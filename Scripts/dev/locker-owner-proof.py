@@ -19,6 +19,32 @@ import time
 from locker_test_support import manage, recover_known_pam_hang, require_guest, run, wait_for
 
 
+def deadline_outcome(descriptor, events):
+    """Classify actual protocol winners, never owner receipt time or LockedHint."""
+    secure = {}
+    for role in ('real', 'emergency'):
+        record = descriptor['units'].get(role)
+        if record:
+            secure[role] = [event['sourceMonotonic'] for event in events
+                if event['kind'] == 'journal' and event['invocation'] == record['identity']['InvocationID']
+                and re.search(r'ext_session_lock_v1#\d+\.locked\(\)', event['message'])]
+    assert secure.get('real'), 'real native secure event missing'
+    real = min(secure['real'])
+    emergency = min(secure['emergency']) if secure.get('emergency') else None
+    if real < descriptor['emergencyAt']:
+        assert 'emergency' not in descriptor['units'], 'unexpected emergency on under-deadline fast path'
+        return 'fast-without-emergency'
+    assert 'emergency' in descriptor['units'], 'late real lock had no deadline emergency attempt'
+    if emergency is None:
+        rejected = descriptor['units']['emergency']['client']
+        assert rejected['terminal'] and rejected['settlement'] == 'finished', 'losing emergency did not settle refusal'
+        assert not descriptor['handoverCommitted'], 'real-first race unexpectedly retired its secure holder'
+        return 'late-real-first'
+    assert emergency < real and descriptor['handoverCommitted'], 'emergency-first acquisition did not hand over fail-closed'
+    assert descriptor['units']['emergency']['client']['settlement'] == 'retired'
+    return 'emergency-first-handover'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
@@ -30,10 +56,18 @@ def main():
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--verify-settings', action='store_true')
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
+    parser.add_argument('--ingress', choices=('ipc', 'cli', 'keybind', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'), default='ipc')
+    parser.add_argument('--late-real-first', action='store_true', help='Test-only granted-client response barrier and held emergency exec')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
     if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'boundary', 'external'):
         parser.error('--main-shell currently proves fast/adoption/slow/boundary/external; other main-shell acceptance remains separate')
+    if args.ingress != 'ipc' and not args.main_shell:
+        parser.error('--ingress requires the actual main shell')
+    if args.late_real_first and args.case != 'fast':
+        parser.error('--late-real-first belongs to the fast/startup outcome proof')
+    if args.ingress in ('custom', 'exclusive', 'legacy') and (args.case != 'external' or args.external_variant != 'existing'):
+        parser.error('selected adapter ingress needs the existing external client proof')
     if args.case == 'slow' and args.delay < 5:
         parser.error('slow coverage requires at least 5s; boundary ordering is a separate case')
     if args.emergency_auth_before_ready and args.case != 'slow':
@@ -41,7 +75,23 @@ def main():
     if args.restart_state and (args.case != 'slow' or args.delay >= 30 or args.emergency_auth_before_ready):
         parser.error('--restart-state needs the cooperative slow handover case')
     source, work = require_guest(args.work, Path(__file__).resolve().parents[2])
-    if args.ui == 'demo' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+    telemetry = []
+    load_file = Path(os.environ['LOCKER_TEST_ARK_LOAD_FILE'])
+
+    def sample_load(phase):
+        fields = [int(value) for value in Path('/proc/stat').read_text().splitlines()[0].split()[1:]]
+        # guest and guest_nice are already included in user/nice, not extra time.
+        total, steal = sum(fields[:8]), fields[7]
+        previous = telemetry[-1] if telemetry else None
+        sample = {'phase': phase, 'monotonic': time.monotonic(), 'cpuTotalTicks': total,
+            'cpuStealTicks': steal, 'arkUptime': load_file.read_text().splitlines()[-1]}
+        if previous and total > previous['cpuTotalTicks']:
+            sample['stealPercentSincePrevious'] = 100 * (steal - previous['cpuStealTicks']) / (total - previous['cpuTotalTicks'])
+        telemetry.append(sample)
+        (work / 'load-samples.json').write_text(json.dumps(telemetry, indent=2))
+
+    sample_load('start')
+    if args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
     sid = manage(source, {'operation': 'discover'})['session']
     assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no', 'existing holder'
@@ -88,18 +138,32 @@ def main():
             commands['slow' + str(delay)] = ('sleep ' + str(delay) + '; printf executed > '
                 + shlex.quote(str(external_executed)) + '; exec ' + standalone)
         configuration['general']['externalLockCommand'] = commands[args.external_variant]
+        if args.ingress == 'custom':
+            configuration['sessionMenu'] = {'powerOptions': [{'action': 'lock', 'enabled': True, 'keybind': '1',
+                'command': commands[args.external_variant]}]}
+            configuration['general']['externalLockCommand'] = 'exit 99'
+        elif args.ingress == 'exclusive':
+            configuration['hooks'] = {'enabled': True, 'handlers': {'lockAction': {
+                'command': commands[args.external_variant], 'exclusive': True}}}
+            configuration['general']['externalLockCommand'] = 'exit 99'
+        elif args.ingress == 'legacy':
+            configuration['general']['lockScreenPlugin'] = 'external'
         unconfirmed = args.external_variant in ('existing', 'pipeline', 'daemonizing-holder')
-    if args.case == 'hooks':
+    if args.case == 'hooks' or args.ingress == 'hooks':
+        prehook_delay = '1' if args.case == 'hooks' else '0.1'
         configuration['hooks'] = {'enabled': True, 'handlers': {
-            'lockAction': {'command': 'printf pre >> ' + shlex.quote(str(marker)) + '; sleep 1', 'exclusive': False},
+            'lockAction': {'command': 'printf pre >> ' + shlex.quote(str(marker)) + '; sleep ' + prehook_delay, 'exclusive': False},
             'screenOffAction': {'command': 'sleep 0.5', 'exclusive': False}}, 'listeners': {
             'screenLock': 'printf lock >> ' + shlex.quote(str(marker)) + '; sleep 40',
-            'screenUnlock': 'printf unlock >> ' + shlex.quote(str(marker))}}
+             'screenUnlock': 'printf unlock >> ' + shlex.quote(str(marker))}}
+    if args.ingress == 'idle':
+        configuration['idle'] = {'enabled': False, 'lockTimeout': 2, 'screenOffTimeout': 0,
+            'suspendTimeout': 0, 'fadeDuration': 0}
     (settings / 'settings.json').write_text(json.dumps(configuration))
     environment = dict(os.environ, XDG_CONFIG_DIRS=str(stage / 'etc/xdg') + ':/etc/xdg',
                        ATMOSPHERA_CONFIG_DIR=str(settings), WAYLAND_DEBUG='client',
                        ATMOSPHERA_CACHE_DIR=str(work / 'cache'), ATMOSPHERA_STATE_DIR=str(work / 'state'))
-    if args.case in ('slow', 'opaque-race', 'opaque-withdraw'):
+    if args.case in ('slow', 'opaque-race', 'opaque-withdraw') or args.late_real_first:
         binary = work / 'bin/qs'
         binary.parent.mkdir()
         shutil.copyfile(source / 'Scripts/dev/fixtures/locker-qs-barrier.py', binary)
@@ -111,6 +175,11 @@ def main():
                 adapter_binary = binary.with_name('python3')
                 shutil.copyfile(source / 'Scripts/dev/fixtures/locker-adapter-barrier.py', adapter_binary)
                 adapter_binary.chmod(0o700)
+        if args.late_real_first:
+            (work / 'block-probe').touch(mode=0o600)
+            adapter_binary = binary.with_name('python3')
+            shutil.copyfile(source / 'Scripts/dev/fixtures/locker-grant-barrier.py', adapter_binary)
+            adapter_binary.chmod(0o700)
     if args.case == 'boundary':
         binary = work / 'bin/python3'
         binary.parent.mkdir()
@@ -134,6 +203,8 @@ def main():
     unlocked = False
     sentinel_identity = None
     sentinel_unit = 'locker-desktop-sentinel.service'
+    original_niri_config = None
+    restore_niri_config = None
 
     def inspect():
         return manage(source, {'operation': 'inspect', 'session': sid})
@@ -164,6 +235,77 @@ def main():
         with credential.open() as stream:
             run(['wtype', '-'], stdin=stream, env=environment)
         run(['wtype', '-k', 'Return'], env=environment)
+
+    def idle_enabled(enabled):
+        path = settings / 'settings/idle.json'
+        values = dict(configuration['idle'], enabled=enabled)
+        temporary = path.with_suffix('.proof-new')
+        temporary.write_text(json.dumps(values))
+        temporary.replace(path)
+
+    def ingress():
+        nonlocal original_niri_config, restore_niri_config
+        if args.ingress == 'idle':
+            # Real ext-idle-notify, not a call to the service's internal action.
+            run(['wtype', '-M', 'shift', '-m', 'shift'], env=environment)
+            idle_enabled(True)
+            return
+        cli = root / 'Scripts/bash/atmosphera'
+        if args.ingress == 'cli':
+            run([str(cli), 'lock'], env=environment)
+            return
+        if args.ingress == 'keybind':
+            assert environment['XDG_CURRENT_DESKTOP'] == 'niri', 'keybind fixture here uses niri'
+            def startup_handoff():
+                text = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                    '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
+                paths = re.findall(r'niri accepted configuration handoff:\s+(\S+)', text)
+                return Path(paths[-1]) if paths else None
+            restore_niri_config = wait_for(startup_handoff, 20)
+            assert restore_niri_config.is_file()
+            compositor = json.loads((work / 'observer/ready.json').read_text())['compositor']
+            assert compositor, 'exact compositor identity required'
+            process = Path('/proc') / str(compositor['pid'])
+            assert process.joinpath('stat').read_text().split(') ', 1)[1].split()[19] == compositor['start']
+            argv = process.joinpath('cmdline').read_bytes().decode().strip('\0').split('\0')
+            env = dict(item.split('=', 1) for item in process.joinpath('environ').read_bytes().decode().split('\0') if '=' in item)
+            original_niri_config = Path(env.get('XDG_CONFIG_HOME', env['HOME'] + '/.config')) / 'niri/config.kdl'
+            for index, value in enumerate(argv):
+                if value in ('-c', '--config'):
+                    original_niri_config = Path(argv[index + 1])
+                elif value.startswith('--config='):
+                    original_niri_config = Path(value.split('=', 1)[1])
+            text = original_niri_config.read_text()
+            # Relative includes keep resolving against their original folder.
+            text = re.sub(r'(?m)^(\s*include\s+)"([^"\n]+)"', lambda match:
+                match[1] + json.dumps(str((original_niri_config.parent / match[2]).resolve())), text)
+            key_config = work / 'keybind-config.kdl'
+            command = 'printf key > ' + shlex.quote(str(work / 'keybind-fired')) + '; exec ' + shlex.join([str(cli), 'lock'])
+            binding = '\n  Mod+Shift+F12 { spawn "sh" "-c" ' + json.dumps(command) + '; }\n'
+            openings = list(re.finditer(r'(?m)^binds\s*\{', text))
+            assert len(openings) == 1, 'fixture needs the guest config single binds section'
+            at = openings[0].end()
+            text = text[:at] + binding + text[at:]
+            key_config.write_text(text)
+            validation = subprocess.run(['niri', 'validate', '-c', str(key_config)], env=environment,
+                text=True, capture_output=True, timeout=15)
+            (work / 'keybind-validation.txt').write_text(validation.stdout + validation.stderr)
+            assert validation.returncode == 0, validation.stderr
+            run(['niri', 'msg', 'action', 'load-config-file', '--path', str(key_config)], env=environment)
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                console.chord(0xffeb, 0xffe1, 0xffc9)  # Super_L + Shift_L + F12
+            finally:
+                console.close()
+            wait_for(lambda: (work / 'keybind-fired').exists())
+            return
+        # Custom session and hook selection is owned behind the same public
+        # session-menu/lock IPC, never a direct test call to an internal owner.
+        if args.ingress == 'custom':
+            ipc('sessionMenu', 'lock')
+        else:
+            ipc('lockerProof', 'lock')
 
     def start():
         nonlocal owner
@@ -250,8 +392,12 @@ def main():
             finally:
                 console.close()
         old_generation = (inspect().get('descriptor') or {}).get('generation')
+        sample_load('request')
         intent = args.case in ('intent', 'opaque-holder', 'opaque-sleep')
-        ipc('lockerProof', 'lockAndSuspend' if intent else 'lock')
+        if intent:
+            ipc('lockerProof', 'lockAndSuspend')
+        else:
+            ingress()
         if intent:
             ipc('lockerProof', 'lockAndSuspend')
             assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'suspend before secure'
@@ -290,10 +436,23 @@ def main():
                     and observation.get('sameInvocation') and not observation.get('gone'))
         wait_for(secured, 15)
         first = inspect()
+        sample_load('first-secure')
+        if args.late_real_first:
+            assert (work / 'grant-held.json').exists(), 'real acquisition did not pass the actual grant barrier'
+            assert (work / 'probe-at-barrier.json').exists(), 'deadline emergency was not exercised'
+            (work / 'release-probe').touch(mode=0o600)
+            wait_for(lambda: inspect()['units']['emergency']['gone'])
+            first = inspect()
+        if args.ingress == 'hooks':
+            assert first['units']['prehook']['gone'], 'real lock bypassed unfinished pre-hook'
+            assert first['descriptor']['units']['prehook']['startedAt'] < first['descriptor']['units']['real']['startedAt']
+        if args.ingress == 'idle':
+            idle_enabled(False)
+            journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat', '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
+            assert 'Executing action: lock' in journal and 'Idle fired: lock' in journal, 'idle ingress did not fire natively'
+        (work / 'ingress.json').write_text(json.dumps({'route': args.ingress, 'snapshot': first['descriptor']['snapshot']}, indent=2))
         (work / ('first-unconfirmed.json' if unconfirmed else 'first-secure.json')).write_text(json.dumps(first, indent=2))
         assert first['descriptor']['units']['real']['startedAt'] < first['descriptor']['emergencyAt']
-        if args.case == 'fast':
-            assert 'emergency' not in first['descriptor']['units'], 'unexpected fallback on fast path'
         if args.case == 'boundary':
             from locker_framebuffer import Framebuffer
             wait_for(lambda: (work / 'ready-at-barrier.json').exists())
@@ -467,7 +626,12 @@ def main():
             assert first['descriptor']['snapshot']['adapter'] == 'opaque'
         if args.case == 'external':
             assert first['descriptor']['snapshot']['adapter'] == 'opaque'
-            assert first['descriptor']['snapshot']['command'] == configuration['general']['externalLockCommand']
+            selected = configuration['general']['externalLockCommand']
+            if args.ingress == 'custom':
+                selected = configuration['sessionMenu']['powerOptions'][0]['command']
+            elif args.ingress == 'exclusive':
+                selected = 'sh -lc ' + shlex.quote(configuration['hooks']['handlers']['lockAction']['command'])
+            assert first['descriptor']['snapshot']['command'] == selected
             assert not first['descriptor']['handoverCommitted'], 'opaque adapter must not hand over'
             if not unconfirmed:
                 wait_for(lambda: inspect()['units']['real']['gone'])
@@ -604,7 +768,7 @@ def main():
         final = inspect()
         (work / 'final.json').write_text(json.dumps(final, indent=2))
         assert all(item['gone'] and not item['members'] for item in final['units'].values())
-        if args.case == 'hooks':
+        if args.case == 'hooks' or args.ingress == 'hooks':
             assert marker.read_text() == 'prelockunlock', 'hook duplicated or lost after adoption'
         assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no'
         if sentinel_identity:
@@ -656,9 +820,13 @@ def main():
                    'realStartedAt': first['descriptor']['units']['real']['startedAt'],
                    'holderSecureAt': native_secure[0]['sourceMonotonic']}
         timings['secondsToSecure'] = timings['holderSecureAt'] - timings['requestedAt']
+        if args.case == 'fast' or (args.case == 'slow' and args.delay < 30):
+            timings['outcome'] = deadline_outcome(final['descriptor'], events)
+            if args.late_real_first:
+                assert timings['outcome'] == 'late-real-first'
+            if args.case == 'slow':
+                assert timings['outcome'] == 'emergency-first-handover'
         (work / 'startup-timings.json').write_text(json.dumps(timings, indent=2))
-        if args.case == 'fast':
-            assert timings['holderSecureAt'] < first['descriptor']['emergencyAt'], 'fast secure acknowledgement missed 3s deadline'
         for role, record in final['descriptor']['units'].items():
             if role not in ('real', 'emergency'):
                 continue
@@ -677,38 +845,66 @@ def main():
         print('PASS owner-' + args.case + recovery, work)
         (work / 'result.txt').write_text('PASS owner-' + args.case + recovery + '\n')
     finally:
-        if owner_stopped:
-            run(['systemctl', '--user', 'kill', '--signal=SIGCONT', '--kill-whom=main', unit])
+        current = None
         observer_error = None
-        if observer is not None and observer.poll() is None:
-            if not observer.stdin.closed:
-                observer.stdin.close()
+        try:
+            if owner_stopped:
+                run(['systemctl', '--user', 'kill', '--signal=SIGCONT', '--kill-whom=main', unit])
+            if observer is not None and observer.poll() is None:
+                if not observer.stdin.closed:
+                    observer.stdin.close()
+                try:
+                    observer.wait(timeout=15)
+                except subprocess.TimeoutExpired as error:
+                    observer_error = error
+                    observer.terminate()
+                    observer.wait(timeout=15)
+            current = inspect()
+            sample_load('end')
+            event_path = work / 'observer/events.jsonl'
+            if current.get('descriptor') and event_path.exists():
+                descriptor = current['descriptor']
+                events = [json.loads(line) for line in event_path.read_text().splitlines()]
+                native = []
+                for role, record in descriptor['units'].items():
+                    for event in events:
+                        if (event['kind'] == 'journal' and event['invocation'] == record['identity']['InvocationID']
+                                and re.search(r'ext_session_lock_v1#\d+\.(locked|finished)\(\)', event['message'])):
+                            native.append({'role': role, 'invocation': event['invocation'],
+                                'secondsFromRequest': event['sourceMonotonic'] - descriptor['requestedAt'],
+                                'message': event['message']})
+                (work / 'native-startup-timings.json').write_text(json.dumps({'native': native,
+                    'requestedAt': descriptor['requestedAt'], 'emergencyAt': descriptor['emergencyAt'],
+                    'handoverCommitted': descriptor['handoverCommitted']}, indent=2))
+            (work / 'last-observation.json').write_text(json.dumps(current, indent=2))
+            if owner:
+                journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                               '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
+                (work / 'owner-journal.txt').write_text(journal)
+        finally:
+            # Evidence failures still fail the proof, but may not skip its
+            # independent teardown/restoration obligations. Never unlock here.
             try:
-                observer.wait(timeout=15)
-            except subprocess.TimeoutExpired as error:
-                observer_error = error
-                observer.terminate()
-                observer.wait(timeout=15)
-        current = inspect()
-        (work / 'last-observation.json').write_text(json.dumps(current, indent=2))
-        if owner:
-            journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
-                           '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
-            (work / 'owner-journal.txt').write_text(journal)
-        # No failure cleanup unlock or broad kill: only stop this root. Preserve
-        # a still-secure holder and protected credential for real-PAM recovery.
-        run(['systemctl', '--user', 'stop', unit])
-        if sentinel_identity:
-            assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'InvocationID', '--value']).stdout.strip() == sentinel_identity
-            run(['systemctl', '--user', 'stop', sentinel_unit])
-            assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'MainPID', '--value']).stdout.strip() == '0'
-        hint = run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip()
-        if hint == 'no' and (unlocked or not current.get('descriptor') or current['descriptor']['phase'] == 'settled'):
-            run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')
-            credential.unlink()
-            original_shadow.unlink()
-        else:
-            print('Real-PAM recovery required; protected recovery files in', work, file=__import__('sys').stderr)
+                if owner:
+                    actual = run(['systemctl', '--user', 'show', unit, '-p', 'InvocationID', '--value']).stdout.strip()
+                    assert actual in ('', owner), 'harness root invocation replaced'
+                    if actual:
+                        run(['systemctl', '--user', 'stop', unit])
+                if sentinel_identity:
+                    assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'InvocationID', '--value']).stdout.strip() == sentinel_identity
+                    run(['systemctl', '--user', 'stop', sentinel_unit])
+                    assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'MainPID', '--value']).stdout.strip() == '0'
+                hint = run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip()
+                settled = current is not None and (not current.get('descriptor') or current['descriptor']['phase'] == 'settled')
+                if hint == 'no' and (unlocked or settled):
+                    run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')
+                    credential.unlink()
+                    original_shadow.unlink()
+                else:
+                    print('Real-PAM recovery required; protected recovery files in', work, file=__import__('sys').stderr)
+            finally:
+                if restore_niri_config is not None:
+                    run(['niri', 'msg', 'action', 'load-config-file', '--path', str(restore_niri_config)], env=environment)
         if observer_error is not None:
             raise observer_error
 

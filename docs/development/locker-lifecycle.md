@@ -100,8 +100,8 @@ unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd pro
 is not a real suspend/resume proof.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
-`rejected`, `resources`, `external`, `contract`, `restart`, `packaging`, `cold-load`
-and `orphan-acceptance`.
+`deadline-race`, `rejected`, `resources`, `external`, `contract`, `restart`, `ingress`, `preview`,
+`packaging`, `cold-load` and `orphan-acceptance`.
 Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
@@ -131,6 +131,19 @@ config and the read-only settings matrix. No source-only Portals link is added;
 the emergency closure contains only its own entry points and shared auth/client
 helpers. Startup is followed by real PAM, native teardown and cgroup cleanup.
 
+Startup outcomes use native protocol time, not owner receipt time. A real lock
+before the original 3-second deadline must have no emergency attempt. If real
+secures late but first, the refused emergency exits and the same real holder
+stays. If emergency secures first, the ready real client takes over through the
+fail-closed handover. Every outcome retains continuous no-unauthenticated-unlock
+assertions. `deadline-race` deterministically exercises both late outcomes with
+test-only response/exec barriers, actual protocol traffic and real PAM. A secure
+holder is never terminated merely to manufacture a different test outcome.
+Owner proofs record guest CPU steal and native startup timing. Their launcher
+supplies `LOCKER_TEST_ARK_LOAD_FILE`, a disk-backed guest file receiving timestamped
+Ark `uptime` observations throughout the run. Strict universal sub-3-second
+latency is tracked separately for a quiet environment, not inferred under load.
+
 The rejected case runs both unmodified installed configs against an independent
 authenticating holder. Native refusal must make both losing clients self-exit,
 without releasing that holder. The resources case adds a retained diagnostic:
@@ -143,7 +156,23 @@ identities are retained. Releasing the reply must exit normally; real PAM unlock
 is followed by at least 10 seconds of exact process/cgroup absence. The image
 cache's independent 1x1 render traffic is not LED or spectrum activity.
 
-The broader ingress/suspend/load matrix and
+The ingress case drives actual main/public IPC and CLI, native ext-idle,
+a real compositor keybind, custom session action, exclusive and nonexclusive
+hooks, listener hooks and legacy external selection. It also retains the scoped
+overlapping-callback and coalesced-suspend-intent checks. The niri keybind fixture
+waits for the shell's startup configuration handoff, validates a private config
+copy, uses the exact VM console's emulated keyboard, then restores the session
+config. It never edits the original compositor config. Passing subproofs retire
+only their reconstructible staged installs, preserving logs/configuration and
+results, to avoid exhausting guest inodes.
+
+The preview case uses the actual CLI, observes the rendered guest framebuffer,
+presses real Escape and checks the desktop returns. The descriptor is unchanged,
+LockedHint stays false, and no protocol lock/unlock request is allowed. This is
+presentation-only; normal inset desktop margins are not a secure-output defect.
+Escape is scoped to each preview window's live content, not an off-window root.
+
+The broader suspend/load matrix and
 the separate Hyprland restore-option proofs are not implied by these entry
 points. Keep their acceptance status in the task's outside-repository execution
 note until those proofs are implemented and run.

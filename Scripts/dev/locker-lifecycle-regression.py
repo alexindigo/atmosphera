@@ -8,6 +8,7 @@ import argparse
 import json
 from pathlib import Path
 import shlex
+import shutil
 import subprocess
 import time
 
@@ -16,7 +17,7 @@ from locker_test_support import manage, require_guest
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
     parser.add_argument('--sample-seconds', type=float, default=10)
     parser.add_argument('--post-unlock-seconds', type=float, default=10)
     parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
@@ -33,11 +34,35 @@ def main():
     if args.case != 'orphan-acceptance' and source != driver:
         parser.error('--source is currently supported only by orphan-acceptance')
     initial = None
-    if args.case in ('rejected', 'resources'):
+    if args.case in ('rejected', 'resources', 'preview'):
         sid = manage(driver, {'operation': 'discover'})['session']
         initial = manage(driver, {'operation': 'inspect', 'session': sid})
     commands = []
-    if args.case in ('rejected', 'resources'):
+    if args.case == 'preview':
+        commands.append(('preview', ['locker-preview-proof.py']))
+    elif args.case == 'deadline-race':
+        for name, options in (('late-real-first', ['--case', 'fast', '--late-real-first']),
+                ('emergency-first-handover', ['--case', 'slow', '--delay', '5'])):
+            command = ['locker-owner-proof.py', '--main-shell', *options]
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append((name, command))
+    elif args.case == 'ingress':
+        for route in ('ipc', 'cli', 'keybind', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'):
+            command = ['locker-owner-proof.py', '--main-shell', '--ingress', route]
+            command += ['--case', 'external', '--external-variant', 'existing'] if route in ('custom', 'exclusive', 'legacy') else ['--case', 'fast']
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append((route, command))
+        # Preserve the scoped callback and coalesced-suspend checks; the real
+        # main cases above prove ingress, not a synthetic hook-completion signal.
+        for name, case in (('overlapping-callbacks', 'hooks'), ('coalesced-intent', 'intent')):
+            command = ['locker-owner-proof.py', '--case', case]
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append((name, command))
+        commands.append(('preview', ['locker-preview-proof.py']))
+    elif args.case in ('rejected', 'resources'):
         command = ['locker-rejected-proof.py', '--sample-seconds', str(args.sample_seconds),
             '--post-unlock-seconds', str(args.post_unlock_seconds)]
         if args.case == 'resources':
@@ -123,6 +148,16 @@ def main():
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=240)
         print((work / (name + '-output.txt')).read_text(), end='', flush=True)
         assert result.returncode == 0, str(command)
+        if args.case == 'ingress':
+            # Each passing subproof has stopped its exact units. Retire only
+            # its reconstructible install copy, not logs/configuration/evidence;
+            # repeated package copies otherwise exhaust this guest's inodes.
+            stage = work / name / 'stage'
+            assert stage.is_dir() and not stage.is_symlink() and stage.resolve() == stage
+            assert (stage / 'etc/xdg/quickshell/atmosphera/VERSION').read_text().strip() == '0.9.3'
+            record = {'path': str(stage), 'inode': stage.stat().st_ino, 'subproof': name}
+            shutil.rmtree(stage)
+            (work / (name + '-staging-retired.json')).write_text(json.dumps(record, indent=2))
     if args.case in ('packaging', 'cold-load'):
         emergency = (work / 'emergency/fixture-protocol.txt').read_text()
         assert 'Registry' not in emergency and 'PluginService' not in emergency, 'emergency initialized non-lock runtime'
@@ -131,7 +166,7 @@ def main():
         sid = manage(driver, {'operation': 'discover'})['session']
         time.sleep(10)
         final = manage(driver, {'operation': 'inspect', 'session': sid})
-        if args.case in ('rejected', 'resources'):
+        if args.case in ('rejected', 'resources', 'preview'):
             # Independent rejection fixtures create no generation. A fresh
             # guest can correctly have no owner descriptor at all.
             assert final['descriptor'] == initial['descriptor'], 'independent clients changed owner generation'

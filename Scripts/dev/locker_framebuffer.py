@@ -76,5 +76,19 @@ class Framebuffer:
         self.socket.sendall(struct.pack('>BBHH', 5, 0, x, y))
         time.sleep(.15)
 
+    def chord(self, *keysyms):
+        # RFC 6143 section 7.5.4: KeyEvent is type/down/pad/X11 keysym.
+        # This reaches QEMU's emulated keyboard, including compositor binds;
+        # a Wayland virtual keyboard can depend on an existing focused client.
+        pressed = []
+        try:
+            for keysym in keysyms:
+                self.socket.sendall(struct.pack('>BBHI', 4, 1, 0, keysym))
+                pressed.append(keysym)
+            time.sleep(.1)
+        finally:
+            for keysym in reversed(pressed):
+                self.socket.sendall(struct.pack('>BBHI', 4, 0, 0, keysym))
+
     def close(self):
         self.socket.close()
