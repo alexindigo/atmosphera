@@ -16,7 +16,8 @@ from locker_test_support import manage, require_guest
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'external', 'contract', 'restart', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'boundary', 'external', 'contract', 'restart', 'orphan-acceptance'), required=True)
+    parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
     parser.add_argument('--states', default='engaged,starting,fallback,handing-over')
     parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
@@ -59,6 +60,15 @@ def main():
         commands.append(('cooperative', cooperative))
         for case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw'):
             commands.append((case, ['locker-owner-proof.py', '--case', case]))
+    elif args.case == 'boundary':
+        for delay in args.delays.split(','):
+            command = ['locker-owner-proof.py', '--main-shell', '--case', 'boundary', '--delay', str(float(delay))]
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append(('ready-' + delay, command))
+        commands.append(('policy-orderings', ['locker-state-proof.py']))
+        commands.append(('auth-before-ready', ['locker-owner-proof.py', '--main-shell', '--case', 'slow',
+            '--delay', '5', '--emergency-auth-before-ready']))
     elif args.case == 'restart':
         for state in args.states.split(','):
             assert state in ('engaged', 'starting', 'fallback', 'handing-over'), 'unknown restart state'

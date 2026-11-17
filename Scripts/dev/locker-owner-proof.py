@@ -22,7 +22,7 @@ from locker_test_support import manage, recover_known_pam_hang, require_guest, r
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
-    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'hooks', 'intent'), default='fast')
+    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'hooks', 'intent'), default='fast')
     parser.add_argument('--external-variant', choices=('existing', 'missing', 'slow5', 'slow40', 'nonzero', 'crash', 'pipeline', 'daemonizing', 'term-resistant', 'daemonizing-holder'), default='existing')
     parser.add_argument('--delay', type=float, default=5)
     parser.add_argument('--emergency-auth-before-ready', action='store_true')
@@ -32,8 +32,8 @@ def main():
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
-    if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'external'):
-        parser.error('--main-shell currently proves fast/adoption/slow/external; other main-shell acceptance remains separate')
+    if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'boundary', 'external'):
+        parser.error('--main-shell currently proves fast/adoption/slow/boundary/external; other main-shell acceptance remains separate')
     if args.case == 'slow' and args.delay < 5:
         parser.error('slow coverage requires at least 5s; boundary ordering is a separate case')
     if args.emergency_auth_before_ready and args.case != 'slow':
@@ -41,7 +41,7 @@ def main():
     if args.restart_state and (args.case != 'slow' or args.delay >= 30 or args.emergency_auth_before_ready):
         parser.error('--restart-state needs the cooperative slow handover case')
     source, work = require_guest(args.work, Path(__file__).resolve().parents[2])
-    if args.ui == 'demo' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+    if args.ui == 'demo' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
     sid = manage(source, {'operation': 'discover'})['session']
     assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no', 'existing holder'
@@ -111,6 +111,13 @@ def main():
                 adapter_binary = binary.with_name('python3')
                 shutil.copyfile(source / 'Scripts/dev/fixtures/locker-adapter-barrier.py', adapter_binary)
                 adapter_binary.chmod(0o700)
+    if args.case == 'boundary':
+        binary = work / 'bin/python3'
+        binary.parent.mkdir()
+        shutil.copyfile(source / 'Scripts/dev/fixtures/locker-adapter-barrier.py', binary)
+        binary.chmod(0o700)
+        (work / 'ready-at-delay').write_text(str(args.delay))
+        environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
     unit = 'locker-owner-proof.service'
     password = secrets.token_hex(16)
     credential = work / 'credential'
@@ -226,7 +233,7 @@ def main():
                                     stderr=(work / 'observer-stderr.txt').open('w'), env=environment)
         wait_for(lambda: (work / 'observer/ready.json').exists(), 10)
         start()
-        if args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready:
+        if args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
             from locker_framebuffer import Framebuffer
             sentinel_entry = work / 'desktop-sentinel.qml'
             shutil.copyfile(source / 'Scripts/dev/fixtures/locker-sentinel.qml', sentinel_entry)
@@ -259,10 +266,22 @@ def main():
         def owner_status():
             return json.loads(ipc('lockOwner', 'status'))
         def secured():
+            nonlocal expected_role
             view = inspect()
             descriptor = view.get('descriptor') or {}
             if unconfirmed:
                 return descriptor.get('generation') != old_generation and owner_status()['state'] == 'engaged-unconfirmed(external)'
+            if args.case == 'boundary':
+                holders = [role for role in ('real', 'emergency')
+                    if (descriptor.get('units', {}).get(role, {}).get('client') or {}).get('secure')
+                    and not descriptor['units'][role]['client'].get('terminal')
+                    and view.get('units', {}).get(role, {}).get('sameInvocation')
+                    and not view['units'][role]['gone']]
+                assert len(holders) <= 1, 'two live secure holders'
+                if holders:
+                    expected_role = holders[0]
+                    return descriptor.get('generation') != old_generation
+                return False
             record = descriptor.get('units', {}).get(expected_role, {})
             client = record.get('client') or {}
             observation = view.get('units', {}).get(expected_role, {})
@@ -275,6 +294,50 @@ def main():
         assert first['descriptor']['units']['real']['startedAt'] < first['descriptor']['emergencyAt']
         if args.case == 'fast':
             assert 'emergency' not in first['descriptor']['units'], 'unexpected fallback on fast path'
+        if args.case == 'boundary':
+            from locker_framebuffer import Framebuffer
+            wait_for(lambda: (work / 'ready-at-barrier.json').exists())
+            ready = json.loads((work / 'ready-at-barrier.json').read_text())
+            assert ready['requestedAt'] == first['descriptor']['requestedAt']
+            assert ready['arrived'] < ready['target']
+            # Capture the actual readiness/deadline window, not 30 seconds of
+            # identical waiting frames. The continuous protocol observer spans
+            # the complete generation, including all the preceding time.
+            wait_for(lambda: time.monotonic() >= ready['target'] - 1, args.delay + 5)
+            console = Framebuffer()
+            frames = []
+            until = max(first['descriptor']['requestedAt'] + args.delay + 3, time.monotonic() + 1)
+            try:
+                while time.monotonic() < until:
+                    view = inspect()
+                    holders = [role for role, record in view['descriptor']['units'].items()
+                        if record.get('client') and record['client']['secure'] and not record['client']['terminal']
+                        and view['units'][role]['sameInvocation'] and not view['units'][role]['gone']]
+                    assert len(holders) <= 1, 'two secure holders at boundary'
+                    frame = work / ('boundary-frame-%04d.ppm' % len(frames))
+                    at = time.monotonic()
+                    console.capture(frame)
+                    assert not console.sentinel_visible(), 'unlocked desktop during boundary race'
+                    frames.append({'file': frame.name, 'at': at, 'holders': holders, 'view': view})
+                    time.sleep(.05)
+            finally:
+                console.close()
+                (work / 'boundary-frames.json').write_text(json.dumps(frames, indent=2))
+            assert frames
+            wait_for(secured, 10)
+            first = inspect()
+            if args.delay >= 30:
+                assert first['units']['real']['gone'] and not first['descriptor']['units']['real']['grant'], 'late-ready client retained acquisition authority'
+                assert expected_role == 'emergency' and not first['descriptor']['handoverCommitted']
+            else:
+                released = json.loads((work / 'ready-released.json').read_text())
+                assert released['released'] >= ready['target']
+            if first['descriptor']['units']['real']['grant']:
+                candidate = first['descriptor']['units']['real']['client']
+                assert candidate['secure'] or (first['units']['real']['gone'] and candidate['terminal']
+                    and candidate['settlement'] == 'finished'), 'granted boundary client neither secured nor settled its refusal'
+            (work / 'boundary-outcome.json').write_text(json.dumps({'delay': args.delay, 'ready': ready,
+                'holder': expected_role, 'view': first}, indent=2))
         if args.case == 'slow':
             assert first['descriptor']['units']['emergency']['startedAt'] >= first['descriptor']['emergencyAt'], 'early emergency deadline'
             assert first['descriptor']['units']['real']['startedAt'] < first['descriptor']['emergencyAt']
@@ -554,7 +617,7 @@ def main():
                 wait_for(authenticated_sentinel)
             finally:
                 console.close()
-        if args.case in ('slow', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw'):
+        if args.case in ('slow', 'boundary', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw'):
             time.sleep(10)
             assert inspect()['descriptor']['phase'] == 'settled'
             assert all(item['gone'] and not item['members'] for item in inspect()['units'].values())

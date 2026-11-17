@@ -17,13 +17,33 @@ from contextlib import redirect_stdout
 work = Path(__file__).resolve().parent.parent
 if len(sys.argv) == 3 and sys.argv[1].endswith('/Scripts/python/locker-unit.py') and sys.argv[2] == 'manage':
     payload = sys.stdin.read()
-    operation = json.loads(payload)['operation']
+    job = json.loads(payload)
+    operation = job['operation']
+    if (operation == 'client' and job.get('role') == 'real' and job.get('status', {}).get('ready')
+            and (work / 'ready-at-delay').exists() and not (work / 'ready-released.json').exists()):
+        # Hold a real prepared client's publication before the actual fenced
+        # transaction. Do not hold its descriptor lock or change any status.
+        adapter = runpy.run_path(sys.argv[1], run_name='locker_boundary_adapter')
+        with adapter['Session'](job['session']).locked(job['generation']) as descriptor:
+            requested = descriptor['requestedAt']
+        arrived = time.monotonic()
+        target = requested + float((work / 'ready-at-delay').read_text())
+        (work / 'ready-at-barrier.json').write_text(json.dumps({'pid': os.getpid(), 'arrived': arrived,
+            'requestedAt': requested, 'target': target}))
+        if arrived >= target:
+            raise RuntimeError('natural preparation missed the controlled readiness barrier')
+        while True:
+            remaining = target - time.monotonic()
+            if remaining <= 0:
+                break
+            time.sleep(min(.002, remaining))
+        (work / 'ready-released.json').write_text(json.dumps({'released': time.monotonic(), 'target': target}))
     sys.stdin = io.StringIO(payload)
     sys.argv = sys.argv[1:]
     # Execute in this same process: client/authenticated publications deliberately
     # require the helper's PPid to be the exact GUI client. A proxy child would
     # (correctly) be rejected by that production identity fence.
-    if operation != 'handover':
+    if operation != 'handover' or (work / 'ready-at-delay').exists():
         runpy.run_path(sys.argv[0], run_name='__main__')
         raise AssertionError('adapter unexpectedly returned without an exit code')
     output = io.StringIO()

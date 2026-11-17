@@ -99,8 +99,9 @@ use `ark-user-vms` strict pinned tester SSH to `atmosphera-locker-orphan` on
 unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd proof
 is not a real suspend/resume proof.
 
-`locker-lifecycle-regression.py` currently provides `fast`, `slow`, `external`,
-`contract`, `restart` and `orphan-acceptance`. Each case requires its own new `--work` directory.
+`locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
+`external`, `contract`, `restart` and `orphan-acceptance`. Each case requires its
+own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
 passing full matrix from a subset. Framebuffer-dependent cases require the
@@ -115,7 +116,15 @@ in fallback and after committed emergency retirement. It checks original
 deadlines, same locker invocation/cgroup/generation, continuous compositor/native
 evidence, framebuffer sentinel absence during handover and authenticated cleanup.
 
-The broader boundary/resource/ingress/suspend/load/packaging matrix and
+The boundary case delays the actual prepared client's generation publication to
+2.9, 3.0, 3.1, 29.9, 30.0 and 30.1 seconds from the original request. It leaves
+the real adapter's parent-process identity fence and protocol outcomes intact,
+checks late-ready authority revocation, and retains continuous traces plus
+framebuffer sequences. It also exercises policy orderings and real emergency
+authentication before delayed readiness. A naturally late preparation fails
+the controlled barrier instead of silently moving its target.
+
+The broader resource/ingress/suspend/load/packaging matrix and
 the separate Hyprland restore-option proofs are not implied by these entry
 points. Keep their acceptance status in the task's outside-repository execution
 note until those proofs are implemented and run.
