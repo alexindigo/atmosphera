@@ -228,14 +228,16 @@ Scope {
     function apply(changed) {
       if (!live)
         return;
-      var next = Object.assign({}, facts);
+      var next = Object.assign({}, facts), touched = false;
       for (var name of fields) {
         if (changed[name] === undefined)
           continue;
         _versions[name] = ++revision;
         next[name] = _value(name, changed[name]);
+        touched = true;
       }
-      facts = next;
+      if (touched)
+        facts = next;
     }
     function membership(name, memberPath, present) {
       if (!live)

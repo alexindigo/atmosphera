@@ -127,9 +127,18 @@ def main():
             bus.control("put", path=path, iface=NM + ".Device.Wireless", props={"Bitrate": ["u", 54000], "ActiveAccessPoint": ["o", ap],
                         "AccessPoints": ["ao", [ap, spare]], "LastScan": ["x", 100]})
         bus.control("change", path=ROOT, iface=NM, props={"Devices": [device, other], "ActiveConnections": []})
-        until(lambda s: s["devices"].get(device, {}).get("ipv4") == "198.18.0.4" and s["devices"][device]["wifiSignal"] == "50", "linked AP/IP facts")
+        until(lambda s: all(s["devices"].get(path, {}).get("ipv4") == "198.18.0.4"
+                            and s["devices"][path]["wifiSignal"] == "50" for path in (device, other)), "both devices' linked AP/IP facts")
         owner.check("shared-records-no-duplicate-proxies", state()["counts"]["accessPoints"] == 2 and state()["counts"]["ipConfigs"] == 1
                     and len(calls("GetAll", ip4)) == 1 and len(calls("GetAll", ap)) == 1)
+        bus.control("change", path=device, iface=NM + ".Device", props={"State": 30})
+        until(lambda s: s["diagnostics"]["activeWifiIf"] == "fixture11", "select remaining connected Wi-Fi device")
+        bus.control("change", path=device, iface=NM + ".Device", props={"State": 100})
+        snapshot = until(lambda s: all(d["connected"] for d in s["devices"].values()), "both Wi-Fi devices connected again")
+        owner.check("wifi-actions-and-details-share-selected-device", snapshot["diagnostics"]["wifiPath"] == other, state=snapshot)
+        bus.control("change", path=other, iface=NM + ".Device", props={"State": 30})
+        until(lambda s: s["diagnostics"]["activeWifiIf"] == "fixture10", "restore selected Wi-Fi device")
+        bus.control("change", path=other, iface=NM + ".Device", props={"State": 100})
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Strength": 77, "Frequency": 5955})
         bus.control("change", path=ip4, iface=NM + ".IP4Config", props={"AddressData": [{"address": "198.18.0.5", "prefix": 24}], "Gateway": "198.18.0.2", "NameserverData": [{"address": "198.18.0.54"}]})
         until(lambda s: all(d["ipv4"] == "198.18.0.5" and d["wifiSignal"] == "77" and d["wifiBand"] == "6 GHz" and d["dns4"] == ["198.18.0.54"] for d in s["devices"].values()), "same-path AP/IP changes")
@@ -221,9 +230,16 @@ def main():
             owner.check("enterprise-hidden-wire-contract-" + ("legacy" if legacy else "manual"),
                         types["802-1x"]["eap"] == "as" and types["802-1x"]["ca-cert"] == "ay"
                         and types["802-11-wireless"]["ssid"] == "ay" and types["802-11-wireless"]["hidden"] == "b"
-                        and settings["802-1x"]["eap"] == ["ttls"] and settings["802-1x"]["phase2-auth"] == "pap"
-                        and settings["802-1x"]["ca-cert"][-1] == 0
-                        and settings["802-11-wireless"]["hidden"] == (not legacy), request=request)
+                         and settings["802-1x"]["eap"] == ["ttls"] and settings["802-1x"]["phase2-auth"] == "pap"
+                         and bytes(settings["802-1x"]["ca-cert"]) == b"file:///fixture-ca.pem\0"
+                         and settings["802-11-wireless"]["hidden"] == (not legacy), request=request)
+        for certificate in ("file:///already-a-uri.pem", "pkcs11:object=fixture-ca"):
+            ipc("wifiConnect", json.dumps(dict(ssid="Certificate scheme fixture", security="wpa2-eap",
+                identity="fixture@example.invalid", enterprise={"caCert": certificate})))
+            wait_for(lambda: bytes(calls("AddAndActivateConnection")[-1]["settings"]["802-1x"]["ca-cert"]) == certificate.encode() + b"\0",
+                     "explicit certificate scheme preserved")
+            until(lambda s: not s["network"]["connecting"], "scheme request settled")
+            owner.check("certificate-scheme-preserved-" + certificate.split(":", 1)[0], True)
         bus.control("signal", path=device, iface=NM + ".Device.Wireless", member="AccessPointRemoved", signature="(o)", args=[spare])
         bus.control("signal", path=other, iface=NM + ".Device.Wireless", member="AccessPointRemoved", signature="(o)", args=[spare])
         until(lambda s: s["counts"]["accessPoints"] == 1, "AP retirement")

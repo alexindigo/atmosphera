@@ -107,7 +107,13 @@ def controlled_network(profile, work):
         frame = wait_for(lambda: text_frame("sae"), "same-path security change rendered")
         owner.check("controlled-panel-same-path-security", True, frame=frame)
         enumerations = sum(c["method"] == "ListConnections" for c in bus.control("calls"))
+        scans = sum(c["method"] == "RequestScan" for c in bus.control("calls"))
+        bus.control("configure", scan="pending")
         shell.ipc("nmPanel", "scan")
+        wait_for(lambda: sum(c["method"] == "RequestScan" for c in bus.control("calls")) > scans,
+                 "panel issues an actual RequestScan")
+        wait_for(lambda: shell.panel_frame()["scanning"], "panel observes in-flight scan")
+        bus.control("change", path=device, iface=NM + ".Device.Wireless", props={"LastScan": 200})
         wait_for(lambda: not shell.panel_frame()["scanning"], "LastScan settles panel scan")
         owner.check("controlled-panel-scan-no-profile-enumeration", sum(c["method"] == "ListConnections" for c in bus.control("calls")) == enumerations)
         bus.control("deny", path=ROOT, method="AddAndActivateConnection")
@@ -122,9 +128,10 @@ def controlled_network(profile, work):
         owner.check("hidden-enterprise-wire-values-and-types", values["802-11-wireless"]["hidden"]
                     and bytes(values["802-11-wireless"]["ssid"]).decode() == "Hidden EAP fixture"
                     and values["802-1x"]["eap"] == ["ttls"] and values["802-1x"]["phase2-auth"] == "pap"
-                    and payload["variantTypes"]["802-11-wireless"]["ssid"] == "ay"
-                    and payload["variantTypes"]["802-1x"]["eap"] == "as"
-                    and payload["variantTypes"]["802-1x"]["ca-cert"] == "ay", payload=payload)
+                     and payload["variantTypes"]["802-11-wireless"]["ssid"] == "ay"
+                     and payload["variantTypes"]["802-1x"]["eap"] == "as"
+                     and payload["variantTypes"]["802-1x"]["ca-cert"] == "ay"
+                     and bytes(values["802-1x"]["ca-cert"]) == b"file:///nonexistent/fixture-ca.pem\0", payload=payload)
         frame = wait_for(lambda: (f if (f := shell.panel_frame())["error"] else None), "network request rejection reaches rendered panel")
         owner.check("controlled-network-failure-rendered", any(frame["error"] == t["text"] for t in frame["texts"]), frame=frame)
         # Saved SSID bytes and an empty hidden AP must meet again at the real
@@ -141,8 +148,12 @@ def controlled_network(profile, work):
             "Ip4Config": ["o", ip4], "Ip6Config": ["o", ip6]})
         bus.control("change", path=ROOT, iface=NM, props={"ActiveConnections": [active]})
         bus.control("change", path=device, iface=NM + ".Device", props={"State": 100, "ActiveConnection": active})
+        visible_ap = ROOT + "/AccessPoint/2"
+        bus.control("put", path=visible_ap, iface=NM + ".AccessPoint", props={"Ssid": ["ay", list(ssid.encode())],
+                    "Strength": ["y", 90], "Frequency": ["u", 5180], "Flags": ["u", 0], "WpaFlags": ["u", 0], "RsnFlags": ["u", 0]})
+        bus.control("change", path=device, iface=NM + ".Device.Wireless", props={"AccessPoints": [ap, visible_ap]})
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": []})
-        frame = wait_for(lambda: text_frame(ssid), "hidden AP falls back to saved UTF-8 SSID in real panel")
+        frame = wait_for(lambda: text_frame(ssid, "Connected"), "hidden AP overrides disconnected namesake in real panel")
         owner.check("hidden-empty-ap-saved-ssid-rendered", frame["visible"], frame=frame)
         owner.check("wifi-profile-name-preserved", shell.state()["profiles"][saved]["id"] == name)
         bus.control("change", path=device, iface=NM + ".Device", props={"State": 30})

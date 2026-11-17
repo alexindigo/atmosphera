@@ -23,6 +23,8 @@ def violations(sources):
         if adapter:
             if re.search(r"\b(?:Item|Loader)\s*\{", text):
                 errors.append((str(path), "graphical object in non-visual NM backend"))
+            if re.search(r"\b(?:profile|active|device|ap|ip)Factory\.createObject\s*\(", text):
+                errors.append((str(path), "record construction bypasses shared ensure boundary"))
             proxy_count = len(re.findall(r"\bDBus\s*\{", text))
             if proxy_count > (1 if path.name == "NmDevice.qml" else 0):
                 errors.append((str(path), "duplicate transport factory outside retained interface"))
@@ -53,6 +55,7 @@ def canaries():
         (Path("Modules/Bad.qml"), "NmDevice {}", "device transport constructed"),
         (NETWORK / "NmState.qml", "Singleton { Component { Item {} } }", "graphical object"),
         (NETWORK / "NmDevice.qml", "Scope { Loader {} }", "graphical object"),
+        (NETWORK / "NmState.qml", "Singleton { function make() { ipFactory.createObject(parent); } }", "bypasses shared ensure"),
     ]
     for path, text, expected in cases:
         result = violations({**safe, path: text})

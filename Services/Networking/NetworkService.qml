@@ -245,7 +245,7 @@ Singleton {
   function _activeWifiDevicePath() {
     var candidates = Object.values(_devices).filter(d => d.ready && d.deviceType === 2);
     candidates.sort((a, b) => a.path.localeCompare(b.path));
-    var active = candidates.find(d => d.connected);
+    var active = candidates.find(d => d.connected && d.ifname === activeWifiIf) || candidates.find(d => d.connected);
     return active ? active.path : candidates.length ? candidates[0].path : "";
   }
   function disconnect(ssid) {
@@ -352,7 +352,7 @@ Singleton {
     // never the connection's display name as an internal transport key.
     if (wifiEnabled && device && device.connected) {
       var active = NmState.activeConnections[device.activeConnection] || {}, profile = NmState.profiles[active.Connection];
-      if (profile && profile.ssid && !result[profile.ssid]) {
+      if (profile && profile.ssid && (!result[profile.ssid] || !result[profile.ssid].connected)) {
         result[profile.ssid] = {
           ssid: profile.ssid,
           security: profile.security || "open",

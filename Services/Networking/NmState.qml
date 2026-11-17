@@ -430,12 +430,10 @@ Singleton {
       if (!apRefs[path])
         _retire(_aps, path);
     for (path in ipRefs)
-      if (!_ips[path])
-        _ips[path] = ipFactory.createObject(_session, {
-                                              owner: _owner,
-                                              path: ipRefs[path].path,
-                                              ipv6: ipRefs[path].ipv6
-                                            });
+      _ensure(_ips, ipFactory, path, {
+                path: ipRefs[path].path,
+                ipv6: ipRefs[path].ipv6
+              });
     for (path in _ips)
       if (!ipRefs[path])
         _retire(_ips, path);
@@ -687,8 +685,12 @@ Singleton {
         };
         if (enterprise.anonIdentity)
           eap["anonymous-identity"] = enterprise.anonIdentity;
-        if (enterprise.caCert)
-          eap["ca-cert"] = new DBusQML.bytes(enterprise.caCert + "\0");
+        if (enterprise.caCert) {
+          var certificate = enterprise.caCert;
+          if (certificate.indexOf("/") === 0)
+            certificate = "file://" + certificate;
+          eap["ca-cert"] = new DBusQML.bytes(certificate + "\0");
+        }
         settings["802-1x"] = eap;
       } else
         settings["802-11-wireless-security"] = {

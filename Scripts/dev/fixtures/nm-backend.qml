@@ -39,6 +39,8 @@ ShellRoot {
                                 error: NetworkService.lastError
                               },
                               diagnostics: {
+                                activeWifiIf: NetworkService.activeWifiIf,
+                                wifiPath: NetworkService._activeWifiDevicePath(),
                                 sessionCreated: NmState._session !== null,
                                 owner: NmState._owner,
                                 profilesReading: NmState._profilesReading,
