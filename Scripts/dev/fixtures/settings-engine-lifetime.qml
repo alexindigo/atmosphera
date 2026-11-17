@@ -1,11 +1,13 @@
+import AtmospheraSettingsTest 1.0
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import AtmospheraSettingsTest 1.0
 
 ShellRoot {
-  SettingsBootstrap { id: bootstrap }
+  SettingsBootstrap {
+    id: bootstrap
+  }
   Loader {
     active: bootstrap.ready
     sourceComponent: Component {
@@ -14,11 +16,21 @@ ShellRoot {
         property bool started: false
         property bool submitted: false
         property bool completed: false
-        NativeStoreProbe { id: native; target: Settings.store }
-        function check(ok, message) { if (!ok) throw new Error("ENGINE_LIFETIME_ASSERT: " + message); }
-        function fail(error) { console.error(String(error)); Qt.exit(2); }
+        NativeStoreProbe {
+          id: native
+          target: Settings.store
+        }
+        function check(ok, message) {
+          if (!ok)
+            throw new Error("ENGINE_LIFETIME_ASSERT: " + message);
+        }
+        function fail(error) {
+          console.error(String(error));
+          Qt.exit(2);
+        }
         function begin() {
-          if (started || !Settings.isLoaded) return;
+          if (started || !Settings.isLoaded)
+            return;
           started = true;
           try {
             console.log("ENGINE_LIFETIME: ENGINE_READY", Settings.data.ui.fontDefaultScale);
@@ -26,8 +38,11 @@ ShellRoot {
               Settings.store.close(function (result) {
                 try {
                   probe.check(result.status === "nothing_to_save", "reloaded/cold settled close");
-                  console.log("ENGINE_LIFETIME: CONSUMER_CLOSE_PASS"); Qt.exit(0);
-                } catch (error) { probe.fail(error); }
+                  console.log("ENGINE_LIFETIME: CONSUMER_CLOSE_PASS");
+                  Qt.exit(0);
+                } catch (error) {
+                  probe.fail(error);
+                }
               });
               return;
             }
@@ -35,12 +50,14 @@ ShellRoot {
             check(Settings.data.ui.fontDefaultScale === 1, "initial consumer");
             Settings.data.ui.fontDefaultScale = 1.25;
             submitted = true;
-            Settings.saveImmediate(function (result) {
+            Settings.saveSelected([["ui", "fontDefaultScale"]], function (result) {
               probe.completed = true;
               probe.check(result.status === "saved", "original save acknowledgement if delivered before detach");
               console.log("ENGINE_LIFETIME: ORIGINAL_SAVED");
             });
-          } catch (error) { fail(error); }
+          } catch (error) {
+            fail(error);
+          }
         }
         IpcHandler {
           target: "engineLifetime"
@@ -55,8 +72,17 @@ ShellRoot {
           }
         }
         Component.onCompleted: begin()
-        Connections { target: Settings; function onSettingsLoaded() { probe.begin(); } }
-        Timer { interval: 25000; running: true; onTriggered: probe.fail("watchdog") }
+        Connections {
+          target: Settings
+          function onSettingsLoaded() {
+            probe.begin();
+          }
+        }
+        Timer {
+          interval: 25000
+          running: true
+          onTriggered: probe.fail("watchdog")
+        }
       }
     }
   }

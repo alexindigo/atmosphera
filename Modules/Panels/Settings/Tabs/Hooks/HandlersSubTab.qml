@@ -50,8 +50,12 @@ ColumnLayout {
     var row = handlerRowComp.createObject(parent, {
                                             label: label,
                                             description: description,
-                                            command: Qt.binding(function () { return root.getHandler(name).command || ""; }),
-                                            exclusive: Qt.binding(function () { return root.getHandler(name).exclusive || false; })
+                                            command: Qt.binding(function () {
+                                              return root.getHandler(name).command || "";
+                                            }),
+                                            exclusive: Qt.binding(function () {
+                                              return root.getHandler(name).exclusive || false;
+                                            })
                                           }) as HookHandlerRow;
     row.editClicked.connect(() => {
       openEdit(label, description, placeholder, name, val => {
@@ -61,7 +65,7 @@ ColumnLayout {
     });
     row.exclusiveToggled.connect(checked => {
       Settings.setPathValue(Settings.data, "hooks.handlers." + name + ".exclusive", checked);
-      Settings.saveImmediate();
+      Settings.saveSelected([["hooks", "handlers", name, "exclusive"]]);
     });
   }
 

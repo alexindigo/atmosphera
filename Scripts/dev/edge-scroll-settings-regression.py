@@ -69,7 +69,7 @@ PROBE = r'''
           shellRoot.edgeSettingsAssert(!Settings.data.bar.edgeScrolling && Settings.data.bar.edgeScrollHoldMs === 650,
                                        "controls did not reach owner");
           stop();
-          Settings.saveImmediate(function (result) {
+          Settings.saveSelected([["bar", "barType"], ["bar", "edgeScrolling"], ["bar", "edgeScrollHoldMs"]], function (result) {
             shellRoot.edgeSettingsAssert(result.status === "saved", "save did not acknowledge");
             console.log("EDGE_SETTINGS: PASS");
             Qt.quit();

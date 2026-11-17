@@ -108,7 +108,14 @@ Singleton {
 
   function reloadFromDisk(callback) {
     if (_reloadCallback || !pluginsFileView.path) {
-      Qt.callLater(function () { callback({status: "failed", error: {code: "registry-not-ready"}}); });
+      Qt.callLater(function () {
+        callback({
+                   status: "failed",
+                   error: {
+                     code: "registry-not-ready"
+                   }
+                 });
+      });
       return;
     }
     _reloadCallback = callback;
@@ -117,7 +124,13 @@ Singleton {
   function _completeReload(success) {
     var callback = _reloadCallback;
     _reloadCallback = null;
-    if (callback) callback({status: success ? "reloaded" : "failed", error: {code: success ? "" : "registry-load"}});
+    if (callback)
+      callback({
+                 status: success ? "reloaded" : "failed",
+                 error: {
+                   code: success ? "" : "registry-load"
+                 }
+               });
   }
 
   // In-memory plugin cache (populated by scanning disk)
@@ -177,7 +190,9 @@ Singleton {
       }
 
       root.migratePluginData(function () {
-        scanPluginFolder(function (success) { root._completeReload(success); });
+        scanPluginFolder(function (success) {
+          root._completeReload(success);
+        });
       });
     }
 
@@ -585,24 +600,34 @@ for key in sys.argv[3:]:
                                                                 lockScreenPlugin: Settings.data.general.lockScreenPlugin
                                                               }, keyMap);
 
+    var paths = [];
     if (rw.touched.barWidgets) {
-      for (var i = 0; i < sections.length; i++)
+      for (var i = 0; i < sections.length; i++) {
         Settings.data.bar.widgets[sections[i]] = rw.barWidgets[sections[i]];
+        paths.push(["bar", "widgets", sections[i]]);
+      }
     }
-    if (rw.touched.screenOverrides)
+    if (rw.touched.screenOverrides) {
       Settings.data.bar.screenOverrides = rw.screenOverrides;
+      paths.push(["bar", "screenOverrides"]);
+    }
     if (rw.touched.controlCenterShortcuts) {
       Settings.data.controlCenter.shortcuts.left = rw.controlCenterShortcuts.left;
       Settings.data.controlCenter.shortcuts.right = rw.controlCenterShortcuts.right;
+      paths.push(["controlCenter", "shortcuts", "left"], ["controlCenter", "shortcuts", "right"]);
     }
-    if (rw.touched.monitorWidgets)
+    if (rw.touched.monitorWidgets) {
       Settings.data.desktopWidgets.monitorWidgets = rw.monitorWidgets;
-    if (rw.touched.lockScreenPlugin)
+      paths.push(["desktopWidgets", "monitorWidgets"]);
+    }
+    if (rw.touched.lockScreenPlugin) {
       Settings.data.general.lockScreenPlugin = rw.lockScreenPlugin;
+      paths.push(["general", "lockScreenPlugin"]);
+    }
 
     if (rw.touched.barWidgets || rw.touched.screenOverrides || rw.touched.controlCenterShortcuts || rw.touched.monitorWidgets || rw.touched.lockScreenPlugin) {
       Logger.i("PluginRegistry", "v5 migration: rewrote placement references to rekeyed plugins");
-      Settings.saveImmediate();
+      Settings.saveSelected(paths);
     }
   }
 
@@ -931,7 +956,8 @@ for key in sys.argv[3:]:
       Logger.i("PluginRegistry", "All plugin manifests loaded. Total plugins:", loadedCount);
       root.pluginsChanged();
       scanProcess.destroy();
-      if (callback) callback(exitCode === 0);
+      if (callback)
+        callback(exitCode === 0);
     });
   }
 

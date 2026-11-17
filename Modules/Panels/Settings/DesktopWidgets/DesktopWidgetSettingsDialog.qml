@@ -288,13 +288,13 @@ Popup {
     // The caller owns the captured session through post-close cleanup. This
     // component receives submission only; its owner detaches after closed.
     editor: ({
-      submit: function (fields, callback) {
-        if (root.settingsEditor)
-          return root.settingsEditor.submit(fields, callback);
-        root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
-        Settings.saveResult(callback);
-      }
-    })
+               submit: function (fields, callback) {
+                 if (root.settingsEditor)
+                   return root.settingsEditor.submit(fields, callback);
+                 root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
+                 Settings.saveSelected([["desktopWidgets", "monitorWidgets"]], callback);
+               }
+             })
     onCompleted: result => root.settingsSaveCompleted(result)
     onCloseRequested: root.close()
   }
