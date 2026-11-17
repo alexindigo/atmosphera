@@ -127,3 +127,58 @@ remaining guest polkit fixture. Its cancellation exception is not an OSError:
 Python's subprocess/select machinery can retry and swallow InterruptedError.
 The same selftest exercises full-scale synthetic smaps analysis, including a known
 growing series; synthetic data never substitutes for an actual memory soak.
+
+## Memory observation
+
+Run inside the same pinned guest and disk workspace. Preserve the original tester
+lingering and user-manager TMPDIR first; enable lingering and give D-Bus-activated
+guest services the disk TMPDIR too. Restore both after joining the job and any
+task-activated service. Never import a signing agent or host credentials.
+
+```sh
+export WORK=/home/tester/Projects/nm-events
+export TMPDIR="$WORK/tmp"
+sudo loginctl enable-linger tester
+systemctl --user set-environment TMPDIR="$TMPDIR"
+systemd-run --user --unit=atmosphera-nm-memory --property=KillMode=mixed --property=WorkingDirectory="$WORK/source" --setenv=TMPDIR="$TMPDIR" python3 -B "$WORK/source/Scripts/dev/nm-memory-soak.py" --guest-profile "$WORK/guest-profile.json" --work "$WORK/artifacts/memory-1" --idle-seconds 3600 --cycles 30 --interval 30
+```
+
+Use a new output directory. A workspace lock and the named unit prevent duplicate
+collectors; inspect the existing PID, start time, cgroup and status rather than
+relaunching after an SSH timeout. The runner warms one real shell for 60 seconds,
+samples Pss_Anon and SwapPss for at least 3600 uninterrupted idle seconds, then
+performs 30 safe WireGuard add/up/down/delete cycles and settles for 30 seconds.
+Every cycle must retire all records to baseline. Shell PID/start time and NM owner
+must remain unchanged. State-changing NM transitions, observer failure, residual
+operations and new runtime exceptions fail the observation; failed data is retained.
+
+The memory harness classifies real DHCP4Config.Options signals separately only
+when lease expiry advances and every other option stays identical. Changed address,
+router, DNS, lease duration, invalidations, another sender/path/interface or extra
+properties fail its negative canaries and remain disallowed transitions. Each
+renewal is timestamped beside its surrounding memory samples and retained in
+`dhcp-renewals.jsonl`, with unchanged published network facts, record counts and
+management routes/resolver required. This is external signal handling, not polling.
+The harness never initiates a product refresh. A full-interval raw wire capture
+checks every shell system-bus name and observes its startup seed; no shell NM
+method or subscription-setup churn is allowed during idle or these renewals because
+expiry bookkeeping invalidates none of the backend's watched facts. Raw NM signals
+must exactly match the separately retained renewal count. Other transitions are
+not filtered away, and the separate stable ten-minute wire gate is unchanged.
+The broad capture relay and its privileged child are joined before creating any
+cycle profile: raw capture must never include private-key marshalling. A teardown
+gate enforces that boundary. KillMode=mixed lets the runner restore its own children
+on cancellation instead of terminating the shell concurrently with its cleanup.
+
+Inspect `status.json`, `memory.jsonl` and the ten-minute `interim-report.md` with
+bounded guest checks, normally every ten minutes. The interim and final JSON/Markdown
+reports contain idle duration/count, Pss_Anon/SwapPss ranges and idle slopes, analysis
+cost, completed cycles and all-phase memory deltas. Samples include record and
+operation counts. `result.json` must report all assertions and cleanup green;
+unit liveness alone is not success. Preserve raw evidence with verified checksums.
+
+The historical +/-20 MiB comparison is distinct from the measured trend: a positive
+slope within that envelope is not proof of flat memory. Report it as observed,
+including an inconclusive trend when appropriate. This one-hour supported-library
+whole-shell observation proves neither 24-hour stability nor NM-only attribution,
+physical-radio behavior, a remote tunnel handshake or an older-library comparison.
