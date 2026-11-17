@@ -3,6 +3,8 @@
 // The lock owner's policy is a pure decision over one reconciled generation.
 // Effects are serialized by LockOwnerService; the unit adapter only fences and
 // executes them. Global LockedHint is deliberately not an engagement input.
+// Locker1 v2 Secured/Unlocked observations arrive as persisted descriptor
+// facts (docs/locker1-contract.md), never as name presence.
 function decision(state, holder, confirmed, kind, role) {
     return {state: state, holder: holder || "", confirmed: confirmed === true,
         effect: kind ? {kind: kind, role: role || ""} : null};
@@ -103,9 +105,11 @@ function decide(view) {
     }
 
     if (opaque) {
-        // Reserved internal boundary for a future matching-request contract
-        // acknowledgement. No D-Bus interface extension is made here.
-        if (view.contractAck && view.contractAck.generation === d.generation && view.contractAck.secure === true)
+        // Locker1 v2: the adapter persisted Secured for this generation's
+        // request ID from the owner that accepted it. A later name loss or
+        // owner change withdraws that confirmation (dead holder, not unlock).
+        if (d.snapshot.adapter === "contract" && d.contractSecured === true && d.contractVersion >= 2
+            && !view.contractFailed)
             return decision("engaged", "external", true);
         if (emergency && emergency.everSecure && !emergencyLive && !client("emergency").authenticated)
             return effect("fallback", "", false, "launch", "emergency");

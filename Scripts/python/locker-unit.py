@@ -592,6 +592,46 @@ def manage(job):
                         'unlockHookStarted', 'sessionUnlockObserved'):
                 if job.get(key) is True:
                     data[key] = True
+            if data.get('contractRequested') and not data.get('contractRequestId'):
+                # Unguessable per-generation Locker1 request ID; never the
+                # generation token itself, which fences local adapter effects.
+                data['contractRequestId'] = secrets.token_hex(16)
+            session.write(data)
+            return data
+        if operation == 'contract-observe':
+            # Locker1 v2 observations, fenced by request ID and the bus owner
+            # that accepted the request. Presence alone never confirms secure.
+            if data['snapshot']['adapter'] != 'contract' or job.get('requestId') != data.get('contractRequestId'):
+                raise Refused('stale contract request')
+            event = job.get('event')
+            owner = job.get('owner')
+            if not isinstance(owner, str) or not owner.startswith(':'):
+                raise Refused('contract observation lacks a unique bus owner')
+            if event == 'requested':
+                version = job.get('version')
+                if type(version) is not int or version < 1:
+                    raise Refused('invalid contract version')
+                if data.get('contractOwner') not in (None, owner):
+                    data['contractFailed'] = True
+                else:
+                    data['contractOwner'] = owner
+                    data['contractVersion'] = version
+            elif data.get('contractOwner') != owner:
+                raise Refused('contract owner changed')
+            elif data.get('contractVersion', 1) < 2:
+                raise Refused('contract version has no correlated observations')
+            elif event == 'secured':
+                data['contractSecured'] = True
+            elif event == 'unlocked':
+                if not data.get('contractSecured'):
+                    raise Refused('contract unlock without secure history')
+                if data['phase'] not in ('unlocking', 'settled'):
+                    data['contractUnlocked'] = True
+                    data['sessionUnlockObserved'] = True
+            elif event == 'failed':
+                data['contractFailed'] = True
+            else:
+                raise Refused('unknown contract observation')
             session.write(data)
             return data
         if operation == 'recover':
@@ -669,6 +709,8 @@ def main():
     sub = parser.add_subparsers(dest='mode', required=True)
     sub.add_parser('manage')
     sub.add_parser('prepare-report')
+    retire = sub.add_parser('retire-report')
+    retire.add_argument('path')
     wrapper = sub.add_parser('run')
     wrapper.add_argument('--generation', required=True)
     wrapper.add_argument('--deadline', required=True)
@@ -683,6 +725,18 @@ def main():
             info.update(schema=1, identity=identity, session=graphical_session(), generation='', role='standalone',
                 invocation=os.environ.get('INVOCATION_ID', ''))
             print(json.dumps({'ok': True, 'value': info}, separators=(',', ':')))
+            return 0
+        if args.mode == 'retire-report':
+            # Only the calling standalone client's own report, by exact name.
+            identity = proc_identity(os.getppid())
+            path = Path(args.path)
+            prefix = 'standalone-' + str(identity['pid']) + '-' + identity['start'] + '-' if identity else None
+            if args.path and (not prefix or path.parent != runtime_root() or not path.name.startswith(prefix)
+                              or not path.name.endswith('.report.json')):
+                raise Refused('not this standalone client\'s report')
+            if args.path:
+                path.unlink(missing_ok=True)
+            print(json.dumps({'ok': True, 'value': None}, separators=(',', ':')))
             return 0
         if args.mode == 'run':
             args.deadline = None if args.deadline == 'none' else float(args.deadline)

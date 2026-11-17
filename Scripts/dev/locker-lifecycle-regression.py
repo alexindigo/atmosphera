@@ -172,7 +172,7 @@ def main():
                 command.append('--recover-known-pam-hang')
             commands.append((state, command))
     elif args.case == 'contract':
-        for variant in ('normal', 'error', 'no-engagement', 'disappearing'):
+        for variant in ('normal', 'error', 'no-engagement', 'disappearing', 'capable', 'shipped'):
             command = ['locker-contract-proof.py', '--variant', variant]
             if args.recover_known_pam_hang:
                 command.append('--recover-known-pam-hang')

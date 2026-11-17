@@ -213,14 +213,20 @@ ShellRoot {
           v.units.emergency.gone = true;
           v.descriptor.units.emergency.client.terminal = true;
           v.descriptor.units.emergency.client.secure = false;
-          v.contractAck = {
-            generation: "stale",
-            secure: true
-          };
-          check(adapter + "-stale-ack-not-secure", v, "engaged-unconfirmed(external)");
-          v.contractAck.generation = "g1";
-          check(adapter + "-matching-future-ack", v, "engaged", "", "", true);
-          delete v.contractAck;
+          v.descriptor.contractSecured = true;
+          v.descriptor.contractVersion = 1;
+          check(adapter + "-v1-secure-claim-not-confirmation", v, "engaged-unconfirmed(external)");
+          v.descriptor.contractVersion = 2;
+          if (adapter === "contract") {
+            check("contract-v2-secured-confirms", v, "engaged", "", "", true);
+            v.contractFailed = true;
+            check("contract-v2-owner-loss-withdraws-confirmation", v, "engaged-unconfirmed(external)");
+            v.contractFailed = false;
+          } else {
+            check("opaque-ignores-contract-secured", v, "engaged-unconfirmed(external)");
+          }
+          delete v.descriptor.contractSecured;
+          delete v.descriptor.contractVersion;
           v.descriptor.units.emergency.everSecure = true;
           check(adapter + "-emergency-crash-is-not-unlock", v, "fallback", "launch", "emergency");
           v.descriptor.units.emergency.everSecure = false;

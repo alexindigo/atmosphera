@@ -1,11 +1,14 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import DBus 1.0
 import "../../Helpers/OwnedProcess.js" as OwnedProcess
 
 // Process-local protocol lifetime, shared by the full and emergency lockers.
 // Cancelling a client is never an unlock. Only this client's successful PAM
-// completion is allowed to clear the Wayland lock request.
+// completion is allowed to clear the Wayland lock request. A standalone client
+// also serves app.atmosphera.Locker1 v2 (docs/locker1-contract.md) when that
+// name is free; managed clients never claim it and nobody's name is replaced.
 Scope {
   id: root
   required property var endpoint
@@ -35,9 +38,91 @@ Scope {
   readonly property string nativeEvent: _nativeEvent
   property string _nativeEvent: ""
 
+  property var _contractRequests: ({})
+  property bool _contractOwned: false
+  property bool _contractNotified: false
+
   signal settled(string reason)
   signal changed
   signal nativeReported(string event)
+
+  function contractError(name, message) {
+    return {dbusError: true, name: "app.atmosphera.Locker1.Error." + name, message: message};
+  }
+
+  function contractState(requestId) {
+    return _contractRequests[requestId] || "unknown";
+  }
+
+  // Lock() and LockRequest(id) join this process's own lock; it is already
+  // acquiring for itself, so there is nothing else to start.
+  function contractRequest(requestId) {
+    if (requestId !== null && !/^[A-Za-z0-9._:-]{1,128}$/.test(requestId))
+      throw contractError("InvalidRequest", "request ID must be 1-128 characters of [A-Za-z0-9._:-]");
+    if (_terminal || _retiring || _authenticated)
+      throw contractError("Ended", "this lock is ending; start a new locker");
+    if (requestId === null || requestId in _contractRequests)
+      return;
+    var next = Object.assign({}, _contractRequests);
+    next[requestId] = endpoint.secure ? "secure" : "pending";
+    _contractRequests = next;
+    if (next[requestId] === "secure")
+      Qt.callLater(function () { root.emitContract("secured", requestId); });
+  }
+
+  function emitContract(kind, requestId) {
+    if (!_contractOwned || !contractEndpoint.item)
+      return;
+    _contractNotified = true;
+    if (kind === "secured")
+      contractEndpoint.item.adaptor.secured(requestId);
+    else
+      contractEndpoint.item.adaptor.unlocked(requestId);
+  }
+
+  // Native outcomes only: locked from the compositor, unlocked after this
+  // client's own successful PAM and protocol unlock request.
+  function notifyContract(event) {
+    var next = Object.assign({}, _contractRequests);
+    var emitted = [];
+    for (var requestId in next) {
+      var state = next[requestId];
+      if (event === "locked" && state === "pending") {
+        next[requestId] = "secure";
+        emitted.push(["secured", requestId]);
+      } else if (event === "authenticated-unlock" && state === "secure") {
+        next[requestId] = "unlocked";
+        emitted.push(["unlocked", requestId]);
+      } else if (event === "finished" && (state === "pending" || state === "secure")) {
+        next[requestId] = "failed";
+      }
+    }
+    _contractRequests = next;
+    for (var i = 0; i < emitted.length; i++)
+      emitContract(emitted[i][0], emitted[i][1]);
+  }
+
+  function quitStandalone() {
+    // No owner reads a standalone report; retire it with the process. A bus
+    // round trip after the last signal proves the daemon received it before
+    // this connection closes. The timer bounds both steps.
+    contractFlushLimit.running = true;
+    var path = _reportInfo ? nativeReport.path : "";
+    OwnedProcess.run(root, ["python3", reportHelper, "retire-report", path], "", function () {
+      if (!_contractNotified || !contractEndpoint.item) {
+        Qt.quit();
+        return;
+      }
+      var reply = contractEndpoint.item.flush.call("GetId", []);
+      if (!reply) {
+        Qt.quit();
+        return;
+      }
+      reply.finished.connect(function () { Qt.quit(); });
+      if (reply.isFinished)
+        Qt.quit();
+    });
+  }
 
   function configureReport(info) {
     if (_reportInfo || !info || !info.path || !info.token || !info.identity)
@@ -81,10 +166,11 @@ Scope {
   function observeNative() {
     // Quickshell forwards this signal before deleting native lock surfaces.
     // Complete the atomic synchronous report before returning to that stack.
-    if (endpoint.secure)
-      reportNative("locked");
-    else if (_requested)
-      reportNative(_unlockCommitted ? "authenticated-unlock" : "finished");
+    var event = endpoint.secure ? "locked" : _requested ? (_unlockCommitted ? "authenticated-unlock" : "finished") : "";
+    if (event !== "") {
+      reportNative(event);
+      notifyContract(event);
+    }
     observe();
   }
 
@@ -123,7 +209,7 @@ Scope {
     changed();
     // No endpoint mutation: secure cancellation/handover is fail-closed.
     if (adapter === "")
-      Qt.callLater(function () { Qt.quit(); });
+      Qt.callLater(quitStandalone);
   }
 
   function retire(sessionId, token) {
@@ -274,6 +360,60 @@ Scope {
     if (adapter === "")
       prepareStandaloneReport();
     synchronize();
+  }
+
+  Loader {
+    id: contractEndpoint
+    active: root.adapter === ""
+    sourceComponent: Scope {
+      property alias adaptor: contractAdaptor
+      property alias flush: contractFlush
+
+      DBusAdaptor {
+        id: contractAdaptor
+        // Unflagged claim: never queued, never replacing an independent owner.
+        service: "app.atmosphera.Locker"
+        path: "/app/atmosphera/Locker"
+        iface: "app.atmosphera.Locker1"
+        connection: SessionBus
+
+        readonly property int version: 2
+
+        // dbusqml relays QML signals through a QVariant slot; typed string
+        // parameters would not connect. The value is still sent as "s".
+        signal secured(var requestId)
+        signal unlocked(var requestId)
+
+        function lock() {
+          root.contractRequest(null);
+        }
+        function lockRequest(requestId: string) {
+          root.contractRequest(requestId);
+        }
+        function requestState(requestId: string): string {
+          return root.contractState(requestId);
+        }
+
+        onNameAcquired: root._contractOwned = true
+        onNameLost: root._contractOwned = false
+      }
+
+      DBus {
+        id: contractFlush
+        service: "org.freedesktop.DBus"
+        path: "/org/freedesktop/DBus"
+        iface: "org.freedesktop.DBus"
+        connection: SessionBus
+        propertiesEnabled: false
+        signalsEnabled: false
+      }
+    }
+  }
+
+  Timer {
+    id: contractFlushLimit
+    interval: 2000
+    onTriggered: Qt.quit()
   }
 
   IpcHandler {

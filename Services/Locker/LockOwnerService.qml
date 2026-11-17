@@ -34,7 +34,10 @@ Singleton {
   property string _reason: ""
   property string _error: ""
   property var _view: null
-  property var _contractAck: null
+  property string _contractIssued: ""
+  property string _contractQueried: ""
+  property string _contractRejected: ""
+  property var _contractFacts: null
   property bool _unlockObserved: false
   property bool _contractFailed: false
   property bool _settingsPending: false
@@ -119,17 +122,6 @@ Singleton {
     pump();
   }
 
-  // Reserved for a future correlated contract adapter. There is deliberately
-  // no new D-Bus method/signal, nor an IPC method accepting unauthenticated ack.
-  function acceptContractAck(session, generation, confirmed) {
-    if (!_view?.descriptor || session !== _session || generation !== _view.descriptor.generation
-        || _view.descriptor.snapshot.adapter !== "contract")
-      return false;
-    _contractAck = {generation: generation, secure: confirmed === true};
-    pump();
-    return true;
-  }
-
   function pump() {
     if (!_initialized || _busy)
       return;
@@ -156,6 +148,45 @@ Singleton {
     call(operation, extra, function () { Qt.callLater(pump); });
   }
 
+  // Persist buffered Locker1 facts before any name-loss failure note: a
+  // shipped client's Unlocked precedes its name disappearing on exit.
+  function persistContract(d) {
+    if (d.snapshot.adapter !== "contract" || d.phase === "unlocking")
+      return false;
+    if (_contractFacts && _contractFacts.generation === d.generation && _contractFacts.events.length > 0) {
+      var fact = _contractFacts;
+      call("contract-observe", {requestId: fact.requestId, owner: fact.owner, version: fact.version,
+        event: fact.events[0]}, function (reply) {
+        if (reply.ok || reply.error === "contract owner changed" || reply.error === "stale contract request")
+          fact.events.shift();
+        if (!reply.ok && reply.error === "contract owner changed")
+          _contractFailed = true;
+        Qt.callLater(pump);
+      });
+      return true;
+    }
+    var observed = LockerService.contractObservations[d.contractRequestId];
+    if (observed && d.contractOwner && d.contractVersion >= 2) {
+      var pending = observed.secured && !d.contractSecured ? "secured"
+        : observed.unlocked && d.contractSecured && !d.contractUnlocked ? "unlocked" : "";
+      if (pending !== "" && _contractRejected !== d.contractRequestId + ":" + observed.owner + ":" + pending) {
+        var rejected = d.contractRequestId + ":" + observed.owner + ":" + pending;
+        call("contract-observe", {requestId: d.contractRequestId, owner: observed.owner, event: pending}, function (reply) {
+          if (!reply.ok) {
+            // A different owner's claim is refused once and recorded as a
+            // failure of the accepted request, never retried as evidence.
+            _contractRejected = rejected;
+            if (reply.error === "contract owner changed")
+              _contractFailed = true;
+          }
+          Qt.callLater(pump);
+        });
+        return true;
+      }
+    }
+    return false;
+  }
+
   function reconcile() {
     var d = _view.descriptor;
     if (!d || d.phase === "settled") {
@@ -167,7 +198,8 @@ Singleton {
             _pendingRequest = false;
             _pendingSuspend = false;
             _pendingSleepWindow = -1;
-            _contractAck = null;
+            _contractFacts = null;
+            _contractRejected = "";
             _unlockObserved = false;
             _contractFailed = false;
             _settingsPending = false;
@@ -186,6 +218,8 @@ Singleton {
       effect("intent", {suspendAfterSecure: suspend});
       return;
     }
+    if (persistContract(d))
+      return;
     if ((_unlockObserved && !d.sessionUnlockObserved) || (_contractFailed && !d.contractFailed)) {
       effect("note", {sessionUnlockObserved: _unlockObserved, contractFailed: _contractFailed});
       return;
@@ -228,22 +262,46 @@ Singleton {
       effect("note", {lockHookStarted: true});
       return;
     }
-    if (d.snapshot.adapter === "contract" && !d.contractRequested && !prehookPending && d.phase !== "unlocking") {
-      call("note", {contractRequested: true}, function (reply) {
-        if (!reply.ok)
-          return;
-        var generation = d.generation;
-        LockerService.requestContract(function (success) {
-          if (!_view?.descriptor || _view.descriptor.generation !== generation)
+    if (d.snapshot.adapter === "contract" && d.phase !== "unlocking" && !prehookPending) {
+      if (!d.contractRequested || (!d.contractOwner && _contractIssued !== d.generation)) {
+        // A request persisted by a previous shell without its accepted owner
+        // is reissued once; LockRequest is idempotent for a known request ID.
+        _contractIssued = d.generation;
+        call("note", {contractRequested: true}, function (reply) {
+          if (!reply.ok)
             return;
-          if (!success)
-            _contractFailed = true;
+          var generation = reply.value.generation;
+          var requestId = reply.value.contractRequestId;
+          LockerService.requestContract(requestId, function (result) {
+            if (!result.ok) {
+              _contractFailed = true;
+            } else {
+              _contractQueried = generation;
+              _contractFacts = {generation: generation, requestId: requestId, owner: result.owner,
+                version: result.version, events: ["requested"]};
+            }
+            Qt.callLater(pump);
+          });
         });
-      });
-      return;
+        return;
+      }
+      if (d.contractOwner && d.contractVersion >= 2 && _contractQueried !== d.generation && !d.contractFailed) {
+        // After a shell restart, signals may have been missed. Ask the
+        // accepting service about this exact request before trusting state.
+        _contractQueried = d.generation;
+        var queried = {generation: d.generation, requestId: d.contractRequestId, owner: d.contractOwner};
+        LockerService.queryContract(queried.requestId, function (result) {
+          queried.events = !result.ok || result.owner !== queried.owner ? ["failed"]
+            : result.state === "secure" ? ["secured"] : result.state === "unlocked" ? ["secured", "unlocked"]
+            : result.state === "pending" ? [] : ["failed"];
+          _contractFacts = queried;
+          Qt.callLater(pump);
+        });
+        return;
+      }
     }
 
-    var view = Object.assign({}, _view, {takeover: _takeover, contractAck: _contractAck,
+    var view = Object.assign({}, _view, {takeover: _takeover,
       realLaunchFailed: d.realLaunchFailed || prehookPending,
       contractFailed: d.contractFailed, sessionUnlockObserved: d.sessionUnlockObserved});
     var next = Lifecycle.decide(view);

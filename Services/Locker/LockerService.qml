@@ -52,27 +52,121 @@ Singleton {
     }
   }
 
-  // Class-3 invocation: dispatch Lock(); false when no contract service.
-  function requestContract(complete) {
-    if (!root._contractAvailable) {
-      complete(false);
-      return;
-    }
-    var reply = contract.call("Lock", []);
+  // --- Locker1 v2 correlated observation (docs/locker1-contract.md) ---
+  // Signals are delivered only from the current owner of the well-known name
+  // (QtDBus sender match) and are stamped with that unique owner. The owner
+  // service persists them through its adapter, which rejects a request ID or
+  // owner that does not match the generation's accepted request.
+  readonly property var contractObservations: _contractObservations
+  property var _contractObservations: ({})
+  property string _contractOwner: ""
+  signal contractObserved(string requestId)
+
+  function _settle(reply, done) {
     if (!reply) {
-      complete(false);
+      done(null);
       return;
     }
     var settled = false;
-    var done = function () {
+    var finish = function () {
       if (settled)
         return;
       settled = true;
-      complete(!reply.isError);
+      done(reply);
     };
-    reply.finished.connect(done);
+    reply.finished.connect(finish);
     if (reply.isFinished)
-      done();
+      finish();
+  }
+
+  function _resolveOwner(done) {
+    root._settle(busDaemon.call("GetNameOwner", ["app.atmosphera.Locker"]), function (reply) {
+      var owner = reply && !reply.isError ? String(reply.value || "") : "";
+      root._contractOwner = owner;
+      done(owner);
+    });
+  }
+
+  function _observe(requestId, event) {
+    if (typeof requestId !== "string" || requestId === "" || root._contractOwner === "")
+      return;
+    var next = Object.assign({}, root._contractObservations);
+    var entry = Object.assign({}, next[requestId] || {});
+    // First owner wins per request; a different owner's later claim is kept
+    // separately so the adapter can refuse it, never merged into the first.
+    if (entry.owner && entry.owner !== root._contractOwner)
+      entry = {owner: root._contractOwner, ownerChanged: true};
+    entry.owner = root._contractOwner;
+    entry[event] = true;
+    next[requestId] = entry;
+    root._contractObservations = next;
+    contractObserved(requestId);
+  }
+
+  // Class-3 invocation. A v2 service receives the generation's request ID;
+  // older services keep the original Lock(). complete({ok, owner, version}).
+  function requestContract(requestId, complete) {
+    if (!root._contractAvailable) {
+      complete({ok: false});
+      return;
+    }
+    root._resolveOwner(function (owner) {
+      if (owner === "") {
+        complete({ok: false});
+        return;
+      }
+      root._settle(contract.getProperty("Version"), function (versionReply) {
+        var value = versionReply && !versionReply.isError ? Number(versionReply.value) : 1;
+        var version = Number.isInteger(value) && value >= 2 ? value : 1;
+        var call = version >= 2 ? contract.call("LockRequest", [requestId]) : contract.call("Lock", []);
+        root._settle(call, function (reply) {
+          complete({ok: !!reply && !reply.isError && root._contractOwner === owner, owner: owner, version: version});
+        });
+      });
+    });
+  }
+
+  // Restart reconciliation: the service's own view of one request.
+  function queryContract(requestId, complete) {
+    if (!root._contractAvailable) {
+      complete({ok: false});
+      return;
+    }
+    root._resolveOwner(function (owner) {
+      if (owner === "") {
+        complete({ok: false});
+        return;
+      }
+      root._settle(contract.call("RequestState", [requestId]), function (reply) {
+        complete({ok: !!reply && !reply.isError, owner: owner, state: reply && !reply.isError ? String(reply.value) : ""});
+      });
+    });
+  }
+
+  DBus {
+    id: busDaemon
+    service: "org.freedesktop.DBus"
+    path: "/org/freedesktop/DBus"
+    iface: "org.freedesktop.DBus"
+    connection: SessionBus
+    propertiesEnabled: false
+    signalsEnabled: false
+  }
+
+  DBusServiceWatcher {
+    service: "app.atmosphera.Locker"
+    onOwnerChanged: (oldOwner, newOwner) => root._contractOwner = newOwner
+  }
+
+  DBusSignalWatcher {
+    service: "app.atmosphera.Locker"
+    path: "/app/atmosphera/Locker"
+    iface: "app.atmosphera.Locker1"
+    member: ""
+    onReceived: (member, args) => {
+      if (member === "Secured" || member === "Unlocked")
+        root._observe(args && args.length > 0 ? args[0] : "", member === "Secured" ? "secured" : "unlocked");
+    }
   }
 
   // --- LockedHint watch (universal lock state) ---
