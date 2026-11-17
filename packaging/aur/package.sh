@@ -11,23 +11,7 @@ package() {
   # Quickshell scans every QML file in imported directories, including unused
   # shell panels and registries. Install the reviewed runtime closure instead
   # of exposing those directories wholesale to the per-process locker.
-  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen"
-  install -Dm644 Quickshell/atmosphera-lockscreen/shell.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/shell.qml"
-  install -Dm644 Quickshell/atmosphera-lockscreen/LockSession.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/LockSession.qml"
-  while IFS= read -r file; do
-    case "$file" in ''|'#'*) continue ;; esac
-    install -Dm644 "$file" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$file"
-  done < Quickshell/atmosphera-lockscreen/runtime-files.txt
-  install -Dm644 Commons/LockerSettings.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/Commons/Settings.qml"
-  for d in Assets Configs Scripts Shaders; do
-    ln -sfn "../atmosphera/$d" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$d"
-  done
-  # The emergency config has a deliberately closed, lock-only import tree.
-  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Services/Locker"
-  install -m644 Quickshell/atmosphera-emergency-lock/*.qml "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/"
-  install -m644 Services/Locker/LockAuth.qml Services/Locker/LockClient.qml "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Services/Locker/"
-  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Helpers"
-  install -m644 Helpers/OwnedProcess.js Helpers/OwnedProcessChild.qml "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Helpers/"
+  bash Scripts/bash/install-locker-configs "$PWD" "$pkgdir/etc/xdg/quickshell"
   rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/tmp"
 
   # Install dispatcher to PATH (handlers resolved via SELF_DIR auto-detect)

@@ -131,6 +131,18 @@ config and the read-only settings matrix. No source-only Portals link is added;
 the emergency closure contains only its own entry points and shared auth/client
 helpers. Startup is followed by real PAM, native teardown and cgroup cleanup.
 
+AUR and Nix assembly both call `Scripts/bash/install-locker-configs`; neither
+maintains a separate locker dependency list. Nix registers the main tree and
+both named sibling configs under `$out/etc/xdg/quickshell`, adds that XDG search
+directory to the wrapper environment and supplies child Quickshell plus the
+Python D-Bus/GLib bindings regardless of optional calendar support.
+`python3 -B Scripts/dev/locker-nix-assembly-proof.py --work <new-artifact-directory>`
+uses the real Nix evaluator and actual package installPhase to inspect the
+filtered assembly, manifest, closed emergency tree and native `qs -c` resolution.
+Its dependency values are sentinels: this is an assembly check, not a full
+Nixpkgs/Qt build, wrapped-runtime proof or NixOS/Home Manager boot. The normal
+guest cold-load/PAM suite separately verifies the shared installed closure.
+
 Startup outcomes use native protocol time, not owner receipt time. A real lock
 before the original 3-second deadline must have no emergency attempt. If real
 secures late but first, the refused emergency exits and the same real holder
