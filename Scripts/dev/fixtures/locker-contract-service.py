@@ -113,10 +113,21 @@ class Locker(dbus.service.Object):
         (self.Secured if kind == 'Secured' else self.Unlocked)(str(request_id))
 
 
-def native_event(stream, condition):
-    global child
-    line = stream.readline()
-    if not line:
+pending = b''
+
+
+def native_event(fd, condition):
+    # Raw reads: one readiness callback can carry several events, and a
+    # buffered readline would strand later lines in a Python-side buffer.
+    global child, pending
+    chunk = os.read(fd, 4096)
+    pending += chunk
+    while b'\n' in pending:
+        line, pending = pending.split(b'\n', 1)
+        native_line(line.decode())
+    if chunk:
+        return True
+    else:
         status = child.wait()
         record('native-exit', status)
         for request_id, state in list(requests.items()):
@@ -128,6 +139,9 @@ def native_event(stream, condition):
                 requests[request_id] = 'failed'
         child = None
         return False
+
+
+def native_line(line):
     event = json.loads(line)['event']
     record('native', event)
     if event == 'locked':
@@ -138,15 +152,14 @@ def native_event(stream, condition):
                 service.Secured(request_id)
     elif event == 'authenticated-unlock':
         native['authenticated'] = True
-    return True
 
 
 def start_native():
     global child
     # The client maps surfaces at once when its release path exists.
-    child = subprocess.Popen([str(args.native_client), str(args.work)], stdout=subprocess.PIPE, text=True)
+    child = subprocess.Popen([str(args.native_client), str(args.work)], stdout=subprocess.PIPE)
     record('native-start', child.pid)
-    GLib.io_add_watch(child.stdout, GLib.IO_IN | GLib.IO_HUP, native_event)
+    GLib.io_add_watch(child.stdout.fileno(), GLib.PRIORITY_DEFAULT, GLib.IO_IN | GLib.IO_HUP, native_event)
 
 
 name = dbus.service.BusName('app.atmosphera.Locker', bus=bus, do_not_queue=True)
