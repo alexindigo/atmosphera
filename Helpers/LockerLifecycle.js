@@ -61,6 +61,20 @@ function decide(view) {
         return decision("unlocking");
     }
 
+    // Without dead-client takeover (Hyprland, restore disabled) a dead holder's
+    // lock is kept by the compositor and a probe would be refused, so after a
+    // refusal the owned opaque unit's exit is the unlock observation; a probe
+    // could only relock after the user's own unlock. With takeover (niri) the
+    // compositor reports a real unlock first and an exit stays a crash event.
+    var refusedOnce = [emergency].concat(d.retiredInvocations || []).some(function (record) {
+        return record && record.protocolOutcome === "finished" && !record.everSecure;
+    });
+    var exitUnlock = opaque && d.snapshot.adapter !== "contract" && !view.takeover && refusedOnce
+        && real && !realLive && !d.probeRaceWon;
+    if (exitUnlock && !view.sessionUnlockObserved)
+        // Persist it as the same session-unlock fact the adapter uses to
+        // withdraw an unrequested probe and to refuse new probe launches.
+        return effect("resolving-unlock", "", false, "note-unlock");
     if (opaque && view.sessionUnlockObserved) {
         // The external authentication and this probe's protocol connection do
         // not share an atomic boundary. Resolve a request already in flight;

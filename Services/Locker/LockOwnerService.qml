@@ -324,6 +324,8 @@ Singleton {
         else
           Qt.callLater(pump);
       });
+    } else if (action.kind === "note-unlock") {
+      effect("note", {sessionUnlockObserved: true});
     } else if (action.kind === "cover-probe-events") {
       effect("cover-probe-events", {events: action.events});
     } else if (action.kind === "probe-race") {

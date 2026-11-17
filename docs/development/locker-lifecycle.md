@@ -46,6 +46,13 @@ At the deadline, the emergency connection provides its own protocol outcome:
 | 4 | Pending suspend while unconfirmed | Probe once at the start of that logind delay window |
 | 5 | Legitimate external unlock | Settle without launching a probe or requiring a second password |
 
+Row 3 applies where the compositor allows dead-client takeover (niri), and
+there a legitimate unlock arrives first as LockedHint=false. Without takeover
+(Hyprland, restore disabled) the compositor keeps a dead holder's lock and
+would refuse a probe, so a probe could only relock after the user's own
+unlock. There the refused opaque unit's exit is the unlock observation and the
+generation settles without a probe or a second password.
+
 There are no periodic emergency retries. A probe already acquiring when external
 authentication finishes must be resolved: if it becomes secure, it stays locked
 and requires its own PAM authentication. The owner logs that fail-closed race.

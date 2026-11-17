@@ -194,6 +194,40 @@ ShellRoot {
           check(adapter + "-sleep-window-no-repeat", v, "engaged-unconfirmed(external)");
           if (adapter === "opaque") {
             v.units.real.gone = true;
+            v.takeover = false;
+            check("opaque-exit-without-native-refusal-is-not-unlock", v, "fallback", "launch", "emergency");
+            v.descriptor.units.emergency.protocolOutcome = "finished";
+            check("opaque-refused-holder-exit-without-takeover-is-unlock", v, "resolving-unlock", "note-unlock");
+            v.sessionUnlockObserved = true;
+            check("no-takeover-persisted-exit-unlock-settles", v, "unlocking", "settle");
+            v.sessionUnlockObserved = false;
+            v.descriptor.retiredInvocations = [v.descriptor.units.emergency];
+            v.descriptor.units.emergency = {
+              identity: {
+                InvocationID: "emergency-race"
+              },
+              client: {
+                requested: true
+              }
+            };
+            v.units.emergency = {
+              sameInvocation: true,
+              gone: false
+            };
+            check("no-takeover-exit-with-probe-in-flight-notes-unlock", v, "resolving-unlock", "note-unlock");
+            v.sessionUnlockObserved = true;
+            check("no-takeover-exit-with-probe-in-flight-waits", v, "resolving-probe");
+            v.descriptor.units.emergency.client.secure = true;
+            check("no-takeover-probe-wins-unlock-race-retained", v, "engaged", "probe-race", "", true);
+            v.sessionUnlockObserved = false;
+            v.descriptor.probeRaceWon = true;
+            check("no-takeover-race-consumed-keeps-secure-probe", v, "engaged", "", "", true);
+            delete v.descriptor.probeRaceWon;
+            v.descriptor.units.emergency = v.descriptor.retiredInvocations[0];
+            delete v.descriptor.retiredInvocations;
+            delete v.descriptor.units.emergency.protocolOutcome;
+            v.units.emergency.gone = true;
+            v.takeover = true;
             check("opaque-candidate-exit-probes-immediately", v, "fallback", "launch", "emergency");
             v.descriptor.probeEvents["exit:real-i1"] = "emergency-i3";
             check("opaque-candidate-exit-no-repeat", v, "engaged-unconfirmed(external)");

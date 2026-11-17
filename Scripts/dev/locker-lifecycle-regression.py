@@ -7,6 +7,7 @@ orphan red/green is intentionally separate from main-root install acceptance.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shlex
 import shutil
@@ -144,6 +145,12 @@ def main():
             cooperative.append('--recover-known-pam-hang')
         commands.append(('cooperative', cooperative))
         for case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw'):
+            if case == 'opaque-crash' and os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+                # Killing a secure holder with restore disabled leaves Hyprland's
+                # unrecoverable dead lock; dead-client recovery is proven only
+                # by the restore-enabled capability case.
+                (work / 'opaque-crash-not-run.txt').write_text('Hyprland: belongs to the restore=1 capability case.\n')
+                continue
             commands.append((case, ['locker-owner-proof.py', '--case', case]))
     elif args.case in ('packaging', 'cold-load'):
         commands.append(('layout', ['locker-package-proof.py']))
