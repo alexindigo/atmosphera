@@ -48,7 +48,7 @@ def deadline_outcome(descriptor, events):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
-    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'hooks', 'intent'), default='fast')
+    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'opaque-expiry', 'hooks', 'intent'), default='fast')
     parser.add_argument('--external-variant', choices=('existing', 'missing', 'slow5', 'slow40', 'nonzero', 'crash', 'pipeline', 'daemonizing', 'term-resistant', 'daemonizing-holder'), default='existing')
     parser.add_argument('--delay', type=float, default=5)
     parser.add_argument('--emergency-auth-before-ready', action='store_true')
@@ -63,7 +63,7 @@ def main():
     parser.add_argument('--sleep-route', choices=('lock-and-suspend', 'prepare-for-sleep'), default='lock-and-suspend')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
-    if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'boundary', 'external'):
+    if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque-expiry'):
         parser.error('--main-shell currently proves fast/adoption/slow/boundary/external; other main-shell acceptance remains separate')
     if args.ingress != 'ipc' and not args.main_shell:
         parser.error('--ingress requires the actual main shell')
@@ -71,8 +71,10 @@ def main():
         parser.error('--late-real-first belongs to the fast/startup outcome proof')
     if args.real_suspend:
         parser.error('real S3 is not testable in this VM; use --sleep-signals')
-    if args.sleep_signals and (not args.main_shell or args.case not in ('fast', 'slow') or args.late_real_first):
+    if args.sleep_signals and (not args.main_shell or args.case not in ('fast', 'slow', 'opaque-expiry') or args.late_real_first):
         parser.error('--sleep-signals requires the actual main fast or slow path')
+    if args.case == 'opaque-expiry' and (not args.sleep_signals or args.sleep_route != 'prepare-for-sleep'):
+        parser.error('opaque-expiry requires actual-main --sleep-signals --sleep-route prepare-for-sleep')
     if args.ingress in ('custom', 'exclusive', 'legacy') and (args.case != 'external' or args.external_variant != 'existing'):
         parser.error('selected adapter ingress needs the existing external client proof')
     if args.case == 'slow' and args.delay < 5:
@@ -123,6 +125,18 @@ def main():
         # generation protocol. Its unit activity/hint must not count as secure.
         configuration['general']['externalLockCommand'] = ('env -u ATMOSPHERA_LOCK_SESSION -u ATMOSPHERA_LOCK_GENERATION '
             '-u ATMOSPHERA_LOCK_ROLE -u ATMOSPHERA_LOCK_ADAPTER qs -c atmosphera-emergency-lock')
+    if args.case == 'opaque-expiry':
+        unconfirmed = True
+        protocol = '/usr/share/wayland-protocols/staging/ext-session-lock/ext-session-lock-v1.xml'
+        header, code = work / 'session-lock-client.h', work / 'session-lock-protocol.c'
+        run(['wayland-scanner', 'client-header', protocol, str(header)])
+        run(['wayland-scanner', 'private-code', protocol, str(code)])
+        flags = shlex.split(run(['pkg-config', '--cflags', '--libs', 'wayland-client', 'xkbcommon', 'pam']).stdout)
+        fixture = work / 'opaque-delayed-locker'
+        compiled = run(['cc', '-Wall', '-Wextra', '-Werror', '-I' + str(work),
+            str(source / 'Scripts/dev/fixtures/locker-opaque-delayed.c'), str(code), '-o', str(fixture), *flags])
+        (work / 'fixture-build.txt').write_text(compiled.stdout + compiled.stderr)
+        configuration['general']['externalLockCommand'] = shlex.join([str(fixture), str(work / 'release-surfaces')])
     external_members = work / 'external-members'
     external_executed = work / 'external-delayed-exec'
     if args.case == 'external':
@@ -221,6 +235,19 @@ def main():
     suspend_command = None
     kernel_cursor = None
     sleep_harness = None
+
+    def output_capture(label):
+        # Bounded diagnostic: shared compositor rendering, not physical scanout
+        # proof. Both sides must calibrate against the same desktop sentinel.
+        path = work / (label + '.png')
+        capture = run(['grim', str(path)], env=environment)
+        (work / (label + '-capture.txt')).write_text(capture.stdout + capture.stderr)
+        width, height = map(int, run(['magick', 'identify', '-format', '%w %h', str(path)]).stdout.split())
+        pixels = subprocess.run(['magick', str(path), '-depth', '8', 'rgb:-'],
+            check=True, capture_output=True, timeout=15).stdout
+        assert len(pixels) == width * height * 3
+        return {'width': width, 'height': height, 'sentinelVisible': b'\xff\x00\xff' * 8 in pixels,
+            'allBlack': not any(pixels), 'monotonic': time.monotonic()}
 
     def inspect():
         return manage(source, {'operation': 'inspect', 'session': sid})
@@ -422,6 +449,9 @@ def main():
             console = Framebuffer()
             try:
                 def visible_sentinel():
+                    if args.case == 'opaque-expiry':
+                        capture = output_capture('unlocked-before')
+                        return capture['sentinelVisible']
                     console.capture(work / 'unlocked-before.ppm')
                     return all(console.sentinel_corners())
                 wait_for(visible_sentinel)
@@ -434,6 +464,20 @@ def main():
             ipc('lockerProof', 'lockAndSuspend')
         else:
             ingress()
+        if args.case == 'opaque-expiry':
+            from locker_framebuffer import Framebuffer
+            def requested_without_surfaces():
+                view = inspect()
+                record = (view.get('descriptor') or {}).get('units', {}).get('real')
+                if not record:
+                    return False
+                text = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                    '_SYSTEMD_INVOCATION_ID=' + record['identity']['InvocationID']]).stdout
+                return text if 'requested-without-surfaces' in text else False
+            before = wait_for(requested_without_surfaces, 15)
+            initial_pixels = output_capture('opaque-initial-request')
+            (work / 'opaque-initial-output.json').write_text(json.dumps({'beforeCaptureJournal': before,
+                'pixels': initial_pixels}, indent=2))
         if intent:
             ipc('lockerProof', 'lockAndSuspend')
             assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'suspend before secure'
@@ -482,7 +526,32 @@ def main():
                 secure = [event['sourceMonotonic'] for event in events if event['kind'] == 'journal'
                     and re.search(r'ext_session_lock_v1#\d+\.locked\(\)', event['message'])]
                 return min(secure) if secure else None
-            sleep_harness.entered(wait_for(native_secure_time, 10))
+            if args.case == 'opaque-expiry':
+                from locker_framebuffer import Framebuffer
+                wait_for((work / 'sleep-service-entered.json').exists, 20)
+                expired = wait_for(lambda: next((row for row in sleep_harness.events()
+                    if row['value']['event'] == 'unconfirmed'), None), 5)
+                released = wait_for(lambda: next((row for row in sleep_harness.events()
+                    if row['value']['event'] == 'released'), None), 5)
+                prepared = next(row for row in sleep_harness.events()
+                    if row['value']['event'] == 'prepare' and row['value']['sleeping'])
+                entered = json.loads((work / 'sleep-service-entered.json').read_text())
+                assert expired['value']['message'] == 'suspend without confirmed secure lock (opaque locker)'
+                assert expired['value']['monotonic'] - prepared['value']['monotonic'] >= expired['value']['maxDelay']
+                assert not released['value']['secure'] and not sleep_harness.inhibitors(sleep_harness.pid)
+                status = owner_status()
+                assert status['state'] == 'engaged-unconfirmed(external)' and not status['secure']
+                assert inspect()['units']['real']['sameInvocation'] and not inspect()['units']['real']['gone']
+                assert not (work / 'release-surfaces').exists()
+                pixels = output_capture('opaque-at-inhibitor-expiry')
+                assert not pixels['sentinelVisible'], 'desktop sentinel exposed at inhibitor expiry'
+                (work / 'opaque-expiry-finding.json').write_text(json.dumps({'prepared': prepared,
+                    'expired': expired, 'released': released, 'sleepServiceEntered': entered,
+                    'status': status, 'pixels': pixels, 'nativeSecureAt': native_secure_time(),
+                    'ownerConfirmedSecure': False, 'kernelSleepInvoked': False}, indent=2))
+                (work / 'release-sleep-service').touch(mode=0o600)
+            else:
+                sleep_harness.entered(wait_for(native_secure_time, 10))
             def resumed():
                 events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
                 sleep = [event for event in events if event['kind'] == 'prepare-for-sleep']
@@ -498,15 +567,28 @@ def main():
             if suspend_command is not None:
                 assert suspend_command.wait(timeout=10) == 0
             from locker_framebuffer import Framebuffer
-            console = Framebuffer()
-            try:
-                console.capture(work / 'after-resume.ppm')
-                assert not console.sentinel_visible(), 'unlocked desktop after resume'
-            finally:
-                console.close()
+            if args.case == 'opaque-expiry':
+                assert not output_capture('opaque-after-resume')['sentinelVisible'], 'unlocked desktop after resume'
+            else:
+                console = Framebuffer()
+                try:
+                    console.capture(work / 'after-resume.ppm')
+                    assert not console.sentinel_visible(), 'unlocked desktop after resume'
+                finally:
+                    console.close()
             (work / 'sleep-result.json').write_text(json.dumps({'route': args.sleep_route, 'events': sleep,
                 'realLogindSignals': True, 'kernelSleepInvoked': False, 'lockIntactOnResume': True,
                 'hardwareLimit': "real S3 not testable in this VM; to be checked on the user's machine"}, indent=2))
+            if args.case == 'opaque-expiry':
+                (work / 'release-surfaces').touch(mode=0o600)
+                def fixture_mapped():
+                    journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                        '_SYSTEMD_INVOCATION_ID=' + first['descriptor']['units']['real']['identity']['InvocationID']]).stdout
+                    return 'surface-committed' in journal and 'keyboard-focus' in journal
+                wait_for(fixture_mapped, 10)
+                # The deadline probe can supersede the initial sleep-window
+                # probe while the no-surface fixture remains unconfirmed.
+                first = inspect()
         if args.late_real_first:
             assert (work / 'grant-held.json').exists(), 'real acquisition did not pass the actual grant barrier'
             assert (work / 'probe-at-barrier.json').exists(), 'deadline emergency was not exercised'
@@ -846,12 +928,14 @@ def main():
             console = Framebuffer()
             try:
                 def authenticated_sentinel():
+                    if args.case == 'opaque-expiry':
+                        return output_capture('unlocked-after')['sentinelVisible']
                     console.capture(work / 'unlocked-after.ppm')
                     return all(console.sentinel_corners())
                 wait_for(authenticated_sentinel)
             finally:
                 console.close()
-        if args.case in ('slow', 'boundary', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw'):
+        if args.case in ('slow', 'boundary', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw', 'opaque-expiry'):
             time.sleep(10)
             assert inspect()['descriptor']['phase'] == 'settled'
             assert all(item['gone'] and not item['members'] for item in inspect()['units'].values())

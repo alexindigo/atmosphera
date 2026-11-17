@@ -209,5 +209,14 @@ The worker's exact invocation/PID identity is retired independently of locker
 authentication, even if a subproof fails.
 
 Separate Hyprland restore-option proofs are not implied by these entry points.
+
+`locker-owner-proof.py --main-shell --case opaque-expiry --sleep-signals
+--sleep-route prepare-for-sleep` records the unconfirmed opaque-output finding.
+The native test client requests a session lock without surfaces, retains its
+connection through the real inhibitor deadline, then maps input surfaces only
+for actual PAM recovery. Guest grim capture must show the unlocked sentinel
+before locking and after authentication; an uncalibrated black image is never
+accepted. This records compositor-rendered output, not physical scanout or
+hardware sleep, and never upgrades the owner's unconfirmed state to secure.
 Keep their acceptance status in the task's
 outside-repository execution note until those proofs are implemented and run.
