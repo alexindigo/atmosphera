@@ -92,16 +92,16 @@ def outputs(root):
         qml += '\n'+'\n'.join(declarations(node,name,defaults[name],(name,)))+'\n'
     qml += '}\n'
     sections = sorted(k for k in defaults if k != 'settingsVersion')
-    sources = banner+'import QtQml\nimport ConfigQml 1.0\n\nQtObject {\n  id: root\n  required property string settingsFile\n  required property string overridesDirectory\n  property list<JsonFileSource> sources: [\n'
+    sources = banner+'import QtQml\nimport ConfigQml 1.0\n\nQtObject {\n  id: root\n  required property string settingsFile\n  required property string overridesDirectory\n  property bool readOnly: false\n  property list<JsonFileSource> sources: [\n'
     records = [('legacy','legacy',[], 'root.settingsFile', False)]+[
         ('user',section,[section],'root.overridesDirectory + '+literal('/'+section+'.json'),True) for section in sections]
     for i,(layer,source,prefix,file,writable) in enumerate(records):
         sources += '    JsonFileSource {\n'
         for key,value in [('layerId',literal(layer)),('sourceId',literal(source)),('prefix',literal(prefix)),
-                          ('path',file),('writable',literal(writable)),('optional','true'),
+                          ('path',file),('writable','!root.readOnly' if writable else 'false'),('optional','true'),
                           ('watchMode','JsonFileSource.Live'),('unknownData','JsonFileSource.Preserve'),
                           ('conflictPolicy','JsonFileSource.StrictPendingRebase' if writable else 'JsonFileSource.StrictSourcePreimage'),
-                          ('startupErrorPolicy','JsonFileSource.SkipProjectionRetainError')]+([('deleteWhenEmpty','true')] if writable else []):
+                          ('startupErrorPolicy','JsonFileSource.SkipProjectionRetainError')]+([('deleteWhenEmpty','!root.readOnly')] if writable else []):
             sources += f'      {key}: {value}\n'
         sources += '    }'+(',' if i<len(records)-1 else '')+'\n'
     sources += '  ]\n}\n'

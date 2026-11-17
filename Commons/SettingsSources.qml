@@ -6,6 +6,7 @@ QtObject {
   id: root
   required property string settingsFile
   required property string overridesDirectory
+  property bool readOnly: false
   property list<JsonFileSource> sources: [
     JsonFileSource {
       layerId: "legacy"
@@ -24,377 +25,377 @@ QtObject {
       sourceId: "appLauncher"
       prefix: ["appLauncher"]
       path: root.overridesDirectory + "/appLauncher.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "atmospheraPerformance"
       prefix: ["atmospheraPerformance"]
       path: root.overridesDirectory + "/atmospheraPerformance.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "audio"
       prefix: ["audio"]
       path: root.overridesDirectory + "/audio.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "bar"
       prefix: ["bar"]
       path: root.overridesDirectory + "/bar.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "bindings"
       prefix: ["bindings"]
       path: root.overridesDirectory + "/bindings.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "brightness"
       prefix: ["brightness"]
       path: root.overridesDirectory + "/brightness.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "calendar"
       prefix: ["calendar"]
       path: root.overridesDirectory + "/calendar.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "colorSchemes"
       prefix: ["colorSchemes"]
       path: root.overridesDirectory + "/colorSchemes.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "controlCenter"
       prefix: ["controlCenter"]
       path: root.overridesDirectory + "/controlCenter.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "desktopContextMenu"
       prefix: ["desktopContextMenu"]
       path: root.overridesDirectory + "/desktopContextMenu.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "desktopWidgets"
       prefix: ["desktopWidgets"]
       path: root.overridesDirectory + "/desktopWidgets.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "dock"
       prefix: ["dock"]
       path: root.overridesDirectory + "/dock.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "general"
       prefix: ["general"]
       path: root.overridesDirectory + "/general.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "hardwareHealth"
       prefix: ["hardwareHealth"]
       path: root.overridesDirectory + "/hardwareHealth.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "hooks"
       prefix: ["hooks"]
       path: root.overridesDirectory + "/hooks.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "icons"
       prefix: ["icons"]
       path: root.overridesDirectory + "/icons.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "idle"
       prefix: ["idle"]
       path: root.overridesDirectory + "/idle.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "inputMethod"
       prefix: ["inputMethod"]
       path: root.overridesDirectory + "/inputMethod.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "location"
       prefix: ["location"]
       path: root.overridesDirectory + "/location.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "network"
       prefix: ["network"]
       path: root.overridesDirectory + "/network.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "nightLight"
       prefix: ["nightLight"]
       path: root.overridesDirectory + "/nightLight.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "notifications"
       prefix: ["notifications"]
       path: root.overridesDirectory + "/notifications.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "osd"
       prefix: ["osd"]
       path: root.overridesDirectory + "/osd.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "plugins"
       prefix: ["plugins"]
       path: root.overridesDirectory + "/plugins.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "sessionMenu"
       prefix: ["sessionMenu"]
       path: root.overridesDirectory + "/sessionMenu.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "systemMonitor"
       prefix: ["systemMonitor"]
       path: root.overridesDirectory + "/systemMonitor.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "templates"
       prefix: ["templates"]
       path: root.overridesDirectory + "/templates.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "ui"
       prefix: ["ui"]
       path: root.overridesDirectory + "/ui.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     },
     JsonFileSource {
       layerId: "user"
       sourceId: "wallpaper"
       prefix: ["wallpaper"]
       path: root.overridesDirectory + "/wallpaper.json"
-      writable: true
+      writable: !root.readOnly
       optional: true
       watchMode: JsonFileSource.Live
       unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
-      deleteWhenEmpty: true
+      deleteWhenEmpty: !root.readOnly
     }
   ]
 }

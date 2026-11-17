@@ -14,7 +14,8 @@ ConfigStore {
   required property string homeDirectory
   required property string defaultFont
   required property string fixedFont
-  autoSave: true
+  property bool readOnly: false
+  autoSave: !readOnly
   autoSaveInterval: 500
   evidenceDirectory: evidencePath
   observedPaths: [["bindings", "environment"]]
@@ -27,6 +28,7 @@ ConfigStore {
   property SettingsSources declarations: SettingsSources {
     settingsFile: root.legacyFile
     overridesDirectory: root.overridesDirectory
+    readOnly: root.readOnly
   }
   property SettingsRecordListPolicies policies: SettingsRecordListPolicies {}
   sources: declarations.sources
