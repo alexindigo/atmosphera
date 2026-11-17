@@ -47,7 +47,7 @@ def guest_env(case):
     env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", NIRI_SOCKET=socks[0],
                ATMOSPHERA_CONFIG_DIR=str(case / "config") + "/", ATMOSPHERA_CACHE_DIR=str(case / "cache") + "/",
                ATMOSPHERA_SETTINGS_FILE=str(case / "config/settings.json"), ATMOSPHERA_DEBUG="0",
-               TMPDIR=str(ROOT / "tmp"), QT_FORCE_STDERR_LOGGING="1")
+               QT_FORCE_STDERR_LOGGING="1")
     return env
 
 
@@ -109,6 +109,31 @@ def main():
     source_version = source_version_text.strip()
     major, minor, patch = map(int, source_version.split("."))
     source_requirements = [source_version, f"{major}.{minor}.{patch + 1}"]
+    # None preserves the supplied source VERSION; fixed vectors independently
+    # exercise build formats and compatibility. This matrix also owns CLI names.
+    specs = [("archive", None, source_version, True, source_version),
+             ("checkout", None, None, False, source_version),
+             ("next-commit", None, None, False, source_version),
+             ("worktree", None, None, False, source_version),
+             ("parent-repo", None, source_version, True, source_version),
+             ("git-failure", None, source_version, False, source_version),
+             ("release", "0.8.0", "0.8.0", True, "0.8.0"),
+             ("package", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", True, "0.8.0"),
+             ("package-checkout", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", False, "0.8.0"),
+             ("pkgrel", "0.8.0.r12.gabc123456-2", "0.8.0.r12.gabc123456", True, "0.8.0"),
+             ("hash", "0.8.0-gabc123456", "0.8.0-gabc123456", True, "0.8.0"),
+             ("old-release", "0.7.2", "0.7.2", True, "0.7.2"),
+             ("legacy-unknown", "", None, False, None),
+             ("upgrade", "0.9.3", "0.9.3", True, "0.9.3"),
+             ("missing-notes", "0.9.3", "0.9.3", True, "0.9.3"),
+             ("empty-notes", "0.9.3", "0.9.3", True, "0.9.3"),
+             ("empty-section", "0.9.3", "0.9.3", True, "0.9.3"),
+             ("future-only", "0.9.3", "0.9.3", True, "0.9.3"),
+             ("downgrade", "0.9.2", "0.9.2", True, "0.9.2"),
+             ("disabled", "0.9.3", "0.9.3", True, "0.9.3")]
+    unknown = set(args.case or []) - {spec[0] for spec in specs}
+    if unknown:
+        parser.error("unknown case name(s): " + ", ".join(sorted(unknown)))
     output.mkdir(parents=True)
     results = []
     # Run the actual release archive's rsync selection. Nix evidence is an
@@ -145,28 +170,6 @@ def main():
         dist_failures.append("bundled CHANGELOG missing from distribution inputs")
     results.append({"case": "distribution", "failures": dist_failures, "consumer": distribution_result})
     print(f"[{'FAIL' if dist_failures else 'PASS'}] distribution: {dist_failures}", flush=True)
-    # None means preserve the supplied source VERSION. Deliberate build-format
-    # and compatibility vectors stay pinned independently of the current release.
-    specs = [("archive", None, source_version, True, source_version),
-             ("checkout", None, None, False, source_version),
-             ("next-commit", None, None, False, source_version),
-             ("worktree", None, None, False, source_version),
-             ("parent-repo", None, source_version, True, source_version),
-             ("git-failure", None, source_version, False, source_version),
-             ("release", "0.8.0", "0.8.0", True, "0.8.0"),
-             ("package", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", True, "0.8.0"),
-             ("package-checkout", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", False, "0.8.0"),
-             ("pkgrel", "0.8.0.r12.gabc123456-2", "0.8.0.r12.gabc123456", True, "0.8.0"),
-             ("hash", "0.8.0-gabc123456", "0.8.0-gabc123456", True, "0.8.0"),
-             ("old-release", "0.7.2", "0.7.2", True, "0.7.2"),
-             ("legacy-unknown", "", None, False, None),
-             ("upgrade", "0.9.3", "0.9.3", True, "0.9.3"),
-             ("missing-notes", "0.9.3", "0.9.3", True, "0.9.3"),
-             ("empty-notes", "0.9.3", "0.9.3", True, "0.9.3"),
-             ("empty-section", "0.9.3", "0.9.3", True, "0.9.3"),
-             ("future-only", "0.9.3", "0.9.3", True, "0.9.3"),
-             ("downgrade", "0.9.2", "0.9.2", True, "0.9.2"),
-             ("disabled", "0.9.3", "0.9.3", True, "0.9.3")]
     for name, version, expected, packaged, base in specs:
         if args.case and name not in args.case:
             continue
