@@ -192,6 +192,14 @@ ShellRoot {
             throw new Error("sleep probe event identity lost");
           v.descriptor.probeEvents["sleep:1"] = "emergency-i2";
           check(adapter + "-sleep-window-no-repeat", v, "engaged-unconfirmed(external)");
+          v.descriptor.unconfirmedRequests = 1;
+          check(adapter + "-request-while-unconfirmed-probes-once", v, "fallback", "launch", "emergency");
+          if (Lifecycle.decide(v).effect.events.join(",") !== "request:1")
+            throw new Error("request probe event identity lost");
+          v.descriptor.probeEvents["request:1"] = "emergency-i2r";
+          check(adapter + "-request-probe-no-repeat", v, "engaged-unconfirmed(external)");
+          delete v.descriptor.unconfirmedRequests;
+          delete v.descriptor.probeEvents["request:1"];
           if (adapter === "opaque") {
             v.units.real.gone = true;
             v.takeover = false;

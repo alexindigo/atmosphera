@@ -45,6 +45,7 @@ At the deadline, the emergency connection provides its own protocol outcome:
 | 3 | External candidate crashes while unconfirmed | Probe immediately, using the new probe's actual outcome |
 | 4 | Pending suspend while unconfirmed | Probe once at the start of that logind delay window |
 | 5 | Legitimate external unlock | Settle without launching a probe or requiring a second password |
+| 6 | New lock request while unconfirmed (any ingress) | Probe once: refused while the holder still holds; secure if an unobservable unlock happened (version 1 Locker1 on Hyprland) |
 
 Row 3 applies where the compositor allows dead-client takeover (niri), and
 there a legitimate unlock arrives first as LockedHint=false. Without takeover

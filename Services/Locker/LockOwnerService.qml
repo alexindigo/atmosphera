@@ -215,7 +215,9 @@ Singleton {
       var suspend = _pendingSuspend;
       _pendingRequest = false;
       _pendingSuspend = false;
-      effect("intent", {suspendAfterSecure: suspend});
+      // A request while an external lock is unconfirmed probes once (addendum
+      // 07): it may follow an unlock this compositor cannot report.
+      effect("intent", {suspendAfterSecure: suspend, unconfirmed: _state === "engaged-unconfirmed(external)"});
       return;
     }
     if (persistContract(d))

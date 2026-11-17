@@ -86,8 +86,11 @@ The owner subscribes to `Secured` and `Unlocked` before it calls
 Hyprland reports session-lock state through its own `hyprland-lock-notify-v1`
 protocol, not through logind `LockedHint`. Quickshell has no client for that
 protocol, so the owner cannot see when a version 1 service unlocks there. The
-owner keeps such a lock as unconfirmed and never kills the service. Lockers that
-want correct behavior on Hyprland should implement version 2.
+owner keeps such a lock as unconfirmed and never kills the service. When the
+user asks to lock again, the owner probes once with its emergency lock: the
+probe is refused while the service still holds the session, and locks the
+screen if the service had already unlocked it. Lockers that want correct
+behavior on Hyprland (no extra emergency lock) should implement version 2.
 
 ## Atmosphera's own lockers
 

@@ -553,6 +553,9 @@ def manage(job):
         if operation == 'intent':
             if data['phase'] not in ('unlocking', 'settled'):
                 data['suspendPending'] = data.get('suspendPending', False) or job.get('suspendAfterSecure') is True
+                if job.get('unconfirmed') is True and not data.get('sessionUnlockObserved'):
+                    # Addendum 07: each request while unconfirmed is one probe event.
+                    data['unconfirmedRequests'] = data.get('unconfirmedRequests', 0) + 1
             session.write(data)
             return data
         if operation == 'consume-suspend':

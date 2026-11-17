@@ -39,6 +39,7 @@ function decide(view) {
         if (view.realLaunchFailed) add("launch-failed");
         if (view.contractFailed) add("contract-failed");
         if (d.sleepWindow) add("sleep:" + d.sleepWindow);
+        if (d.unconfirmedRequests) add("request:" + d.unconfirmedRequests);
         var probeClient = client("emergency");
         if (emergency && !emergencyLive && !emergency.everSecure
             && !(probeClient.terminal && probeClient.requested && probeClient.settlement === "finished"))

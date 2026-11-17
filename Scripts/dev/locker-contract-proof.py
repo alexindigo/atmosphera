@@ -237,6 +237,16 @@ def main():
         assert inspect()['descriptor']['generation'] == generation
         if args.variant != 'shipped':
             assert json.loads((fixture / 'calls.json').read_text())['calls'] == 1
+        if args.variant == 'normal':
+            # Addendum 07: a request while unconfirmed probes once; the holder
+            # still holds the session, so the probe is refused and nothing changes.
+            wait_for(lambda: 'request:1' in inspect()['descriptor'].get('probeEvents', {})
+                and inspect()['units']['emergency']['gone'], 15)
+            probed = inspect()['descriptor']
+            assert probed['units']['emergency']['identity'] != d['units']['emergency']['identity']
+            assert probed['units']['emergency'].get('protocolOutcome') == 'finished'
+            assert owner_status()['state'] == 'engaged-unconfirmed(external)' and same_live('fixture')
+            (work / 'request-probe-refused.json').write_text(json.dumps(probed, indent=2))
         if contract_v2:
             request_id = d['contractRequestId']
             stale = secrets.token_hex(16)
@@ -277,22 +287,27 @@ def main():
             assert inspect()['descriptor']['phase'] not in ('unlocking', 'settled')
             start_main('main3')
             main_role = 'main3'
+        relocked = False
         if args.variant == 'normal' and hyprland:
-            # Documented version 1 limitation: Hyprland has no LockedHint and
-            # Quickshell no lock-notify client, so the owner cannot observe the
-            # independent service's own unlock. It must stay unconfirmed and
-            # never touch the service or probe on its own.
+            # Version 1 on Hyprland: the service's own unlock is not observable
+            # (no LockedHint, no lock-notify client); the owner stays unconfirmed
+            # and never touches the service or probes on its own.
             wait_for(lambda: not compositor_locked(work, sid), 15)
             time.sleep(5)
             limited = inspect()
             assert owner_status()['state'] == 'engaged-unconfirmed(external)' and not owner_status()['secure']
-            assert limited['descriptor']['units']['emergency']['identity'] == d['units']['emergency']['identity'], 'unexpected probe'
+            assert limited['descriptor']['units']['emergency']['identity'] == probed['units']['emergency']['identity'], 'unexpected probe'
             assert same_live('fixture')
             (work / 'v1-hyprland-limitation.json').write_text(json.dumps(limited, indent=2))
-            # Test cleanup only: supply the observation the product cannot make.
-            manage(source, {'operation': 'note', 'session': sid, 'generation': generation, 'sessionUnlockObserved': True})
-            (work / 'harness-supplied-unlock-observation.txt').write_text(
-                'Harness note after native Hyprland unlock, for cleanup only; not product behavior.\n')
+            # Addendum 07: the user's next lock request must lock the screen.
+            ipc('lockScreen', 'lock')
+            wait_for(lambda: (inspect()['descriptor']['units']['emergency'].get('client') or {}).get('secure'), 15)
+            wait_for(lambda: compositor_locked(work, sid), 5)
+            assert 'request:2' in inspect()['descriptor']['probeEvents'] and same_live('fixture')
+            assert json.loads((fixture / 'calls.json').read_text())['calls'] == 1
+            relock_at = time.monotonic()
+            type_password(credential)
+            relocked = True
         wait_for(lambda: inspect()['descriptor']['phase'] == 'settled', 15)
         final = inspect()
         assert all(unit['gone'] and not unit['members'] for unit in final['units'].values())
@@ -321,13 +336,21 @@ def main():
                 assert [json.loads(line) for line in (fixture / 'events.jsonl').read_text().splitlines()
                         if json.loads(line)['event'] == 'native-exit'][-1]['value'] == 0
                 continue
+            if relocked and kind == 'journal':
+                # Holder's own unlock, then the relocking probe's after real PAM.
+                assert len(matching) == 2 and matching[1]['sourceMonotonic'] >= relock_at, matching
+                assert [m['invocation'] for m in matching] == [units['fixture']['InvocationID'],
+                    final['descriptor']['units']['emergency']['identity']['InvocationID']]
+                continue
             assert len(matching) == 1 and matching[0]['sourceMonotonic'] >= auth_at, (kind, matching)
             if kind == 'journal':
                 expected = (units[holder_role]['InvocationID'] if holder_role
                     else final['descriptor']['units']['emergency']['identity']['InvocationID'])
                 assert matching[0]['invocation'] == expected, 'non-holder protocol unlock'
         hints = [event for event in compositor_transitions(events) if not event['locked']]
-        assert len(hints) == 1 and hints[0]['observed'] >= auth_at
+        assert len(hints) == (2 if relocked else 1) and hints[0]['observed'] >= auth_at
+        if relocked:
+            assert hints[1]['observed'] >= relock_at
         (work / 'final.json').write_text(json.dumps(final, indent=2))
         (work / 'result.txt').write_text('PASS contract-' + args.variant + '\n')
         print('PASS contract-' + args.variant, work)
