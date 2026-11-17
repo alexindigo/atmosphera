@@ -100,8 +100,8 @@ unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd pro
 is not a real suspend/resume proof.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
-`external`, `contract`, `restart` and `orphan-acceptance`. Each case requires its
-own new `--work` directory.
+`external`, `contract`, `restart`, `packaging`, `cold-load` and `orphan-acceptance`.
+Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
 passing full matrix from a subset. Framebuffer-dependent cases require the
@@ -124,7 +124,13 @@ framebuffer sequences. It also exercises policy orderings and real emergency
 authentication before delayed readiness. A naturally late preparation fails
 the controlled barrier instead of silently moving its target.
 
-The broader resource/ingress/suspend/load/packaging matrix and
+The packaging and cold-load cases inspect a fresh assembled install and run
+actual-main built-in/demo paths, an independently authenticating emergency
+config and the read-only settings matrix. No source-only Portals link is added;
+the emergency closure contains only its own entry points and shared auth/client
+helpers. Startup is followed by real PAM, native teardown and cgroup cleanup.
+
+The broader resource/ingress/suspend/load matrix and
 the separate Hyprland restore-option proofs are not implied by these entry
 points. Keep their acceptance status in the task's outside-repository execution
 note until those proofs are implemented and run.
