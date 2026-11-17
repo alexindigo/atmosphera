@@ -72,3 +72,58 @@ guest-private bus. Controlled AP/security/scan results are not physical-radio
 proof. Runtime runners retain result.json, logs and cleanup status and join all
 owned processes before returning. Full consumer, wire, restart and memory
 acceptance is specified by the external event-driven implementation plan.
+
+## Real consumer and wire runners
+
+Inside the same identity-pinned guest, with a fresh output directory for each run:
+
+```sh
+python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/lifecycle-1 --case lifecycle
+python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/actions-1 --case actions
+python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/restart-1 --case restart
+python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/network-1 --case network
+python3 -B Scripts/dev/nm-idle-wire.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/idle-1 --seconds 600
+python3 -B Scripts/dev/nm-runner-selftest.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/runner-selftest-1
+```
+
+The consumer runner copies the candidate tree and inserts read-only observers in
+that disposable copy. Production VPN/NetworkPanel components, facades and dbusqml
+remain in the path. Native Wayland pointer events open the widget/menu and select
+actions. A requested FrameAnimation observes settled Text/icon/menu delegates;
+the Python receipt time is a conservative upper bound after that frame. The signal
+observer uses the same guest monotonic clock. Test observation never provides
+state to the product.
+
+The VPN widget is placed at the bar center in the test configuration so transient
+top-right notification surfaces cannot intercept the next menu action. Icon-plugin
+readiness is part of fixture startup. Raw logs retain the unchanged HostService
+icon binding warning separately from new runtime exceptions.
+
+Live fixtures install a temporary tester-only guest polkit rule, own every profile
+by UUID before mutation, and remove only those profiles and that rule at teardown.
+WG fixtures have no peer, default route or DNS change. No private key enters results.
+The network case additionally requires a task-owned disposable virtio Ethernet NIC,
+with autoconnect prevented before hotplug. Its external guest-workspace
+`ethernet-fixture.json` contains `guestUuid` and `mac`; the runner rejects the
+management MAC, resolves exactly one matching guest interface and checks its NM
+type before creating a no-default-route/no-DNS static profile. The management
+connection, default routes and resolver contents must remain unchanged.
+
+Controlled-daemon legs run on a separate guest-private bus with real dbusqml and
+real consumer components. These cover accepted-then-failed activation and
+Wi-Fi/AP/IP/security/scan contracts, not a physical Wi-Fi radio or remote VPN peer.
+Every result distinguishes controlled and live cases.
+
+The wire runner retains both broad raw traffic and the measured interval, resolves
+all shell system-bus names by PID, records dynamic name membership, and proves the
+monitor saw the actual shell seed before measuring zero idle calls. Parser canaries
+inject both NM destination forms, multiple shell names, setup churn, unrelated
+senders and malformed headers. Any external NM transition makes the interval
+non-idle; preserve it and repeat a new full interval rather than filtering it away.
+
+The runner selftest includes a real SIGTERM during shell construction and requires
+an explicit failed receipt, joined children, restored niri configuration and no
+remaining guest polkit fixture. Its cancellation exception is not an OSError:
+Python's subprocess/select machinery can retry and swallow InterruptedError.
+The same selftest exercises full-scale synthetic smaps analysis, including a known
+growing series; synthetic data never substitutes for an actual memory soak.

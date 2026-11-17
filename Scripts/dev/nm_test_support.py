@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import statistics
 import subprocess
 import time
 
@@ -15,6 +16,10 @@ from guest_profile import activate_profile, protect_owned_process
 
 
 SOURCE = Path(__file__).resolve().parents[2]
+
+
+class NmInterruptedError(RuntimeError):
+    """Do not inherit OSError: subprocess/select retry InterruptedError."""
 
 
 def run(argv, *, env=None, seconds=30, check=True):
@@ -51,8 +56,16 @@ class GuestRun:
         self.children = []
         self.logs = []
         self.results = []
+        self.previous_signals = {}
+        for signum in (signal.SIGTERM, signal.SIGINT):
+            self.previous_signals[signum] = signal.getsignal(signum)
+            signal.signal(signum, self.interrupted)
         self.receipt = dict(passed=False, guest=self.profile.record(), cases=self.results)
         self.write()
+
+    @staticmethod
+    def interrupted(signum, frame):
+        raise NmInterruptedError("NetworkManager proof interrupted: " + str(signum))
 
     def write(self):
         path = self.work / "result.json"
@@ -99,6 +112,8 @@ class GuestRun:
         self.receipt["passed"] = bool(self.results and all(c["passed"] for c in self.results)
                                       and self.receipt["cleanupComplete"] and "error" not in self.receipt)
         self.write()
+        for signum, handler in self.previous_signals.items():
+            signal.signal(signum, handler)
         return self.receipt["passed"]
 
 
@@ -124,3 +139,52 @@ class PrivateBus:
         # This result is a single D-Bus string in gdbus's Python-like tuple syntax.
         import ast
         return json.loads(ast.literal_eval(result.stdout)[0])
+
+
+def parse_smaps(text):
+    values = {}
+    for line in text.splitlines():
+        fields = line.split()
+        if fields and fields[0] in ("Pss_Anon:", "SwapPss:"):
+            assert len(fields) == 3 and fields[2] == "kB"
+            values[fields[0][:-1]] = int(fields[1])
+    assert set(values) == {"Pss_Anon", "SwapPss"}, "missing smaps accounting"
+    return values
+
+
+def analyze(samples):
+    started = time.monotonic()
+    idle = [s for s in samples if s["phase"] == "idle"]
+    assert len(idle) >= 2
+    times = [(s["monotonic"] - idle[0]["monotonic"]) / 3600 for s in idle]
+    mean_t = statistics.mean(times)
+    denominator = sum((t - mean_t) ** 2 for t in times)
+    metrics = {}
+    for field in ("Pss_Anon", "SwapPss"):
+        values = [s[field] for s in idle]
+        mean = statistics.mean(values)
+        slope = sum((t - mean_t) * (v - mean) for t, v in zip(times, values)) / denominator if denominator else 0
+        metrics[field] = dict(minKiB=min(values), maxKiB=max(values), rangeKiB=max(values) - min(values),
+                              initialKiB=values[0], finalKiB=values[-1], slopeKiBPerHour=slope,
+                              maxDistanceFromInitialKiB=max(abs(v - values[0]) for v in values))
+    return dict(idleSeconds=idle[-1]["monotonic"] - idle[0]["monotonic"], sampleCount=len(idle),
+                metrics=metrics, historicalPlusMinus20MiB=all(m["maxDistanceFromInitialKiB"] <= 20 * 1024 for m in metrics.values()),
+                analysisSeconds=time.monotonic() - started,
+                limitation="One-hour whole-shell observation, not 24-hour stability or NM-only attribution")
+
+
+def analysis_canaries():
+    assert parse_smaps("Pss_Anon: 100 kB\nSwapPss: 2 kB\n") == {"Pss_Anon": 100, "SwapPss": 2}
+    try:
+        parse_smaps("Pss_Anon: 100 kB\n")
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("missing-accounting canary accepted")
+    steady = [dict(phase="idle", monotonic=i * 30, Pss_Anon=1000, SwapPss=0) for i in range(121)]
+    report = analyze(steady)
+    assert report["idleSeconds"] == 3600 and report["sampleCount"] == 121 and report["historicalPlusMinus20MiB"]
+    growing = [dict(s, Pss_Anon=1000 + i * 256) for i, s in enumerate(steady)]
+    report = analyze(growing)
+    assert not report["historicalPlusMinus20MiB"] and abs(report["metrics"]["Pss_Anon"]["slopeKiBPerHour"] - 30720) < .01
+    return report
