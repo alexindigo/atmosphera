@@ -134,6 +134,7 @@ def main():
             (work / 'known-pam-hang-recovery.json').write_text(json.dumps({'holder': parent, 'child': child}, indent=2))
 
     barrier = work / 'terminal-barrier'
+    retained = True
     try:
         observer = subprocess.Popen(['python3', '-B', str(source / 'Scripts/dev/locker-compositor-observer.py'),
             '--work', str(work / 'observer')], env=environment, stdin=subprocess.PIPE,
@@ -155,7 +156,26 @@ def main():
             launch('diagnostic', diagnostic, {'ATMOSPHERA_LOCK_SESSION': '', 'ATMOSPHERA_LOCK_GENERATION': '',
                 'ATMOSPHERA_LOCK_ADAPTER': str(source / 'Scripts/dev/fixtures/locker-terminal-adapter.py'),
                 'LOCKER_TERMINAL_BARRIER': str(barrier)})
-            wait_for(lambda: (barrier / 'terminal.json').exists(), 30)
+            if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+                # Hyprland 0.56.2 ends a refused client with a fatal protocol
+                # error right after finished() (see the upstream draft), so no
+                # rejected root can be retained for sampling. Require its own
+                # terminal settlement first, then exact process/cgroup exit.
+                wait_for(lambda: status('diagnostic')['gone'], 30)
+                log = journal('diagnostic')
+                plain = re.sub(r'\x1b\[[0-9;]*m', '', log)
+                assert re.search(r'ext_session_lock_v1#\d+\.finished\(\)', log) and 'unlock_and_destroy' not in log
+                settled_at = plain.find('Locker settled: finished')
+                assert settled_at >= 0 and settled_at < plain.find('invalid object'), 'terminal settlement must precede the native error'
+                assert not re.search(r'(NiriService|NiriIpcBackend|Detected compositor|HyprlandService)', log)
+                assert locked() and status('holder')['sameProcess'] and 'unlock_and_destroy' not in journal('holder')
+                (work / 'hyprland-diagnostic-not-retainable.json').write_text(json.dumps({
+                    'reason': 'native fatal error after finished(); retained-root CPU sampling impossible',
+                    'diagnostic': status('diagnostic')}, indent=2))
+                retained = False
+            else:
+                wait_for(lambda: (barrier / 'terminal.json').exists(), 30)
+        if args.resources and retained:
             def resources():
                 return json.loads(run(['qs', 'ipc', '-p', str(diagnostic), 'call', 'lockerResources', 'status'], env=environment).stdout)
             def stopped():
