@@ -18,6 +18,12 @@ package() {
   for d in Assets Bindings Commons Configs Helpers Modules Scripts Services Widgets builtin; do
     ln -sfn "../atmosphera/$d" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$d"
   done
+  # The emergency config has a deliberately closed, lock-only import tree.
+  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Services/Locker"
+  install -m644 Quickshell/atmosphera-emergency-lock/*.qml "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/"
+  install -m644 Services/Locker/LockAuth.qml Services/Locker/LockClient.qml "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Services/Locker/"
+  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Helpers"
+  install -m644 Helpers/OwnedProcess.js Helpers/OwnedProcessChild.qml "$pkgdir/etc/xdg/quickshell/atmosphera-emergency-lock/Helpers/"
   rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/tmp"
 
   # Install dispatcher to PATH (handlers resolved via SELF_DIR auto-detect)
