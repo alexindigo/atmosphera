@@ -396,6 +396,15 @@ python3 -B Scripts/dev/plugin-lint.py --root builtin/plugins --catalog builtin/p
 python3 -B Scripts/dev/plugin-lint-selftest.py
 ```
 
+The action catalog's guest-only regression checks schema parity, source IPC
+signatures, quoting/recognition and live loaded-plugin membership/unloading.
+In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace:
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-landing/tmp
+timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/hot-corners-landing/runs/catalog-fresh
+```
+
 `Scripts/dev/qmllint.sh` with no paths includes built-in QML. Its native import
 setup and the container hook share the source-backed metadata boundary described
 in `Scripts/dev/native-metadata/README.md`; no installed runtime module is edited.

@@ -149,6 +149,59 @@ Lock screen components receive additional properties from the shell:
 - **`qs.Services.System`** — `AudioService`, `BatteryService`, `NetworkService`
 - **`qs.Widgets`** — `NButton`, `NIcon`, `NText`, `NTextInput`, etc.
 
+### Declaring actions
+
+An optional manifest `actions` list describes user-facing operations exposed by
+the plugin's Main `IpcHandler`. Commands remain ordinary shell commands, not a
+new in-process dispatch API. Only loaded plugins with a Main instance contribute
+declared actions. Unavailable actions are absent, never disabled.
+
+```json
+"actions": [{
+  "id": "toggle",
+  "label": "Clipboard panel",
+  "description": "Toggle the clipboard plugin panel.",
+  "icon": "clipboard",
+  "command": "atmosphera ipc plugin:clipboard toggle"
+}]
+```
+
+| Field | Contract |
+|---|---|
+| `id` | Lowercase letter followed by lowercase letters, digits or hyphens; unique within the source |
+| `label`, `description` | Non-empty single-line strings |
+| `icon` | Key from the shell's built-in icon set |
+| `command` | Exactly `atmosphera ipc <target> <function>`, safe words separated by single spaces |
+| `arguments` | Optional ordered list of typed arguments, each with `name`, `label`, `type` and a valid `default` |
+
+Argument names start with a lowercase letter and contain only letters/digits.
+Types are `choice` (non-empty unique `{value, label}` choices), `number` (integer,
+optional integer `min`/`max` and string `unit`) and `text` (non-empty single line).
+Unknown keys are rejected, including on arguments and choices. Every argument
+needs a valid default; placeholders are not commands. Plugin actions do not set
+`group`, `requiresPlugin` or `compositor`: those are core-catalog fields only.
+
+The compatibility gate checks every manifest's actions against its real Main
+entry point: target/function, arity, supported parameter types, icons, duplicate
+IDs and commands. Parameters may be untyped or `string`; `int` is also accepted
+for number arguments. Do not declare helpers merely because they are callable.
+
+### Using the action registry
+
+Import `qs.Services.Actions` and require `minAtmospheraVersion: "0.10.0"`.
+`ActionRegistry.ready` reports core-catalog loading; `actions` contains plain
+objects with `key`, `section`, `group`, `label`, `description`, `icon`, `command`
+and `arguments`. Plugin groups use their manifest names; keys are qualified by
+the installed plugin key. Core groups retain catalog order. The registry's
+`revision` increments when plugins load, unload or reload.
+
+`compose(action, values)` takes values keyed by argument name, using defaults for
+missing values, and returns a safely quoted command (or `""` for an invalid
+value). `match(command)` returns `{action, values}` only when that command is
+exactly reproduced by composition; otherwise it returns null. Use
+`displayLabel(action, values)` for the action and chosen argument labels. Keep
+the literal stored command visible: recognition never rewrites custom input.
+
 ### Data-driven launcher providers
 
 An asynchronous `launcherProvider` can publish `signal resultsChanged` when
