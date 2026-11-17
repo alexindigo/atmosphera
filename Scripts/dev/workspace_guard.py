@@ -51,8 +51,10 @@ def require_disk_backed_paths(*paths):
             raise ValueError(MESSAGE)
 
 
-def check_execution_paths(parser, workspace):
+def check_execution_paths(parser, workspace, *, source=None):
     """Validate an entry point's workspace and TMPDIR before it creates either."""
+    if source is not None and Path(workspace).resolve().is_relative_to(Path(source).resolve()):
+        parser.error('workspace must be outside the source directory')
     tmpdir = os.environ.get('TMPDIR', '')
     if not tmpdir.strip():
         parser.error('set TMPDIR to a disk-backed directory inside the assigned VM')

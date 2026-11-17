@@ -370,7 +370,7 @@ def main():
         return inside(*args.inside, daemon=args.daemon)
     source = args.source.resolve()
     work = (args.workspace or source.parent / ('edge-e2e-' + time.strftime('%Y%m%d-%H%M%S'))).resolve()
-    check_execution_paths(parser, work)
+    check_execution_paths(parser, work, source=source)
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '.qmlls.ini', '__pycache__', '*.bak'))
