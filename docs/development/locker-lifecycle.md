@@ -101,7 +101,7 @@ is not a real suspend/resume proof.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
 `deadline-race`, `rejected`, `resources`, `external`, `contract`, `restart`, `ingress`, `preview`,
-`packaging`, `cold-load` and `orphan-acceptance`.
+`suspend`, `packaging`, `cold-load` and `orphan-acceptance`.
 Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
@@ -172,7 +172,22 @@ LockedHint stays false, and no protocol lock/unlock request is allowed. This is
 presentation-only; normal inset desktop margins are not a secure-output defect.
 Escape is scoped to each preview window's live content, not an off-window root.
 
-The broader suspend/load matrix and
-the separate Hyprland restore-option proofs are not implied by these entry
-points. Keep their acceptance status in the task's outside-repository execution
-note until those proofs are implemented and run.
+`suspend --delays 0,5,40 --sleep-signals` exercises actual main lock-and-suspend
+and externally initiated sleep through the real logind manager, signals and
+delay-inhibitor fd. A guest-only runtime override substitutes a bounded service
+barrier for systemd's kernel-sleep command. The proof observes the real inhibitor
+held before the request, native secure before its actual release, service entry,
+real PrepareForSleep(false), inhibitor reacquisition and the lock intact on the
+guest framebuffer. The original service ExecStart is restored in finally.
+No kernel sleep is invoked; the kernel journal must contain no suspend entry.
+`--real-suspend` is rejected: real S3 is not testable in this VM and must be
+checked on the user's machine. This proof is not hardware suspend/resume proof.
+
+Passing subproofs retire only their reconstructible staged installs and icon
+copies that match the authoritative source byte-for-byte. Per-file hashes and
+exact paths are recorded; settings, caches, state, logs and captures remain.
+This avoids inode exhaustion during sequential main-shell matrices.
+
+The load matrix and separate Hyprland restore-option proofs are not implied
+by these entry points. Keep their acceptance status in the task's
+outside-repository execution note until those proofs are implemented and run.

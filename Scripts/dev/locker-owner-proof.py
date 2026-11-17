@@ -58,6 +58,9 @@ def main():
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
     parser.add_argument('--ingress', choices=('ipc', 'cli', 'keybind', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'), default='ipc')
     parser.add_argument('--late-real-first', action='store_true', help='Test-only granted-client response barrier and held emergency exec')
+    parser.add_argument('--real-suspend', action='store_true')
+    parser.add_argument('--sleep-signals', action='store_true', help='Real logind/inhibitor path with a no-kernel-sleep service barrier')
+    parser.add_argument('--sleep-route', choices=('lock-and-suspend', 'prepare-for-sleep'), default='lock-and-suspend')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
     if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'boundary', 'external'):
@@ -66,6 +69,10 @@ def main():
         parser.error('--ingress requires the actual main shell')
     if args.late_real_first and args.case != 'fast':
         parser.error('--late-real-first belongs to the fast/startup outcome proof')
+    if args.real_suspend:
+        parser.error('real S3 is not testable in this VM; use --sleep-signals')
+    if args.sleep_signals and (not args.main_shell or args.case not in ('fast', 'slow') or args.late_real_first):
+        parser.error('--sleep-signals requires the actual main fast or slow path')
     if args.ingress in ('custom', 'exclusive', 'legacy') and (args.case != 'external' or args.external_variant != 'existing'):
         parser.error('selected adapter ingress needs the existing external client proof')
     if args.case == 'slow' and args.delay < 5:
@@ -91,7 +98,7 @@ def main():
         (work / 'load-samples.json').write_text(json.dumps(telemetry, indent=2))
 
     sample_load('start')
-    if args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+    if args.sleep_signals or args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
     sid = manage(source, {'operation': 'discover'})['session']
     assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no', 'existing holder'
@@ -106,7 +113,7 @@ def main():
     settings.mkdir()
     configuration = {'settingsVersion': 62,
         'general': {'lockScreenEnabled': True, 'lockScreenPlugin': 'demo-custom-lockscreen' if args.ui == 'demo' else 'default',
-                    'lockOnSuspend': False, 'showChangelogOnStartup': False}}
+                     'lockOnSuspend': args.sleep_signals, 'showChangelogOnStartup': False}}
     marker = work / 'hook-events'
     if args.case == 'opaque':
         configuration['general']['externalLockCommand'] = 'sleep 40'
@@ -187,6 +194,12 @@ def main():
         binary.chmod(0o700)
         (work / 'ready-at-delay').write_text(str(args.delay))
         environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
+    if args.sleep_signals:
+        binary = work / 'bin/python3'
+        binary.parent.mkdir(exist_ok=True)
+        shutil.copyfile(source / 'Scripts/dev/fixtures/locker-adapter-barrier.py', binary)
+        binary.chmod(0o700)
+        environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
     unit = 'locker-owner-proof.service'
     password = secrets.token_hex(16)
     credential = work / 'credential'
@@ -205,6 +218,9 @@ def main():
     sentinel_unit = 'locker-desktop-sentinel.service'
     original_niri_config = None
     restore_niri_config = None
+    suspend_command = None
+    kernel_cursor = None
+    sleep_harness = None
 
     def inspect():
         return manage(source, {'operation': 'inspect', 'session': sid})
@@ -244,7 +260,17 @@ def main():
         temporary.replace(path)
 
     def ingress():
-        nonlocal original_niri_config, restore_niri_config
+        nonlocal original_niri_config, restore_niri_config, suspend_command, kernel_cursor
+        if args.sleep_signals:
+            sleep_harness.held()
+            cursor = run(['sudo', '-n', 'journalctl', '-b', '-k', '-n', '1', '--show-cursor', '--no-pager']).stdout
+            kernel_cursor = re.search(r'-- cursor: (\S+)', cursor)[1]
+            if args.sleep_route == 'prepare-for-sleep':
+                suspend_command = subprocess.Popen(['sudo', '-n', 'systemctl', 'suspend'],
+                    stdout=(work / 'suspend-command.txt').open('x'), stderr=subprocess.STDOUT)
+            else:
+                ipc('sessionMenu', 'lockAndSuspend')
+            return
         if args.ingress == 'idle':
             # Real ext-idle-notify, not a call to the service's internal action.
             run(['wtype', '-M', 'shift', '-m', 'shift'], env=environment)
@@ -330,6 +356,12 @@ def main():
             except ValueError:
                 return False
         wait_for(ready, 20)
+        if args.sleep_signals:
+            def inhibitor_ready():
+                journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                    '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
+                return 'Delay inhibitor acquired' in journal
+            wait_for(inhibitor_ready, 15)
 
     def restart_at(state):
         before = inspect()
@@ -369,13 +401,17 @@ def main():
             'newOwner': owner, 'before': before, 'stopped': stopped, 'after': after}, indent=2))
 
     try:
+        if args.sleep_signals:
+            from locker_sleep_support import SleepHarness
+            sleep_harness = SleepHarness(source, work)
+            sleep_harness.install()
         observer = subprocess.Popen(['python3', '-B', str(source / 'Scripts/dev/locker-compositor-observer.py'),
                                      '--work', str(work / 'observer')], stdin=subprocess.PIPE,
                                     stdout=(work / 'observer-stdout.txt').open('w'),
                                     stderr=(work / 'observer-stderr.txt').open('w'), env=environment)
         wait_for(lambda: (work / 'observer/ready.json').exists(), 10)
         start()
-        if args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+        if args.sleep_signals or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
             from locker_framebuffer import Framebuffer
             sentinel_entry = work / 'desktop-sentinel.qml'
             shutil.copyfile(source / 'Scripts/dev/fixtures/locker-sentinel.qml', sentinel_entry)
@@ -437,6 +473,40 @@ def main():
         wait_for(secured, 15)
         first = inspect()
         sample_load('first-secure')
+        if args.sleep_signals:
+            # The real manager must wait on its real delay fd before entering
+            # our no-kernel-sleep service. Observe native secure, fd release,
+            # service entry, then let the normal manager publish resume.
+            def native_secure_time():
+                events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+                secure = [event['sourceMonotonic'] for event in events if event['kind'] == 'journal'
+                    and re.search(r'ext_session_lock_v1#\d+\.locked\(\)', event['message'])]
+                return min(secure) if secure else None
+            sleep_harness.entered(wait_for(native_secure_time, 10))
+            def resumed():
+                events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+                sleep = [event for event in events if event['kind'] == 'prepare-for-sleep']
+                return sleep if len(sleep) >= 2 and not sleep[-1]['sleeping'] else None
+            sleep = wait_for(resumed, 45)
+            assert [event['sleeping'] for event in sleep] == [True, False], 'missing or duplicated real sleep window'
+            kernel_text = run(['sudo', '-n', 'journalctl', '-b', '-k', '--no-pager', '-o', 'json', '--after-cursor=' + kernel_cursor]).stdout
+            kernel = [json.loads(line) for line in kernel_text.splitlines()]
+            (work / 'sleep-kernel.json').write_text(json.dumps(kernel, indent=2))
+            assert not any('PM: suspend entry' in record.get('MESSAGE', '') for record in kernel), 'fixture unexpectedly suspended the kernel'
+            assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes', 'resumed unlocked'
+            wait_for(lambda: sleep_harness.inhibitors(sleep_harness.pid), 10)
+            if suspend_command is not None:
+                assert suspend_command.wait(timeout=10) == 0
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                console.capture(work / 'after-resume.ppm')
+                assert not console.sentinel_visible(), 'unlocked desktop after resume'
+            finally:
+                console.close()
+            (work / 'sleep-result.json').write_text(json.dumps({'route': args.sleep_route, 'events': sleep,
+                'realLogindSignals': True, 'kernelSleepInvoked': False, 'lockIntactOnResume': True,
+                'hardwareLimit': "real S3 not testable in this VM; to be checked on the user's machine"}, indent=2))
         if args.late_real_first:
             assert (work / 'grant-held.json').exists(), 'real acquisition did not pass the actual grant barrier'
             assert (work / 'probe-at-barrier.json').exists(), 'deadline emergency was not exercised'
@@ -905,6 +975,8 @@ def main():
             finally:
                 if restore_niri_config is not None:
                     run(['niri', 'msg', 'action', 'load-config-file', '--path', str(restore_niri_config)], env=environment)
+                if sleep_harness is not None:
+                    sleep_harness.close()
         if observer_error is not None:
             raise observer_error
 

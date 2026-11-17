@@ -15,6 +15,32 @@ import time
 from contextlib import redirect_stdout
 
 work = Path(__file__).resolve().parent.parent
+arguments = sys.argv[1:]
+if arguments[:1] == ['-B']:
+    arguments = arguments[1:]
+if len(arguments) == 1 and arguments[0].endswith('/Scripts/python/locker-sleep-inhibitor.py'):
+    # Observe the real helper's stdout without changing its fd or signals.
+    class Tap:
+        def __init__(self):
+            self.pending = ''
+            self.output = (work / 'inhibitor-events.jsonl').open('a', buffering=1)
+
+        def write(self, text):
+            sys.__stdout__.write(text)
+            self.pending += text
+            while '\n' in self.pending:
+                line, self.pending = self.pending.split('\n', 1)
+                self.output.write(json.dumps({'pid': os.getpid(), 'value': json.loads(line)}) + '\n')
+            return len(text)
+
+        def flush(self):
+            sys.__stdout__.flush()
+            self.output.flush()
+
+    sys.stdout = Tap()
+    sys.argv = arguments
+    runpy.run_path(arguments[0], run_name='__main__')
+    sys.exit(0)
 if len(sys.argv) == 3 and sys.argv[1].endswith('/Scripts/python/locker-unit.py') and sys.argv[2] == 'manage':
     payload = sys.stdin.read()
     job = json.loads(payload)

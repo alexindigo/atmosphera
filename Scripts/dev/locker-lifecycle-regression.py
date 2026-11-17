@@ -5,6 +5,7 @@ Each subproof retains its complete native/PAM/identity assertions. Source-based
 orphan red/green is intentionally separate from main-root install acceptance.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import shlex
@@ -15,9 +16,34 @@ import time
 from locker_test_support import manage, require_guest
 
 
+def retire_reconstructible(source, work):
+    retired = []
+    stage = work / 'stage'
+    if stage.exists():
+        assert stage.is_dir() and not stage.is_symlink() and stage.resolve() == stage
+        assert (stage / 'etc/xdg/quickshell/atmosphera/VERSION').read_text().strip() == '0.9.3'
+        retired.append({'path': str(stage), 'inode': stage.stat().st_ino, 'kind': 'staged-install'})
+        shutil.rmtree(stage)
+    def fingerprint(root):
+        files = {}
+        for path in root.rglob('*'):
+            assert not path.is_symlink(), path
+            if path.is_file():
+                files[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
+        return files
+    for icons in (work / 'config/plugins').glob('*:atmosphera-icons'):
+        original = source / 'builtin/plugins/atmosphera-icons'
+        expected = fingerprint(original)
+        assert expected and fingerprint(icons) == expected, 'test icon copy differs from source'
+        retired.append({'path': str(icons), 'inode': icons.stat().st_ino, 'kind': 'unchanged-icons',
+            'source': str(original), 'files': expected})
+        shutil.rmtree(icons)
+    (work / 'reconstructible-retired.json').write_text(json.dumps(retired, indent=2))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'suspend', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
     parser.add_argument('--sample-seconds', type=float, default=10)
     parser.add_argument('--post-unlock-seconds', type=float, default=10)
     parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
@@ -25,10 +51,14 @@ def main():
     parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--delay', type=float, default=5)
+    parser.add_argument('--real-suspend', action='store_true')
+    parser.add_argument('--sleep-signals', action='store_true')
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--recover-known-pam-hang', action='store_true')
     args = parser.parse_args()
+    if args.real_suspend:
+        parser.error('real S3 is not testable in this VM; use --sleep-signals')
     driver = Path(__file__).resolve().parents[2]
     source, work = require_guest(args.work, args.source)
     if args.case != 'orphan-acceptance' and source != driver:
@@ -40,6 +70,17 @@ def main():
     commands = []
     if args.case == 'preview':
         commands.append(('preview', ['locker-preview-proof.py']))
+    elif args.case == 'suspend':
+        assert args.sleep_signals, 'suspend acceptance requires real logind signals and delay-fd ordering'
+        for route in ('lock-and-suspend', 'prepare-for-sleep'):
+            for delay in args.delays.split(','):
+                delay = float(delay)
+                assert delay in (0, 5, 40), 'suspend delays must be 0,5,40'
+                command = ['locker-owner-proof.py', '--main-shell', '--sleep-signals', '--sleep-route', route]
+                command += ['--case', 'fast'] if delay == 0 else ['--case', 'slow', '--delay', str(delay)]
+                if args.recover_known_pam_hang:
+                    command.append('--recover-known-pam-hang')
+                commands.append((route + '-' + str(int(delay)), command))
     elif args.case == 'deadline-race':
         for name, options in (('late-real-first', ['--case', 'fast', '--late-real-first']),
                 ('emergency-first-handover', ['--case', 'slow', '--delay', '5'])):
@@ -148,16 +189,9 @@ def main():
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=240)
         print((work / (name + '-output.txt')).read_text(), end='', flush=True)
         assert result.returncode == 0, str(command)
-        if args.case == 'ingress':
-            # Each passing subproof has stopped its exact units. Retire only
-            # its reconstructible install copy, not logs/configuration/evidence;
-            # repeated package copies otherwise exhaust this guest's inodes.
-            stage = work / name / 'stage'
-            assert stage.is_dir() and not stage.is_symlink() and stage.resolve() == stage
-            assert (stage / 'etc/xdg/quickshell/atmosphera/VERSION').read_text().strip() == '0.9.3'
-            record = {'path': str(stage), 'inode': stage.stat().st_ino, 'subproof': name}
-            shutil.rmtree(stage)
-            (work / (name + '-staging-retired.json')).write_text(json.dumps(record, indent=2))
+        # Passing subproofs have finished their cleanup. Retire only reproducible
+        # installs and hash-identical asset copies, never logs/settings/evidence.
+        retire_reconstructible(source, work / name)
     if args.case in ('packaging', 'cold-load'):
         emergency = (work / 'emergency/fixture-protocol.txt').read_text()
         assert 'Registry' not in emergency and 'PluginService' not in emergency, 'emergency initialized non-lock runtime'
@@ -180,6 +214,8 @@ def main():
         (work / 'post-unlock.json').write_text(json.dumps(final, indent=2))
     recovery = any((work / name / 'known-pam-hang-recovery.json').exists() for name, _ in commands)
     suffix = ' (known native PAM hang recovered)' if recovery else ''
+    if args.case == 'suspend':
+        suffix += ' (real logind signals; no hardware sleep)'
     (work / 'result.txt').write_text('PASS ' + args.case + suffix + '\n')
     print('PASS ' + args.case + suffix, work)
 

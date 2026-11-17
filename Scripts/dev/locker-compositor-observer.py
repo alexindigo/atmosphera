@@ -107,9 +107,16 @@ def main():
         if str(interface) == 'org.freedesktop.login1.Session' and 'LockedHint' in values:
             emit('locked-hint', locked=bool(values['LockedHint']))
 
+    def prepare_for_sleep(sleeping):
+        emit('prepare-for-sleep', sleeping=bool(sleeping),
+             boottime=time.clock_gettime(time.CLOCK_BOOTTIME))
+
     bus.add_signal_receiver(changed, signal_name='PropertiesChanged',
                             dbus_interface='org.freedesktop.DBus.Properties',
-                            bus_name='org.freedesktop.login1', path=session_path)
+                             bus_name='org.freedesktop.login1', path=session_path)
+    bus.add_signal_receiver(prepare_for_sleep, signal_name='PrepareForSleep',
+                            dbus_interface='org.freedesktop.login1.Manager',
+                            bus_name='org.freedesktop.login1', path='/org/freedesktop/login1')
     emit('initial', locked=bool(properties.Get('org.freedesktop.login1.Session', 'LockedHint')), session=sid)
     journal_errors = (work / 'journal-stderr.txt').open('w')
     journal = subprocess.Popen(['journalctl', '--user', '-b', '--follow', '--lines=0', '--output=json', '--no-pager'],
