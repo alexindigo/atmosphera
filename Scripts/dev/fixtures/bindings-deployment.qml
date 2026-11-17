@@ -159,7 +159,7 @@ ShellRoot {
                          "pendingRequests": state.pendingRequests
                        });
           if (probe.externalListenerKind === "save") {
-            Settings.saveImmediate(function (result) {
+            Settings.saveResult(function (result) {
               probe.terminalSnapshot("corrective-listener-save");
               probe.report("save-callback", {
                              "token": "corrective-listener-save",
@@ -312,7 +312,7 @@ ShellRoot {
             if (probe.modelCallbackArmed) {
               probe.modelCallbackArmed = false;
               probe.modelCallbackSignalState = probe.nativeState();
-              probe.modelCallbackNested = Settings.saveImmediate(function (nested) {
+              probe.modelCallbackNested = Settings.saveResult(function (nested) {
                 probe.modelCallbackEvents.push({
                                                  "event": "nested-callback",
                                                  "requestId": nested.requestId,
@@ -380,7 +380,7 @@ ShellRoot {
                              "snapshotSettled": state.paths["bindings.environment"].admittedFingerprint === state.paths["bindings.environment"].presentedFingerprint
                            });
               Settings.data.ui.fontDefaultScale = 1.6;
-              Settings.saveImmediate(function (result) {
+              Settings.saveResult(function (result) {
                 probe.report("save-callback", {
                                "token": "effective-save",
                                "success": result.status === "saved" || result.status === "nothing_to_save",
@@ -498,7 +498,7 @@ ShellRoot {
                          });
           }
           function save(token: string) {
-            Settings.saveImmediate(function (result) {
+            Settings.saveResult(function (result) {
               probe.terminalSnapshot(token);
               probe.report("save-callback", {
                              "token": token,
@@ -536,7 +536,7 @@ ShellRoot {
             probe.modelCallbackReturned = false;
             probe.modelCallbackSavedSignals = 0;
             probe.modelCallbackBefore = probe.nativeState();
-            probe.modelCallbackOuter = Settings.saveImmediate(function (result) {
+            probe.modelCallbackOuter = Settings.saveResult(function (result) {
               probe.modelCallbackEvents.push({
                                                "event": "outer-callback",
                                                "requestId": result.requestId,
@@ -561,11 +561,11 @@ ShellRoot {
           }
           function editScale(value: string) {
             Settings.data.ui.fontDefaultScale = Number(value);
-            Settings.saveImmediate();
+            Settings.saveSelected([["ui", "fontDefaultScale"]]);
           }
           function auditSaveScale(value: string, token: string) {
             Settings.data.ui.fontDefaultScale = Number(value);
-            var request = Settings.saveImmediate(function (result) {
+            var request = Settings.saveResult(function (result) {
               probe.terminalSnapshot(token);
               probe.report("save-callback", {
                              "token": token,
@@ -709,7 +709,7 @@ ShellRoot {
           }
           function hugeSave(token: string) {
             Settings.data.bar.middleClickCommand = "private-stdin-fixture-" + Array(150000).join("x");
-            Settings.saveImmediate(function (result) {
+            Settings.saveResult(function (result) {
               probe.report("save-callback", {
                              "token": token,
                              "success": result.status === "saved" || result.status === "nothing_to_save",
@@ -720,7 +720,7 @@ ShellRoot {
           }
           function saveThrow(token: string) {
             Settings.data.ui.fontDefaultScale = 1.25;
-            Settings.saveImmediate(function (result) {
+            Settings.saveResult(function (result) {
               probe.report("save-callback", {
                              "token": token,
                              "success": result.status === "saved" || result.status === "nothing_to_save",
@@ -809,7 +809,7 @@ ShellRoot {
             Settings.data.bar.widgets.left[1].compactMode = true;
             Settings.data.bar.widgets.left[1].panelShowAlbumArt = false;
             Settings.data.notifications.enabled = false;
-            Settings.saveImmediate(function (result) {
+            Settings.saveResult(function (result) {
               probe.report("save-callback", {
                              "token": token,
                              "success": result.status === "saved" || result.status === "nothing_to_save",

@@ -417,7 +417,7 @@ ColumnLayout {
       initialIcon: (Settings.data.dock.launcherIcon && Settings.data.dock.launcherIcon !== "") ? Settings.data.dock.launcherIcon : "search"
       onIconSelected: iconName => {
         Settings.data.dock.launcherIcon = iconName;
-        Settings.saveImmediate();
+        Settings.saveSelected([["dock", "launcherIcon"]]);
       }
     }
 

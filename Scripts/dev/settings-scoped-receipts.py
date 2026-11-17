@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--plugins', type=Path, required=True)
     parser.add_argument('--guest-profile', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    modes = ('ordinary', 'reset', 'draft', 'overlay', 'profile', 'profile-plugin')
+    modes = ('ordinary', 'reset', 'bar-command', 'transfer', 'draft', 'overlay', 'profile', 'profile-plugin')
     parser.add_argument('--modes', nargs='+', choices=modes, default=modes)
     args = parser.parse_args()
     source, plugins, out = args.source.resolve(), args.plugins.resolve(), args.output.resolve()
@@ -59,6 +59,8 @@ def main():
             (config/'settings/ui.json').write_text('{"fontDefaultScale":1.4,"unknown":"ui-retained"}\n')
             if mode == 'overlay':
                 (config/'settings/bar.json').write_text('{"widgets":{"left":[{"id":"plugin:shell-profiles","opaque":{"wide":18446744073709551615}}]}}')
+            if mode in ('bar-command', 'transfer'):
+                (config/'settings/bar.json').write_text('{"widgets":{"left":[{"id":"Tray","pinned":[],"opaque":{"wide":18446744073709551615}}],"right":[]}}')
             shutil.copytree(plugins/'shell-profiles', config/'plugins/shell-profiles')
             runtime = profile.child_environment('sr-')
             env = dict(os.environ, **runtime, QT_QPA_PLATFORM='wayland', QML_DISABLE_DISK_CACHE='1',
@@ -77,9 +79,18 @@ def main():
                     row = json.loads((config/'settings/bar.json').read_text())['widgets']['left'][0]
                     assert row == {'id': 'plugin:shell-profiles', 'opaque': {'wide': 18446744073709551615}}
                 default = json.loads((source/'Configs/defaults.json').read_text())['ui']['fontDefaultScale']
-                expected = default if mode == 'reset' else 1.8 if mode == 'draft' and code == 0 else 1.6
+                expected = (default if mode == 'reset' else 1.4 if mode in ('bar-command', 'transfer')
+                            else 1.8 if mode == 'draft' and code == 0 else 1.6)
                 assert raw.get('fontDefaultScale', default) == expected
+                if mode in ('bar-command', 'transfer') and code == 0:
+                    widgets = json.loads((config/'settings/bar.json').read_text())['widgets']
+                    selected = widgets['left'] if mode == 'bar-command' else widgets['right']
+                    assert selected == [{'id': 'Tray', 'pinned': ['scoped'] if mode == 'bar-command' else [],
+                                         'opaque': {'wide': 18446744073709551615}}]
+                    if mode == 'transfer':
+                        assert widgets['left'] == []
                 cold_code, cold = launch(dict(env, SCOPED_RECEIPT_MODE='cold',
+                                             SCOPED_RECEIPT_COLD_CASE=mode,
                                              SCOPED_RECEIPT_EXPECT=str(expected)), work/'cold.log')
                 assert cold_code == 0 and 'SCOPED_RECEIPT: COLD_PASS' in cold
                 passed = code == 0 and 'SCOPED_RECEIPT: PASS '+mode in text

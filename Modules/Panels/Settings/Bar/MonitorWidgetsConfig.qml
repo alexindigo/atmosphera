@@ -195,7 +195,8 @@ NBox {
   }
 
   function captureWidgetSettings(section, index) {
-    var commands = root._captureListEditor(["bar", "screenOverrides"], root._sectionAddress(root.screenName, section));
+    var ownerPath = ["bar", "screenOverrides"];
+    var commands = root._captureListEditor(ownerPath, root._sectionAddress(root.screenName, section));
     if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length)
       return null;
     return {
@@ -233,7 +234,7 @@ NBox {
                          }
                        });
           } else {
-            Settings.saveResult(callback);
+            Settings.saveSelected([ownerPath], callback);
           }
         });
       },
@@ -274,8 +275,8 @@ NBox {
                                index: commands.initialValue.length,
                                value: newWidget
                              }
-                            ], function (result) {
-                              if (result.status === "admitted" && result.refreshState === "current")
+                           ], function (result) {
+                             if (result.status === "admitted" && result.refreshState === "current")
                                BarService.widgetsRevision++;
                              commands.detach();
                            });

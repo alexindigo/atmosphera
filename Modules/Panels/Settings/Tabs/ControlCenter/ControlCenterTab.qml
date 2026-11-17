@@ -205,17 +205,42 @@ ColumnLayout {
     var editor = Settings.createRecordListEditor(["controlCenter", "shortcuts", section], []);
     if (!editor)
       return false;
-    return editor.submit([{op: "insert", index: editor.initialValue.length, value: newWidget}], function () { editor.detach(); });
+    return editor.submit([
+                           {
+                             op: "insert",
+                             index: editor.initialValue.length,
+                             value: newWidget
+                           }
+                         ], function () {
+                           editor.detach();
+                         });
   }
 
   function captureWidgetInteraction(section, index) {
     var sections = [
-      {id: "left", path: ["controlCenter", "shortcuts", "left"], listAddress: [], length: Settings.data.controlCenter.shortcuts.left.length},
-      {id: "right", path: ["controlCenter", "shortcuts", "right"], listAddress: [], length: Settings.data.controlCenter.shortcuts.right.length}
-    ];
-    return SectionCommands.capture({sections: sections,
-      createEditor: function (path, address, targets) { return Settings.createRecordListEditor(path, address, targets); },
-      later: function (callback) { Qt.callLater(callback); }, onChanged: function () {}}, section, index);
+          {
+            id: "left",
+            path: ["controlCenter", "shortcuts", "left"],
+            listAddress: [],
+            length: Settings.data.controlCenter.shortcuts.left.length
+          },
+          {
+            id: "right",
+            path: ["controlCenter", "shortcuts", "right"],
+            listAddress: [],
+            length: Settings.data.controlCenter.shortcuts.right.length
+          }
+        ];
+    return SectionCommands.capture({
+                                     sections: sections,
+                                     createEditor: function (path, address, targets) {
+                                       return Settings.createRecordListEditor(path, address, targets);
+                                     },
+                                     later: function (callback) {
+                                       Qt.callLater(callback);
+                                     },
+                                     onChanged: function () {}
+                                   }, section, index);
   }
 
   function _submitWidgetInteraction(section, index, action, destination) {
@@ -242,7 +267,8 @@ ColumnLayout {
   }
 
   function captureWidgetSettings(section, index) {
-    var commands = Settings.createRecordListEditor(["controlCenter", "shortcuts", section], []);
+    var ownerPath = ["controlCenter", "shortcuts", section];
+    var commands = Settings.createRecordListEditor(ownerPath, []);
     if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length) {
       if (commands)
         commands.detach();
@@ -253,22 +279,38 @@ ColumnLayout {
       submit: function (fields, callback) {
         var edits = fields && typeof fields === "object" && !Array.isArray(fields) ? Object.keys(fields).filter(function (key) {
           return key !== "id";
-        }).map(function (key) { return {op: "set", index: index, field: key, value: fields[key]}; }) : [];
+        }).map(function (key) {
+          return {
+            op: "set",
+            index: index,
+            field: key,
+            value: fields[key]
+          };
+        }) : [];
         return commands.submit(edits, function (result) {
           if (result.status === "admitted" && result.refreshState === "current") {
-            Settings.saveResult(callback);
+            Settings.saveSelected([ownerPath], callback);
           } else if (typeof callback === "function") {
-            callback({status: "failed", error: result.error || {code: "list-edit-conflict"}});
+            callback({
+                       status: "failed",
+                       error: result.error || {
+                         code: "list-edit-conflict"
+                       }
+                     });
           }
         });
       },
-      detach: function () { commands.detach(); }
+      detach: function () {
+        commands.detach();
+      }
     };
   }
 
   function _updateWidgetSettingsInSection(section, index, settings) {
     var editor = root.captureWidgetSettings(section, index);
-    return editor ? editor.submit(settings, function () { editor.detach(); }) : false;
+    return editor ? editor.submit(settings, function () {
+      editor.detach();
+    }) : false;
   }
 
   // Base list model for all combo boxes

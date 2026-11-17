@@ -129,7 +129,7 @@ Item {
     const started = Date.now();
     const startedNs = nativeClock.nowNs();
     const savedRound = probe.round;
-    Settings.saveImmediate(function (result, message) {
+    Settings.saveResult(function (result, message) {
       const status = typeof result === "boolean" ? (result ? "saved" : "failed") : result.status;
       const receipt = {
         round: savedRound,

@@ -145,7 +145,7 @@ Popup {
     editor: root.settingsEditor || {
               submit: function (fields, callback) {
                 root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
-                Settings.saveResult(callback);
+                Settings.saveSelected([["controlCenter", "shortcuts", root.sectionId]], callback);
               }
             }
     onCompleted: result => root.settingsSaveCompleted(result)
