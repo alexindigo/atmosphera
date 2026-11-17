@@ -5,6 +5,7 @@ from pathlib import Path
 import select
 import shutil
 import subprocess
+import sys
 import threading
 import time
 import uuid
@@ -16,6 +17,7 @@ from qml_probe import inject_probe, probe_owner_path
 
 def finish_run(owner, *resources):
     """Attempt every restoration even when one earlier teardown fails."""
+    primary = sys.exception()
     errors = []
     for resource in resources:
         if resource:
@@ -26,7 +28,11 @@ def finish_run(owner, *resources):
     if errors:
         owner.receipt["error"] = owner.receipt.get("error", "resource restoration failed")
     owner.receipt["restorationErrors"] = errors
-    owner.close()
+    try:
+        if not owner.close() and (primary is None or not owner.receipt.get("cleanupComplete")):
+            errors.append(dict(resource="owned-children", error="runner cleanup or acceptance failed"))
+    except BaseException as error:
+        errors.append(dict(resource="owned-children", error=repr(error)))
     # This also covers a constructor that failed before returning its shell.
     try:
         run(["niri", "msg", "action", "load-config-file", "--path", "/home/tester/.config/niri/config.kdl"],
@@ -35,9 +41,15 @@ def finish_run(owner, *resources):
         errors.append(dict(resource="niri", error=repr(error)))
         owner.receipt["error"] = owner.receipt.get("error", "niri restoration failed")
         owner.receipt["passed"] = False
+    if errors:
+        owner.receipt["passed"] = False
     owner.write()
     if errors:
-        raise RuntimeError("NM proof restoration failed: " + repr(errors))
+        message = "NM proof restoration failed: " + repr(errors)
+        if primary is not None:
+            primary.add_note(message)
+        else:
+            raise RuntimeError(message)
 
 
 MENU_PROBE = r'''
@@ -231,7 +243,14 @@ class SignalLog:
                 self.context.pop_thread_default()
         self.thread = threading.Thread(target=worker, daemon=False)
         self.thread.start()
-        assert self.ready.wait(10) and not self.failure, self.failure
+        try:
+            assert self.ready.wait(10) and not self.failure, self.failure
+        except BaseException as error:
+            try:
+                self.close()
+            except BaseException as cleanup:
+                error.add_note("SignalLog constructor cleanup failed: " + repr(cleanup))
+            raise
 
     def close(self):
         self.stopping = True
@@ -416,14 +435,17 @@ class LiveProfiles:
                 '    return polkit.Result.YES;\n});\n')
         local = owner.work / "nm-polkit.rules"
         local.write_text(rule)
-        run(["sudo", "-n", "install", "-m", "0644", local, self.authorization])
         try:
+            run(["sudo", "-n", "install", "-m", "0644", local, self.authorization])
             wait_for(lambda: run(["nmcli", "-t", "general", "permissions"]).stdout.split(
                 "org.freedesktop.NetworkManager.settings.modify.system:")[1].splitlines()[0] == "yes", "guest polkit fixture ready")
-        except BaseException:
-            run(["sudo", "-n", "rm", "--", self.authorization])
+            self.save()
+        except BaseException as error:
+            try:
+                run(["sudo", "-n", "rm", "-f", "--", self.authorization])
+            except BaseException as cleanup:
+                error.add_note("LiveProfiles constructor cleanup failed: " + repr(cleanup))
             raise
-        self.save()
 
     def network(self):
         return dict(routes=run(["ip", "-j", "route", "show", "default"]).stdout,

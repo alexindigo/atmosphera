@@ -302,7 +302,7 @@ def main():
             (owner.work / "fixture-calls.json").write_text(json.dumps(bus.control("calls"), indent=2))
         raise
     finally:
-        owner.close()
+        owner.complete()
 
 
 if __name__ == "__main__":

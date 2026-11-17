@@ -57,7 +57,7 @@ def main():
         owner.receipt["error"] = repr(error)
         raise
     finally:
-        owner.close()
+        owner.complete()
 
 
 if __name__ == "__main__":

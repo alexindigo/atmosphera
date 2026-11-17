@@ -40,6 +40,11 @@ and empty values yield an empty SSID. Non-empty bytes retain the library's UTF-8
 decoding, with replacement characters for invalid sequences. Profile display
 names are NM strings and never pass through a byte decoder.
 
+Enterprise certificate settings use NM's byte-array path scheme: an absolute
+CA certificate path becomes `file://` plus its UTF-8 path and a NUL terminator.
+Already-qualified URI/token values are preserved. Both facade call shapes share
+this owner-side encoding; the controlled peer checks the complete wire value.
+
 ## Commands and recovery
 
 Operations have an identity and compact `accepted`, `completed` or `error` results.
@@ -140,6 +145,10 @@ The runner selftest includes a real SIGTERM during shell construction and requir
 an explicit failed receipt, joined children, restored niri configuration and no
 remaining guest polkit fixture. Its cancellation exception is not an OSError:
 Python's subprocess/select machinery can retry and swallow InterruptedError.
+It also injects signal-worker construction interruption, authorization install/
+ledger failures and owned-child teardown failure. Constructors clean up before
+returning failure, and CLI completion rejects unsuccessful teardown without
+replacing an in-flight body exception.
 The same selftest exercises full-scale synthetic smaps analysis, including a known
 growing series; synthetic data never substitutes for an actual memory soak.
 

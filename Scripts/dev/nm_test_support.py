@@ -10,6 +10,7 @@ from pathlib import Path
 import signal
 import statistics
 import subprocess
+import sys
 import time
 
 from guest_profile import activate_profile, protect_owned_process
@@ -115,6 +116,20 @@ class GuestRun:
         for signum, handler in self.previous_signals.items():
             signal.signal(signum, handler)
         return self.receipt["passed"]
+
+    def complete(self):
+        """Settle a CLI runner without replacing an in-flight body exception."""
+        primary = sys.exception()
+        try:
+            passed = self.close()
+        except BaseException as error:
+            if primary is None:
+                raise
+            primary.add_note("NM runner teardown failed: " + repr(error))
+            return False
+        if not passed and primary is None:
+            raise RuntimeError("NM runner failed; see result.json")
+        return passed
 
 
 class PrivateBus:
