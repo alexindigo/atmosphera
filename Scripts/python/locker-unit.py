@@ -59,6 +59,80 @@ def same_process(identity):
     return identity is not None and proc_identity(identity['pid']) == identity
 
 
+def prepare_report(prefix='client'):
+    root = runtime_root()
+    with tempfile.NamedTemporaryFile(mode='w', dir=root, prefix=prefix + '-', suffix='.report.json', delete=False) as stream:
+        os.fchmod(stream.fileno(), 0o600)
+        stream.write('{}\n')
+        stream.flush()
+        os.fsync(stream.fileno())
+    return {'path': stream.name, 'token': secrets.token_hex(24)}
+
+
+def refresh_report(data, role, record):
+    info = record.get('reportInfo')
+    identity = record.get('clientIdentity')
+    if info and identity and not record.get('reportRetired'):
+        try:
+            path = Path(info['path'])
+            if path.parent != runtime_root() or not path.name.endswith('.report.json'):
+                raise Refused('invalid client report path')
+            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+            with os.fdopen(fd) as stream:
+                metadata = os.fstat(stream.fileno())
+                if metadata.st_uid != os.getuid() or stat.S_IMODE(metadata.st_mode) != 0o600 or not stat.S_ISREG(metadata.st_mode):
+                    raise Refused('invalid client report ownership/mode')
+                text = stream.read(4097)
+            if len(text) > 4096:
+                raise Refused('invalid client report size')
+            report = json.loads(text)
+            if report:
+                expected = {'schema': 1, 'session': data['session'], 'generation': data['generation'],
+                    'role': role, 'invocation': record['identity']['InvocationID'],
+                    'identity': identity, 'token': info['token']}
+                if any(report.get(key) != value for key, value in expected.items()):
+                    raise Refused('client report identity mismatch')
+                sequence = report.get('sequence')
+                event = report.get('event')
+                if type(sequence) is not int or sequence < 1 or event not in ('locked', 'finished', 'authenticated-unlock'):
+                    raise Refused('invalid client report event/sequence')
+                if event in ('locked', 'authenticated-unlock') and report.get('everSecure') is not True:
+                    raise Refused('client report lacks secure history')
+                if event == 'authenticated-unlock' and data.get('authRole') != role:
+                    raise Refused('client report lacks authentication fence')
+                previous = record.get('protocolReport')
+                if previous is None or sequence > previous['sequence']:
+                    record['protocolReport'] = report
+                elif sequence == previous['sequence'] and report != previous:
+                    raise Refused('client report sequence was rewritten')
+            record.pop('reportError', None)
+        except (OSError, ValueError, Refused) as error:
+            # Invalid/missing evidence cannot create a new secure or auth fact.
+            record['reportError'] = str(error)
+    report = record.get('protocolReport')
+    record['protocolOutcome'] = 'unknown'
+    if not report:
+        if record.get('client'):
+            record['client']['secure'] = False
+            record['client']['authenticated'] = False
+            if record['client'].get('settlement') in ('finished', 'authenticated-unlock'):
+                record['client']['terminal'] = False
+                record['client']['settlement'] = ''
+        return
+    client = record.setdefault('client', {})
+    record['everSecure'] = record.get('everSecure', False) or report.get('everSecure') is True
+    client['requested'] = True
+    if report['event'] == 'locked':
+        record['protocolOutcome'] = 'locked'
+        client['locked'] = True
+        client['secure'] = True
+    else:
+        authenticated = report['event'] == 'authenticated-unlock'
+        record['protocolOutcome'] = 'authenticated-unlock' if authenticated else 'finished'
+        client.update(locked=False, secure=False, terminal=True, authenticated=authenticated,
+            settlement='authenticated-unlock' if authenticated else 'finished')
+
+
 def cgroup_members(group):
     if not group or group == '/' or '..' in Path(group).parts:
         raise Refused('invalid saved control group')
@@ -272,7 +346,9 @@ def client_reply(data, role):
             'retire': bool(record.get('retire') or data['phase'] == 'settled'),
             'externalUnlocked': bool(role == 'emergency' and data['snapshot']['adapter'] != 'bundled'
                                      and data.get('sessionUnlockObserved') and not data.get('probeRaceWon')),
-            'phase': data['phase'], 'generation': data['generation']}
+            'phase': data['phase'], 'generation': data['generation'],
+            'report': dict(record['reportInfo'], schema=1, session=data['session'], generation=data['generation'],
+                role=role, invocation=record['identity']['InvocationID'], identity=record['clientIdentity'])}
 
 
 def manage(job):
@@ -314,6 +390,9 @@ def manage(job):
     with session.locked(None if operation == 'inspect' else job['generation']) as data:
         if data is None:
             return {'descriptor': None, 'now': time.monotonic()}
+        for saved_role, saved_record in data['units'].items():
+            if saved_role in ('real', 'emergency'):
+                refresh_report(data, saved_role, saved_record)
         if operation == 'inspect':
             observations = {role: observe(record) for role, record in data['units'].items()}
             session.write(data)
@@ -349,7 +428,8 @@ def manage(job):
                     '--property=SendSIGKILL=yes', '--property=ExitType=cgroup']
             environment = dict(data['environment'], ATMOSPHERA_LOCK_SESSION=data['session'],
                                ATMOSPHERA_LOCK_GENERATION=data['generation'], ATMOSPHERA_LOCK_ROLE=role,
-                                ATMOSPHERA_LOCK_ADAPTER=str(Path(__file__).resolve()))
+                                 ATMOSPHERA_LOCK_ADAPTER=str(Path(__file__).resolve()))
+            report_info = prepare_report(session.escaped + '-' + data['generation'] + '-' + role) if role in ('real', 'emergency') else None
             if role == 'real' and data['snapshot']['adapter'] == 'bundled' and data.get('settingsPath'):
                 environment['ATMOSPHERA_LOCK_SETTINGS_FILE'] = data['settingsPath']
             args += ['--setenv=' + key + '=' + value for key, value in environment.items()]
@@ -361,12 +441,21 @@ def manage(job):
             args += ['--', sys.executable, str(Path(__file__).resolve()), 'run', '--generation',
                      data['generation'], '--deadline', startup_deadline,
                      '--', 'sh', '-c', job['command']]
-            command(args)
+            try:
+                command(args)
+            except BaseException:
+                if report_info:
+                    Path(report_info['path']).unlink(missing_ok=True)
+                raise
             identity = unit_status(name)
             if not identity['InvocationID'] or not identity['ControlGroup']:
                 raise Refused('new unit has no invocation/cgroup identity')
             record = {'name': name, 'identity': identity, 'members': cgroup_members(identity['ControlGroup']),
-                      'startedAt': time.monotonic(), 'grant': role == 'emergency', 'retire': False, 'client': None}
+                       'startedAt': time.monotonic(), 'grant': role == 'emergency', 'retire': False, 'client': None}
+            if report_info:
+                record['reportInfo'] = report_info
+            if previous:
+                data.setdefault('retiredInvocations', []).append(previous)
             data['units'][role] = record
             if role == 'emergency':
                 record['probeEvents'] = job.get('events', [])
@@ -386,8 +475,7 @@ def manage(job):
             settlement = payload.get('settlement', '')
             record['client']['settlement'] = settlement if settlement in ('finished', 'retired', 'authenticated-unlock', 'authentication-revoked', 'stale-generation') else ''
             record['client']['observedAt'] = time.monotonic()
-            if payload.get('secure') is True:
-                record['everSecure'] = True
+            refresh_report(data, role, record)
             if role == 'real' and time.monotonic() >= data['deadline'] and not record['grant'] and not record.get('everSecure'):
                 record['retire'] = True
             session.write(data)
@@ -522,6 +610,14 @@ def manage(job):
                 if not observe(record)['gone']:
                     raise Refused('cannot settle while an owned invocation remains')
             data['phase'] = 'settled'
+            for record in [*data['units'].values(), *data.get('retiredInvocations', [])]:
+                info = record.get('reportInfo')
+                if info:
+                    path = Path(info['path'])
+                    if path.parent != session.root or not path.name.endswith('.report.json'):
+                        raise Refused('invalid retired report path')
+                    path.unlink(missing_ok=True)
+                    record['reportRetired'] = True
             if data.get('settingsPath'):
                 expected = session.root / (session.escaped + '-' + data['generation'] + '.settings.json')
                 if str(expected) != data['settingsPath']:
@@ -572,12 +668,22 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='mode', required=True)
     sub.add_parser('manage')
+    sub.add_parser('prepare-report')
     wrapper = sub.add_parser('run')
     wrapper.add_argument('--generation', required=True)
     wrapper.add_argument('--deadline', required=True)
     wrapper.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     try:
+        if args.mode == 'prepare-report':
+            identity = proc_identity(os.getppid())
+            if identity is None:
+                raise Refused('standalone report requires a live parent')
+            info = prepare_report('standalone-' + str(identity['pid']) + '-' + identity['start'])
+            info.update(schema=1, identity=identity, session=graphical_session(), generation='', role='standalone',
+                invocation=os.environ.get('INVOCATION_ID', ''))
+            print(json.dumps({'ok': True, 'value': info}, separators=(',', ':')))
+            return 0
         if args.mode == 'run':
             args.deadline = None if args.deadline == 'none' else float(args.deadline)
             if args.command and args.command[0] == '--':

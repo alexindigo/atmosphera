@@ -176,6 +176,9 @@ ShellRoot {
           v.descriptor.probeEvents.deadline = "emergency-i1";
           v.units.emergency.gone = true;
           v.now = 3.5;
+          v.descriptor.units.emergency.client.terminal = false;
+          check(adapter + "-probe-exit-without-report-is-unknown", v, "fallback", "launch", "emergency");
+          v.descriptor.units.emergency.client.terminal = true;
           check(adapter + "-refusal-is-unconfirmed", v, "engaged-unconfirmed(external)");
           v.lockedHint = true;
           check(adapter + "-hint-is-not-confirmation", v, "engaged-unconfirmed(external)");

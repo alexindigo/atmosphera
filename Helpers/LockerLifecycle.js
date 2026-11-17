@@ -37,6 +37,10 @@ function decide(view) {
         if (view.realLaunchFailed) add("launch-failed");
         if (view.contractFailed) add("contract-failed");
         if (d.sleepWindow) add("sleep:" + d.sleepWindow);
+        var probeClient = client("emergency");
+        if (emergency && !emergencyLive && !emergency.everSecure
+            && !(probeClient.terminal && probeClient.requested && probeClient.settlement === "finished"))
+            add("probe-exit:" + emergency.identity.InvocationID);
         return events;
     }
     function probe(kind, events, state) {

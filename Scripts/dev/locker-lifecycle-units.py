@@ -20,6 +20,7 @@ def main():
     commands = [
         ('state', 'locker-state-proof.py', []),
         ('adapter', 'locker-unit-adapter-proof.py', []),
+        ('reports', 'locker-report-validation.py', []),
         ('client', 'locker-client-proof.py', ['--config', str(config)]),
         ('inhibitor', 'locker-inhibitor-proof.py', []),
     ]

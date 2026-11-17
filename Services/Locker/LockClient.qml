@@ -26,16 +26,82 @@ Scope {
   property bool _syncDirty: false
   property bool _authPending: false
   property string _settlement: ""
+  property var _reportInfo: null
+  property int _reportSequence: 0
+  property bool _reportEverSecure: false
+  property bool _reportSaved: false
+  property bool _unlockCommitted: false
+  readonly property string reportHelper: adapter || Quickshell.shellDir + "/Scripts/python/locker-unit.py"
+  readonly property string nativeEvent: _nativeEvent
+  property string _nativeEvent: ""
 
   signal settled(string reason)
   signal changed
+  signal nativeReported(string event)
+
+  function configureReport(info) {
+    if (_reportInfo || !info || !info.path || !info.token || !info.identity)
+      return;
+    nativeReport.path = info.path;
+    _reportInfo = info;
+  }
+
+  function prepareStandaloneReport() {
+    OwnedProcess.run(root, ["python3", reportHelper, "prepare-report"], "", function (result) {
+      var reply;
+      try { reply = JSON.parse(result.stdout); }
+      catch (error) { reply = {ok: false}; }
+      if (!reply.ok) {
+        finish("report-unavailable");
+        return;
+      }
+      configureReport(reply.value);
+      if (prepared)
+        acquire(session, generation);
+    });
+  }
+
+  function reportNative(event) {
+    if (!_reportInfo)
+      return false;
+    if (event === "locked")
+      _reportEverSecure = true;
+    var report = Object.assign({}, _reportInfo, {event: event, sequence: ++_reportSequence,
+      everSecure: _reportEverSecure});
+    delete report.path;
+    _reportSaved = false;
+    nativeReport.setText(JSON.stringify(report));
+    if (_reportSaved) {
+      _nativeEvent = event;
+      nativeReported(event);
+    }
+    return _reportSaved;
+  }
+
+  function observeNative() {
+    // Quickshell forwards this signal before deleting native lock surfaces.
+    // Complete the atomic synchronous report before returning to that stack.
+    if (endpoint.secure)
+      reportNative("locked");
+    else if (_requested)
+      reportNative(_unlockCommitted ? "authenticated-unlock" : "finished");
+    observe();
+  }
+
+  FileView {
+    id: nativeReport
+    preload: false
+    blockWrites: true
+    atomicWrites: true
+    onSaved: root._reportSaved = true
+  }
 
   function matches(sessionId, token) {
     return sessionId === session && token === generation && !_terminal && !_retiring;
   }
 
   function acquire(sessionId, token) {
-    if (!matches(sessionId, token) || !prepared || _authenticated || (adapter !== "" && !_granted))
+    if (!matches(sessionId, token) || !prepared || !_reportInfo || _authenticated || (adapter !== "" && !_granted))
       return false;
     if (_requested)
       return endpoint.locked;
@@ -101,8 +167,10 @@ Scope {
   function completeAuthentication() {
     if (!_authenticated || _terminal || _retiring)
       return;
-    if (endpoint.secure && endpoint.locked)
+    if (endpoint.secure && endpoint.locked) {
+      _unlockCommitted = true;
       endpoint.locked = false;
+    }
     evaluate();
   }
 
@@ -151,6 +219,7 @@ Scope {
         return;
       }
       if (reply.ok && reply.value.generation === generation) {
+        configureReport(reply.value.report);
         _granted = reply.value.grant;
         if (reply.value.retire)
           retire(session, generation);
@@ -189,7 +258,7 @@ Scope {
   Connections {
     target: root.endpoint
     function onLockStateChanged() { root.observe(); }
-    function onSecureStateChanged() { root.observe(); }
+    function onSecureStateChanged() { root.observeNative(); }
   }
   Connections {
     target: root.auth
@@ -198,12 +267,12 @@ Scope {
 
   onPreparedChanged: {
     changed();
-    if (prepared && generation === "")
+    if (prepared && generation === "" && _reportInfo)
       acquire(session, generation);
   }
   Component.onCompleted: {
-    if (prepared && generation === "")
-      acquire(session, generation);
+    if (adapter === "")
+      prepareStandaloneReport();
     synchronize();
   }
 

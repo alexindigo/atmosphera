@@ -226,5 +226,35 @@ a client's generation-correlated secure acknowledgement. Logind hints remain
 separate corroboration. The slow proof follows discovered takeover capability:
 without it, the real candidate is cancelled and the independently authenticating
 emergency stays alive; no dead-holder handover is attempted.
+
+## Durable native client reports
+
+LockClient writes its native outcome synchronously before returning from
+secureStateChanged, before Quickshell tears down the lock surfaces. A private
+0600 per-client runtime file is atomically committed by FileView with blocking
+writes; the installed Qt uses fdatasync before the rename. The adapter validates
+the session, generation, invocation, registered PID/start identity, token and
+monotone sequence before retaining the report in the generation descriptor.
+Late asynchronous status cannot erase the native result. These are operation
+reports, not settings writes or an additional authentication path.
+
+A matching finished report means refused, never secure. A matching locked report
+followed by unauthenticated process death means a dead-client lock, not unlock.
+No report means unknown; an unreported probe exit triggers a new fail-closed
+probe rather than pretending the dead process secured the session. Only the
+client's successful-PAM path and committed private fence may report authenticated
+unlock. Standalone clients prepare the same private report before acquiring;
+the emergency package includes only the narrow helper it needs for this.
+
+Guest `locker-owner-proof.py --case report-refusal` reproduces native refusal
+while an independently authenticating holder remains secure, verifies that the
+owner reads finished after probe death, and traces the client's own successful
+sync plus atomic commit before surface destruction. Hyprland's native error
+must remain visible. The focused proof authenticates and retires its holder
+explicitly; it is not class-3 contract acceptance. `--case report-unknown` kills
+only a blocked, not-yet-executed probe, verifies unknown, then requires a fresh
+emergency lock and actual PAM. `locker-report-validation.py` exercises stale
+identity/sequence, mode, symlink and private-auth-fence rejection; those synthetic
+validation inputs are not PAM evidence.
 Keep their acceptance status in the task's
 outside-repository execution note until those proofs are implemented and run.

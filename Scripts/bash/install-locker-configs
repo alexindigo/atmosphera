@@ -21,3 +21,4 @@ install -m644 Quickshell/atmosphera-emergency-lock/*.qml "$configs/atmosphera-em
 install -m644 Services/Locker/{LockAuth,LockClient}.qml "$configs/atmosphera-emergency-lock/Services/Locker/"
 install -dm755 "$configs/atmosphera-emergency-lock/Helpers"
 install -m644 Helpers/OwnedProcess.js Helpers/OwnedProcessChild.qml "$configs/atmosphera-emergency-lock/Helpers/"
+install -Dm644 Scripts/python/locker-unit.py "$configs/atmosphera-emergency-lock/Scripts/python/locker-unit.py"

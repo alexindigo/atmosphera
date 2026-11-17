@@ -53,7 +53,7 @@ def main():
         for name in ('Assets', 'Configs', 'Scripts', 'Shaders'):
             assert (real / name).resolve() == stage / 'share/atmosphera' / name
         expected = {'shell.qml', 'EmergencyLock.qml', 'Services/Locker/LockAuth.qml', 'Services/Locker/LockClient.qml',
-            'Helpers/OwnedProcess.js', 'Helpers/OwnedProcessChild.qml'}
+            'Helpers/OwnedProcess.js', 'Helpers/OwnedProcessChild.qml', 'Scripts/python/locker-unit.py'}
         assert {str(path.relative_to(emergency)) for path in emergency.rglob('*') if path.is_file()} == expected
         assert not any(path.is_symlink() for path in emergency.rglob('*'))
         assert not (stage / 'share/atmosphera/Scripts/dev').exists()

@@ -48,7 +48,7 @@ def deadline_outcome(descriptor, events):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
-    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'opaque-expiry', 'hooks', 'intent'), default='fast')
+    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'opaque-expiry', 'report-refusal', 'report-unknown', 'hooks', 'intent'), default='fast')
     parser.add_argument('--external-variant', choices=('existing', 'missing', 'slow5', 'slow40', 'nonzero', 'crash', 'pipeline', 'daemonizing', 'term-resistant', 'daemonizing-holder'), default='existing')
     parser.add_argument('--delay', type=float, default=5)
     parser.add_argument('--emergency-auth-before-ready', action='store_true')
@@ -118,9 +118,9 @@ def main():
         'general': {'lockScreenEnabled': True, 'lockScreenPlugin': 'demo-custom-lockscreen' if args.ui == 'demo' else 'default',
                      'lockOnSuspend': args.sleep_signals, 'showChangelogOnStartup': False}}
     marker = work / 'hook-events'
-    if args.case == 'opaque':
+    if args.case in ('opaque', 'report-unknown'):
         configuration['general']['externalLockCommand'] = 'sleep 40'
-    unconfirmed = args.case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw')
+    unconfirmed = args.case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'report-refusal')
     if unconfirmed:
         # Actual independently authenticating client, deliberately not our
         # generation protocol. Its unit activity/hint must not count as secure.
@@ -185,12 +185,15 @@ def main():
     environment = dict(os.environ, XDG_CONFIG_DIRS=str(stage / 'etc/xdg') + ':/etc/xdg',
                        ATMOSPHERA_CONFIG_DIR=str(settings), WAYLAND_DEBUG='client',
                        ATMOSPHERA_CACHE_DIR=str(work / 'cache'), ATMOSPHERA_STATE_DIR=str(work / 'state'))
-    if args.case in ('slow', 'opaque-race', 'opaque-withdraw') or args.late_real_first:
+    if args.case in ('slow', 'opaque-race', 'opaque-withdraw', 'report-refusal', 'report-unknown') or args.late_real_first:
         binary = work / 'bin/qs'
         binary.parent.mkdir()
-        shutil.copyfile(source / 'Scripts/dev/fixtures/locker-qs-barrier.py', binary)
+        fixture_name = 'locker-report-qs.py' if args.case.startswith('report-') else 'locker-qs-barrier.py'
+        shutil.copyfile(source / 'Scripts/dev/fixtures' / fixture_name, binary)
         binary.chmod(0o700)
         environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
+        if args.case.startswith('report-'):
+            (work / ('trace-report-probe' if args.case == 'report-refusal' else 'hold-first-report-probe')).touch(mode=0o600)
         if args.case == 'slow':
             (work / 'delay-real').write_text(str(args.delay))
             if args.delay < 30 and not args.emergency_auth_before_ready and takeover:
@@ -466,6 +469,24 @@ def main():
             ipc('lockerProof', 'lockAndSuspend')
         else:
             ingress()
+        if args.case == 'report-unknown':
+            wait_for(lambda: (work / 'probe-held.json').exists(), 15)
+            held = inspect()
+            probe = held['descriptor']['units']['emergency']
+            assert held['units']['emergency']['sameInvocation'] and probe.get('protocolOutcome') == 'unknown'
+            assert json.loads(Path(probe['reportInfo']['path']).read_text()) == {}
+            run(['systemctl', '--user', 'kill', '--signal=SIGSTOP', '--kill-whom=main', unit])
+            owner_stopped = True
+            run(['systemctl', '--user', 'kill', '--signal=SIGKILL', '--kill-whom=all', probe['name']])
+            wait_for(lambda: inspect()['units']['emergency']['gone'])
+            unknown = inspect()
+            assert unknown['descriptor']['units']['emergency']['protocolOutcome'] == 'unknown'
+            assert not unknown['descriptor']['units']['emergency'].get('everSecure')
+            assert not unknown['descriptor']['units']['emergency']['client']
+            (work / 'unknown-probe-exit.json').write_text(json.dumps(unknown, indent=2))
+            run(['systemctl', '--user', 'kill', '--signal=SIGCONT', '--kill-whom=main', unit])
+            owner_stopped = False
+            wait_for(lambda: inspect()['descriptor']['units']['emergency']['identity']['InvocationID'] != probe['identity']['InvocationID'])
         if args.case == 'opaque-expiry':
             from locker_framebuffer import Framebuffer
             def requested_without_surfaces():
@@ -490,7 +511,7 @@ def main():
             wait_for(lambda: inspect().get('descriptor', {}).get('generation') != old_generation
                 and 'real' in inspect()['descriptor']['units'])
             restart_at('starting')
-        expected_role = 'emergency' if args.case in ('opaque', 'slow') or (args.case == 'external' and not unconfirmed) else 'real'
+        expected_role = 'emergency' if args.case in ('opaque', 'slow', 'report-unknown') or (args.case == 'external' and not unconfirmed) else 'real'
         def owner_status():
             return json.loads(ipc('lockOwner', 'status'))
         def secured():
@@ -868,6 +889,59 @@ def main():
                 else:
                     assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'opaque refusal discharged suspend'
             assert compositor_locked(work, sid)
+        if args.case == 'report-refusal':
+            probe = inspect()['descriptor']['units']['emergency']
+            assert inspect()['units']['emergency']['gone']
+            report = probe['protocolReport']
+            assert report['event'] == 'finished' and not report['everSecure']
+            assert probe['protocolOutcome'] == 'finished' and not owner_status()['secure']
+            text = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                '_SYSTEMD_INVOCATION_ID=' + probe['identity']['InvocationID']]).stdout
+            if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+                assert 'invalid object' in text, 'native refused-probe crash was hidden'
+            trace = []
+            for path in work.glob('probe-syscalls.*'):
+                if path.name != 'probe-syscalls.' + str(probe['clientIdentity']['pid']):
+                    continue  # Prove the synchronous client handler, not a helper's fsync.
+                for line in path.read_text().splitlines():
+                    try:
+                        trace.append((float(line.split()[0]), line))
+                    except (ValueError, IndexError):
+                        pass
+            received = min(at for at, line in trace if re.search(r'ext_session_lock_v1#\d+\.finished\(', line))
+            destroyed = min(at for at, line in trace if re.search(r'ext_session_lock_surface_v1#\d+\.destroy\(', line))
+            synced = [(at, line) for at, line in trace if ('fsync(' in line or 'fdatasync(' in line) and 'atmosphera-lock/' in line
+                and '= 0' in line and received < at < destroyed]
+            assert synced, 'no successful durable report sync between native refusal and surface teardown'
+            committed = [(at, line) for at, line in trace if 'rename(' in line and probe['reportInfo']['path'] in line
+                and '= 0' in line and synced[0][0] < at < destroyed]
+            assert committed, 'report was not atomically committed before surface teardown'
+            (work / 'durable-refusal.json').write_text(json.dumps({'report': report, 'probe': probe,
+                'finishedAt': received, 'sync': synced, 'atomicCommit': committed, 'surfaceDestroyAt': destroyed,
+                'nativeErrorVisible': 'invalid object' in text}, indent=2))
+            # This focused proof observes the refused report. Hyprland opaque
+            # unit-exit observation belongs to the next addendum integration.
+            ipc('lockerProof', 'exit')
+            auth_at = time.monotonic()
+            authenticate()
+            wait_for(lambda: inspect()['units']['real']['gone'], 20)
+            wait_for(lambda: not compositor_locked(work, sid))
+            manage(source, {'operation': 'settle', 'session': sid, 'generation': first['descriptor']['generation']})
+            final = inspect()
+            assert all(row['gone'] and not row['members'] for row in final['units'].values())
+            observer.stdin.close()
+            assert observer.wait(timeout=10) == 0
+            events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+            releases = [row for row in compositor_transitions(events) if not row['locked']]
+            native_unlocks = [row for row in events if row['kind'] == 'journal' and 'unlock_and_destroy' in row['message']]
+            assert len(releases) == len(native_unlocks) == 1
+            assert releases[0]['observed'] >= auth_at and native_unlocks[0]['sourceMonotonic'] >= auth_at
+            assert native_unlocks[0]['invocation'] == first['descriptor']['units']['real']['identity']['InvocationID']
+            (work / 'final.json').write_text(json.dumps(final, indent=2))
+            unlocked = True
+            (work / 'result.txt').write_text('PASS durable refused-probe report before native teardown\n')
+            print('PASS durable refused-probe report before native teardown', work)
+            return
         generation = first['descriptor']['generation']
         identity = first['descriptor']['units'][expected_role]['identity']
         ipc('lockerProof', 'lock')

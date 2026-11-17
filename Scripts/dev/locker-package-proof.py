@@ -34,7 +34,7 @@ def main():
     for name in ('Portals', 'Services/Plugins/Registry.qml', 'Services/Plugins/Service.qml', 'Commons/Migrations/Migration36.qml'):
         assert not (real / name).exists(), 'non-lock startup dependency: ' + name
     expected = {'shell.qml', 'EmergencyLock.qml', 'Services/Locker/LockAuth.qml', 'Services/Locker/LockClient.qml',
-        'Helpers/OwnedProcess.js', 'Helpers/OwnedProcessChild.qml'}
+        'Helpers/OwnedProcess.js', 'Helpers/OwnedProcessChild.qml', 'Scripts/python/locker-unit.py'}
     files = {str(path.relative_to(emergency)) for path in emergency.rglob('*') if path.is_file()}
     assert files == expected, (files, expected)
     assert not any(path.is_symlink() for path in emergency.rglob('*'))
