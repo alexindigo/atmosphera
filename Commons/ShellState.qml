@@ -51,7 +51,7 @@ Singleton {
                                           lastSeenTs: 0
                                         })
 
-      // UpdateService: changelog state
+      // Version: changelog state
       property var changelogState: ({
                                       lastSeenVersion: ""
                                     })
@@ -179,7 +179,7 @@ Singleton {
     };
   }
 
-  // Changelog state (UpdateService)
+  // Changelog state (Version)
   function setChangelogState(stateData) {
     adapter.changelogState = stateData;
     save();
