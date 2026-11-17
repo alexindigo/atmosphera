@@ -22,7 +22,8 @@ from locker_test_support import manage, recover_known_pam_hang, require_guest, r
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
-    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'hooks', 'intent'), default='fast')
+    parser.add_argument('--case', choices=('fast', 'adoption', 'slow', 'external', 'opaque', 'opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw', 'hooks', 'intent'), default='fast')
+    parser.add_argument('--external-variant', choices=('existing', 'missing', 'slow5', 'slow40', 'nonzero', 'crash', 'pipeline', 'daemonizing', 'term-resistant', 'daemonizing-holder'), default='existing')
     parser.add_argument('--delay', type=float, default=5)
     parser.add_argument('--emergency-auth-before-ready', action='store_true')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
@@ -30,8 +31,8 @@ def main():
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
-    if args.main_shell and args.case not in ('fast', 'adoption', 'slow'):
-        parser.error('--main-shell currently proves fast/adoption/slow; other main-shell acceptance remains separate')
+    if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'external'):
+        parser.error('--main-shell currently proves fast/adoption/slow/external; other main-shell acceptance remains separate')
     if args.case == 'slow' and args.delay < 5:
         parser.error('slow coverage requires at least 5s; boundary ordering is a separate case')
     if args.emergency_auth_before_ready and args.case != 'slow':
@@ -62,6 +63,29 @@ def main():
         # generation protocol. Its unit activity/hint must not count as secure.
         configuration['general']['externalLockCommand'] = ('env -u ATMOSPHERA_LOCK_SESSION -u ATMOSPHERA_LOCK_GENERATION '
             '-u ATMOSPHERA_LOCK_ROLE -u ATMOSPHERA_LOCK_ADAPTER qs -c atmosphera-emergency-lock')
+    external_members = work / 'external-members'
+    external_executed = work / 'external-delayed-exec'
+    if args.case == 'external':
+        standalone = ('env -u ATMOSPHERA_LOCK_SESSION -u ATMOSPHERA_LOCK_GENERATION '
+            '-u ATMOSPHERA_LOCK_ROLE -u ATMOSPHERA_LOCK_ADAPTER qs -c atmosphera-emergency-lock')
+        workload = 'python3 ' + shlex.quote(str(source / 'Scripts/dev/fixtures/locker-unit-workload.py'))
+        workload += ' --work ' + shlex.quote(str(external_members))
+        external_members.mkdir()
+        commands = {
+            'existing': standalone,
+            'missing': 'atmosphera-nonexistent-locker-acceptance',
+            'nonzero': 'exit 17',
+            'crash': 'kill -KILL $$',
+            'pipeline': standalone + ' | cat',
+            'daemonizing': workload + ' --daemonize',
+            'term-resistant': workload + ' --resist-term',
+            'daemonizing-holder': standalone + ' & exit 0',
+        }
+        for delay in (5, 40):
+            commands['slow' + str(delay)] = ('sleep ' + str(delay) + '; printf executed > '
+                + shlex.quote(str(external_executed)) + '; exec ' + standalone)
+        configuration['general']['externalLockCommand'] = commands[args.external_variant]
+        unconfirmed = args.external_variant in ('existing', 'pipeline', 'daemonizing-holder')
     if args.case == 'hooks':
         configuration['hooks'] = {'enabled': True, 'handlers': {
             'lockAction': {'command': 'printf pre >> ' + shlex.quote(str(marker)) + '; sleep 1', 'exclusive': False},
@@ -187,7 +211,7 @@ def main():
         if args.case == 'hooks':
             ipc('lockerProof', 'overlapHook')
             ipc('lockerProof', 'lockViaHook')
-        expected_role = 'emergency' if args.case in ('opaque', 'slow') else 'real'
+        expected_role = 'emergency' if args.case in ('opaque', 'slow') or (args.case == 'external' and not unconfirmed) else 'real'
         def owner_status():
             return json.loads(ipc('lockOwner', 'status'))
         def secured():
@@ -330,6 +354,25 @@ def main():
             first = inspect()
             assert not first['descriptor']['handoverCommitted'], 'opaque handover'
             assert first['descriptor']['snapshot']['adapter'] == 'opaque'
+        if args.case == 'external':
+            assert first['descriptor']['snapshot']['adapter'] == 'opaque'
+            assert first['descriptor']['snapshot']['command'] == configuration['general']['externalLockCommand']
+            assert not first['descriptor']['handoverCommitted'], 'opaque adapter must not hand over'
+            if not unconfirmed:
+                wait_for(lambda: inspect()['units']['real']['gone'])
+                assert not inspect()['units']['real']['members']
+            if args.external_variant in ('daemonizing', 'term-resistant'):
+                assert {path.name for path in external_members.iterdir()} == {'parent.json', 'child.json'}
+                members = [json.loads(path.read_text()) for path in external_members.iterdir()]
+                for member in members:
+                    process = Path('/proc') / str(member['pid'])
+                    assert not process.exists() or (process / 'stat').read_text().split(') ', 1)[1].split()[19] != member['start'], 'escaped external descendant'
+                (work / 'external-identities.json').write_text(json.dumps(members, indent=2))
+            if args.external_variant in ('slow5', 'slow40'):
+                delay = int(args.external_variant[4:])
+                wait_for(lambda: time.monotonic() > first['descriptor']['units']['real']['startedAt'] + delay + 1, delay + 5)
+                assert not external_executed.exists(), 'opaque delayed locker executed after emergency cancellation'
+                assert inspect()['descriptor']['units']['emergency']['client']['secure']
         if args.case == 'hooks':
             assert marker.read_text() == 'prelock', 'hook not exactly once'
             assert json.loads(ipc('lockerProof', 'completions'))['other'] == 1, 'unrelated callback stolen'
@@ -367,7 +410,10 @@ def main():
                 first = inspect()
             if args.case != 'opaque-crash':
                 assert not owner_status()['secure'], 'opaque refusal was declared secure'
-                assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'opaque refusal discharged suspend'
+                if args.main_shell:
+                    assert not inspect()['descriptor']['suspendPending'], 'external lock unexpectedly requested suspend'
+                else:
+                    assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'opaque refusal discharged suspend'
             assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
         generation = first['descriptor']['generation']
         identity = first['descriptor']['units'][expected_role]['identity']
@@ -460,7 +506,7 @@ def main():
                 wait_for(authenticated_sentinel)
             finally:
                 console.close()
-        if args.case in ('slow', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw'):
+        if args.case in ('slow', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw'):
             time.sleep(10)
             assert inspect()['descriptor']['phase'] == 'settled'
             assert all(item['gone'] and not item['members'] for item in inspect()['units'].values())

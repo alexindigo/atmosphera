@@ -7,6 +7,7 @@ orphan red/green is intentionally separate from main-root install acceptance.
 import argparse
 import json
 from pathlib import Path
+import shlex
 import subprocess
 import time
 
@@ -15,7 +16,8 @@ from locker_test_support import manage, require_guest
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'external', 'orphan-acceptance'), required=True)
+    parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--delay', type=float, default=5)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
@@ -27,7 +29,36 @@ def main():
     if args.case != 'orphan-acceptance' and source != driver:
         parser.error('--source is currently supported only by orphan-acceptance')
     commands = []
-    if args.case == 'orphan-acceptance':
+    if args.case == 'external':
+        # Validate the unchanged PR #21 checker with real side-effecting inputs.
+        # Availability checking must never execute any part of the expression.
+        marker = work / 'checker-side-effect'
+        executable = work / 'checker-executable'
+        executable.write_text('#!/bin/sh\nprintf executed > ' + shlex.quote(str(marker)) + '\n')
+        executable.chmod(0o700)
+        checks = [(str(executable), 'available'),
+                  (str(work / 'nonexistent-checker-executable'), 'missing'),
+                  (str(executable) + '; touch ' + shlex.quote(str(marker)), 'unverified'),
+                  ('sh -c ' + shlex.quote('touch ' + str(marker)), 'available')]
+        for expression, expected in checks:
+            result = subprocess.run(['python3', '-B', str(driver / 'Scripts/python/check-external-command.py'), expression],
+                text=True, capture_output=True, timeout=5, check=True)
+            assert result.stdout.strip() == expected and not marker.exists(), (expression, result.stdout)
+        (work / 'availability.json').write_text(json.dumps({'checks': len(checks), 'sideEffect': marker.exists()}))
+        for variant in args.variants.split(','):
+            command = ['locker-owner-proof.py', '--main-shell', '--case', 'external', '--external-variant', variant]
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append((variant, command))
+        # Preserve the already-defined cooperative and event-driven opaque
+        # checks as part of this entry point, not as claims inferred from units.
+        cooperative = ['locker-owner-proof.py', '--main-shell', '--case', 'slow', '--delay', '5']
+        if args.recover_known_pam_hang:
+            cooperative.append('--recover-known-pam-hang')
+        commands.append(('cooperative', cooperative))
+        for case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw'):
+            commands.append((case, ['locker-owner-proof.py', '--case', case]))
+    elif args.case == 'orphan-acceptance':
         commands.append(('orphan', ['locker-orphan-proof.py', '--source', str(source)]))
     else:
         common = ['locker-owner-proof.py', '--main-shell', '--case', args.case, '--ui', args.ui]
