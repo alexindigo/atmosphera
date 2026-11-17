@@ -16,7 +16,8 @@ from locker_test_support import manage, require_guest
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'external', 'contract', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'external', 'contract', 'restart', 'orphan-acceptance'), required=True)
+    parser.add_argument('--states', default='engaged,starting,fallback,handing-over')
     parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--delay', type=float, default=5)
@@ -58,6 +59,14 @@ def main():
         commands.append(('cooperative', cooperative))
         for case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw'):
             commands.append((case, ['locker-owner-proof.py', '--case', case]))
+    elif args.case == 'restart':
+        for state in args.states.split(','):
+            assert state in ('engaged', 'starting', 'fallback', 'handing-over'), 'unknown restart state'
+            command = ['locker-owner-proof.py', '--main-shell']
+            command += ['--case', 'fast'] if state == 'engaged' else ['--case', 'slow', '--delay', '5', '--restart-state', state]
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append((state, command))
     elif args.case == 'contract':
         for variant in ('normal', 'error', 'no-engagement', 'disappearing'):
             command = ['locker-contract-proof.py', '--variant', variant]

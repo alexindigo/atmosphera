@@ -100,7 +100,7 @@ unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd pro
 is not a real suspend/resume proof.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `external`,
-`contract` and `orphan-acceptance`. Each case requires its own new `--work` directory.
+`contract`, `restart` and `orphan-acceptance`. Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
 passing full matrix from a subset. Framebuffer-dependent cases require the
@@ -109,6 +109,11 @@ exact fork's local VNC port forwarded to the guest and the matching VM name.
 The contract case uses a separately supervised Locker1 service for normal,
 method-error, no-engagement and disappearing-name outcomes. It preserves the
 independent service after owner settlement and observes actual PAM/native unlock.
+
+The restart case cold-starts the actual main shell again while engaged, starting,
+in fallback and after committed emergency retirement. It checks original
+deadlines, same locker invocation/cgroup/generation, continuous compositor/native
+evidence, framebuffer sentinel absence during handover and authenticated cleanup.
 
 The broader boundary/resource/ingress/suspend/load/packaging matrix and
 the separate Hyprland restore-option proofs are not implied by these entry

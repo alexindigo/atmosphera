@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--external-variant', choices=('existing', 'missing', 'slow5', 'slow40', 'nonzero', 'crash', 'pipeline', 'daemonizing', 'term-resistant', 'daemonizing-holder'), default='existing')
     parser.add_argument('--delay', type=float, default=5)
     parser.add_argument('--emergency-auth-before-ready', action='store_true')
+    parser.add_argument('--restart-state', choices=('starting', 'fallback', 'handing-over'))
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--verify-settings', action='store_true')
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
@@ -37,6 +38,8 @@ def main():
         parser.error('slow coverage requires at least 5s; boundary ordering is a separate case')
     if args.emergency_auth_before_ready and args.case != 'slow':
         parser.error('--emergency-auth-before-ready belongs to --case slow')
+    if args.restart_state and (args.case != 'slow' or args.delay >= 30 or args.emergency_auth_before_ready):
+        parser.error('--restart-state needs the cooperative slow handover case')
     source, work = require_guest(args.work, Path(__file__).resolve().parents[2])
     if args.ui == 'demo' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
@@ -179,6 +182,43 @@ def main():
                 return False
         wait_for(ready, 20)
 
+    def restart_at(state):
+        before = inspect()
+        d = before['descriptor']
+        real = d['units']['real']
+        if state == 'starting':
+            assert 'emergency' not in d['units'] and not real['grant']
+            assert not (real.get('client') or {}).get('requested')
+        elif state == 'fallback':
+            assert d['units']['emergency']['client']['secure'] and not d['handoverCommitted']
+            assert not (real.get('client') or {}).get('ready')
+        elif state == 'handing-over':
+            assert d['handoverCommitted'] and before['units']['emergency']['gone']
+            assert not real['grant']
+        else:
+            raise AssertionError(state)
+        previous_owner = owner
+        ipc('lockerProof', 'exit')
+        wait_for(lambda: run(['systemctl', '--user', 'show', unit, '-p', 'ActiveState', '--value']).stdout.strip() == 'inactive')
+        stopped = inspect()
+        assert stopped['descriptor']['generation'] == d['generation']
+        for role, record in d['units'].items():
+            assert stopped['descriptor']['units'][role]['identity'] == record['identity'], 'shell exit replaced a locker invocation'
+        start()
+        def readopted():
+            current = json.loads(ipc('lockOwner', 'status'))
+            return (current.get('descriptor') or {}).get('generation') == d['generation']
+        wait_for(readopted, 10)
+        after = inspect()
+        assert owner != previous_owner, 'main root did not restart'
+        assert after['descriptor']['generation'] == d['generation']
+        for key in ('requestedAt', 'emergencyAt', 'deadline'):
+            assert after['descriptor'][key] == d[key], 'shell restart reset an original deadline'
+        for role, record in d['units'].items():
+            assert after['descriptor']['units'][role]['identity'] == record['identity'], 'adoption launched a duplicate invocation'
+        (work / ('restart-' + state + '.json')).write_text(json.dumps({'previousOwner': previous_owner,
+            'newOwner': owner, 'before': before, 'stopped': stopped, 'after': after}, indent=2))
+
     try:
         observer = subprocess.Popen(['python3', '-B', str(source / 'Scripts/dev/locker-compositor-observer.py'),
                                      '--work', str(work / 'observer')], stdin=subprocess.PIPE,
@@ -211,6 +251,10 @@ def main():
         if args.case == 'hooks':
             ipc('lockerProof', 'overlapHook')
             ipc('lockerProof', 'lockViaHook')
+        if args.restart_state == 'starting':
+            wait_for(lambda: inspect().get('descriptor', {}).get('generation') != old_generation
+                and 'real' in inspect()['descriptor']['units'])
+            restart_at('starting')
         expected_role = 'emergency' if args.case in ('opaque', 'slow') or (args.case == 'external' and not unconfirmed) else 'real'
         def owner_status():
             return json.loads(ipc('lockOwner', 'status'))
@@ -234,6 +278,8 @@ def main():
         if args.case == 'slow':
             assert first['descriptor']['units']['emergency']['startedAt'] >= first['descriptor']['emergencyAt'], 'early emergency deadline'
             assert first['descriptor']['units']['real']['startedAt'] < first['descriptor']['emergencyAt']
+            if args.restart_state == 'fallback':
+                restart_at('fallback')
             if args.emergency_auth_before_ready:
                 # Authenticate immediately, while the selected real workload is
                 # still in its actual delay. Its future exec must be revoked.
@@ -309,6 +355,8 @@ def main():
                     console.capture(work / 'dead-holder.ppm')
                     assert not console.sentinel_visible(), 'unlocked desktop visible during dead-holder handover'
                     (work / 'dead-holder.json').write_text(json.dumps(blank, indent=2))
+                    if args.restart_state == 'handing-over':
+                        restart_at('handing-over')
                     (work / 'release-handover').touch(mode=0o600)
                     expected_role = 'real'
                     wait_for(secured, 15)
