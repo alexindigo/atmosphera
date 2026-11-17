@@ -12,6 +12,8 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlsplit
 
+import action_catalog
+
 VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 SHELL_ROOT = Path(__file__).resolve().parents[2]
 RETIRED = {
@@ -149,10 +151,19 @@ def lint(root, shell=SHELL_ROOT, changes=None, qml_dir="/usr/lib/qt6/qml", paths
             elif not ((path.parent / url.path).is_dir() if name == "wallpapers" else
                       (path.parent / url.path).is_file()):
                 errors.append(f"{path}: {name} entry point missing: {entry}")
+        # Declarative action metadata is a full-catalog contract, including in a
+        # changed-plugin run. Unchanged manifests cannot hide broken actions.
+        errors.extend(f"{path}: {error}" for error in action_catalog.check_plugin(manifest, path.parent, shell))
+        files = sorted(path.parent.rglob("*.qml")) + sorted(path.parent.rglob("*.js"))
+        uses_actions = any(re.search(r"^\s*import\s+qs\.Services\.Actions(?:\s|$)",
+                                     code_only(file.read_text(), lexer), re.M)
+                           for file in files if not file.is_symlink())
+        minimum = version(manifest.get("minAtmospheraVersion"))
+        if uses_actions and (minimum is None or minimum < (0, 9, 4)):
+            errors.append(f"{path}: qs.Services.Actions requires minAtmospheraVersion >= 0.9.4")
         if selected is not None and path.parent.name not in selected:
             continue
         uses_palette = False
-        files = sorted(path.parent.rglob("*.qml")) + sorted(path.parent.rglob("*.js"))
         for file in files:
             if file.is_symlink():
                 errors.append(f"{file}: symlink source is not supported by the lint snapshot")

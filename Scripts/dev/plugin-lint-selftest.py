@@ -95,6 +95,131 @@ class Regression(unittest.TestCase):
         self.assertEqual(self.errors({"checked_plugins": [], "previous_versions": {}}), [])
 
 
+class ActionRegression(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.plugin = self.root / "example"
+        self.plugin.mkdir()
+        self.action = {"id": "show", "label": "Show example", "description": "Show the example.",
+                       "icon": "terminal", "command": "atmosphera ipc plugin:example show"}
+        self.manifest = {"id": "example", "version": "1.0.1", "minAtmospheraVersion": "0.10.0",
+                         "entryPoints": {"main": "Main.qml"}, "actions": [self.action]}
+        self.source = 'import QtQuick\nimport Quickshell.Io\nItem { IpcHandler { target: "plugin:example"; function show() {} } }\n'
+
+    def errors(self, changes=None):
+        (self.plugin / "manifest.json").write_text(json.dumps(self.manifest))
+        (self.plugin / "Main.qml").write_text(self.source)
+        return lint.lint(self.root, changes=changes)
+
+    def has_error(self, text):
+        self.assertTrue(any(text in error for error in self.errors()), text)
+
+    def text_argument(self):
+        return {"name": "message", "label": "Message", "type": "text", "default": "hello"}
+
+    def test_valid_action(self):
+        self.assertEqual(self.errors(), [])
+
+    def test_unknown_key(self):
+        self.action["unknown"] = True
+        self.has_error("unknown action key")
+
+    def test_bad_id(self):
+        self.action["id"] = "Bad"
+        self.has_error("invalid action id")
+
+    def test_missing_icon(self):
+        self.action["icon"] = "this-icon-does-not-exist"
+        self.has_error("missing icon")
+
+    def test_no_main(self):
+        self.manifest["entryPoints"] = {}
+        self.has_error("require entryPoints.main")
+
+    def test_unknown_target(self):
+        self.action["command"] = "atmosphera ipc plugin:missing show"
+        self.has_error("unknown IPC target")
+
+    def test_unknown_function(self):
+        self.action["command"] = "atmosphera ipc plugin:example missing"
+        self.has_error("unknown IPC function")
+
+    def test_arity(self):
+        self.action["arguments"] = [self.text_argument()]
+        self.has_error("arity mismatch")
+
+    def test_bool_parameter(self):
+        self.action["arguments"] = [self.text_argument()]
+        self.source = self.source.replace("function show()", "function show(flag: bool)")
+        self.has_error("unsupported IPC parameter type")
+
+    def test_number_parameter(self):
+        self.action["arguments"] = [{"name": "seconds", "label": "Seconds", "type": "number", "default": 900, "min": 1}]
+        for parameter in ("seconds: int", "seconds: string", "seconds"):
+            self.source = f'import QtQuick\nimport Quickshell.Io\nItem {{ IpcHandler {{ target: "plugin:example"; function show({parameter}) {{}} }} }}\n'
+            self.assertEqual(self.errors(), [])
+
+    def test_duplicate_id(self):
+        self.manifest["actions"].append(dict(self.action))
+        self.has_error("duplicate action id")
+
+    def test_duplicate_core_command(self):
+        self.action["command"] = "atmosphera ipc controlCenter toggle"
+        self.source = self.source.replace("plugin:example", "controlCenter").replace("function show()", "function toggle()")
+        self.has_error("duplicate composed command")
+
+    def test_choice_default(self):
+        self.action["arguments"] = [{"name": "mode", "label": "Mode", "type": "choice", "default": "other",
+                                     "choices": [{"value": "region", "label": "Region"}]}]
+        self.has_error("invalid default")
+
+    def test_number_range(self):
+        self.action["arguments"] = [{"name": "seconds", "label": "Seconds", "type": "number", "default": 0, "min": 1}]
+        self.has_error("invalid default")
+
+    def test_actions_not_a_list(self):
+        self.manifest["actions"] = {}
+        self.has_error("actions must be a list")
+
+    def test_import_minimum(self):
+        self.source = "import qs.Services.Actions as Actions\n" + self.source
+        self.manifest["minAtmospheraVersion"] = "0.9.3"
+        self.has_error("qs.Services.Actions requires")
+        self.manifest["minAtmospheraVersion"] = "0.9.4"
+        self.assertEqual(self.errors(), [])
+
+    def test_commented_import_does_not_require_minimum(self):
+        self.source = "// import qs.Services.Actions\n" + self.source
+        self.manifest["minAtmospheraVersion"] = "0.9.3"
+        self.assertEqual(self.errors(), [])
+
+    def test_unchanged_manifest_is_still_audited(self):
+        self.action["id"] = "Bad"
+        self.assertTrue(any("invalid action id" in error for error in
+                            self.errors({"checked_plugins": [], "previous_versions": {}})))
+
+    def test_scanner_ignores_comments_strings_and_nested_functions(self):
+        self.source = '''import QtQuick
+import Quickshell.Io
+Item {
+  // IpcHandler { target: "wrong"; function show() {} }
+  property string fake: 'IpcHandler { target: "wrong"; function show() {} }'
+  IpcHandler {
+    target: "plugin:example"
+    function show(): string {
+      function nested(flag: bool) {}
+      return "}";
+    }
+  }
+}
+'''
+        self.assertEqual(self.errors(), [])
+        self.action["command"] = "atmosphera ipc plugin:example nested"
+        self.has_error("unknown IPC function")
+
+
 class IndexRegression(unittest.TestCase):
     def snapshot(self, root):
         tree = subprocess.check_output(["git", "-C", str(root), "write-tree"], text=True, timeout=30).strip()
