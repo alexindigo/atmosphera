@@ -15,6 +15,24 @@ release version. Compatibility and changelog identities use only the release
 part. Package-written build identities such as `0.8.0.r12.gabc1234` (including
 pkgrel suffixes) remain supported; they are not bumped API versions.
 
+Version also owns release-note selection and acknowledgment. It reads the bundled
+root `CHANGELOG.md` (`## [x.y.z]` release sections), never a remote upgrade-log
+service. Packaged installs, including packaged -git builds, automatically show
+only nonempty sections newer than the acknowledged release and no newer than
+`VERSION`, subject to `general.showChangelogOnStartup`. Source checkouts never
+open the dialog automatically. OK/close acknowledges the release through Version;
+About and manual viewing share the same content component and bundled history.
+
+The guest-only regression exercises the actual dialog OK path, disk readback,
+cold restart, release upgrades, build identities, missing notes and About:
+
+```sh
+# Inside atmosphera-nm-events on ark.home:
+cd /home/tester/Projects/changelog/source
+export TMPDIR=/home/tester/Projects/changelog/tmp
+timeout 330 python3 -B Scripts/dev/version-regression.py --source "$PWD" --output /home/tester/Projects/changelog/fresh-run
+```
+
 ## Shell identity and recovery
 
 `ShellRegistration` elects one shell per session bus under `app.atmosphera.Shell`.
