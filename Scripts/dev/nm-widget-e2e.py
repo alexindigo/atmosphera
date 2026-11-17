@@ -13,6 +13,34 @@ NM = "org.freedesktop.NetworkManager"
 ROOT = "/org/freedesktop/NetworkManager"
 
 
+def ssid_row(frame, ssid, connected):
+    rows = [row for row in frame["networkRows"] if row["ssid"] == ssid]
+    if len(rows) != 1 or rows[0]["connected"] != connected:
+        return None
+    texts = [text["text"] for text in rows[0]["texts"]]
+    return frame if ssid in texts and ("Connected" in texts) == connected else None
+
+
+def ssid_row_canaries():
+    ssid = "toString"
+    def frame(connected, *texts):
+        return {"networkRows": [{"ssid": ssid, "connected": connected,
+                                 "texts": [{"text": text} for text in texts]}]}
+    for connected in (False, True):
+        for label in (False, True):
+            candidate = frame(connected, ssid, *(["Connected"] if label else []))
+            assert bool(ssid_row(candidate, ssid, connected)) == (label == connected), (connected, label)
+        assert ssid_row(frame(connected, ssid), ssid, not connected) is None
+        assert ssid_row(frame(connected, "another SSID"), ssid, connected) is None
+    duplicate = frame(False, ssid)
+    duplicate["networkRows"] *= 2
+    assert ssid_row(duplicate, ssid, False) is None
+    separate = frame(True, ssid)
+    separate["networkRows"].append(frame(True, "Connected")["networkRows"][0] | {"ssid": "another SSID"})
+    assert ssid_row(separate, ssid, True) is None
+    return True
+
+
 def controlled_actions(profile, work, restart=False):
     owner = GuestRun(profile, work)
     shell = None
@@ -88,13 +116,6 @@ def controlled_network(profile, work):
             frame = shell.panel_frame()
             strings = [t["text"] for t in frame["texts"]]
             return frame if all(any(value in text for text in strings) for value in expected) else None
-        def ssid_row(ssid, connected):
-            frame = shell.panel_frame()
-            rows = [row for row in frame["networkRows"] if row["ssid"] == ssid]
-            if len(rows) != 1 or rows[0]["connected"] != connected:
-                return None
-            texts = [text["text"] for text in rows[0]["texts"]]
-            return frame if ssid in texts and (not connected or "Connected" in texts) else None
         frame = wait_for(lambda: text_frame("Controlled Wi-Fi"), "controlled AP reaches real NetworkPanel")
         owner.check("controlled-production-network-panel-ap", frame["visible"], frame=frame)
         shell.ipc("nmWifiDetails", "details", "Controlled Wi-Fi", "4")
@@ -160,7 +181,7 @@ def controlled_network(profile, work):
                     "Strength": ["y", 90], "Frequency": ["u", 5180], "Flags": ["u", 0], "WpaFlags": ["u", 0], "RsnFlags": ["u", 0]})
         bus.control("change", path=device, iface=NM + ".Device.Wireless", props={"AccessPoints": [ap, visible_ap]})
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": []})
-        frame = wait_for(lambda: ssid_row(ssid, True), "one rendered hidden-AP row owns both SSID and Connected state")
+        frame = wait_for(lambda: ssid_row(shell.panel_frame(), ssid, True), "one rendered hidden-AP row owns both SSID and Connected state")
         owner.check("hidden-empty-ap-saved-ssid-rendered", frame["visible"], frame=frame)
         owner.check("wifi-profile-name-preserved", shell.state()["profiles"][saved]["id"] == name)
         bus.control("change", path=device, iface=NM + ".Device", props={"State": 30})
@@ -169,7 +190,7 @@ def controlled_network(profile, work):
         owner.check("non-utf8-ssid-rendered", frame["visible"], frame=frame)
         for ssid in ("toString", "constructor", "__proto__"):
             bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(ssid.encode())})
-            frame = wait_for(lambda: ssid_row(ssid, False), "reserved-name SSID rendered in its own row")
+            frame = wait_for(lambda: ssid_row(shell.panel_frame(), ssid, False), "reserved-name SSID rendered in its own row")
             owner.check("arbitrary-ssid-key-rendered-" + ssid, frame["visible"], frame=frame)
         # Profile names are strings, not ay. Verify the real VPN menu still
         # renders them after the SSID fixture has exercised empty byte buffers.

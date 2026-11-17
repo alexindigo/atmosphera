@@ -118,6 +118,8 @@ def main():
     try:
         wire = runpy.run_path(str(SOURCE / "Scripts/dev/nm-idle-wire.py"))
         owner.check("wire-classifier-positive-negative-malformed-canaries", wire["parser_canaries"]())
+        widget = runpy.run_path(str(SOURCE / "Scripts/dev/nm-widget-e2e.py"))
+        owner.check("rendered-ssid-row-state-and-label-canaries", widget["ssid_row_canaries"]())
         analysis = analysis_canaries()
         owner.check("memory-full-scale-analysis-canaries", analysis["sampleCount"] == 121 and not analysis["historicalPlusMinus20MiB"], analysis=analysis)
         review_canaries(owner, args.guest_profile)
