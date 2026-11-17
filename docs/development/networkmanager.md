@@ -39,6 +39,9 @@ Qt can reject a view of the null backing store of an empty `QByteArray`. Absent
 and empty values yield an empty SSID. Non-empty bytes retain the library's UTF-8
 decoding, with replacement characters for invalid sequences. Profile display
 names are NM strings and never pass through a byte decoder.
+SSID-keyed facade maps have null prototypes from initialization through
+projection, so names such as `toString`, `constructor` and `__proto__` are data,
+not inherited members. Controlled tests require their actual rendered rows.
 
 Enterprise certificate settings use NM's byte-array path scheme: an absolute
 CA certificate path becomes `file://` plus its UTF-8 path and a NUL terminator.

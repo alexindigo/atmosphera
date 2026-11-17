@@ -183,6 +183,22 @@ def main():
         shapes = json.loads(ipc("ssidShapes", PROFILE).stdout)
         owner.check("ssid-js-array-buffer-and-absent-shapes", shapes == ["", "", "", "", "A\u00e9", "A\u00e9", "\ufffd\ufffdA"], shapes=shapes)
         bus.control("remove", path=second_profile)
+        for path in (device, other):
+            bus.control("change", path=path, iface=NM + ".Device", props={"State": 30})
+        until(lambda s: not any(d["connected"] for d in s["devices"].values()), "disconnected SSID key controls")
+        for ssid in ("toString", "constructor", "__proto__"):
+            bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(ssid.encode())})
+            snapshot = until(lambda s: s["aps"][ap]["ssid"] == ssid, "reserved-name SSID reaches AP record")
+            owner.check("arbitrary-ssid-key-visible-" + ssid,
+                        snapshot["network"]["networks"].get(ssid, {}).get("ssid") == ssid
+                        and snapshot["network"]["networks"][ssid]["existing"] is False, state=snapshot)
+            bus.control("settings", path=PROFILE, settings=profile("Saved " + ssid, "802-11-wireless", ssid))
+            snapshot = until(lambda s: s["profiles"].get(PROFILE, {}).get("ssid") == ssid, "reserved-name saved SSID")
+            owner.check("arbitrary-ssid-key-saved-" + ssid,
+                        snapshot["network"]["profiles"].get(ssid) is True and snapshot["network"]["networks"][ssid]["existing"] is True,
+                        state=snapshot)
+        for path in (device, other):
+            bus.control("change", path=path, iface=NM + ".Device", props={"State": 100})
         bus.control("settings", path=PROFILE, settings=profile("Burst final"))
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(b"Fixture")})
         until(lambda s: s["profiles"].get(PROFILE, {}).get("id") == "Burst final"

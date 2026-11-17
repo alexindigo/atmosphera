@@ -61,7 +61,7 @@ Singleton {
   property string activeEthernetIf: ""
   property bool ethernetDetailsLoading: false
   property double activeEthernetDetailsTimestamp: 0
-  property var networks: ({})
+  property var networks: Object.create(null)
   property var activeWifiDetails: ({})
   property bool wifiConnected: false
   property string activeWifiIf: ""
@@ -74,9 +74,9 @@ Singleton {
   property string forgettingNetwork: ""
   property bool scanPending: false
   property bool scanningActive: false
-  property var existingProfiles: ({})
-  property var _profileChoices: ({})
-  property var _apPaths: ({})
+  property var existingProfiles: Object.create(null)
+  property var _profileChoices: Object.create(null)
+  property var _apPaths: Object.create(null)
   property bool airplaneModeEnabled: false
   property bool airplaneModeToggled: false
   readonly property var _devices: NmState.devices
@@ -312,7 +312,7 @@ Singleton {
     _projectWifi();
   }
   function _projectProfiles() {
-    var existing = {}, choices = {};
+    var existing = Object.create(null), choices = Object.create(null);
     for (var profile of Object.values(NmState.profiles)) {
       if (profile.ssid || profile.id)
         existing[profile.ssid || profile.id] = true;
@@ -329,7 +329,7 @@ Singleton {
     _profileChoices = choices;
   }
   function _projectWifi() {
-    var result = {}, paths = {}, devicePath = _activeWifiDevicePath(), device = _devices[devicePath];
+    var result = Object.create(null), paths = Object.create(null), devicePath = _activeWifiDevicePath(), device = _devices[devicePath];
     if (wifiEnabled && device)
       for (var path of device.accessPoints || []) {
         var ap = NmState.accessPoints[path];

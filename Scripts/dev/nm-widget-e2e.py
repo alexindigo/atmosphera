@@ -88,6 +88,13 @@ def controlled_network(profile, work):
             frame = shell.panel_frame()
             strings = [t["text"] for t in frame["texts"]]
             return frame if all(any(value in text for text in strings) for value in expected) else None
+        def ssid_row(ssid, connected):
+            frame = shell.panel_frame()
+            rows = [row for row in frame["networkRows"] if row["ssid"] == ssid]
+            if len(rows) != 1 or rows[0]["connected"] != connected:
+                return None
+            texts = [text["text"] for text in rows[0]["texts"]]
+            return frame if ssid in texts and (not connected or "Connected" in texts) else None
         frame = wait_for(lambda: text_frame("Controlled Wi-Fi"), "controlled AP reaches real NetworkPanel")
         owner.check("controlled-production-network-panel-ap", frame["visible"], frame=frame)
         shell.ipc("nmWifiDetails", "details", "Controlled Wi-Fi", "4")
@@ -153,13 +160,17 @@ def controlled_network(profile, work):
                     "Strength": ["y", 90], "Frequency": ["u", 5180], "Flags": ["u", 0], "WpaFlags": ["u", 0], "RsnFlags": ["u", 0]})
         bus.control("change", path=device, iface=NM + ".Device.Wireless", props={"AccessPoints": [ap, visible_ap]})
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": []})
-        frame = wait_for(lambda: text_frame(ssid, "Connected"), "hidden AP overrides disconnected namesake in real panel")
+        frame = wait_for(lambda: ssid_row(ssid, True), "one rendered hidden-AP row owns both SSID and Connected state")
         owner.check("hidden-empty-ap-saved-ssid-rendered", frame["visible"], frame=frame)
         owner.check("wifi-profile-name-preserved", shell.state()["profiles"][saved]["id"] == name)
         bus.control("change", path=device, iface=NM + ".Device", props={"State": 30})
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": [255, 128, 65]})
         frame = wait_for(lambda: text_frame("\ufffd\ufffdA"), "non-UTF-8 AP rendered with replacement characters")
         owner.check("non-utf8-ssid-rendered", frame["visible"], frame=frame)
+        for ssid in ("toString", "constructor", "__proto__"):
+            bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(ssid.encode())})
+            frame = wait_for(lambda: ssid_row(ssid, False), "reserved-name SSID rendered in its own row")
+            owner.check("arbitrary-ssid-key-rendered-" + ssid, frame["visible"], frame=frame)
         # Profile names are strings, not ay. Verify the real VPN menu still
         # renders them after the SSID fixture has exercised empty byte buffers.
         bus.control("settings", path=ROOT + "/Settings/1", settings={"connection": {

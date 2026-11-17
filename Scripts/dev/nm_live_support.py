@@ -124,12 +124,21 @@ PANEL_PROBE = r'''
     for (var child of item.children || []) result = result.concat(nmTestTexts(child));
     return result;
   }
+  function nmTestNetworkRows(item) {
+    if (!item.visible || item.opacity === 0) return [];
+    if (typeof item.nmTestNetworkRow === "function" && item.width > 0 && item.height > 0)
+      return [Object.assign(item.nmTestNetworkRow(), {texts: mainColumn.nmTestTexts(item)})];
+    var result = [];
+    for (var child of item.children || []) result = result.concat(mainColumn.nmTestNetworkRows(child));
+    return result;
+  }
   FrameAnimation {
     running: mainColumn.nmTestCaptured !== mainColumn.nmTestRequested
     onTriggered: Qt.callLater(function () {
       mainColumn.nmTestFrame = {sequence: mainColumn.nmTestRequested,
-        visible: root.isPanelVisible && root.effectivelyVisible,
-        mode: root.panelViewMode, texts: mainColumn.nmTestTexts(mainColumn),
+         visible: root.isPanelVisible && root.effectivelyVisible,
+         mode: root.panelViewMode, texts: mainColumn.nmTestTexts(mainColumn),
+         networkRows: mainColumn.nmTestNetworkRows(mainColumn),
         scanning: NetworkService.scanningActive, error: NetworkService.lastError};
       mainColumn.nmTestCaptured = mainColumn.nmTestRequested;
     })
@@ -285,6 +294,9 @@ class LiveShell:
     function details(ssid: string, version: int) { root.infoSsid = ssid; root.ipVersion = version; }
   }
 ''', imports="import Quickshell.Io\n")
+        inject("Modules/Panels/Settings/Tabs/Connections/WifiSubTab.qml", r'''
+  function nmTestNetworkRow() { return {ssid: modelData.ssid, connected: modelData.connected}; }
+''', root_id="networkItem")
         nm_path = self.shell / "Services/Networking/NmState.qml"
         text = inject_probe(nm_path.read_text(), "property int nmTestSeeds: 0", root_id="root")
         anchor = "function _listProfiles() {"
