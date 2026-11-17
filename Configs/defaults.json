@@ -69,6 +69,8 @@
         }
       ]
     },
+    "edgeScrolling": true,
+    "edgeScrollHoldMs": 600,
     "mouseWheelAction": "none",
     "reverseScroll": false,
     "mouseWheelWrap": true,

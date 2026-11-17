@@ -191,6 +191,7 @@
     {"path": ["desktopWidgets", "iconBlendStrength"], "type": "Real"},
     {"path": ["desktopWidgets", "iconHueAdjustment"], "type": "Real"},
     {"path": ["desktopWidgets", "widgetContentPadding"], "type": "Real"},
+    {"path": ["bar", "edgeScrollHoldMs"], "type": "Integer", "minimum": 200, "maximum": 1000},
     {"path": ["bindings", "environment"], "choices": ["none", "macos"]},
     {"path": ["wallpaper", "fillColor"], "ref": "color"},
     {"path": ["wallpaper", "solidColor"], "ref": "color"},

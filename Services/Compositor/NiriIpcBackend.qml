@@ -1,5 +1,6 @@
 import Niri 1.0
 import QtQuick
+import "../../Helpers/NiriEdgeNavigation.js" as EdgeNavigation
 import qs.Commons
 import qs.Services.Keyboard
 
@@ -470,6 +471,98 @@ Item {
       });
     } catch (e) {
       Logger.e("NiriService", "Failed to scroll workspace content:", e);
+    }
+  }
+
+  property bool _edgeNavigationBusy: false
+
+  // One navigation transaction at a time, with no stale repeat backlog. Native
+  // replies have bounded timeouts. Handled acknowledges processing, not motion:
+  // only the following authoritative snapshot can report a moved target.
+  function navigateEdge(output, edge, requestId, completed) {
+    if (_edgeNavigationBusy) {
+      completed({
+                  requestId: requestId,
+                  outcome: "unknown"
+                });
+      return;
+    }
+    _edgeNavigationBusy = true;
+    var finished = false;
+    function finish(outcome) {
+      if (finished)
+        return;
+      finished = true;
+      root._edgeNavigationBusy = false;
+      completed({
+                  requestId: requestId,
+                  outcome: outcome
+                });
+    }
+    function receive(reply, consume) {
+      reply.finished.connect(function () {
+        if (reply.isError) {
+          Logger.w("NiriIpcBackend", "Edge navigation failed:", reply.error.message);
+          finish("error");
+        } else {
+          try {
+            consume(reply.value);
+          } catch (error) {
+            Logger.w("NiriIpcBackend", "Edge navigation failed:", error);
+            finish("error");
+          }
+        }
+      });
+    }
+    function snapshot(consume) {
+      receive(NiriRequests.workspaces(), function (workspaceList) {
+        var snapshotWorkspaces = Array.from(workspaceList).map(root.extractWorkspace);
+        receive(NiriRequests.windows(), function (windowList) {
+          consume(snapshotWorkspaces, Array.from(windowList).map(root.extractWindow));
+        });
+      });
+    }
+    function navigate() {
+      // Re-resolve after output focus, not from event-stream cache. Include the
+      // actual trailing empty workspace, never an occupied-only projection.
+      snapshot(function (workspaceList, windowList) {
+        var target = EdgeNavigation.resolve(output, edge, workspaceList, windowList);
+        if (target.kind !== "navigate") {
+          finish(target.kind);
+          return;
+        }
+        var actions = {
+          left: "FocusColumnLeft",
+          right: "FocusColumnRight",
+          top: "FocusWorkspaceUp",
+          bottom: "FocusWorkspaceDown"
+        };
+        var action = {};
+        action[actions[edge]] = {};
+        receive(NiriActions.sendAction(action), function () {
+          snapshot(function (afterWorkspaces, afterWindows) {
+            finish(EdgeNavigation.outcome(target, afterWorkspaces, afterWindows));
+          });
+        });
+      });
+    }
+    try {
+      receive(NiriRequests.workspaces(), function (workspaceList) {
+        var focused = Array.from(workspaceList).find(function (ws) {
+          return ws.isFocused;
+        });
+        if (focused && focused.output === output)
+          navigate();
+        else
+          receive(NiriActions.sendAction({
+                                           FocusMonitor: {
+                                             output: output
+                                           }
+                                         }), navigate);
+      });
+    } catch (error) {
+      Logger.w("NiriIpcBackend", "Edge navigation failed:", error);
+      finish("error");
     }
   }
 

@@ -1,8 +1,8 @@
 {
   "format": 1,
   "inputs": {
-    "Configs/defaults.json": "fb940a326872df6351c243d35b665af137e9783459164a1fc5ffdbd25bd70435",
-    "Configs/settings-schema-overlay.json": "c8689dd8043059820332e416b923436426f11ff5987e7b89a36d79e449af81aa"
+    "Configs/defaults.json": "1043f2684262d697308f05a20187ab8ab0b128d7bc3e8738060b7bbf82ec8db7",
+    "Configs/settings-schema-overlay.json": "3a08c81ea6dac1ec06a3ef25f5153c5be1128c09bb2808dc5d77740be7f85747"
   },
   "paths": [
     {
@@ -359,6 +359,22 @@
         "displayMode"
       ],
       "type": "String"
+    },
+    {
+      "maximum": 1000,
+      "minimum": 200,
+      "path": [
+        "bar",
+        "edgeScrollHoldMs"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "edgeScrolling"
+      ],
+      "type": "Boolean"
     },
     {
       "path": [

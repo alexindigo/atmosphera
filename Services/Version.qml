@@ -82,6 +82,7 @@ Singleton {
         root.isGitVersion = root.classifyIsGitVersion(stripped);
         root.versionFromPackage = fromPackage;
         Logger.i("Version", "Detected installed version:", stripped, "(git:", root.isGitVersion + ", packaged:", root.versionFromPackage + ")");
+        root.resumeChangelogRequests();
       } else {
         Logger.i("Version", "No VERSION file — using fallback version:", root.currentVersion);
       }
@@ -431,30 +432,89 @@ Singleton {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // Changelog UX (upgrade log fetching + popup orchestration)
-
-  // URLs
-  readonly property string upgradeLogBaseUrl: Quickshell.env("ATMOSPHERA_UPGRADELOG_URL") || ""
+  // Changelog ownership: bundled release sections, eligibility and acknowledgment.
+  // UI surfaces only request notes or forward dismissal; build hashes never
+  // participate in release selection or the durable seen marker.
 
   // Changelog properties
   property bool initialized: false
-  property bool changelogPending: false
-  property string changelogFromVersion: ""
-  property string changelogToVersion: ""
   property string previousVersion: ""
   property string changelogCurrentVersion: ""
-  property string releaseContent: ""
+  property var changelogSections: []
+  property bool changelogNotesLoaded: false
+  readonly property string releaseContent: versionKnown ? notesForRange(previousVersion, currentReleaseVersion) : ""
   property string lastShownVersion: ""
   property bool popupScheduled: false
-  property string fetchError: ""
   property string changelogLastSeenVersion: ""
   property bool changelogStateLoaded: false
   property bool pendingShowRequest: false
+  property bool pendingViewRequest: false
+  property var viewChangelogTargetScreen: null
 
   // Fix for FileView race condition
   property bool saveInProgress: false
   property bool pendingSave: false
-  property int saveDebounceTimer: 0
+
+  FileView {
+    path: Quickshell.shellPath("CHANGELOG.md")
+    printErrors: false
+    watchChanges: false
+    onLoaded: {
+      root.changelogSections = root.parseChangelog(text());
+      root.changelogNotesLoaded = true;
+      root.resumeChangelogRequests();
+    }
+    onLoadFailed: {
+      root.changelogSections = [];
+      root.changelogNotesLoaded = true;
+      root.resumeChangelogRequests();
+    }
+  }
+
+  // Preserve each complete release section, excluding headings without notes.
+  // Unreleased/future entries and dated subheadings are not release identities.
+  function parseChangelog(markdown) {
+    const headings = /^##\s+\[v?(\d+\.\d+\.\d+)\][^\n]*$/gm;
+    const sections = [];
+    let previous = null;
+    let match;
+    while ((match = headings.exec(markdown)) !== null) {
+      if (previous && markdown.slice(previous.body, match.index).trim())
+        sections.push({
+                        version: previous.version,
+                        content: markdown.slice(previous.start, match.index).trim()
+                      });
+      previous = {
+        version: match[1],
+        start: match.index,
+        body: headings.lastIndex
+      };
+    }
+    if (previous && markdown.slice(previous.body).trim())
+      sections.push({
+                      version: previous.version,
+                      content: markdown.slice(previous.start).trim()
+                    });
+    return sections.sort((a, b) => compareVersions(b.version, a.version));
+  }
+
+  function notesForRange(fromVersion, toVersion) {
+    if (!toVersion)
+      return "";
+    return changelogSections.filter(section => compareVersions(section.version, toVersion) <= 0 && (!fromVersion || compareVersions(section.version, fromVersion) > 0)).map(section => section.content).join("\n\n");
+  }
+
+  function resumeChangelogRequests() {
+    if (!versionKnown || !changelogNotesLoaded)
+      return;
+    if (pendingViewRequest) {
+      pendingViewRequest = false;
+      viewChangelog(viewChangelogTargetScreen);
+    } else if (pendingShowRequest && changelogStateLoaded) {
+      pendingShowRequest = false;
+      showLatestChangelog();
+    }
+  }
 
   Connections {
     target: PanelService
@@ -500,82 +560,6 @@ Singleton {
     interval: 300
     repeat: false
     onTriggered: executeSave()
-  }
-
-  function handleChangelogRequest() {
-    const fromVersion = ensureVersionPrefix(releaseVersion(changelogFromVersion));
-    const toVersion = ensureVersionPrefix(releaseVersion(changelogToVersion));
-
-    if (Settings.shouldOpenSetupWizard) {
-      // If you'll see the setup wizard then you don't need to see the changelog
-      markChangelogSeen(toVersion);
-      return;
-    }
-
-    if (!toVersion)
-      return;
-
-    if (popupScheduled && changelogCurrentVersion === toVersion)
-      return;
-
-    if (!popupScheduled && lastShownVersion === toVersion)
-      return;
-
-    previousVersion = fromVersion;
-    changelogCurrentVersion = toVersion;
-
-    // Fetch the upgrade log from the server
-    fetchUpgradeLog(fromVersion, toVersion);
-
-    popupScheduled = true;
-    root.popupQueued(previousVersion, changelogCurrentVersion);
-
-    clearChangelogRequest();
-  }
-
-  function fetchUpgradeLog(fromVersion, toVersion) {
-    // Normalize and ensure "v" prefix for consistent URL format
-    let from = ensureVersionPrefix(releaseVersion(fromVersion || changelogLastSeenVersion || "3.0.0"));
-    let to = ensureVersionPrefix(releaseVersion(toVersion));
-
-    // 'from' always needs to be before 'to' (use semantic comparison)
-    if (compareVersions(from, to) >= 0) {
-      from = "v3.0.0";
-    }
-
-    const url = `${upgradeLogBaseUrl}/${from}/${to}`;
-    Logger.i("Version", "Fetching upgrade log:", url);
-    const request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        Logger.d("Version", "Request completed with status:", request.status);
-        Logger.d("Version", "Response text length:", request.responseText ? request.responseText.length : 0);
-
-        if (request.status >= 200 && request.status < 300) {
-          releaseContent = request.responseText || "";
-          Logger.d("Version", "Successfully fetched upgrade log");
-          fetchError = "";
-          openWhenReady();
-        } else {
-          Logger.w("Version", "Failed to fetch upgrade log, status:", request.status);
-          releaseContent = "";
-
-          if (request.status === 404) {
-            // Changelog not available for this version range - skip silently
-            Logger.w("Version", "Changelog not found, skipping display");
-            fetchError = "";
-            popupScheduled = false;
-            markChangelogSeen(toVersion);
-          } else {
-            // Network error or server issue - show error to user
-            fetchError = I18n.tr("changelog.error.fetch-failed");
-            openWhenReady();
-          }
-        }
-      }
-    };
-    request.open("GET", url);
-    request.send();
   }
 
   function normalizeVersion(version) {
@@ -624,18 +608,12 @@ Singleton {
 
   // Called by shell.qml to show changelog after init
   function checkChangelogPrompt() {
-    Logger.d("Version", "checkChangelogPrompt called, stateLoaded:", changelogStateLoaded);
-    if (!changelogStateLoaded) {
-      Logger.d("Version", "State not loaded yet, setting pending flag");
-      pendingShowRequest = true;
-      return;
-    }
-
-    showLatestChangelog();
+    pendingShowRequest = true;
+    resumeChangelogRequests();
   }
 
   function openWhenReady() {
-    if (!popupScheduled)
+    if (!popupScheduled || !releaseContent.trim())
       return;
 
     if (!Quickshell.screens || Quickshell.screens.length === 0) {
@@ -677,10 +655,7 @@ Singleton {
   }
 
   function showLatestChangelog() {
-    if (!currentVersion)
-      return;
-
-    if (!changelogStateLoaded) {
+    if (!versionKnown || !changelogStateLoaded || !changelogNotesLoaded) {
       pendingShowRequest = true;
       return;
     }
@@ -688,49 +663,49 @@ Singleton {
     const lastSeen = ensureVersionPrefix(releaseVersion(changelogLastSeenVersion));
     const target = ensureVersionPrefix(currentReleaseVersion);
 
-    if (lastSeen === target)
+    // Packaged -git builds are releases for this UX; source checkouts are not.
+    if (!target || !versionFromPackage || Settings.shouldOpenSetupWizard || !Settings.data.general.showChangelogOnStartup)
       return;
-
-    if (!Settings.data.general.showChangelogOnStartup) {
-      // user has opted out of seeing changelogs, mark as seen
-      markChangelogSeen(target);
+    if (lastSeen && compareVersions(lastSeen, target) >= 0)
       return;
-    }
-
-    changelogFromVersion = lastSeen;
-    changelogToVersion = target;
-    changelogPending = true;
-    handleChangelogRequest();
+    if (lastShownVersion === target || popupScheduled || !notesForRange(lastSeen, target).trim())
+      return;
+    previousVersion = lastSeen;
+    changelogCurrentVersion = target;
+    popupScheduled = true;
+    root.popupQueued(previousVersion, target);
+    openWhenReady();
   }
 
-  // Manual changelog viewing (e.g., from Settings > About > View Changelog)
-  // Shows all changes since v3.0.0, unlike showLatestChangelog() which uses lastSeenVersion
-  property var viewChangelogTargetScreen: null
+  // About and the manual dialog use all bundled sections up to this release,
+  // independent of acknowledgment and checkout/package provenance.
+  function loadChangelog() {
+    previousVersion = "";
+    changelogCurrentVersion = versionKnown ? ensureVersionPrefix(currentReleaseVersion) : "";
+  }
 
   function viewChangelog(screen) {
-    if (!currentVersion)
-      return;
-
-    const target = ensureVersionPrefix(currentReleaseVersion);
-    const fromVersion = "v3.8.2";
-
-    previousVersion = fromVersion;
-    changelogCurrentVersion = target;
     viewChangelogTargetScreen = screen || null;
-    popupScheduled = true;
-    fetchUpgradeLog(fromVersion, target);
+    pendingShowRequest = false;
+    if (!versionKnown || !changelogNotesLoaded) {
+      pendingViewRequest = true;
+      return;
+    }
+    loadChangelog();
+    popupScheduled = releaseContent.trim() !== "";
+    openWhenReady();
   }
 
-  function clearChangelogRequest() {
-    changelogPending = false;
-    changelogFromVersion = "";
-    changelogToVersion = "";
+  function dismissChangelog() {
+    if (releaseContent.trim())
+      markChangelogSeen(changelogCurrentVersion);
   }
 
   function markChangelogSeen(version) {
-    if (!version)
+    const release = ensureVersionPrefix(releaseVersion(version));
+    if (!release || (changelogLastSeenVersion && compareVersions(release, changelogLastSeenVersion) < 0))
       return;
-    changelogLastSeenVersion = ensureVersionPrefix(releaseVersion(version));
+    changelogLastSeenVersion = release;
     debouncedSaveChangelogState();
   }
 
@@ -746,10 +721,7 @@ Singleton {
     }
     changelogStateLoaded = true;
 
-    if (pendingShowRequest) {
-      pendingShowRequest = false;
-      Qt.callLater(root.showLatestChangelog);
-    }
+    resumeChangelogRequests();
   }
 
   function debouncedSaveChangelogState() {

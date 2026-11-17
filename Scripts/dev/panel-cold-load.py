@@ -108,7 +108,7 @@ def main():
     args = parser.parse_args()
     source = args.source.resolve()
     work = args.workspace.resolve()
-    check_execution_paths(parser, work)
+    check_execution_paths(parser, work, source=source)
     work.mkdir()  # Preserve earlier runs instead of replacing their evidence.
     shell = work / "shell"
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.bak"))

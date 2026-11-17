@@ -14,6 +14,56 @@ ColumnLayout {
   readonly property string effectiveMiddleClickAction: Settings.data.bar.middleClickAction || "none"
   readonly property string effectiveRightClickAction: Settings.data.bar.rightClickAction || "controlCenter"
 
+  ColumnLayout {
+    objectName: "edgeScrollingSettings"
+    Layout.fillWidth: true
+    spacing: Style.marginL
+    visible: CompositorService.isNiri
+
+    NBox {
+      objectName: "edgeScrollingNotice"
+      Layout.fillWidth: true
+      implicitHeight: edgeScrollNotice.implicitHeight + Style.marginL * 2
+      visible: Settings.data.bar.barType !== "framed"
+
+      NText {
+        id: edgeScrollNotice
+        anchors.fill: parent
+        anchors.margins: Style.marginL
+        text: I18n.tr("panels.bar.edge-scrolling-framed-notice")
+        wrapMode: Text.WordWrap
+      }
+    }
+
+    NToggle {
+      objectName: "edgeScrollingToggle"
+      Layout.fillWidth: true
+      label: I18n.tr("panels.bar.edge-scrolling-label")
+      description: I18n.tr("panels.bar.edge-scrolling-description")
+      enabled: Settings.data.bar.barType === "framed"
+      checked: Settings.data.bar.edgeScrolling
+      defaultValue: Settings.getDefaultValue("bar.edgeScrolling")
+      onToggled: checked => Settings.data.bar.edgeScrolling = checked
+    }
+
+    NValueSlider {
+      objectName: "edgeScrollHoldSlider"
+      Layout.fillWidth: true
+      label: I18n.tr("panels.bar.edge-scroll-hold-label")
+      description: I18n.tr("panels.bar.edge-scroll-hold-description", {
+                             repeat: Math.round(Settings.data.bar.edgeScrollHoldMs * 1.5)
+                           })
+      enabled: Settings.data.bar.barType === "framed"
+      from: 200
+      to: 1000
+      stepSize: 10
+      value: Settings.data.bar.edgeScrollHoldMs
+      defaultValue: Settings.getDefaultValue("bar.edgeScrollHoldMs")
+      text: String(Math.round(value))
+      onMoved: value => Settings.data.bar.edgeScrollHoldMs = Math.round(value)
+    }
+  }
+
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("panels.bar.behavior-workspace-scroll-label")

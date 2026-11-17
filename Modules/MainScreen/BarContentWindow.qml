@@ -199,6 +199,20 @@ PanelWindow {
   implicitWidth: barIsVertical ? barHeight : barWindow.screen.width
   implicitHeight: barIsVertical ? barWindow.screen.height : barHeight
 
+  // The bar has its own surface above MainScreen. Observe its part of the same
+  // screen-local zones as well, so its outer row works without an input overlay.
+  EdgeScrollSensors {
+    observationItem: barWindow.contentItem
+    originX: barWindow.barPosition === "right" ? barWindow.screen.width - barWindow.width - barWindow.margins.right : barWindow.margins.left
+    originY: barWindow.barPosition === "bottom" ? barWindow.screen.height - barWindow.height - barWindow.margins.bottom : barWindow.margins.top
+    zones: EdgeScrollService.zonesForScreen(barWindow.screen?.name || "")
+    active: EdgeScrollService.enabled && barWindow.visible
+    includeInputRegions: false
+    onZoneEntered: (zone, buttons, source) => EdgeScrollService.enter(zone, buttons, source)
+    onZoneLeft: (key, source) => EdgeScrollService.leave(key, source)
+    onButtonsChanged: buttons => EdgeScrollService.buttonsChanged(buttons)
+  }
+
   // Bar content loader - loaded once, stays active for lifetime
   Loader {
     id: barLoader

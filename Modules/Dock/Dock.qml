@@ -727,6 +727,26 @@ Loader {
           implicitHeight: isVertical ? peekEdgeLength : peekThickness
           implicitWidth: isVertical ? peekThickness : peekEdgeLength
 
+          // Read-only publication of this surface's existing anchor recipe.
+          // The peek surface remains the sole owner of reveal geometry/input.
+          readonly property var revealRect: ({
+                                               x: dockPosition === "right" ? screen.width - width : margins.left,
+                                               y: dockPosition === "bottom" ? screen.height - height : margins.top,
+                                               width: width,
+                                               height: height
+                                             })
+          readonly property bool publishesReveal: autoHide && visible
+          function publishReveal() {
+            if (publishesReveal)
+              DockGeometryService.publishReveal(peekWindow, screen?.name || "", revealRect);
+            else
+              DockGeometryService.removeReveal(peekWindow, screen?.name || "");
+          }
+          onRevealRectChanged: publishReveal()
+          onPublishesRevealChanged: publishReveal()
+          Component.onCompleted: publishReveal()
+          Component.onDestruction: DockGeometryService.removeReveal(peekWindow, screen?.name || "")
+
           MouseArea {
             id: peekArea
             anchors.fill: parent
