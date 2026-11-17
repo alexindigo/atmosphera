@@ -191,6 +191,32 @@ class Session:
         prefix = {'real': 'atmosphera-lockscreen-', 'emergency': 'atmosphera-emergency-lock-'}.get(role, 'atmosphera-lock-' + role + '-')
         return prefix + self.escaped + '.service'
 
+    def write_settings(self, data, settings_json):
+        if not isinstance(settings_json, str) or not isinstance(json.loads(settings_json), dict):
+            raise Refused('settings view must be an encoded object')
+        path = self.root / (self.escaped + '-' + data['generation'] + '.settings.json')
+        revision = data.get('settingsRevision', 0) + 1
+        header = json.dumps({'schema': 1, 'session': self.session, 'generation': data['generation'],
+                             'revision': str(revision)}, separators=(',', ':'))
+        # Keep ConfigQml's exact numeric tokens verbatim. Parsing then dumping
+        # the values here would round floating-point JSON observation tokens.
+        text = header[:-1] + ',"values":' + settings_json + '}'
+        name = None
+        try:
+            with tempfile.NamedTemporaryFile(mode='w', dir=self.root, prefix='.' + self.escaped + '-settings-', delete=False) as stream:
+                name = stream.name
+                os.fchmod(stream.fileno(), 0o600)
+                stream.write(text)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(name, path)
+            name = None
+        finally:
+            if name is not None:
+                os.unlink(name)
+        data['settingsPath'] = str(path)
+        data['settingsRevision'] = revision
+
 
 def observe(record):
     current = unit_status(record['name'])
@@ -281,6 +307,8 @@ def manage(job):
                     'probeEvents': {}, 'sleepWindow': 1 if job['snapshot'].get('sleepWindow') else 0,
                     'sleepWindowActive': job['snapshot'].get('sleepWindow') is True,
                     'probeRaceWon': False}
+            if job.get('settingsJson') is not None:
+                session.write_settings(data, job['settingsJson'])
             session.write(data)
             return data
     with session.locked(None if operation == 'inspect' else job['generation']) as data:
@@ -291,6 +319,12 @@ def manage(job):
             session.write(data)
             return {'descriptor': data, 'units': observations, 'now': time.monotonic()}
         role = job.get('role')
+        if operation == 'settings':
+            if data['phase'] in ('unlocking', 'settled'):
+                raise Refused('generation no longer accepts settings input')
+            session.write_settings(data, job['settingsJson'])
+            session.write(data)
+            return {'revision': data['settingsRevision']}
         if operation == 'launch':
             if data['phase'] == 'settled' or (data['phase'] == 'unlocking' and role != 'unlockhook'):
                 raise Refused('generation has lost launch authority')
@@ -315,7 +349,9 @@ def manage(job):
                     '--property=SendSIGKILL=yes', '--property=ExitType=cgroup']
             environment = dict(data['environment'], ATMOSPHERA_LOCK_SESSION=data['session'],
                                ATMOSPHERA_LOCK_GENERATION=data['generation'], ATMOSPHERA_LOCK_ROLE=role,
-                               ATMOSPHERA_LOCK_ADAPTER=str(Path(__file__).resolve()))
+                                ATMOSPHERA_LOCK_ADAPTER=str(Path(__file__).resolve()))
+            if role == 'real' and data['snapshot']['adapter'] == 'bundled' and data.get('settingsPath'):
+                environment['ATMOSPHERA_LOCK_SETTINGS_FILE'] = data['settingsPath']
             args += ['--setenv=' + key + '=' + value for key, value in environment.items()]
             startup_deadline = 'none'
             if role == 'real' and data['snapshot']['adapter'] == 'bundled':
@@ -486,6 +522,11 @@ def manage(job):
                 if not observe(record)['gone']:
                     raise Refused('cannot settle while an owned invocation remains')
             data['phase'] = 'settled'
+            if data.get('settingsPath'):
+                expected = session.root / (session.escaped + '-' + data['generation'] + '.settings.json')
+                if str(expected) != data['settingsPath']:
+                    raise Refused('settings input path identity mismatch')
+                expected.unlink(missing_ok=True)
             session.write(data)
             return data
         raise Refused('unknown locker management operation')

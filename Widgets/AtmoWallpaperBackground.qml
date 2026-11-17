@@ -1,6 +1,5 @@
 import QtQuick
 import qs.Commons
-import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
 
@@ -9,6 +8,9 @@ Item {
   anchors.fill: parent
 
   property var screen
+  property var wallpaperProvider: WallpaperService
+  readonly property real displayScale: screen?.devicePixelRatio ?? 1
+  onDisplayScaleChanged: Qt.callLater(requestCachedWallpaper)
   property string resolvedWallpaperPath: ""
   property color fallbackColor: AtmoColor.mSurface
 
@@ -37,7 +39,7 @@ Item {
   }
 
   Connections {
-    target: WallpaperService
+    target: root.wallpaperProvider
     function onWallpaperChanged(screenName, path) {
       if (screen && screenName === screen.name) {
         Qt.callLater(requestCachedWallpaper);
@@ -48,19 +50,10 @@ Item {
   // The current-wallpaper map loads asynchronously from the cache file;
   // fresh processes (e.g. the bundled locker) request before it's in.
   Connections {
-    target: WallpaperService
+    target: root.wallpaperProvider
     function onIsInitializedChanged() {
-      if (WallpaperService.isInitialized && screen)
+      if (root.wallpaperProvider.isInitialized && screen)
         Qt.callLater(requestCachedWallpaper);
-    }
-  }
-
-  Connections {
-    target: CompositorService
-    function onDisplayScalesChanged() {
-      if (screen && width > 0 && height > 0) {
-        Qt.callLater(requestCachedWallpaper);
-      }
     }
   }
 
@@ -74,13 +67,13 @@ Item {
       return;
     }
 
-    var originalPath = WallpaperService.getWallpaper(screen.name) || "";
+    var originalPath = wallpaperProvider.getWallpaper(screen.name) || "";
     if (originalPath === "") {
       resolvedWallpaperPath = "";
       return;
     }
 
-    if (WallpaperService.isSolidColorPath(originalPath)) {
+    if (wallpaperProvider.isSolidColorPath(originalPath)) {
       resolvedWallpaperPath = "";
       return;
     }
@@ -90,7 +83,7 @@ Item {
       return;
     }
 
-    var compositorScale = CompositorService.getDisplayScale(screen.name);
+    var compositorScale = displayScale;
     var targetWidth = Math.round(width * compositorScale);
     var targetHeight = Math.round(height * compositorScale);
     if (targetWidth <= 0 || targetHeight <= 0) {

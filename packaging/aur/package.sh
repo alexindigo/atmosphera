@@ -8,14 +8,18 @@ package() {
   # Exclude dev tooling and temp files from the installed tree
   rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/dev" "$pkgdir/etc/xdg/quickshell/atmosphera/Scripts/dev"
 
-  # Bundled per-process lock screen (the shell spawns it as
-  # `qs -c atmosphera-lockscreen`): sibling config whose symlinks into the
-  # main tree let the shared lock UIs render with fresh per-process
-  # singletons.
+  # Quickshell scans every QML file in imported directories, including unused
+  # shell panels and registries. Install the reviewed runtime closure instead
+  # of exposing those directories wholesale to the per-process locker.
   install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen"
   install -Dm644 Quickshell/atmosphera-lockscreen/shell.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/shell.qml"
   install -Dm644 Quickshell/atmosphera-lockscreen/LockSession.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/LockSession.qml"
-  for d in Assets Bindings Commons Configs Helpers Modules Scripts Services Widgets builtin; do
+  while IFS= read -r file; do
+    case "$file" in ''|'#'*) continue ;; esac
+    install -Dm644 "$file" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$file"
+  done < Quickshell/atmosphera-lockscreen/runtime-files.txt
+  install -Dm644 Commons/LockerSettings.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/Commons/Settings.qml"
+  for d in Assets Configs Scripts Shaders; do
     ln -sfn "../atmosphera/$d" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$d"
   done
   # The emergency config has a deliberately closed, lock-only import tree.

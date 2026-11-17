@@ -440,16 +440,12 @@ Singleton {
     target: "lockScreen"
 
     function lock() {
-      if (!PanelService.lockScreen.active) {
-        CompositorService.lock();
-      }
+      CompositorService.lock();
     }
 
     function preview() {
-      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
-        PanelService.lockScreen.previewMode = true;
-      }
+      if (PanelService.lockScreen)
+        PanelService.lockScreen.showPreview();
     }
   }
 
@@ -594,16 +590,11 @@ Singleton {
     }
 
     function lock() {
-      if (!PanelService.lockScreen.active) {
-        CompositorService.lock();
-      }
+      CompositorService.lock();
     }
 
     function lockAndSuspend() {
-      // Only lock and suspend if not already locked
-      if (!PanelService.lockScreen.active) {
-        CompositorService.lockAndSuspend();
-      }
+      CompositorService.lockAndSuspend();
     }
   }
 
@@ -858,7 +849,15 @@ Singleton {
     // Returns all settings and shell state as JSON
     function all(): string {
       try {
-        var snapshot = ShellState.buildStateSnapshot();
+        var snapshot = ShellState.buildStateSnapshot({
+          doNotDisturb: NotificationService.doNotDisturb,
+          atmospheraPerformanceMode: PowerProfileService.atmospheraPerformanceMode,
+          barVisible: BarService.isVisible,
+          openedPanel: PanelService.openedPanel?.objectName || "",
+          lockScreenActive: PanelService.lockScreen?.active || false,
+          wallpapers: WallpaperService.getWallpapersEffectiveMap(),
+          desktopWidgetsEditMode: DesktopWidgetRegistry.editMode || false
+        });
         if (!snapshot) {
           throw new Error("State snapshot unavailable");
         }

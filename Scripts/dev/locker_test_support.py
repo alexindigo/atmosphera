@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import signal
 import time
 
 
@@ -61,3 +62,58 @@ def manage(source, job, check=True):
         assert result.returncode == 0 and reply['ok'], reply
         return reply['value']
     return reply
+
+
+def recover_known_pam_hang(source, session, role, work):
+    """Optional test-only recovery for the separately tracked native syslog hang.
+
+    Never retire the secure GUI holder. A matching native stack plus stable
+    parent/start-time/cgroup identity is required before signalling its child.
+    This is not a product fix or an alternative authentication path.
+    """
+    before = manage(source, {'operation': 'inspect', 'session': session})
+    record = before['descriptor']['units'][role]
+    observation = before['units'][role]
+    assert observation['sameInvocation'] and not observation['gone']
+    parent = record['clientIdentity']
+    assert record['client']['secure'] and not record['client']['authenticated']
+
+    def identity(pid):
+        path = Path('/proc') / str(pid)
+        fields = (path / 'stat').read_text().split(') ', 1)[1].split()
+        return {'pid': pid, 'parent': int(fields[1]), 'start': fields[19]}
+
+    assert identity(parent['pid'])['start'] == parent['start']
+    recovered = []
+    for member in observation['members']:
+        try:
+            child = identity(member['pid'])
+            if child['parent'] != parent['pid'] or child['start'] != member['start']:
+                continue
+            if (Path('/proc') / str(child['pid']) / 'exe').resolve() != (Path('/proc') / str(parent['pid']) / 'exe').resolve():
+                continue
+        except FileNotFoundError:
+            continue
+        trace = run(['sudo', '-n', 'gdb', '-q', '-batch', '-p', str(child['pid']), '-ex', 'thread apply all bt'], timeout=20)
+        stack = trace.stdout + trace.stderr
+        (work / ('pam-child-' + str(child['pid']) + '-stack.txt')).write_text(stack)
+        if not all(frame in stack for frame in ('__lll_lock_wait_private', '__syslog_chk', 'pam_syslog', 'pam_sm_authenticate', 'pam_unix.so')):
+            continue
+        current = manage(source, {'operation': 'inspect', 'session': session})
+        actual = current['descriptor']['units'][role]
+        assert actual['identity'] == record['identity'] and actual['clientIdentity'] == parent
+        assert current['units'][role]['sameInvocation'] and actual['client']['secure']
+        assert not actual['client']['authenticated']
+        assert identity(parent['pid'])['start'] == parent['start']
+        assert identity(child['pid']) == child
+        assert any(item['pid'] == child['pid'] and item['start'] == child['start'] for item in current['units'][role]['members'])
+        os.kill(child['pid'], signal.SIGKILL)
+        wait_for(lambda: not (Path('/proc') / str(child['pid'])).exists())
+        after = manage(source, {'operation': 'inspect', 'session': session})
+        assert after['units'][role]['sameInvocation'] and after['descriptor']['units'][role]['client']['secure']
+        recovered.append(child)
+    if recovered:
+        (work / 'known-pam-hang-recovery.json').write_text(json.dumps({'holder': parent,
+            'invocation': record['identity']['InvocationID'], 'children': recovered}, indent=2))
+        print('KNOWN NATIVE PAM HANG: verified child recovery; holder stayed secure', flush=True)
+    return bool(recovered)

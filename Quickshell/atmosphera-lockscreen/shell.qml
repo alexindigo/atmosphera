@@ -1,12 +1,8 @@
 //@ pragma Env ATMOSPHERA_LOCKSCREEN=1
 import QtQuick
 import Quickshell
-import qs.Commons
 
 ShellRoot {
-  SettingsBootstrap { id: bootstrap }
-  Loader {
-    active: bootstrap.ready
-    sourceComponent: Component { LockSession {} }
-  }
+  // Reading settings never creates preference directories or starts a writer.
+  LockSession {}
 }

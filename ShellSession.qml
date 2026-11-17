@@ -54,6 +54,13 @@ ShellRoot {
       readonly property bool settingsLoaded: Settings.isLoaded
       readonly property bool shellStateLoaded: ShellState.isLoaded
 
+      SettingsWidgetPolicies {
+        store: Settings.store
+        settingsLoaded: Settings.isLoaded
+        pluginService: Service
+        pluginRegistry: Registry
+      }
+
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------");
         Logger.i("Shell", "Atmosphera Hello!");

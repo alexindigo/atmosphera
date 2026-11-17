@@ -23,13 +23,13 @@ Singleton {
 
   readonly property bool contractAvailable: _contractAvailable
   readonly property bool locked: _locked
-  // False until the seat session's LockedHint has been read once —
-  // consumers degrade to the in-process flag while this is false.
+  // Corroborating session state only, never a candidate's secure ack.
   readonly property bool lockedHintAvailable: _lockedHintAvailable
 
   property bool _contractAvailable: false
   property bool _locked: false
   property bool _lockedHintAvailable: false
+  signal sessionUnlocked
 
   // --- class-3 contract presence + invocation ---
 
@@ -53,11 +53,26 @@ Singleton {
   }
 
   // Class-3 invocation: dispatch Lock(); false when no contract service.
-  function lock() {
-    if (!root._contractAvailable)
-      return false;
-    contract.call("Lock", []);
-    return true;
+  function requestContract(complete) {
+    if (!root._contractAvailable) {
+      complete(false);
+      return;
+    }
+    var reply = contract.call("Lock", []);
+    if (!reply) {
+      complete(false);
+      return;
+    }
+    var settled = false;
+    var done = function () {
+      if (settled)
+        return;
+      settled = true;
+      complete(!reply.isError);
+    };
+    reply.finished.connect(done);
+    if (reply.isFinished)
+      done();
   }
 
   // --- LockedHint watch (universal lock state) ---
@@ -67,6 +82,8 @@ Singleton {
       return;
     root._locked = active;
     Logger.i("LockerService", active ? "locked" : "unlocked");
+    if (!active)
+      sessionUnlocked();
   }
 
   function _convergeLockedHint() {
@@ -84,18 +101,8 @@ Singleton {
       done();
   }
 
-  // The seat0 session id (bare `loginctl show-session` does not resolve
-  // the graphical session from a systemd user service — resolve via the
-  // session list).
-  Process {
-    id: seatSessionQuery
-    command: ["sh", "-c", "loginctl list-sessions --no-legend | awk '$4==\"seat0\" {print $1; exit}'"]
-    running: true
-    stdout: StdioCollector {}
-    onExited: function (exitCode) {
-      var id = (stdout.text || "").trim();
-      if (exitCode !== 0 || id === "")
-        return;
+  // The owner discovers the display-bound graphical session, not SSH/seat0.
+  function observeSession(id) {
       var reply = logindManager.call("GetSession", [id]);
       if (!reply)
         return;
@@ -107,7 +114,6 @@ Singleton {
       reply.finished.connect(done);
       if (reply.isFinished)
         done();
-    }
   }
 
   DBus {

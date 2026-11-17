@@ -1,18 +1,6 @@
-// Atmosphera bundled lock screen — the class-1 locker (no-modes model).
-//
-// A standalone per-lock qs config: spawned by the shell as
-// `qs -c atmosphera-lockscreen`, engages the ext_session_lock_v1 on
-// startup (self-engage == the A.1.3 re-engage when respawned into a
-// still-locked session), unlocks on PAM auth, exits after unlock.
-// Serves nothing on D-Bus; the shell observes state via LockedHint.
-//
-// The config dir is assembled at install time: this shell.qml plus
-// symlinks to the main shell tree (Commons, Services, Modules, Widgets,
-// Helpers, Assets, Configs, builtin) so the shared lock UIs render
-// identically with fresh per-process singleton instances.
-//
-// The env marker tells shared singletons (CompositorService lock
-// machinery) that this process IS the locker — no recursive spawning.
+// Bundled per-lock presentation. LockClient owns the protocol lifetime;
+// successful PAM is the only normal unlock path. Under a generation owner,
+// preparation precedes the acquisition grant.
 
 //@ pragma Env ATMOSPHERA_LOCKSCREEN=1
 
@@ -23,6 +11,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.LockScreen
 import qs.Services.Keyboard
+import qs.Services.Locker
 import qs.Services.Media
 import qs.Services.UI
 
@@ -31,40 +20,62 @@ ShellRoot {
 
   property bool _settingsReady: false
   property bool _i18nReady: false
-  readonly property bool ready: _settingsReady && _i18nReady
+  property var _uiComponent: null
+  readonly property bool ready: _settingsReady && _i18nReady && lockContext.pamReady && _uiComponent !== null
 
-  // Set when PAM auth succeeded; the process exits only after the
-  // compositor confirms the unlock (secure -> false) — exiting earlier
-  // races niri and leaves the dead-client lock (red background).
-  property bool _unlocking: false
+  LockWallpaper {
+    id: wallpaperData
+    cacheFile: Settings.cacheDir + "wallpapers.json"
+    darkMode: Settings.data.colorSchemes.darkMode ?? false
+    useSolidColor: Settings.data.wallpaper.useSolidColor ?? false
+    solidColor: String(Settings.data.wallpaper.solidColor || "#000000")
+  }
 
   LockContext {
     id: lockContext
-
-    onUnlocked: {
-      root._unlocking = true;
-      lockSession.locked = false;
-    }
+    enabled: lockSession.secure && !client.terminal
     onFailed: {
       lockContext.passwordText = "";
+    }
+  }
+
+  LockClient {
+    id: client
+    endpoint: lockSession
+    auth: lockContext
+    prepared: root.ready
+    onSettled: reason => {
+      LockKeysService.unregisterComponent("lockscreen");
+      SpectrumService.unregisterComponent("lockscreen");
+      iconManifestProc.running = false;
+      Logger.i("LockScreen", "Locker settled:", reason);
     }
   }
 
   Connections {
     target: lockSession
     function onSecureStateChanged() {
-      if (root._unlocking && !lockSession.secure)
-        quitTimer.start();
+      if (lockSession.secure)
+        Logger.i("LockScreen", "Bundled locker secure");
     }
   }
 
-  // Margin for wayland teardown after the compositor's unlock confirm.
-  Timer {
-    id: quitTimer
-    interval: 500
-    repeat: false
-    onTriggered: Qt.quit()
+  function prepareUi() {
+    if (!_settingsReady || !_i18nReady || _uiComponent !== null)
+      return;
+    var component = Qt.createComponent(_lockUiSource());
+    if (component.status === Component.Error) {
+      Logger.e("LockScreen", "Failed to load lock UI:", component.errorString());
+      component = Qt.createComponent(Quickshell.shellDir + "/Modules/LockScreen/BuiltInLockScreen.qml");
+    }
+    if (component.status === Component.Ready)
+      _uiComponent = component;
+    else
+      Logger.e("LockScreen", "Lock UI unavailable:", component.errorString());
   }
+
+  on_SettingsReadyChanged: prepareUi()
+  on_I18nReadyChanged: prepareUi()
 
   Connections {
     target: Settings
@@ -83,11 +94,10 @@ ShellRoot {
     AtmoSingletonCheck.verify("AtmoColor", AtmoColor, AtmoSingletonCheck.atmoColorContract);
     if (Settings.isLoaded)
       root._settingsReady = true;
-    // I18n emits translationsLoaded even on the English fallback path
+    if (I18n.isLoaded)
+      root._i18nReady = true;
 
-    // Fresh per-process singletons need the same init the main shell
-    // gives them — the wallpaper cache file only loads in init().
-    WallpaperService.init();
+    // The read-only wallpaper input loads only cached presentation data.
     ImageCacheService.init();
 
     // Icon sets (atmosphera-icons) are data-only IconRegistry
@@ -101,8 +111,7 @@ ShellRoot {
     if (Settings.data.general.enableLockScreenMediaControls && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none")
       SpectrumService.registerComponent("lockscreen");
 
-    lockSession.locked = true;
-    Logger.i("LockScreen", "Bundled locker engaged");
+    prepareUi();
   }
 
   Component.onDestruction: {
@@ -197,7 +206,8 @@ ShellRoot {
       showCountdown: Settings.data.general.enableLockScreenCountdown,
       countdownDuration: Settings.data.general.lockScreenCountdownDuration,
       lockBlur: Settings.data.general.lockScreenBlur,
-      lockTint: Settings.data.general.lockScreenTint
+      lockTint: Settings.data.general.lockScreenTint,
+      wallpaperProvider: wallpaperData
     };
   }
 
@@ -235,16 +245,7 @@ ShellRoot {
             anchors.fill: parent
 
             Component.onCompleted: {
-              var comp = Qt.createComponent(root._lockUiSource());
-              if (comp.status === Component.Error) {
-                Logger.e("LockScreen", "Failed to load lock UI:", comp.errorString());
-                comp = Qt.createComponent(Quickshell.shellDir + "/Modules/LockScreen/BuiltInLockScreen.qml");
-              }
-              if (comp.status !== Component.Ready) {
-                Logger.e("LockScreen", "Built-in lock UI unavailable:", comp.errorString());
-                return; // hidden password entry below still unlocks
-              }
-               var inst = comp.createObject(uiWrapper, {
+               var inst = root._uiComponent.createObject(uiWrapper, {
                                              lockContext: lockContext,
                                               screen: Qt.binding(function () { return lockSurface.screen; }),
                                              lockScreenApi: root._buildLockScreenApi(),
@@ -298,6 +299,15 @@ ShellRoot {
         enabled: !lockSurface.uiBuilt
         onPositionChanged: passwordInput.forceActiveFocus()
       }
+    }
+  }
+
+  IpcHandler {
+    target: "lockerSettings"
+    function status(): string {
+      return JSON.stringify({session: client.session, generation: client.generation,
+        readOnly: Settings.readOnly, ready: Settings.isLoaded,
+        allowPasswordWithFingerprint: lockContext.allowPasswordWithFingerprint});
     }
   }
 }
