@@ -183,8 +183,11 @@ needs a valid default; placeholders are not commands. Plugin actions do not set
 
 The compatibility gate checks every manifest's actions against its real Main
 entry point: target/function, arity, supported parameter types, icons, duplicate
-IDs and commands. Parameters may be untyped or `string`; `int` is also accepted
-for number arguments. Do not declare helpers merely because they are callable.
+IDs and commands. Parameters require an explicit `string` type; `int` is also
+accepted for number arguments. Untyped and `var` parameters are not registered
+by Quickshell IPC. A handler may have at most ten parameters, and its return type
+must also be IPC-compatible (no annotation, `void`, `var`, `string`, `int`, `bool`,
+`real` or `color`). Do not declare helpers merely because they are callable.
 
 ### Using the action registry
 
