@@ -1312,6 +1312,22 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.general.hot-corners-title",
+    "descriptionKey": "panels.general.hot-corners-description",
+    "widget": "NLabel",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.general.hot-corners-delay-label",
+    "descriptionKey": "panels.general.hot-corners-delay-description",
+    "widget": "NValueSlider",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.general.keybinds-title",
     "descriptionKey": "panels.general.keybinds-description",
     "widget": "NLabel",
