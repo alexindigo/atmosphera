@@ -404,8 +404,9 @@ python3 -B Scripts/dev/plugin-lint-selftest.py
 The action catalog's guest-only regression checks schema parity, source IPC
 signatures, quoting/recognition and live loaded-plugin membership/unloading.
 Plugin lint audits declared actions in every manifest, including unchanged
-plugins in a changed-plugin run. Imports of `qs.Services.Actions` require at
-least 0.9.4; this configqml-based feature is delivered with 0.10.0.
+plugins in a changed-plugin run. `qs.Services.Actions` is first exported by
+0.10.0; imports (including aliased and semicolon-terminated imports) require
+`minAtmospheraVersion` of at least 0.10.0. It is absent from the 0.9.x releases.
 In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace:
 
 ```sh

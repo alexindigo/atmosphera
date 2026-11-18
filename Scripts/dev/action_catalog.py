@@ -15,14 +15,20 @@ ARG_NAME = re.compile(r"[a-z][A-Za-z0-9]*\Z")
 SAFE_WORD = re.compile(r"[A-Za-z0-9_@%+=:,./-]+\Z")
 GROUPS = {"Panels", "Launcher", "Session", "Toggles", "Compositor"}
 COMPOSITORS = {"niri", "hyprland", "sway", "mango"}
+# ECMAScript WhiteSpace + LineTerminator, matching QML String.trim(). Python's
+# default strip differs for BOM and several control characters.
+ECMA_SPACE = "\t\n\v\f\r \u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff"
+MAX_SAFE_INTEGER = 9007199254740991
 
 
 def line(value):
-    return isinstance(value, str) and bool(value.strip()) and not any(c in value for c in "\r\n\0")
+    return isinstance(value, str) and bool(value.strip(ECMA_SPACE)) and not any(c in value for c in "\r\n\0")
 
 
 def integer(value):
-    return type(value) in (int, float) and math.isfinite(value) and int(value) == value
+    # Bound Python ints before math.isfinite converts to a double.
+    return (type(value) in (int, float) and -MAX_SAFE_INTEGER <= value <= MAX_SAFE_INTEGER
+            and math.isfinite(value) and int(value) == value)
 
 
 def valid_value(argument, value):

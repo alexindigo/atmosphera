@@ -155,12 +155,12 @@ def lint(root, shell=SHELL_ROOT, changes=None, qml_dir="/usr/lib/qt6/qml", paths
         # changed-plugin run. Unchanged manifests cannot hide broken actions.
         errors.extend(f"{path}: {error}" for error in action_catalog.check_plugin(manifest, path.parent, shell))
         files = sorted(path.parent.rglob("*.qml")) + sorted(path.parent.rglob("*.js"))
-        uses_actions = any(re.search(r"^\s*import\s+qs\.Services\.Actions(?:\s|$)",
+        uses_actions = any(re.search(r"^\s*import\s+qs\.Services\.Actions(?:[;\s]|$)",
                                      code_only(file.read_text(), lexer), re.M)
                            for file in files if not file.is_symlink())
         minimum = version(manifest.get("minAtmospheraVersion"))
-        if uses_actions and (minimum is None or minimum < (0, 9, 4)):
-            errors.append(f"{path}: qs.Services.Actions requires minAtmospheraVersion >= 0.9.4")
+        if uses_actions and (minimum is None or minimum < (0, 10, 0)):
+            errors.append(f"{path}: qs.Services.Actions requires minAtmospheraVersion >= 0.10.0")
         if selected is not None and path.parent.name not in selected:
             continue
         uses_palette = False

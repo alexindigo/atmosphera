@@ -58,6 +58,25 @@ Item {
     roundtrip("number", timed, {
                 seconds: 1200
               });
+    var unbounded = {
+      command: "atmosphera ipc plugin:example number",
+      arguments: [
+        {
+          name: "value",
+          type: "number",
+          default: 900
+        }
+      ]
+    };
+    emitCase("safe-edits", [ActionCommand.compose(unbounded, {
+                                                    value: 900
+                                                  }), ActionCommand.compose(unbounded, {
+                                                                              value: 9007199254740991
+                                                                            }), ActionCommand.compose(unbounded, {
+                                                                                                        value: 9007199254740992
+                                                                                                      }), ActionCommand.compose(unbounded, {
+                                                                                                                                  value: -9007199254740992
+                                                                                                                                })]);
     roundtrip("space", text, {
                 message: "hello world"
               });
