@@ -28,35 +28,44 @@ def main():
     record = dict(_COMM='niri', _PID=str(os.getpid()), _UID=str(os.getuid()),
         __MONOTONIC_TIMESTAMP=str(int(time.monotonic() * 1_000_000)), MESSAGE='unlocking session')
     results = []
-    cases = ('journal-exact', 'foreign-pid', 'foreign-uid', 'stale-start', 'before-source', 'file-source')
+    cases = ('journal-exact', 'foreign-pid', 'foreign-uid', 'stale-start', 'before-source', 'file-source',
+        'byte-array', 'byte-array-foreign-pid', 'byte-array-foreign-uid', 'byte-array-stale-start',
+        'invalid-byte-array', 'valid-after-invalid-array')
     for scenario in cases:
         events = []
         selected, message = dict(identity), dict(record)
-        if scenario == 'foreign-pid':
+        if scenario.startswith('byte-array'):
+            message['MESSAGE'] = list(b'\x1b[32munlocking session\x1b[0m')
+        if scenario in ('foreign-pid', 'byte-array-foreign-pid'):
             message['_PID'] = '0'
-        elif scenario == 'foreign-uid':
+        elif scenario in ('foreign-uid', 'byte-array-foreign-uid'):
             message['_UID'] = str(os.getuid() + 1)
-        elif scenario == 'stale-start':
+        elif scenario in ('stale-start', 'byte-array-stale-start'):
             selected['start'] = '0'
         elif scenario == 'before-source':
             selected['since'] = time.monotonic() + 60
         elif scenario == 'file-source':
             selected['source'] = 'file'
+        elif scenario in ('invalid-byte-array', 'valid-after-invalid-array'):
+            message['MESSAGE'] = [-1, 256]
         env = dict(json=json, os=os, Path=Path, pending=bytearray(), compositor_identity=selected,
             emit=lambda kind, **values: events.append(dict(kind=kind, **values)))
         exec(code, env)
         error = None
         try:
             raw = (json.dumps(message) + '\n').encode()
+            if scenario == 'valid-after-invalid-array':
+                raw += (json.dumps(record) + '\n').encode()
             # The same journal line can arrive across pipe-read boundaries.
             env['consume_journal'](raw[:17])
             env['consume_journal'](raw[17:])
         except AssertionError as failure:
             error = str(failure)
         compositor = [event for event in events if event['kind'] == 'compositor-log']
-        if scenario == 'journal-exact':
+        if scenario in ('journal-exact', 'byte-array', 'valid-after-invalid-array'):
             passed = error is None and len(compositor) == 1 and compositor[0].get('pid') == identity['pid'] and compositor[0].get('start') == start
-        elif scenario == 'stale-start':
+            passed = passed and 'unlocking session' in compositor[0]['message']
+        elif scenario in ('stale-start', 'byte-array-stale-start'):
             passed = bool(error) and not compositor
         else:
             passed = error is None and not compositor

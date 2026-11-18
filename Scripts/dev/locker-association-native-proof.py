@@ -13,7 +13,7 @@ import secrets
 import shlex
 import time
 
-from locker_test_support import manage, require_guest, run, wait_for
+from locker_test_support import manage, recover_known_pam_hang, require_guest, run, wait_for
 
 
 PROBE = '''
@@ -33,6 +33,7 @@ PROBE = '''
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
+    parser.add_argument('--recover-known-pam-hang', action='store_true')
     args = parser.parse_args()
     source, work = require_guest(args.work, Path(__file__).resolve().parents[2])
     discovery = manage(source, {'operation': 'discover'})
@@ -78,6 +79,9 @@ def main():
         assert ui_state() == {'secure': True, 'busy': False, 'failed': False, 'terminal': False}
         run(['wtype', 'wrong-password'])
         run(['wtype', '-k', 'Return'])
+        if args.recover_known_pam_hang:
+            time.sleep(3)
+            recover_known_pam_hang(source, sid, 'emergency', work)
         wait_for(lambda: ui_state()['failed'] and not ui_state()['busy'], 20)
         refused = inspect()
         assert refused['descriptor']['phase'] != 'unlocking'

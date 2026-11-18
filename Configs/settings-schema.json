@@ -1,8 +1,8 @@
 {
   "format": 1,
   "inputs": {
-    "Configs/defaults.json": "1043f2684262d697308f05a20187ab8ab0b128d7bc3e8738060b7bbf82ec8db7",
-    "Configs/settings-schema-overlay.json": "3a08c81ea6dac1ec06a3ef25f5153c5be1128c09bb2808dc5d77740be7f85747"
+    "Configs/defaults.json": "e764edecb63a782ff4659a3e483f170359669ae39ee1b5d127b5fdc26452c10b",
+    "Configs/settings-schema-overlay.json": "4e8f5f59c3391eb1e61026ccd979c1b48cb8b4b98dcf3361cb808d1e89c5a6e7"
   },
   "paths": [
     {
@@ -7038,6 +7038,55 @@
         "forceBlackScreenCorners"
       ],
       "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "bottomLeft"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "bottomRight"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 1000,
+      "minimum": 100,
+      "path": [
+        "general",
+        "hotCorners",
+        "delayMs"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "topLeft"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "topRight"
+      ],
+      "type": "String"
     },
     {
       "path": [

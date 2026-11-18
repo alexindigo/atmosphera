@@ -12,6 +12,9 @@ This file credits the upstream [Noctalia Shell](https://github.com/noctalia-dev/
 
 - **[Quickshell](https://github.com/outfoxxed/quickshell)** — The Qt/QML-based Wayland shell framework that powers this project
 
+## Features
+- **[Hot Corners plugin](https://github.com/noctalia-dev/noctalia-plugins) by sapjax** - Origin of Atmosphera's hot corners (MIT, written for Noctalia Shell)
+
 ## Runtime Dependencies
 
 ### System Integration

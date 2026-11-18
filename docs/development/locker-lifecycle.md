@@ -149,7 +149,9 @@ the named VM framebuffer, not compositor screencopy that may return black.
 
 The observer selects one niri log source for the exact socket-owner lifetime:
 regular stdout when available, otherwise journal records with matching PID/UID
-and a still-current process start identity. Both publish `compositor-log` with
+and a still-current process start identity. Journal MESSAGE strings and byte
+arrays (used for ANSI-bearing records) share that identity validation.
+Both publish `compositor-log` with
 that identity; unrelated niri-named journal records are not compositor evidence.
 `locker-observer-journal-proof.py --work <new-artifact-directory>` exercises
 the actual ingestion function with split synthetic records and rejecting
@@ -251,7 +253,12 @@ cache's independent 1x1 render traffic is not LED or spectrum activity.
 
 The ingress case drives actual main/public IPC and CLI, native ext-idle,
 a real compositor keybind, custom session action, exclusive and nonexclusive
-hooks, listener hooks and legacy external selection. It also retains the scoped
+hooks, listener hooks and legacy external selection. The owner proof's
+`--main-shell --case fast --ingress hot-corner` leg moves the named VM console
+pointer into the real bottom-right corner and
+runs the catalog's `atmosphera ipc lockScreen lock` command through the ordinary
+corner surface/dwell/command path before native lock and PAM checks.
+It also retains the scoped
 overlapping-callback and coalesced-suspend-intent checks. The niri keybind fixture
 waits for the shell's startup configuration handoff, validates a private config
 copy, uses the exact VM console's emulated keyboard, then restores the session

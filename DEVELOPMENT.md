@@ -2,6 +2,11 @@
 
 ## Release identity
 
+The 0.10.0 settings stack requires configqml >=0.5.1 for native
+`saveSelected`. AUR recipes share that floor through `packaging/aur/metadata.sh`;
+Nix and the devcontainer pin the same release. Regenerate both Qt tooling
+metadata variants when updating the dependency.
+
 The tracked root `VERSION` is the authoritative release/API version. Update it
 alongside the release's changelog commit, **before** tagging, and tag that commit
 with the same version (for example, `VERSION` contains `0.8.0` and the tag is
@@ -394,6 +399,38 @@ For a full audit or regressions inside the assigned test VM:
 ```
 python3 -B Scripts/dev/plugin-lint.py --root builtin/plugins --catalog builtin/plugins/registry.json
 python3 -B Scripts/dev/plugin-lint-selftest.py
+```
+
+The action catalog's guest-only regression checks schema parity, source IPC
+signatures, quoting/recognition and live loaded-plugin membership/unloading.
+Plugin lint audits declared actions in every manifest, including unchanged
+plugins in a changed-plugin run. `qs.Services.Actions` is first exported by
+0.10.0; imports (including aliased and semicolon-terminated imports) require
+`minAtmospheraVersion` of at least 0.10.0. It is absent from the 0.9.x releases.
+In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace
+outside the source checkout (the runner rejects nested workspaces):
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-landing/tmp
+mkdir -p /home/tester/Projects/action-catalog-runs
+timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/action-catalog-runs/catalog-fresh
+```
+
+Hot corners have four guest-only regressions in the same VM: the settings page
+and its persistence, the dwell controller with a fake clock, the plugins registry
+v6 migration (planner cases and cold starts over synthetic profiles), and the
+real-input acceptance on two outputs (`--case` takes `all` or a list of H1-H9):
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-core/tmp
+W=/home/tester/Projects/hot-corners-core/runs
+mkdir -p "$TMPDIR" "$W"
+timeout 600 python3 -B Scripts/dev/hot-corners-settings-regression.py --source "$PWD" --workspace $W/settings-fresh
+timeout 300 python3 -B Scripts/dev/hot-corners-service-regression.py
+timeout 900 python3 -B Scripts/dev/hot-corners-migration-regression.py --source "$PWD" --workspace $W/migration-fresh
+python3 -B Scripts/dev/hot-corners-migration-oracle-selftest.py
+ACTION_TEST_VM_UUID=20c0b416-2943-49fb-8aa0-eb7d29b1c8ea python3 -B Scripts/dev/hot-corners-migration-boundary-proof.py --workspace $W/migration-boundary-fresh
+timeout 1800 python3 -B Scripts/dev/hot-corners-e2e.py --source "$PWD" --workspace $W/e2e-fresh --case all
 ```
 
 `Scripts/dev/qmllint.sh` with no paths includes built-in QML. Its native import

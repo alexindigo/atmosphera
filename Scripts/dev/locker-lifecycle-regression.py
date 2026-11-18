@@ -118,7 +118,7 @@ def main():
                 command.append('--recover-known-pam-hang')
             commands.append((name, command))
     elif args.case == 'ingress':
-        for route in ('ipc', 'cli', 'keybind', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'):
+        for route in ('ipc', 'cli', 'keybind', 'hot-corner', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'):
             command = ['locker-owner-proof.py', '--main-shell', '--ingress', route]
             command += ['--case', 'external', '--external-variant', 'existing'] if route in ('custom', 'exclusive', 'legacy') else ['--case', 'fast']
             if args.recover_known_pam_hang:

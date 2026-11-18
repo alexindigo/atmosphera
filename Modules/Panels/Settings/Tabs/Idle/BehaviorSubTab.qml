@@ -146,11 +146,11 @@ ColumnLayout {
       onActionTimeoutChanged: val => Settings.data.idle.screenOffTimeout = val
       onActionCommandChanged: cmd => {
         Settings.data.idle.screenOffCommand = cmd;
-        Settings.saveImmediate();
+        Settings.saveSelected([["idle", "screenOffCommand"]]);
       }
       onActionResumeCommandChanged: cmd => {
         Settings.data.idle.resumeScreenOffCommand = cmd;
-        Settings.saveImmediate();
+        Settings.saveSelected([["idle", "resumeScreenOffCommand"]]);
       }
     }
 
@@ -165,11 +165,11 @@ ColumnLayout {
       onActionTimeoutChanged: val => Settings.data.idle.lockTimeout = val
       onActionCommandChanged: cmd => {
         Settings.data.idle.lockCommand = cmd;
-        Settings.saveImmediate();
+        Settings.saveSelected([["idle", "lockCommand"]]);
       }
       onActionResumeCommandChanged: cmd => {
         Settings.data.idle.resumeLockCommand = cmd;
-        Settings.saveImmediate();
+        Settings.saveSelected([["idle", "resumeLockCommand"]]);
       }
     }
 
@@ -209,11 +209,11 @@ ColumnLayout {
       onActionTimeoutChanged: val => Settings.data.idle.suspendTimeout = val
       onActionCommandChanged: cmd => {
         Settings.data.idle.suspendCommand = cmd;
-        Settings.saveImmediate();
+        Settings.saveSelected([["idle", "suspendCommand"]]);
       }
       onActionResumeCommandChanged: cmd => {
         Settings.data.idle.resumeSuspendCommand = cmd;
-        Settings.saveImmediate();
+        Settings.saveSelected([["idle", "resumeSuspendCommand"]]);
       }
     }
 

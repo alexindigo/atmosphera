@@ -190,8 +190,16 @@ def main():
             pending[:] = remainder
             record = json.loads(line)
             message = record.get('MESSAGE', '')
+            # journalctl -o json represents messages containing control bytes
+            # (including niri's ANSI colors) as arrays of unsigned bytes.
+            if isinstance(message, list):
+                try:
+                    message = bytes(message).decode('utf-8', 'replace')
+                except (TypeError, ValueError):
+                    continue
             if not isinstance(message, str) or 'wl_keyboard' in message:
                 continue
+            record['MESSAGE'] = message
             compositor = compositor_journal_event(record, compositor_identity)
             if compositor:
                 emit('compositor-log', **compositor)

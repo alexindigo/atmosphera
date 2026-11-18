@@ -87,6 +87,13 @@ function planV5(input) {
 
         var id = bareId(key);
 
+        // Hot Corners owns its import and retirement in v6. In particular, v5
+        // must not discard its only (legacy in-directory) settings first.
+        if (isHotCornersKey(key)) {
+            out[key] = clone(state);
+            continue;
+        }
+
         // Rule 2: built-in-sourced but no longer shipped.
         if (shipped.indexOf(id) < 0) {
             removals.push(key);
@@ -266,5 +273,75 @@ function rewriteSettingsReferences(refs, keyMap) {
             monitorWidgets: monitorsChanged,
             lockScreenPlugin: lockChanged
         }
+    };
+}
+
+// v6: the Hot Corners plugin is built into the shell. Every install of it is
+// removed; enabled installs hand their corner commands to general.hotCorners.
+// input: { states, settings: { <key>: { primary: text|null, legacy: text|null } },
+//          core: { topLeft, topRight, bottomLeft, bottomRight } }
+// Returns: { corners, removals, files, warnings }
+var HOT_CORNERS_ID = "hot-corners";
+var HOT_CORNERS_FIELDS = [
+    ["TopLeft", "topLeft"],
+    ["TopRight", "topRight"],
+    ["BottomLeft", "bottomLeft"],
+    ["BottomRight", "bottomRight"]
+];
+
+function isHotCornersKey(key) {
+    return typeof key === "string" && key.indexOf("/") < 0 && bareId(key) === HOT_CORNERS_ID;
+}
+
+function planV6(input) {
+    var states = input.states || {};
+    var settings = input.settings || {};
+    var core = input.core || {};
+    // Code-unit order, so the first install to provide a corner is deterministic.
+    var keys = Object.keys(states).filter(function (key) {
+        return isHotCornersKey(key);
+    }).sort();
+
+    var corners = {};
+    var files = [];
+    var warnings = [];
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        files.push("settings/plugins/" + key + ".json", "settings/plugins/" + key + ".config.json");
+        var state = states[key];
+        if (!state || typeof state !== "object" || state.enabled !== true)
+            continue;
+        var texts = has(settings, key) && settings[key] ? settings[key] : {};
+        // The same precedence the plugin's settings owner uses.
+        var text = typeof texts.primary === "string" ? texts.primary : typeof texts.legacy === "string" ? texts.legacy : null;
+        if (text === null)
+            continue;
+        var parsed;
+        try {
+            parsed = JSON.parse(text);
+        } catch (e) {
+            warnings.push(key + ": settings are not valid JSON; no corner commands imported");
+            continue;
+        }
+        var source = parsed && typeof parsed === "object" ? parsed.corners : null;
+        if (!source || typeof source !== "object")
+            continue;
+        for (var f = 0; f < HOT_CORNERS_FIELDS.length; f++) {
+            var from = HOT_CORNERS_FIELDS[f][0];
+            var to = HOT_CORNERS_FIELDS[f][1];
+            var value = source[from];
+            if (typeof value !== "string" || value === "" || has(corners, to))
+                continue;
+            // Never overwrite a corner the user already set in the shell.
+            if (typeof core[to] === "string" && core[to] !== "")
+                continue;
+            corners[to] = value;
+        }
+    }
+    return {
+        corners: corners,
+        removals: keys,
+        files: files,
+        warnings: warnings
     };
 }

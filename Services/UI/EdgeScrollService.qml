@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Services.UPower
-import "../../Helpers/EdgeZones.js" as EdgeZones
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.Power
@@ -20,37 +19,8 @@ Singleton {
   property bool wallFeedback: false
   property int _pulseFrames: 0
 
-  readonly property var screenZones: {
-    if (!root.enabled)
-      return {};
-    var all = Quickshell.screens.map(function (screen) {
-      return {
-        name: screen.name,
-        x: screen.x,
-        y: screen.y,
-        width: screen.width,
-        height: screen.height
-      };
-    });
-    var result = {};
-    for (var screen of all) {
-      var monitors = Settings.data.bar.monitors;
-      if (root.enabled && (monitors.length === 0 || monitors.includes(screen.name))) {
-        result[screen.name] = EdgeZones.zones(screen, all, Settings.data.bar.frameThickness, Settings.getBarPositionForScreen(screen.name), Style.getBarHeightForScreen(screen.name), DockGeometryService.revealRect(screen.name));
-      }
-    }
-    return result;
-  }
-
   signal stepped(var zone)
   signal navigationFinished(var zone, string outcome)
-
-  onScreenZonesChanged: {
-    if (activeZone && !(screenZones[activeZone.screenName] || []).some(function (zone) {
-      return zone.key === root.activeZone.key;
-    }))
-      controller.cancel();
-  }
 
   EdgeScrollController {
     id: controller
@@ -126,10 +96,6 @@ Singleton {
     }
   }
 
-  function zonesForScreen(name) {
-    return screenZones[name] || [];
-  }
-
   function enter(zone, buttons, source) {
     controller.enter(zone, buttons, source);
   }
@@ -138,6 +104,9 @@ Singleton {
   }
   function buttonsChanged(buttons) {
     controller.buttonsChanged(buttons);
+  }
+  function cancel() {
+    controller.cancel();
   }
   function leaveScreen(name) {
     if (activeZone && activeZone.screenName === name)

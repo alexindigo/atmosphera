@@ -69,12 +69,13 @@ PopupWindow {
     if (!itemName || index < 0 || !["left", "center", "right"].includes(section))
       return false;
     var screenOverride = Settings.getBarWidgetsForScreen(screenName) !== Settings.data.bar.widgets;
+    var ownerPath = screenOverride ? ["bar", "screenOverrides"] : ["bar", "widgets", section];
     var commands = null;
     if (screenOverride) {
       var monitors = Settings.data.bar.screenOverrides;
       for (var i = 0; i < monitors.length; ++i) {
         if (monitors[i].name === screenName) {
-          commands = Settings.createRecordListEditor(["bar", "screenOverrides"], [
+          commands = Settings.createRecordListEditor(ownerPath, [
                                                        {
                                                          index: i
                                                        },
@@ -89,7 +90,7 @@ PopupWindow {
         }
       }
     } else {
-      commands = Settings.createRecordListEditor(["bar", "widgets", section], []);
+      commands = Settings.createRecordListEditor(ownerPath, []);
     }
     if (!commands || commands.initialValue[index]?.id !== "Tray") {
       if (commands)
@@ -98,6 +99,7 @@ PopupWindow {
     }
     _pinEditor = {
       commands: commands,
+      ownerPath: ownerPath,
       screenName: screenName,
       screenOverride: screenOverride,
       section: section,
@@ -774,7 +776,7 @@ PopupWindow {
                                               if (panel)
                                                 panel.close();
                                             }
-                                            Settings.saveResult(function (result) {
+                                            Settings.saveSelected([editor.ownerPath], function (result) {
                                               root._pinBusy = false;
                                               complete(result);
                                             });

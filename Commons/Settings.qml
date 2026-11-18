@@ -1,11 +1,11 @@
 pragma Singleton
+import ConfigQml 1.0
 
 import QtQuick
 import Quickshell
-import ConfigQml 1.0
 import "../Helpers/SettingsDefaults.js" as Defaults
-import "../Helpers/SettingsListCommands.js" as Lists
 import "../Helpers/SettingsDraftEditor.js" as DraftEditor
+import "../Helpers/SettingsListCommands.js" as Lists
 import qs.Commons
 
 Singleton {
@@ -56,7 +56,9 @@ Singleton {
     fixedFont: "monospace"
     onStatusChanged: {
       if (ready && !root.isLoaded) {
-        root.isFreshInstall = sourceStates.every(function (state) { return state.presence === "absent"; });
+        root.isFreshInstall = sourceStates.every(function (state) {
+          return state.presence === "absent";
+        });
         root.shouldOpenSetupWizard = root.isFreshInstall;
         root.isLoaded = true;
         root.settingsLoaded();
@@ -74,7 +76,7 @@ Singleton {
       }
     }
     onCompleted: result => {
-      if (["save", "autosave", "flush", "close", "saveGroup", "retryGroup", "apply", "overlayApply", "overlayReset", "importProfile"].indexOf(result.operation) === -1 && !(result.operation === "retainGroup" && result.status === "failed"))
+      if (["save", "saveSelected", "autosave", "flush", "close", "saveGroup", "retryGroup", "apply", "overlayApply", "overlayReset", "importProfile"].indexOf(result.operation) === -1 && !(result.operation === "retainGroup" && result.status === "failed"))
         return;
       root.settingsSaveCompleted(result);
       if (result.status === "saved")
@@ -84,8 +86,10 @@ Singleton {
     }
     onSourceError: error => Logger.e("Settings", "Source error:", error.code, error.sourceId)
     onSourceWarning: warning => {
-      if (warning.code === "unknown-setting") Logger.w("Settings", "Ignoring unknown setting:", warning.path.join("."));
-      else Logger.w("Settings", "Source warning:", warning.code, warning.sourceId);
+      if (warning.code === "unknown-setting")
+        Logger.w("Settings", "Ignoring unknown setting:", warning.path.join("."));
+      else
+        Logger.w("Settings", "Source warning:", warning.code, warning.sourceId);
     }
     onSourceAccepted: event => {
       for (var fact of event.facts) {
@@ -101,59 +105,94 @@ Singleton {
         root.settingsReloaded();
       }
     }
-    onProjectionEffects: event => { if (!root.readOnly) root._migrationEffects(event.effects); }
+    onProjectionEffects: event => {
+      if (!root.readOnly)
+        root._migrationEffects(event.effects);
+    }
   }
 
-  function ensureTrailingSlash(path) { return path.endsWith("/") ? path : path + "/"; }
+  function ensureTrailingSlash(path) {
+    return path.endsWith("/") ? path : path + "/";
+  }
   function preprocessPath(path) {
-    if (typeof path !== "string") return path;
+    if (typeof path !== "string")
+      return path;
     return path === "~" ? Quickshell.env("HOME") : path.startsWith("~/") ? Quickshell.env("HOME") + path.substring(1) : path;
   }
-  function getDefaultValue(path) { return Defaults.defaultValue(typeof path === "string" ? path.split(".") : path); }
+  function getDefaultValue(path) {
+    return Defaults.defaultValue(typeof path === "string" ? path.split(".") : path);
+  }
   function isValueChanged(path, value) {
     var initial = getDefaultValue(path);
     return initial !== undefined && (typeof value === "object" ? JSON.stringify(value) !== JSON.stringify(initial) : value !== initial);
   }
   function formatDefaultValueForTooltip(path) {
     var value = getDefaultValue(path);
-    if (value === undefined) return "";
-    if (Array.isArray(value)) return value.length ? "[" + value.length + " items]" : "(empty)";
-    if (value !== null && typeof value === "object") return "(object)";
+    if (value === undefined)
+      return "";
+    if (Array.isArray(value))
+      return value.length ? "[" + value.length + " items]" : "(empty)";
+    if (value !== null && typeof value === "object")
+      return "(object)";
     return value === "" ? "(empty)" : String(value);
   }
   function getPathValue(object, path) {
     var value = object;
     for (var part of (typeof path === "string" ? path.split(".") : path)) {
-      if (value === null || value === undefined) return undefined;
+      if (value === null || value === undefined)
+        return undefined;
       value = value[part];
     }
     return value;
   }
-  function isKnownSchemaPath(path) { return owner.info(typeof path === "string" ? path.split(".") : path).declared === true; }
+  function isKnownSchemaPath(path) {
+    return owner.info(typeof path === "string" ? path.split(".") : path).declared === true;
+  }
   function setPathValue(object, path, value, prefix) {
-    if (!isKnownSchemaPath(prefix ? prefix + "." + path : path)) return false;
+    if (!isKnownSchemaPath(prefix ? prefix + "." + path : path))
+      return false;
     var parts = path.split(".");
     var parent = object;
-    for (var i = 0; i < parts.length - 1; ++i) parent = parent[parts[i]];
+    for (var i = 0; i < parts.length - 1; ++i)
+      parent = parent[parts[i]];
     parent[parts[parts.length - 1]] = value;
     return true;
   }
-  function filePathFor(section) { return section === "legacy" ? settingsFile : overridesDir + section + ".json"; }
-  function effectiveDiskEnvironment() { return _acceptedEnvironment; }
+  function filePathFor(section) {
+    return section === "legacy" ? settingsFile : overridesDir + section + ".json";
+  }
+  function effectiveDiskEnvironment() {
+    return _acceptedEnvironment;
+  }
   function createRecordListEditor(path, address, additional, options) {
-    return Lists.create(owner, path, address, additional, options, function (callback) { Qt.callLater(callback); });
+    return Lists.create(owner, path, address, additional, options, function (callback) {
+      Qt.callLater(callback);
+    });
   }
   function createEditor(path) {
-    return DraftEditor.create(owner, path, function (callback) { Qt.callLater(callback); });
+    return DraftEditor.create(owner, path, function (callback) {
+      Qt.callLater(callback);
+    });
   }
   function modelIsCurrent(path, model) {
     var info = owner.info(path);
     return Lists.settled(info) && info.publicationGeneration === model.generation;
   }
-  function saveImmediate(callback) { return typeof callback === "function" ? owner.save(callback) : owner.save(); }
-  function saveResult(callback) { return saveImmediate(callback); }
-  function beginManagedBindings() { _managedBindings = true; }
-  function setBindingsUnresolved(value) { _bindingsUnresolved = value; }
+  function saveSelected(paths, callback) {
+    return typeof callback === "function" ? owner.saveSelected(paths, callback) : owner.saveSelected(paths);
+  }
+  function saveImmediate(callback) {
+    return typeof callback === "function" ? owner.save(callback) : owner.save();
+  }
+  function saveResult(callback) {
+    return saveImmediate(callback);
+  }
+  function beginManagedBindings() {
+    _managedBindings = true;
+  }
+  function setBindingsUnresolved(value) {
+    _bindingsUnresolved = value;
+  }
 
   // Application request IDs select immutable native captures, not saved values.
   // Only tokens and ordering live here. The worker owns bodies, bases and retries.
@@ -167,23 +206,36 @@ Singleton {
     return state === "stopped" ? owner.retryGroup(token, callback) : owner.saveGroup(token, callback);
   }
   function _retain(key, paths, edits, callback) {
-    if (_groups[key]) return _saveGroup(_groups[key], callback);
-    return owner.retainGroup({requestKey: key, paths: paths, edits: edits, dependencies: _dependencies()}, function (result) {
-      if (result.status !== "retained") {
-        if (typeof callback === "function") callback(result);
-        return;
-      }
-      root._groups[key] = result.groupToken;
-      root._groupOrder.push(result.groupToken);
-      root._saveGroup(result.groupToken, callback);
-    });
+    if (_groups[key])
+      return _saveGroup(_groups[key], callback);
+    return owner.retainGroup({
+                               requestKey: key,
+                               paths: paths,
+                               edits: edits,
+                               dependencies: _dependencies()
+                             }, function (result) {
+                               if (result.status !== "retained") {
+                                 if (typeof callback === "function")
+                                   callback(result);
+                                 return;
+                               }
+                               root._groups[key] = result.groupToken;
+                               root._groupOrder.push(result.groupToken);
+                               root._saveGroup(result.groupToken, callback);
+                             });
   }
   function saveBindingsEnvironment(environment, callback, identity, captureToken) {
     if (captureToken) {
       _groups[identity] = captureToken;
       return _saveGroup(captureToken, callback);
     }
-    return _retain(identity, [["bindings"]], [{path: ["bindings", "environment"], present: true, value: environment}], callback);
+    return _retain(identity, [["bindings"]], [
+                     {
+                       path: ["bindings", "environment"],
+                       present: true,
+                       value: environment
+                     }
+                   ], callback);
   }
   function saveSetupWork(work, callback, identity) {
     // Invalid application IDs still enter the native ordered completion queue.
@@ -192,51 +244,86 @@ Singleton {
       return false;
     }
     return _retain(identity + ":setup", [["general", "scaleRatio"], ["bar", "position"], ["wallpaper", "directory"], ["colorSchemes"], ["dock"]], [
-      {path: ["general", "scaleRatio"], present: true, value: work.scaleRatio},
-      {path: ["bar", "position"], present: true, value: work.barPosition},
-      {path: ["wallpaper", "directory"], present: true, value: work.wallpaperDirectory}
-    ], callback);
+                     {
+                       path: ["general", "scaleRatio"],
+                       present: true,
+                       value: work.scaleRatio
+                     },
+                     {
+                       path: ["bar", "position"],
+                       present: true,
+                       value: work.barPosition
+                     },
+                     {
+                       path: ["wallpaper", "directory"],
+                       present: true,
+                       value: work.wallpaperDirectory
+                     }
+                   ], callback);
   }
   function releaseManagedRequest(identity) {
     for (var key of [identity, identity + ":setup"]) {
       var token = _groups[key];
       if (token && owner.groupInfo(token).state === "succeeded") {
         owner.releaseGroup(token);
-        _groupOrder = _groupOrder.filter(function (value) { return value !== token; });
+        _groupOrder = _groupOrder.filter(function (value) {
+          return value !== token;
+        });
       }
     }
   }
   function _reset(path) {
     if (_managedBindings && path[0] === "bindings") {
-      owner.retainGroup({requestKey: "bindings-reset-" + (++_resetSerial), paths: [["bindings"]], edits: [{path: path, present: false}], dependencies: _dependencies()}, function (result) {
-        if (result.status === "retained") {
-          root._groupOrder.push(result.groupToken);
-          root.bindingsEnvironmentRequested(root.data.bindings.environment, result.groupToken);
-        }
-      });
+      owner.retainGroup({
+                          requestKey: "bindings-reset-" + (++_resetSerial),
+                          paths: [["bindings"]],
+                          edits: [
+                            {
+                              path: path,
+                              present: false
+                            }
+                          ],
+                          dependencies: _dependencies()
+                        }, function (result) {
+                          if (result.status === "retained") {
+                            root._groupOrder.push(result.groupToken);
+                            root.bindingsEnvironmentRequested(root.data.bindings.environment, result.groupToken);
+                          }
+                        });
       return;
     }
     owner.reset(path, "user");
-    owner.save();
+    owner.saveSelected([path]);
   }
-  function resetSection(key) { _reset([key]); }
-  function resetValue(path) { _reset(path.split(".")); }
+  function resetSection(key) {
+    _reset([key]);
+  }
+  function resetValue(path) {
+    _reset(path.split("."));
+  }
 
   function _findScreenOverride(screenName) {
     var overrides = data.bar.screenOverrides;
-    if (!overrides) return null;
+    if (!overrides)
+      return null;
     for (var i = 0; screenName && i < overrides.length; ++i)
-      if (overrides[i] && overrides[i].name === screenName) return overrides[i];
+      if (overrides[i] && overrides[i].name === screenName)
+        return overrides[i];
     return null;
   }
   function _findScreenOverrideIndex(screenName) {
     var overrides = data.bar.screenOverrides;
-    if (!overrides) return -1;
+    if (!overrides)
+      return -1;
     for (var i = 0; screenName && i < overrides.length; ++i)
-      if (overrides[i] && overrides[i].name === screenName) return i;
+      if (overrides[i] && overrides[i].name === screenName)
+        return i;
     return -1;
   }
-  function isScreenOverrideEnabled(screenName) { var row = _findScreenOverride(screenName); return !!row && row.enabled !== false; }
+  function isScreenOverrideEnabled(screenName) {
+    var row = _findScreenOverride(screenName);
+    return !!row && row.enabled !== false;
+  }
   function getBarPositionForScreen(screenName) {
     var row = _findScreenOverride(screenName);
     return row && row.enabled !== false && row.position !== undefined ? row.position : data.bar.position || "top";
@@ -255,40 +342,80 @@ Singleton {
   }
   function hasScreenOverride(screenName, property) {
     var row = _findScreenOverride(screenName);
-    return !!row && (property ? Object.prototype.hasOwnProperty.call(row, property) : Object.keys(row).some(function (key) { return key !== "name"; }));
+    return !!row && (property ? Object.prototype.hasOwnProperty.call(row, property) : Object.keys(row).some(function (key) {
+      return key !== "name";
+    }));
   }
-  function getScreenOverrideEntry(screenName) { return _findScreenOverride(screenName); }
+  function getScreenOverrideEntry(screenName) {
+    return _findScreenOverride(screenName);
+  }
   function setScreenOverride(screenName, field, value) {
-    if (!screenName || typeof field !== "string" || !field) return false;
+    if (!screenName || typeof field !== "string" || !field)
+      return false;
     var editor = createRecordListEditor(["bar", "screenOverrides"], []);
-    if (!editor) return false;
-    var index = editor.initialValue.findIndex(function (row) { return row.name === screenName; });
+    if (!editor)
+      return false;
+    var index = editor.initialValue.findIndex(function (row) {
+      return row.name === screenName;
+    });
     var edit;
     if (index === -1) {
       var row = Object.create(null);
       row.name = screenName;
       row[field] = value;
-      edit = {op: "insert", index: editor.initialValue.length, value: row};
-    } else edit = {op: "set", index: index, field: field, value: value};
-    return editor.submit([edit], function () { editor.detach(); });
+      edit = {
+        op: "insert",
+        index: editor.initialValue.length,
+        value: row
+      };
+    } else
+      edit = {
+        op: "set",
+        index: index,
+        field: field,
+        value: value
+      };
+    return editor.submit([edit], function () {
+      editor.detach();
+    });
   }
   function clearScreenOverride(screenName, field) {
     var editor = createRecordListEditor(["bar", "screenOverrides"], []);
-    if (!editor) return false;
-    var index = editor.initialValue.findIndex(function (row) { return row.name === screenName; });
-    if (index === -1) { editor.detach(); return false; }
-    var remaining = Object.keys(editor.initialValue[index]).filter(function (key) { return key !== field && key !== "name"; });
-    var edit = !field || remaining.length === 0 ? {op: "remove", index: index} : {op: "unset", index: index, field: field};
-    return editor.submit([edit], function () { editor.detach(); });
+    if (!editor)
+      return false;
+    var index = editor.initialValue.findIndex(function (row) {
+      return row.name === screenName;
+    });
+    if (index === -1) {
+      editor.detach();
+      return false;
+    }
+    var remaining = Object.keys(editor.initialValue[index]).filter(function (key) {
+      return key !== field && key !== "name";
+    });
+    var edit = !field || remaining.length === 0 ? {
+                                                    op: "remove",
+                                                    index: index
+                                                  } : {
+      op: "unset",
+      index: index,
+      field: field
+    };
+    return editor.submit([edit], function () {
+      editor.detach();
+    });
   }
 
   function _migrationEffects(effects) {
     // Only the historical six shell-effect wrappers remain production code.
     // Their effect execution is not, and never was, a settings save receipt.
     var actions = {
-      "clear-emoji-usage": 36, "create-legacy-pam": 44,
-      "remove-legacy-pam": 46, "clear-network-stats": 47,
-      "clear-launcher-usage": 49, "migrate-color-schemes": 56
+      "clear-emoji-usage": 36,
+      "create-legacy-pam": 44,
+      "remove-legacy-pam": 46,
+      "clear-network-stats": 47,
+      "clear-launcher-usage": 49,
+      "migrate-color-schemes": 56
     };
     for (var effect of effects) {
       if (actions[effect.action] !== effect.version) {
@@ -297,7 +424,8 @@ Singleton {
       }
       var component = Qt.createComponent(Qt.resolvedUrl("Migrations/Migration" + effect.version + ".qml"));
       var migration = component.status === Component.Ready ? component.createObject(root) : null;
-      if (!migration) Logger.e("Settings", "Migration effect unavailable:", effect.version);
+      if (!migration)
+        Logger.e("Settings", "Migration effect unavailable:", effect.version);
       else {
         migration.migrate(null, Logger, null);
         migration.destroy();

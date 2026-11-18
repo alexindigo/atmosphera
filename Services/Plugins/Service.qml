@@ -29,16 +29,25 @@ Singleton {
   // Entry points outlive registry removal and destroy() returns. Keep their
   // preference APIs until the actual QObject destruction stacks have unwound.
   function retainPluginEntry(item) {
-    if (!item || !("pluginApi" in item) || !item.pluginApi) return;
+    if (!item || !("pluginApi" in item) || !item.pluginApi)
+      return;
     root.retainPluginConsumer(item, item.pluginApi);
   }
   function retainPluginConsumer(item, api) {
-    while (api && "base" in api) api = api.base;
-    if (!api || !("settingsOwner" in api) || !api.settingsOwner || api.settingsOwner.closed) return;
+    while (api && "base" in api)
+      api = api.base;
+    if (!api || !("settingsOwner" in api) || !api.settingsOwner || api.settingsOwner.closed)
+      return;
     var key = api.pluginId;
     var entries = _pluginEntries[key] || [];
-    if (entries.some(function (entry) { return entry.item === item; })) return;
-    var entry = {item: item, api: api};
+    if (entries.some(function (entry) {
+      return entry.item === item;
+    }))
+      return;
+    var entry = {
+      item: item,
+      api: api
+    };
     entries.push(entry);
     _pluginEntries[key] = entries;
     item.Component.destruction.connect(function () {
@@ -46,7 +55,9 @@ Singleton {
       // handlers. The queued release observes the end of that whole stack.
       Qt.callLater(function () {
         var current = root._pluginEntries[key] || [];
-        root._pluginEntries[key] = current.filter(function (candidate) { return candidate !== entry; });
+        root._pluginEntries[key] = current.filter(function (candidate) {
+          return candidate !== entry;
+        });
         root._settlePluginUnload(key);
       });
     });
@@ -56,10 +67,17 @@ Singleton {
   // never flushes manual edits that the plugin did not ask to publish.
   function savePluginSettings(api, handle, callback) {
     var base = api;
-    while (base && "base" in base) base = base.base;
+    while (base && "base" in base)
+      base = base.base;
     if (!handle || !api.settingsReady || !base || !base.settingsOwner || base.settingsOwner.closed || base.settingsOwner.status !== "Ready") {
       Qt.callLater(function () {
-        if (typeof callback === "function") callback({status: "failed", error: {code: "plugin-owner"}});
+        if (typeof callback === "function")
+          callback({
+                     status: "failed",
+                     error: {
+                       code: "plugin-owner"
+                     }
+                   });
       });
       return false;
     }
@@ -67,7 +85,8 @@ Singleton {
     return handle.save(function (result) {
       api._lastSettingsSave = result;
       try {
-        if (typeof callback === "function") callback(result);
+        if (typeof callback === "function")
+          callback(result);
       } finally {
         api._pendingSettingsSaves--;
         root._completePluginSaves(api);
@@ -75,36 +94,51 @@ Singleton {
     });
   }
   function _completePluginSaves(api) {
-    if (api._pendingSettingsSaves) return;
+    if (api._pendingSettingsSaves)
+      return;
     var waiters = api._settingsSaveWaiters;
     api._settingsSaveWaiters = [];
-    var result = api._lastSettingsSave || {status: "nothing_to_save"};
-    waiters.forEach(function (callback) { callback(result); });
+    var result = api._lastSettingsSave || {
+      status: "nothing_to_save"
+    };
+    waiters.forEach(function (callback) {
+      callback(result);
+    });
   }
   function waitForPluginSaves(api, callback) {
     api._settingsSaveWaiters.push(callback);
-    Qt.callLater(function () { root._completePluginSaves(api); });
+    Qt.callLater(function () {
+      root._completePluginSaves(api);
+    });
   }
   function retainPluginEditor(editor, api) {
     root.retainPluginConsumer(editor, api);
     var base = api;
-    while (base && "base" in base) base = base.base;
+    while (base && "base" in base)
+      base = base.base;
     var key = base.pluginId;
-    editor.ownerCurrent = function () { return base !== null && root.getPluginAPI(key) === base; };
+    editor.ownerCurrent = function () {
+      return base !== null && root.getPluginAPI(key) === base;
+    };
     // Factory-created editors close on discard; declarative test consumers
     // keep their ordinary parent-owned lifetime.
-    editor.closedChanged.connect(function () { if (editor.closed) editor.destroy(); });
+    editor.closedChanged.connect(function () {
+      if (editor.closed)
+        editor.destroy();
+    });
   }
 
   function _settlePluginUnload(pluginId) {
     var retirement = _retiringPlugins[pluginId];
-    if (!retirement || !retirement.notified || retirement.settling || (_pluginEntries[pluginId] || []).length) return;
+    if (!retirement || !retirement.notified || retirement.settling || (_pluginEntries[pluginId] || []).length)
+      return;
     retirement.settling = true;
     function finish(result) {
       retirement.settling = false;
       if (result.status !== "failed") {
         if (retirement.owner) {
-          if (root._settingsOwners[pluginId] === retirement.owner) delete root._settingsOwners[pluginId];
+          if (root._settingsOwners[pluginId] === retirement.owner)
+            delete root._settingsOwners[pluginId];
           retirement.owner.detach();
           retirement.owner.destroy();
         }
@@ -116,17 +150,32 @@ Singleton {
       }
       var callbacks = retirement.callbacks;
       retirement.callbacks = [];
-      callbacks.forEach(function (callback) { callback(result); });
+      callbacks.forEach(function (callback) {
+        callback(result);
+      });
     }
     PluginInstances.settlePlugin(pluginId, function (result) {
-      if (result.status === "failed") { finish(result); return; }
-      if (retirement.api) root.waitForPluginSaves(retirement.api, finish);
-      else finish({status: "nothing_to_save"});
+      if (result.status === "failed") {
+        finish(result);
+        return;
+      }
+      if (retirement.api)
+        root.waitForPluginSaves(retirement.api, finish);
+      else
+        finish({
+                 status: "nothing_to_save"
+               });
     });
   }
 
-  Component { id: preferenceOwnerFactory; PluginPreferenceOwner {} }
-  Component { id: preferenceEditorFactory; PluginPreferenceEditor {} }
+  Component {
+    id: preferenceOwnerFactory
+    PluginPreferenceOwner {}
+  }
+  Component {
+    id: preferenceEditorFactory
+    PluginPreferenceEditor {}
+  }
 
   // External profile IO must settle the actual owners, not serialize their
   // GUI values. Captured owner identities also fence plugin load/unload.
@@ -135,7 +184,12 @@ Singleton {
       return Object.keys(root._settingsOwners).sort().filter(function (key) {
         var owner = root._settingsOwners[key];
         return owner && !owner.closed && owner.status === "Ready";
-      }).map(function (key) { return {key: key, owner: root._settingsOwners[key]}; });
+      }).map(function (key) {
+        return {
+          key: key,
+          owner: root._settingsOwners[key]
+        };
+      });
     }
     var owners = readyOwners();
     function unchanged() {
@@ -145,45 +199,88 @@ Singleton {
       });
     }
     function failed(code) {
-      callback({status: "failed", refreshState: "not_refreshed", error: {code: code}});
+      callback({
+                 status: "failed",
+                 refreshState: "not_refreshed",
+                 error: {
+                   code: code
+                 }
+               });
     }
     var fences = [];
     function current() {
       return unchanged() && fences.every(function (fence) {
-        return fence.paths.every(function (path, index) { return fence.store.info(path).latestInput === fence.inputs[index]; });
+        return fence.paths.every(function (path, index) {
+          return fence.store.info(path).latestInput === fence.inputs[index];
+        });
       });
     }
-    function greater(a, b) { return a.length > b.length || (a.length === b.length && a > b); }
+    function greater(a, b) {
+      return a.length > b.length || (a.length === b.length && a > b);
+    }
     function next(index) {
-      if (!unchanged()) { failed("profile-owner-changed"); return; }
+      if (!unchanged()) {
+        failed("profile-owner-changed");
+        return;
+      }
       if (index > owners.length) {
-        if (!current()) { failed("profile-concurrent-edit"); return; }
-        callback({status: "current", refreshState: "current", isCurrent: current}); return;
+        if (!current()) {
+          failed("profile-concurrent-edit");
+          return;
+        }
+        callback({
+                   status: "current",
+                   refreshState: "current",
+                   isCurrent: current
+                 });
+        return;
       }
       var store = index === 0 ? Settings.store : owners[index - 1].owner.store;
-      var paths = index === 0 ? store.inputPaths : store.settingsKeys.map(function (key) { return ["settings", key]; });
+      var paths = index === 0 ? store.inputPaths : store.settingsKeys.map(function (key) {
+        return ["settings", key];
+      });
       store[operation](function (result) {
         // Plain store save/reload receipts do not carry editor refreshState.
         // Their settled owner and unresolved-group facts fence this workflow.
-        if (["saved", "nothing_to_save", "reloaded"].indexOf(result.status) === -1 ||
-            (result.unresolvedGroups && result.unresolvedGroups.length)) {
+        if (["saved", "nothing_to_save", "reloaded"].indexOf(result.status) === -1 || (result.unresolvedGroups && result.unresolvedGroups.length)) {
           var ownerKey = index === 0 ? "shell" : owners[index - 1].key;
           var blockers = (result.unresolvedGroups || []).map(function (token) {
             var info = store.groupInfo(token);
-            return {ownerKey: ownerKey, groupToken: token, requestKey: info.requestKey || "", state: info.state || "unresolved"};
+            return {
+              ownerKey: ownerKey,
+              groupToken: token,
+              requestKey: info.requestKey || "",
+              state: info.state || "unresolved"
+            };
           });
-          callback(Object.assign({}, result, {preferenceOwnerKey: ownerKey, preferenceBlockers: blockers})); return;
+          callback(Object.assign({}, result, {
+                                   preferenceOwnerKey: ownerKey,
+                                   preferenceBlockers: blockers
+                                 }));
+          return;
         }
-        var inputs = paths.map(function (path) { return store.info(path).latestInput; });
-        if (inputs.some(function (input) { return greater(input, result.inputPrefix); })) {
-          failed("profile-concurrent-edit"); return;
+        var inputs = paths.map(function (path) {
+          return store.info(path).latestInput;
+        });
+        if (inputs.some(function (input) {
+          return greater(input, result.inputPrefix);
+        })) {
+          failed("profile-concurrent-edit");
+          return;
         }
-        fences.push({store: store, paths: paths, inputs: inputs});
+        fences.push({
+                      store: store,
+                      paths: paths,
+                      inputs: inputs
+                    });
         next(index + 1);
       });
     }
     Qt.callLater(function () {
-      if (["save", "reload"].indexOf(operation) === -1) { failed("profile-operation"); return; }
+      if (["save", "reload"].indexOf(operation) === -1) {
+        failed("profile-operation");
+        return;
+      }
       next(0);
     });
   }
@@ -191,8 +288,10 @@ Singleton {
   function _openSettingsOwner(pluginId, callback) {
     if (_retiringPlugins[pluginId]) {
       _retiringPlugins[pluginId].callbacks.push(function (result) {
-        if (result.status === "failed") callback(null);
-        else root._openSettingsOwner(pluginId, callback);
+        if (result.status === "failed")
+          callback(null);
+        else
+          root._openSettingsOwner(pluginId, callback);
       });
       root._settlePluginUnload(pluginId);
       return;
@@ -200,12 +299,13 @@ Singleton {
     var owner = _settingsOwners[pluginId];
     if (!owner) {
       owner = preferenceOwnerFactory.createObject(root, {
-        pluginId: pluginId, pluginDirectory: Registry.getPluginDir(pluginId),
-        userFile: Registry.getPluginSettingsFile(pluginId),
-        configFile: Settings.configDir + "settings/plugins/" + pluginId + ".config.json",
-        cacheDirectory: Settings.cacheDir + "plugin-schemas",
-        evidenceDirectory: Settings.cacheDir + "plugin-settings-conflicts"
-      });
+                                                    pluginId: pluginId,
+                                                    pluginDirectory: Registry.getPluginDir(pluginId),
+                                                    userFile: Registry.getPluginSettingsFile(pluginId),
+                                                    configFile: Settings.configDir + "settings/plugins/" + pluginId + ".config.json",
+                                                    cacheDirectory: Settings.cacheDir + "plugin-schemas",
+                                                    evidenceDirectory: Settings.cacheDir + "plugin-settings-conflicts"
+                                                  });
       _settingsOwners[pluginId] = owner;
       owner.completed.connect(function (result) {
         if (["save", "apply", "flush", "close"].indexOf(result.operation) !== -1)
@@ -214,13 +314,15 @@ Singleton {
     }
     var delivered = false;
     function settled() {
-      if (delivered || owner.status === "Loading") return;
+      if (delivered || owner.status === "Loading")
+        return;
       delivered = true;
       owner.settled.disconnect(settled);
       var ready = !owner.closed && owner.status === "Ready";
       if (!ready && root._settingsOwners[pluginId] === owner) {
         delete root._settingsOwners[pluginId];
-        if (!owner.closed) owner.detach();
+        if (!owner.closed)
+          owner.detach();
         owner.destroy();
       }
       callback(ready ? owner : null);
@@ -233,7 +335,8 @@ Singleton {
   // This returns its namespace, never a second mutable preferences snapshot.
   function loadPluginSettings(pluginId, callback) {
     root._openSettingsOwner(pluginId, function (owner) {
-      if (typeof callback === "function") callback(owner ? owner.settingsScope.values : null);
+      if (typeof callback === "function")
+        callback(owner ? owner.settingsScope.values : null);
     });
   }
 
@@ -411,9 +514,9 @@ Singleton {
                                                                                                   "plugin": registeredKey
                                                                                                 }));
                                // Load the plugin since it was already enabled (state persisted but files were missing)
-                                loadPlugin(registeredKey, function () {
-                                  root.addWidgetToBar("plugin:" + registeredKey, "right");
-                                });
+                               loadPlugin(registeredKey, function () {
+                                 root.addWidgetToBar("plugin:" + registeredKey, "right");
+                               });
                              } else {
                                ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
                                                                                                  "error": error || "Unknown error"
@@ -833,13 +936,13 @@ Singleton {
 
     Registry.setPluginEnabled(compositeKey, true);
     loadPlugin(compositeKey, skipAddToBar ? null : function (manifest) {
-        // Registration makes retained rows visible before the duplicate check.
-        if (root.addWidgetToBar("plugin:" + compositeKey, "right")) {
-          ToastService.showNotice(I18n.tr("toast.plugin-widget-added"), I18n.tr("toast.plugin-widget-added-desc", {
-                                                                                  "name": manifest.name || compositeKey,
-                                                                                  "section": "right"
-                                                                                }), "puzzle");
-        }
+      // Registration makes retained rows visible before the duplicate check.
+      if (root.addWidgetToBar("plugin:" + compositeKey, "right")) {
+        ToastService.showNotice(I18n.tr("toast.plugin-widget-added"), I18n.tr("toast.plugin-widget-added-desc", {
+                                                                                "name": manifest.name || compositeKey,
+                                                                                "section": "right"
+                                                                              }), "puzzle");
+      }
     });
 
     // Update available plugins list (use plain ID to match against availablePlugins)
@@ -859,14 +962,22 @@ Singleton {
       return null;
     var first = targets[0];
     var commands = Settings.createRecordListEditor(first.path, first.listAddress, targets.slice(1).map(function (target) {
-      return {path: target.path, listAddress: target.listAddress, ensure: target.ensure === true};
-    }), {ensure: first.ensure === true});
+      return {
+        path: target.path,
+        listAddress: target.listAddress,
+        ensure: target.ensure === true
+      };
+    }), {
+                                                     ensure: first.ensure === true
+                                                   });
     if (!commands)
       return null;
     var edits = [];
     targets.forEach(function (target, selection) {
       target.edits.forEach(function (edit) {
-        edits.push(Object.assign({}, edit, {at: commands.target(selection)}));
+        edits.push(Object.assign({}, edit, {
+                                   at: commands.target(selection)
+                                 }));
       });
     });
     return {
@@ -879,7 +990,9 @@ Singleton {
             callback(result);
         });
       },
-      detach: function () { commands.detach(); }
+      detach: function () {
+        commands.detach();
+      }
     };
   }
 
@@ -894,7 +1007,21 @@ Singleton {
   }
 
   function _screenWidgetTarget(name, section) {
-    return {path: ["bar", "screenOverrides"], listAddress: [{field: "name", equals: name}, {key: "widgets"}, {key: section}]};
+    return {
+      path: ["bar", "screenOverrides"],
+      listAddress: [
+        {
+          field: "name",
+          equals: name
+        },
+        {
+          key: "widgets"
+        },
+        {
+          key: section
+        }
+      ]
+    };
   }
 
   function createBarWidgetInsertion(widgetId, section) {
@@ -902,16 +1029,45 @@ Singleton {
     var sections = ["left", "center", "right"];
     if (sections.indexOf(section) === -1)
       return null;
-    if (sections.some(function (key) { return Settings.data.bar.widgets[key].slice().some(function (row) { return row.id === widgetId; }); }))
+    if (sections.some(function (key) {
+      return Settings.data.bar.widgets[key].slice().some(function (row) {
+        return row.id === widgetId;
+      });
+    }))
       return null;
-    var targets = [{path: ["bar", "widgets", section], listAddress: [],
-      edits: [{op: "insert", index: Settings.data.bar.widgets[section].length, value: {id: widgetId}}]}];
+    var targets = [
+          {
+            path: ["bar", "widgets", section],
+            listAddress: [],
+            edits: [
+              {
+                op: "insert",
+                index: Settings.data.bar.widgets[section].length,
+                value: {
+                  id: widgetId
+                }
+              }
+            ]
+          }
+        ];
     root._firstPlacementMonitors(Settings.data.bar.screenOverrides).forEach(function (monitor) {
-      if (!monitor.widgets || sections.some(function (key) { return (monitor.widgets[key] || []).some(function (row) { return row.id === widgetId; }); }))
+      if (!monitor.widgets || sections.some(function (key) {
+        return (monitor.widgets[key] || []).some(function (row) {
+          return row.id === widgetId;
+        });
+      }))
         return;
       var target = root._screenWidgetTarget(monitor.name, section);
       target.ensure = true;
-      target.edits = [{op: "insert", index: (monitor.widgets[section] || []).length, value: {id: widgetId}}];
+      target.edits = [
+            {
+              op: "insert",
+              index: (monitor.widgets[section] || []).length,
+              value: {
+                id: widgetId
+              }
+            }
+          ];
       targets.push(target);
     });
     return root._capturePlacementBatch(targets);
@@ -949,7 +1105,10 @@ Singleton {
     var edits = [];
     for (var i = rows.length - 1; i >= 0; --i) {
       if (rows[i].id === widgetId)
-        edits.push({op: "remove", index: i});
+        edits.push({
+                     op: "remove",
+                     index: i
+                   });
     }
     return edits;
   }
@@ -960,7 +1119,11 @@ Singleton {
     sections.forEach(function (section) {
       var edits = root._placementRemovals(Settings.data.bar.widgets[section], widgetId);
       if (edits.length)
-        targets.push({path: ["bar", "widgets", section], listAddress: [], edits: edits});
+        targets.push({
+                       path: ["bar", "widgets", section],
+                       listAddress: [],
+                       edits: edits
+                     });
     });
     root._firstPlacementMonitors(Settings.data.bar.screenOverrides).forEach(function (monitor) {
       if (!monitor.widgets)
@@ -974,7 +1137,9 @@ Singleton {
         }
       });
     });
-    return root._capturePlacementBatch(targets, function () { BarService.widgetsRevision++; });
+    return root._capturePlacementBatch(targets, function () {
+      BarService.widgetsRevision++;
+    });
   }
 
   function removeWidgetFromBar(widgetId) {
@@ -988,7 +1153,19 @@ Singleton {
     root._firstPlacementMonitors(Settings.data.desktopWidgets.monitorWidgets).forEach(function (monitor) {
       var edits = root._placementRemovals(monitor.widgets || [], widgetId);
       if (edits.length)
-        targets.push({path: ["desktopWidgets", "monitorWidgets"], listAddress: [{field: "name", equals: monitor.name}, {key: "widgets"}], edits: edits});
+        targets.push({
+                       path: ["desktopWidgets", "monitorWidgets"],
+                       listAddress: [
+                         {
+                           field: "name",
+                           equals: monitor.name
+                         },
+                         {
+                           key: "widgets"
+                         }
+                       ],
+                       edits: edits
+                     });
     });
     return root._capturePlacementBatch(targets);
   }
@@ -1030,8 +1207,7 @@ Singleton {
     if (typeof callback !== "function")
       return;
     Qt.callLater(function () {
-      if (Registry.isPluginEnabled(pluginId) && root.loadedPlugins[pluginId]?.barWidget === component
-          && BarWidgetRegistry.getWidget("plugin:" + pluginId) === component && typeof callback === "function")
+      if (Registry.isPluginEnabled(pluginId) && root.loadedPlugins[pluginId]?.barWidget === component && BarWidgetRegistry.getWidget("plugin:" + pluginId) === component && typeof callback === "function")
         callback(manifest);
     });
   }
@@ -1039,7 +1215,8 @@ Singleton {
   function loadPlugin(pluginId, onBarRegistered) {
     if (_retiringPlugins[pluginId]) {
       _retiringPlugins[pluginId].callbacks.push(function (result) {
-        if (result.status !== "failed") root.loadPlugin(pluginId, onBarRegistered);
+        if (result.status !== "failed")
+          root.loadPlugin(pluginId, onBarRegistered);
       });
       root._settlePluginUnload(pluginId);
       return;
@@ -1292,14 +1469,20 @@ Singleton {
   // preserveSettings: if true, don't remove desktop widget settings (used for hot reload)
   function unloadPlugin(pluginId, preserveSettings, callback) {
     if (_retiringPlugins[pluginId]) {
-      if (typeof callback === "function") _retiringPlugins[pluginId].callbacks.push(callback);
+      if (typeof callback === "function")
+        _retiringPlugins[pluginId].callbacks.push(callback);
       root._settlePluginUnload(pluginId);
       return;
     }
     var preferences = _settingsOwners[pluginId];
     var plugin = root.loadedPlugins[pluginId];
-    var retirement = {owner: preferences, api: plugin ? plugin.api : null, notified: false,
-      settling: false, callbacks: typeof callback === "function" ? [callback] : []};
+    var retirement = {
+      owner: preferences,
+      api: plugin ? plugin.api : null,
+      notified: false,
+      settling: false,
+      callbacks: typeof callback === "function" ? [callback] : []
+    };
     _retiringPlugins[pluginId] = retirement;
     if (!plugin) {
       Logger.w("PluginService", "Plugin not loaded:", pluginId);
@@ -1471,11 +1654,19 @@ Singleton {
       return root.createPluginSettingsEditor(pluginId, api);
     };
     api.settingsPreviewOwner = settingsPreviewFactory.createObject(api, {
-      sourceValue: Qt.binding(function () { return api.pluginSettings; }),
-      draftFactory: function () { return root.createPluginSettingsEditor(pluginId, api); },
-      currentOwner: function () { return root.getPluginAPI(pluginId) === api ? api : null; }
-    });
-    api.createSettingsPreview = function (editor) { return api.settingsPreviewOwner.open(editor); };
+                                                                     sourceValue: Qt.binding(function () {
+                                                                       return api.pluginSettings;
+                                                                     }),
+                                                                     draftFactory: function () {
+                                                                       return root.createPluginSettingsEditor(pluginId, api);
+                                                                     },
+                                                                     currentOwner: function () {
+                                                                       return root.getPluginAPI(pluginId) === api ? api : null;
+                                                                     }
+                                                                   });
+    api.createSettingsPreview = function (editor) {
+      return api.settingsPreviewOwner.open(editor);
+    };
 
     // Writes the shared state to disk and reassigns it, so bindings on
     // `state` (instances forward it) re-evaluate.
@@ -1489,8 +1680,12 @@ Singleton {
     // the user's sparse override at ~/.config/atmosphera/plugins/<id>/config.json
     // (user wins). Read-only for the shipped file; async via callback.
     api.getConfig = function (callback) {
-      if (api.settingsOwner) return api.settingsOwner.snapshotConfig(callback);
-      Qt.callLater(function () { if (typeof callback === "function") callback(null); });
+      if (api.settingsOwner)
+        return api.settingsOwner.snapshotConfig(callback);
+      Qt.callLater(function () {
+        if (typeof callback === "function")
+          callback(null);
+      });
       return false;
     };
 
@@ -1765,14 +1960,24 @@ Singleton {
   // Selected plugin-level editor. No runtime API or file changes until Apply;
   // loading/unloading a different API invalidates the original capture.
   function createPluginSettingsEditor(pluginId, api) {
-    if (!api || !api.settingsHandle || root.getPluginAPI(pluginId) !== api) return null;
+    if (!api || !api.settingsHandle || root.getPluginAPI(pluginId) !== api)
+      return null;
     var fields = api.settingsOwner.store.settingsKeys;
     var writable = fields.length !== 0;
     var handle;
     // Informational pages own a native read-only view, not an empty draft.
-    try { handle = writable ? api.settingsHandle.draft() : api.settingsHandle.scope([], false); } catch (error) { return null; }
-    if (!handle) return null;
-    var editor = preferenceEditorFactory.createObject(root, {fields: fields, writable: writable, inputScope: api.settingsHandle});
+    try {
+      handle = writable ? api.settingsHandle.draft() : api.settingsHandle.scope([], false);
+    } catch (error) {
+      return null;
+    }
+    if (!handle)
+      return null;
+    var editor = preferenceEditorFactory.createObject(root, {
+                                                        fields: fields,
+                                                        writable: writable,
+                                                        inputScope: api.settingsHandle
+                                                      });
     root.retainPluginEditor(editor, api);
     editor.attach(handle);
     return editor;
@@ -2042,6 +2247,7 @@ Singleton {
 
     // Backup desktop widget settings (includes this plugin's widgets)
     var desktopWidgetsBackup = JSON.parse(JSON.stringify(Settings.data.desktopWidgets.monitorWidgets || []));
+    var restoredPaths = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]];
     Logger.d("PluginService", "Backed up desktop widget settings");
 
     // Close any open panels for this plugin before update
@@ -2087,7 +2293,7 @@ Singleton {
 
         // Persist restored layout immediately to prevent race with file watcher reload
         // (the earlier disablePlugin write triggers a reload that can overwrite the restore)
-        Settings.saveImmediate();
+        Settings.saveSelected(restoredPaths);
 
         // Remove from updates list
         var updates = Object.assign({}, root.pluginUpdates);
@@ -2107,7 +2313,7 @@ Singleton {
 
         // Restore desktop widget settings even on failure
         Settings.data.desktopWidgets.monitorWidgets = desktopWidgetsBackup;
-        Settings.saveImmediate();
+        Settings.saveSelected(restoredPaths);
 
         if (callback)
           callback(false, error);
@@ -2493,7 +2699,8 @@ Singleton {
     // Unload the plugin (destroys components and instances)
     // Pass true to preserve desktop widget settings during hot reload
     unloadPlugin(pluginId, true, function (result) {
-      if (result.status === "failed") return;
+      if (result.status === "failed")
+        return;
       // Only replace the owner after actual entry destruction and all requested
       // shared/placement saves have delivered their publication receipts.
       Registry.incrementPluginLoadVersion(pluginId);

@@ -12,6 +12,7 @@ import re
 import secrets
 import shlex
 import shutil
+import struct
 import subprocess
 import threading
 import time
@@ -56,7 +57,7 @@ def main():
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--verify-settings', action='store_true')
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
-    parser.add_argument('--ingress', choices=('ipc', 'cli', 'keybind', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'), default='ipc')
+    parser.add_argument('--ingress', choices=('ipc', 'cli', 'keybind', 'hot-corner', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'), default='ipc')
     parser.add_argument('--late-real-first', action='store_true', help='Test-only granted-client response barrier and held emergency exec')
     parser.add_argument('--real-suspend', action='store_true')
     parser.add_argument('--sleep-signals', action='store_true', help='Real logind/inhibitor path with a no-kernel-sleep service barrier')
@@ -107,7 +108,7 @@ def main():
         (work / 'load-samples.json').write_text(json.dumps(telemetry, indent=2))
 
     sample_load('start')
-    if hypr_crash or args.sleep_signals or args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+    if hypr_crash or args.sleep_signals or args.ui == 'demo' or args.ingress in ('keybind', 'hot-corner') or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
     discovery = manage(source, {'operation': 'discover'})
     sid, takeover = discovery['session'], discovery['takeover']
@@ -188,10 +189,14 @@ def main():
     if args.ingress == 'idle':
         configuration['idle'] = {'enabled': False, 'lockTimeout': 2, 'screenOffTimeout': 0,
             'suspendTimeout': 0, 'fadeDuration': 0}
+    if args.ingress == 'hot-corner':
+        configuration['general']['hotCorners'] = {'bottomRight': 'atmosphera ipc lockScreen lock', 'delayMs': 200}
     (settings / 'settings.json').write_text(json.dumps(configuration))
     environment = dict(os.environ, XDG_CONFIG_DIRS=str(stage / 'etc/xdg') + ':/etc/xdg',
                        ATMOSPHERA_CONFIG_DIR=str(settings), WAYLAND_DEBUG='client',
                        ATMOSPHERA_CACHE_DIR=str(work / 'cache'), ATMOSPHERA_STATE_DIR=str(work / 'state'))
+    if args.ingress == 'hot-corner':
+        environment['PATH'] = str(root / 'Scripts/bash') + ':' + environment['PATH']
     if args.case in ('slow', 'opaque-race', 'opaque-withdraw', 'report-refusal', 'report-unknown') or args.late_real_first:
         binary = work / 'bin/qs'
         binary.parent.mkdir()
@@ -389,6 +394,19 @@ def main():
         cli = root / 'Scripts/bash/atmosphera'
         if args.ingress == 'cli':
             run([str(cli), 'lock'], env=environment)
+            return
+        if args.ingress == 'hot-corner':
+            assert environment['XDG_CURRENT_DESKTOP'] == 'niri', 'hot-corner integration uses the niri guest'
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                # Ordinary native pointer motion over the real corner surface;
+                # no direct service/owner call or synthetic dwell completion.
+                console.socket.sendall(struct.pack('>BBHH', 5, 0, console.width // 2, console.height // 2))
+                time.sleep(.3)
+                console.socket.sendall(struct.pack('>BBHH', 5, 0, console.width - 3, console.height - 3))
+            finally:
+                console.close()
             return
         if args.ingress == 'keybind':
             assert environment['XDG_CURRENT_DESKTOP'] == 'niri', 'keybind fixture here uses niri'
@@ -767,6 +785,10 @@ def main():
             idle_enabled(False)
             journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat', '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
             assert 'Executing action: lock' in journal and 'Idle fired: lock' in journal, 'idle ingress did not fire natively'
+        if args.ingress == 'hot-corner':
+            text = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat', '_SYSTEMD_INVOCATION_ID=' + owner]).stdout
+            events = [line for line in text.splitlines() if 'HotCorners' in line and 'run bottomRight' in line]
+            assert len(events) == 1 and 'Virtual-1' in events[0], 'exact hot-corner action not observed'
         (work / 'ingress.json').write_text(json.dumps({'route': args.ingress, 'snapshot': first['descriptor']['snapshot']}, indent=2))
         (work / ('first-unconfirmed.json' if unconfirmed else 'first-secure.json')).write_text(json.dumps(first, indent=2))
         assert first['descriptor']['units']['real']['startedAt'] < first['descriptor']['emergencyAt']
