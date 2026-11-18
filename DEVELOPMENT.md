@@ -407,11 +407,30 @@ Plugin lint audits declared actions in every manifest, including unchanged
 plugins in a changed-plugin run. `qs.Services.Actions` is first exported by
 0.10.0; imports (including aliased and semicolon-terminated imports) require
 `minAtmospheraVersion` of at least 0.10.0. It is absent from the 0.9.x releases.
-In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace:
+In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace
+outside the source checkout (the runner rejects nested workspaces):
 
 ```sh
 export TMPDIR=/home/tester/Projects/hot-corners-landing/tmp
-timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/hot-corners-landing/runs/catalog-fresh
+mkdir -p /home/tester/Projects/action-catalog-runs
+timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/action-catalog-runs/catalog-fresh
+```
+
+Hot corners have four guest-only regressions in the same VM: the settings page
+and its persistence, the dwell controller with a fake clock, the plugins registry
+v6 migration (planner cases and cold starts over synthetic profiles), and the
+real-input acceptance on two outputs (`--case` takes `all` or a list of H1-H9):
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-core/tmp
+W=/home/tester/Projects/hot-corners-core/runs
+mkdir -p "$TMPDIR" "$W"
+timeout 600 python3 -B Scripts/dev/hot-corners-settings-regression.py --source "$PWD" --workspace $W/settings-fresh
+timeout 300 python3 -B Scripts/dev/hot-corners-service-regression.py
+timeout 900 python3 -B Scripts/dev/hot-corners-migration-regression.py --source "$PWD" --workspace $W/migration-fresh
+python3 -B Scripts/dev/hot-corners-migration-oracle-selftest.py
+ACTION_TEST_VM_UUID=20c0b416-2943-49fb-8aa0-eb7d29b1c8ea python3 -B Scripts/dev/hot-corners-migration-boundary-proof.py --workspace $W/migration-boundary-fresh
+timeout 1800 python3 -B Scripts/dev/hot-corners-e2e.py --source "$PWD" --workspace $W/e2e-fresh --case all
 ```
 
 `Scripts/dev/qmllint.sh` with no paths includes built-in QML. Its native import

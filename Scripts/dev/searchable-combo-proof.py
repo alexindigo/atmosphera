@@ -50,15 +50,18 @@ def main():
     log = (work / 'shell.log').read_text(errors='replace')
     cases = [json.loads(line.split('COMBO_CASE ', 1)[1]) for line in log.splitlines() if 'COMBO_CASE ' in line]
     errors = [line for line in log.splitlines() if re.search(r'Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:|is not a type|is unavailable', line)]
-    expected = ['stale-no-match', 'explicit-run', 'clamped-navigation', 'changed-navigation', 'wheel-default',
+    expected = ['registry-ready-publication', 'stale-no-match', 'explicit-run', 'clamped-navigation', 'changed-navigation', 'wheel-default',
                 'move-identity', 'replacement-invalidates', 'pending-rejects', 'bulk-refresh', 'literal-preview',
-                'footer-identity', 'empty-navigation', 'same-index-replacement', 'data-change-identity']
+                 'footer-identity', 'empty-navigation', 'same-index-replacement', 'data-change-identity',
+                 'action-selection-supersedes-editor', 'action-clear-supersedes-editor',
+                 'action-unsuperseded-editor', 'action-run-supersedes-editor',
+                 'action-locale-grouped', 'action-locale-plain', 'action-invalid-restored']
     passed = (execution['exit_code'] == 0 and execution['cleanup_complete'] and not errors
               and [row['name'] for row in cases] == expected and all(row['passed'] for row in cases)
               and 'COMBO_DONE' in log)
     receipt = dict(passed=passed, cases=cases, qml_errors=errors, source_sha256={
         rel: hashlib.sha256((source / rel).read_bytes()).hexdigest() for rel in
-        ('Widgets/NSearchableComboBox.qml', 'Scripts/dev/fixtures/searchable-combo.qml', 'Scripts/dev/searchable-combo-proof.py')})
+        ('Widgets/NSearchableComboBox.qml', 'Widgets/NActionPicker.qml', 'Scripts/dev/fixtures/searchable-combo.qml', 'Scripts/dev/searchable-combo-proof.py')})
     write_receipt(work, receipt, execution)
     print(json.dumps(receipt, indent=2))
     return 0 if passed else 1

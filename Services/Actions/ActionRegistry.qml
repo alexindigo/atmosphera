@@ -123,13 +123,13 @@ Singleton {
         Logger.e("ActionRegistry", "Cannot read core actions: " + error);
         root._coreActions = [];
       }
-      root._coreLoaded = true;
       root.rebuild();
+      root._coreLoaded = true;
     }
     onLoadFailed: function (error) {
       Logger.e("ActionRegistry", "Cannot load core actions: " + error);
-      root._coreLoaded = true;
       root.rebuild();
+      root._coreLoaded = true;
     }
   }
 

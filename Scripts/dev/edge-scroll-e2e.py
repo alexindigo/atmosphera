@@ -34,7 +34,7 @@ PROBE = r'''
         active: EdgeScrollService.activeZone, progress: EdgeScrollService.progress,
         pulse: EdgeScrollService.stepPulse, reducedMotion: EdgeScrollService.reducedMotion,
         pulseCount: shellRoot.edgePulseCount, reducedPulseFrames: shellRoot.edgeReducedPulseFrames,
-        zones: EdgeScrollService.screenZones, dock: DockGeometryService.revealRect("Virtual-1"),
+        zones: ScreenZonesService.edgeZones, dock: DockGeometryService.revealRect("Virtual-1"),
         panel: PanelService.openedPanel?.objectName || "", tooltip: TooltipService.activeTooltip?.visible || false,
         widget: widget ? {x: point.x + 8, y: point.y, width: widget.width, height: widget.height,
                           hovered: widget.hovering} : null});
@@ -381,7 +381,7 @@ def main():
     dock = shell / 'Modules/Dock/Dock.qml'
     dock.write_text('import Quickshell.Io\n' + inject_probe(dock.read_text(), DOCK_PROBE, root_id='peekWindow'))
     if os.environ.get('EDGE_SCROLL_DIAGNOSTICS') == '1':
-        sensors = shell / 'Modules/MainScreen/EdgeScrollSensors.qml'
+        sensors = shell / 'Modules/MainScreen/ScreenZoneSensors.qml'
         text = sensors.read_text().replace('onHoveredChanged: {', 'onHoveredChanged: { console.log("EDGE_HOVER", root.originX, root.originY, hovered, point.position, point.pressedButtons);')
         text = text.replace('onActiveChanged: {', 'onActiveChanged: { console.log("EDGE_PRESS", active, point.pressedButtons);')
         sensors.write_text(text)

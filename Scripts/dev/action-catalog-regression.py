@@ -81,7 +81,7 @@ def main():
     add_execution_arguments(parser)
     args = parser.parse_args()
     source, work = args.source.resolve(), args.workspace.resolve()
-    check_execution_paths(parser, work)
+    check_execution_paths(parser, work, source=source)
     if Path.home() != Path("/home/tester") or not Path("/run/user/1000/wayland-1").exists():
         parser.error("run only inside the assigned Wayland test VM")
     work.mkdir(parents=True)

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
 import Quickshell
+import qs.Services.Actions
 import qs.Widgets
 
 ShellRoot {
@@ -11,6 +12,15 @@ ShellRoot {
   property var commands: []
   property int selectedBefore: 0
   property string savedArguments: "--user-value"
+  property string configuredCommand: "echo before"
+
+  Connections {
+    target: ActionRegistry
+    function onReadyChanged() {
+      if (ActionRegistry.ready)
+        check("registry-ready-publication", ActionRegistry.match("atmosphera ipc settings open") !== null, ActionRegistry.actions.length);
+    }
+  }
 
   function check(name, passed, observed) {
     console.log("COMBO_CASE " + JSON.stringify({
@@ -59,6 +69,14 @@ ShellRoot {
         root.savedArguments = "--default";
       }
       onCustomEntered: text => root.commands = root.commands.concat([text])
+    }
+    NActionPicker {
+      id: actionPicker
+      y: 180
+      width: 500
+      fieldObjectName: "proof-action"
+      command: root.configuredCommand
+      onCommandChosen: command => root.configuredCommand = command
     }
   }
   Timer {
@@ -229,11 +247,63 @@ ShellRoot {
         picker._highlight = 0;
         first.setProperty(0, "name", "Match Renamed");
         break;
-      default:
+      case 11:
         check("data-change-identity", picker._highlight === 0 && picker.activeModel.get(0).name === "Match Renamed", {
                 highlight: picker._highlight,
                 row: picker.activeModel.get(0)
               });
+        break;
+      case 12:
+        if (!ActionRegistry.ready) {
+          root.step--;
+          break;
+        }
+        var field = find(actionPicker, item => item.objectName === "proof-action");
+        field.openCustomEditor();
+        field.selectChoice(field.findIndexByKey("core/settings"));
+        var selectedCommand = configuredCommand;
+        actionPicker.commitCustomEditor();
+        check("action-selection-supersedes-editor", !field.customEditing && selectedCommand === "atmosphera ipc settings open" && configuredCommand === selectedCommand, configuredCommand);
+        configuredCommand = "echo before clear";
+        field.openCustomEditor();
+        field.cleared();
+        actionPicker.commitCustomEditor();
+        check("action-clear-supersedes-editor", !field.customEditing && configuredCommand === "", configuredCommand);
+        configuredCommand = "echo retained draft";
+        field.openCustomEditor();
+        actionPicker.commitCustomEditor();
+        check("action-unsuperseded-editor", !field.customEditing && configuredCommand === "echo retained draft", configuredCommand);
+        field.openCustomEditor();
+        field.searchText = "echo replacement";
+        field.selectSearchCommand();
+        actionPicker.commitCustomEditor();
+        check("action-run-supersedes-editor", !field.customEditing && configuredCommand === "echo replacement", configuredCommand);
+        configuredCommand = "atmosphera ipc idleInhibitor enableFor 900";
+        break;
+      default:
+        var frame = find(actionPicker, item => item.objectName === "proof-action-seconds");
+        var input = frame ? find(frame, item => item.inputItem !== undefined) : null;
+        if (!input) {
+          check("action-locale-grouped", false, "missing input");
+          check("action-locale-plain", false, "missing input");
+          check("action-invalid-restored", false, "missing input");
+        } else {
+          input.inputItem.validator.locale = "de_DE";
+          input.text = "1.000";
+          input.textEdited();
+          check("action-locale-grouped", configuredCommand === "atmosphera ipc idleInhibitor enableFor 1000", configuredCommand);
+          input.text = "1000";
+          input.textEdited();
+          check("action-locale-plain", configuredCommand === "atmosphera ipc idleInhibitor enableFor 1000", configuredCommand);
+          input.inputItem.forceActiveFocus();
+          input.text = "";
+          input.textEdited();
+          picker.forceActiveFocus();
+          check("action-invalid-restored", input.text === "1000" && configuredCommand === "atmosphera ipc idleInhibitor enableFor 1000", {
+                  text: input.text,
+                  command: configuredCommand
+                });
+        }
         console.log("COMBO_DONE");
         stop();
         Qt.quit();
