@@ -18,6 +18,7 @@ def main():
         env=dict(os.environ, srcdir=str(source.parent), _gitname=source.name, pkgdir=str(stage), pkgver='0.9.3'), timeout=60)
     config = stage / 'etc/xdg/quickshell/atmosphera-emergency-lock'
     commands = [
+        ('session', 'locker-session-proof.py', []),
         ('state', 'locker-state-proof.py', []),
         ('adapter', 'locker-unit-adapter-proof.py', []),
         ('reports', 'locker-report-validation.py', []),

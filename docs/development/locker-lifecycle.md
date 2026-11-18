@@ -14,6 +14,16 @@ a candidate, retiring an emergency holder for takeover, losing a protocol reques
 or restarting the main shell must not send `unlock_and_destroy`. No password or
 authentication permit is transferred between processes.
 
+Session association belongs to `locker-unit.py` for discovery, new generations
+and standalone client reports. The selected niri socket or Hyprland instance
+identifies a same-UID compositor PID with verified process name and lifetime.
+Its login session must be same-user, local Wayland, class `user`, and active or
+online. A compositor's `session-*.scope` is authoritative. Without a session
+scope (niri-session/uwsm user services), only the compositor's own
+`/proc/<pid>/environ` may supply `XDG_SESSION_ID`, and its nonempty `XDG_SEAT`
+must match that eligible login's seat. Caller/manager environment never selects
+the login session, and an ineligible scope cannot fall back to the environment.
+
 | # | Time / event | Behavior |
 |---|---|---|
 | 1 | Initial bundled request | Prepare settings, auth and UI; report generation-ready; wait for the owner's acquisition grant |
@@ -115,6 +125,13 @@ use `ark-user-vms` strict pinned tester SSH to `atmosphera-locker-orphan` on
 `locker-lifecycle-units.py --work <new-artifact-directory>` runs policy, actual
 unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd proof
 is not a real suspend/resume proof.
+
+`locker-session-proof.py --work <new-artifact-directory>` supplies synthetic
+proc/logind inputs for both launch shapes on niri and Hyprland, including
+foreign/mismatched/ineligible sessions and process identity rejection. It is
+not native lock or PAM evidence; repeat the real-main fast/slow proofs with the
+guest compositor launched by `niri-session` as `niri.service`, as well as the
+login-session scope launch.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
 `deadline-race`, `rejected`, `resources`, `external`, `contract`, `restart`, `ingress`, `preview`,

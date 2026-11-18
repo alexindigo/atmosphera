@@ -164,36 +164,60 @@ def unit_status(name):
 
 def graphical_session(wanted=None):
     ids = [row.split()[0] for row in command(['loginctl', 'list-sessions', '--no-legend', '--no-pager']).stdout.splitlines() if row.split()]
-    candidates = []
+    candidates = {}
     for sid in ids:
         info = properties(['loginctl', 'show-session', sid, '-p', 'Id', '-p', 'User',
-                           '-p', 'Type', '-p', 'Class', '-p', 'State', '-p', 'Remote'])
+                           '-p', 'Type', '-p', 'Class', '-p', 'State', '-p', 'Remote', '-p', 'Seat'])
         if (info.get('User') == str(os.getuid()) and info.get('Type') == 'wayland'
                 and info.get('Class') == 'user' and info.get('Remote') == 'no'
                 and info.get('State') in ('active', 'online')):
-            candidates.append(info['Id'])
+            candidates[info['Id']] = info
     # A compositor's own PID binds a systemd-launched shell to its graphical
     # session rather than to this management command's SSH/login session.
     compositor_pid = None
+    compositor_comm = None
     socket = os.environ.get('NIRI_SOCKET', '')
     if socket:
         match = re.fullmatch(r'niri\..+\.(\d+)\.sock', Path(socket).name)
         if not match or not stat.S_ISSOCK(os.stat(socket).st_mode) or os.stat(socket).st_uid != os.getuid():
             raise Refused('invalid niri display identity')
         compositor_pid = int(match[1])
-        if Path(f'/proc/{compositor_pid}/comm').read_text().strip() != 'niri':
-            raise Refused('niri display PID does not identify niri')
+        compositor_comm = 'niri'
     elif os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
         instances = json.loads(command(['hyprctl', '-j', 'instances']).stdout)
         instances = [item for item in instances if item.get('instance') == os.environ['HYPRLAND_INSTANCE_SIGNATURE']]
         if len(instances) != 1:
             raise Refused('ambiguous Hyprland display identity')
         compositor_pid = int(instances[0]['pid'])
-    if compositor_pid:
-        groups = Path(f'/proc/{compositor_pid}/cgroup').read_text()
-        candidates = [sid for sid in candidates if re.search(r'/session-' + re.escape(sid) + r'\.scope(?:/|\n|$)', groups)]
-    else:
+        compositor_comm = 'Hyprland'
+    if not compositor_pid:
         raise Refused('no supported graphical compositor identity')
+    process = Path(f'/proc/{compositor_pid}')
+    identity = proc_identity(compositor_pid)
+    try:
+        if (identity is None or process.stat().st_uid != os.getuid()
+                or (process / 'comm').read_text().strip() != compositor_comm):
+            raise Refused('display PID does not identify this user\'s compositor')
+        groups = (process / 'cgroup').read_text()
+        scopes = re.findall(r'/session-([^/\n]+)\.scope(?:/|\n|$)', groups)
+        if scopes:
+            # A scope is authoritative, even if ineligible: never override it
+            # with an environment value pointing at a different login session.
+            candidates = [sid for sid in candidates if sid in scopes]
+        else:
+            # niri-session and uwsm launch compositors in the user manager,
+            # outside session-*.scope. Only that verified compositor's own
+            # environment can associate it with a strict local Wayland login.
+            environment = dict(entry.split('=', 1) for entry in
+                os.fsdecode((process / 'environ').read_bytes()).split('\0') if '=' in entry)
+            sid = environment.get('XDG_SESSION_ID', '')
+            seat = environment.get('XDG_SEAT', '')
+            candidates = [sid] if (sid in candidates and seat
+                and candidates[sid].get('Seat') == seat) else []
+        if not same_process(identity):
+            raise Refused('display compositor changed during session discovery')
+    except OSError as error:
+        raise Refused('cannot inspect display compositor: ' + str(error)) from error
     if len(candidates) != 1 or (wanted is not None and candidates[0] != wanted):
         raise Refused('graphical session does not match the display')
     return candidates[0]
