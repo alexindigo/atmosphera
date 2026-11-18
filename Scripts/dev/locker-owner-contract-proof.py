@@ -33,6 +33,8 @@ ShellRoot {
   property int settlements: 0
   property int ticks: 0
   property bool finished: false
+  property var oldQueryReply: null
+  property int sleepConfirmations: 0
 
   function respond(callback, value) {
     Qt.callLater(function () { callback({stdout: JSON.stringify({ok: true, value: value})}); });
@@ -56,6 +58,8 @@ ShellRoot {
         apply(job);
         respond(callback, descriptor);
       }
+    } else if (job.operation === "sleep-window") {
+      respond(callback, descriptor);
     } else if (job.operation === "note") {
       descriptor.contractFailed = job.contractFailed || descriptor.contractFailed;
       respond(callback, descriptor);
@@ -78,18 +82,40 @@ ShellRoot {
     LockOwnerService._initialized = true;
     LockOwnerService.pump();
   }
+  Connections {
+    target: LockOwnerService
+    ignoreUnknownSignals: true
+    function onSleepConfirmed(window, confirmed, opaque) {
+      if (confirmed) {
+        root.sleepConfirmations++;
+        if (root.scenario === "sleep-query-inflight" && root.ticks < 10)
+          root.premature = true;
+      }
+    }
+  }
   Timer {
     interval: 20
     running: !root.finished
     repeat: true
     onTriggered: {
       root.ticks++;
+      if (root.scenario === "sleep-query-inflight" && root.ticks === 3) {
+        root.oldQueryReply = LockerService.reply;
+        LockOwnerService.observeSleepWindow(true, "current-window");
+      }
       LockOwnerService.pump();
-      if (root.ticks < 5 || (root.scenario === "query-persistence" && root.ticks < 10))
+      if (root.ticks < 5 || ((root.scenario === "query-persistence" || root.scenario === "sleep-query-inflight") && root.ticks < 10))
         root.premature = root.premature || LockOwnerService.secure;
       if (root.ticks === 5 && LockerService.reply) {
-        LockerService.reply({ok: true, owner: ":1.10", state: root.scenario === "query-pending" ? "pending" : root.scenario === "query-unlocked" ? "unlocked" : "secure"});
+        var reply = root.oldQueryReply || LockerService.reply;
+        reply({ok: true, owner: ":1.10", state: root.scenario === "query-pending" ? "pending" : root.scenario === "query-unlocked" ? "unlocked" : "secure"});
       }
+      if (root.scenario === "sleep-query-inflight" && root.ticks === 10)
+        LockerService.reply({ok: true, owner: ":1.10", state: "secure"});
+      if (root.scenario === "sleep-after-auth" && root.ticks === 12)
+        LockOwnerService.observeSleepWindow(true, "current-window");
+      if (root.scenario === "sleep-after-auth" && root.ticks === 15)
+        LockerService.reply({ok: true, owner: ":1.10", state: "unlocked"});
       if (root.ticks === 10 && root.observeReply) {
         root.apply(root.observeJob);
         root.respond(root.observeReply, root.descriptor);
@@ -108,12 +134,17 @@ ShellRoot {
         passed = passed && !LockOwnerService.secure && root.probes === 1;
       else if (root.scenario === "query-unlocked")
         passed = passed && !LockOwnerService.secure && root.probes === 0 && root.settlements === 1;
+      else if (root.scenario === "sleep-query-inflight")
+        passed = passed && LockOwnerService.secure && LockerService.queries === 2 && root.sleepConfirmations > 0;
+      else if (root.scenario === "sleep-after-auth")
+        passed = passed && !LockOwnerService.secure && LockerService.queries === 2 && root.sleepConfirmations === 0 && root.settlements === 1;
       else
         passed = passed && LockOwnerService.secure;
       root.finished = true;
       LockOwnerService._initialized = false;
       console.log("OWNER_CONTRACT_RESULT " + JSON.stringify({scenario: root.scenario, passed: passed,
-        premature: root.premature, secure: LockOwnerService.secure, withdrawn: root.withdrawn, probes: root.probes}));
+        premature: root.premature, secure: LockOwnerService.secure, withdrawn: root.withdrawn, probes: root.probes,
+        queries: LockerService.queries, sleepConfirmations: root.sleepConfirmations}));
       Qt.exit(passed ? 0 : 1);
     }
   }
@@ -142,11 +173,12 @@ def main():
     (shell / 'Services/Control/HooksService.qml').write_text('pragma Singleton\nimport QtQuick\nQtObject {}\n')
     (shell / 'Services/Locker/LockerService.qml').write_text('pragma Singleton\nimport QtQuick\nQtObject { '
         'property bool contractAvailable: true; property string contractOwner: ":1.10"; '
-        'property var contractObservations: ({}); property var reply: null; signal sessionUnlocked; '
-        'function queryContract(id, complete) { reply = complete; } function observeSession(id) {} }\n')
+        'property var contractObservations: ({}); property var reply: null; property int queries: 0; signal sessionUnlocked; '
+        'function queryContract(id, complete) { queries++; reply = complete; } function observeSession(id) {} }\n')
     (shell / 'shell.qml').write_text(ROOT)
     results = []
-    for scenario in ('query-inflight', 'query-persistence', 'query-pending', 'owner-replacement', 'query-unlocked'):
+    for scenario in ('query-inflight', 'query-persistence', 'query-pending', 'owner-replacement', 'query-unlocked',
+                     'sleep-query-inflight', 'sleep-after-auth'):
         process = subprocess.run(['qs', '-p', str(shell), '--no-color'],
             env=dict(os.environ, LOCKER_REVIEW_CASE=scenario, QT_QPA_PLATFORM='offscreen'),
             check=False, text=True, capture_output=True, timeout=15)

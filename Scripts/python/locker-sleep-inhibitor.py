@@ -7,6 +7,7 @@ stdin EOF closes it, so shell death cannot leak an inhibitor. No lock/unlock API
 """
 import json
 import os
+import secrets
 import sys
 import time
 
@@ -22,7 +23,7 @@ def main():
     manager = dbus.Interface(proxy, 'org.freedesktop.login1.Manager')
     properties = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
     max_delay = int(properties.Get('org.freedesktop.login1.Manager', 'InhibitDelayMaxUSec')) / 1_000_000
-    state = {'fd': None, 'secure': False, 'opaque': False, 'sleeping': False,
+    state = {'fd': None, 'secure': False, 'opaque': False, 'sleeping': False, 'window': '',
              'started': None, 'expired': False}
     loop = GLib.MainLoop()
 
@@ -46,10 +47,12 @@ def main():
         state['sleeping'] = bool(start)
         state['started'] = time.monotonic() if start else None
         state['expired'] = False
-        emit('prepare', sleeping=bool(start), secure=state['secure'])
-        if start and state['secure']:
-            release()
-        elif not start:
+        # A pre-window boolean cannot authorize this fd's release. Tokens also
+        # fence replies queued before a helper restart or an earlier resume.
+        state['secure'] = False
+        state['window'] = secrets.token_hex(24) if start else ''
+        emit('prepare', sleeping=bool(start), window=state['window'], secure=False)
+        if not start:
             acquire()
 
     def check_window():
@@ -72,6 +75,8 @@ def main():
                 while b'\n' in receive.buffer:
                     line, receive.buffer = receive.buffer.split(b'\n', 1)
                     value = json.loads(line)
+                    if not state['sleeping'] or not state['window'] or value.get('window') != state['window']:
+                        continue
                     state['secure'] = value.get('secure') is True
                     state['opaque'] = value.get('opaque') is True
                     if state['sleeping'] and state['secure']:

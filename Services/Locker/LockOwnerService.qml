@@ -49,9 +49,13 @@ Singleton {
   property bool _contractFailed: false
   property bool _settingsPending: false
   property string _settingsGeneration: ""
+  property string _sleepWindow: ""
+  property int _sleepRevision: 0
+  property string _suspendReceipt: ""
 
   signal suspendReady
   signal secureChangedForSleep(bool confirmed)
+  signal sleepConfirmed(string window, bool confirmed, bool opaque)
 
   function quoted(text) {
     return "'" + String(text).replace(/'/g, "'\\''") + "'";
@@ -138,7 +142,13 @@ Singleton {
     pump();
   }
 
-  function observeSleepWindow(active) {
+  function observeSleepWindow(active, window) {
+    _sleepWindow = active ? window || "" : "";
+    _sleepRevision++;
+    // An independent locker may have authenticated since the last query.
+    // Each sleep window needs its own owner-bound confirmation.
+    if (active)
+      _contractQueried = "";
     _pendingSleepWindow = active ? 1 : 0;
     pump();
   }
@@ -157,9 +167,14 @@ Singleton {
       });
       return;
     }
+    var sleepRevision = _sleepRevision;
     call("inspect", {}, function (reply) {
       if (!reply.ok)
         return;
+      if (sleepRevision !== _sleepRevision) {
+        Qt.callLater(pump);
+        return;
+      }
       _view = reply.value;
       reconcile();
     });
@@ -247,13 +262,18 @@ Singleton {
   }
 
   function contractKey(d) {
-    return d.generation + ":" + d.contractRequestId + ":" + d.contractOwner;
+    return d.generation + ":" + d.contractRequestId + ":" + d.contractOwner + ":" + _sleepRevision;
   }
 
   function reconcile() {
     var d = _view.descriptor;
     if (!d || d.phase === "settled") {
       publish("unlocked", "", false);
+      if (_suspendReceipt !== "") {
+        _suspendReceipt = "";
+        requestLock("lock-and-suspend", true);
+        return;
+      }
       if (_pendingRequest) {
         var config = snapshot();
         var submitted = takeRequest();
@@ -378,13 +398,14 @@ Singleton {
                  return;
                var generation = reply.value.generation;
                var requestId = reply.value.contractRequestId;
+               var sleepRevision = _sleepRevision;
                LockerService.requestContract(requestId, function (result) {
                  if (_view?.descriptor?.generation !== generation)
                    return;
                  if (!result.ok) {
                    _contractFailed = true;
                  } else {
-                   _contractQueried = generation + ":" + requestId + ":" + result.owner;
+                   _contractQueried = generation + ":" + requestId + ":" + result.owner + ":" + sleepRevision;
                    _contractFacts = {
                      generation: generation,
                      requestId: requestId,
@@ -431,10 +452,26 @@ Singleton {
                              });
     var next = Lifecycle.decide(view);
     publish(next.state, next.holder, next.confirmed);
+    if (_sleepWindow !== "")
+      sleepConfirmed(_sleepWindow, next.confirmed, d.snapshot.adapter !== "bundled");
+    if (_suspendReceipt !== "" && next.confirmed) {
+      if (_suspendReceipt !== d.generation) {
+        _suspendReceipt = "";
+        requestLock("lock-and-suspend", true);
+      } else {
+        // This reconciliation follows the consume receipt. Authentication or
+        // owner loss observed in between therefore cannot use the old permit.
+        _suspendReceipt = "";
+        suspendReady();
+      }
+      return;
+    }
     if (next.confirmed && d.suspendPending) {
+      var generation = d.generation;
       call("consume-suspend", {}, function (reply) {
         if (reply.ok && reply.value.pending)
-          suspendReady();
+          _suspendReceipt = generation;
+        Qt.callLater(pump);
       });
       return;
     }
