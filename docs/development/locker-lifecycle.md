@@ -338,5 +338,6 @@ only a blocked, not-yet-executed probe, verifies unknown, then requires a fresh
 emergency lock and actual PAM. `locker-report-validation.py` exercises stale
 identity/sequence, mode, symlink and private-auth-fence rejection; those synthetic
 validation inputs are not PAM evidence.
-Keep their acceptance status in the task's
-outside-repository execution note until those proofs are implemented and run.
+These entry points are implemented. Their assertions define each run's
+acceptance; retained results and native traces, not entry-point existence,
+establish which scenarios passed on a particular tree and compositor.

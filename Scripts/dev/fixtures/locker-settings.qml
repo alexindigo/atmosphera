@@ -45,7 +45,10 @@ ShellRoot {
         return;
       }
       console.log("READONLY_VALUES", JSON.stringify({compact: Settings.data.general.compactLockScreen,
-        defaultFont: Settings.data.ui.fontDefault, home: Settings.data.general.avatarImage}));
+        defaultFont: Settings.data.ui.fontDefault, home: Settings.data.general.avatarImage,
+        bars: ["disabled", "enabled", "implicit", "missing"].map(function (name) {
+          return [Settings.getBarPositionForScreen(name), Settings.getBarDensityForScreen(name)];
+        })}));
       if (Quickshell.env("LOCKER_SETTINGS_CODEC") === "1")
         console.log("INPUT_CODEC", Input.capture(Settings.data, Settings.store));
       if (Quickshell.env("LOCKER_SETTINGS_LIVE") === "1")

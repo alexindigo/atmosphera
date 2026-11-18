@@ -47,7 +47,7 @@ def main():
     parser.add_argument('--case', choices=('fast', 'slow', 'suspend', 'load', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance', 'hyprland-capability'), required=True)
     parser.add_argument('--sample-seconds', type=float, default=10)
     parser.add_argument('--post-unlock-seconds', type=float, default=10)
-    parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
+    parser.add_argument('--delays')
     parser.add_argument('--states', default='engaged,starting,fallback,handing-over')
     parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
@@ -58,6 +58,8 @@ def main():
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--recover-known-pam-hang', action='store_true')
     args = parser.parse_args()
+    if args.delays is None:
+        args.delays = '0,5,40' if args.case == 'suspend' else '2.9,3.0,3.1,29.9,30.0,30.1'
     if args.real_suspend:
         parser.error('real S3 is not testable in this VM; use --sleep-signals')
     driver = Path(__file__).resolve().parents[2]

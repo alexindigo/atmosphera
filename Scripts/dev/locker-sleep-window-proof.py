@@ -59,6 +59,13 @@ def main():
         record('foreign-window', releases() == 0)
         receive(dict(window=first, secure=False))
         record('negative-current-window', releases() == 0)
+        for label, raw in (('malformed-json', b'{bad}\n'), ('non-object-json', b'1\n')):
+            os.write(writer, raw)
+            try:
+                watching = env['receive'](None, 1)
+            except (ValueError, AttributeError):
+                watching = False
+            record(label + '-retains-watch', watching is True and releases() == 0)
         receive(dict(window=first, secure=True))
         record('confirmed-current-window', releases() == 1)
         env['prepare'](False)

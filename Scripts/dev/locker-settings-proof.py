@@ -42,7 +42,11 @@ def main():
         config.mkdir()
         if mode == 'existing':
             (config / 'settings').mkdir()
-            (config / 'settings.json').write_text(json.dumps({'settingsVersion': 62, 'general': {'compactLockScreen': False}}))
+            (config / 'settings.json').write_text(json.dumps({'settingsVersion': 62, 'general': {'compactLockScreen': False},
+                'bar': {'position': 'bottom', 'density': 'compact', 'screenOverrides': [
+                    {'name': 'disabled', 'enabled': False, 'position': 'left', 'density': 'spacious'},
+                    {'name': 'enabled', 'enabled': True, 'position': 'right', 'density': 'mini'},
+                    {'name': 'implicit', 'position': 'left', 'density': 'spacious'}]}}))
             (config / 'settings/general.json').write_text(json.dumps({'compactLockScreen': True}))
         if mode == 'legacy':
             (config / 'settings.json').write_text('{"settingsVersion":26,"general":{"compactLockScreen":false}}')
@@ -96,6 +100,8 @@ def main():
         assert not list(config.rglob('*.lock')) and not list(config.rglob('*.bak')), 'locker created publication artifacts'
         marker = next(line.split('READONLY_VALUES ', 1)[1] for line in (result.stdout + result.stderr).splitlines() if 'READONLY_VALUES ' in line)
         values = json.loads(marker)
+        if mode == 'existing':
+            assert values['bars'] == [['bottom', 'compact'], ['right', 'mini'], ['left', 'spacious'], ['bottom', 'compact']], values
         assert values['compact'] == (mode in ('existing', 'codec') or mode.startswith('managed')), values
         if mode.startswith('managed'):
             assert not (case / 'cache/settings-conflicts').exists(), 'managed consumer initialized retention writer'

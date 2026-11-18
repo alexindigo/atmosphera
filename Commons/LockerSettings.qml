@@ -114,10 +114,10 @@ Singleton {
   }
   function getBarPositionForScreen(name) {
     var row = _screenOverride(name);
-    return row && row.position !== undefined ? row.position : data.bar.position || "top";
+    return row && row.enabled !== false && row.position !== undefined ? row.position : data.bar.position || "top";
   }
   function getBarDensityForScreen(name) {
     var row = _screenOverride(name);
-    return row && row.density !== undefined ? row.density : data.bar.density || "default";
+    return row && row.enabled !== false && row.density !== undefined ? row.density : data.bar.density || "default";
   }
 }

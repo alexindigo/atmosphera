@@ -74,7 +74,14 @@ def main():
                 receive.buffer += chunk
                 while b'\n' in receive.buffer:
                     line, receive.buffer = receive.buffer.split(b'\n', 1)
-                    value = json.loads(line)
+                    try:
+                        value = json.loads(line)
+                    except ValueError:
+                        emit('ignored', reason='malformed owner state line')
+                        continue
+                    if not isinstance(value, dict):
+                        emit('ignored', reason='non-object owner state line')
+                        continue
                     if not state['sleeping'] or not state['window'] or value.get('window') != state['window']:
                         continue
                     state['secure'] = value.get('secure') is True

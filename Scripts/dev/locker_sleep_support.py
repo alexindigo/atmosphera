@@ -28,7 +28,8 @@ class SleepHarness:
 
     def events(self):
         path = self.work / 'inhibitor-events.jsonl'
-        return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+        complete = path.read_text().rpartition('\n')[0] if path.exists() else ''
+        return [json.loads(line) for line in complete.splitlines()]
 
     def inhibitors(self, pid):
         import dbus
@@ -47,7 +48,7 @@ class SleepHarness:
         path = self.work / 'sleep-service-entered.json'
         wait_for(path.exists, 20)
         entered = json.loads(path.read_text())
-        released = next(row for row in self.events() if row['pid'] == self.pid and row['value']['event'] == 'released')
+        released = wait_for(lambda: next((row for row in self.events() if row['pid'] == self.pid and row['value']['event'] == 'released'), None), 10)
         assert released['value']['secure'], 'delay inhibitor released without confirmed secure'
         assert native_secure <= released['value']['monotonic'] <= entered['monotonic'], 'secure/release/sleep ordering violated'
         assert not self.inhibitors(self.pid), 'real delay inhibitor fd remained held after secure release'
@@ -58,11 +59,14 @@ class SleepHarness:
     def close(self):
         if not self.installed:
             return
-        (self.work / 'release-sleep-service').touch(mode=0o600)
-        wait_for(lambda: run(['systemctl', 'show', 'systemd-suspend.service', '-p', 'ActiveState', '--value']).stdout.strip() == 'inactive', 65)
-        assert self.override.read_text() == self.content, 'sleep fixture changed ownership'
-        run(['sudo', '-n', 'rm', '--', str(self.override)])
-        run(['sudo', '-n', 'systemctl', 'daemon-reload'])
+        try:
+            (self.work / 'release-sleep-service').touch(mode=0o600)
+            wait_for(lambda: run(['systemctl', 'show', 'systemd-suspend.service', '-p', 'ActiveState', '--value']).stdout.strip() in ('inactive', 'failed'), 65)
+        finally:
+            if self.override.exists():
+                assert self.override.read_text() == self.content, 'sleep fixture changed ownership'
+                run(['sudo', '-n', 'rm', '--', str(self.override)])
+            run(['sudo', '-n', 'systemctl', 'daemon-reload'])
         restored = run(['systemctl', 'show', 'systemd-suspend.service', '-p', 'ExecStart', '--value']).stdout
         assert restored == self.original, 'original sleep service was not restored'
         (self.work / 'sleep-service-restored.json').write_text(json.dumps({'restored': restored, 'overrideAbsent': not self.override.exists()}))

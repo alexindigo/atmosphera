@@ -1,4 +1,5 @@
 """Guest-only plumbing shared by locker lifecycle proofs."""
+import errno
 import json
 import os
 from pathlib import Path
@@ -53,7 +54,7 @@ def require_guest(work, source):
 
 def manage(source, job, check=True):
     result = subprocess.run(['python3', '-B', str(source / 'Scripts/python/locker-unit.py'), 'manage'],
-                            input=json.dumps(job), text=True, capture_output=True, timeout=20)
+                            input=json.dumps(job), text=True, capture_output=True, timeout=20, check=False)
     try:
         reply = json.loads(result.stdout)
     except ValueError as error:
@@ -70,8 +71,9 @@ def cgroup_pids(group):
     for file in Path(group).rglob('cgroup.procs'):
         try:
             pids += file.read_text().split()
-        except FileNotFoundError:
-            pass
+        except OSError as error:
+            if error.errno not in (errno.ENOENT, errno.ENODEV):
+                raise
     return pids
 
 

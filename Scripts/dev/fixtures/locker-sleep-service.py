@@ -13,10 +13,16 @@ import time
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--work', type=Path, required=True)
 args = parser.parse_args()
-args.work.joinpath('sleep-service-entered.json').write_text(json.dumps({'monotonic': time.monotonic(),
-    'kernelSleepInvoked': False}))
+def publish(name, value):
+    path = args.work / name
+    temporary = path.with_suffix('.new')
+    temporary.write_text(json.dumps(value))
+    temporary.replace(path)
+
+publish('sleep-service-entered.json', {'monotonic': time.monotonic(),
+    'kernelSleepInvoked': False})
 deadline = time.monotonic() + 60
 while not args.work.joinpath('release-sleep-service').exists() and time.monotonic() < deadline:
     time.sleep(.02)
-args.work.joinpath('sleep-service-finished.json').write_text(json.dumps({'monotonic': time.monotonic(),
-    'released': args.work.joinpath('release-sleep-service').exists(), 'kernelSleepInvoked': False}))
+publish('sleep-service-finished.json', {'monotonic': time.monotonic(),
+    'released': args.work.joinpath('release-sleep-service').exists(), 'kernelSleepInvoked': False})

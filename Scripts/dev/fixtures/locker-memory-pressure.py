@@ -18,9 +18,12 @@ assert Path(os.environ['TMPDIR']).resolve().is_relative_to(Path('/home/tester/Pr
 memory = bytearray(args.mib * 1024 * 1024)
 for offset in range(0, len(memory), 4096):
     memory[offset] = 17
-(args.work / 'resident.json').write_text(json.dumps({'pid': os.getpid(), 'bytes': len(memory),
+report = args.work / 'resident.json'
+temporary = report.with_suffix('.new')
+temporary.write_text(json.dumps({'pid': os.getpid(), 'bytes': len(memory),
     'stat': Path('/proc/self/stat').read_text(), 'status': Path('/proc/self/status').read_text(),
     'memoryPressure': Path('/proc/pressure/memory').read_text(), 'readyAt': time.monotonic()}, indent=2))
+temporary.replace(report)
 while not (args.work / 'release').exists():
     for offset in range(0, len(memory), 4096):
         memory[offset] = (memory[offset] + 1) & 255
