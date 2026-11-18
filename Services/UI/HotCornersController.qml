@@ -31,7 +31,10 @@ Item {
     if (!gateOpen)
       cancel();
   }
-  onDelayMsChanged: cancel()
+  onDelayMsChanged: {
+    if (_zone)
+      disarm();
+  }
   onCommandsChanged: {
     if (_zone && commandFor(_zone) !== _command)
       cancel();

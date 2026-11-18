@@ -234,6 +234,8 @@ def resolve_tab_info(
     # Determine sub-tab index and label from parent tab's NTabBar/NTabView
     parent_tab_file = parent / f"{dir_name}Tab.qml"
     if not parent_tab_file.exists():
+        parent_tab_file = TABS_DIR / f"{dir_name}Tab.qml"
+    if not parent_tab_file.exists():
         return tab_index, tab_label, None, None
 
     subtab_names, subtab_labels = get_subtab_info(parent_tab_file)

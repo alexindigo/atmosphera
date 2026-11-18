@@ -29,7 +29,7 @@ Singleton {
     var monitors = Settings.data.bar.monitors;
     for (var screen of root.screens) {
       if (monitors.length === 0 || monitors.includes(screen.name))
-        result[screen.name] = EdgeZones.zones(screen, root.screens, Settings.data.bar.frameThickness, Settings.getBarPositionForScreen(screen.name), Style.getBarHeightForScreen(screen.name), DockGeometryService.revealRect(screen.name));
+        result[screen.name] = EdgeZones.zones(screen, root.screens, Settings.data.bar.frameThickness, Settings.getBarPositionForScreen(screen.name), Style.getBarHeightForScreen(screen.name), DockGeometryService.revealRect(screen.name), HotCornersService.configuredCorners);
     }
     return result;
   }

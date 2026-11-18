@@ -14,6 +14,14 @@ ShellRoot {
   property string savedArguments: "--user-value"
   property string configuredCommand: "echo before"
 
+  Connections {
+    target: ActionRegistry
+    function onReadyChanged() {
+      if (ActionRegistry.ready)
+        check("registry-ready-publication", ActionRegistry.match("atmosphera ipc settings open") !== null, ActionRegistry.actions.length);
+    }
+  }
+
   function check(name, passed, observed) {
     console.log("COMBO_CASE " + JSON.stringify({
                                                  name: name,

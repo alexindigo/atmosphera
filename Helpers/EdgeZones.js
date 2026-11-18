@@ -1,6 +1,6 @@
 // Logical screen coordinates in; screen-local, non-overlapping rectangles out.
 // Contacts are split into spans so a partially touching side is not all "inner".
-// Edge zones never overlap corner zones: every edge subtracts all four corners.
+// Edge zones subtract configured corner zones, leaving empty corners unchanged.
 var HOT_CORNER_SIZE = 5;
 var CORNER_NAMES = ["topLeft", "topRight", "bottomLeft", "bottomRight"];
 
@@ -55,15 +55,15 @@ function subtractRect(rect, cut) {
   ].filter(function (part) { return part.width > 0 && part.height > 0; });
 }
 
-function zones(screen, screens, frame, barPosition, barThickness, dockReveal) {
+function zones(screen, screens, frame, barPosition, barThickness, dockReveal, configuredCorners) {
   if (!screen || screen.width <= 0 || screen.height <= 0 || frame <= 0)
     return [];
   var sides = {left: frame, right: frame, top: frame, bottom: frame};
   if (Object.prototype.hasOwnProperty.call(sides, barPosition))
     sides[barPosition] = Math.max(frame, barThickness);
   var result = [];
-  var cornerCuts = CORNER_NAMES.map(function (corner) {
-    return cornerRect(screen, corner);
+  var cornerCuts = corners(screen, configuredCorners).map(function (zone) {
+    return zone.rect;
   });
   ["left", "right", "top", "bottom"].forEach(function (edge) {
     var vertical = edge === "left" || edge === "right";

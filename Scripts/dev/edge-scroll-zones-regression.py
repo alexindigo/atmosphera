@@ -61,6 +61,9 @@ console.log('PASS dock reveal subtraction on every edge, including inner strips'
 assert.equal(scope.zones(screen,[screen],0,'top',40,null).length,0);
 assert.ok(build().every(z => z.kind === 'edge'));
 const ALL = ['topLeft','topRight','bottomLeft','bottomRight'];
+assert.equal(hit(plain(scope.zones(screen,[screen],2,'top',0,null,[])),0,3).length,1,'empty corner retains edge');
+assert.equal(hit(plain(scope.zones(screen,[screen],2,'top',0,null,['topLeft'])),0,3).length,0,'configured corner excludes edge');
+assert.equal(hit(plain(scope.zones(screen,[screen],2,'top',0,null,['bottomRight'])),0,3).length,1,'other configured corner retains edge');
 const corners = (own, names=ALL) => plain(scope.corners(own, names));
 const cornerRect = (corner, x, y) => ({kind:'corner', corner, screenName:'A', rect:{x,y,width:5,height:5}, key:'A:corner:'+corner});
 assert.deepStrictEqual(corners(screen), [cornerRect('topLeft',0,0), cornerRect('topRight',995,0),
@@ -103,7 +106,8 @@ for (const all of [[screen], [screen,right], [screen,bottom], [screen,partial], 
     for (let frame = 4; frame <= 24; frame++) {
         for (const bar of ['top','bottom','left','right']) {
             for (const thickness of [0, frame, 24, 40]) {
-                const edges = plain(scope.zones(screen, all, frame, bar, thickness, null));
+                const edges = plain(scope.zones(screen, all, frame, bar, thickness, null, ALL));
+                assert.ok(edges.length > 0, JSON.stringify({all, frame, bar, thickness, reason:'empty edge matrix'}));
                 const cornerZones = corners(screen);
                 for (const e of edges) {
                     for (const c of cornerZones) {
@@ -120,7 +124,7 @@ for (const all of [[screen], [screen,right], [screen,bottom], [screen,partial], 
     }
 }
 assert.ok(disjointChecks > 1000);
-const frame4 = simplify(plain(scope.zones(screen,[screen],4,'left',0,null)));
+const frame4 = simplify(plain(scope.zones(screen,[screen],4,'left',0,null,ALL)));
 assert.deepStrictEqual(frame4.filter(z => z.edge === 'top'), [rect('top',5,0,990,1)]);
 console.log('PASS corners and edges disjoint for frame 4-24, every bar position and thickness (' + disjointChecks + ' pairs)');
 console.log('EDGE_SCROLL_ZONES: PASS');

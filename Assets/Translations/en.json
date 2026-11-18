@@ -1288,7 +1288,7 @@
       "hot-corners-delay-description": "How long the pointer rests in a corner before its action runs.",
       "hot-corners-delay-label": "Delay (ms)",
       "hot-corners-description": "Run an action when the pointer rests in a screen corner. Each corner works on every screen.",
-      "hot-corners-niri-note": "niri's own hot corner (top-left by default) keeps the exact corner pixel. Add gestures { hot-corners { off; } } to niri's config to give the whole corner to Atmosphera.",
+      "hot-corners-niri-note": "niri's own hot corner (top-left by default) keeps the exact corner pixel. Add gestures { hot-corners { off; } } to niri's config to give the whole corner to Atmosphera. Also remove any output-specific hot-corners override or set off in that output's hot-corners block; the global setting does not override it.",
       "hot-corners-popup-title": "Choose corner action",
       "hot-corners-title": "Hot corners",
       "hot-corners-top-left": "Top left",

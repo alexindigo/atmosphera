@@ -50,7 +50,7 @@ def main():
     log = (work / 'shell.log').read_text(errors='replace')
     cases = [json.loads(line.split('COMBO_CASE ', 1)[1]) for line in log.splitlines() if 'COMBO_CASE ' in line]
     errors = [line for line in log.splitlines() if re.search(r'Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:|is not a type|is unavailable', line)]
-    expected = ['stale-no-match', 'explicit-run', 'clamped-navigation', 'changed-navigation', 'wheel-default',
+    expected = ['registry-ready-publication', 'stale-no-match', 'explicit-run', 'clamped-navigation', 'changed-navigation', 'wheel-default',
                 'move-identity', 'replacement-invalidates', 'pending-rejects', 'bulk-refresh', 'literal-preview',
                  'footer-identity', 'empty-navigation', 'same-index-replacement', 'data-change-identity',
                  'action-selection-supersedes-editor', 'action-clear-supersedes-editor',

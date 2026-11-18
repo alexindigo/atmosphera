@@ -92,10 +92,13 @@ ShellRoot {
                     controller.enter(tl, 0, sA); advance(1000); count(5, "row 7 locked enter");
                     controller.gateOpen = true;
                     controller.enter(tl, 0, sA); advance(150); controller.delayMs = 300;
-                    check(!controller.activeZone, "row 7 delay did not cancel");
+                    check(controller.activeZone && !controller.dwelling, "row 7 delay did not disarm visit");
                     advance(1000); count(5, "row 7 delay");
+                    controller.enter(tl, 0, sA); advance(1000); count(5, "row 7 delay rearmed same visit");
+                    controller.leave(tl.key, sA); controller.finishLeave();
                     controller.enter(tl, 0, sA); advance(299); count(5, "row 7 new delay early"); advance(1); count(6, "row 7 new delay");
                     controller.delayMs = 200;
+                    controller.enter(tl, 0, sA); advance(1000); count(6, "row 7 fired visit rearmed by delay");
                     controller.enter(tr2, 0, sA); advance(150);
                     controller.commands = ({topLeft: test.stored, topRight: "echo tr", bottomLeft: "", bottomRight: "echo other"});
                     check(controller.activeZone && controller.dwelling, "row 7 other corner's change cancelled");
@@ -149,5 +152,8 @@ if __name__ == '__main__':
         result = subprocess.run(['qs', '-p', fixture.name, '--no-color'], text=True, capture_output=True,
                                 timeout=120, env=dict(os.environ, QT_QPA_PLATFORM='wayland'))
     print(result.stdout + result.stderr)
-    assert result.returncode == 0 and 'HOT_CORNERS_SERVICE: PASS' in result.stdout + result.stderr
-    assert not any(error in result.stdout + result.stderr for error in ['TypeError:', 'ReferenceError:', 'SyntaxError:'])
+    output = result.stdout + result.stderr
+    if (result.returncode != 0 or 'HOT_CORNERS_SERVICE: PASS' not in output
+            or 'HOT_CORNERS_SERVICE: FAIL' in output
+            or any(error in output for error in ['TypeError:', 'ReferenceError:', 'SyntaxError:'])):
+        raise SystemExit(1)

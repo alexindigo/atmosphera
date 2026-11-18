@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import select
+import shlex
 import shutil
 import subprocess
 import sys
@@ -413,6 +414,7 @@ def inside(shell, work, cases):
                 samples.append(state()['edgeActive'])
             rest(); time.sleep(.6)
             assert lines()[len(before):] == ['bottomRight'], lines()[len(before):]
+            assert state()['fired'][fired:] == [{'corner': 'bottomRight', 'screen': 'Virtual-1'}], state()['fired'][fired:]
             assert column() == start and all(sample is None for sample in samples), (column(), samples)
             passed('H9: framed with edge scrolling, the right edge steps once; BR fires, no edge step')
 
@@ -429,7 +431,7 @@ def inside(shell, work, cases):
             passed('H7: clearing BR on the page removes both BR surfaces; holding BR fires nothing', layers=wanted)
 
         if 'H8' in cases:
-            custom = "printf '%s\\n' customBottomLeft >> " + str(fired_log)
+            custom = "printf '%s\\n' customBottomLeft >> " + shlex.quote(str(fired_log))
             untouched = state()['values']['bottomRight']
             open_page()
             open_field('topLeft')
@@ -543,7 +545,7 @@ def main():
         env[key] = str(work / leaf)
     settings = work / 'config/atmosphera/settings'
     settings.mkdir(parents=True)
-    commands = {corner: f"printf '%s\\n' {corner} >> {work / 'fired.log'}" for corner in CORNERS}
+    commands = {corner: f"printf '%s\\n' {corner} >> {shlex.quote(str(work / 'fired.log'))}" for corner in CORNERS}
     (settings / 'general.json').write_text(json.dumps({'showChangelogOnStartup': False,
                                                        'hotCorners': {**commands, 'delayMs': 200}}))
     # Same visual fixture as the action-picker captures: icon set and UI font.

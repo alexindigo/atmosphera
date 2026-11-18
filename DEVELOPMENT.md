@@ -407,11 +407,13 @@ Plugin lint audits declared actions in every manifest, including unchanged
 plugins in a changed-plugin run. `qs.Services.Actions` is first exported by
 0.10.0; imports (including aliased and semicolon-terminated imports) require
 `minAtmospheraVersion` of at least 0.10.0. It is absent from the 0.9.x releases.
-In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace:
+In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace
+outside the source checkout (the runner rejects nested workspaces):
 
 ```sh
 export TMPDIR=/home/tester/Projects/hot-corners-landing/tmp
-timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/hot-corners-landing/runs/catalog-fresh
+mkdir -p /home/tester/Projects/action-catalog-runs
+timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/action-catalog-runs/catalog-fresh
 ```
 
 Hot corners have four guest-only regressions in the same VM: the settings page
