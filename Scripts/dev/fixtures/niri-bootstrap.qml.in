@@ -192,11 +192,57 @@ ShellRoot {
       });
       caseRun("cache arrival republishes derived rows without replacing live state", b => {
         NiriEvents.windowsChanged([win(1, 1, 7), win(2, 2, 3, true)]);
+        let notifications=0;
+        b.windowListChanged.connect(() => notifications++);
         NiriEvents.workspacesChanged([Object.assign(ws(1, false), {output: "Right"}), Object.assign(ws(2, true), {output: "Left"})]);
+        check(b.windows.find(w=>w.id===1).output === "Right" && b.windows.find(w=>w.id===2).output === "Left" && notifications > 0, "workspace projection was not published independently");
+        const beforeOutputs=notifications;
         NiriRequests.deliver("outputs", {Right: {logical: {x: 1000}}, Left: {logical: {x: 0}}});
         check(b.windows[0].id === 2 && b.windows[0].output === "Left" && b.windows[1].output === "Right", "derived output/order stayed stale");
+        check(notifications > beforeOutputs, "output ordering was not published independently");
         check(b.focusedWindowId === 2, "projection replaced current focus");
         same(b.windows.map(w => w.layout.posInScrollingLayout[0]), [3, 7], "projection replaced current layouts");
+        const rows=b.windows, beforeScale=notifications, forwarded=CompositorService.forwardCount;
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Right: {logical: {x: 1000, scale: 2}}, Left: {logical: {x: 0, scale: 2}}});
+        check(b.windows === rows && notifications === beforeScale, "unchanged projection churned the window list");
+        check(CompositorService.forwardCount > forwarded && CompositorService.forwardedOutputs.Left.scale === 2, "scale forwarding was suppressed with the unchanged projection");
+      });
+      caseRun("new connection never projects retained old window rows", b => {
+        NiriEvents.windowsChanged([win(1, 1, 1, true)]);
+        NiriEvents.workspacesChanged([ws(1, true)]);
+        NiriEvents.keyboardLayoutsChanged({names:["Old"],currentIdx:0});
+        const publications=[];
+        b.windowListChanged.connect(() => publications.push(b.windows.map(w=>w.id)));
+        NiriConnection.isConnected=false;NiriConnection.isConnected=true;
+        NiriEvents.workspacesChanged([ws(2,true)]);
+        NiriRequests.deliver("outputs", {});
+        NiriRequests.deliver("outputs", {New:{logical:{scale:2}}});
+        check(b.windows.length===0 && b.focusedWindowId===null && b.keyboardLayouts.length===0, "old connection state survived new-connection projection");
+        check(!publications.some(ids=>ids.indexOf(1)>=0), "old row was published after connection reset");
+        NiriEvents.windowsChanged([win(2,2,1,true)]);
+        check(b.windows[0].id===2 && b.focusedWindowId===2, "new snapshot was not published after reset");
+      });
+      caseRun("layout events refresh tiled sort positions but retain floating sentinel", b => {
+        NiriEvents.workspacesChanged([ws(1,true)]);
+        NiriEvents.windowsChanged([win(1,1,1),win(2,1,2,true),Object.assign(win(3,1,3),{isFloating:true})]);
+        NiriEvents.windowLayoutsChanged([[1,{pos_in_scrolling_layout:[2,1],tile_pos_in_workspace_view:[50,0]}],[2,{pos_in_scrolling_layout:[1,1],tile_pos_in_workspace_view:[10,0]}],[3,{tile_pos_in_workspace_view:[-100,0]}]]);
+        same(b.windows.filter(w=>!w.isFloating).map(w=>w.id),[2,1],"layout projection did not refresh tiled sort order");
+        check(b.windows.find(w=>w.id===2).position.x===10 && b.windows.find(w=>w.id===1).position.x===50 && b.windows.find(w=>w.id===3).position.x===b.floatingWindowPosition,"position projection lost tiled/floating contract");
+      });
+      caseRun("offline seed errors wait for reconnect instead of polling", b => {
+        NiriConnection.isConnected=false;NiriRequests.reset();b.bootstrap();
+        for(const domain of ["windows","workspaces","keyboardLayouts","outputs"]) NiriRequests.deliver(domain,{},true);
+        const started=Date.now();
+        return waitFor(()=>Date.now()-started>400).then(()=>{
+          for(const domain of ["windows","workspaces","keyboardLayouts","outputs"]) check(NiriRequests.counts[domain]===1,"offline retry polled "+domain);
+          NiriConnection.isConnected=true;
+          NiriRequests.deliver("windows",[win(9,9,1,true)]);
+          NiriRequests.deliver("workspaces",[ws(9,true)]);
+          NiriRequests.deliver("keyboardLayouts",{names:["New"],currentIdx:0});
+          NiriRequests.deliver("outputs",{});
+          check(b.windows[0].id===9 && b.keyboardLayouts[0]==="New","reconnect did not resume hydration");
+        });
       });
       runNext();
     }

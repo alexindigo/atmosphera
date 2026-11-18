@@ -86,7 +86,7 @@ def main():
     write('Commons/qmldir', 'singleton Logger 1.0 Logger.qml\n')
     write('Services/Keyboard/KeyboardLayoutService.qml', 'pragma Singleton\nimport QtQml\nQtObject { function setCurrentLayout(current, fallback) {} }\n')
     write('Services/Keyboard/qmldir', 'singleton KeyboardLayoutService 1.0 KeyboardLayoutService.qml\n')
-    write('Services/Compositor/CompositorService.qml', 'pragma Singleton\nimport QtQml\nQtObject { function onDisplayScalesUpdated(outputs) {} }\n')
+    write('Services/Compositor/CompositorService.qml', 'pragma Singleton\nimport QtQml\nQtObject { property int forwardCount: 0; property var forwardedOutputs: ({}); function onDisplayScalesUpdated(outputs) { forwardedOutputs=outputs; forwardCount++; } }\n')
     write('Services/Compositor/qmldir', 'NiriIpcBackend 1.0 NiriIpcBackend.qml\nsingleton CompositorService 1.0 CompositorService.qml\n')
     write('Niri/NiriEvents.qml', EVENTS)
     write('Niri/NiriRequests.qml', REQUESTS)
@@ -99,7 +99,7 @@ def main():
                                 env=env, cwd=tree, stdout=log, stderr=subprocess.STDOUT, timeout=40)
     lines = [line.split('BOOTSTRAP_RESULT|', 1)[1] for line in (output / 'shell.log').read_text().splitlines() if 'BOOTSTRAP_RESULT|' in line]
     cases = json.loads(lines[-1]) if lines else []
-    passed = result.returncode == 0 and len(cases) == 12 and all(c['passed'] for c in cases)
+    passed = result.returncode == 0 and len(cases) == 15 and all(c['passed'] for c in cases)
     for case in cases:
         print(case['name'], 'PASS' if case['passed'] else 'FAIL', case.get('error', ''))
     (output / 'result.json').write_text(json.dumps(dict(passed=passed, exit_code=result.returncode, cases=cases), indent=2) + '\n')

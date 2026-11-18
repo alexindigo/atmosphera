@@ -140,13 +140,21 @@ Item {
     win.output = (ws && ws.output) ? ws.output : "";
   }
 
-  function refreshDerivedWindows() {
+  function refreshDerivedWindows(force) {
     // Cache arrival changes projections, never the live layout/focus facts.
-    windows = toSortedWindowList(windows.map(function (win) {
+    var projected = toSortedWindowList(windows.map(function (win) {
       var projected = Object.assign({}, win);
+      projected.position = buildPosition(projected);
       resolveWindowOutput(projected);
       return projected;
     }));
+    var changed = force || projected.some(function (win, index) {
+      var previous = root.windows[index];
+      return !previous || previous.id !== win.id || previous.output !== win.output || previous.position.x !== win.position.x || previous.position.y !== win.position.y;
+    });
+    if (!changed)
+      return;
+    windows = projected;
     windowListChanged();
   }
 
@@ -272,7 +280,8 @@ Item {
         };
         // Retry transport failures without a tight loop. Ownership, not a
         // retry quota, decides whether this work is still needed.
-        seedRetryTimer.start();
+        if (NiriConnection.isConnected)
+          seedRetryTimer.start();
       } else if (outcome === "accept") {
         apply(reply.value);
       }
@@ -388,9 +397,8 @@ Item {
         }
       }
       if (updated) {
-        // New array identity so property bindings re-evaluate (see upsertWindow)
-        windows = windows.slice();
-        windowListChanged();
+        // Layout changes own new facts even when the derived order is stable.
+        refreshDerivedWindows(true);
       }
     }
 
@@ -472,6 +480,19 @@ Item {
       root._bootstrapState = BootstrapHandover.create();
       root._seedRetries = ({});
       seedRetryTimer.stop();
+      // A new connection owns a new set of observations, not projections of
+      // the last connection's rows while its replacement snapshot arrives.
+      windows = [];
+      focusedWindowId = null;
+      workspaces.clear();
+      workspaceCache = ({});
+      outputCache = ({});
+      keyboardLayouts = [];
+      keyboardLayoutIndex = -1;
+      overviewActive = false;
+      windowListChanged();
+      activeWindowChanged();
+      workspaceChanged();
       if (NiriConnection.isConnected)
         bootstrap();
     }
