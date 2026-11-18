@@ -59,6 +59,70 @@ assert.deepStrictEqual(plain(scope.subtractRect({x:0,y:0,width:8,height:100},{x:
  {x:0,y:0,width:8,height:20},{x:0,y:60,width:8,height:40},{x:0,y:20,width:2,height:40},{x:4,y:20,width:4,height:40}]);
 console.log('PASS dock reveal subtraction on every edge, including inner strips');
 assert.equal(scope.zones(screen,[screen],0,'top',40,null).length,0);
+assert.ok(build().every(z => z.kind === 'edge'));
+const ALL = ['topLeft','topRight','bottomLeft','bottomRight'];
+const corners = (own, names=ALL) => plain(scope.corners(own, names));
+const cornerRect = (corner, x, y) => ({kind:'corner', corner, screenName:'A', rect:{x,y,width:5,height:5}, key:'A:corner:'+corner});
+assert.deepStrictEqual(corners(screen), [cornerRect('topLeft',0,0), cornerRect('topRight',995,0),
+    cornerRect('bottomLeft',0,795), cornerRect('bottomRight',995,795)]);
+assert.deepStrictEqual(corners(screen, ['bottomRight','topLeft','unknown']).map(z => z.corner), ['topLeft','bottomRight']);
+assert.deepStrictEqual(corners(screen, []), []);
+assert.deepStrictEqual(corners({...screen, width:0}), []);
+console.log('PASS four 5x5 corners on one output, configured subset only');
+const globalRects = (own, zones) => zones.map(z => ({...z, global:{x:own.x+z.rect.x, y:own.y+z.rect.y, width:z.rect.width, height:z.rect.height}}));
+const touchesOther = (own, others, rect) => others.some(o => {
+    const g = {x:own.x+rect.x, y:own.y+rect.y, width:rect.width, height:rect.height};
+    const xTouch = g.x === o.x + o.width || g.x + g.width === o.x;
+    const yTouch = g.y === o.y + o.height || g.y + g.height === o.y;
+    const xOverlap = g.x < o.x + o.width && o.x < g.x + g.width;
+    const yOverlap = g.y < o.y + o.height && o.y < g.y + g.height;
+    return (xTouch && yOverlap) || (yTouch && xOverlap);
+});
+const pairs = [[right, 'side by side'], [bottom, 'stacked'], [partial, 'partial touch']];
+for (const [other, label] of pairs) {
+    const ownCorners = corners(screen), otherCorners = plain(scope.corners(other, ALL));
+    assert.equal(ownCorners.length + otherCorners.length, 8, label);
+    for (const z of otherCorners) assert.equal(z.rect.width * z.rect.height, 25, label);
+    const inner = ownCorners.filter(z => touchesOther(screen,[other],z.rect)).length
+                + otherCorners.filter(z => touchesOther(other,[screen],z.rect)).length;
+    if (label === 'side by side') {
+        assert.equal(inner, 4, label);
+        assert.deepStrictEqual(ownCorners.filter(z => touchesOther(screen,[other],z.rect)).map(z => z.corner), ['topRight','bottomRight']);
+        assert.deepStrictEqual(otherCorners.filter(z => touchesOther(other,[screen],z.rect)).map(z => z.corner), ['topLeft','bottomLeft']);
+    } else if (label === 'stacked') {
+        assert.equal(inner, 4, label);
+    } else {
+        assert.equal(inner, 2, label); // only the partner's left corners touch A's right side
+    }
+    const keys = new Set(ownCorners.concat(otherCorners).map(z => z.key));
+    assert.equal(keys.size, 8, label + ' keys unique');
+}
+console.log('PASS eight corners on two outputs: side by side (4 inner), stacked (4 inner), partial touch');
+let disjointChecks = 0;
+for (const all of [[screen], [screen,right], [screen,bottom], [screen,partial], [screen,left], [screen,above]]) {
+    for (let frame = 4; frame <= 24; frame++) {
+        for (const bar of ['top','bottom','left','right']) {
+            for (const thickness of [0, frame, 24, 40]) {
+                const edges = plain(scope.zones(screen, all, frame, bar, thickness, null));
+                const cornerZones = corners(screen);
+                for (const e of edges) {
+                    for (const c of cornerZones) {
+                        const r = e.rect, q = c.rect;
+                        assert.ok(r.x+r.width<=q.x || q.x+q.width<=r.x || r.y+r.height<=q.y || q.y+q.height<=r.y,
+                                  JSON.stringify({frame, bar, thickness, e, c}));
+                        disjointChecks++;
+                    }
+                    for (const [x,y] of [[0,0],[999,0],[0,799],[999,799],[4,4],[995,795]])
+                        assert.ok(!(x>=e.rect.x && y>=e.rect.y && x<e.rect.x+e.rect.width && y<e.rect.y+e.rect.height), 'corner pixel in edge');
+                }
+            }
+        }
+    }
+}
+assert.ok(disjointChecks > 1000);
+const frame4 = simplify(plain(scope.zones(screen,[screen],4,'left',0,null)));
+assert.deepStrictEqual(frame4.filter(z => z.edge === 'top'), [rect('top',5,0,990,1)]);
+console.log('PASS corners and edges disjoint for frame 4-24, every bar position and thickness (' + disjointChecks + ' pairs)');
 console.log('EDGE_SCROLL_ZONES: PASS');
 '''
 
