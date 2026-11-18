@@ -335,16 +335,16 @@ PanelWindow {
       depth: Math.min(16, Settings.data.bar.frameThickness)
     }
 
-    EdgeScrollSensors {
+    ScreenZoneSensors {
       id: edgeSensors
       anchors.fill: parent
       observationItem: container
-      zones: EdgeScrollService.zonesForScreen(root.screen?.name || "")
+      zones: ScreenZonesService.edgeZonesForScreen(root.screen?.name || "")
       active: EdgeScrollService.enabled && root.barShouldShow
-      onZoneEntered: (zone, buttons, source) => EdgeScrollService.enter(zone, buttons, source)
-      onZoneLeft: (key, source) => EdgeScrollService.leave(key, source)
-      onButtonsChanged: buttons => EdgeScrollService.buttonsChanged(buttons)
-      Component.onDestruction: EdgeScrollService.leaveScreen(root.screen?.name || "")
+      onZoneEntered: (zone, buttons, source) => ScreenZonesService.enter(zone, buttons, source)
+      onZoneLeft: (key, source) => ScreenZonesService.leave(key, source)
+      onButtonsChanged: buttons => ScreenZonesService.buttonsChanged(buttons)
+      Component.onDestruction: ScreenZonesService.leaveScreen(root.screen?.name || "")
     }
 
     // Background MouseArea for closing panels when clicking outside

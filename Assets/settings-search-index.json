@@ -1269,7 +1269,8 @@
     "widget": "NTextInputButton",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.general.tab-basics"
   },
   {
     "labelKey": "panels.general.fonts-default-label",
@@ -1277,7 +1278,8 @@
     "widget": "NSearchableComboBox",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.general.tab-basics"
   },
   {
     "labelKey": "panels.general.fonts-monospace-label",
@@ -1285,7 +1287,8 @@
     "widget": "NSearchableComboBox",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.general.tab-basics"
   },
   {
     "labelKey": "panels.general.fonts-default-scale-label",
@@ -1293,7 +1296,8 @@
     "widget": "NValueSlider",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.general.tab-basics"
   },
   {
     "labelKey": "panels.general.fonts-monospace-scale-label",
@@ -1301,7 +1305,8 @@
     "widget": "NValueSlider",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.general.tab-basics"
   },
   {
     "labelKey": "panels.general.smooth-scrolling-label",
@@ -1309,7 +1314,26 @@
     "widget": "NToggle",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.general.tab-basics"
+  },
+  {
+    "labelKey": "panels.general.hot-corners-title",
+    "descriptionKey": "panels.general.hot-corners-description",
+    "widget": "NLabel",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": 3,
+    "subTabLabel": "panels.general.tab-hot-corners"
+  },
+  {
+    "labelKey": "panels.general.hot-corners-delay-label",
+    "descriptionKey": "panels.general.hot-corners-delay-description",
+    "widget": "NValueSlider",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": 3,
+    "subTabLabel": "panels.general.tab-hot-corners"
   },
   {
     "labelKey": "panels.general.keybinds-title",
@@ -1317,7 +1341,8 @@
     "widget": "NLabel",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 1,
+    "subTabLabel": "panels.general.tab-keybinds"
   },
   {
     "labelKey": "panels.general.shortcuts-title",
@@ -1325,7 +1350,8 @@
     "widget": "NLabel",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 2,
+    "subTabLabel": "panels.general.tab-shortcuts"
   },
   {
     "labelKey": "panels.general.input-method-title",
@@ -1333,7 +1359,8 @@
     "widget": "NLabel",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 2,
+    "subTabLabel": "panels.general.tab-shortcuts"
   },
   {
     "labelKey": "panels.general.input-method-target-label",
@@ -1341,7 +1368,8 @@
     "widget": "NComboBox",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 2,
+    "subTabLabel": "panels.general.tab-shortcuts"
   },
   {
     "labelKey": "panels.general.input-method-mode-label",
@@ -1349,7 +1377,8 @@
     "widget": "NComboBox",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 2,
+    "subTabLabel": "panels.general.tab-shortcuts"
   },
   {
     "labelKey": "panels.general.input-method-label-label",
@@ -1357,7 +1386,8 @@
     "widget": "NTextInput",
     "tab": 0,
     "tabLabel": "common.general",
-    "subTab": null
+    "subTab": 2,
+    "subTabLabel": "panels.general.tab-shortcuts"
   },
   {
     "labelKey": "panels.hooks.session-label",

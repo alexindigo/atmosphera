@@ -146,7 +146,14 @@
       ]
     },
     "reverseScroll": false,
-    "smoothScrollEnabled": true
+    "smoothScrollEnabled": true,
+    "hotCorners": {
+      "topLeft": "",
+      "topRight": "",
+      "bottomLeft": "",
+      "bottomRight": "",
+      "delayMs": 200
+    }
   },
   "bindings": {
     "environment": "none"

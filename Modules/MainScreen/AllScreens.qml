@@ -35,6 +35,17 @@ Variants {
 
     property bool windowLoaded: false
 
+    // Hot corners: one Overlay surface per configured corner, on every screen
+    // whether or not it shows a bar. Nothing is created for empty corners.
+    Instantiator {
+      model: ScreenZonesService.cornerZonesForScreen(windowItem.modelData?.name || "")
+      delegate: HotCornerWindow {
+        required property var modelData
+        screen: windowItem.modelData
+        zone: modelData
+      }
+    }
+
     // Main Screen loader - Bar and panels backgrounds
     Loader {
       id: windowLoader

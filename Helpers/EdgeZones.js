@@ -1,5 +1,43 @@
 // Logical screen coordinates in; screen-local, non-overlapping rectangles out.
 // Contacts are split into spans so a partially touching side is not all "inner".
+// Edge zones subtract configured corner zones, leaving empty corners unchanged.
+var HOT_CORNER_SIZE = 5;
+var CORNER_NAMES = ["topLeft", "topRight", "bottomLeft", "bottomRight"];
+
+function cornerRect(screen, corner) {
+  var width = Math.min(HOT_CORNER_SIZE, screen.width);
+  var height = Math.min(HOT_CORNER_SIZE, screen.height);
+  return {
+    x: corner === "topLeft" || corner === "bottomLeft" ? 0 : screen.width - width,
+    y: corner === "topLeft" || corner === "topRight" ? 0 : screen.height - height,
+    width: width,
+    height: height
+  };
+}
+
+// One zone per named corner on this output, whatever its neighbours are.
+function corners(screen, names) {
+  if (!screen || screen.width <= 0 || screen.height <= 0)
+    return [];
+  return CORNER_NAMES.filter(function (corner) {
+    return (names || []).indexOf(corner) >= 0;
+  }).map(function (corner) {
+    return {kind: "corner", corner: corner, screenName: screen.name, rect: cornerRect(screen, corner),
+            key: [screen.name, "corner", corner].join(":")};
+  });
+}
+
+function subtractRects(rects, cuts) {
+  cuts.forEach(function (cut) {
+    var next = [];
+    rects.forEach(function (rect) {
+      next = next.concat(subtractRect(rect, cut));
+    });
+    rects = next;
+  });
+  return rects;
+}
+
 function subtractRect(rect, cut) {
   if (!cut)
     return [rect];
@@ -17,13 +55,16 @@ function subtractRect(rect, cut) {
   ].filter(function (part) { return part.width > 0 && part.height > 0; });
 }
 
-function zones(screen, screens, frame, barPosition, barThickness, dockReveal) {
+function zones(screen, screens, frame, barPosition, barThickness, dockReveal, configuredCorners) {
   if (!screen || screen.width <= 0 || screen.height <= 0 || frame <= 0)
     return [];
   var sides = {left: frame, right: frame, top: frame, bottom: frame};
   if (Object.prototype.hasOwnProperty.call(sides, barPosition))
     sides[barPosition] = Math.max(frame, barThickness);
   var result = [];
+  var cornerCuts = corners(screen, configuredCorners).map(function (zone) {
+    return zone.rect;
+  });
   ["left", "right", "top", "bottom"].forEach(function (edge) {
     var vertical = edge === "left" || edge === "right";
     var start = vertical ? sides.top : sides.left;
@@ -58,8 +99,8 @@ function zones(screen, screens, frame, barPosition, barThickness, dockReveal) {
       var rect = vertical
           ? {x: edge === "left" ? 0 : screen.width - thickness, y: from, width: thickness, height: to - from}
           : {x: from, y: edge === "top" ? 0 : screen.height - thickness, width: to - from, height: thickness};
-      subtractRect(rect, dockReveal).forEach(function (part) {
-        result.push({edge: edge, inner: inner, screenName: screen.name, rect: part,
+      subtractRects([rect], [dockReveal].concat(cornerCuts)).forEach(function (part) {
+        result.push({kind: "edge", edge: edge, inner: inner, screenName: screen.name, rect: part,
                      key: [screen.name, edge, inner, part.x, part.y, part.width, part.height].join(":")});
       });
     }
