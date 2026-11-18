@@ -25,6 +25,7 @@ install_module() {
 }
 
 install_module dbusqml 1.1.2 00c7ec63c3407a53c0b43c5bfdec81f1a3f23f71aa757fab97ba24dacd2d7681
+install_module configqml 0.5.1 ff2950caea6f4e17d5ef659f6c3c17b0593095b1e2ba065f1902fec6f5b2aa48
 install_module xdgiconqml 0.1.0 4017958aaba9791e5799fc72ae8447ed0db4026de741ade50e4e94abe5b955e9
 install_module pipewirespectrum 0.1.0 9c1be44521c2386f7a2190e6ca07b9eec692c4ed765faa29331ea4815d080544
 install_module niriqml 0.2.0 59079deeeed8dc245e35ee91846f0f7b32e005cc6ff716a1b05ed68de64e0b4f

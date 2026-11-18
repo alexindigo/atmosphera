@@ -1,0 +1,250 @@
+import QtQuick
+import Quickshell
+import Niri 1.0
+import "Services/Compositor"
+
+ShellRoot {
+  id: test
+  property var cases: []
+  property var pendingCases: []
+  Component { id: backendComponent; NiriIpcBackend {} }
+
+  function check(value, message) {
+    if (!value) throw new Error(message);
+  }
+  function win(id, workspace, col, focused) {
+    return {id: id, title: "Window " + id, workspaceId: workspace, isFocused: !!focused,
+      layout: {posInScrollingLayout: [col, 1], tileSize: [400, 600]}};
+  }
+  function ws(id, focused) {
+    return {id: id, idx: id, output: "Virtual-1", isFocused: !!focused, isActive: !!focused, isUrgent: false, activeWindowId: id};
+  }
+  function windows(backend) { return backend.windows.map(w => [w.id, w.workspaceId, w.layout.posInScrollingLayout[0]]); }
+  function same(actual, expected, message) {
+    check(JSON.stringify(actual) === JSON.stringify(expected), message + ": " + JSON.stringify(actual));
+  }
+  function waitFor(predicate) {
+    return new Promise((resolve, reject) => {
+      const started = Date.now();
+      const timer = Qt.createQmlObject('import QtQml; Timer { interval: 10; repeat: true }', test);
+      timer.triggered.connect(() => {
+        if (predicate()) {
+          timer.stop(); timer.destroy(); resolve();
+        } else if (Date.now() - started > 2000) {
+          timer.stop(); timer.destroy(); reject(new Error("asynchronous retry did not settle"));
+        }
+      });
+      timer.start();
+    });
+  }
+  function caseRun(name, body) {
+    pendingCases.push({name: name, body: body});
+  }
+  function runNext() {
+    if (!pendingCases.length) {
+      console.log("BOOTSTRAP_RESULT|" + JSON.stringify(cases));
+      Qt.quit();
+      return;
+    }
+    const next = pendingCases.shift();
+    NiriRequests.reset();
+    NiriConnection.isConnected = true;
+    const backend = backendComponent.createObject(test);
+    function finish(error) {
+      cases.push(error ? {name: next.name, passed: false, error: String(error)} : {name: next.name, passed: true});
+      backend.destroy();
+      Qt.callLater(runNext);
+    }
+    try {
+      const result = next.body(backend);
+      if (result && typeof result.then === "function") result.then(() => finish(null), finish);
+      else finish(null);
+    } catch (error) {
+      finish(error);
+    }
+  }
+
+  Timer {
+    interval: 10
+    running: true
+    onTriggered: {
+      caseRun("stream handover prevents overlaps and wrong-window selection", b => {
+        NiriEvents.windowsChanged([win(1, 1, 1, true), win(2, 1, 2)]);
+        NiriEvents.windowOpenedOrChanged(win(2, 2, 1));
+        NiriEvents.windowFocusChanged(2);
+        NiriRequests.deliver("windows", [win(1, 1, 1, true), win(2, 1, 1)]);
+        same(windows(b), [[1, 1, 1], [2, 2, 1]], "stale query overlapped tiles");
+        check(b.focusedWindowId === 2, "stale query restored old focus");
+        const hits = b.windows.filter(w => w.workspaceId === 1 && w.layout.posInScrollingLayout[0] === 1);
+        check(hits.length === 1 && hits[0].id === 1, "pointer would select the wrong window");
+        const queries = NiriRequests.counts.windows;
+        b.bootstrap();
+        check(NiriRequests.counts.windows === queries, "stream owner was queried again");
+      });
+      caseRun("workspace and keyboard stream state survive old seeds", b => {
+        NiriEvents.workspacesChanged([ws(1, true), ws(2, false)]);
+        NiriEvents.workspaceActivated(2, true);
+        NiriEvents.workspaceActiveWindowChanged(2, 42);
+        NiriEvents.keyboardLayoutsChanged({names: ["English", "German"], currentIdx: 0});
+        NiriEvents.keyboardLayoutSwitched(1);
+        NiriRequests.deliver("workspaces", [ws(1, true), ws(2, false)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 0});
+        check(b.workspaces.get(1).isFocused && b.workspaces.get(1).activeWindowId === 42, "workspace seed overwrote events");
+        check(b.keyboardLayoutIndex === 1, "keyboard seed overwrote switch");
+        const queries = NiriRequests.counts.keyboardLayouts;
+        b.bootstrap();
+        check(NiriRequests.counts.keyboardLayouts === queries, "keyboard stream owner was queried again");
+      });
+      caseRun("raced late-subscriber seed retries without losing unchanged rows", b => {
+        NiriEvents.windowOpenedOrChanged(win(3, 3, 1, true));
+        NiriEvents.workspaceActivated(3, true);
+        NiriEvents.keyboardLayoutSwitched(1);
+        NiriRequests.deliver("windows", [win(1, 1, 1), win(2, 2, 1)]);
+        NiriRequests.deliver("workspaces", [ws(1, true), ws(2, false)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 0});
+        check(b.windows.some(w => w.id === 3), "raced seed deleted a newly opened window");
+        // Retrying a stale seed is synchronous request creation; transport completion is asynchronous.
+        NiriRequests.deliver("windows", [win(1, 1, 1), win(2, 2, 1), win(3, 3, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(1, false), ws(2, false), ws(3, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 1});
+        check(b.windows.length === 3 && b.focusedWindowId === 3, "late-subscriber hydration incomplete");
+        check(b.workspaces.count === 3 && b.workspaces.get(2).isFocused, "workspace hydration incomplete");
+        check(b.keyboardLayoutIndex === 1, "keyboard hydration incomplete");
+      });
+      caseRun("clean seed hands ownership to later events", b => {
+        NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(1, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 0});
+        NiriEvents.windowOpenedOrChanged(win(1, 2, 2));
+        NiriEvents.windowFocusChanged(0);
+        NiriEvents.windowLayoutsChanged([[1, {pos_in_scrolling_layout: [3, 1]}]]);
+        same(windows(b), [[1, 2, 3]], "events stopped owning seeded state");
+        check(b.focusedWindowId === null, "null focus lost");
+        NiriEvents.windowClosed(1);
+        check(b.windows.length === 0, "close event lost");
+        const queries = NiriRequests.counts.windows;
+        b.bootstrap();
+        check(NiriRequests.counts.windows === queries, "cleanly seeded state was queried again");
+      });
+      for (const kind of ["focus", "layout", "close"]) {
+        caseRun(kind + " delta invalidates a pending window seed", b => {
+          if (kind === "focus") NiriEvents.windowFocusChanged(9);
+          if (kind === "layout") NiriEvents.windowLayoutsChanged([[9, {pos_in_scrolling_layout: [3, 1]}]]);
+          if (kind === "close") NiriEvents.windowClosed(1);
+          NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
+          check(NiriRequests.counts.windows === 2, kind + " did not retire the stale seed");
+          check(!b.windows.some(w => w.id === 1), kind + " allowed a stale window to appear");
+          const fresh = kind === "close" ? [] : [win(9, 2, 3, true)];
+          NiriRequests.deliver("windows", fresh);
+          same(windows(b), kind === "close" ? [] : [[9, 2, 3]], kind + " re-hydration failed");
+        });
+      }
+      caseRun("reconnect rejects old replies and hydrates the new connection", b => {
+        NiriConnection.isConnected = false;
+        NiriConnection.isConnected = true;
+        NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(1, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["Old"], currentIdx: 0});
+        check(b.windows.length === 0 && b.workspaces.count === 0 && b.keyboardLayouts.length === 0, "old connection reply was accepted");
+        NiriRequests.deliver("windows", [win(2, 2, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(2, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["New"], currentIdx: 0});
+        check(b.windows[0].id === 2 && b.workspaces.get(0).id === 2 && b.keyboardLayouts[0] === "New", "new connection not hydrated");
+      });
+      caseRun("only the latest output query can publish", b => {
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Old: {logical: {width: 100}}});
+        check(!b.outputCache.Old, "superseded output request was accepted");
+        NiriRequests.deliver("outputs", {New: {logical: {width: 200}}});
+        check(b.outputCache.New && b.outputCache.New.width === 200, "latest output query not published");
+      });
+      caseRun("failed latest output query retries and newer work cancels its retry", b => {
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Old: {logical: {width: 100}}});
+        NiriRequests.deliver("outputs", {}, true);
+        check(!b.outputCache.Old, "error adopted an obsolete output response");
+        return waitFor(() => NiriRequests.counts.outputs === 3).then(() => {
+          NiriRequests.deliver("outputs", {New: {logical: {scale: 2, width: 200}}});
+          check(b.outputCache.New && b.outputCache.New.scale === 2, "retry failed to publish actual display scale");
+          b.bootstrap();
+          NiriRequests.deliver("outputs", {}, true);
+          b.bootstrap();
+          const started = Date.now();
+          return waitFor(() => Date.now() - started > 400).then(() => {
+            check(NiriRequests.counts.outputs === 5, "superseded failure retried over a newer request");
+            NiriRequests.deliver("outputs", {Newest: {logical: {scale: 3}}});
+            check(b.outputCache.Newest.scale === 3, "newest output request did not own publication");
+          });
+        });
+      });
+      caseRun("coalesced keyboard seed retries errors and stream handover cancels retry", b => {
+        b.bootstrap();
+        check(NiriRequests.counts.keyboardLayouts === 1, "keyboard seed was not coalesced");
+        NiriRequests.deliver("keyboardLayouts", {}, true);
+        return waitFor(() => NiriRequests.counts.keyboardLayouts === 2).then(() => {
+          NiriRequests.deliver("keyboardLayouts", {}, true);
+          NiriEvents.keyboardLayoutsChanged({names: ["Stream"], currentIdx: 0});
+          const started = Date.now();
+          return waitFor(() => Date.now() - started > 400).then(() => {
+            check(NiriRequests.counts.keyboardLayouts === 2 && b.keyboardLayouts[0] === "Stream", "retry competed with the authoritative stream");
+          });
+        });
+      });
+      caseRun("cache arrival republishes derived rows without replacing live state", b => {
+        NiriEvents.windowsChanged([win(1, 1, 7), win(2, 2, 3, true)]);
+        let notifications=0;
+        b.windowListChanged.connect(() => notifications++);
+        NiriEvents.workspacesChanged([Object.assign(ws(1, false), {output: "Right"}), Object.assign(ws(2, true), {output: "Left"})]);
+        check(b.windows.find(w=>w.id===1).output === "Right" && b.windows.find(w=>w.id===2).output === "Left" && notifications > 0, "workspace projection was not published independently");
+        const beforeOutputs=notifications;
+        NiriRequests.deliver("outputs", {Right: {logical: {x: 1000}}, Left: {logical: {x: 0}}});
+        check(b.windows[0].id === 2 && b.windows[0].output === "Left" && b.windows[1].output === "Right", "derived output/order stayed stale");
+        check(notifications > beforeOutputs, "output ordering was not published independently");
+        check(b.focusedWindowId === 2, "projection replaced current focus");
+        same(b.windows.map(w => w.layout.posInScrollingLayout[0]), [3, 7], "projection replaced current layouts");
+        const rows=b.windows, beforeScale=notifications, forwarded=CompositorService.forwardCount;
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Right: {logical: {x: 1000, scale: 2}}, Left: {logical: {x: 0, scale: 2}}});
+        check(b.windows === rows && notifications === beforeScale, "unchanged projection churned the window list");
+        check(CompositorService.forwardCount > forwarded && CompositorService.forwardedOutputs.Left.scale === 2, "scale forwarding was suppressed with the unchanged projection");
+      });
+      caseRun("new connection never projects retained old window rows", b => {
+        NiriEvents.windowsChanged([win(1, 1, 1, true)]);
+        NiriEvents.workspacesChanged([ws(1, true)]);
+        NiriEvents.keyboardLayoutsChanged({names:["Old"],currentIdx:0});
+        const publications=[];
+        b.windowListChanged.connect(() => publications.push(b.windows.map(w=>w.id)));
+        NiriConnection.isConnected=false;NiriConnection.isConnected=true;
+        NiriEvents.workspacesChanged([ws(2,true)]);
+        NiriRequests.deliver("outputs", {});
+        NiriRequests.deliver("outputs", {New:{logical:{scale:2}}});
+        check(b.windows.length===0 && b.focusedWindowId===null && b.keyboardLayouts.length===0, "old connection state survived new-connection projection");
+        check(!publications.some(ids=>ids.indexOf(1)>=0), "old row was published after connection reset");
+        NiriEvents.windowsChanged([win(2,2,1,true)]);
+        check(b.windows[0].id===2 && b.focusedWindowId===2, "new snapshot was not published after reset");
+      });
+      caseRun("layout events refresh tiled sort positions but retain floating sentinel", b => {
+        NiriEvents.workspacesChanged([ws(1,true)]);
+        NiriEvents.windowsChanged([win(1,1,1),win(2,1,2,true),Object.assign(win(3,1,3),{isFloating:true})]);
+        NiriEvents.windowLayoutsChanged([[1,{pos_in_scrolling_layout:[2,1],tile_pos_in_workspace_view:[50,0]}],[2,{pos_in_scrolling_layout:[1,1],tile_pos_in_workspace_view:[10,0]}],[3,{tile_pos_in_workspace_view:[-100,0]}]]);
+        same(b.windows.filter(w=>!w.isFloating).map(w=>w.id),[2,1],"layout projection did not refresh tiled sort order");
+        check(b.windows.find(w=>w.id===2).position.x===10 && b.windows.find(w=>w.id===1).position.x===50 && b.windows.find(w=>w.id===3).position.x===b.floatingWindowPosition,"position projection lost tiled/floating contract");
+      });
+      caseRun("offline seed errors wait for reconnect instead of polling", b => {
+        NiriConnection.isConnected=false;NiriRequests.reset();b.bootstrap();
+        for(const domain of ["windows","workspaces","keyboardLayouts","outputs"]) NiriRequests.deliver(domain,{},true);
+        const started=Date.now();
+        return waitFor(()=>Date.now()-started>400).then(()=>{
+          for(const domain of ["windows","workspaces","keyboardLayouts","outputs"]) check(NiriRequests.counts[domain]===1,"offline retry polled "+domain);
+          NiriConnection.isConnected=true;
+          NiriRequests.deliver("windows",[win(9,9,1,true)]);
+          NiriRequests.deliver("workspaces",[ws(9,true)]);
+          NiriRequests.deliver("keyboardLayouts",{names:["New"],currentIdx:0});
+          NiriRequests.deliver("outputs",{});
+          check(b.windows[0].id===9 && b.keyboardLayouts[0]==="New","reconnect did not resume hydration");
+        });
+      });
+      runNext();
+    }
+  }
+}
