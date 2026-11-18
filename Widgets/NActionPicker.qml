@@ -171,7 +171,21 @@ ColumnLayout {
             inputMethodHints: argumentRow.modelData.type === "number" ? Qt.ImhDigitsOnly : Qt.ImhNone
             onTextEdited: {
               if (inputItem.acceptableInput)
-                root.chooseArgument(argumentRow.modelData.name, argumentRow.modelData.type === "number" ? Number(text) : text);
+                root.chooseArgument(argumentRow.modelData.name, argumentRow.modelData.type === "number" ? Number.fromLocaleString(Qt.locale(numberValidator.locale), text) : text);
+            }
+            function restoreInvalidEdit() {
+              if (!inputItem.acceptableInput)
+                text = Qt.binding(function () {
+                  return root.matched ? String(root.matched.values[argumentRow.modelData.name]) : "";
+                });
+            }
+            onEditingFinished: restoreInvalidEdit()
+            Connections {
+              target: valueInput.inputItem
+              function onActiveFocusChanged() {
+                if (!valueInput.inputItem.activeFocus)
+                  valueInput.restoreInvalidEdit();
+              }
             }
             IntValidator {
               id: numberValidator

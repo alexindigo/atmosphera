@@ -65,6 +65,21 @@ GridLayout {
   signal cleared
   signal customEntered(string text)
 
+  // A choice supersedes the editor's draft in every consumer. Apply may only
+  // commit a draft which has not since been replaced by selection or Clear.
+  onSelected: {
+    if (customEditing)
+      cancelCustomEditor();
+  }
+  onCleared: {
+    if (customEditing)
+      cancelCustomEditor();
+  }
+  onCustomEntered: {
+    if (customEditing)
+      cancelCustomEditor();
+  }
+
   component SectionBand: Rectangle {
     required property string section
     implicitHeight: sectionText.implicitHeight + Style.marginS * 2
