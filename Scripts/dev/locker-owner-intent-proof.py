@@ -28,6 +28,7 @@ ShellRoot {
   property var beginJob: null
   property var beginReply: null
   property int begins: 0
+  property int intents: 0
   property int settingsRevision: 0
   property int suspendCompletions: 0
   property int ticks: 0
@@ -58,6 +59,10 @@ ShellRoot {
     if (job.operation === "begin") {
       begins++;
       beginJob = job;
+      if (scenario === "persistent-begin-refusal") {
+        respond(callback, null, false);
+        return;
+      }
       if (begins === 1 && scenario === "late-begin") {
         beginReply = callback;
         Qt.callLater(function () {
@@ -79,6 +84,11 @@ ShellRoot {
     } else if (job.operation === "inspect") {
       respond(callback, view());
     } else if (job.operation === "intent") {
+      intents++;
+      if (scenario === "persistent-intent-refusal") {
+        respond(callback, null, false);
+        return;
+      }
       if (scenario === "intent-refusal" && !intentRejected) {
         intentRejected = true;
         descriptor.phase = "unlocking";
@@ -117,7 +127,7 @@ ShellRoot {
     LockOwnerService._session = "fixture-session";
     LockOwnerService._initialized = true;
     LockOwnerService._busy = true;
-    if (scenario === "unlocking-request" || scenario === "intent-refusal") {
+    if (scenario === "unlocking-request" || scenario === "intent-refusal" || scenario === "persistent-intent-refusal") {
       descriptor = fresh({adapter: "bundled"});
       descriptor.phase = scenario === "unlocking-request" ? "unlocking" : "starting";
     }
@@ -132,6 +142,20 @@ ShellRoot {
     running: !root.finished
     onTriggered: {
       root.ticks++;
+      if (root.scenario === "persistent-begin-refusal" || root.scenario === "persistent-intent-refusal") {
+        // A failed receipt must retain its request without scheduling another
+        // process immediately. The existing owner timer owns retry cadence.
+        if (root.ticks < 2)
+          return;
+        var attempts = root.scenario === "persistent-begin-refusal" ? root.begins : root.intents;
+        root.finished = true;
+        LockOwnerService._initialized = false;
+        var retained = LockOwnerService._pendingRequest;
+        console.log("OWNER_INTENT_RESULT " + JSON.stringify({passed: attempts === 1 && retained,
+          scenario: root.scenario, attempts: attempts, retained: retained}));
+        Qt.exit(attempts === 1 && retained ? 0 : 1);
+        return;
+      }
       var passed = root.suspendCompletions === 1;
       if (root.scenario === "late-begin")
         passed = passed && root.settingsRevision === 2 && root.sleeping;
@@ -186,7 +210,8 @@ def main():
         'signal sessionUnlocked; function observeSession(id) {} }\n')
     (shell / 'shell.qml').write_text(ROOT)
     results = []
-    for scenario in ('late-begin', 'begin-refusal', 'unlocking-request', 'intent-refusal'):
+    for scenario in ('late-begin', 'begin-refusal', 'unlocking-request', 'intent-refusal',
+                     'persistent-begin-refusal', 'persistent-intent-refusal'):
         env = dict(os.environ, LOCKER_REVIEW_CASE=scenario, QT_QPA_PLATFORM='offscreen')
         process = subprocess.run(['qs', '-p', str(shell), '--no-color'], env=env,
             check=False, text=True, capture_output=True, timeout=15)

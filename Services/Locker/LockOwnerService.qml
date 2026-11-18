@@ -265,6 +265,8 @@ Singleton {
                  restoreRequest(submitted);
                  if (_pendingSleepWindow === -1)
                    _pendingSleepWindow = sleepWindow;
+                 // The existing pump timer owns retries after adapter errors.
+                 return;
                }
                Qt.callLater(pump);
              });
@@ -279,7 +281,11 @@ Singleton {
              suspendAfterSecure: request.suspend,
              unconfirmed: _state === "engaged-unconfirmed(external)"
            }, function (reply) {
-             if (!reply.ok || reply.value.phase === "unlocking" || reply.value.phase === "settled")
+             if (!reply.ok) {
+               restoreRequest(request);
+               return;
+             }
+             if (reply.value.phase === "unlocking" || reply.value.phase === "settled")
                restoreRequest(request);
              Qt.callLater(pump);
            });
