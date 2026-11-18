@@ -53,13 +53,14 @@ Singleton {
   }
 
   // --- Locker1 v2 correlated observation (docs/locker1-contract.md) ---
-  // Signals are delivered only from the current owner of the well-known name
-  // (QtDBus sender match) and are stamped with that unique owner. The owner
-  // service persists them through its adapter, which rejects a request ID or
-  // owner that does not match the generation's accepted request.
+  // Each owner lifetime has a fixed unique-destination subscription. Requests,
+  // replies and signals carry that lifetime, never a mutable name's identity.
+  readonly property string contractOwner: _contractOwner
   readonly property var contractObservations: _contractObservations
   property var _contractObservations: ({})
   property string _contractOwner: ""
+  property int _contractRevision: 0
+  property var _contractSubscription: null
   signal contractObserved(string requestId)
 
   function _settle(reply, done) {
@@ -80,23 +81,58 @@ Singleton {
   }
 
   function _resolveOwner(done) {
+    var revision = _contractRevision;
     root._settle(busDaemon.call("GetNameOwner", ["app.atmosphera.Locker"]), function (reply) {
+      if (revision !== root._contractRevision) {
+        done("", root._contractRevision);
+        return;
+      }
       var owner = reply && !reply.isError ? String(reply.value || "") : "";
-      root._contractOwner = owner;
-      done(owner);
+      root._changeOwner(owner);
+      done(owner, root._contractRevision);
     });
   }
 
-  function _observe(requestId, event) {
-    if (typeof requestId !== "string" || requestId === "" || root._contractOwner === "")
+  function _changeOwner(owner) {
+    if (_contractOwner === owner)
+      return;
+    _contractRevision++;
+    if (_contractSubscription) {
+      _contractSubscription.enabled = false;
+      _contractSubscription.destroy();
+      _contractSubscription = null;
+    }
+    _contractOwner = owner;
+    if (owner !== "")
+      _contractSubscription = contractSubscription.createObject(root, {owner: owner, revision: _contractRevision});
+  }
+
+  function _ownerCall(owner, revision, iface, member, args, signature, done) {
+    if (owner !== _contractOwner || revision !== _contractRevision) {
+      done(null);
+      return;
+    }
+    var pending = SessionBus.asyncCall({service: owner, path: "/app/atmosphera/Locker",
+      iface: iface, member: member, arguments: args, signature: signature, autoStart: false});
+    _settle(pending, function (reply) {
+      // A daemon round trip also fences a name change whose watcher delivery
+      // has not run yet. A->B->A is rejected by the lifetime revision as well.
+      root._resolveOwner(function (current, currentRevision) {
+        done(current === owner && currentRevision === revision ? reply : null);
+      });
+    });
+  }
+
+  function _observe(owner, revision, requestId, event) {
+    if (typeof requestId !== "string" || requestId === "" || owner !== _contractOwner || revision !== _contractRevision)
       return;
     var next = Object.assign({}, root._contractObservations);
     var entry = Object.assign({}, next[requestId] || {});
     // First owner wins per request; a different owner's later claim is kept
     // separately so the adapter can refuse it, never merged into the first.
-    if (entry.owner && entry.owner !== root._contractOwner)
-      entry = {owner: root._contractOwner, ownerChanged: true};
-    entry.owner = root._contractOwner;
+    if (entry.owner && entry.owner !== owner)
+      entry = {owner: owner, ownerChanged: true};
+    entry.owner = owner;
     entry[event] = true;
     next[requestId] = entry;
     root._contractObservations = next;
@@ -110,17 +146,20 @@ Singleton {
       complete({ok: false});
       return;
     }
-    root._resolveOwner(function (owner) {
+    root._resolveOwner(function (owner, revision) {
       if (owner === "") {
         complete({ok: false});
         return;
       }
-      root._settle(contract.getProperty("Version"), function (versionReply) {
+      root._ownerCall(owner, revision, "org.freedesktop.DBus.Properties", "Get", ["app.atmosphera.Locker1", "Version"], "ss", function (versionReply) {
+        if (!versionReply) {
+          complete({ok: false});
+          return;
+        }
         var value = versionReply && !versionReply.isError ? Number(versionReply.value) : 1;
         var version = Number.isInteger(value) && value >= 2 ? value : 1;
-        var call = version >= 2 ? contract.call("LockRequest", [requestId]) : contract.call("Lock", []);
-        root._settle(call, function (reply) {
-          complete({ok: !!reply && !reply.isError && root._contractOwner === owner, owner: owner, version: version});
+        root._ownerCall(owner, revision, "app.atmosphera.Locker1", version >= 2 ? "LockRequest" : "Lock", version >= 2 ? [requestId] : [], version >= 2 ? "s" : "", function (reply) {
+          complete({ok: !!reply && !reply.isError, owner: owner, version: version});
         });
       });
     });
@@ -132,12 +171,12 @@ Singleton {
       complete({ok: false});
       return;
     }
-    root._resolveOwner(function (owner) {
+    root._resolveOwner(function (owner, revision) {
       if (owner === "") {
         complete({ok: false});
         return;
       }
-      root._settle(contract.call("RequestState", [requestId]), function (reply) {
+      root._ownerCall(owner, revision, "app.atmosphera.Locker1", "RequestState", [requestId], "s", function (reply) {
         complete({ok: !!reply && !reply.isError, owner: owner, state: reply && !reply.isError ? String(reply.value) : ""});
       });
     });
@@ -155,17 +194,22 @@ Singleton {
 
   DBusServiceWatcher {
     service: "app.atmosphera.Locker"
-    onOwnerChanged: (oldOwner, newOwner) => root._contractOwner = newOwner
+    onOwnerChanged: (oldOwner, newOwner) => root._changeOwner(newOwner)
   }
 
-  DBusSignalWatcher {
-    service: "app.atmosphera.Locker"
-    path: "/app/atmosphera/Locker"
-    iface: "app.atmosphera.Locker1"
-    member: ""
-    onReceived: (member, args) => {
-      if (member === "Secured" || member === "Unlocked")
-        root._observe(args && args.length > 0 ? args[0] : "", member === "Secured" ? "secured" : "unlocked");
+  Component {
+    id: contractSubscription
+    DBusSignalWatcher {
+      required property string owner
+      required property int revision
+      service: owner
+      path: "/app/atmosphera/Locker"
+      iface: "app.atmosphera.Locker1"
+      member: ""
+      onReceived: (member, args) => {
+        if (member === "Secured" || member === "Unlocked")
+          root._observe(owner, revision, args && args.length > 0 ? args[0] : "", member === "Secured" ? "secured" : "unlocked");
+      }
     }
   }
 

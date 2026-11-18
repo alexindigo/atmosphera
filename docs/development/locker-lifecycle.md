@@ -76,14 +76,24 @@ The public Locker1 contract, including version 2, is in
 [`docs/locker1-contract.md`](../locker1-contract.md). The owner obtains a fresh
 per-generation request ID from `locker-unit.py`, reads `Version`, calls
 `LockRequest(id)` (or `Lock()` for version 1) and records the accepting unique
-bus owner. `LockerService` stamps `Secured`/`Unlocked` with the current owner;
+bus owner. `LockerService` binds calls and signal subscriptions to a fixed unique
+owner and lifetime revision, rejecting replies after replacement;
 the adapter's `contract-observe` operation persists them only for the matching
 request ID and owner. A persisted `Secured` confirms engagement until the
 service's name is lost or changes owner. `Unlocked` is the same unlock
 observation as LockedHint=false on niri, so no probe or second password follows.
-After a shell restart the owner queries `RequestState(id)` of the recorded owner.
+Direct owner replacement immediately withdraws confirmation. After a shell
+restart the owner queries `RequestState(id)` of the recorded owner and withholds
+confirmation until the complete result is persisted and freshly inspected.
 Standalone shipped lockers serve version 2 through `LockClient`; managed clients
 never claim the name.
+
+`locker-contract-identity-proof.py --work <new-artifact-directory>` controls real
+private-bus replacements during Version, LockRequest and RequestState, plus
+fixed-owner signal delivery. `locker-owner-contract-proof.py` uses the actual
+QML owner with delayed query/persistence receipts and direct owner replacement.
+Both are guest-only boundary controls, not native lock or authentication proof;
+the real-PAM `contract` variants separately cover actual independent lockers.
 
 ## Settings and process lifetime
 

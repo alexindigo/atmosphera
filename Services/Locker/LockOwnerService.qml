@@ -42,6 +42,7 @@ Singleton {
   property var _view: null
   property string _contractIssued: ""
   property string _contractQueried: ""
+  property var _contractQuery: null
   property string _contractRejected: ""
   property var _contractFacts: null
   property bool _unlockObserved: false
@@ -191,6 +192,15 @@ Singleton {
            });
       return true;
     }
+    if (_contractFacts && _contractFacts.generation === d.generation && _contractFacts.events.length === 0) {
+      // This inspect follows every accepted persistence receipt. Only now can
+      // a restored query count as reconciled, including Secured + Unlocked.
+      if (_contractFacts === _contractQuery) {
+        _contractQueried = _contractFacts.key;
+        _contractQuery = null;
+      }
+      _contractFacts = null;
+    }
     var observed = LockerService.contractObservations[d.contractRequestId];
     if (observed && d.contractOwner && d.contractVersion >= 2) {
       var pending = observed.secured && !d.contractSecured ? "secured" : observed.unlocked && d.contractSecured && !d.contractUnlocked ? "unlocked" : "";
@@ -236,6 +246,10 @@ Singleton {
     _pendingSuspend = _pendingSuspend || request.suspend;
   }
 
+  function contractKey(d) {
+    return d.generation + ":" + d.contractRequestId + ":" + d.contractOwner;
+  }
+
   function reconcile() {
     var d = _view.descriptor;
     if (!d || d.phase === "settled") {
@@ -252,6 +266,7 @@ Singleton {
              }, function (reply) {
                if (reply.ok) {
                  _contractFacts = null;
+                 _contractQuery = null;
                  _contractRejected = "";
                  _unlockObserved = false;
                  _contractFailed = false;
@@ -364,10 +379,12 @@ Singleton {
                var generation = reply.value.generation;
                var requestId = reply.value.contractRequestId;
                LockerService.requestContract(requestId, function (result) {
+                 if (_view?.descriptor?.generation !== generation)
+                   return;
                  if (!result.ok) {
                    _contractFailed = true;
                  } else {
-                   _contractQueried = generation;
+                   _contractQueried = generation + ":" + requestId + ":" + result.owner;
                    _contractFacts = {
                      generation: generation,
                      requestId: requestId,
@@ -381,17 +398,24 @@ Singleton {
              });
         return;
       }
-      if (d.contractOwner && d.contractVersion >= 2 && _contractQueried !== d.generation && !d.contractFailed) {
+      if (d.contractOwner && d.contractVersion >= 2 && _contractQueried !== contractKey(d) && !d.contractFailed && !_contractFailed) {
         // After a shell restart, signals may have been missed. Ask the
         // accepting service about this exact request before trusting state.
-        _contractQueried = d.generation;
+        // In-flight and durably reconciled are deliberately different states.
+        publish("starting", "", false);
+        if (_contractQuery && _contractQuery.key === contractKey(d))
+          return;
         var queried = {
+          key: contractKey(d),
           generation: d.generation,
           requestId: d.contractRequestId,
           owner: d.contractOwner
         };
+        _contractQuery = queried;
         LockerService.queryContract(queried.requestId, function (result) {
-          queried.events = !result.ok || result.owner !== queried.owner ? ["failed"] : result.state === "secure" ? ["secured"] : result.state === "unlocked" ? ["secured", "unlocked"] : result.state === "pending" ? [] : ["failed"];
+          if (_contractQuery !== queried || _view?.descriptor?.generation !== queried.generation)
+            return;
+          queried.events = !result.ok || result.owner !== queried.owner ? ["failed"] : result.state === "secure" ? ["secured"] : result.state === "unlocked" ? ["secured", "unlocked"] : result.state === "pending" && !d.contractSecured ? [] : ["failed"];
           _contractFacts = queried;
           Qt.callLater(pump);
         });
@@ -402,7 +426,7 @@ Singleton {
     var view = Object.assign({}, _view, {
                                takeover: _takeover,
                                realLaunchFailed: d.realLaunchFailed || prehookPending,
-                               contractFailed: d.contractFailed,
+                               contractFailed: d.contractFailed || _contractFailed,
                                sessionUnlockObserved: d.sessionUnlockObserved
                              });
     var next = Lifecycle.decide(view);
@@ -521,6 +545,15 @@ Singleton {
     function onContractAvailableChanged() {
       if (!LockerService.contractAvailable && _view?.descriptor?.snapshot.adapter === "contract")
         _contractFailed = true;
+    }
+    function onContractOwnerChanged() {
+      var d = _view?.descriptor;
+      var accepted = d?.contractOwner || _contractFacts?.owner;
+      if (d?.snapshot.adapter === "contract" && d.phase !== "settled" && accepted && LockerService.contractOwner !== accepted) {
+        _contractFailed = true;
+        publish(_state, _holder, false);
+        Qt.callLater(pump);
+      }
     }
   }
 

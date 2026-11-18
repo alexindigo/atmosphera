@@ -206,7 +206,7 @@ def main():
     (shell / 'Services/Control/HooksService.qml').write_text('pragma Singleton\nimport QtQuick\nQtObject { '
         'function handlerFor(name) { return null; } function listenerCommandFor(a, b) { return ""; } }\n')
     (shell / 'Services/Locker/LockerService.qml').write_text('pragma Singleton\nimport QtQuick\nQtObject { '
-        'property bool contractAvailable: false; property var contractObservations: ({}); '
+        'property bool contractAvailable: false; property string contractOwner: ""; property var contractObservations: ({}); '
         'signal sessionUnlocked; function observeSession(id) {} }\n')
     (shell / 'shell.qml').write_text(ROOT)
     results = []
