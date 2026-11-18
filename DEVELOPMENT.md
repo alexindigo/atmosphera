@@ -421,9 +421,12 @@ real-input acceptance on two outputs (`--case` takes `all` or a list of H1-H9):
 ```sh
 export TMPDIR=/home/tester/Projects/hot-corners-core/tmp
 W=/home/tester/Projects/hot-corners-core/runs
+mkdir -p "$TMPDIR" "$W"
 timeout 600 python3 -B Scripts/dev/hot-corners-settings-regression.py --source "$PWD" --workspace $W/settings-fresh
 timeout 300 python3 -B Scripts/dev/hot-corners-service-regression.py
 timeout 900 python3 -B Scripts/dev/hot-corners-migration-regression.py --source "$PWD" --workspace $W/migration-fresh
+python3 -B Scripts/dev/hot-corners-migration-oracle-selftest.py
+ACTION_TEST_VM_UUID=20c0b416-2943-49fb-8aa0-eb7d29b1c8ea python3 -B Scripts/dev/hot-corners-migration-boundary-proof.py --workspace $W/migration-boundary-fresh
 timeout 1800 python3 -B Scripts/dev/hot-corners-e2e.py --source "$PWD" --workspace $W/e2e-fresh --case all
 ```
 

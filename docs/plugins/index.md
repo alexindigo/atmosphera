@@ -276,8 +276,11 @@ plugin records for itself: caches, last-known values, counters.
 
 - `hot-corners` is built into the shell from 0.10.0 (Settings -> General -> Hot
   corners). On the first start of 0.10.0, plugins registry migration v6 imports
-  the plugin's corner commands into the shell settings, backs the plugin up under
-  `~/.config/atmosphera/backups/plugins-v6-<time>/` and uninstalls it.
+  commands from enabled installs into empty shell corners only, backs the plugin
+  up under `~/.config/atmosphera/backups/plugins-v6-<time>/` and uninstalls it.
+  Commands from disabled installs or for already configured shell corners remain
+  available in that backup. Failed reads, backup or settings saves leave the
+  migration pending and the plugin installed for a later start.
 
 ## Example Plugin
 

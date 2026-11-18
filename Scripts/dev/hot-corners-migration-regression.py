@@ -89,6 +89,7 @@ def plan_cases():
          {'hot-corners': {'primary': None, 'legacy': None}}, EMPTY, {}, ['hot-corners'])
     case('no settings', {KEY: enabled, OTHER_KEY: None}, {}, EMPTY, {}, sorted([KEY, OTHER_KEY]))
     case('nothing to do', {'x:other': enabled}, {}, EMPTY, {}, [])
+    case('unsafe keys', {'../../outside:hot-corners': enabled, 'nested/path:hot-corners': enabled}, {}, EMPTY, {}, [])
     return cases, expected
 
 
@@ -114,8 +115,10 @@ def run_planner(shell, work, env):
             observed[name] = plan
     rows = [dict(case='planner:' + name, observed=observed.get(name), expected=want, passed=observed.get(name) == want)
             for name, want in expected.items()]
-    rows.append(dict(case='planner:completed', observed='HOT_CORNERS_PLAN_DONE' in text and not ERRORS.search(text),
-                     expected=True, passed='HOT_CORNERS_PLAN_DONE' in text and not ERRORS.search(text)))
+    completed = 'HOT_CORNERS_PLAN_DONE' in text and not ERRORS.search(text) and result.returncode == 0
+    rows.append(dict(case='planner:completed', observed=dict(marker='HOT_CORNERS_PLAN_DONE' in text,
+                     exit_code=result.returncode, errors=bool(ERRORS.search(text))),
+                     expected=dict(marker=True, exit_code=0, errors=False), passed=completed))
     return rows
 
 
@@ -151,8 +154,8 @@ class Profile:
             self.write(f'settings/plugins/{key}.json', primary)
         return {'enabled': enabled, 'sourceUrl': REGISTRY_URL if key == KEY else OTHER_URL}
 
-    def plugins_json(self, states):
-        self.write('plugins.json', {'version': 5, 'sources': [], 'states': states})
+    def plugins_json(self, states, version=5):
+        self.write('plugins.json', {'version': version, 'sources': [], 'states': states})
 
     def start(self, shell, base_env):
         self.starts += 1
@@ -183,7 +186,7 @@ class Profile:
         return (self.config / rel).exists()
 
 
-def cold_starts(shell, root, env):
+def cold_starts(shell, root, env, executions=None):
     rows = []
 
     def check(case, name, observed, expected):
@@ -191,7 +194,10 @@ def cold_starts(shell, root, env):
 
     def started(case, run):
         check(case, 'start completed', bool(run['state']) and run['execution']['exit_code'] == 0 and not run['execution']['timed_out'], True)
+        check(case, 'namespace cleanup', run['execution']['cleanup_complete'], True)
         check(case, 'no QML errors', run['errors'], [])
+        if executions is not None:
+            executions.append(dict(profile=case, **run['execution']))
 
     def migrated(case, profile, run, corners, keys, backed_up):
         started(case, run)
@@ -288,6 +294,22 @@ def cold_starts(shell, root, env):
     check('M8 again', 'no migration work', 'v6 migration' in run['text'], False)
     check('M8 again', 'profile unchanged', (json.loads((p.config / 'plugins.json').read_bytes()), p.shard(), len(p.backups())),
           (json.loads(after), shard, 1))
+
+    # M9: pre-v5 built-in install with commands only in the legacy folder. v5
+    # must leave it for v6, even though the shipped payload no longer has it.
+    p = Profile(root, 'm9')
+    key = 'builtin:hot-corners'
+    state = p.plugin(key, True, legacy=settings_text(topLeft='m9 before v5'))
+    state['sourceUrl'] = 'file:///old/Plugins'
+    p.plugins_json({key: state}, version=4)
+    migrated('M9', p, p.start(shell, env), dict(EMPTY, topLeft='m9 before v5'), [key],
+             ['plugins.json', f'plugins/{key}/settings.json'])
+
+    # M10: completion is persisted even when v6 has no work after v5.
+    p = Profile(root, 'm10')
+    p.plugins_json({}, version=4)
+    started('M10', p.start(shell, env))
+    check('M10', 'empty migration completion persisted', p.plugins().get('version'), 6)
     return rows
 
 
@@ -306,13 +328,18 @@ def main():
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software', DISPLAY='',
                ATMOSPHERA_UPGRADELOG_URL='http://127.0.0.1:9')
     rows = run_planner(shell, work, env)
-    rows += cold_starts(shell, work, env)
+    executions = []
+    rows += cold_starts(shell, work, env, executions)
     failures = [row for row in rows if not row['passed']]
     receipt = dict(passed=not failures, cases=len(rows), failures=failures)
     (work / 'cases.json').write_text(json.dumps(rows, indent=2))
-    execution = dict(exit_code=0 if not failures else 1, timed_out=False, cleanup_complete=True)
+    execution = dict(exit_code=0 if not failures else 1,
+                     timed_out=any(item['timed_out'] for item in executions),
+                     cleanup_complete=bool(executions) and all(item['cleanup_complete'] for item in executions),
+                     starts=executions)
     write_receipt(work, receipt, execution)
-    print(json.dumps(dict(passed=receipt['passed'], cases=len(rows), failures=failures), indent=2))
+    print(json.dumps(dict(passed=receipt['passed'], cases=len(rows), failures=failures,
+                         cleanup_complete=execution['cleanup_complete']), indent=2))
     return 0 if receipt['passed'] else 1
 
 

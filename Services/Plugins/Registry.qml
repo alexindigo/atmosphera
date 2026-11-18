@@ -1,5 +1,6 @@
 pragma Singleton
 
+import ConfigQml 1.0
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -478,6 +479,19 @@ for key in sys.argv[3:]:
       return;
     }
 
+    // Do not mutate the profile before the owner needed for reference rewrites
+    // is ready. A terminal failure leaves this migration pending, not startup.
+    root._whenSettingsLoaded(function (ready) {
+      if (!ready) {
+        Logger.e("PluginRegistry", "v5 migration: settings unavailable; profile left unchanged");
+        done();
+        return;
+      }
+      root._applyV5Migration(plan, currentHash, done);
+    });
+  }
+
+  function _applyV5Migration(plan, currentHash, done) {
     for (var r = 0; r < plan.rekeys.length; r++)
       Logger.i("PluginRegistry", "v5 migration: rekeyed", plan.rekeys[r].from, "->", plan.rekeys[r].to);
     for (var m = 0; m < plan.removals.length; m++)
@@ -504,10 +518,8 @@ for key in sys.argv[3:]:
         root.pluginSources = plan.sources;
         root._v5Pending = false;
         root.save();
-        root._whenSettingsLoaded(function () {
-          root._rewriteSettingsV5(plan, currentHash);
-          done();
-        });
+        root._rewriteSettingsV5(plan, currentHash);
+        done();
       });
     });
   }
@@ -649,10 +661,12 @@ for key in sys.argv[3:]:
       return;
     }
     var keys = Object.keys(root.pluginStates).filter(function (key) {
-      return PluginProfileMigration.bareId(key) === PluginProfileMigration.HOT_CORNERS_ID;
+      return PluginProfileMigration.isHotCornersKey(key);
     }).sort();
     if (keys.length === 0) {
       root._v6Pending = false;
+      if (!root._v5Pending)
+        root.save();
       done();
       return;
     }
@@ -660,7 +674,12 @@ for key in sys.argv[3:]:
     keys.forEach(function (key) {
       paths.push(root.getPluginSettingsFile(key), root.getLegacyPluginSettingsFile(key));
     });
-    root._readTexts(paths, function (texts) {
+    root._readTexts(paths, function (texts, error) {
+      if (error) {
+        Logger.e("PluginRegistry", "v6 migration: input read failed; plugin left installed:", error);
+        done();
+        return;
+      }
       var settings = {};
       keys.forEach(function (key, index) {
         settings[key] = {
@@ -668,7 +687,12 @@ for key in sys.argv[3:]:
           legacy: texts[index * 2 + 1]
         };
       });
-      root._whenSettingsLoaded(function () {
+      root._whenSettingsLoaded(function (ready) {
+        if (!ready) {
+          Logger.e("PluginRegistry", "v6 migration: settings unavailable; plugin left installed");
+          done();
+          return;
+        }
         root._applyV6(PluginProfileMigration.planV6({
                                                       states: root.pluginStates,
                                                       settings: settings,
@@ -695,6 +719,10 @@ for key in sys.argv[3:]:
       }
       var written = [];
       Object.keys(plan.corners).forEach(function (corner) {
+        // The backup is asynchronous. Only the current owner value authorizes
+        // filling an empty corner; a pre-backup plan cannot overwrite an edit.
+        if (Settings.data.general.hotCorners[corner] !== "")
+          return;
         Settings.data.general.hotCorners[corner] = plan.corners[corner];
         written.push(["general", "hotCorners", corner]);
         Logger.i("PluginRegistry", "v6 migration: imported the hot-corners plugin's", corner, "command");
@@ -731,6 +759,7 @@ for key in sys.argv[3:]:
       var states = Object.assign({}, root.pluginStates);
       plan.removals.forEach(function (key) {
         delete states[key];
+        delete root.installedPlugins[key];
         Logger.i("PluginRegistry", "v6 migration: removed the hot-corners plugin (built into the shell):", key);
       });
       root.pluginStates = states;
@@ -740,15 +769,21 @@ for key in sys.argv[3:]:
     });
   }
 
-  // Reads each path; a missing or unreadable file gives null.
+  // Only confirmed absence gives null. A read failure cannot authorize removal
+  // or fallback to a different settings source.
   function _readTexts(paths, done) {
     var texts = [];
+    var script = "import os, sys\ntry:\n with open(sys.argv[1], encoding='utf-8') as f: sys.stdout.write(f.read())\nexcept FileNotFoundError:\n sys.exit(3 if not os.path.lexists(sys.argv[1]) else 1)\n";
     function next() {
       if (texts.length === paths.length) {
         done(texts);
         return;
       }
-      root.runProcess("ReadMigrationInput", ["sh", "-c", 'test -f "$1" && cat -- "$1"', "sh", paths[texts.length]], function (exitCode, out) {
+      root.runProcess("ReadMigrationInput", ["python3", "-c", script, paths[texts.length]], function (exitCode, out) {
+        if (exitCode !== 0 && exitCode !== 3) {
+          done(null, paths[texts.length]);
+          return;
+        }
         texts.push(exitCode === 0 ? out : null);
         next();
       });
@@ -794,19 +829,31 @@ for key in sys.argv[3:]:
     });
   }
 
-  // Runs callback once Settings has loaded (immediately if it already has).
+  // A wait has two terminal outcomes. Every caller must keep its migration
+  // pending on failure and allow plugin startup to continue.
   function _whenSettingsLoaded(callback) {
-    if (Settings.isLoaded) {
-      callback();
+    function outcome() {
+      if (Settings.isLoaded)
+        return true;
+      if (Settings.store.status === ConfigStore.Error)
+        return false;
+      return null;
+    }
+    var ready = outcome();
+    if (ready !== null) {
+      callback(ready);
       return;
     }
-    var called = false;
-    Settings.settingsLoaded.connect(function () {
-      if (called)
+    function changed() {
+      var ready = outcome();
+      if (ready === null)
         return;
-      called = true;
-      callback();
-    });
+      Settings.settingsLoaded.disconnect(changed);
+      Settings.store.statusChanged.disconnect(changed);
+      callback(ready);
+    }
+    Settings.settingsLoaded.connect(changed);
+    Settings.store.statusChanged.connect(changed);
   }
 
   // Runs a command in a Process and hands back its exit code and output.

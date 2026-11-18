@@ -87,6 +87,13 @@ function planV5(input) {
 
         var id = bareId(key);
 
+        // Hot Corners owns its import and retirement in v6. In particular, v5
+        // must not discard its only (legacy in-directory) settings first.
+        if (isHotCornersKey(key)) {
+            out[key] = clone(state);
+            continue;
+        }
+
         // Rule 2: built-in-sourced but no longer shipped.
         if (shipped.indexOf(id) < 0) {
             removals.push(key);
@@ -282,13 +289,17 @@ var HOT_CORNERS_FIELDS = [
     ["BottomRight", "bottomRight"]
 ];
 
+function isHotCornersKey(key) {
+    return typeof key === "string" && key.indexOf("/") < 0 && bareId(key) === HOT_CORNERS_ID;
+}
+
 function planV6(input) {
     var states = input.states || {};
     var settings = input.settings || {};
     var core = input.core || {};
     // Code-unit order, so the first install to provide a corner is deterministic.
     var keys = Object.keys(states).filter(function (key) {
-        return bareId(key) === HOT_CORNERS_ID;
+        return isHotCornersKey(key);
     }).sort();
 
     var corners = {};
