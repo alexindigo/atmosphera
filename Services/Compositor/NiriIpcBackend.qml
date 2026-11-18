@@ -1,5 +1,6 @@
 import Niri 1.0
 import QtQuick
+import "../../Helpers/BootstrapHandover.js" as BootstrapHandover
 import qs.Commons
 import qs.Services.Keyboard
 
@@ -28,6 +29,7 @@ Item {
   property var workspaceCache: ({})
 
   property bool _warned: false
+  property var _bootstrapState: BootstrapHandover.create()
 
   // ── Gadget extractors (sever Qt ownership) ──
 
@@ -224,26 +226,43 @@ Item {
 
   // ── Output / bootstrap ──
 
-  function bootstrap() {
-    // Query keyboard layouts
-    var klReply = NiriRequests.keyboardLayouts();
-    klReply.finished.connect(function () {
-      if (klReply.isError) {
-        Logger.w("NiriIpcBackend", "keyboardLayouts request failed:", klReply.error.message);
-        return;
+  function seedDomain(name, request, apply, refresh) {
+    var token = BootstrapHandover.begin(root._bootstrapState, name, refresh);
+    if (!token)
+      return;
+    var reply = request();
+    reply.finished.connect(function () {
+      var outcome = BootstrapHandover.finish(root._bootstrapState, token, !reply.isError);
+      if (outcome === "retry") {
+        // The snapshot raced stream updates. Hydrate again only if the stream
+        // has not supplied a full snapshot in the meantime.
+        root.seedDomain(name, request, apply, refresh);
+      } else if (outcome === "error") {
+        Logger.w("NiriIpcBackend", name + " seed request failed:", reply.error.message);
+      } else if (outcome === "accept") {
+        apply(reply.value);
       }
-      updateKeyboardLayouts(klReply.value);
     });
+  }
 
-    // Query outputs
-    var outReply = NiriRequests.outputs();
-    outReply.finished.connect(function () {
-      if (outReply.isError) {
-        Logger.w("NiriIpcBackend", "outputs request failed:", outReply.error.message);
-        return;
-      }
+  function bootstrap() {
+    // Hydrate a late subscriber, then leave all changes to the event stream.
+    seedDomain("windows", function () {
+      return NiriRequests.windows();
+    }, rebuildWindows);
+    seedDomain("workspaces", function () {
+      return NiriRequests.workspaces();
+    }, rebuildWorkspaces);
+    seedDomain("keyboardLayouts", function () {
+      return NiriRequests.keyboardLayouts();
+    }, updateKeyboardLayouts);
+
+    // Outputs have no stream snapshot here; explicit refreshes keep latest-
+    // request ownership and share the connection-lifetime guard.
+    seedDomain("outputs", function () {
+      return NiriRequests.outputs();
+    }, function (outputs) {
       outputCache = {};
-      var outputs = outReply.value;
       var keys = Object.keys(outputs);
       for (var i = 0; i < keys.length; i++) {
         var name = keys[i];
@@ -267,7 +286,7 @@ Item {
         };
       }
       queryDisplayScales();
-    });
+    }, true);
   }
 
   function initialize() {
@@ -286,24 +305,29 @@ Item {
     target: NiriEvents
 
     function onWindowsChanged(windows) {
+      BootstrapHandover.observe(root._bootstrapState, "windows", true);
       Logger.d("NiriIpcBackend", "onWindowsChanged:", windows.length, "windows");
       rebuildWindows(windows);
     }
 
     function onWorkspacesChanged(workspaces) {
+      BootstrapHandover.observe(root._bootstrapState, "workspaces", true);
       Logger.d("NiriIpcBackend", "onWorkspacesChanged:", workspaces.length, "workspaces");
       rebuildWorkspaces(workspaces);
     }
 
     function onWindowOpenedOrChanged(window) {
+      BootstrapHandover.observe(root._bootstrapState, "windows", false);
       upsertWindow(window);
     }
 
     function onWindowClosed(id) {
+      BootstrapHandover.observe(root._bootstrapState, "windows", false);
       removeWindow(id);
     }
 
     function onWindowLayoutsChanged(changes) {
+      BootstrapHandover.observe(root._bootstrapState, "windows", false);
       // niri emits layout-only updates (tile moves/resizes) via this event,
       // NOT WindowOpenedOrChanged — update layouts in place so consumers
       // (e.g. the overview map) stay in sync on every move
@@ -336,12 +360,14 @@ Item {
     }
 
     function onWindowFocusChanged(id) {
+      BootstrapHandover.observe(root._bootstrapState, "windows", false);
       // niriqml reports niri's "no focused window" (null id) as 0
       focusedWindowId = id ? id : null;
       activeWindowChanged();
     }
 
     function onWorkspaceActiveWindowChanged(workspaceId, windowId) {
+      BootstrapHandover.observe(root._bootstrapState, "workspaces", false);
       // Update a single workspace's active window in place (no full rebuild)
       for (var i = 0; i < workspaces.count; i++) {
         if (workspaces.get(i).id === workspaceId) {
@@ -356,6 +382,7 @@ Item {
     }
 
     function onWorkspaceActivated(workspaceId, focused) {
+      BootstrapHandover.observe(root._bootstrapState, "workspaces", false);
       // niri does NOT resend WorkspacesChanged on activation — apply the
       // event incrementally instead of re-querying (reactive, no round-trip):
       // per IPC spec, the activated workspace becomes active on its output
@@ -388,10 +415,12 @@ Item {
     }
 
     function onKeyboardLayoutsChanged(layouts) {
+      BootstrapHandover.observe(root._bootstrapState, "keyboardLayouts", true);
       updateKeyboardLayouts(layouts);
     }
 
     function onKeyboardLayoutSwitched(idx) {
+      BootstrapHandover.observe(root._bootstrapState, "keyboardLayouts", false);
       onKeyboardSwitched(idx);
     }
 
@@ -404,36 +433,15 @@ Item {
     target: NiriConnection
 
     function onConnectedChanged() {
+      // Invalidate every pending callback on both sides of a reconnect.
+      root._bootstrapState = BootstrapHandover.create();
       if (NiriConnection.isConnected)
         bootstrap();
     }
   }
 
   Component.onCompleted: {
-    // Seed current state with one-shot queries. The event stream's initial
-    // WindowsChanged/WorkspacesChanged snapshot is dispatched exactly once at
-    // connection time — if this backend armed after it (startup race against
-    // the NiriService Loader), we'd otherwise stay empty until enough live
-    // events trickle in. The queries return the same gadget payloads the
-    // live signals deliver, so the rebuild paths are identical.
-    var winsReply = NiriRequests.windows();
-    winsReply.finished.connect(function () {
-      if (winsReply.isError) {
-        Logger.w("NiriIpcBackend", "windows seed request failed:", winsReply.error.message);
-        return;
-      }
-      rebuildWindows(winsReply.value);
-    });
-    var wsReply = NiriRequests.workspaces();
-    wsReply.finished.connect(function () {
-      if (wsReply.isError) {
-        Logger.w("NiriIpcBackend", "workspaces seed request failed:", wsReply.error.message);
-        return;
-      }
-      rebuildWorkspaces(wsReply.value);
-    });
-    if (NiriConnection.isConnected)
-      bootstrap();
+    bootstrap();
   }
 
   // ── Actions ──

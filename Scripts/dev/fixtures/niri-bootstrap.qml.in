@@ -1,0 +1,146 @@
+import QtQuick
+import Quickshell
+import Niri 1.0
+import "Services/Compositor"
+
+ShellRoot {
+  id: test
+  property var cases: []
+  property var pendingCases: []
+  Component { id: backendComponent; NiriIpcBackend {} }
+
+  function check(value, message) {
+    if (!value) throw new Error(message);
+  }
+  function win(id, workspace, col, focused) {
+    return {id: id, title: "Window " + id, workspaceId: workspace, isFocused: !!focused,
+      layout: {posInScrollingLayout: [col, 1], tileSize: [400, 600]}};
+  }
+  function ws(id, focused) {
+    return {id: id, idx: id, output: "Virtual-1", isFocused: !!focused, isActive: !!focused, isUrgent: false, activeWindowId: id};
+  }
+  function windows(backend) { return backend.windows.map(w => [w.id, w.workspaceId, w.layout.posInScrollingLayout[0]]); }
+  function same(actual, expected, message) {
+    check(JSON.stringify(actual) === JSON.stringify(expected), message + ": " + JSON.stringify(actual));
+  }
+  function caseRun(name, body) {
+    pendingCases.push({name: name, body: body});
+  }
+  function runNext() {
+    if (!pendingCases.length) {
+      console.log("BOOTSTRAP_RESULT|" + JSON.stringify(cases));
+      Qt.quit();
+      return;
+    }
+    const next = pendingCases.shift();
+    NiriRequests.reset();
+    NiriConnection.isConnected = true;
+    const backend = backendComponent.createObject(test);
+    try {
+      next.body(backend);
+      cases.push({name: next.name, passed: true});
+    } catch (error) {
+      cases.push({name: next.name, passed: false, error: String(error)});
+    }
+    backend.destroy();
+    Qt.callLater(runNext);
+  }
+
+  Timer {
+    interval: 10
+    running: true
+    onTriggered: {
+      caseRun("stream handover prevents overlaps and wrong-window selection", b => {
+        NiriEvents.windowsChanged([win(1, 1, 1, true), win(2, 1, 2)]);
+        NiriEvents.windowOpenedOrChanged(win(2, 2, 1));
+        NiriEvents.windowFocusChanged(2);
+        NiriRequests.deliver("windows", [win(1, 1, 1, true), win(2, 1, 1)]);
+        same(windows(b), [[1, 1, 1], [2, 2, 1]], "stale query overlapped tiles");
+        check(b.focusedWindowId === 2, "stale query restored old focus");
+        const hits = b.windows.filter(w => w.workspaceId === 1 && w.layout.posInScrollingLayout[0] === 1);
+        check(hits.length === 1 && hits[0].id === 1, "pointer would select the wrong window");
+        const queries = NiriRequests.counts.windows;
+        b.bootstrap();
+        check(NiriRequests.counts.windows === queries, "stream owner was queried again");
+      });
+      caseRun("workspace and keyboard stream state survive old seeds", b => {
+        NiriEvents.workspacesChanged([ws(1, true), ws(2, false)]);
+        NiriEvents.workspaceActivated(2, true);
+        NiriEvents.workspaceActiveWindowChanged(2, 42);
+        NiriEvents.keyboardLayoutsChanged({names: ["English", "German"], currentIdx: 0});
+        NiriEvents.keyboardLayoutSwitched(1);
+        NiriRequests.deliver("workspaces", [ws(1, true), ws(2, false)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 0});
+        check(b.workspaces.get(1).isFocused && b.workspaces.get(1).activeWindowId === 42, "workspace seed overwrote events");
+        check(b.keyboardLayoutIndex === 1, "keyboard seed overwrote switch");
+        const queries = NiriRequests.counts.keyboardLayouts;
+        b.bootstrap();
+        check(NiriRequests.counts.keyboardLayouts === queries, "keyboard stream owner was queried again");
+      });
+      caseRun("raced late-subscriber seed retries without losing unchanged rows", b => {
+        NiriEvents.windowOpenedOrChanged(win(3, 3, 1, true));
+        NiriEvents.workspaceActivated(3, true);
+        NiriEvents.keyboardLayoutSwitched(1);
+        NiriRequests.deliver("windows", [win(1, 1, 1), win(2, 2, 1)]);
+        NiriRequests.deliver("workspaces", [ws(1, true), ws(2, false)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 0});
+        check(b.windows.some(w => w.id === 3), "raced seed deleted a newly opened window");
+        // Retrying a stale seed is synchronous request creation; transport completion is asynchronous.
+        NiriRequests.deliver("windows", [win(1, 1, 1), win(2, 2, 1), win(3, 3, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(1, false), ws(2, false), ws(3, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 1});
+        check(b.windows.length === 3 && b.focusedWindowId === 3, "late-subscriber hydration incomplete");
+        check(b.workspaces.count === 3 && b.workspaces.get(2).isFocused, "workspace hydration incomplete");
+        check(b.keyboardLayoutIndex === 1, "keyboard hydration incomplete");
+      });
+      caseRun("clean seed hands ownership to later events", b => {
+        NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(1, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["English", "German"], currentIdx: 0});
+        NiriEvents.windowOpenedOrChanged(win(1, 2, 2));
+        NiriEvents.windowFocusChanged(0);
+        NiriEvents.windowLayoutsChanged([[1, {pos_in_scrolling_layout: [3, 1]}]]);
+        same(windows(b), [[1, 2, 3]], "events stopped owning seeded state");
+        check(b.focusedWindowId === null, "null focus lost");
+        NiriEvents.windowClosed(1);
+        check(b.windows.length === 0, "close event lost");
+        const queries = NiriRequests.counts.windows;
+        b.bootstrap();
+        check(NiriRequests.counts.windows === queries, "cleanly seeded state was queried again");
+      });
+      for (const kind of ["focus", "layout", "close"]) {
+        caseRun(kind + " delta invalidates a pending window seed", b => {
+          if (kind === "focus") NiriEvents.windowFocusChanged(9);
+          if (kind === "layout") NiriEvents.windowLayoutsChanged([[9, {pos_in_scrolling_layout: [3, 1]}]]);
+          if (kind === "close") NiriEvents.windowClosed(1);
+          NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
+          check(NiriRequests.counts.windows === 2, kind + " did not retire the stale seed");
+          check(!b.windows.some(w => w.id === 1), kind + " allowed a stale window to appear");
+          const fresh = kind === "close" ? [] : [win(9, 2, 3, true)];
+          NiriRequests.deliver("windows", fresh);
+          same(windows(b), kind === "close" ? [] : [[9, 2, 3]], kind + " re-hydration failed");
+        });
+      }
+      caseRun("reconnect rejects old replies and hydrates the new connection", b => {
+        NiriConnection.isConnected = false;
+        NiriConnection.isConnected = true;
+        NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(1, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["Old"], currentIdx: 0});
+        check(b.windows.length === 0 && b.workspaces.count === 0, "old connection reply was accepted");
+        NiriRequests.deliver("windows", [win(2, 2, 1, true)]);
+        NiriRequests.deliver("workspaces", [ws(2, true)]);
+        NiriRequests.deliver("keyboardLayouts", {names: ["New"], currentIdx: 0});
+        check(b.windows[0].id === 2 && b.workspaces.get(0).id === 2 && b.keyboardLayouts[0] === "New", "new connection not hydrated");
+      });
+      caseRun("only the latest output query can publish", b => {
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Old: {logical: {width: 100}}});
+        check(!b.outputCache.Old, "superseded output request was accepted");
+        NiriRequests.deliver("outputs", {New: {logical: {width: 200}}});
+        check(b.outputCache.New && b.outputCache.New.width === 200, "latest output query not published");
+      });
+      runNext();
+    }
+  }
+}
