@@ -116,7 +116,7 @@ def load_lexer(shell):
 
 
 def ipc_handlers(path, lexer):
-    """{target: {function: [parameter types]}} from actual IpcHandler objects.
+    """{target: {function: {parameters, returns}}} from actual IpcHandler objects.
 
     Braces and declaration offsets come from code only. Literal targets are
     read from the original source; comments, strings and nested JS functions
@@ -159,14 +159,14 @@ def ipc_handlers(path, lexer):
         if len(targets) != 1:
             continue
         functions = handlers.setdefault(targets[0], {})
-        for m in re.finditer(r"\bfunction\s+([A-Za-z_$][\w$]*)\s*\(([^()]*)\)\s*(?::\s*[\w.]+)?\s*\{", code[start:end]):
+        for m in re.finditer(r"\bfunction\s+([A-Za-z_$][\w$]*)\s*\(([^()]*)\)\s*(?::\s*([\w.]+))?\s*\{", code[start:end]):
             if depths[start + m.start()] != depth:
                 continue
             params = []
             for param in m.group(2).split(",") if m.group(2).strip() else []:
                 p = re.fullmatch(r"\s*[A-Za-z_$][\w$]*\s*(?::\s*([\w.]+))?\s*", param)
                 params.append(p.group(1) or "" if p else "unsupported")
-            functions[m.group(1)] = params
+            functions[m.group(1)] = {"parameters": params, "returns": m.group(3) or ""}
     return handlers
 
 
@@ -196,14 +196,21 @@ def action_checks(actions, origin, icons, handlers, core_commands=()):
         if target not in handlers:
             errors.append(f"{prefix}: unknown IPC target {target}")
             continue
-        params = handlers[target].get(function)
-        if params is None:
+        signature = handlers[target].get(function)
+        if signature is None:
             errors.append(f"{prefix}: unknown IPC function {target}.{function}")
             continue
+        params = signature["parameters"]
+        # Match IpcFunction::resolve, not just manifest arity. QML's untyped
+        # parameter is QVariant, which is accepted only for a void return.
+        if signature["returns"] not in ("", "var", "void", "string", "int", "bool", "real", "color"):
+            errors.append(f"{prefix}: unsupported IPC return type for {target}.{function}")
+        if len(params) > 10:
+            errors.append(f"{prefix}: at most 10 IPC parameters for {target}.{function}")
         args = action.get("arguments", [])
         if len(params) != len(args):
             errors.append(f"{prefix}: IPC arity mismatch for {target}.{function}")
-        elif any(t not in ("", "string", "int") or (t == "int" and arg["type"] != "number")
+        elif any(t not in ("string", "int") or (t == "int" and arg["type"] != "number")
                  for t, arg in zip(params, args)):
             errors.append(f"{prefix}: unsupported IPC parameter type for {target}.{function}")
     return errors

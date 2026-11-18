@@ -157,9 +157,39 @@ class ActionRegression(unittest.TestCase):
 
     def test_number_parameter(self):
         self.action["arguments"] = [{"name": "seconds", "label": "Seconds", "type": "number", "default": 900, "min": 1}]
-        for parameter in ("seconds: int", "seconds: string", "seconds"):
+        for parameter in ("seconds: int", "seconds: string"):
             self.source = f'import QtQuick\nimport Quickshell.Io\nItem {{ IpcHandler {{ target: "plugin:example"; function show({parameter}) {{}} }} }}\n'
             self.assertEqual(self.errors(), [])
+
+    def test_untyped_parameter(self):
+        for argument in (self.text_argument(), {"name": "seconds", "label": "Seconds", "type": "number", "default": 900}):
+            for annotation in ("", ": var"):
+                with self.subTest(argument=argument["type"], annotation=annotation):
+                    self.action["arguments"] = [argument]
+                    self.source = f'import QtQuick\nimport Quickshell.Io\nItem {{ IpcHandler {{ target: "plugin:example"; function show(value{annotation}) {{}} }} }}\n'
+                    self.has_error("unsupported IPC parameter type")
+
+    def test_parameter_limit(self):
+        for count in (10, 11):
+            with self.subTest(count=count):
+                self.action["arguments"] = [dict(self.text_argument(), name=f"arg{i}") for i in range(count)]
+                params = ", ".join(f"arg{i}: string" for i in range(count))
+                self.source = f'import QtQuick\nimport Quickshell.Io\nItem {{ IpcHandler {{ target: "plugin:example"; function show({params}) {{}} }} }}\n'
+                if count > 10:
+                    self.has_error("at most 10 IPC parameters")
+                else:
+                    self.assertEqual(self.errors(), [])
+
+    def test_unsupported_return_type(self):
+        self.source = self.source.replace("function show()", "function show(): date")
+        self.has_error("unsupported IPC return type")
+
+    def test_supported_return_types(self):
+        original = self.source
+        for annotation in ("", ": void", ": var", ": string", ": int", ": bool", ": real", ": color"):
+            with self.subTest(annotation=annotation):
+                self.source = original.replace("function show()", "function show()" + annotation)
+                self.assertEqual(self.errors(), [])
 
     def test_duplicate_id(self):
         self.manifest["actions"].append(dict(self.action))
@@ -204,8 +234,8 @@ class ActionRegression(unittest.TestCase):
         self.source = '''import QtQuick
 import Quickshell.Io
 Item {
-  // IpcHandler { target: "wrong"; function show() {} }
-  property string fake: 'IpcHandler { target: "wrong"; function show() {} }'
+  // IpcHandler { target: "comment-only"; function show() {} }
+  property string fake: 'IpcHandler { target: "string-only"; function show() {} }'
   IpcHandler {
     target: "plugin:example"
     function show(): string {
@@ -218,6 +248,9 @@ Item {
         self.assertEqual(self.errors(), [])
         self.action["command"] = "atmosphera ipc plugin:example nested"
         self.has_error("unknown IPC function")
+        for target in ("comment-only", "string-only"):
+            self.action["command"] = f"atmosphera ipc {target} show"
+            self.has_error("unknown IPC target")
 
 
 class IndexRegression(unittest.TestCase):
