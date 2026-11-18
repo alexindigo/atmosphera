@@ -30,6 +30,21 @@ Item {
 
   property bool _warned: false
   property var _bootstrapState: BootstrapHandover.create()
+  property var _seedRetries: ({})
+
+  Timer {
+    id: seedRetryTimer
+    interval: 250
+    onTriggered: {
+      var retries = root._seedRetries;
+      root._seedRetries = ({});
+      for (var name in retries) {
+        var retry = retries[name];
+        if (BootstrapHandover.canRetry(root._bootstrapState, retry.token))
+          root.seedDomain(name, retry.request, retry.apply, retry.token.refresh);
+      }
+    }
+  }
 
   // ── Gadget extractors (sever Qt ownership) ──
 
@@ -100,6 +115,7 @@ Item {
       workspaces.append(ws);
       workspaceCache[ws.id] = ws;
     }
+    refreshDerivedWindows();
     workspaceChanged();
   }
 
@@ -122,6 +138,16 @@ Item {
   function resolveWindowOutput(win) {
     var ws = workspaceCache[win.workspaceId];
     win.output = (ws && ws.output) ? ws.output : "";
+  }
+
+  function refreshDerivedWindows() {
+    // Cache arrival changes projections, never the live layout/focus facts.
+    windows = toSortedWindowList(windows.map(function (win) {
+      var projected = Object.assign({}, win);
+      resolveWindowOutput(projected);
+      return projected;
+    }));
+    windowListChanged();
   }
 
   function upsertWindow(winData) {
@@ -239,6 +265,14 @@ Item {
         root.seedDomain(name, request, apply, refresh);
       } else if (outcome === "error") {
         Logger.w("NiriIpcBackend", name + " seed request failed:", reply.error.message);
+        root._seedRetries[name] = {
+          token: token,
+          request: request,
+          apply: apply
+        };
+        // Retry transport failures without a tight loop. Ownership, not a
+        // retry quota, decides whether this work is still needed.
+        seedRetryTimer.start();
       } else if (outcome === "accept") {
         apply(reply.value);
       }
@@ -285,6 +319,7 @@ Item {
           "transform": logical.transform || ""
         };
       }
+      refreshDerivedWindows();
       queryDisplayScales();
     }, true);
   }
@@ -435,6 +470,8 @@ Item {
     function onConnectedChanged() {
       // Invalidate every pending callback on both sides of a reconnect.
       root._bootstrapState = BootstrapHandover.create();
+      root._seedRetries = ({});
+      seedRetryTimer.stop();
       if (NiriConnection.isConnected)
         bootstrap();
     }

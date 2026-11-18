@@ -45,3 +45,11 @@ function finish(state, token, succeeded) {
     current.owned = true;
   return "accept";
 }
+
+function canRetry(state, token) {
+  if (state !== token.state)
+    return false;
+  var current = domain(state, token.name);
+  return current.serial === token.serial && !current.pending
+      && (token.refresh || !current.owned);
+}

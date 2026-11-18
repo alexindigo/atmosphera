@@ -23,6 +23,20 @@ ShellRoot {
   function same(actual, expected, message) {
     check(JSON.stringify(actual) === JSON.stringify(expected), message + ": " + JSON.stringify(actual));
   }
+  function waitFor(predicate) {
+    return new Promise((resolve, reject) => {
+      const started = Date.now();
+      const timer = Qt.createQmlObject('import QtQml; Timer { interval: 10; repeat: true }', test);
+      timer.triggered.connect(() => {
+        if (predicate()) {
+          timer.stop(); timer.destroy(); resolve();
+        } else if (Date.now() - started > 2000) {
+          timer.stop(); timer.destroy(); reject(new Error("asynchronous retry did not settle"));
+        }
+      });
+      timer.start();
+    });
+  }
   function caseRun(name, body) {
     pendingCases.push({name: name, body: body});
   }
@@ -36,14 +50,18 @@ ShellRoot {
     NiriRequests.reset();
     NiriConnection.isConnected = true;
     const backend = backendComponent.createObject(test);
-    try {
-      next.body(backend);
-      cases.push({name: next.name, passed: true});
-    } catch (error) {
-      cases.push({name: next.name, passed: false, error: String(error)});
+    function finish(error) {
+      cases.push(error ? {name: next.name, passed: false, error: String(error)} : {name: next.name, passed: true});
+      backend.destroy();
+      Qt.callLater(runNext);
     }
-    backend.destroy();
-    Qt.callLater(runNext);
+    try {
+      const result = next.body(backend);
+      if (result && typeof result.then === "function") result.then(() => finish(null), finish);
+      else finish(null);
+    } catch (error) {
+      finish(error);
+    }
   }
 
   Timer {
@@ -127,7 +145,7 @@ ShellRoot {
         NiriRequests.deliver("windows", [win(1, 1, 1, true)]);
         NiriRequests.deliver("workspaces", [ws(1, true)]);
         NiriRequests.deliver("keyboardLayouts", {names: ["Old"], currentIdx: 0});
-        check(b.windows.length === 0 && b.workspaces.count === 0, "old connection reply was accepted");
+        check(b.windows.length === 0 && b.workspaces.count === 0 && b.keyboardLayouts.length === 0, "old connection reply was accepted");
         NiriRequests.deliver("windows", [win(2, 2, 1, true)]);
         NiriRequests.deliver("workspaces", [ws(2, true)]);
         NiriRequests.deliver("keyboardLayouts", {names: ["New"], currentIdx: 0});
@@ -139,6 +157,46 @@ ShellRoot {
         check(!b.outputCache.Old, "superseded output request was accepted");
         NiriRequests.deliver("outputs", {New: {logical: {width: 200}}});
         check(b.outputCache.New && b.outputCache.New.width === 200, "latest output query not published");
+      });
+      caseRun("failed latest output query retries and newer work cancels its retry", b => {
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Old: {logical: {width: 100}}});
+        NiriRequests.deliver("outputs", {}, true);
+        check(!b.outputCache.Old, "error adopted an obsolete output response");
+        return waitFor(() => NiriRequests.counts.outputs === 3).then(() => {
+          NiriRequests.deliver("outputs", {New: {logical: {scale: 2, width: 200}}});
+          check(b.outputCache.New && b.outputCache.New.scale === 2, "retry failed to publish actual display scale");
+          b.bootstrap();
+          NiriRequests.deliver("outputs", {}, true);
+          b.bootstrap();
+          const started = Date.now();
+          return waitFor(() => Date.now() - started > 400).then(() => {
+            check(NiriRequests.counts.outputs === 5, "superseded failure retried over a newer request");
+            NiriRequests.deliver("outputs", {Newest: {logical: {scale: 3}}});
+            check(b.outputCache.Newest.scale === 3, "newest output request did not own publication");
+          });
+        });
+      });
+      caseRun("coalesced keyboard seed retries errors and stream handover cancels retry", b => {
+        b.bootstrap();
+        check(NiriRequests.counts.keyboardLayouts === 1, "keyboard seed was not coalesced");
+        NiriRequests.deliver("keyboardLayouts", {}, true);
+        return waitFor(() => NiriRequests.counts.keyboardLayouts === 2).then(() => {
+          NiriRequests.deliver("keyboardLayouts", {}, true);
+          NiriEvents.keyboardLayoutsChanged({names: ["Stream"], currentIdx: 0});
+          const started = Date.now();
+          return waitFor(() => Date.now() - started > 400).then(() => {
+            check(NiriRequests.counts.keyboardLayouts === 2 && b.keyboardLayouts[0] === "Stream", "retry competed with the authoritative stream");
+          });
+        });
+      });
+      caseRun("cache arrival republishes derived rows without replacing live state", b => {
+        NiriEvents.windowsChanged([win(1, 1, 7), win(2, 2, 3, true)]);
+        NiriEvents.workspacesChanged([Object.assign(ws(1, false), {output: "Right"}), Object.assign(ws(2, true), {output: "Left"})]);
+        NiriRequests.deliver("outputs", {Right: {logical: {x: 1000}}, Left: {logical: {x: 0}}});
+        check(b.windows[0].id === 2 && b.windows[0].output === "Left" && b.windows[1].output === "Right", "derived output/order stayed stale");
+        check(b.focusedWindowId === 2, "projection replaced current focus");
+        same(b.windows.map(w => w.layout.posInScrollingLayout[0]), [3, 7], "projection replaced current layouts");
       });
       runNext();
     }
