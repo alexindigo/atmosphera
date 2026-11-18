@@ -269,6 +269,13 @@ plugin records for itself: caches, last-known values, counters.
   rename) and it reassigns `state` so that bindings in instances re-evaluate. Store
   only JSON-serializable values.
 
+## Retired plugins
+
+- `hot-corners` is built into the shell from 0.10.0 (Settings -> General -> Hot
+  corners). On the first start of 0.10.0, plugins registry migration v6 imports
+  the plugin's corner commands into the shell settings, backs the plugin up under
+  `~/.config/atmosphera/backups/plugins-v6-<time>/` and uninstalls it.
+
 ## Example Plugin
 
 A complete example lock screen plugin is available at

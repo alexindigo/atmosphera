@@ -408,6 +408,20 @@ export TMPDIR=/home/tester/Projects/hot-corners-landing/tmp
 timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/hot-corners-landing/runs/catalog-fresh
 ```
 
+Hot corners have four guest-only regressions in the same VM: the settings page
+and its persistence, the dwell controller with a fake clock, the plugins registry
+v6 migration (planner cases and cold starts over synthetic profiles), and the
+real-input acceptance on two outputs (`--case` takes `all` or a list of H1-H9):
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-core/tmp
+W=/home/tester/Projects/hot-corners-core/runs
+timeout 600 python3 -B Scripts/dev/hot-corners-settings-regression.py --source "$PWD" --workspace $W/settings-fresh
+timeout 300 python3 -B Scripts/dev/hot-corners-service-regression.py
+timeout 900 python3 -B Scripts/dev/hot-corners-migration-regression.py --source "$PWD" --workspace $W/migration-fresh
+timeout 1800 python3 -B Scripts/dev/hot-corners-e2e.py --source "$PWD" --workspace $W/e2e-fresh --case all
+```
+
 `Scripts/dev/qmllint.sh` with no paths includes built-in QML. Its native import
 setup and the container hook share the source-backed metadata boundary described
 in `Scripts/dev/native-metadata/README.md`; no installed runtime module is edited.

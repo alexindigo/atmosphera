@@ -13,7 +13,7 @@ Singleton {
   readonly property string pluginsDir: Settings.configDir + "plugins"
   readonly property string pluginsFile: Settings.configDir + "plugins.json"
 
-  readonly property int currentVersion: 5
+  readonly property int currentVersion: 6
 
   // The shell-shipped source's location (read-only distribution payload at
   // builtin/plugins/). Its identity is hashed from this path exactly like
@@ -28,6 +28,8 @@ Singleton {
   // then writes the loaded version, so an interrupted or failed migration is
   // not stamped as done and runs again on the next start.
   property bool _v5Pending: false
+  // Same for the v6 Hot Corners import (see migrateV6).
+  property bool _v6Pending: false
 
   Component.onCompleted: {
     ensurePluginsDirectory();
@@ -160,6 +162,7 @@ Singleton {
       root.pluginSources = pluginStateAdapter.sources || [];
       root._loadedVersion = pluginStateAdapter.version;
       root._v5Pending = pluginStateAdapter.version < 5;
+      root._v6Pending = pluginStateAdapter.version < 6;
 
       var needsSave = false;
       for (var i = 0; i < root.pluginSources.length; i++) {
@@ -420,7 +423,9 @@ for key in sys.argv[3:]:
 
     root.migrateIconSetsV3(function () {
       root.migrateV5(function () {
-        root.refreshBuiltinPlugins(done);
+        root.migrateV6(function () {
+          root.refreshBuiltinPlugins(done);
+        });
       });
     });
   }
@@ -629,6 +634,164 @@ for key in sys.argv[3:]:
       Logger.i("PluginRegistry", "v5 migration: rewrote placement references to rekeyed plugins");
       Settings.saveSelected(paths);
     }
+  }
+
+  // v6 (planned by PluginProfileMigration.planV6): Hot Corners is built into the
+  // shell. Every hot-corners install is backed up and removed before the plugin
+  // can load; enabled installs hand their corner commands to general.hotCorners.
+  // Order: read settings, plan, backup, core corners, plugin folders and files,
+  // then plugins.json. A failed backup changes nothing and keeps _v6Pending, so
+  // the next start runs it again; every later step is safe to repeat.
+  function migrateV6(done) {
+    if (root._loadedVersion >= 6) {
+      root._v6Pending = false;
+      done();
+      return;
+    }
+    var keys = Object.keys(root.pluginStates).filter(function (key) {
+      return PluginProfileMigration.bareId(key) === PluginProfileMigration.HOT_CORNERS_ID;
+    }).sort();
+    if (keys.length === 0) {
+      root._v6Pending = false;
+      done();
+      return;
+    }
+    var paths = [];
+    keys.forEach(function (key) {
+      paths.push(root.getPluginSettingsFile(key), root.getLegacyPluginSettingsFile(key));
+    });
+    root._readTexts(paths, function (texts) {
+      var settings = {};
+      keys.forEach(function (key, index) {
+        settings[key] = {
+          primary: texts[index * 2],
+          legacy: texts[index * 2 + 1]
+        };
+      });
+      root._whenSettingsLoaded(function () {
+        root._applyV6(PluginProfileMigration.planV6({
+                                                      states: root.pluginStates,
+                                                      settings: settings,
+                                                      core: {
+                                                        topLeft: Settings.data.general.hotCorners.topLeft,
+                                                        topRight: Settings.data.general.hotCorners.topRight,
+                                                        bottomLeft: Settings.data.general.hotCorners.bottomLeft,
+                                                        bottomRight: Settings.data.general.hotCorners.bottomRight
+                                                      }
+                                                    }), done);
+      });
+    });
+  }
+
+  function _applyV6(plan, done) {
+    for (var w = 0; w < plan.warnings.length; w++)
+      Logger.w("PluginRegistry", "v6 migration:", plan.warnings[w]);
+    var backupDir = Settings.configDir + "backups/plugins-v6-" + Qt.formatDateTime(new Date(), "yyyyMMdd-HHmmss");
+    root._backupV6(plan, backupDir, function (ok) {
+      if (!ok) {
+        Logger.e("PluginRegistry", "v6 migration: backup failed, profile left unchanged:", backupDir);
+        done();
+        return;
+      }
+      var written = [];
+      Object.keys(plan.corners).forEach(function (corner) {
+        Settings.data.general.hotCorners[corner] = plan.corners[corner];
+        written.push(["general", "hotCorners", corner]);
+        Logger.i("PluginRegistry", "v6 migration: imported the hot-corners plugin's", corner, "command");
+      });
+      // The imported commands are saved before the plugin's own copy is removed.
+      root._saveV6Corners(written, function (saved) {
+        if (!saved) {
+          Logger.e("PluginRegistry", "v6 migration: saving the imported corners failed; plugin left installed");
+          done();
+          return;
+        }
+        root._finishV6(plan, done);
+      });
+    });
+  }
+
+  function _saveV6Corners(paths, done) {
+    if (paths.length === 0) {
+      done(true);
+      return;
+    }
+    Settings.saveSelected(paths, function (result) {
+      done(result.status === "saved");
+    });
+  }
+
+  function _finishV6(plan, done) {
+    root._removeV6Files(plan, function (removed) {
+      if (!removed) {
+        Logger.e("PluginRegistry", "v6 migration: removing hot-corners files failed; plugins.json left at its loaded version");
+        done();
+        return;
+      }
+      var states = Object.assign({}, root.pluginStates);
+      plan.removals.forEach(function (key) {
+        delete states[key];
+        Logger.i("PluginRegistry", "v6 migration: removed the hot-corners plugin (built into the shell):", key);
+      });
+      root.pluginStates = states;
+      root._v6Pending = false;
+      root.save();
+      done();
+    });
+  }
+
+  // Reads each path; a missing or unreadable file gives null.
+  function _readTexts(paths, done) {
+    var texts = [];
+    function next() {
+      if (texts.length === paths.length) {
+        done(texts);
+        return;
+      }
+      root.runProcess("ReadMigrationInput", ["sh", "-c", 'test -f "$1" && cat -- "$1"', "sh", paths[texts.length]], function (exitCode, out) {
+        texts.push(exitCode === 0 ? out : null);
+        next();
+      });
+    }
+    next();
+  }
+
+  // Copies plugins.json and every folder and settings file the plan removes into
+  // backupDir. Missing items are skipped; any copy error fails the backup.
+  function _backupV6(plan, backupDir, done) {
+    var s = "set -e\n";
+    s += "mkdir -p " + root._shq(Settings.configDir + "backups") + "\n";
+    s += "mkdir " + root._shq(backupDir) + "\n";
+    s += "mkdir -p " + root._shq(backupDir + "/plugins") + " " + root._shq(backupDir + "/settings/plugins") + "\n";
+    s += "cp -a " + root._shq(root.pluginsFile) + " " + root._shq(backupDir + "/") + "\n";
+    plan.removals.forEach(function (key) {
+      var folder = root._shq(root.pluginsDir + "/" + key);
+      s += "if [ -e " + folder + " ]; then cp -a " + folder + " " + root._shq(backupDir + "/plugins/") + "; fi\n";
+    });
+    plan.files.forEach(function (name) {
+      var file = root._shq(Settings.configDir + name);
+      s += "if [ -e " + file + " ]; then cp -a " + file + " " + root._shq(backupDir + "/settings/plugins/") + "; fi\n";
+    });
+    root.runProcess("BackupPluginsV6", ["sh", "-c", s], function (exitCode, out, err) {
+      if (exitCode !== 0)
+        Logger.e("PluginRegistry", "v6 backup script failed:", err.trim());
+      done(exitCode === 0);
+    });
+  }
+
+  function _removeV6Files(plan, done) {
+    var s = "set -e\n";
+    plan.removals.forEach(function (key) {
+      s += "rm -rf " + root._shq(root.pluginsDir + "/" + key) + "\n";
+    });
+    plan.files.forEach(function (name) {
+      s += "rm -f " + root._shq(Settings.configDir + name) + "\n";
+    });
+    root.runProcess("RemoveHotCornersPlugin", ["sh", "-c", s], function (exitCode, out, err) {
+      if (exitCode !== 0)
+        Logger.e("PluginRegistry", "v6 removal script failed:", err.trim());
+      done(exitCode === 0);
+    });
   }
 
   // Runs callback once Settings has loaded (immediately if it already has).
@@ -1019,7 +1182,7 @@ for key in sys.argv[3:]:
 
   // Save registry to disk (only states and sources)
   function save() {
-    pluginStateAdapter.version = root._v5Pending ? root._loadedVersion : root.currentVersion;
+    pluginStateAdapter.version = (root._v5Pending || root._v6Pending) ? root._loadedVersion : root.currentVersion;
     pluginStateAdapter.states = root.pluginStates;
     pluginStateAdapter.sources = root.pluginSources;
 
