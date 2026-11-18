@@ -218,12 +218,26 @@ class ActionRegression(unittest.TestCase):
         self.manifest["minAtmospheraVersion"] = "0.9.3"
         self.has_error("qs.Services.Actions requires")
         self.manifest["minAtmospheraVersion"] = "0.9.4"
+        self.has_error("qs.Services.Actions requires")
+        self.manifest["minAtmospheraVersion"] = "0.10.0"
         self.assertEqual(self.errors(), [])
 
     def test_commented_import_does_not_require_minimum(self):
         self.source = "// import qs.Services.Actions\n" + self.source
         self.manifest["minAtmospheraVersion"] = "0.9.3"
         self.assertEqual(self.errors(), [])
+
+    def test_semicolon_actions_import_requires_release(self):
+        self.source = 'import qs.Services.Actions;\n' + self.source
+        self.manifest['minAtmospheraVersion'] = '0.9.3'
+        self.has_error('requires minAtmospheraVersion >= 0.10.0')
+        self.manifest['minAtmospheraVersion'] = '0.10.0'
+        self.assertEqual(self.errors(), [])
+
+    def test_huge_numeric_default_is_rejected_without_overflow(self):
+        self.source = self.source.replace('function show()', 'function show(value: string)')
+        self.action['arguments'] = [dict(name='value', label='Value', type='number', default=10 ** 310)]
+        self.has_error('invalid default')
 
     def test_unchanged_manifest_is_still_audited(self):
         self.action["id"] = "Bad"

@@ -110,6 +110,7 @@ def main():
     expected.update({
         "tab": {"command": "atmosphera ipc settings openTab plugins", "values": {"tab": "plugins"}, "label": "Open settings tab: Plugins"},
         "number": {"command": "atmosphera ipc idleInhibitor enableFor 1200", "values": {"seconds": 1200}, "label": "Keep awake for: 1200 seconds"},
+        "safe-edits": ["atmosphera ipc plugin:example number 900", "atmosphera ipc plugin:example number 9007199254740991", "", ""],
         "space": {"command": "atmosphera ipc plugin:example show 'hello world'", "values": {"message": "hello world"}, "label": "Message: hello world"},
         "apostrophe": {"command": "atmosphera ipc plugin:example show 'it'\\''s here'", "values": {"message": "it's here"}, "label": "Message: it's here"},
         "availability": [True, False, True, False],

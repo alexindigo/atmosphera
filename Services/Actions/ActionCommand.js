@@ -17,11 +17,13 @@ function record(value) {
 }
 
 function line(value) {
+    // ECMAScript WhiteSpace + LineTerminator; the Python validator uses the
+    // same explicit set rather than Python's broader/different strip().
     return typeof value === "string" && value.trim().length > 0 && !/[\r\n\x00]/.test(value);
 }
 
 function integer(value) {
-    return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+    return typeof value === "number" && isFinite(value) && Math.abs(value) <= 9007199254740991 && Math.floor(value) === value;
 }
 
 function unknown(object, allowed) {
