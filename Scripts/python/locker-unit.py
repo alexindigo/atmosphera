@@ -14,7 +14,9 @@ import os
 from pathlib import Path
 import re
 import secrets
+import socket
 import stat
+import struct
 import subprocess
 import sys
 import tempfile
@@ -162,6 +164,33 @@ def unit_status(name):
     return {key: values.get(key, '') for key in FIELDS}
 
 
+def wayland_peer():
+    """Kernel identity of the actual display endpoint, independent of backend IPC."""
+    display = os.environ.get('WAYLAND_DISPLAY', '')
+    if not display:
+        raise Refused('no Wayland display identity')
+    path = Path(display)
+    if not path.is_absolute():
+        runtime = Path(os.environ.get('XDG_RUNTIME_DIR', ''))
+        if not runtime.is_absolute():
+            raise Refused('Wayland display requires an absolute runtime directory')
+        path = runtime / path
+    try:
+        metadata = os.stat(path)
+        if not stat.S_ISSOCK(metadata.st_mode) or metadata.st_uid != os.getuid():
+            raise Refused('invalid Wayland display ownership/type')
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as peer:
+            peer.settimeout(2)
+            peer.connect(str(path))
+            pid, uid, _gid = struct.unpack('3i', peer.getsockopt(
+                socket.SOL_SOCKET, socket.SO_PEERCRED, struct.calcsize('3i')))
+        if uid != os.getuid() or pid <= 1:
+            raise Refused('Wayland peer does not identify this user\'s compositor')
+        return pid
+    except OSError as error:
+        raise Refused('cannot inspect Wayland display peer: ' + str(error)) from error
+
+
 def graphical_session(wanted=None):
     ids = [row.split()[0] for row in command(['loginctl', 'list-sessions', '--no-legend', '--no-pager']).stdout.splitlines() if row.split()]
     candidates = {}
@@ -190,13 +219,16 @@ def graphical_session(wanted=None):
             raise Refused('ambiguous Hyprland display identity')
         compositor_pid = int(instances[0]['pid'])
         compositor_comm = 'Hyprland'
-    if not compositor_pid:
-        raise Refused('no supported graphical compositor identity')
+    else:
+        # Sway, Mango, Labwc and generic Wayland sessions need no backend PID
+        # hint: SO_PEERCRED identifies the server behind the connected display.
+        # Desktop names and the shell/manager's session variables are not proof.
+        compositor_pid = wayland_peer()
     process = Path(f'/proc/{compositor_pid}')
     identity = proc_identity(compositor_pid)
     try:
         if (identity is None or process.stat().st_uid != os.getuid()
-                or (process / 'comm').read_text().strip() != compositor_comm):
+                or (compositor_comm is not None and (process / 'comm').read_text().strip() != compositor_comm)):
             raise Refused('display PID does not identify this user\'s compositor')
         groups = (process / 'cgroup').read_text()
         scopes = re.findall(r'/session-([^/\n]+)\.scope(?:/|\n|$)', groups)

@@ -39,7 +39,7 @@ def require_guest(work, source):
         assert run(['findmnt', '-T', str(path), '-n', '-o', 'FSTYPE']).stdout.strip() not in ('tmpfs', 'ramfs'), 'disk-backed paths required'
     os.environ.update(XDG_RUNTIME_DIR='/run/user/1000', DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/1000/bus')
     manager = dict(line.split('=', 1) for line in run(['systemctl', '--user', 'show-environment']).stdout.splitlines() if '=' in line)
-    assert manager.get('XDG_CURRENT_DESKTOP') in ('niri', 'Hyprland'), 'real graphical session required'
+    assert manager.get('XDG_CURRENT_DESKTOP') in ('niri', 'Hyprland', 'mango', 'Mango'), 'real graphical session required'
     for key in ('NIRI_SOCKET', 'HYPRLAND_INSTANCE_SIGNATURE', 'WAYLAND_DISPLAY', 'XDG_CURRENT_DESKTOP', 'XDG_SESSION_TYPE'):
         if key in manager:
             os.environ[key] = manager[key]

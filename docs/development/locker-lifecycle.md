@@ -17,6 +17,10 @@ authentication permit is transferred between processes.
 Session association belongs to `locker-unit.py` for discovery, new generations
 and standalone client reports. The selected niri socket or Hyprland instance
 identifies a same-UID compositor PID with verified process name and lifetime.
+Sway, Mango, Labwc and other Wayland backends use kernel peer credentials from
+the actual connected display socket instead of requiring compositor-specific
+IPC. Both the socket and peer must belong to the user; the peer must have a
+live, stable process identity. Desktop names alone never select a session.
 Its login session must be same-user, local Wayland, class `user`, and active or
 online. A compositor's `session-*.scope` is authoritative. Without a session
 scope (niri-session/uwsm user services), only the compositor's own
@@ -127,9 +131,15 @@ unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd pro
 is not a real suspend/resume proof.
 
 `locker-session-proof.py --work <new-artifact-directory>` supplies synthetic
-proc/logind inputs for both launch shapes on niri and Hyprland, including
-foreign/mismatched/ineligible sessions and process identity rejection. It is
-not native lock or PAM evidence; repeat the real-main fast/slow proofs with the
+proc/logind inputs for both launch shapes on niri, Hyprland, Sway, Mango, Labwc
+and generic Wayland, including foreign/mismatched/ineligible sessions, process
+identity and display-peer rejection. It is not native lock or PAM evidence.
+`locker-association-native-proof.py --work <new-artifact-directory>` uses the
+real display association and managed emergency closure, rejects a wrong PAM
+password, then observes the holder's own authenticated native unlock and exact
+cgroup exit. Its read-only test observations do not replace authentication.
+This narrow adapter/client proof is not the full main-shell owner matrix.
+Repeat the real-main fast/slow proofs with the
 guest compositor launched by `niri-session` as `niri.service`, as well as the
 login-session scope launch.
 

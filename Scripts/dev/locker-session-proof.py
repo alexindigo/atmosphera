@@ -9,9 +9,11 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import socket
 import stat
+import struct
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from locker_test_support import require_guest
 
@@ -26,7 +28,7 @@ def main():
     spec.loader.exec_module(adapter)
     uid = os.getuid()
     results = []
-    for compositor in ('niri', 'Hyprland'):
+    for compositor in ('niri', 'Hyprland', 'sway', 'mango', 'labwc', 'generic'):
         cases = [
             ('scope', {'scope': '42'}, True),
             ('scope-online', {'scope': '42', 'State': 'online'}, True),
@@ -53,6 +55,22 @@ def main():
             ('unreadable-environment', {'unreadable': True}, False),
             ('scope-foreign', {'scope': '42', 'User': str(uid + 1)}, False),
         ]
+        peer_identity = compositor not in ('niri', 'Hyprland')
+        if peer_identity:
+            # Unknown compositors are identified by the connected display peer,
+            # not by caller-supplied desktop names or an executable allowlist.
+            cases = [case for case in cases if case[0] != 'wrong-process-comm']
+            cases += [
+                ('peer-foreign', {'peer_uid': uid + 1}, False),
+                ('peer-no-pid', {'peer_pid': 0}, False),
+                ('peer-connect-error', {'peer_error': True}, False),
+                ('socket-foreign', {'socket_uid': uid + 1}, False),
+                ('socket-not-socket', {'socket_mode': stat.S_IFREG}, False),
+                ('missing-display', {'display': ''}, False),
+                ('relative-runtime', {'runtime': 'relative'}, False),
+                ('caller-desktop-does-not-select-session', {'desktop': 'niri'}, True),
+                ('peer-with-unknown-process-name', {'comm': 'other-wayland-compositor'}, True),
+            ]
         for name, change, accepted in cases:
             info = dict(Id='42', User=str(uid), Type='wayland', Class='user', State='active', Remote='no', Seat='seat0')
             info.update({key: value for key, value in change.items() if key in info})
@@ -60,8 +78,14 @@ def main():
                      if 'scope' in change else '0::/user.slice/user-1000.slice/user@1000.service/session.slice/compositor.service\n')
             environment = {'XDG_SESSION_ID': change.get('env_sid', '42'), 'XDG_SEAT': change.get('env_seat', 'seat0')}
             caller = {'XDG_SESSION_ID': '42', 'XDG_SEAT': 'seat0'}
-            caller.update({'NIRI_SOCKET': '/run/user/1000/niri.wayland-1.4242.sock'} if compositor == 'niri'
-                          else {'HYPRLAND_INSTANCE_SIGNATURE': 'test-instance'})
+            if compositor == 'niri':
+                caller['NIRI_SOCKET'] = '/run/user/1000/niri.wayland-1.4242.sock'
+            elif compositor == 'Hyprland':
+                caller['HYPRLAND_INSTANCE_SIGNATURE'] = 'test-instance'
+            else:
+                caller.update(WAYLAND_DISPLAY=change.get('display', 'wayland-1'),
+                    XDG_RUNTIME_DIR=change.get('runtime', '/run/user/1000'),
+                    XDG_CURRENT_DESKTOP=change.get('desktop', compositor))
 
             def command(argv):
                 if argv[:2] == ['loginctl', 'list-sessions']:
@@ -86,6 +110,12 @@ def main():
                 return b'\0'.join((key + '=' + value).encode() for key, value in environment.items()) + b'\0'
 
             identity = {'pid': 4242, 'start': '123'}
+            peer = MagicMock()
+            peer.__enter__.return_value = peer
+            peer.getsockopt.return_value = struct.pack('3i', change.get('peer_pid', 4242),
+                change.get('peer_uid', uid), uid)
+            if change.get('peer_error'):
+                peer.connect.side_effect = OSError('fixture peer connection refused')
             with patch.dict(os.environ, caller, clear=True), \
                     patch.object(adapter, 'command', command), \
                     patch.object(adapter, 'properties', properties), \
@@ -94,7 +124,9 @@ def main():
                     patch.object(Path, 'read_text', read_text), \
                     patch.object(Path, 'read_bytes', read_bytes), \
                     patch.object(Path, 'stat', return_value=SimpleNamespace(st_uid=change.get('proc_uid', uid))), \
-                    patch.object(os, 'stat', return_value=SimpleNamespace(st_uid=uid, st_mode=stat.S_IFSOCK)):
+                    patch.object(os, 'stat', return_value=SimpleNamespace(st_uid=change.get('socket_uid', uid),
+                        st_mode=change.get('socket_mode', stat.S_IFSOCK))), \
+                    patch.object(socket, 'socket', return_value=peer):
                 try:
                     sid = adapter.graphical_session(change.get('wanted'))
                 except adapter.Refused as error:
