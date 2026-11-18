@@ -93,6 +93,14 @@ standalone lockers also use native read-only sources. Lockers do not materialize
 defaults, save settings or execute migration side effects. Live preference
 updates remain observable. The generation input is removed at settlement.
 
+Owner submissions consume only the captured request/settings invalidation.
+Arrivals while `begin` runs remain queued. Refused request receipts restore
+their intent, and a request received during authenticated teardown waits for
+settlement before starting the next generation instead of being silently lost.
+`locker-owner-intent-proof.py --work <new-artifact-directory>` exercises those
+async receipt orderings with the actual QML owner and a controlled adapter;
+it is not native lock, sleep or PAM evidence.
+
 `locker-unit.py` fences effects by session, generation, InvocationID and cgroup.
 Its startup bound covers ungranted preparation while the main shell is absent;
 it never infers successful unlock from process death. Client protocol refusal
