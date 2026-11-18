@@ -2,6 +2,11 @@
 
 ## Release identity
 
+The 0.10.0 settings stack requires configqml >=0.5.1 for native
+`saveSelected`. AUR recipes share that floor through `packaging/aur/metadata.sh`;
+Nix and the devcontainer pin the same release. Regenerate both Qt tooling
+metadata variants when updating the dependency.
+
 The tracked root `VERSION` is the authoritative release/API version. Update it
 alongside the release's changelog commit, **before** tagging, and tag that commit
 with the same version (for example, `VERSION` contains `0.8.0` and the tag is
