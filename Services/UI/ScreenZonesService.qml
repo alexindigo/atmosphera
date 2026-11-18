@@ -42,21 +42,49 @@ Singleton {
       EdgeScrollService.cancel();
   }
 
+  // Corner zones: configured corners on every output.
+  readonly property var cornerZones: {
+    var result = {};
+    for (var screen of root.screens)
+      result[screen.name] = EdgeZones.corners(screen, HotCornersService.configuredCorners);
+    return result;
+  }
+
+  onCornerZonesChanged: {
+    var active = HotCornersService.activeZone;
+    if (active && !(cornerZones[active.screenName] || []).some(function (zone) {
+      return zone.key === active.key;
+    }))
+      HotCornersService.cancel();
+  }
+
   function edgeZonesForScreen(name) {
     return edgeZones[name] || [];
   }
+  function cornerZonesForScreen(name) {
+    return cornerZones[name] || [];
+  }
 
   function enter(zone, buttons, source) {
-    if (zone && zone.kind === "edge")
+    if (!zone)
+      return;
+    if (zone.kind === "corner")
+      HotCornersService.enter(zone, buttons, source);
+    else if (zone.kind === "edge")
       EdgeScrollService.enter(zone, buttons, source);
   }
   function leave(key, source) {
-    EdgeScrollService.leave(key, source);
+    if (HotCornersService.activeZone && HotCornersService.activeZone.key === key)
+      HotCornersService.leave(key, source);
+    else
+      EdgeScrollService.leave(key, source);
   }
   function buttonsChanged(buttons) {
     EdgeScrollService.buttonsChanged(buttons);
+    HotCornersService.buttonsChanged(buttons);
   }
   function leaveScreen(name) {
     EdgeScrollService.leaveScreen(name);
+    HotCornersService.leaveScreen(name);
   }
 }
