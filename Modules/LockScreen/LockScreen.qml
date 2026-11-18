@@ -74,6 +74,7 @@ Loader {
   }
 
   Component.onDestruction: {
+    InputMethodService.exitSecureMode();
     SpectrumService.unregisterComponent("lockscreen");
     LockKeysService.unregisterComponent("lockscreen");
   }

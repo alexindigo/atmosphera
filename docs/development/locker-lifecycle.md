@@ -97,6 +97,17 @@ the real-PAM `contract` variants separately cover actual independent lockers.
 
 ## Settings and process lifetime
 
+Both lock-only entry roots force `QT_IM_MODULE` and `QT_IM_MODULES` to
+`compose` before Qt constructs its application. Password entry retains local
+compose/dead-key handling without a remote fcitx/ibus context, even when the
+main shell is absent. The shell separately holds one fcitx snapshot while
+either its actual-lock observation or preview demand is active; closing either
+cannot release the other's demand. Only the final release restores that snapshot.
+`locker-ime-proof.py --work <new-artifact-directory>` checks the actual roots'
+input-context selection under inherited fcitx/ibus settings and both shell demand
+overlap directions. It is not evidence of a password leak on a particular Qt
+version, nor a substitute for native lock/PAM acceptance.
+
 The main Settings owner publishes a private, generation-correlated effective
 settings view. Managed lockers read it through native read-only ConfigQml routes;
 standalone lockers also use native read-only sources. Lockers do not materialize
