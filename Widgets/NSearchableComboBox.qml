@@ -50,6 +50,14 @@ GridLayout {
   readonly property bool _runEntry: customEntry && searchText.trim() !== "" && (!activeModel || activeModel.count === 0)
   readonly property int _choiceCount: _runEntry ? 1 : (activeModel ? activeModel.count : 0)
   property int _highlight: 0
+  // The index is presentation only. Preserve the choice's identity across
+  // source mutation, never whatever happens to occupy its previous index.
+  property var _highlightChoice: null
+  property bool _filterPending: false
+  property Timer _filterTurn: Timer {
+    interval: 0
+    onTriggered: root.filterModel()
+  }
 
   readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1)
 
@@ -135,25 +143,38 @@ GridLayout {
   }
 
   function selectSearchCommand() {
+    if (_filterPending || !_runEntry)
+      return;
     root.customEntered(searchText.trim());
     combo.popup.close();
   }
 
   function selectHighlighted() {
+    if (_filterPending)
+      return;
     if (customEntry && _highlight === _choiceCount) {
       openCustomEditor();
-    } else if (_runEntry) {
+    } else if (_runEntry && _highlight === 0) {
       selectSearchCommand();
     } else if (activeModel && _highlight >= 0 && _highlight < activeModel.count) {
-      root.selected(activeModel.get(_highlight).key);
-      combo.popup.close();
+      selectChoice(_highlight);
     }
   }
 
+  function selectChoice(index) {
+    if (_filterPending || !activeModel || index < 0 || index >= activeModel.count)
+      return;
+    root.selected(activeModel.get(index).key);
+    combo.popup.close();
+  }
+
   function navigate(delta) {
+    if (_filterPending)
+      return;
     var last = _choiceCount - 1 + (customEntry ? 1 : 0);
-    _highlight = Math.max(0, Math.min(last, _highlight + delta));
-    if (selectOnNavigation && !_runEntry && _highlight < _choiceCount)
+    var previous = _highlight;
+    _highlight = last < 0 ? -1 : Math.max(0, Math.min(last, _highlight + delta));
+    if (_highlight !== previous && selectOnNavigation && !_runEntry && _highlight >= 0 && _highlight < _choiceCount)
       root.selected(activeModel.get(_highlight).key);
   }
 
@@ -172,7 +193,24 @@ GridLayout {
   }
 
   on_HighlightChanged: {
+    rememberHighlight();
     listView.currentIndex = _highlight < (activeModel ? activeModel.count : 0) ? _highlight : -1;
+  }
+
+  function rememberHighlight() {
+    if (customEntry && _highlight === _choiceCount)
+      _highlightChoice = {kind: "footer"};
+    else if (_runEntry && _highlight === 0)
+      _highlightChoice = {kind: "command", text: searchText.trim()};
+    else if (activeModel && _highlight >= 0 && _highlight < activeModel.count)
+      _highlightChoice = {kind: "row", key: activeModel.get(_highlight).key};
+    else
+      _highlightChoice = null;
+  }
+
+  function scheduleFilter() {
+    _filterPending = true;
+    _filterTurn.restart();
   }
 
   columns: root.stacked ? 1 : 2
@@ -258,6 +296,23 @@ GridLayout {
   property bool isFiltered: false
 
   function filterModel() {
+    var choice = _highlightChoice;
+    _filterTurn.stop();
+    rebuildFilteredModel();
+    if (choice && choice.kind === "footer" && customEntry)
+      _highlight = _choiceCount;
+    else if (choice && choice.kind === "command" && _runEntry && choice.text === searchText.trim())
+      _highlight = 0;
+    else if (choice && choice.kind === "row" && !_runEntry)
+      _highlight = findIndexInActiveModel(choice.key);
+    else
+      _highlight = -1;
+    rememberHighlight();
+    listView.currentIndex = !_runEntry && _highlight >= 0 && _highlight < _choiceCount ? _highlight : -1;
+    _filterPending = false;
+  }
+
+  function rebuildFilteredModel() {
     // Check if model exists and has items
     if (!root.model || root.model.count === undefined || root.model.count === 0) {
       filteredModel.clear();
@@ -319,17 +374,25 @@ GridLayout {
 
   onSearchTextChanged: {
     filterModel();
-    _highlight = 0;
-    listView.currentIndex = 0;
+    _highlight = (_choiceCount > 0 || customEntry) ? 0 : -1;
+    rememberHighlight();
   }
+
+  onModelChanged: scheduleFilter()
 
   Connections {
     target: root.model
     function onCountChanged() {
-      root.filterModel();
+      root.scheduleFilter();
     }
     function onDataChanged() {
-      root.filterModel();
+      root.scheduleFilter();
+    }
+    function onRowsMoved() {
+      root.scheduleFilter();
+    }
+    function onModelReset() {
+      root.scheduleFilter();
     }
   }
 
@@ -353,7 +416,7 @@ GridLayout {
     model: root.activeModel
     textRole: "name"
     currentIndex: findIndexInActiveModel(currentKey)
-    wheelEnabled: root.selectOnNavigation
+    wheelEnabled: false
     padding: 0
     Keys.priority: Keys.BeforeItem
     Keys.onPressed: event => {
@@ -367,9 +430,7 @@ GridLayout {
         event.accepted = true;
     }
     onActivated: {
-      if (combo.currentIndex >= 0 && root.activeModel && combo.currentIndex < root.activeModel.count) {
-        root.selected(root.activeModel.get(combo.currentIndex).key);
-      }
+      root.selectChoice(combo.currentIndex);
     }
 
     background: Rectangle {
@@ -526,7 +587,7 @@ GridLayout {
           id: runCommandRow
           visible: root._runEntry
           Layout.fillWidth: true
-          text: root.runCommandLabel.replace("%1", root.searchText.trim())
+          text: root.runCommandLabel.replace("%1", function () { return root.searchText.trim(); })
           highlighted: root._highlight === 0
           leftPadding: Style.marginM
           rightPadding: Style.marginM
@@ -620,9 +681,7 @@ GridLayout {
                 }
 
                 onClicked: {
-                  var selectedKey = rowRoot.rowData.key;
-                  root.selected(selectedKey);
-                  combo.popup.close();
+                  root.selectChoice(rowRoot.index);
                 }
 
                 contentItem: RowLayout {
@@ -757,6 +816,7 @@ GridLayout {
           // Ensure the model is filtered when popup opens
           filterModel();
           root._highlight = Math.max(0, root.findIndexInActiveModel(root.currentKey));
+          root.rememberHighlight();
           listView.currentIndex = root._highlight;
           // Small delay to ensure the popup is fully rendered
           Qt.callLater(() => {
