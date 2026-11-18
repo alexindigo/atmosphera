@@ -136,6 +136,14 @@ An absence-of-unlock claim requires a continuous native/compositor trace, not
 only a sampled boolean or the owner's own log. Observe locked output through
 the named VM framebuffer, not compositor screencopy that may return black.
 
+The observer selects one niri log source for the exact socket-owner lifetime:
+regular stdout when available, otherwise journal records with matching PID/UID
+and a still-current process start identity. Both publish `compositor-log` with
+that identity; unrelated niri-named journal records are not compositor evidence.
+`locker-observer-journal-proof.py --work <new-artifact-directory>` exercises
+the actual ingestion function with split synthetic records and rejecting
+identity/source controls. It is not native journal-backed lock/PAM evidence.
+
 ## Guest verification entry points
 
 Run workloads only in the authorized task guest. For the retained niri fork,

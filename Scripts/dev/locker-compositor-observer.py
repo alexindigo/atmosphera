@@ -22,6 +22,21 @@ from datetime import datetime
 from locker_test_support import manage, require_guest, run
 
 
+def compositor_journal_event(record, identity):
+    """Normalize only the selected compositor lifetime's journal source."""
+    if not identity or identity.get('source') != 'journal':
+        return None
+    if record.get('_PID') != str(identity['pid']) or record.get('_UID') != str(identity['uid']):
+        return None
+    process = Path('/proc') / str(identity['pid'])
+    assert (process / 'stat').read_text().split(') ', 1)[1].split()[19] == identity['start'], 'compositor identity changed'
+    monotonic = int(record['__MONOTONIC_TIMESTAMP']) / 1_000_000
+    if monotonic < identity['since']:
+        return None
+    return dict(message=record['MESSAGE'], sourceMonotonic=monotonic,
+        pid=identity['pid'], start=identity['start'], source='journal')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
@@ -52,9 +67,8 @@ def main():
     notification_pending = bytearray()
     clock_offset = time.monotonic() - time.time()
     if os.environ.get('NIRI_SOCKET'):
-        # This devbase redirects niri stdout/stderr to a regular file rather
-        # than the journal. Bind that stream to the process holding the exact
-        # discovered compositor socket, not a guessed historical pathname.
+        # Bind either stdout or journal evidence to the exact socket owner,
+        # not a historical file or an arbitrary niri-named journal record.
         socket_path = os.environ['NIRI_SOCKET']
         assert Path(socket_path).is_socket()
         inodes = {line.split()[6] for line in Path('/proc/net/unix').read_text().splitlines()[1:]
@@ -72,16 +86,17 @@ def main():
                 continue
         assert len(matches) == 1, 'cannot identify the exact niri compositor socket owner'
         process = matches[0]
+        compositor_identity = {'pid': int(process.name), 'uid': process.stat().st_uid,
+            'start': (process / 'stat').read_text().split(') ', 1)[1].split()[19],
+            'socket': socket_path, 'source': 'journal', 'since': time.monotonic()}
         fd = process / 'fd/1'
         if stat.S_ISREG(fd.stat().st_mode):
             compositor_stream = fd.open('rb')
             compositor_stream.seek(0, os.SEEK_END)
             identity = os.fstat(compositor_stream.fileno())
-            compositor_identity = {'pid': int(process.name),
-                'start': (process / 'stat').read_text().split(') ', 1)[1].split()[19],
-                'file': str(fd.readlink()), 'inode': identity.st_ino, 'device': identity.st_dev,
-                'offset': compositor_stream.tell(), 'socket': socket_path}
-            emit('compositor-source', **compositor_identity)
+            compositor_identity.update(source='file', file=str(fd.readlink()), inode=identity.st_ino,
+                device=identity.st_dev, offset=compositor_stream.tell())
+        emit('compositor-source', **compositor_identity)
 
     if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
         instances = json.loads(run(['hyprctl', '-j', 'instances']).stdout)
@@ -123,7 +138,8 @@ def main():
             message = re.sub(r'\x1b\[[0-9;]*m', '', line.decode(errors='replace'))
             timestamp = re.match(r'^(\d{4}-\d\d-\d\dT\S+)', message)
             source = datetime.fromisoformat(timestamp[1]).timestamp() + clock_offset if timestamp else None
-            emit('compositor-log', message=message, sourceMonotonic=source)
+            emit('compositor-log', message=message, sourceMonotonic=source,
+                pid=compositor_identity['pid'], start=compositor_identity['start'], source='file')
         return True
 
     def read_notifications(channel, condition):
@@ -176,6 +192,9 @@ def main():
             message = record.get('MESSAGE', '')
             if not isinstance(message, str) or 'wl_keyboard' in message:
                 continue
+            compositor = compositor_journal_event(record, compositor_identity)
+            if compositor:
+                emit('compositor-log', **compositor)
             unit = record.get('_SYSTEMD_USER_UNIT', '')
             if (record.get('_COMM') == 'niri' or unit.startswith(('atmosphera-lockscreen-', 'atmosphera-emergency-lock-', 'atmosphera-lock-', 'locker-orphan-proof-', 'locker-contract-', 'locker-capability-'))):
                 emit('journal', sourceMonotonic=int(record['__MONOTONIC_TIMESTAMP']) / 1_000_000,
@@ -185,7 +204,12 @@ def main():
         if condition & GLib.IO_IN:
             chunk = os.read(journal.stdout.fileno(), 262144)
             if chunk:
-                consume_journal(chunk)
+                try:
+                    consume_journal(chunk)
+                except Exception as error:
+                    emit('observer-error', message='journal: ' + str(error))
+                    loop.quit()
+                    return False
                 return True
         if condition & (GLib.IO_HUP | GLib.IO_ERR):
             emit('observer-error', message='journal follower exited unexpectedly')
