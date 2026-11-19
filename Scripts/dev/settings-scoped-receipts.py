@@ -5,11 +5,11 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
 
-from guest_profile import activate_profile, protect_owned_process
+from guest_profile import activate_profile
 from probe_files import ProbeFiles
 from workspace_guard import require_disk_backed_paths
+from presentation_harness import run_harness
 
 
 def main():
@@ -30,21 +30,16 @@ def main():
     rows = []
 
     def launch(env, log):
-        child = subprocess.Popen(['dbus-run-session', '--', 'qs', '-p', str(lease.probe), '--no-color'],
-                                 env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                 start_new_session=True)
-        guard = None
-        try:
-            guard = protect_owned_process(child)
-            body, _ = child.communicate(timeout=45)
-            log.write_bytes(body)
-            return child.returncode, body.decode()
-        finally:
-            if child.poll() is None:
-                if guard:
-                    guard.terminate()
-                body, _ = child.communicate()
-                log.write_bytes(body)
+        nonlocal runtime_quiet
+        work = log.parent/(log.stem+'-execution')
+        work.mkdir()
+        execution = run_harness(['dbus-run-session', '--', 'qs', '-p', str(lease.probe), '--no-color'], work, env, 45)
+        runtime_quiet = bool(execution['cleanup_complete'])
+        body = (work/'shell.log').read_bytes()
+        log.write_bytes(body)
+        if execution['timed_out'] or not runtime_quiet:
+            raise RuntimeError('probe supervision failed: '+repr(execution))
+        return execution['exit_code'], body.decode()
 
     try:
         for mode in args.modes:
@@ -63,6 +58,7 @@ def main():
                 (config/'settings/bar.json').write_text('{"widgets":{"left":[{"id":"Tray","pinned":[],"opaque":{"wide":18446744073709551615}}],"right":[]}}')
             shutil.copytree(plugins/'shell-profiles', config/'plugins/shell-profiles')
             runtime = profile.child_environment('sr-')
+            runtime_quiet = False
             env = dict(os.environ, **runtime, QT_QPA_PLATFORM='wayland', QML_DISABLE_DISK_CACHE='1',
                        ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_SETTINGS_FILE=str(config/'settings.json'),
                        ATMOSPHERA_CACHE_DIR=str(work/'cache'), ATMOSPHERA_STATE_DIR=str(work/'state'),
@@ -95,11 +91,24 @@ def main():
                 assert cold_code == 0 and 'SCOPED_RECEIPT: COLD_PASS' in cold
                 passed = code == 0 and 'SCOPED_RECEIPT: PASS '+mode in text
                 rows.append(dict(mode=mode, status='PASS' if passed else 'FAIL', exit=code,
-                                 coldPassed=True, bindingBytesRetained=True, profileNotCopied=True))
+                                  coldPassed=True, bindingBytesRetained=True, profileNotCopied=True))
                 print(json.dumps(rows[-1]), flush=True)
+            except Exception as error:
+                rows.append(dict(mode=mode, status='FAIL', error=repr(error)))
+            except (KeyboardInterrupt, SystemExit) as error:
+                rows.append(dict(mode=mode, status='FAIL', error=repr(error)))
+                raise
             finally:
-                shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))
-            (out/'result.json').write_text(json.dumps(rows, indent=2)+'\n')
+                if runtime_quiet:
+                    try:
+                        shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))
+                    except OSError as error:
+                        rows[-1]['status'] = 'FAIL'
+                        rows[-1]['cleanupError'] = repr(error)
+                else:
+                    rows[-1]['status'] = 'FAIL'
+                    rows[-1]['cleanupError'] = 'namespace not proven quiet; runtime retained'
+                (out/'result.json').write_text(json.dumps(rows, indent=2)+'\n')
     finally:
         lease.close()
         profile.verify()
