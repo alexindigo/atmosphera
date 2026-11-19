@@ -65,12 +65,19 @@ ShellRoot {
       descriptor = fresh(job.snapshot);
       respond(callback, descriptor);
     } else if (job.operation === "consume-suspend") {
+      // Like the adapter: a stale generation is refused, and the receipt
+      // reports the intent captured before it was cleared.
+      if (job.generation !== descriptor.generation) {
+        Qt.callLater(function () { callback({stdout: JSON.stringify({ok: false, error: "stale locker generation"})}); });
+        return;
+      }
+      var pending = descriptor.suspendPending === true;
       consumedAt = inspections;
       descriptor.suspendPending = false;
       if (scenario === "suspend-auth" && begins === 0)
         heldConsume = callback;
       else
-        respond(callback, {pending: true});
+        respond(callback, {pending: pending});
     } else if (job.operation === "sleep-window") {
       sleepJobs.push(job.active);
       if (job.active && !descriptor.sleepWindowActive)
