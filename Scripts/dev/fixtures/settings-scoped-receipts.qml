@@ -182,8 +182,30 @@ ShellRoot {
         complete(false, "synthetic stopped startup, no deployment");
       });
       head = BindingsService.headRequestId;
-      if (mode !== "profile-plugin")
+      if (mode !== "profile-plugin") {
+        // This witness tests scoped receipts against an unattempted native
+        // blocker, not queue admission. A waiting reset now correctly retains
+        // nothing until it reaches the FIFO head (covered by the FIFO proof).
+        Settings.store.retainGroup({
+                                     requestKey: "bindings-reset-1",
+                                     paths: [["bindings"]],
+                                     edits: [
+                                       {
+                                         path: ["bindings", "environment"],
+                                         present: false
+                                       }
+                                     ],
+                                     dependencies: []
+                                   }, function (retained) {
+                                     try {
+                                       root.check(retained.status === "retained", "native unattempted blocker admitted");
+                                       root.token = retained.groupToken;
+                                     } catch (error) {
+                                       root.fail(error);
+                                     }
+                                   });
         Settings.resetValue("bindings.environment");
+      }
     } catch (error) {
       fail(error);
     }
@@ -193,10 +215,9 @@ ShellRoot {
       return;
     try {
       if (mode !== "profile-plugin") {
-        if (!Settings._groupOrder.length || BindingsService.queueCount !== 2)
+        if (!token || BindingsService.queueCount !== 2)
           return;
         blockedStore = Settings.store;
-        token = Settings._groupOrder[0];
         checkHead();
       }
       phase = 2;

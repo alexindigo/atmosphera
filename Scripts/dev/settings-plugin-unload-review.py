@@ -2,17 +2,18 @@
 """Assigned-guest plugin destruction, publication and reload consumers."""
 import argparse
 from contextlib import closing
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 from pathlib import Path
 import shutil
-import signal
 import subprocess
 import time
 
 from guest_profile import activate_profile
 from native_settings_controls import prepare
 from probe_files import ProbeFiles
+from presentation_harness import run_harness
 
 
 CASES = ('destruction', 'closed-api', 'panel-slot', 'placement', 'reload-held',
@@ -68,8 +69,10 @@ def main():
             schedule = work / 'schedule.json'
             schedule.write_text(json.dumps(dict(rules=[rule])))
             env.update(LD_PRELOAD=str(build / 'libatmosphera_native_io.so'), ATCQ_NATIVE_SCHEDULE=str(schedule))
-        process = None
+        execution = None
+        runtime_quiet = False
         released = False
+        cleanup_errors = []
 
         def release():
             nonlocal released
@@ -82,22 +85,31 @@ def main():
 
         try:
             with closing(ProbeFiles(source, Path(__file__).parent / 'fixtures/settings-plugin-unload-review.qml')) as probes:
-                with (work / 'engine.log').open('x') as log:
-                    command = ['dbus-run-session', '--']
-                    if 'LD_PRELOAD' in env:
-                        command += ['env', 'LD_PRELOAD=' + env.pop('LD_PRELOAD')]
-                    command += ['qs', '-p', str(probes.probe), '--no-color']
-                    process = subprocess.Popen(command,
-                                               cwd=source, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-                    if held:
-                        deadline = time.monotonic() + 20
-                        while not marker.exists() or 'PLUGIN_UNLOAD: HELD_PASS' not in (work / 'engine.log').read_text():
-                            assert process.poll() is None and time.monotonic() < deadline, 'real IO/consumer hold not reached'
-                            time.sleep(.02)
-                        if case in ('reload-held', 'editor-apply-held'):
-                            assert json.loads(target.read_text())['scratchpadContent'] == 'original'
-                        release()
-                    assert process.wait(timeout=30) == 0
+                command = ['dbus-run-session', '--']
+                if 'LD_PRELOAD' in env:
+                    command += ['env', 'LD_PRELOAD=' + env.pop('LD_PRELOAD')]
+                command += ['qs', '-p', str(probes.probe), '--no-color']
+                live = work/'execution'
+                live.mkdir()
+                # The existing namespace supervisor owns every descendant,
+                # including setsid() pipe holders. The caller retains only the
+                # scheduling side channel; it never adopts a desktop process.
+                with ThreadPoolExecutor(max_workers=1) as supervisor:
+                    future = supervisor.submit(run_harness, command, live, env, 30)
+                    try:
+                        if held:
+                            deadline = time.monotonic() + 20
+                            while not marker.exists() or not (live/'shell.log').exists() or 'PLUGIN_UNLOAD: HELD_PASS' not in (live/'shell.log').read_text():
+                                assert not future.done() and time.monotonic() < deadline, 'real IO/consumer hold not reached'
+                                time.sleep(.02)
+                            if case in ('reload-held', 'editor-apply-held'):
+                                assert json.loads(target.read_text())['scratchpadContent'] == 'original'
+                            release()
+                    finally:
+                        execution = future.result(timeout=40)
+                        runtime_quiet = bool(execution['cleanup_complete'])
+                        shutil.copyfile(live/'shell.log', work/'engine.log')
+                assert execution['exit_code'] == 0 and not execution['timed_out'] and execution['cleanup_complete'], execution
                 text = (work / 'engine.log').read_text()
                 assert 'PLUGIN_UNLOAD: PASS' in text and not any(token in text for token in (
                     'TypeError:', 'ReferenceError:', 'SyntaxError:', '_ASSERT:', 'Failed to load configuration')), text[-6000:]
@@ -107,11 +119,13 @@ def main():
                     cold_env = dict(env, PLUGIN_UNLOAD_COLD='1')
                     cold_env.pop('LD_PRELOAD', None)
                     cold_env.pop('ATCQ_NATIVE_SCHEDULE', None)
-                    cold = subprocess.run(['timeout', '25', 'dbus-run-session', '--', 'qs', '-p', str(probes.probe), '--no-color'],
-                                          cwd=source, env=cold_env, capture_output=True, text=True, timeout=30)
-                    text = cold.stdout + cold.stderr
+                    cold_root = work/'cold-execution'
+                    cold_root.mkdir()
+                    cold = run_harness(['dbus-run-session', '--', 'qs', '-p', str(probes.probe), '--no-color'], cold_root, cold_env, 25)
+                    runtime_quiet = runtime_quiet and bool(cold['cleanup_complete'])
+                    text = (cold_root/'shell.log').read_text()
                     (work / 'cold.log').write_text(text)
-                    assert cold.returncode == 0 and 'PLUGIN_UNLOAD: COLD_PASS' in text, text[-6000:]
+                    assert cold['exit_code'] == 0 and cold['cleanup_complete'] and not cold['timed_out'] and 'PLUGIN_UNLOAD: COLD_PASS' in text, text[-6000:]
                     assert not any(token in text for token in ('TypeError:', 'ReferenceError:', 'SyntaxError:', '_ASSERT:'))
                 assert json.loads((preferences / 'notes-scratchpad.json').read_text())['opaque']['keep']
                 if args.lint and case == (CASES[-1] if args.case == 'all' else args.case):
@@ -127,17 +141,30 @@ def main():
                     (work / 'lint.log').write_text(lint.stdout + lint.stderr)
                     assert lint.returncode == 0, lint.stdout + lint.stderr
                 rows.append(dict(id=case, status='PASS'))
-        except BaseException as error:
+        except Exception as error:
             rows.append(dict(id=case, status='FAIL', error=repr(error)))
+        except (KeyboardInterrupt, SystemExit) as error:
+            rows.append(dict(id=case, status='FAIL', error=repr(error)))
+            raise
         finally:
-            if held and marker.exists() and not released and process is not None and process.poll() is None:
-                release()
-            if process is not None and process.poll() is None:
-                assert Path('/proc/' + str(process.pid)).stat().st_uid == os.getuid()
-                os.killpg(process.pid, signal.SIGTERM)
-                process.wait(timeout=10)
-            shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))
-        (output / 'result.json').write_text(json.dumps(dict(cases=rows, nativeControls=contract), indent=2) + '\n')
+            if held and marker.exists() and not released:
+                try:
+                    release()
+                except OSError as error:
+                    cleanup_errors.append('release: '+repr(error))
+            if runtime_quiet:
+                try:
+                    shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))
+                except OSError as error:
+                    cleanup_errors.append('runtime: '+repr(error))
+            else:
+                cleanup_errors.append('namespace not proven quiet; runtime retained')
+            if rows:
+                rows[-1]['cleanupErrors'] = cleanup_errors
+                rows[-1]['execution'] = execution
+                if cleanup_errors:
+                    rows[-1]['status'] = 'FAIL'
+            (output / 'result.json').write_text(json.dumps(dict(cases=rows, nativeControls=contract), indent=2) + '\n')
         print(json.dumps({key: value[:500] if key == 'error' else value for key, value in rows[-1].items()}), flush=True)
     return int(any(row['status'] != 'PASS' for row in rows))
 
