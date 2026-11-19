@@ -127,6 +127,17 @@ standalone lockers also use native read-only sources. Lockers do not materialize
 defaults, save settings or execute migration side effects. Live preference
 updates remain observable. The generation input is removed at settlement.
 
+`locker-state-storage-proof.py --mode file|unwritable --work <new-artifact-directory>`
+starts the installed bundled entry without a main shell or generation owner,
+with unusable settings-state storage. It checks wrong-password rejection, native
+PAM-before-unlock ordering, compositor unlock and unchanged authored preferences.
+It does not claim no presentation-cache writes. The actual-main
+`locker-owner-proof.py --main-shell --case fast --interrupt-with-unavailable-state`
+loses its private settings state only after the bundled client is secure, crashes
+that exact invocation, and requires emergency recovery without an intervening
+unlock followed by successful PAM. Dead-client recovery requires niri's proven
+takeover capability; it is not a claim about compositors that refuse takeover.
+
 Owner submissions consume only the captured request/settings invalidation.
 Arrivals while `begin` runs remain queued. Refused request receipts restore
 their intent, and a request received during authenticated teardown waits for

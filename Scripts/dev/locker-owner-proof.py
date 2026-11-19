@@ -57,6 +57,8 @@ def main():
     parser.add_argument('--restart-state', choices=('starting', 'fallback', 'handing-over'))
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--verify-settings', action='store_true')
+    parser.add_argument('--interrupt-with-unavailable-state', action='store_true',
+        help='Lose private settings state after secure, crash the exact holder, require emergency PAM recovery')
     parser.add_argument('--main-shell', action='store_true', help='Use the actual main shell for fast/adoption and public lock IPC')
     parser.add_argument('--ingress', choices=('ipc', 'cli', 'keybind', 'hot-corner', 'idle', 'custom', 'exclusive', 'hooks', 'legacy'), default='ipc')
     parser.add_argument('--late-real-first', action='store_true', help='Test-only granted-client response barrier and held emergency exec')
@@ -67,6 +69,8 @@ def main():
     parser.add_argument('--suspend-race-lock-on-suspend', action='store_true', help='Prove the same intervening-PAM ordering with lockOnSuspend enabled')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
+    if args.interrupt_with_unavailable_state and (not args.main_shell or args.case != 'fast'):
+        parser.error('--interrupt-with-unavailable-state requires actual-main fast')
     if args.suspend_after_inspect_race and (not args.main_shell or args.case != 'fast' or args.sleep_signals):
         parser.error('--suspend-after-inspect-race requires actual-main fast without the optional sleep helper')
     if args.suspend_race_lock_on_suspend and not args.suspend_after_inspect_race:
@@ -722,6 +726,24 @@ def main():
                     and observation.get('sameInvocation') and not observation.get('gone'))
         wait_for(secured, 15)
         first = inspect()
+        if args.interrupt_with_unavailable_state:
+            assert takeover, 'interrupted secure-client recovery requires proven dead-client takeover'
+            state = Path(environment['ATMOSPHERA_STATE_DIR'])
+            if state.exists():
+                state.rename(work / 'settings-state-before-loss')
+            state.write_text('settings state is unavailable during recovery\n')
+            lost = first['descriptor']['units']['real']
+            assert lost['client']['secure'] and first['units']['real']['sameInvocation']
+            run(['systemctl', '--user', 'kill', '--signal=SIGKILL', '--kill-whom=all', lost['name']])
+            expected_role = 'emergency'
+            wait_for(secured, 20)
+            first = inspect()
+            assert compositor_locked(work, sid) and first['units']['real']['gone']
+            events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+            assert not any(e['kind'] == 'journal' and 'unlock_and_destroy' in e.get('message', '') for e in events)
+            assert not any(not e['locked'] for e in compositor_transitions(events))
+            (work / 'unavailable-state-recovery.json').write_text(json.dumps({'interrupted': lost,
+                'replacement': first, 'statePath': str(state), 'noUnlockBeforeReplacement': True}, indent=2))
         if wlroots_sentinel:
             from locker_framebuffer import Framebuffer
             console = Framebuffer()
@@ -1228,20 +1250,21 @@ def main():
         ipc('lockerProof', 'lock')
         time.sleep(.5)
         assert inspect()['descriptor']['generation'] == generation, 'duplicate generation'
-        # Graceful exit only for our harness root. The locker unit must survive.
-        ipc('lockerProof', 'exit')
-        wait_for(lambda: run(['systemctl', '--user', 'show', unit, '-p', 'ActiveState', '--value']).stdout.strip() == 'inactive')
-        assert inspect()['descriptor']['units'][expected_role]['identity'] == identity
-        if not unconfirmed:
-            assert inspect()['descriptor']['units'][expected_role]['client']['secure']
-        start()
-        def adopted():
-            status = json.loads(ipc('lockOwner', 'status'))
-            return status if (status['state'] == 'engaged-unconfirmed(external)' if unconfirmed else status['secure']) else None
-        status = wait_for(adopted, 10)
-        assert status['descriptor']['generation'] == generation
-        assert status['descriptor']['units'][expected_role]['identity'] == identity
-        (work / 'adopted.json').write_text(json.dumps(status, indent=2))
+        if not args.interrupt_with_unavailable_state:
+            # Graceful exit only for our harness root. The locker unit must survive.
+            ipc('lockerProof', 'exit')
+            wait_for(lambda: run(['systemctl', '--user', 'show', unit, '-p', 'ActiveState', '--value']).stdout.strip() == 'inactive')
+            assert inspect()['descriptor']['units'][expected_role]['identity'] == identity
+            if not unconfirmed:
+                assert inspect()['descriptor']['units'][expected_role]['client']['secure']
+            start()
+            def adopted():
+                status = json.loads(ipc('lockOwner', 'status'))
+                return status if (status['state'] == 'engaged-unconfirmed(external)' if unconfirmed else status['secure']) else None
+            status = wait_for(adopted, 10)
+            assert status['descriptor']['generation'] == generation
+            assert status['descriptor']['units'][expected_role]['identity'] == identity
+            (work / 'adopted.json').write_text(json.dumps(status, indent=2))
         if intent:
             assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'adoption duplicated suspend intent'
         # The demo's TextInput needs an ordinary click after its window maps.
@@ -1304,6 +1327,8 @@ def main():
         if args.case == 'hooks' or args.ingress == 'hooks':
             assert marker.read_text() == 'prelockunlock', 'hook duplicated or lost after adoption'
         assert not compositor_locked(work, sid)
+        if args.interrupt_with_unavailable_state:
+            assert Path(environment['ATMOSPHERA_STATE_DIR']).read_text() == 'settings state is unavailable during recovery\n'
         if sentinel_identity:
             from locker_framebuffer import Framebuffer
             console = Framebuffer()
@@ -1362,7 +1387,7 @@ def main():
             assert not re.search(r'ext_session_lock_v1#\d+\.locked\(\)', run(['journalctl', '--user', '-b',
                 '--no-pager', '-o', 'cat', '_SYSTEMD_INVOCATION_ID=' + final['descriptor']['units']['real']['identity']['InvocationID']]).stdout)
             timings['outcome'] = 'emergency-retained-no-takeover'
-        elif args.case == 'fast' or (args.case == 'slow' and args.delay < 30):
+        elif (args.case == 'fast' and not args.interrupt_with_unavailable_state) or (args.case == 'slow' and args.delay < 30):
             timings['outcome'] = deadline_outcome(final['descriptor'], events)
             if args.late_real_first:
                 assert timings['outcome'] == 'late-real-first'
