@@ -14,7 +14,7 @@ import shutil
 import subprocess
 import time
 
-from locker_test_support import hypr_option, manage, require_guest, restore_hypr_option, set_hypr_option
+from locker_test_support import compositor_locked, hypr_option, manage, require_guest, restore_hypr_option, set_hypr_option, supervise_proof
 
 
 def retire_reconstructible(source, work):
@@ -222,14 +222,33 @@ def main():
         command = ['python3', '-B', str(driver / 'Scripts/dev' / command[0]), *command[1:], '--work', str(work / name)]
         if name in option_during:
             set_hypr_option(option_during[name])
-        with (work / (name + '-output.txt')).open('x') as log:
-            result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=240)
+        try:
+            with (work / (name + '-output.txt')).open('x') as log:
+                result = supervise_proof(command, log, max(240, args.delay + 120),
+                    work / (name + '-supervision.json'), source=driver, recovery_root=work / name)
+        finally:
+            if name in option_during:
+                # A failing evidence assertion after authenticated settlement
+                # must not leave restore enabled. A remaining holder keeps its
+                # recovery capability; never infer unlock from controller exit.
+                option_cleanup = {'restored': False}
+                try:
+                    sid = manage(driver, {'operation': 'discover'})['session']
+                    current = manage(driver, {'operation': 'inspect', 'session': sid})
+                    d = current.get('descriptor')
+                    safe = (not d or d['phase'] == 'settled') and all(row['gone'] for row in current.get('units', {}).values())
+                    if safe and not compositor_locked(work / name, sid):
+                        restore_hypr_option(original_option)
+                        option_cleanup['restored'] = True
+                except Exception as error:
+                    option_cleanup['error'] = str(error)
+                (work / (name + '-option-cleanup.json')).write_text(json.dumps(option_cleanup))
         print((work / (name + '-output.txt')).read_text(), end='', flush=True)
         # A failed subproof may leave a lock that needs real-PAM recovery with
         # the option still on; restore only after its own clean exit.
         assert result.returncode == 0, str(command)
         if name in option_during:
-            restore_hypr_option(original_option)
+            assert option_cleanup['restored'], 'restore option retained: safe cleanup was not established'
             (work / (name + '-restored-option.json')).write_text(json.dumps(hypr_option()))
         # Passing subproofs have finished their cleanup. Retire only reproducible
         # installs and hash-identical asset copies, never logs/settings/evidence.

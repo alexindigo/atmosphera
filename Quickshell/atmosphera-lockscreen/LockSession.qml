@@ -21,6 +21,7 @@ ShellRoot {
   property bool _settingsReady: false
   property bool _i18nReady: false
   property var _uiComponent: null
+  property bool _spectrumRegistered: false
   readonly property bool ready: _settingsReady && _i18nReady && lockContext.pamReady && _uiComponent !== null
 
   LockWallpaper {
@@ -74,7 +75,19 @@ ShellRoot {
       Logger.e("LockScreen", "Lock UI unavailable:", component.errorString());
   }
 
-  on_SettingsReadyChanged: prepareUi()
+  function registerSpectrumIfWanted() {
+    if (!_settingsReady || client.terminal || _spectrumRegistered)
+      return;
+    if (Settings.data.general.enableLockScreenMediaControls && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none") {
+      SpectrumService.registerComponent("lockscreen");
+      _spectrumRegistered = true;
+    }
+  }
+
+  on_SettingsReadyChanged: {
+    prepareUi();
+    registerSpectrumIfWanted();
+  }
   on_I18nReadyChanged: prepareUi()
 
   Connections {
@@ -108,8 +121,7 @@ ShellRoot {
     // Parity with the in-process LockScreen's component registrations
     // (caps-lock indicator; audio visualizer when the UI wants it).
     LockKeysService.registerComponent("lockscreen");
-    if (Settings.data.general.enableLockScreenMediaControls && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none")
-      SpectrumService.registerComponent("lockscreen");
+    registerSpectrumIfWanted();
 
     prepareUi();
   }
@@ -148,7 +160,9 @@ ShellRoot {
 
   Process {
     id: iconManifestProc
-    stdout: StdioCollector { id: iconManifestOutput }
+    stdout: StdioCollector {
+      id: iconManifestOutput
+    }
     onExited: function () {
       var chunks = (iconManifestOutput.text || "").split("@@ID@@");
       for (var i = 1; i < chunks.length; i++) {
@@ -245,14 +259,16 @@ ShellRoot {
             anchors.fill: parent
 
             Component.onCompleted: {
-               var inst = root._uiComponent.createObject(uiWrapper, {
-                                             lockContext: lockContext,
-                                              screen: Qt.binding(function () { return lockSurface.screen; }),
-                                             lockScreenApi: root._buildLockScreenApi(),
-                                             pluginApi: null
-                                            }) as Item;
-               if (inst) {
-                 inst.anchors.fill = uiWrapper;
+              var inst = root._uiComponent.createObject(uiWrapper, {
+                                                          lockContext: lockContext,
+                                                          screen: Qt.binding(function () {
+                                                            return lockSurface.screen;
+                                                          }),
+                                                          lockScreenApi: root._buildLockScreenApi(),
+                                                          pluginApi: null
+                                                        }) as Item;
+              if (inst) {
+                inst.anchors.fill = uiWrapper;
                 lockSurface.uiBuilt = true;
               }
             }
@@ -305,9 +321,13 @@ ShellRoot {
   IpcHandler {
     target: "lockerSettings"
     function status(): string {
-      return JSON.stringify({session: client.session, generation: client.generation,
-        readOnly: Settings.readOnly, ready: Settings.isLoaded,
-        allowPasswordWithFingerprint: lockContext.allowPasswordWithFingerprint});
+      return JSON.stringify({
+                              session: client.session,
+                              generation: client.generation,
+                              readOnly: Settings.readOnly,
+                              ready: Settings.isLoaded,
+                              allowPasswordWithFingerprint: lockContext.allowPasswordWithFingerprint
+                            });
     }
   }
 }

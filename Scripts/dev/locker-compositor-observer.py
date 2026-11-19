@@ -142,14 +142,17 @@ def main():
                 pid=compositor_identity['pid'], start=compositor_identity['start'], source='file')
         return True
 
+    def consume_notifications(chunk):
+        notification_pending.extend(chunk)
+        while b'\n' in notification_pending:
+            line, _, rest = notification_pending.partition(b'\n')
+            notification_pending[:] = rest
+            value = json.loads(line)
+            emit(value.pop('kind'), **value)
+
     def read_notifications(channel, condition):
         if condition & GLib.IO_IN:
-            notification_pending.extend(os.read(notification.stdout.fileno(), 65536))
-            while b'\n' in notification_pending:
-                line, _, rest = notification_pending.partition(b'\n')
-                notification_pending[:] = rest
-                value = json.loads(line)
-                emit(value.pop('kind'), **value)
+            consume_notifications(os.read(notification.stdout.fileno(), 65536))
             return True
         emit('observer-error', message='native Hyprland notification stream closed')
         loop.quit()
@@ -179,7 +182,10 @@ def main():
                             bus_name='org.freedesktop.login1', path='/org/freedesktop/login1')
     emit('initial', locked=bool(properties.Get('org.freedesktop.login1.Session', 'LockedHint')), session=sid)
     journal_errors = (work / 'journal-stderr.txt').open('w')
-    journal = subprocess.Popen(['journalctl', '--user', '-b', '--follow', '--lines=0', '--output=json', '--no-pager'],
+    cursor_text = run(['journalctl', '--user', '-b', '-n', '1', '--show-cursor', '--output=json', '--no-pager']).stdout
+    cursor = re.search(r'(?m)^-- cursor: (\S+)', cursor_text)
+    assert cursor, 'cannot establish journal replay cursor before readiness'
+    journal = subprocess.Popen(['journalctl', '--user', '-b', '--follow', '--no-tail', '--after-cursor=' + cursor[1], '--output=json', '--no-pager'],
                                stdout=subprocess.PIPE, stderr=journal_errors)
     pending = bytearray()
 
@@ -206,7 +212,7 @@ def main():
             unit = record.get('_SYSTEMD_USER_UNIT', '')
             if (record.get('_COMM') == 'niri' or unit.startswith(('atmosphera-lockscreen-', 'atmosphera-emergency-lock-', 'atmosphera-lock-', 'locker-orphan-proof-', 'locker-contract-', 'locker-capability-'))):
                 emit('journal', sourceMonotonic=int(record['__MONOTONIC_TIMESTAMP']) / 1_000_000,
-                     invocation=record.get('_SYSTEMD_INVOCATION_ID', ''), unit=unit, message=message)
+                     invocation=record.get('_SYSTEMD_INVOCATION_ID', ''), pid=record.get('_PID', ''), unit=unit, message=message)
 
     def read_journal(channel, condition):
         if condition & GLib.IO_IN:
@@ -249,7 +255,8 @@ def main():
         GLib.io_add_watch(notification.stdout.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, read_notifications)
     signal.signal(signal.SIGTERM, lambda *_: loop.quit())
     try:
-        sample()
+        if not sample():
+            raise RuntimeError('initial observer sample failed')
         (work / 'ready.json').write_text(json.dumps({'session': sid, 'monotonic': time.monotonic(), 'pid': os.getpid(),
                                                     'compositor': compositor_identity}))
         loop.run()
@@ -265,7 +272,8 @@ def main():
             compositor_stream.close()
         if notification is not None:
             notification.terminate()
-            notification.wait(timeout=10)
+            remaining, _ = notification.communicate(timeout=10)
+            consume_notifications(remaining)
         journal_errors.close()
         emit('end')
         output.close()

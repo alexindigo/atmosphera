@@ -351,6 +351,18 @@ the session, generation, invocation, registered PID/start identity, token and
 monotone sequence before retaining the report in the generation descriptor.
 Late asynchronous status cannot erase the native result. These are operation
 reports, not settings writes or an additional authentication path.
+
+Here, durable means that the complete report is atomically visible before
+teardown and survives the writer's death within the same boot, so the owner can
+still read it after the client process is gone (addendum 06, "Durable lifecycle
+report"). Reports live under `$XDG_RUNTIME_DIR/atmosphera-lock`, in session
+runtime tmpfs that is cleared at logout/reboot. Reading after reboot is not a
+goal: power loss also ends the session to which the report belongs. A parent
+directory fsync adds no reboot-persistence guarantee on that tmpfs channel.
+The native proof binds the successful file sync to the exact atomic rename,
+including Qt's O_TMPFILE/linkat materialization, before surface teardown; it
+also checks that the owner reads the completed report after the writer exits.
+
 Report admission requires a JSON object (including the initial empty object).
 Secure confirmation also requires the registered PID/start lifetime to remain
 live, not just its wrapper or cgroup. Handover rechecks the real invocation in

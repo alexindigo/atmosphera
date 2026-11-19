@@ -26,3 +26,5 @@ while not args.work.joinpath('release-sleep-service').exists() and time.monotoni
     time.sleep(.02)
 publish('sleep-service-finished.json', {'monotonic': time.monotonic(),
     'released': args.work.joinpath('release-sleep-service').exists(), 'kernelSleepInvoked': False})
+if not args.work.joinpath('release-sleep-service').exists():
+    raise SystemExit(1)

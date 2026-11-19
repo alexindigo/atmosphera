@@ -20,10 +20,17 @@ import QtQuick
 import Quickshell
 ShellRoot {
   FloatingWindow {
+    id: window
     width: 320; height: 100; visible: true
-    TextInput { anchors.fill: parent; focus: true; echoMode: TextInput.Password }
+    TextInput { id: input; anchors.fill: parent; focus: true; echoMode: TextInput.Password }
   }
-  Timer { interval: 1500; running: true; onTriggered: Qt.quit() }
+  Timer {
+    interval: 20; running: true; repeat: true
+    onTriggered: if (input.Window.active && input.activeFocus) {
+      console.log("IME_FOCUSED_PASSWORD_INPUT"); Qt.quit();
+    }
+  }
+  Timer { interval: 5000; running: true; onTriggered: Qt.exit(1) }
 }
 '''
 
@@ -91,7 +98,7 @@ def main():
             log = process.stdout + process.stderr
             (directory / (inherited + '.log')).write_text(log)
             contexts = re.findall(r'using input method: ([^\n]+)', log)
-            passed = bool(contexts) and all('QComposeInputContext' in value for value in contexts)
+            passed = bool(contexts) and all('QComposeInputContext' in value for value in contexts) and 'IME_FOCUSED_PASSWORD_INPUT' in log
             results.append(dict(config=config, inherited=inherited, contexts=contexts,
                                 passed=passed and process.returncode == 0))
 

@@ -5,7 +5,12 @@ import os
 from pathlib import Path
 import subprocess
 import signal
+import select
+import sys
 import time
+
+if sys.flags.optimize:
+    raise SystemExit('Locker proofs refuse optimized Python: guest guards and acceptance assertions must remain active')
 
 
 WORKSPACE = Path('/home/tester/Projects/locker')
@@ -27,6 +32,7 @@ def wait_for(predicate, timeout=10):
 
 
 def require_guest(work, source):
+    install_cancellation()
     assert run(['id', '-un']).stdout.strip() == 'tester', 'guest tester account required'
     expected = os.environ['LOCKER_TEST_VM_UUID']
     assert run(['sudo', '-n', 'cat', '/sys/class/dmi/id/product_uuid']).stdout.strip().lower() == expected.lower(), 'wrong guest UUID'
@@ -50,6 +56,57 @@ def require_guest(work, source):
     work.mkdir(mode=0o700)
     (work / 'guest.json').write_text(json.dumps({'uuid': expected, 'source': str(source), 'work': str(work), 'display': str(socket)}, indent=2))
     return source, work
+
+
+class ProofCancelled(BaseException):
+    pass
+
+
+def install_cancellation():
+    def cancel(signum, frame):
+        # Do not interrupt the independent finally obligations a second time.
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        raise ProofCancelled('locker proof cancellation requested; preserving any unauthenticated holder')
+    signal.signal(signal.SIGTERM, cancel)
+
+
+def supervise_proof(command, log, timeout, receipt, source=None, recovery_root=None, cleanup_timeout=120):
+    """Cancel a proof, never its secure holder, and allow its finally to finish."""
+    started = time.monotonic()
+    child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT)
+    timed_out, forced, cancelled = False, False, None
+    try:
+        code = child.wait(timeout=timeout)
+    except BaseException as error:
+        timed_out = isinstance(error, subprocess.TimeoutExpired)
+        cancelled = None if timed_out else error
+        child.send_signal(signal.SIGTERM)
+        try:
+            code = child.wait(timeout=cleanup_timeout)
+        except subprocess.TimeoutExpired:
+            forced = True
+            child.kill()
+            code = child.wait()
+    result = dict(command=command, pid=child.pid, exitCode=code, timedOut=timed_out,
+        forcedTermination=forced, cleanupHandlerReturned=(timed_out or cancelled is not None) and not forced,
+        elapsed=time.monotonic() - started)
+    if timed_out or cancelled is not None:
+        result['cleanupCompleted'] = False  # A child exit alone is not a cleanup oracle.
+        if source is not None:
+            try:
+                sid = manage(source, {'operation': 'discover'})['session']
+                view = manage(source, {'operation': 'inspect', 'session': sid})
+                result['guestState'] = view
+            except Exception as error:
+                result['guestStateError'] = str(error)
+        if recovery_root is not None:
+            result['recoveryFiles'] = [str(path) for name in ('credential', 'original-shadow-hash')
+                for path in recovery_root.rglob(name)]
+        print('Proof timed out; no unlock attempted. State and recovery paths:', receipt, file=sys.stderr)
+    Path(receipt).write_text(json.dumps(result, indent=2))
+    if cancelled is not None:
+        raise cancelled
+    return subprocess.CompletedProcess(command, 124 if timed_out else code)
 
 
 def manage(source, job, check=True):
@@ -155,16 +212,17 @@ def recover_known_pam_hang(source, session, role, work):
         (work / ('pam-child-' + str(child['pid']) + '-stack.txt')).write_text(stack)
         if not all(frame in stack for frame in ('__lll_lock_wait_private', '__syslog_chk', 'pam_syslog', 'pam_sm_authenticate', 'pam_unix.so')):
             continue
-        current = manage(source, {'operation': 'inspect', 'session': session})
-        actual = current['descriptor']['units'][role]
-        assert actual['identity'] == record['identity'] and actual['clientIdentity'] == parent
-        assert current['units'][role]['sameInvocation'] and actual['client']['secure']
-        assert not actual['client']['authenticated']
-        assert identity(parent['pid'])['start'] == parent['start']
-        assert identity(child['pid']) == child
-        assert any(item['pid'] == child['pid'] and item['start'] == child['start'] for item in current['units'][role]['members'])
-        os.kill(child['pid'], signal.SIGKILL)
-        wait_for(lambda: not (Path('/proc') / str(child['pid'])).exists())
+        def validate():
+            current = manage(source, {'operation': 'inspect', 'session': session})
+            actual = current['descriptor']['units'][role]
+            assert actual['identity'] == record['identity'] and actual['clientIdentity'] == parent
+            assert current['units'][role]['sameInvocation'] and actual['client']['secure']
+            assert not actual['client']['authenticated']
+            assert identity(parent['pid'])['start'] == parent['start']
+            assert identity(child['pid']) == child
+            assert any(item['pid'] == child['pid'] and item['start'] == child['start'] for item in current['units'][role]['members'])
+        if not signal_pinned_child(child['pid'], validate):
+            continue
         after = manage(source, {'operation': 'inspect', 'session': session})
         assert after['units'][role]['sameInvocation'] and after['descriptor']['units'][role]['client']['secure']
         recovered.append(child)
@@ -173,3 +231,26 @@ def recover_known_pam_hang(source, session, role, work):
             'invocation': record['identity']['InvocationID'], 'children': recovered}, indent=2))
         print('KNOWN NATIVE PAM HANG: verified child recovery; holder stayed secure', flush=True)
     return bool(recovered)
+
+
+def signal_pinned_child(pid, validate):
+    """Pin before final validation; never signal a reused numeric PID."""
+    try:
+        fd = os.pidfd_open(pid)
+    except ProcessLookupError:
+        return False
+    try:
+        if select.select([fd], [], [], 0)[0]:
+            return False
+        try:
+            validate()
+        except (FileNotFoundError, ProcessLookupError):
+            return False
+        try:
+            signal.pidfd_send_signal(fd, signal.SIGKILL)
+        except ProcessLookupError:
+            return False
+        wait_for(lambda: bool(select.select([fd], [], [], 0)[0]))
+        return True
+    finally:
+        os.close(fd)

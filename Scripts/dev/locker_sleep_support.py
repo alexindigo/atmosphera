@@ -16,7 +16,11 @@ class SleepHarness:
         assert not self.override.exists(), 'another sleep fixture is installed'
         assert run(['systemctl', 'show', 'systemd-suspend.service', '-p', 'ActiveState', '--value']).stdout.strip() == 'inactive'
         fixture = self.source / 'Scripts/dev/fixtures/locker-sleep-service.py'
-        self.content = '[Service]\nExecStart=\nExecStart=/usr/bin/python3 -B ' + str(fixture) + ' --work ' + str(self.work) + '\n'
+        # JSON double quotes use the same escaping for these systemd argument
+        # bytes; double dollars/specifiers keep paths literal through ExecStart.
+        def argument(path):
+            return json.dumps(str(path).replace('$', '$$').replace('%', '%%'), ensure_ascii=False)
+        self.content = '[Service]\nExecStart=\nExecStart=/usr/bin/python3 -B ' + argument(fixture) + ' --work ' + argument(self.work) + '\n'
         candidate = self.work / 'sleep-service-override.conf'
         candidate.write_text(self.content)
         run(['sudo', '-n', 'install', '-Dm644', str(candidate), str(self.override)])
@@ -50,7 +54,7 @@ class SleepHarness:
         entered = json.loads(path.read_text())
         released = wait_for(lambda: next((row for row in self.events() if row['pid'] == self.pid and row['value']['event'] == 'released'), None), 10)
         assert released['value']['secure'], 'delay inhibitor released without confirmed secure'
-        assert native_secure <= released['value']['monotonic'] <= entered['monotonic'], 'secure/release/sleep ordering violated'
+        assert native_secure <= released['value']['closeMonotonic'] <= entered['monotonic'], 'secure/release/sleep ordering violated'
         assert not self.inhibitors(self.pid), 'real delay inhibitor fd remained held after secure release'
         (self.work / 'inhibitor-ordering.json').write_text(json.dumps({'nativeSecure': native_secure,
             'released': released, 'sleepServiceEntered': entered, 'remainingInhibitors': []}, indent=2))

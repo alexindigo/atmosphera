@@ -19,7 +19,7 @@ if os.environ.get('ATMOSPHERA_LOCK_ROLE') == 'emergency' and sys.argv[1:3] == ['
         raise RuntimeError('unreported-probe proof did not retire its exact blocked unit')
     if (root / 'trace-report-probe').exists():
         command = ['strace', '-ff', '-ttt', '-s', '256', '-yy', '-e',
-            'trace=fsync,fdatasync,rename,renameat,renameat2,write,writev',
+            'trace=openat,close,linkat,fsync,fdatasync,rename,renameat,renameat2,write,writev',
             '-o', str(root / 'probe-syscalls'), '/usr/bin/qs', *sys.argv[1:]]
         os.execvp(command[0], command)
 os.execv('/usr/bin/qs', ['qs', *sys.argv[1:]])

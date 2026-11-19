@@ -8,7 +8,7 @@ import runpy
 import subprocess
 import time
 
-from locker_test_support import require_guest, run, wait_for
+from locker_test_support import require_guest, run, supervise_proof, wait_for
 
 
 def main():
@@ -35,6 +35,7 @@ def main():
         run(['systemd-run', '--user', '--collect', '--unit=' + unit, '--property=KillMode=control-group',
             '--property=TimeoutStopSec=2s', '--property=MemoryMax=' + str(mib + 64) + 'M',
             '--property=MemorySwapMax=0', '--property=CPUQuota=100%', '--property=TasksMax=16',
+            '--property=RuntimeMaxSec=' + str(2 * (240 + 120) + 120),
             '--setenv=TMPDIR=' + os.environ['TMPDIR'], '--setenv=LOCKER_TEST_VM_UUID=' + os.environ['LOCKER_TEST_VM_UUID'],
             '--', '/usr/bin/python3', '-B', str(source / 'Scripts/dev/fixtures/locker-memory-pressure.py'),
             '--work', str(memory), '--mib', str(mib)])
@@ -54,7 +55,8 @@ def main():
             if args.recover_known_pam_hang:
                 command.append('--recover-known-pam-hang')
             with (work / (name + '-output.txt')).open('x') as log:
-                result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=240)
+                result = supervise_proof(command, log, 240, work / (name + '-supervision.json'),
+                    source=source, recovery_root=work / name)
             print((work / (name + '-output.txt')).read_text(), end='', flush=True)
             assert result.returncode == 0, command
             assert run(['systemctl', '--user', 'show', unit, '-p', 'InvocationID', '--value']).stdout.strip() == invocation

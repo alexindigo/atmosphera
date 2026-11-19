@@ -18,6 +18,7 @@ import threading
 import time
 
 from locker_test_support import compositor_locked, compositor_transitions, hypr_option, manage, recover_known_pam_hang, require_guest, run, wait_for
+from locker_proof_oracles import authenticated_unlocks, process_report_commit
 
 
 def deadline_outcome(descriptor, events):
@@ -117,6 +118,18 @@ def main():
     run(['bash', '-eu', '-c', 'source "$1/packaging/aur/package.sh"; package', 'stage', str(source)],
         env=dict(os.environ, srcdir=str(source.parent), _gitname=source.name, pkgdir=str(stage), pkgver='0.9.3'), timeout=60)
     root = stage / 'etc/xdg/quickshell/atmosphera'
+    # Read-only proof observations of the actual shared LockAuth completion.
+    # No credential, auth result injection or alternative unlock path.
+    for relative, target in (('atmosphera-lockscreen/LockSession.qml', 'lockContext'),
+            ('atmosphera-emergency-lock/EmergencyLock.qml', 'lockAuth')):
+        path = stage / 'etc/xdg/quickshell' / relative
+        text = path.read_text()
+        anchor = '  id: root\n'
+        assert text.count(anchor) == 1
+        observation = ('  Connections { target: ' + target + '; function onDiagnostic(message) { '
+            'if (message === "Authentication successful") console.log("LOCKER_PAM_SUCCESS " '
+            '+ JSON.stringify({pid: Quickshell.processId})); } }\n')
+        path.write_text(text.replace(anchor, anchor + observation))
     entry = root / ('shell.qml' if args.main_shell else 'locker-owner-proof.qml')
     if not args.main_shell:
         entry.write_text((source / 'Scripts/dev/fixtures/locker-owner.qml').read_text())
@@ -303,7 +316,8 @@ def main():
 
         def native():
             return [event for event in observed() if event['kind'] in ('compositor-initial', 'compositor-lock')]
-        at_resume = native()[-1]['locked']
+        at_resume_events = [row for row in native() if row.get('sourceMonotonic', row['observed']) <= resume['observed']]
+        at_resume = at_resume_events[-1]['locked'] if at_resume_events else False
         wait_for(lambda: native()[-1]['locked'], max(bound - time.monotonic(), 0) + .5)
         transitions = native()
         assert [event['locked'] for event in transitions] == [False, True], 'native unlock or relock around resume'
@@ -680,6 +694,17 @@ def main():
                     and observation.get('sameInvocation') and not observation.get('gone'))
         wait_for(secured, 15)
         first = inspect()
+        if args.ingress == 'hot-corner':
+            # End this gesture while locked; a pointer left in the corner can
+            # start a fresh dwell when the shell returns after authentication.
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                console.socket.sendall(struct.pack('>BBHH', 5, 0, console.width // 2, console.height // 2))
+                (work / 'hot-corner-pointer-rest.json').write_text(json.dumps({
+                    'monotonic': time.monotonic(), 'x': console.width // 2, 'y': console.height // 2}))
+            finally:
+                console.close()
         sample_load('first-secure')
         if crashed:
             recovery = first['descriptor']['units']['emergency']
@@ -865,6 +890,7 @@ def main():
                 assert len(unlocks) == 1 and unlocks[0]['observed'] >= authenticated_at
                 native_unlocks = [event for event in events if event['kind'] == 'journal' and 'unlock_and_destroy' in event['message']]
                 assert len(native_unlocks) == 1 and native_unlocks[0]['sourceMonotonic'] >= authenticated_at
+                (work / 'pam-unlock-ordering.json').write_text(json.dumps(authenticated_unlocks(events, 1), indent=2))
                 assert native_unlocks[0]['invocation'] == first['descriptor']['units']['emergency']['identity']['InvocationID']
                 if os.environ.get('NIRI_SOCKET'):
                     compositor_unlocks = [event for event in events if event['kind'] == 'compositor-log' and 'unlocking session' in event['message']]
@@ -1069,19 +1095,15 @@ def main():
                     continue  # Prove the synchronous client handler, not a helper's fsync.
                 for line in path.read_text().splitlines():
                     try:
-                        trace.append((float(line.split()[0]), line))
+                        trace.append((float(line.split()[0]), '[trace=' + path.name + '] ' + line))
                     except (ValueError, IndexError):
                         pass
             received = min(at for at, line in trace if re.search(r'ext_session_lock_v1#\d+\.finished\(', line))
             destroyed = min(at for at, line in trace if re.search(r'ext_session_lock_surface_v1#\d+\.destroy\(', line))
-            synced = [(at, line) for at, line in trace if ('fsync(' in line or 'fdatasync(' in line) and 'atmosphera-lock/' in line
-                and '= 0' in line and received < at < destroyed]
-            assert synced, 'no successful durable report sync between native refusal and surface teardown'
-            committed = [(at, line) for at, line in trace if 'rename(' in line and probe['reportInfo']['path'] in line
-                and '= 0' in line and synced[0][0] < at < destroyed]
-            assert committed, 'report was not atomically committed before surface teardown'
+            committed = process_report_commit(trace, probe['reportInfo']['path'], received, destroyed)
             (work / 'durable-refusal.json').write_text(json.dumps({'report': report, 'probe': probe,
-                'finishedAt': received, 'sync': synced, 'atomicCommit': committed, 'surfaceDestroyAt': destroyed,
+                'finishedAt': received, 'atomicCommit': committed, 'surfaceDestroyAt': destroyed,
+                'persistenceScope': 'same-boot process survival, not power-loss/reboot',
                 'nativeErrorVisible': 'invalid object' in text}, indent=2))
             # This focused proof observes the refused report. Hyprland opaque
             # unit-exit observation belongs to the next addendum integration.
@@ -1099,6 +1121,7 @@ def main():
             releases = [row for row in compositor_transitions(events) if not row['locked']]
             native_unlocks = [row for row in events if row['kind'] == 'journal' and 'unlock_and_destroy' in row['message']]
             assert len(releases) == len(native_unlocks) == 1
+            (work / 'pam-unlock-ordering.json').write_text(json.dumps(authenticated_unlocks(events, 1), indent=2))
             assert releases[0]['observed'] >= auth_at and native_unlocks[0]['sourceMonotonic'] >= auth_at
             assert native_unlocks[0]['invocation'] == first['descriptor']['units']['real']['identity']['InvocationID']
             (work / 'final.json').write_text(json.dumps(final, indent=2))
@@ -1199,9 +1222,10 @@ def main():
                 wait_for(authenticated_sentinel)
             finally:
                 console.close()
-        if args.case in ('slow', 'boundary', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw', 'opaque-expiry'):
+        if args.case in ('slow', 'boundary', 'external', 'opaque-holder', 'opaque-sleep', 'opaque-race', 'opaque-withdraw', 'opaque-expiry') or args.ingress == 'hot-corner':
             time.sleep(10)
             assert inspect()['descriptor']['phase'] == 'settled'
+            assert inspect()['descriptor']['generation'] == final['descriptor']['generation'], 'unexpected follow-on generation'
             assert all(item['gone'] and not item['members'] for item in inspect()['units'].values())
             assert not compositor_locked(work, sid), 'delayed relock'
         unlocked = True
@@ -1225,6 +1249,7 @@ def main():
         assert all(event['observed'] >= at for event, at in zip(unlocks, authenticated_inputs)), 'unlock before successful PAM input'
         native_unlocks = [event for event in events if event['kind'] == 'journal' and 'unlock_and_destroy' in event['message']]
         assert len(native_unlocks) == len(authenticated_inputs), 'unexpected native unlock'
+        (work / 'pam-unlock-ordering.json').write_text(json.dumps(authenticated_unlocks(events, len(authenticated_inputs)), indent=2))
         assert all(event['sourceMonotonic'] >= at for event, at in zip(native_unlocks, authenticated_inputs)), 'native unlock before PAM input'
         if os.environ.get('NIRI_SOCKET'):
             compositor_unlocks = [event for event in events if event['kind'] == 'compositor-log' and 'unlocking session' in event['message']]
@@ -1308,23 +1333,29 @@ def main():
             # Evidence failures still fail the proof, but may not skip its
             # independent teardown/restoration obligations. Never unlock here.
             try:
-                if owner:
-                    actual = run(['systemctl', '--user', 'show', unit, '-p', 'InvocationID', '--value']).stdout.strip()
-                    assert actual in ('', owner), 'harness root invocation replaced'
-                    if actual:
-                        run(['systemctl', '--user', 'stop', unit])
-                if sentinel_identity:
-                    assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'InvocationID', '--value']).stdout.strip() == sentinel_identity
-                    run(['systemctl', '--user', 'stop', sentinel_unit])
-                    assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'MainPID', '--value']).stdout.strip() == '0'
-                hint = run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip()
-                settled = current is not None and (not current.get('descriptor') or current['descriptor']['phase'] == 'settled')
-                if hint == 'no' and (unlocked or settled):
-                    run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')
-                    credential.unlink()
-                    original_shadow.unlink()
-                else:
-                    print('Real-PAM recovery required; protected recovery files in', work, file=__import__('sys').stderr)
+                try:
+                    if owner:
+                        actual = run(['systemctl', '--user', 'show', unit, '-p', 'InvocationID', '--value']).stdout.strip()
+                        assert actual in ('', owner), 'harness root invocation replaced'
+                        if actual:
+                            run(['systemctl', '--user', 'stop', unit])
+                    if sentinel_identity:
+                        actual = run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'InvocationID', '--value']).stdout.strip()
+                        assert actual in ('', sentinel_identity), 'sentinel invocation replaced'
+                        if actual:
+                            run(['systemctl', '--user', 'stop', sentinel_unit])
+                            assert run(['systemctl', '--user', 'show', sentinel_unit, '-p', 'MainPID', '--value']).stdout.strip() == '0'
+                finally:
+                    # A sentinel evidence/identity failure must not skip safe
+                    # restoration after already-authenticated settlement.
+                    hint = run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip()
+                    settled = current is not None and (not current.get('descriptor') or current['descriptor']['phase'] == 'settled')
+                    if hint == 'no' and (unlocked or settled):
+                        run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')
+                        credential.unlink()
+                        original_shadow.unlink()
+                    else:
+                        print('Real-PAM recovery required; protected recovery files in', work, file=__import__('sys').stderr)
             finally:
                 if restore_niri_config is not None:
                     run(['niri', 'msg', 'action', 'load-config-file', '--path', str(restore_niri_config)], env=environment)

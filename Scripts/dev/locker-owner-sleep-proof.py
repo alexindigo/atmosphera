@@ -120,7 +120,7 @@ ShellRoot {
       root.ticks++;
       if (root.ticks === 5) {
         if (root.heldInspect) {
-          var old = root.inspect();
+        var old = root.copy(root.inspect());
           root.authenticate();
           root.respond(root.heldInspect, old);
           LockOwnerService.requestLock("prepare-for-sleep", false);

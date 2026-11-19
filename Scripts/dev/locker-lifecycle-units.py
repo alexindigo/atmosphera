@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 
-from locker_test_support import require_guest, run
+from locker_test_support import require_guest, run, supervise_proof
 
 
 def main():
@@ -28,7 +28,8 @@ def main():
     for name, script, extra in commands:
         command = ['python3', '-B', str(source / 'Scripts/dev' / script), '--work', str(work / name), *extra]
         with (work / (name + '-output.txt')).open('x') as log:
-            result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=180)
+            result = supervise_proof(command, log, 180, work / (name + '-supervision.json'),
+                source=source, recovery_root=work / name)
         print((work / (name + '-output.txt')).read_text(), end='', flush=True)
         assert result.returncode == 0, str(command)
     (work / 'result.txt').write_text('PASS units\n')
