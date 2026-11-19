@@ -43,6 +43,11 @@ def main():
     record['client'].update(terminal=True, authenticated=True, settlement='authenticated-unlock')
     check('async-terminal-without-native-report-is-unknown', 'unknown')
     assert not record['client']['terminal'] and not record['client']['authenticated']
+    for value in ([1], [1, 2], 'text', 1, True, None, []):
+        record = copy.deepcopy(original)
+        path.write_text(json.dumps(value))
+        check('reject-non-object-' + type(value).__name__ + repr(value), 'unknown')
+        assert not record['client']['secure'] and record.get('reportError')
     for field, value in (('generation', 'stale-generation'), ('session', 'other-session'),
             ('role', 'real'), ('invocation', 'old-invocation'), ('identity', {'pid': identity['pid'], 'start': 'old'}),
             ('token', 'wrong-token'), ('sequence', True), ('event', 'synthetic-auth')):
@@ -66,6 +71,10 @@ def main():
     record = copy.deepcopy(original)
     check('matching-native-lock', 'locked')
     assert record['client']['secure'] and record['everSecure']
+    from unittest.mock import patch
+    with patch.object(module, 'same_process', return_value=False):
+        check('dead-registered-client-is-unknown', 'unknown')
+        assert not record['client']['secure'] and record['everSecure']
     record['client']['secure'] = False
     check('async-publication-cannot-erase-lock', 'locked')
     assert record['client']['secure']

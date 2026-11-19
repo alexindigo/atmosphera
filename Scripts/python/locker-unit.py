@@ -7,6 +7,7 @@ records systemd identities, and enforces only an ungranted startup deadline.
 No operation here performs a Wayland unlock or accepts a password.
 """
 import argparse
+import base64
 from contextlib import contextmanager
 import fcntl
 import json
@@ -88,6 +89,8 @@ def refresh_report(data, role, record):
             if len(text) > 4096:
                 raise Refused('invalid client report size')
             report = json.loads(text)
+            if not isinstance(report, dict):
+                raise Refused('client report must be an object')
             if report:
                 expected = {'schema': 1, 'session': data['session'], 'generation': data['generation'],
                     'role': role, 'invocation': record['identity']['InvocationID'],
@@ -112,6 +115,9 @@ def refresh_report(data, role, record):
             # Invalid/missing evidence cannot create a new secure or auth fact.
             record['reportError'] = str(error)
     report = record.get('protocolReport')
+    client_alive = identity is not None and same_process(identity)
+    if not client_alive and record.get('client'):
+        record['client'].update(ready=False, secure=False, locked=False, authenticated=False)
     record['protocolOutcome'] = 'unknown'
     if not report:
         if record.get('client'):
@@ -125,9 +131,12 @@ def refresh_report(data, role, record):
     record['everSecure'] = record.get('everSecure', False) or report.get('everSecure') is True
     client['requested'] = True
     if report['event'] == 'locked':
-        record['protocolOutcome'] = 'locked'
-        client['locked'] = True
-        client['secure'] = True
+        # A live wrapper/cgroup is not the protocol holder. Retain secure
+        # history for fail-closed recovery, never current confirmation after
+        # the registered client's exact process lifetime has ended.
+        record['protocolOutcome'] = 'locked' if client_alive else 'unknown'
+        client['locked'] = client_alive
+        client['secure'] = client_alive
     else:
         authenticated = report['event'] == 'authenticated-unlock'
         record['protocolOutcome'] = 'authenticated-unlock' if authenticated else 'finished'
@@ -224,6 +233,8 @@ def graphical_session(wanted=None):
         # hint: SO_PEERCRED identifies the server behind the connected display.
         # Desktop names and the shell/manager's session variables are not proof.
         compositor_pid = wayland_peer()
+    if compositor_comm is not None and wayland_peer() != compositor_pid:
+        raise Refused('backend identity does not match the Wayland display peer')
     process = Path(f'/proc/{compositor_pid}')
     identity = proc_identity(compositor_pid)
     try:
@@ -494,9 +505,13 @@ def manage(job):
                 startup_deadline = str(data['deadline'])
             elif role in ('prehook', 'unlockhook'):
                 startup_deadline = str(time.monotonic() + 5)
+            # systemd versions differ in ExecStart environment expansion. An
+            # encoded argument is inert on both old and new versions; decode
+            # only inside the wrapper, then let sh interpret the original once.
+            encoded = base64.b64encode(os.fsencode(job['command'])).decode('ascii')
             args += ['--', sys.executable, str(Path(__file__).resolve()), 'run', '--generation',
                      data['generation'], '--deadline', startup_deadline,
-                     '--', 'sh', '-c', job['command']]
+                     '--command-encoded', encoded]
             try:
                 command(args)
             except BaseException:
@@ -556,7 +571,7 @@ def manage(job):
             if (data['phase'] in ('unlocking', 'settled') or data['authRole'] is not None
                     or not emergency or not emergency.get('client') or not emergency['client']['secure']
                     or observe(emergency)['gone'] or not real or not real.get('client')
-                    or not real['client']['ready'] or time.monotonic() >= data['deadline']):
+                    or not real['client']['ready'] or observe(real)['gone'] or time.monotonic() >= data['deadline']):
                 return {'committed': False}
             data['handoverCommitted'] = True
             data['handoverAt'] = time.monotonic()
@@ -757,8 +772,11 @@ def run_unit(args):
             command(['systemctl', '--user', 'stop', '--no-block', session.name(role)])
         if time.monotonic() - last_session_check >= 1:
             last_session_check = time.monotonic()
-            result = command(['loginctl', 'show-session', session.session, '-p', 'State', '--value'], check=False)
-            if result.returncode or result.stdout.strip() == 'closing':
+            try:
+                result = command(['loginctl', 'show-session', session.session, '-p', 'State', '--value'], check=False)
+            except (OSError, subprocess.SubprocessError):
+                result = None
+            if result is not None and result.returncode == 0 and result.stdout.strip() == 'closing':
                 command(['systemctl', '--user', 'stop', '--no-block', session.name(role)])
         time.sleep(.1)
 
@@ -773,6 +791,7 @@ def main():
     wrapper = sub.add_parser('run')
     wrapper.add_argument('--generation', required=True)
     wrapper.add_argument('--deadline', required=True)
+    wrapper.add_argument('--command-encoded')
     wrapper.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     try:
@@ -799,6 +818,10 @@ def main():
             return 0
         if args.mode == 'run':
             args.deadline = None if args.deadline == 'none' else float(args.deadline)
+            if args.command_encoded is not None:
+                if args.command:
+                    raise Refused('wrapper command has two transports')
+                args.command = ['sh', '-c', os.fsdecode(base64.b64decode(args.command_encoded, validate=True))]
             if args.command and args.command[0] == '--':
                 args.command.pop(0)
             return run_unit(args)

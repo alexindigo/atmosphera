@@ -21,6 +21,8 @@ Sway, Mango, Labwc and other Wayland backends use kernel peer credentials from
 the actual connected display socket instead of requiring compositor-specific
 IPC. Both the socket and peer must belong to the user; the peer must have a
 live, stable process identity. Desktop names alone never select a session.
+Backend hints must identify the same PID as the connected Wayland endpoint;
+mixing one session's niri/Hyprland hint with another display is refused.
 Its login session must be same-user, local Wayland, class `user`, and active or
 online. A compositor's `session-*.scope` is authoritative. Without a session
 scope (niri-session/uwsm user services), only the compositor's own
@@ -48,6 +50,11 @@ commands run in the owned real unit, including pipelines and daemonized children
 The availability checker only inspects command availability; it never runs the
 command. A persistent `app.atmosphera.Locker1` service is independently managed:
 the owner may call `Lock()` but must not terminate that service.
+
+The adapter encodes configured command bytes across systemd's argument boundary
+and decodes them in its existing wrapper before `sh -c`. This prevents systemd
+environment substitution on old and new systemd versions; the shell interprets
+the original configured syntax once.
 
 Neither a running unit, a D-Bus name nor LockedHint identifies a secure candidate.
 At the deadline, the emergency connection provides its own protocol outcome:
@@ -338,6 +345,17 @@ the session, generation, invocation, registered PID/start identity, token and
 monotone sequence before retaining the report in the generation descriptor.
 Late asynchronous status cannot erase the native result. These are operation
 reports, not settings writes or an additional authentication path.
+Report admission requires a JSON object (including the initial empty object).
+Secure confirmation also requires the registered PID/start lifetime to remain
+live, not just its wrapper or cgroup. Handover rechecks the real invocation in
+the committing transaction. Inconclusive logind lookups, including timeouts,
+retain the holder; a successful closing result still retires session units.
+
+`locker-adapter-admission-proof.py` controls these adapter boundaries and actual
+systemd command transport. `locker-auth-fence-proof.py` checks the actual
+LockClient's existing same-transaction retry after transient peer-stop refusal
+and no unlock after persistent refusal. These controlled receipts are not PAM
+or native session-lock evidence.
 
 A matching finished report means refused, never secure. A matching locked report
 followed by unauthenticated process death means a dead-client lock, not unlock.

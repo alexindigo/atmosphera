@@ -56,18 +56,22 @@ def main():
             ('scope-foreign', {'scope': '42', 'User': str(uid + 1)}, False),
         ]
         peer_identity = compositor not in ('niri', 'Hyprland')
+        cases += [
+            ('peer-foreign', {'peer_uid': uid + 1}, False),
+            ('peer-no-pid', {'peer_pid': 0}, False),
+            ('peer-connect-error', {'peer_error': True}, False),
+            ('socket-foreign', {'socket_uid': uid + 1}, False),
+            ('socket-not-socket', {'socket_mode': stat.S_IFREG}, False),
+            ('missing-display', {'display': ''}, False),
+            ('relative-runtime', {'runtime': 'relative'}, False),
+        ]
+        if not peer_identity:
+            cases += [('peer-backend-mismatch', {'peer_pid': 4343}, False)]
         if peer_identity:
             # Unknown compositors are identified by the connected display peer,
             # not by caller-supplied desktop names or an executable allowlist.
             cases = [case for case in cases if case[0] != 'wrong-process-comm']
             cases += [
-                ('peer-foreign', {'peer_uid': uid + 1}, False),
-                ('peer-no-pid', {'peer_pid': 0}, False),
-                ('peer-connect-error', {'peer_error': True}, False),
-                ('socket-foreign', {'socket_uid': uid + 1}, False),
-                ('socket-not-socket', {'socket_mode': stat.S_IFREG}, False),
-                ('missing-display', {'display': ''}, False),
-                ('relative-runtime', {'runtime': 'relative'}, False),
                 ('caller-desktop-does-not-select-session', {'desktop': 'niri'}, True),
                 ('peer-with-unknown-process-name', {'comm': 'other-wayland-compositor'}, True),
             ]
@@ -77,7 +81,9 @@ def main():
             group = ('0::/user.slice/user-1000.slice/session-' + change['scope'] + '.scope\n'
                      if 'scope' in change else '0::/user.slice/user-1000.slice/user@1000.service/session.slice/compositor.service\n')
             environment = {'XDG_SESSION_ID': change.get('env_sid', '42'), 'XDG_SEAT': change.get('env_seat', 'seat0')}
-            caller = {'XDG_SESSION_ID': '42', 'XDG_SEAT': 'seat0'}
+            caller = {'XDG_SESSION_ID': '42', 'XDG_SEAT': 'seat0',
+                'WAYLAND_DISPLAY': change.get('display', 'wayland-1'),
+                'XDG_RUNTIME_DIR': change.get('runtime', '/run/user/1000')}
             if compositor == 'niri':
                 caller['NIRI_SOCKET'] = '/run/user/1000/niri.wayland-1.4242.sock'
             elif compositor == 'Hyprland':
