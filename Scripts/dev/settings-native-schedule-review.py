@@ -2,18 +2,18 @@
 """Native schedule markers promise complete JSON and a ready FIFO reader."""
 import argparse
 from contextlib import closing
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 from pathlib import Path
 import resource
-import signal
 import shutil
-import subprocess
 import time
 
-from guest_profile import activate_profile, profile_argument, protect_owned_process
+from guest_profile import activate_profile, profile_argument
 from native_settings_controls import prepare
 from probe_files import ProbeFiles
+from presentation_harness import run_harness
 
 
 def main():
@@ -49,43 +49,52 @@ def main():
                        ATMOSPHERA_SETTINGS_FILE=str(root/'config/settings.json'),
                        ATMOSPHERA_CACHE_DIR=str(root/'cache'), ATMOSPHERA_STATE_DIR=str(root/'state'),
                        LD_PRELOAD=str(build/'libatmosphera_native_io.so'), ATCQ_NATIVE_SCHEDULE=str(schedule),
+                       XDG_CACHE_HOME=str(root/'cache'), XDG_CONFIG_HOME=str(root/'xdg'),
+                       XDG_STATE_HOME=str(root/'state'), XDG_DATA_HOME=str(root/'data'),
                        SCHEDULE_RELEASE='1' if case == 'failure' else '0', QML_DISABLE_DISK_CACHE='1')
-            child = guard = None
+            execution = None
             error = None
             try:
-                with (output/(case+'.log')).open('x') as log:
-                    child = subprocess.Popen(['qs', '-p', str(probes.probe), '--no-color'], env=env,
-                                             stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-                    guard = protect_owned_process(child)
-                    if case == 'missing-reader':
-                        assert child.wait(timeout=20) != 0, 'missing FIFO must fail instrumentation'
-                        assert not marker.exists(), 'marker falsely advertised an unavailable FIFO reader'
-                    else:
-                        deadline = time.monotonic()+20
-                        while not marker.exists():
-                            assert child.poll() is None and time.monotonic() < deadline, 'native hold missing'
-                            time.sleep(.001)
-                        observation = json.loads(marker.read_text())
-                        assert observation['phase'] == 'rename' and observation['file'] == str(target)
-                        fd = os.open(gate, os.O_WRONLY | os.O_NONBLOCK)
-                        try:
-                            os.write(fd, b'1\n' if case == 'failure' else b'0\n')
-                        finally:
-                            os.close(fd)
-                        assert child.wait(timeout=20) == 0
-                        assert 'NATIVE_SCHEDULE: PASS' in (output/(case+'.log')).read_text()
-                        if case == 'normal':
-                            assert json.loads(target.read_text())['fontDefaultScale'] == 1.25
+                supervised = root/'execution'
+                supervised.mkdir()
+                # Expected native aborts can fork Quickshell crash helpers.
+                # Own the whole descendant lifetime, not just Popen's child.
+                command = ['env', 'LD_PRELOAD='+env.pop('LD_PRELOAD'), 'qs', '-p', str(probes.probe), '--no-color']
+                with ThreadPoolExecutor(max_workers=1) as supervisor:
+                    future = supervisor.submit(run_harness, command, supervised, env, 30)
+                    try:
+                        if case != 'missing-reader':
+                            deadline = time.monotonic()+20
+                            while not marker.exists():
+                                assert not future.done() and time.monotonic() < deadline, 'native hold missing'
+                                time.sleep(.001)
+                            observation = json.loads(marker.read_text())
+                            assert observation['phase'] == 'rename' and observation['file'] == str(target)
+                            fd = os.open(gate, os.O_WRONLY | os.O_NONBLOCK)
+                            try:
+                                os.write(fd, b'1\n' if case == 'failure' else b'0\n')
+                            finally:
+                                os.close(fd)
+                    finally:
+                        execution = future.result(timeout=40)
+                        shutil.copyfile(supervised/'shell.log', output/(case+'.log'))
+                assert execution['cleanup_complete'] and not execution['timed_out'], execution
+                if case == 'missing-reader':
+                    assert execution['exit_code'] != 0, 'missing FIFO must fail instrumentation'
+                    assert not marker.exists(), 'marker falsely advertised an unavailable FIFO reader'
+                else:
+                    assert execution['exit_code'] == 0
+                    assert 'NATIVE_SCHEDULE: PASS' in (output/(case+'.log')).read_text()
+                    if case == 'normal':
+                        assert json.loads(target.read_text())['fontDefaultScale'] == 1.25
             except Exception as caught:
                 error = repr(caught)
             finally:
-                if child is not None and child.poll() is None:
-                    if guard is None:
-                        guard = protect_owned_process(child)
-                    guard.terminate()
-                    child.wait(timeout=5)
-                shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))
-            rows.append(dict(case=case, status='FAIL' if error else 'PASS', error=error))
+                if execution is not None and execution['cleanup_complete']:
+                    shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))
+                else:
+                    error = (error or '')+'; namespace not proven quiet; runtime retained'
+            rows.append(dict(case=case, status='FAIL' if error else 'PASS', error=error, execution=execution))
             print(json.dumps(rows[-1]), flush=True)
     profile.verify()
     (output/'result.json').write_text(json.dumps(dict(cases=rows, nativeControls=contract), indent=2)+'\n')
