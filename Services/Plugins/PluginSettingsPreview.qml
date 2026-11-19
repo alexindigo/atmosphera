@@ -41,7 +41,12 @@ QtObject {
     var identity = currentOwner();
     if (_token || identity === null || identity === undefined) return null;
     var editor = providedEditor || draftFactory();
-    if (!editor || !editor.ready) return null;
+    if (!editor || !editor.ready) {
+      // A refused synchronous preview owns no session. Release only editors
+      // created here; a supplied editor still belongs to its caller.
+      if (editor && !providedEditor) editor.discard();
+      return null;
+    }
     var owned = !providedEditor;
     var token = {};
     var lifetime = _lifetime;
