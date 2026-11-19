@@ -37,6 +37,26 @@ def compositor_journal_event(record, identity):
         pid=identity['pid'], start=identity['start'], source='journal')
 
 
+def read_initial_notification(fd, pending, timeout):
+    """Read the initial state with the same raw reader as later callbacks.
+
+    Records arriving in the same chunk stay in ``pending`` for the callback,
+    never in a buffered reader the raw-fd callback cannot see.
+    """
+    import select
+    deadline = time.monotonic() + timeout
+    while b'\n' not in pending:
+        assert select.select([fd], [], [], max(0, deadline - time.monotonic()))[0], 'native notification startup timed out'
+        chunk = os.read(fd, 65536)
+        assert chunk, 'native notification stream closed during startup'
+        pending.extend(chunk)
+    line, _, rest = pending.partition(b'\n')
+    pending[:] = rest
+    initial = json.loads(line)
+    assert initial.get('kind') == 'compositor-initial', 'native notification did not start with its initial state'
+    return initial
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
@@ -78,7 +98,12 @@ def main():
             try:
                 if (process / 'exe').resolve().name != 'niri':
                     continue
-                if not any(link.readlink().as_posix() in {'socket:[' + inode + ']' for inode in inodes}
+                def target(link):
+                    try:
+                        return link.readlink().as_posix()
+                    except FileNotFoundError:
+                        return ''  # an unrelated descriptor closed during the scan
+                if not any(target(link) in {'socket:[' + inode + ']' for inode in inodes}
                            for link in (process / 'fd').iterdir()):
                     continue
                 matches.append(process)
@@ -119,9 +144,7 @@ def main():
         notification = subprocess.Popen([str(binary)], stdout=subprocess.PIPE,
             stderr=(work / 'hypr-notify-stderr.txt').open('w'))
         # Initial roundtrip is bounded; ready never precedes native subscription.
-        import select
-        assert select.select([notification.stdout], [], [], 5)[0], 'native notification startup timed out'
-        initial = json.loads(notification.stdout.readline())
+        initial = read_initial_notification(notification.stdout.fileno(), notification_pending, 5)
         emit(initial.pop('kind'), **initial)
         if initial.get('locked'):
             raise AssertionError('a pre-existing Hyprland lock is not a test target')
@@ -253,6 +276,7 @@ def main():
     GLib.timeout_add(50, read_compositor)
     if notification is not None:
         GLib.io_add_watch(notification.stdout.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, read_notifications)
+        consume_notifications(b'')  # records read together with the initial state
     signal.signal(signal.SIGTERM, lambda *_: loop.quit())
     try:
         if not sample():

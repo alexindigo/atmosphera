@@ -74,6 +74,11 @@ def main():
     check('pam-before-native-unlock', lambda: authenticated_unlocks([success, unlock], 1))
     check('same-timestamp-ordered-pam-before-unlock', lambda: authenticated_unlocks(
         [dict(success, sourceMonotonic=3), unlock], 1))
+    second = dict(unlock, sourceMonotonic=5, message='-> ext_session_lock_v1#8.unlock_and_destroy()')
+    check('pam-per-native-unlock', lambda: authenticated_unlocks(
+        [success, unlock, dict(success, sourceMonotonic=4), second], 2))
+    check('reject-one-pam-two-unlocks', lambda: rejected(lambda: authenticated_unlocks(
+        [success, unlock, second], 2)))
     check('reject-same-timestamp-pam-after-unlock', lambda: rejected(lambda: authenticated_unlocks(
         [unlock, dict(success, sourceMonotonic=3)], 1)))
     for name, events in (

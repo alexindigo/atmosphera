@@ -54,6 +54,23 @@ def main():
     check('atomic-resident-report', lambda: atomic_fixture('locker-memory-pressure.py', ['resident.json']))
     check('atomic-sleep-reports', lambda: atomic_fixture('locker-sleep-service.py', ['sleep-service-entered.json', 'sleep-service-finished.json']))
 
+    def initial_notification_keeps_same_chunk():
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('locker_observer', source / 'Scripts/dev/locker-compositor-observer.py')
+        observer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(observer)
+        read, write = os.pipe()
+        try:
+            os.write(write, b'{"kind":"compositor-initial","locked":false}\n{"kind":"compositor-lock","locked":true}\n')
+            pending = bytearray()
+            initial = observer.read_initial_notification(read, pending, 1)
+            assert initial == {'kind': 'compositor-initial', 'locked': False}
+            assert json.loads(bytes(pending).splitlines()[0]) == {'kind': 'compositor-lock', 'locked': True}, 'lock record lost'
+        finally:
+            os.close(read)
+            os.close(write)
+    check('observer-initial-keeps-same-chunk-lock', initial_notification_keeps_same_chunk)
+
     def partial_events():
         case = work / 'events'
         case.mkdir()
@@ -236,10 +253,12 @@ ShellRoot {
             sid='fixture', current={'descriptor': {'phase': 'settled'}}, unlocked=True,
             wlroots_desktop=lambda: False, compositor_locked=lambda *args: False,
             original_hash='controlled-not-a-password', credential=credential, original_shadow=shadow, work=work)
+        raised = None
         try:
             exec(compile(ast.Module(body=[node], type_ignores=[]), str(path), 'exec'), env)
         except AssertionError as error:
-            assert 'sentinel invocation replaced' in str(error)
+            raised = error
+        assert raised is not None and 'sentinel invocation replaced' in str(raised), 'sentinel ownership failure not exercised'
         assert restored == [True] and not credential.exists() and not shadow.exists()
     check('sentinel-failure-still-restores-safe-password', independent_password_restore)
 

@@ -18,11 +18,16 @@ def authenticated_unlocks(events, expected):
         and re.search(r'ext_session_lock_v1#\d+\.unlock_and_destroy\(', row.get('message', ''))]
     assert len(unlocks) == expected, 'unexpected native unlock count'
     proofs = []
+    consumed = {}
     for unlock_index, unlock in unlocks:
         # journald can timestamp consecutive lines from one stream identically.
         # journalctl preserves their source order; require both earlier position
         # and a non-later source time, never merely an auth-attempt timestamp.
-        successes = [row for index, row in enumerate(events) if index < unlock_index and row['kind'] == 'journal'
+        # Each unlock needs its own success after the client's previous unlock.
+        client = (unlock.get('invocation'), unlock.get('pid'))
+        after = consumed.get(client, -1)
+        consumed[client] = unlock_index
+        successes = [row for index, row in enumerate(events) if after < index < unlock_index and row['kind'] == 'journal'
             and row.get('invocation') == unlock.get('invocation') and row.get('invocation')
             and row.get('pid') == unlock.get('pid') and row.get('pid')
             and pam_success(row.get('message', ''))

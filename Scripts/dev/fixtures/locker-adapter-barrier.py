@@ -89,7 +89,9 @@ if len(sys.argv) == 3 and sys.argv[1].endswith('/Scripts/python/locker-unit.py')
         if hold_inspect and reply['ok']:
             # Capture the completed real inspect transaction, outside its flock.
             # Authentication remains free to commit before the old bytes arrive.
-            (work / 'after-consume-inspect.json').write_text(output.getvalue())
+            partial = work / 'after-consume-inspect.json.partial'
+            partial.write_text(output.getvalue())
+            partial.replace(work / 'after-consume-inspect.json')
             deadline = time.monotonic() + 45
             while not (work / 'release-after-consume-inspect').exists():
                 if time.monotonic() >= deadline:

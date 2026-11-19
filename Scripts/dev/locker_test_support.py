@@ -50,8 +50,11 @@ def require_guest(work, source):
     desktop = manager.get('XDG_CURRENT_DESKTOP', '')
     assert desktop in ('niri', 'Hyprland', 'mango', 'Mango', 'sway') or desktop.split(':')[0] == 'labwc', 'real graphical session required'
     for key in ('NIRI_SOCKET', 'HYPRLAND_INSTANCE_SIGNATURE', 'SWAYSOCK', 'WAYLAND_DISPLAY', 'XDG_CURRENT_DESKTOP', 'XDG_SESSION_TYPE'):
+        # A stale caller hint must not select another compositor's branch.
         if key in manager:
             os.environ[key] = manager[key]
+        else:
+            os.environ.pop(key, None)
     assert os.environ.get('WAYLAND_DISPLAY'), 'graphical display required'
     socket = Path(os.environ['XDG_RUNTIME_DIR']) / os.environ['WAYLAND_DISPLAY']
     assert socket.is_socket(), 'Wayland socket missing'
