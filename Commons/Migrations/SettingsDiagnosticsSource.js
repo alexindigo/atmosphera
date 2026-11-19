@@ -19,6 +19,6 @@ var transform = `function(input) {
     });
   }
   visit(input.raw, input.source.prefix);
-  if (truncated) diagnostics.push({code: "unknown-setting-truncated", path: [], severity: "warning"});
+  if (truncated) diagnostics[diagnostics.length - 1] = {code: "unknown-setting-truncated", path: [], severity: "warning"};
   return {values: input.values, compatibilityRaw: input.compatibilityRaw, effects: [], diagnostics: diagnostics};
 }`;

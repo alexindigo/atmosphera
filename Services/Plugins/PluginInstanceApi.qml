@@ -123,6 +123,7 @@ QtObject {
     }
     editor.whenReady(function (opened) {
       if (opened.status !== "opened") {
+        editor.discard();
         if (typeof callback === "function") callback(opened);
         return;
       }

@@ -17,6 +17,8 @@ def main():
         parser.add_argument('--'+name, required=True, type=Path)
     profile_argument(parser)
     args = parser.parse_args()
+    for name in ('source', 'output', 'work_root'):
+        setattr(args, name, getattr(args, name).resolve())
     profile = activate_profile(args.guest_profile)
     profile.prepare_roots()
     args.output.mkdir(parents=True, exist_ok=False)

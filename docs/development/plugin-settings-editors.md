@@ -1,5 +1,7 @@
 # Plugin editor owner preparation
 
+## Historical pre-cutover contract
+
 Plugin APIs expose `createSettingsEditor()`. The returned selected-value handle
 has `initialValue`, `apply(value, callback)`, `resetOverrides(callback)` (instance
 only), and `discard()`. It is separate from the live runtime API. Unapplied values
@@ -90,9 +92,52 @@ factory with the actual normalized worker command/overlay contract.
 
 ## Native cutover witness
 
+Native editors open asynchronously and own their editable values. Do not pass a
+detached copy of `initialValue` to Apply:
+
+```qml
+var editor = pluginApi.createSettingsEditor();
+editor.whenReady(function (result) {
+  if (result.status !== "opened") {
+    editor.discard();
+    return;
+  }
+  editor.values.label = "New label"; // A field declared by this plugin's schema.
+  editor.apply(editor.values, function (receipt) {
+    // Inspect receipt.status and receipt.refreshState before saved feedback.
+  });
+});
+```
+
+`discard()` still refuses while busy. A presentation that is already closing or
+being destroyed calls `release()` instead: the editor owns its deferred detach
+through native Apply/Reset settlement and suppresses the released presentation's
+completion callback. This does not authorize discarding user edits on an ordinary
+Close; the popup's confirmation flow remains responsible for that decision.
+
 The current owner uses `Scripts/dev/fixtures/settings-plugin-editors-native.qml`.
 It retains shared Cancel/Apply, all four placement addresses, ABA/reorder/base/
 unload refusals, real IO failure and Retry, sparse unknown fields, Reset, runtime
 consumers and separate cold verification. The old-owner fixture belongs to the
 pre-cutover commits and is not shipped in the current tree. The gate selects the
 native witness at cutover; historical trees retain their own old-owner fixture.
+
+## Runtime placement save and retirement Retry
+
+Placement `saveSettings` requests selected publication of its owning atomic
+settings key (for example `bar.widgets.left`), not a whole-store save. Failed
+receipts retain their attempted, unconfirmed coverage keys. An explicit Retry
+publishes the **current values of those same keys** through ConfigQml 0.5.1
+`saveSelected`. A newer edit to a covered key is the user's latest intent for
+that key. Keys outside the failed coverage are not saved, including unrelated
+pending keys in the same JSON file or shared plugin settings. Successful later
+requested coverage supersedes earlier failures on those keys; retirement never
+retries newly unrequested edits after that success.
+
+This is a current-intent Retry, not an exact original-value capture. ConfigQml
+0.5.1 returns retained-group tokens asynchronously, so overlapping requests cannot
+name an earlier token before its callback. A future native queued-capture facility
+could support exact original-boundary Retry. It is not required for this contract.
+List/record keys remain atomic: Retry does not invent a per-row persistence unit.
+Same-owner retries retain the existing ready native owner until requested work
+settles, then wait for placement API destruction before releasing that owner.

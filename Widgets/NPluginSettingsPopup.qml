@@ -39,10 +39,11 @@ Popup {
   property var _cancelOpening: null
   property var _lifetime: ({alive: true})
   signal settingsCompleted(var result)
+  signal presentationInvalidated
   Component.onDestruction: {
     _lifetime.alive = false;
     if (_cancelOpening) _cancelOpening();
-    if (_editor) _editor.discard();
+    if (_editor) _editor.release();
   }
 
   NSettingsInputGuard {
@@ -267,11 +268,12 @@ Popup {
     settingsLoader.sourceComponent = null;
     settingsLoader.source = "";
     if (_editor)
-      _editor.discard();
+      _editor.release();
     _editor = null;
     if (_pageApi)
       _pageApi.destroy();
     _pageApi = null;
+    _busy = false;
     _failed = false;
     currentPlugin = null;
     inputEdits.reset();
@@ -346,6 +348,10 @@ Popup {
       root.currentPlugin = null;
       root.currentPluginApi = null;
       root.currentInstanceApi = null;
+      // No page ever opened and no editable work remains. Release an adopted
+      // transparent host through its existing presentation lifetime contract.
+      root._failed = false;
+      root.presentationInvalidated();
     });
     return true;
   }

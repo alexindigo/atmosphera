@@ -20,6 +20,8 @@ def main():
     for name in ('source', 'installed', 'output', 'work-root'):
         parser.add_argument('--'+name, type=Path, required=True)
     args = parser.parse_args()
+    for name in ('source', 'installed', 'output', 'work_root'):
+        setattr(args, name, getattr(args, name).resolve())
     args.output.mkdir(parents=True, exist_ok=False)
     args.work_root.mkdir(parents=True, exist_ok=False)
     build, contract = prepare(args.source)
@@ -42,6 +44,7 @@ def main():
     runtime = Path(tempfile.mkdtemp(prefix='el-', dir=os.environ['TMPDIR']))
     env = dict(os.environ,QML_IMPORT_PATH=str(build),LD_PRELOAD=str(build/'libatmosphera_native_io.so'),
         ATCQ_NATIVE_SCHEDULE=str(schedule),ATMOSPHERA_CONFIG_DIR=str(config),
+        ATCQ_NATIVE_DETACH_MARKER=str(args.work_root/'detached.json'),
         ATMOSPHERA_CACHE_DIR=str(args.work_root/'cache'),ATMOSPHERA_STATE_DIR=str(args.work_root/'state'),
         XDG_RUNTIME_DIR=str(runtime),QML_DISABLE_DISK_CACHE='1')
     process = ipc = None
@@ -69,6 +72,15 @@ def main():
                     assert process.poll() is None and time.monotonic()<deadline,'pending native reload not observed'
                     time.sleep(.02)
                 assert json.loads(target.read_text())['fontDefaultScale'] == 1
+                # RELOAD_PENDING is only a sample made before reload starts.
+                # The original native owner must detach while rename is held.
+                detached = Path(env['ATCQ_NATIVE_DETACH_MARKER'])
+                while not detached.exists():
+                    assert process.poll() is None and time.monotonic()<deadline,'native owner detach not observed'
+                    time.sleep(.02)
+                observation = json.loads(detached.read_text())
+                assert observation == dict(phase='owner-detached', pid=process.pid), observation
+                assert json.loads(target.read_text())['fontDefaultScale'] == 1
                 release()
                 assert ipc.wait(timeout=20) == 0
             assert process.wait(timeout=25) == 0
@@ -79,7 +91,7 @@ def main():
         expected = dict(fontDefaultScale=1.25,opaque=dict(keep=[False,0,None,'']))
         assert json.loads(target.read_text()) == expected
         cold_env = dict(env,I5_ENGINE_COLD='1')
-        cold_env.pop('LD_PRELOAD'); cold_env.pop('ATCQ_NATIVE_SCHEDULE')
+        cold_env.pop('LD_PRELOAD'); cold_env.pop('ATCQ_NATIVE_SCHEDULE'); cold_env.pop('ATCQ_NATIVE_DETACH_MARKER')
         cold = subprocess.run(['timeout','25','qs','-p',str(entry),'--no-color'],env=cold_env,
             capture_output=True,text=True,timeout=30)
         text = cold.stdout+cold.stderr; (args.output/'cold.log').write_text(text)
@@ -88,19 +100,33 @@ def main():
         assert json.loads(target.read_text()) == expected
         assert before == (legacy.read_bytes(),legacy.stat().st_ino,legacy.stat().st_mtime_ns,legacy.stat().st_mode)
         (args.output/'result.json').write_text(json.dumps(dict(status='PASS',controls=contract,
-            cases=['native-save-held','reload-during-pending-save','new-engine-consumer','separate-cold-consumer','async-close'],
+            cases=['native-save-held','reload-during-pending-save','native-owner-detached-before-release','new-engine-consumer','separate-cold-consumer','async-close'],
             rawUnknownPreserved=True,legacyUnchanged=True,runtimeRoot=str(runtime),entrySha256=hashlib.sha256(entry.read_bytes()).hexdigest()),indent=2)+'\n')
         print('SETTINGS_ENGINE_LIFETIME: PASS')
     finally:
-        if marker.exists() and not released:
-            release()
-        if ipc is not None and ipc.poll() is None:
-            ipc.wait(timeout=20)
-        if process is not None and process.poll() is None:
-            assert Path('/proc/'+str(process.pid)).stat().st_uid == os.getuid()
-            assert b'i5-engine-lifetime.qml' in Path('/proc/'+str(process.pid)+'/cmdline').read_bytes()
-            os.killpg(process.pid,signal.SIGTERM); process.wait(timeout=10)
-        entry.unlink()
+        cleanup_errors = []
+        try:
+            if marker.exists() and not released:
+                try:
+                    release()
+                except OSError as error:
+                    cleanup_errors.append('release: '+repr(error))
+            if ipc is not None and ipc.poll() is None:
+                try:
+                    ipc.wait(timeout=20)
+                except subprocess.TimeoutExpired:
+                    ipc.terminate()
+                    ipc.wait(timeout=5)
+            if process is not None and process.poll() is None:
+                assert Path('/proc/'+str(process.pid)).stat().st_uid == os.getuid()
+                assert b'i5-engine-lifetime.qml' in Path('/proc/'+str(process.pid)+'/cmdline').read_bytes()
+                os.killpg(process.pid,signal.SIGTERM); process.wait(timeout=10)
+        finally:
+            entry.unlink()
+            (args.output/'cleanup.json').write_text(json.dumps(dict(errors=cleanup_errors,
+                childExit=process.returncode if process else None), indent=2)+'\n')
+        if cleanup_errors:
+            raise RuntimeError('engine lifetime cleanup failed: '+repr(cleanup_errors))
 
 
 if __name__ == '__main__':
