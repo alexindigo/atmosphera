@@ -3,6 +3,7 @@ import Quickshell
 import qs.Commons
 import qs.Services.Keyboard
 import qs.Services.Plugins
+import qs.Services.UI
 
 ShellRoot {
   id: root
@@ -32,6 +33,10 @@ ShellRoot {
     console.log("SCOPED_RECEIPT: PASS " + mode);
     Qt.exit(0);
   }
+  function publishSelected(paths, callback) {
+    // Keep the rejecting control executable on the callback-only parent API.
+    return typeof Settings.saveSelected === "function" ? Settings.saveSelected(paths, callback) : Settings.saveImmediate(callback);
+  }
   function result(receipt) {
     try {
       console.log("SCOPED_RECEIPT_RESULT " + JSON.stringify({
@@ -47,6 +52,12 @@ ShellRoot {
           editor.apply(1.8, result);
           return;
         }
+      } else if (["ordinary", "reset", "bar-command", "transfer"].indexOf(mode) !== -1) {
+        check(receipt.operation === "saveSelected" && receipt.status === "saved" && !receipt.unresolvedGroups.length, "per-edit selected save acknowledged");
+        const expected = mode === "transfer" ? ["bar.widgets.left", "bar.widgets.right"] : mode === "bar-command" ? ["bar.widgets.left"] : ["ui.fontDefaultScale"];
+        check(JSON.stringify(receipt.coverage.map(function (entry) {
+          return entry.path.join(".");
+        }).sort()) === JSON.stringify(expected), "per-edit leaf coverage");
       } else
         check(receipt.status === "failed" && receipt.error.code === "unresolved-group", "root save keeps full-prefix refusal");
       done();
@@ -173,6 +184,11 @@ ShellRoot {
       if (mode === "cold") {
         check(Settings.data.ui.fontDefaultScale === Number(Quickshell.env("SCOPED_RECEIPT_EXPECT")), "independent cold UI consumer");
         check(Settings.data.bindings.environment === "macos", "held bindings did not reach disk");
+        const original = Quickshell.env("SCOPED_RECEIPT_COLD_CASE");
+        if (original === "bar-command")
+          check(Settings.data.bar.widgets.left[0].pinned[0] === "scoped", "cold actual bar field");
+        if (original === "transfer")
+          check(Settings.data.bar.widgets.left.length === 0 && Settings.data.bar.widgets.right[0].id === "Tray", "cold multi-leaf transfer");
         console.log("SCOPED_RECEIPT: COLD_PASS");
         Qt.exit(0);
         return;
@@ -221,7 +237,35 @@ ShellRoot {
         checkHead();
       }
       phase = 2;
-      if (mode === "draft") {
+      if (mode === "bar-command") {
+        editor = BarService.createWidgetSettingsEditor("", "left", 0);
+        check(editor !== null, "actual bar command editor");
+        check(editor.submit({
+                              pinned: ["scoped"]
+                            }, result), "actual bar command admitted");
+      } else if (mode === "transfer") {
+        editor = Settings.createRecordListEditor(["bar", "widgets", "left"], [], [
+                                                   {
+                                                     path: ["bar", "widgets", "right"],
+                                                     listAddress: []
+                                                   }
+                                                 ]);
+        check(editor !== null, "native multi-leaf command editor");
+        check(editor.submit([
+                              {
+                                op: "transfer",
+                                from: editor.endpoint(0),
+                                to: editor.endpoint(0, 1)
+                              }
+                            ], function (admitted) {
+                              try {
+                                check(admitted.status === "admitted", "native transfer admitted");
+                                publishSelected([["bar", "widgets", "left"], ["bar", "widgets", "right"]], result);
+                              } catch (error) {
+                                fail(error);
+                              }
+                            }), "native transfer submitted");
+      } else if (mode === "draft") {
         editor = Settings.createEditor("ui.fontDefaultScale");
         check(editor !== null, "actual selected native draft");
         editor.apply(1.6, result);
@@ -232,7 +276,7 @@ ShellRoot {
         if (mode.indexOf("profile") === 0 || mode === "overlay")
           openProfile();
         else
-          Settings.saveImmediate(result);
+          publishSelected([["ui", "fontDefaultScale"]], result);
       }
     } catch (error) {
       fail(error);
@@ -244,7 +288,7 @@ ShellRoot {
       root.begin();
     }
     function onSettingsSaveCompleted(receipt) {
-      if (root.mode === "reset" && root.phase === 2 && receipt.operation === "save")
+      if (root.phase === 2 && root.mode === "reset" && ["save", "saveSelected"].indexOf(receipt.operation) !== -1)
         root.result(receipt);
     }
   }

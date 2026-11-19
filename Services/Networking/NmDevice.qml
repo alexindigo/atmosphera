@@ -1,389 +1,424 @@
-pragma ComponentBehavior: Bound
+// Interface is reused by sibling records and captures no outer IDs. Bound
+// inline components cannot be instantiated from another QML file (Qt contract).
+pragma ComponentBehavior: Unbound
 
 import DBus 1.0
 import QtQuick
+import QtQml.Models
+import Quickshell
 
-// A NetworkManager device bundle: state + details via D-Bus (no nmcli).
-//
-// Layered proxies because NM's object model splits per interface and some
-// objects (Ip4Config/Ip6Config, Connection.Active) do not answer
-// introspection — those reads go through getProperty()/call() directly.
-//
-// Root is an Item (not QtObject) so the Component children below are legal:
-// QtObject's default property is list<QtObject>, which rejects Components.
-Item {
+// Retained device bundle. Linked facts are inputs, never child-object reads.
+Scope {
   id: root
-
-  // The D-Bus object path of the device (e.g. /org/freedesktop/NetworkManager/Devices/2)
-  property string path: ""
-
-  // Public, auto-updating device facts
-  readonly property bool ready: _devReady
-  readonly property string ifname: _ifname
-  readonly property int deviceType: _deviceType // NM DeviceType: 1=ethernet, 2=wifi, 32=generic/loopback
-  readonly property int nmState: _state // NM DeviceState: 100=activated; exposed as nmState
-  readonly property bool connected: _state === 100
-  readonly property string hwAddr: _hwAddr
-  readonly property string connectionName: _connectionName
-  readonly property string speed: _speed // ethernet: e.g. "1000 Mbps" (Wired.Speed is Mb/s)
-  readonly property string rate: _rate // wifi: bitrate, normalized to "N Mbit/s"
-  readonly property string ipv4: _ipv4
-  readonly property string gateway4: _gateway4
-  readonly property var dns4: _dns4
-  readonly property var ipv6: _ipv6
-  readonly property var gateway6: _gateway6
-  readonly property var dns6: _dns6
-
-  // Wifi-only (populated via the active AccessPoint)
-  readonly property string activeAccessPoint: _activeAccessPoint
-  readonly property string wifiSignal: _wifiSignal
-  readonly property string wifiBand: _wifiBand
-  readonly property string wifiChannel: _wifiChannel
-  readonly property string wifiWidth: _wifiWidth
-
-  property bool _devReady: false
-  property string _ifname: ""
-  property int _deviceType: 0
-  property int _state: 0
-  property string _hwAddr: ""
-  property string _connectionName: ""
-  property string _speed: ""
-  property string _rate: ""
-  property string _ipv4: ""
-  property string _gateway4: ""
-  property var _dns4: []
-  property var _ipv6: []
-  property var _gateway6: []
-  property var _dns6: []
-  property string _activeAccessPoint: ""
-  property string _ip4Path: ""
-  property string _ip6Path: ""
-  property string _acPath: ""
-  property string _wifiSignal: ""
-  property string _wifiBand: ""
-  property string _wifiChannel: ""
-  property string _wifiWidth: ""
-
-  signal factsChanged
-
-  function _emitFacts() {
-    factsChanged();
+  required property string owner
+  required property string path
+  property bool live: true
+  property var activeFacts: ({})
+  property var accessPointFacts: ({})
+  property var ip4Facts: ({})
+  property var ip6Facts: ({})
+  readonly property var references: ({
+                                       active: core.facts.ActiveConnection || "/",
+                                       ip4: core.facts.Ip4Config || "/",
+                                       ip6: core.facts.Ip6Config || "/",
+                                       accessPoint: wireless.object ? wireless.object.facts.ActiveAccessPoint || "/" : "/",
+                                       accessPoints: wireless.object ? wireless.object.facts.AccessPoints || [] : []
+                                     })
+  readonly property var facts: {
+    var c = core.facts, w = wireless.object ? wireless.object.facts : {}, e = wired.object ? wired.object.facts : {};
+    var connected = c.State === 100, ap = accessPointFacts;
+    var frequency = ap.Frequency || 0;
+    return {
+      path: path,
+      ready: core.ready,
+      ifname: c.Interface || "",
+      deviceType: c.DeviceType || 0,
+      nmState: c.State || 0,
+      connected: connected,
+      hwAddr: c.HwAddress || "",
+      connectionName: connected ? activeFacts.Id || "" : "",
+      activeConnection: references.active,
+      speed: connected && e.Speed ? e.Speed + " Mbps" : "",
+      rate: connected && w.Bitrate ? Math.round(w.Bitrate / 100) / 10 + " Mbit/s" : "",
+      ipv4: connected ? (ip4Facts.addresses || [])[0] || "" : "",
+      gateway4: connected ? ip4Facts.Gateway || "" : "",
+      dns4: connected ? ip4Facts.nameservers || [] : [],
+      ipv6: connected ? ip6Facts.addresses || [] : [],
+      gateway6: connected && ip6Facts.Gateway ? [ip6Facts.Gateway] : [],
+      dns6: connected ? ip6Facts.nameservers || [] : [],
+      activeAccessPoint: references.accessPoint,
+      accessPoints: references.accessPoints,
+      lastScan: w.LastScan === undefined ? -1 : Number(w.LastScan),
+      wifiSignal: connected && ap.Strength !== undefined ? String(ap.Strength) : "",
+      wifiBand: !connected || !frequency ? "" : frequency >= 5925 && frequency < 7125 ? "6 GHz" : frequency >= 5150 && frequency < 5925 ? "5 GHz" : frequency >= 2400 && frequency < 2500 ? "2.4 GHz" : frequency + " MHz",
+      wifiChannel: connected && frequency ? String(root.channel(frequency) || "") : "",
+      wifiWidth: connected && ap.Bandwidth ? ap.Bandwidth + " MHz" : ""
+    };
   }
-
-  // The device object itself (introspects fine)
-  property var _dev: DBus {
-    service: "org.freedesktop.NetworkManager"
+  signal changed
+  signal failed(string message)
+  onFactsChanged: changed()
+  function channel(frequency) {
+    if (frequency === 2484)
+      return 14;
+    if (frequency >= 2412 && frequency <= 2472)
+      return Math.round((frequency - 2407) / 5);
+    if (frequency >= 5000 && frequency <= 5900)
+      return Math.round((frequency - 5000) / 5);
+    if (frequency >= 5955 && frequency <= 7115)
+      return Math.round((frequency - 5950) / 5);
+    return 0;
+  }
+  function reconcile() {
+    core.reconcile();
+    if (wired.object)
+      wired.object.reconcile();
+    if (wireless.object)
+      wireless.object.reconcile();
+  }
+  function requestScan(done) {
+    if (!wireless.object) {
+      done({
+             ok: false,
+             error: "Wireless device unavailable"
+           });
+      return;
+    }
+    wireless.object.invoke("RequestScan", [
+                           {}
+                         ], done);
+  }
+  function retire() {
+    live = false;
+    core.retire();
+    if (wired.object)
+      wired.object.retire();
+    if (wireless.object)
+      wireless.object.retire();
+  }
+  Interface {
+    id: core
+    owner: root.owner
     path: root.path
     iface: "org.freedesktop.NetworkManager.Device"
-    connection: SystemBus
-
-    onSignalReceived: function (name, args) {
-      if (name === "StateChanged") {
-        root._refreshCore();
-      } else if (name === "PropertiesChanged") {
-        root._refreshCore();
-      }
+    fields: ["Interface", "DeviceType", "State", "HwAddress", "ActiveConnection", "Ip4Config", "Ip6Config"]
+    onEventReceived: function (member, args) {
+      if (member === "StateChanged")
+        core.apply({
+                     State: args[0]
+                   });
     }
-
-    onIntrospectionCompleted: {
-      root._refreshCore();
-    }
+    onFailed: message => root.failed(message)
   }
-
-  // Wired-specific facts (speed, carrier)
-  property var _wired: null
-  // Wireless-specific facts (bitrate, active AP)
-  property var _wireless: null
-
-  function _refreshCore() {
-    var dev = root._dev;
-    // Dynamic props auto-fetched post-introspection
-    var newState = (dev.state !== undefined) ? dev.state : 0;
-    var newType = (dev.deviceType !== undefined) ? dev.deviceType : 0;
-    var newIf = dev["interface"] || "";
-    var newHw = dev.hwAddress || "";
-    var newAcPath = dev.activeConnection || "";
-    var newIp4 = dev.ip4Config || "";
-    var newIp6 = dev.ip6Config || "";
-
-    var changed = (newState !== root._state) || (newType !== root._deviceType) || (newIf !== root._ifname) || (newHw !== root._hwAddr) || (newAcPath !== root._acPath) || (newIp4 !== root._ip4Path) || (newIp6 !== root._ip6Path);
-
-    root._state = newState;
-    root._deviceType = newType;
-    root._ifname = newIf;
-    root._hwAddr = newHw;
-    root._acPath = newAcPath;
-    root._ip4Path = newIp4;
-    root._ip6Path = newIp6;
-
-    root._devReady = true;
-
-    // Type-specific proxies
-    if (newType === 1 && !root._wired) {
-      root._wired = wiredComponent.createObject(root, {
-                                                  "path": root.path
-                                                });
-    } else if (newType === 2 && !root._wireless) {
-      root._wireless = wirelessComponent.createObject(root, {
-                                                        "path": root.path
-                                                      });
-    }
-
-    if (root.connected) {
-      root._refreshDetails();
-    } else {
-      root._clearDetails();
-    }
-
-    if (changed) {
-      root._emitFacts();
-    }
-  }
-
-  function _refreshDetails() {
-    // Connection display name via Connection.Active.Id (no introspection on
-    // that object — getProperty directly)
-    if (root._acPath && root._acPath !== "/") {
-      var acProxy = acComponent.createObject(root, {
-                                               "path": root._acPath
-                                             });
-      var idReply = acProxy.getProperty("Id");
-      if (idReply) {
-        idReply.finished.connect(function () {
-          if (!idReply.isError && idReply.value !== undefined && idReply.value !== "") {
-            if (root._connectionName !== String(idReply.value)) {
-              root._connectionName = String(idReply.value);
-              root._emitFacts();
-            }
-          }
-          acProxy.destroy();
-        });
-      } else {
-        acProxy.destroy();
-      }
-    }
-
-    // IPv4 details (Ip4Config does not introspect — getProperty directly)
-    if (root._ip4Path && root._ip4Path !== "/") {
-      root._readIpConfig(root._ip4Path, false);
-    }
-    if (root._ip6Path && root._ip6Path !== "/") {
-      root._readIpConfig(root._ip6Path, true);
-    }
-  }
-
-  function _readIpConfig(cfgPath, isV6) {
-    var proxy = ipCfgComponent.createObject(root, {
-                                              "path": cfgPath
-                                            });
-    var reply = proxy.call("GetAll", ["org.freedesktop.NetworkManager.IP" + (isV6 ? "6" : "4") + "Config"]);
-    if (!reply) {
-      proxy.destroy();
-      return;
-    }
-    reply.finished.connect(function () {
-      if (!reply.isError) {
-        var props = reply.value;
-        if (props && typeof props === "object") {
-          var addrData = props["AddressData"] || [];
-          var gateway = props["Gateway"] || "";
-          var nsData = props["NameserverData"] || [];
-
-          var addrs = [];
-          for (var i = 0; i < addrData.length; i++) {
-            if (addrData[i] && addrData[i]["address"]) {
-              addrs.push(addrData[i]["address"]);
-            }
-          }
-          var dns = [];
-          for (var j = 0; j < nsData.length; j++) {
-            if (nsData[j] && nsData[j]["address"]) {
-              dns.push(nsData[j]["address"]);
-            }
-          }
-
-          if (!isV6) {
-            root._ipv4 = addrs.length > 0 ? addrs[0] : "";
-            root._gateway4 = gateway || "";
-            root._dns4 = dns;
-          } else {
-            root._ipv6 = addrs;
-            root._gateway6 = gateway ? [gateway] : [];
-            root._dns6 = dns;
-          }
-          root._emitFacts();
-        }
-      }
-      proxy.destroy();
-    });
-  }
-
-  function _clearDetails() {
-    var had = root._connectionName !== "" || root._ipv4 !== "" || root._ipv6.length > 0;
-    root._connectionName = "";
-    root._ipv4 = "";
-    root._gateway4 = "";
-    root._dns4 = [];
-    root._ipv6 = [];
-    root._gateway6 = [];
-    root._dns6 = [];
-    root._speed = "";
-    root._rate = "";
-    root._activeAccessPoint = "";
-    if (had) {
-      root._emitFacts();
-    }
-  }
-
-  Component {
-    id: wiredComponent
-    DBus {
-      service: "org.freedesktop.NetworkManager"
+  Instantiator {
+    id: wired
+    model: 1
+    active: root.live && core.facts.DeviceType === 1
+    delegate: Interface {
+      owner: root.owner
+      path: root.path
       iface: "org.freedesktop.NetworkManager.Device.Wired"
-      connection: SystemBus
-      onSignalReceived: function (name, args) {
-        if (name === "PropertiesChanged") {
-          root._refreshWired();
-        }
-      }
-      onIntrospectionCompleted: root._refreshWired()
+      fields: ["Speed", "Carrier"]
+      onFailed: message => root.failed(message)
     }
   }
-
-  Component {
-    id: wirelessComponent
-    DBus {
-      service: "org.freedesktop.NetworkManager"
+  Instantiator {
+    id: wireless
+    model: 1
+    active: root.live && core.facts.DeviceType === 2
+    delegate: Interface {
+      id: wifi
+      owner: root.owner
+      path: root.path
       iface: "org.freedesktop.NetworkManager.Device.Wireless"
-      connection: SystemBus
-      onSignalReceived: function (name, args) {
-        if (name === "PropertiesChanged") {
-          root._refreshWireless();
-        }
+      fields: ["Bitrate", "ActiveAccessPoint", "AccessPoints", "LastScan"]
+      signatures: ({
+                     RequestScan: "a{sv}"
+                   })
+      onEventReceived: function (member, args) {
+        if (member === "AccessPointAdded" || member === "AccessPointRemoved")
+          wifi.membership("AccessPoints", args[0], member === "AccessPointAdded");
       }
-      onIntrospectionCompleted: root._refreshWireless()
+      onFailed: message => root.failed(message)
     }
   }
 
-  Component {
-    id: acComponent
+  // Shared retained-interface implementation for the named backend records.
+  // Explicit watchers attach before the one seed. Automatic proxy subscriptions
+  // and cache reads are disabled: exactly one layer owns invalidations/revisions.
+  component Interface: Scope {
+    id: record
+    required property string owner
+    required property string path
+    required property string iface
+    property var fields: []
+    property var signatures: ({})
+    property bool autoSeed: true
+    property bool live: true
+    property bool ready: false
+    property string errorText: ""
+    property var facts: ({})
+    property int revision: 0
+    property bool reading: false
+    property bool dirtyAgain: false
+    property int _retryDelayMs: 250
+    property var _versions: ({})
+    property var _memberships: ({})
+    property var _pending: ({})
+    property var _invalidAgain: ({})
+    signal eventReceived(string member, var args)
+    signal failed(string message)
+    signal seeded
+
+    // Only failed reads arm this one-shot. Healthy retained records stay idle;
+    // the record's owner lifetime also owns every recovery attempt.
+    Timer {
+      id: readRetry
+      onTriggered: record.reconcile()
+    }
+    onLiveChanged: {
+      if (!live)
+        readRetry.stop();
+    }
+
     DBus {
-      service: "org.freedesktop.NetworkManager"
-      iface: "org.freedesktop.NetworkManager.Connection.Active"
+      id: endpoint
+      service: record.owner
+      path: record.path
+      iface: record.iface
       connection: SystemBus
+      propertiesEnabled: false
+      signalsEnabled: false
+      callTimeout: 10000
+      _signatures: record.signatures
     }
-  }
-
-  Component {
-    id: ipCfgComponent
-    DBus {
-      service: "org.freedesktop.NetworkManager"
-      iface: "org.freedesktop.DBus.Properties"
+    DBusSignalWatcher {
       connection: SystemBus
-    }
-  }
-
-  Component {
-    id: apComponent
-    DBus {
-      service: "org.freedesktop.NetworkManager"
-      iface: "org.freedesktop.DBus.Properties"
-      connection: SystemBus
-    }
-  }
-
-  function _refreshWired() {
-    if (!root._wired) {
-      return;
-    }
-    var sp = root._wired.speed;
-    var s = (sp !== undefined && sp > 0) ? sp + " Mbps" : "";
-    if (s !== root._speed) {
-      root._speed = s;
-      root._emitFacts();
-    }
-  }
-
-  function _refreshWireless() {
-    if (!root._wireless) {
-      return;
-    }
-    var br = root._wireless.bitrate; // Kb/s
-    var r = (br !== undefined && br > 0) ? Math.round(br / 100) / 10 + " Mbit/s" : "";
-    if (r !== root._rate) {
-      root._rate = r;
-    }
-    var ap = root._wireless.activeAccessPoint || "";
-    if (ap !== root._activeAccessPoint) {
-      root._activeAccessPoint = ap;
-      if (ap && ap !== "/") {
-        root._readApDetails(ap);
-      } else {
-        root._wifiSignal = "";
-        root._wifiBand = "";
-        root._wifiChannel = "";
-        root._wifiWidth = "";
+      service: record.owner
+      path: record.path
+      iface: record.iface
+      enabled: record.live
+      onReceived: function (member, args) {
+        if (record && record.live)
+          record.eventReceived(member, args);
       }
     }
-    root._emitFacts();
-  }
-
-  // Read the active AccessPoint's signal/band/channel (AccessPoint objects
-  // do not introspect — getProperty directly, via the Properties iface).
-  function _readApDetails(apPath) {
-    var proxy = apComponent.createObject(root, {
-                                           "path": apPath
-                                         });
-    var reply = proxy.call("GetAll", ["org.freedesktop.NetworkManager.AccessPoint"]);
-    if (!reply) {
-      proxy.destroy();
-      return;
+    DBusSignalWatcher {
+      connection: SystemBus
+      service: record.owner
+      path: record.path
+      iface: "org.freedesktop.DBus.Properties"
+      member: "PropertiesChanged"
+      enabled: record.live
+      onReceived: function (member, args) {
+        if (!record || !record.live || args[0] !== record.iface)
+          return;
+        record.apply(args[1] || {});
+        for (var name of args[2] || [])
+          if (record.fields.indexOf(name) !== -1)
+            record.invalidate(name);
+      }
     }
-    reply.finished.connect(function () {
-      if (!reply.isError && reply.value && typeof reply.value === "object") {
-        var props = reply.value;
-        var strength = props["Strength"];
-        var freq = props["Frequency"];
-        var width = props["Bandwidth"];
+    Component.onCompleted: Qt.callLater(function () {
+      if (record && record.live && record.autoSeed)
+        record.reconcile();
+    })
 
-        root._wifiSignal = (strength !== undefined) ? String(strength) : "";
-        if (width !== undefined && width > 0) {
-          root._wifiWidth = width + " MHz";
+    function _error(message) {
+      errorText = message;
+      failed(message);
+    }
+    function _retryRead() {
+      if (!live || readRetry.running)
+        return;
+      readRetry.interval = _retryDelayMs;
+      _retryDelayMs = Math.min(_retryDelayMs * 2, 30000);
+      readRetry.start();
+    }
+    function _value(name, value) {
+      // dbusqml preserves a native object-path inside a variant as a boxed
+      // value, unlike paths decoded inside ao. Normalize identity once here.
+      if (["Connection", "ActiveConnection", "Ip4Config", "Ip6Config", "ActiveAccessPoint"].indexOf(name) !== -1)
+        return String(value || "/");
+      if (["Devices", "ActiveConnections", "AccessPoints"].indexOf(name) !== -1)
+        return Array.from(value || []).map(path => String(path));
+      return value;
+    }
+    function apply(changed) {
+      if (!live)
+        return;
+      var next = Object.assign({}, facts), touched = false;
+      for (var name of fields) {
+        if (changed[name] === undefined)
+          continue;
+        _versions[name] = ++revision;
+        next[name] = _value(name, changed[name]);
+        touched = true;
+      }
+      if (touched)
+        facts = next;
+    }
+    function membership(name, memberPath, present) {
+      if (!live)
+        return;
+      memberPath = String(memberPath);
+      revision++;
+      if (reading) {
+        if (!_memberships[name])
+          _memberships[name] = {};
+        _memberships[name][memberPath] = {
+          present: present,
+          revision: revision
+        };
+      }
+      var paths = (facts[name] || []).filter(p => p !== memberPath);
+      if (present)
+        paths.push(memberPath);
+      var next = Object.assign({}, facts);
+      next[name] = paths;
+      facts = next;
+    }
+    function reconcile() {
+      if (!live)
+        return;
+      if (reading) {
+        dirtyAgain = true;
+        return;
+      }
+      readRetry.stop();
+      reading = true;
+      var started = revision;
+      // One GetAll, with explicit signature, independent of introspection. No
+      // new proxy is created and no dbusqml cache can race this record's state.
+      var reply = SystemBus.asyncCall({
+                                        service: owner,
+                                        path: path,
+                                        iface: "org.freedesktop.DBus.Properties",
+                                        member: "GetAll",
+                                        arguments: [iface],
+                                        signature: "s",
+                                        timeout: 10000
+                                      });
+      reply.finished.connect(function () {
+        if (!record || !record.live)
+          return;
+        record.reading = false;
+        if (reply.isError) {
+          var retained = Object.assign({}, record.facts);
+          for (var field of record.fields)
+            if ((record._versions[field] || 0) <= started)
+              delete retained[field];
+          record.facts = retained;
+          record.ready = false;
+          record._error(reply.error.message);
+          record._retryRead();
         } else {
-          root._wifiWidth = "";
-        }
-        if (freq !== undefined) {
-          var f = +freq;
-          var band = "";
-          if (f >= 5925 && f < 7125) {
-            band = "6 GHz";
-          } else if (f >= 5150 && f < 5925) {
-            band = "5 GHz";
-          } else if (f >= 2400 && f < 2500) {
-            band = "2.4 GHz";
-          } else if (f) {
-            band = f + " MHz";
+          var next = Object.assign({}, record.facts), values = reply.value || {};
+          for (var name of record.fields) {
+            if ((record._versions[name] || 0) > started)
+              continue;
+            if (values[name] === undefined) {
+              delete next[name];
+              continue;
+            }
+            var value = record._value(name, values[name]), events = record._memberships[name];
+            if (events) {
+              value = Array.from(value || []);
+              for (var memberPath in events)
+                if (events[memberPath].revision > started) {
+                  value = value.filter(p => p !== memberPath);
+                  if (events[memberPath].present)
+                    value.push(memberPath);
+                }
+            }
+            next[name] = value;
           }
-          root._wifiBand = band;
-          var channel = root._freqToChannel(f);
-          root._wifiChannel = channel ? String(channel) : "";
+          record.facts = next;
+          record.ready = true;
+          record.errorText = "";
+          record._retryDelayMs = 250;
         }
-        root._emitFacts();
+        // Membership events only protect an in-flight read. Do not accumulate
+        // a history of every removed AP/device across a long-running session.
+        record._memberships = ({});
+        record.seeded();
+        if (record.dirtyAgain) {
+          record.dirtyAgain = false;
+          record.reconcile();
+        }
+      });
+    }
+    function invalidate(name) {
+      _versions[name] = ++revision;
+      var next = Object.assign({}, facts);
+      delete next[name];
+      facts = next;
+      if (_pending[name]) {
+        _invalidAgain[name] = true;
+        return;
       }
-      proxy.destroy();
-    });
-  }
-
-  function _freqToChannel(f) {
-    if (f >= 2412 && f <= 2472) {
-      return Math.round((f - 2407) / 5);
+      _readProperty(name);
     }
-    if (f >= 5000 && f <= 5900) {
-      return Math.round((f - 5000) / 5);
+    function _readProperty(name) {
+      if (!live)
+        return;
+      _pending[name] = true;
+      var started = _versions[name];
+      var reply = endpoint.getProperty(name);
+      reply.finished.connect(function () {
+        if (!record || !record.live)
+          return;
+        delete record._pending[name];
+        if (record._versions[name] === started) {
+          if (reply.isError) {
+            record._error(reply.error.message);
+            record._retryRead();
+          } else {
+            var next = Object.assign({}, record.facts);
+            next[name] = record._value(name, reply.value);
+            record.facts = next;
+          }
+        }
+        if (record._invalidAgain[name]) {
+          delete record._invalidAgain[name];
+          record._readProperty(name);
+        }
+      });
     }
-    if (f >= 5955 && f <= 7115) {
-      return Math.round((f - 5950) / 5);
+    function invoke(member, args, done) {
+      if (!live) {
+        done({
+               ok: false,
+               error: "NetworkManager owner unavailable"
+             });
+        return;
+      }
+      var reply = endpoint.call(member, args);
+      if (!reply) {
+        done({
+               ok: false,
+               error: "NetworkManager request unavailable"
+             });
+        return;
+      }
+      reply.finished.connect(function () {
+        if (!record || !record.live)
+          return;
+        done(reply.isError ? {
+                               ok: false,
+                               error: reply.error.message,
+                               errorName: reply.error.name
+                             } : {
+               ok: true,
+               value: reply.value,
+               values: reply.values
+             });
+      });
     }
-    return 0;
+    function retire() {
+      live = false;
+      facts = ({});
+      ready = false;
+    }
   }
 }

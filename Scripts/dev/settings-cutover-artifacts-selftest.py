@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """The native cutover ships no obsolete owner or test-only migration wrapper."""
+import ast
 from pathlib import Path
+import shutil
+import tempfile
 import unittest
 
 
@@ -30,6 +33,20 @@ class CutoverArtifacts(unittest.TestCase):
         self.assertIn('/Scripts/dev/fixtures/Migration62.qml', launcher)
         self.assertIn('./i5-migration62.qml', projection)
         self.assertNotIn('/Commons/Migrations/Migration62.qml', launcher + projection)
+
+    def test_timing_runner_provisions_the_wrapper_for_older_sources(self):
+        timing = ROOT / 'Scripts/dev/settings-gui-timing.py'
+        if not timing.exists():
+            self.skipTest('timing runner belongs to the top stack')
+        loop = next(node for node in ast.walk(ast.parse(timing.read_text())) if isinstance(node, ast.For)
+                    and isinstance(node.iter, ast.Tuple) and 'launcher-key-owner-probe.qml' in ast.unparse(node.iter))
+        with tempfile.TemporaryDirectory() as temporary:
+            shell = Path(temporary)
+            (shell / 'Scripts/dev/fixtures').mkdir(parents=True)
+            exec(compile(ast.Module(body=[loop], type_ignores=[]), str(timing), 'exec'),
+                 dict(HERE=timing.parent, shell=shell, shutil=shutil))
+            wrapper = Path('Scripts/dev/fixtures/Migration62.qml')
+            self.assertEqual((shell / wrapper).read_bytes(), (ROOT / wrapper).read_bytes())
 
 
 if __name__ == '__main__':

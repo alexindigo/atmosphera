@@ -11,7 +11,7 @@ import socket
 import subprocess
 import time
 
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 KINDS = ("held_replies", "portal_entries", "requests", "browsers", "selections", "previews",
          "playbacks", "windows", "entries", "thumbnail_providers", "thumbnails",
          "thumbnail_workers", "players", "outputs", "controls")
@@ -162,7 +162,7 @@ Singleton {
 
 
 def add_checkpoint_handler(shell):
-    path = shell / "shell.qml"
+    path = probe_owner_path(shell)
     text = path.read_text()
     needle = "    function collectGarbage(): void { gc(); }"
     assert text.count(needle) == 1

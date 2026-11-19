@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Services.Power
 import qs.Services.Theming
 import qs.Services.UI
+import "../../Helpers/WallpaperSelection.js" as WallpaperSelection
 
 Singleton {
   id: root
@@ -412,17 +413,7 @@ Singleton {
   }
 
   function _entryToEffectivePath(entry) {
-    if (!entry) {
-      return "";
-    }
-    if (typeof entry === "string") {
-      return entry;
-    }
-    var p = _pathsFromEntry(entry);
-    if (Settings.data.colorSchemes.darkMode) {
-      return p.dark || p.light || "";
-    }
-    return p.light || p.dark || "";
+    return WallpaperSelection.effective(entry, Settings.data.colorSchemes.darkMode);
   }
 
   function _normalizeAppearanceSlot(slot) {

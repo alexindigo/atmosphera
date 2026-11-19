@@ -84,12 +84,16 @@ Singleton {
   }
 
   function updateNotificationServer() {
+    const enabled = Settings.isLoaded && Settings.data.notifications.enabled !== false;
+    if (enabled === Boolean(notificationServerLoader))
+      return;
+
     if (notificationServerLoader) {
       notificationServerLoader.destroy();
       notificationServerLoader = null;
     }
 
-    if (Settings.isLoaded && Settings.data.notifications.enabled !== false) {
+    if (enabled) {
       notificationServerLoader = notificationServerComponent.createObject(root);
     }
   }
@@ -122,7 +126,8 @@ Singleton {
       updateNotificationServer();
     }
     function onEffectiveSettingsChanged(section) {
-      if (section === "notifications") updateNotificationServer();
+      if (section === "notifications")
+        updateNotificationServer();
     }
   }
 

@@ -5,6 +5,11 @@ import struct
 import zlib
 
 
+def wait_for_ipc_target(query, target, wait, seconds):
+    """Wait for registration, not the CLI's successful 'Target not found' reply."""
+    return wait(lambda: ('target ' + target) in query().stdout.splitlines(), seconds)
+
+
 def png(color):
     def chunk(kind, data):
         return struct.pack('!I', len(data)) + kind + data + struct.pack('!I', zlib.crc32(kind + data))

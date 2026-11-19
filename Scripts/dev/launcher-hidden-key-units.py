@@ -10,6 +10,7 @@ import subprocess
 import sys
 
 from launcher_workspace import ROOT
+from qml_probe import bootstrap_fixture
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
 
@@ -34,7 +35,7 @@ def main():
         tree, profile = runtime / kind / 'tree', runtime / kind / 'profile'
         shutil.copytree(source, tree, symlinks=True)
         case_fixture = (source / 'Scripts/dev/fixtures/launcher-guard-readiness.qml') if kind == 'readiness' and not a.fixture else fixture
-        (tree / 'shell.qml').write_text(case_fixture.read_text())
+        (tree / 'shell.qml').write_text(bootstrap_fixture(case_fixture.read_text()))
         env = dict(profile_env(profile), LAUNCHER_KEY_CASE=kind,
                    LAUNCHER_GUARD_AVAILABLE='1' if (tree / 'Widgets/NInputGuard.qml').exists() else '0',
                    LAUNCHER_INPUT_HELPER=str(ROOT / 'tools/filechooser_input.py'))

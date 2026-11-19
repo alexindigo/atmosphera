@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 from launcher_workspace import ROOT
+from qml_probe import bootstrap_fixture
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
 
@@ -27,7 +28,7 @@ def main():
     out.mkdir()
     tree, profile = runtime / 'tree', runtime / 'profile'
     shutil.copytree(source, tree, symlinks=True)
-    (tree / 'shell.qml').write_text((source / 'Scripts/dev/fixtures/launcher-selection.qml').read_text().replace('"../../../Modules/', '"Modules/'))
+    (tree / 'shell.qml').write_text(bootstrap_fixture((source / 'Scripts/dev/fixtures/launcher-selection.qml').read_text().replace('"../../../Modules/', '"Modules/')))
     build = runtime / 'pointer-build'
     build.mkdir()
     env = dict(profile_env(profile), LAUNCHER_INPUT_HELPER=str(ROOT / 'tools/filechooser_input.py'))

@@ -44,6 +44,12 @@ than exposed as an admitted dynamic property. A descriptor cannot make an old
 plugin's arbitrary root-key creation compatible: those plugins must be ported to
 a map or state/cache owner and diagnosed explicitly until then.
 
+Built-in plugins without an authored descriptor resolve through this catalog
+too, so a built-in version bump needs a matching exact-version entry.
+`Scripts/dev/builtin-plugin-settings-check.py` (part of the settings contract
+gate, run by the pre-commit hook and CI) compiles every shipped built-in's store
+with the shell's compiler and fails when one does not resolve.
+
 The inert `Scripts/dev/build-plugin-settings-schema.py` validates metadata and
 emits a ConfigSchema using the existing main-schema declaration emitter. It reads
 only the selected manifest and host metadata, never user settings. This is build/

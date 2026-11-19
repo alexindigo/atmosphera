@@ -1,5 +1,12 @@
 # Captured record-list command preparation
 
+Current native immediate-persistence callers use
+`Settings.saveSelected([owningPath], callback)` after current admission. The path
+is captured with the command's global/screen/desktop/shortcut owner, not recomputed
+from later UI state. Multi-leaf transfers publish both owning leaves with
+`saveSelected`, preserving other pending work and unrelated retained groups.
+Root `Settings.saveResult` remains reserved for an explicit full-prefix promise.
+
 ## Approved C2 container commands (old-owner preparation)
 
 The additional `Match` / `ensure` / `copy` / `at` shapes follow integration answer9

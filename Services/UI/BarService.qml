@@ -522,14 +522,15 @@ Singleton {
       return Settings.getBarWidgetsForScreen(screenName) === Settings.data.bar.widgets ? "global" : screenName;
     }
     var capturedRoute = route();
+    var ownerPath = capturedRoute === "global" ? ["bar", "widgets", section] : ["bar", "screenOverrides"];
     var commands = null;
     if (capturedRoute === "global") {
-      commands = Settings.createRecordListEditor(["bar", "widgets", section], []);
+      commands = Settings.createRecordListEditor(ownerPath, []);
     } else {
       var monitors = Settings.data.bar.screenOverrides;
       for (var i = 0; i < monitors.length; ++i) {
         if (monitors[i].name === capturedRoute) {
-          commands = Settings.createRecordListEditor(["bar", "screenOverrides"], [
+          commands = Settings.createRecordListEditor(ownerPath, [
                                                        {
                                                          index: i
                                                        },
@@ -591,7 +592,7 @@ Singleton {
                        });
             return;
           }
-          Settings.saveResult(callback);
+          Settings.saveSelected([ownerPath], callback);
         });
       },
       detach: function () {

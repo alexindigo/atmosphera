@@ -16,7 +16,7 @@ import time
 import uuid
 
 from presentation_harness import run_harness, write_receipt
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 from workspace_guard import check_execution_paths
 
 
@@ -271,7 +271,7 @@ def main():
     parser.add_argument('--baseline-page', action='store_true')
     args = parser.parse_args()
     work = args.workspace.resolve()
-    check_execution_paths(parser, work)
+    check_execution_paths(parser, work, source=args.source)
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '*.bak'))
@@ -342,7 +342,7 @@ def main():
         passed = execution['exit_code'] == 0 and log.count('CHECK_PASS ') == len(cases) and not re.search(r'CHECK_FAIL|TypeError:|ReferenceError:', log)
         passed = finish_stage(async_work, passed, execution, cases=len(cases))
         assert passed, log
-    entry = shell / 'shell.qml'
+    entry = probe_owner_path(shell)
     entry.write_text('import Quickshell.Io\n' + inject_probe(entry.read_text(), PAGE))
     page_work = work / 'page'
     page_work.mkdir()

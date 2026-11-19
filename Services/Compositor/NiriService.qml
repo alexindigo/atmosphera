@@ -111,6 +111,16 @@ Item {
       loader.item.focusWindow(window);
   }
 
+  function navigateEdge(output, edge, requestId, completed) {
+    if (available)
+      loader.item.navigateEdge(output, edge, requestId, completed);
+    else
+      completed({
+                  requestId: requestId,
+                  outcome: "unknown"
+                });
+  }
+
   function closeWindow(window) {
     if (available)
       loader.item.closeWindow(window);

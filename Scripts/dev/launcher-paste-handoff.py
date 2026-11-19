@@ -12,7 +12,8 @@ import subprocess
 import time
 
 from launcher_workspace import ROOT
-from launcher_paste_support import png, profile_environment
+from qml_probe import bootstrap_fixture
+from launcher_paste_support import png, profile_environment, wait_for_ipc_target
 
 
 def main():
@@ -29,7 +30,7 @@ def main():
     output.mkdir()
     tree = runtime / 'tree'
     shutil.copytree(args.source, tree, symlinks=True)
-    (tree / 'shell.qml').write_text((Path(__file__).parent / 'fixtures/launcher-paste-held.qml').read_text())
+    (tree / 'shell.qml').write_text(bootstrap_fixture((Path(__file__).parent / 'fixtures/launcher-paste-held.qml').read_text()))
     clipboard = tree / 'Services/Keyboard/ClipboardService.qml'
     text = clipboard.read_text()
     marker = '    id: pasteProc\n'
@@ -73,7 +74,8 @@ def main():
                     process = subprocess.Popen(['timeout', '--kill-after=5', '30', 'qs', '-p', str(shell), '--no-color'],
                                                env=env, cwd=tree, stdout=log, stderr=subprocess.STDOUT)
                     try:
-                        flow.wait(lambda: ipc('state', check=False).stdout.strip(), 10)
+                        wait_for_ipc_target(lambda: flow.command(['qs', '-p', shell, 'ipc', 'show'], check=False),
+                                            'heldPaste', flow.wait, 10)
                         flow.wait(lambda: state()['active'] and state()['hadKeyboard'] and state()['clipboardReady'] and state()['uiFocused'], 10)
                         flow.press(28)
                         flow.wait(lambda: state()['closing'] and state()['producerDestroyed'] and state()['uiDestroyed'])

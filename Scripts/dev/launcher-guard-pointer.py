@@ -10,6 +10,8 @@ import subprocess
 import time
 
 from launcher_workspace import ROOT
+from qml_probe import bootstrap_fixture
+from launcher_paste_support import wait_for_ipc_target
 
 
 def main():
@@ -25,7 +27,7 @@ def main():
     output.mkdir()
     tree = runtime / 'tree'
     shutil.copytree(args.source, tree, symlinks=True)
-    (tree / 'shell.qml').write_text((args.source / 'Scripts/dev/fixtures/launcher-guard-pointer.qml').read_text())
+    (tree / 'shell.qml').write_text(bootstrap_fixture((args.source / 'Scripts/dev/fixtures/launcher-guard-pointer.qml').read_text()))
     shell = tree / 'shell.qml'
     env = dict(os.environ)
     profile = runtime / 'profile'
@@ -60,7 +62,8 @@ def main():
         process = subprocess.Popen(['timeout', '--kill-after=5', '120', 'qs', '-p', str(shell), '--no-color'],
                                    cwd=tree, env=env, stdout=log, stderr=subprocess.STDOUT)
         try:
-            flow.wait(lambda: ipc('state', check=False).stdout.strip(), 20)
+            wait_for_ipc_target(lambda: flow.command(['qs', '-p', shell, 'ipc', 'show'], check=False),
+                                'guardPointer', flow.wait, 20)
             flow.wait(lambda: state()['active'])
             baseline = state()
             ipc('deactivate', 'true')

@@ -15,6 +15,7 @@ import subprocess
 import sys
 
 from launcher_workspace import ROOT
+from qml_probe import bootstrap_fixture
 # L0's task-local route adaptation, shared with tools/shell-gate. Never import
 # the unrelated file chooser VM route from this source tree.
 sys.path.insert(0, str(ROOT / 'tools'))
@@ -51,7 +52,7 @@ def main():
     shutil.copytree(source, tree, symlinks=True)
     # As in filechooser-units.py, load the fixture directly at the shell root
     # so Quickshell resolves its qs.* imports through the config VFS.
-    (tree / 'shell.qml').write_text((source / 'Scripts/dev/fixtures/launcher-ranking.qml').read_text().replace('"../../../Modules/', '"Modules/'))
+    (tree / 'shell.qml').write_text(bootstrap_fixture((source / 'Scripts/dev/fixtures/launcher-ranking.qml').read_text().replace('"../../../Modules/', '"Modules/')))
     applications = profile / 'data/applications'
     (applications / 'launcher-unit-alpha.desktop').write_text(desktop('Source Alpha', '/usr/bin/oldexec'))
     (applications / 'launcher-unit-beta.desktop').write_text(desktop('Source Beta', '/usr/bin/beta', 'browser;'))

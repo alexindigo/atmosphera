@@ -269,11 +269,21 @@ Singleton {
   }
 
   function _widgetAddress(monitorName) {
-    return [{field: "name", equals: monitorName}, {key: "widgets"}];
+    return [
+          {
+            field: "name",
+            equals: monitorName
+          },
+          {
+            key: "widgets"
+          }
+        ];
   }
 
   function _createListEditor(path, address, additionalLists) {
-    return Settings.createRecordListEditor(path, address, additionalLists, {ensure: true});
+    return Settings.createRecordListEditor(path, address, additionalLists, {
+                                             ensure: true
+                                           });
   }
 
   // New rows are explicit input. Existing rows only cross field/transfer commands.
@@ -282,27 +292,51 @@ Singleton {
     if (!commands)
       return false;
     var index = commands.initialValue.length;
-    return commands.submit([{op: "insert", index: index, value: widgetData}], function (result) {
-      commands.detach();
-      if (typeof callback === "function")
-        callback(result, index);
-    });
+    return commands.submit([
+                             {
+                               op: "insert",
+                               index: index,
+                               value: widgetData
+                             }
+                           ], function (result) {
+                             commands.detach();
+                             if (typeof callback === "function")
+                               callback(result, index);
+                           });
   }
 
   function captureWidgetInteraction(monitorName, index, monitorNames) {
-    var names = [monitorName].concat(monitorNames || []).filter(function (name, i, all) { return all.indexOf(name) === i; });
-    var sections = names.map(function (name) {
-      return {id: name, path: ["desktopWidgets", "monitorWidgets"], listAddress: root._widgetAddress(name), ensure: true,
-        length: root.getWidgetsForMonitor(name).length};
+    var names = [monitorName].concat(monitorNames || []).filter(function (name, i, all) {
+      return all.indexOf(name) === i;
     });
-    return SectionCommands.capture({sections: sections, createEditor: root._createListEditor,
-      transferFields: {x: 100, y: 100, scale: 1.0},
-      later: function (callback) { Qt.callLater(callback); }, onChanged: function () {}}, monitorName, index);
+    var sections = names.map(function (name) {
+      return {
+        id: name,
+        path: ["desktopWidgets", "monitorWidgets"],
+        listAddress: root._widgetAddress(name),
+        ensure: true,
+        length: root.getWidgetsForMonitor(name).length
+      };
+    });
+    return SectionCommands.capture({
+                                     sections: sections,
+                                     createEditor: root._createListEditor,
+                                     transferFields: {
+                                       x: 100,
+                                       y: 100,
+                                       scale: 1.0
+                                     },
+                                     later: function (callback) {
+                                       Qt.callLater(callback);
+                                     },
+                                     onChanged: function () {}
+                                   }, monitorName, index);
   }
 
   // Retain this editor through component loading, saves, Retry and close cleanup.
   function createWidgetSettingsEditor(monitorName, index) {
-    var commands = Settings.createRecordListEditor(["desktopWidgets", "monitorWidgets"], root._widgetAddress(monitorName));
+    var ownerPath = ["desktopWidgets", "monitorWidgets"];
+    var commands = Settings.createRecordListEditor(ownerPath, root._widgetAddress(monitorName));
     if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length) {
       if (commands)
         commands.detach();
@@ -313,12 +347,24 @@ Singleton {
       submit: function (fields, callback) {
         var edits = fields && typeof fields === "object" && !Array.isArray(fields) ? Object.keys(fields).filter(function (key) {
           return key !== "id";
-        }).map(function (key) { return {op: "set", index: index, field: key, value: fields[key]}; }) : [];
+        }).map(function (key) {
+          return {
+            op: "set",
+            index: index,
+            field: key,
+            value: fields[key]
+          };
+        }) : [];
         return commands.submit(edits, function (result) {
           if (result.status === "admitted" && result.refreshState === "current") {
-            Settings.saveResult(callback);
+            Settings.saveSelected([ownerPath], callback);
           } else if (typeof callback === "function") {
-            callback({status: "failed", error: result.error || {code: "list-edit-conflict"}});
+            callback({
+                       status: "failed",
+                       error: result.error || {
+                         code: "list-edit-conflict"
+                       }
+                     });
           }
         });
       },
@@ -327,9 +373,16 @@ Singleton {
         if (!row || row.id !== "AppShortcut" || row.appId)
           return false;
         // The command fence, not a later row lookup, decides whether cleanup is safe.
-        return commands.submit([{op: "remove", index: index}], callback);
+        return commands.submit([
+                                 {
+                                   op: "remove",
+                                   index: index
+                                 }
+                               ], callback);
       },
-      detach: function () { commands.detach(); }
+      detach: function () {
+        commands.detach();
+      }
     };
   }
 

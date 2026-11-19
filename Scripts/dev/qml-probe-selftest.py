@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from qml_probe import inject_probe
+from qml_probe import bootstrap_fixture, inject_probe, probe_owner_path
 
 
 HERE = Path(__file__).resolve().parent
@@ -86,7 +86,7 @@ ShellRoot {
         tree = ast.parse((HERE / "filechooser-isolation-regression.py").read_text())
         instrument = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
                           and node.name == "instrument")
-        scope = {"inject_probe": inject_probe}
+        scope = {"inject_probe": inject_probe, "probe_owner_path": probe_owner_path}
         exec(compile(ast.Module(body=[instrument], type_ignores=[]), "instrument", "exec"), scope)
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -99,7 +99,7 @@ ShellRoot {
                                  "import Quickshell.Io\n" + inject_probe(source, PROBE, root_id=owner))
 
     def test_all_full_shell_probe_payloads(self):
-        source = (HERE.parents[1] / "shell.qml").read_text()
+        source = probe_owner_path(HERE.parents[1]).read_text()
         # Both versions identify the same session owner, at different depths.
         shapes = (source, "ShellRoot { id: shellRoot; }",
                   "ShellRoot { Loader { active: elected; sourceComponent: Item { id: shellRoot; } } }")
@@ -129,6 +129,127 @@ ShellRoot {
         self.assertIn("panel-cold-load.py", runners)
         self.assertIn("plugin-panel-lifecycle.py", runners)
         self.assertIn("launcher-flow-e2e.py", runners)
+
+    def test_legacy_split_and_duplicate_file_selection(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            entry = root / "shell.qml"
+            session = root / "ShellSession.qml"
+            entry.write_text("ShellRoot { id: shellRoot; }")
+            self.assertEqual(probe_owner_path(root), entry)
+            entry.write_text("ShellRoot { Loader { sourceComponent: Component { ShellSession {} } } }")
+            session.write_text("ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }")
+            self.assertEqual(probe_owner_path(root), session)
+            self.assertNotIn(PROBE, entry.read_text())
+            entry.write_text("ShellRoot { id: shellRoot; }")
+            with self.assertRaisesRegex(ValueError, "found 2"):
+                probe_owner_path(root)
+            entry.unlink();session.unlink()
+            with self.assertRaisesRegex(ValueError, "found 0"):
+                probe_owner_path(root)
+
+    def test_generic_chooser_instrumenter_resolves_split_session(self):
+        tree = ast.parse((HERE / "filechooser-isolation-regression.py").read_text())
+        instrument = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                          and node.name == "instrument")
+        scope = {"inject_probe": inject_probe, "probe_owner_path": probe_owner_path}
+        exec(compile(ast.Module(body=[instrument], type_ignores=[]), "instrument", "exec"), scope)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bootstrap = "ShellRoot { Loader { sourceComponent: ShellSession {} } }"
+            session = "ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }"
+            (root / "shell.qml").write_text(bootstrap)
+            (root / "ShellSession.qml").write_text(session)
+            scope["instrument"](root, "shell.qml", PROBE)
+            self.assertEqual((root / "shell.qml").read_text(), bootstrap)
+            self.assertEqual((root / "ShellSession.qml").read_text(),
+                             "import Quickshell.Io\n" + inject_probe(session, PROBE))
+
+    def test_timing_probe_resolves_both_shell_shapes(self):
+        tree = ast.parse((HERE / "settings-gui-timing.py").read_text())
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "main")
+        start = next(i for i, node in enumerate(main.body) if isinstance(node, ast.Assign)
+                     and any(isinstance(t, ast.Name) and t.id == "body" for t in node.targets))
+        code = compile(ast.Module(body=main.body[start:start + 4], type_ignores=[]), "timing-probe", "exec")
+        for split in (False, True):
+            with self.subTest(split=split), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                session = "ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }"
+                bootstrap = "ShellRoot { Loader { sourceComponent: ShellSession {} } }"
+                (root / "shell.qml").write_text(bootstrap if split else session)
+                if split:
+                    (root / "ShellSession.qml").write_text(session)
+                scope = {"shell": root, "probe_owner_path": probe_owner_path, "inject_probe": inject_probe}
+                exec(code, scope)
+                self.assertEqual(probe_owner_path(root).read_text(), inject_probe(session, scope["injected"]))
+                if split:
+                    self.assertEqual((root / "shell.qml").read_text(), bootstrap)
+
+    def test_external_command_page_probe_resolves_both_shell_shapes(self):
+        tree = ast.parse((HERE / "external-command-regression.py").read_text())
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "main")
+        page = next(i for i, node in enumerate(main.body) if isinstance(node, ast.Assign)
+                    and any(isinstance(target, ast.Name) and target.id == "page_work" for target in node.targets))
+        code = compile(ast.Module(body=main.body[page-2:page], type_ignores=[]), "external-command-page", "exec")
+        for split in (False, True):
+            with self.subTest(split=split), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                bootstrap = "ShellRoot { Loader { sourceComponent: ShellSession {} } }"
+                session = "ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }"
+                (root / "shell.qml").write_text(bootstrap if split else session)
+                if split:
+                    (root / "ShellSession.qml").write_text(session)
+                exec(code, dict(shell=root, PAGE=PROBE, inject_probe=inject_probe, probe_owner_path=probe_owner_path))
+                self.assertEqual(probe_owner_path(root).read_text(), "import Quickshell.Io\n" + inject_probe(session, PROBE))
+                if split:
+                    self.assertEqual((root / "shell.qml").read_text(), bootstrap)
+
+    def test_chooser_followup_probes_keep_the_resolved_owner(self):
+        from filechooser_leaks import add_checkpoint_handler
+        tree = ast.parse((HERE / "filechooser-isolation-regression.py").read_text())
+        instrument = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                          and node.name == "instrument")
+        heap = next(node for node in ast.walk(tree) if isinstance(node, ast.If)
+                    and ast.unparse(node.test) == "a.heap_probe"
+                    and any(isinstance(child, ast.Assign) and any(isinstance(t, ast.Name)
+                            and t.id == "path" for t in child.targets) for child in node.body))
+        code = compile(ast.Module(body=heap.body, type_ignores=[]), "heap-followup", "exec")
+        for split in (False, True):
+            for mode in ("retention", "heap"):
+                with self.subTest(split=split, mode=mode), tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    bootstrap = "ShellRoot { Loader { sourceComponent: ShellSession {} } }"
+                    session = "ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }"
+                    entry = root / "shell.qml"
+                    entry.write_text(bootstrap if split else session)
+                    if split:
+                        (root / "ShellSession.qml").write_text(session)
+                    scope = {"inject_probe": inject_probe, "probe_owner_path": probe_owner_path, "shell": root}
+                    exec(compile(ast.Module(body=[instrument], type_ignores=[]), "instrument", "exec"), scope)
+                    scope["instrument"](root, "shell.qml", "    function collectGarbage(): void { gc(); }")
+                    if mode == "retention":
+                        add_checkpoint_handler(root)
+                    else:
+                        exec(code, scope)
+                    owner = probe_owner_path(root).read_text()
+                    expected = ("leakCounts", "leakCheckpoint") if mode == "retention" else ("lifetimes",)
+                    self.assertTrue(all(owner.count("function " + name + "(") == 1 for name in expected))
+                    self.assertEqual(owner.count("function collectGarbage("), 1)
+                    if split:
+                        self.assertEqual(entry.read_text(), bootstrap)
+
+    def test_inert_startup_preserves_the_complete_fixture(self):
+        prelude = 'import QtQuick\nimport Quickshell\n// ShellRoot { fake }\n'
+        body = 'ShellRoot { id: root; Timer { interval: 300; running: true } }\n'
+        observed = bootstrap_fixture(prelude + body)
+        self.assertIn(prelude, observed)
+        self.assertEqual(observed.count(body), 1)
+        self.assertIn('active: fixtureDirectories.ready', observed)
+        self.assertIn('active: Settings.isLoaded', observed)
+        self.assertLess(observed.index('Settings.isLoaded'), observed.index(body))
+        for source in ('Item {}', 'ShellRoot {} ShellRoot {}'):
+            with self.assertRaises(ValueError):
+                bootstrap_fixture(source)
 
 
 if __name__ == "__main__":

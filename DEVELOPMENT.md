@@ -20,6 +20,24 @@ release version. Compatibility and changelog identities use only the release
 part. Package-written build identities such as `0.8.0.r12.gabc1234` (including
 pkgrel suffixes) remain supported; they are not bumped API versions.
 
+Version also owns release-note selection and acknowledgment. It reads the bundled
+root `CHANGELOG.md` (`## [x.y.z]` release sections), never a remote upgrade-log
+service. Packaged installs, including packaged -git builds, automatically show
+only nonempty sections newer than the acknowledged release and no newer than
+`VERSION`, subject to `general.showChangelogOnStartup`. Source checkouts never
+open the dialog automatically. OK/close acknowledges the release through Version;
+About and manual viewing share the same content component and bundled history.
+
+The guest-only regression exercises the actual dialog OK path, disk readback,
+cold restart, release upgrades, build identities, missing notes and About:
+
+```sh
+# Inside atmosphera-nm-events on ark.home:
+cd /home/tester/Projects/changelog/source
+export TMPDIR=/home/tester/Projects/changelog/tmp
+timeout 330 python3 -B Scripts/dev/version-regression.py --source "$PWD" --output /home/tester/Projects/changelog/fresh-run
+```
+
 ## Shell identity and recovery
 
 `ShellRegistration` elects one shell per session bus under `app.atmosphera.Shell`.
@@ -381,6 +399,38 @@ For a full audit or regressions inside the assigned test VM:
 ```
 python3 -B Scripts/dev/plugin-lint.py --root builtin/plugins --catalog builtin/plugins/registry.json
 python3 -B Scripts/dev/plugin-lint-selftest.py
+```
+
+The action catalog's guest-only regression checks schema parity, source IPC
+signatures, quoting/recognition and live loaded-plugin membership/unloading.
+Plugin lint audits declared actions in every manifest, including unchanged
+plugins in a changed-plugin run. `qs.Services.Actions` is first exported by
+0.10.0; imports (including aliased and semicolon-terminated imports) require
+`minAtmospheraVersion` of at least 0.10.0. It is absent from the 0.9.x releases.
+In VM `atmosphera-edge-scroll` on ark, with a fresh disk-backed workspace
+outside the source checkout (the runner rejects nested workspaces):
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-landing/tmp
+mkdir -p /home/tester/Projects/action-catalog-runs
+timeout 240 python3 -B Scripts/dev/action-catalog-regression.py --source "$PWD" --workspace /home/tester/Projects/action-catalog-runs/catalog-fresh
+```
+
+Hot corners have four guest-only regressions in the same VM: the settings page
+and its persistence, the dwell controller with a fake clock, the plugins registry
+v6 migration (planner cases and cold starts over synthetic profiles), and the
+real-input acceptance on two outputs (`--case` takes `all` or a list of H1-H9):
+
+```sh
+export TMPDIR=/home/tester/Projects/hot-corners-core/tmp
+W=/home/tester/Projects/hot-corners-core/runs
+mkdir -p "$TMPDIR" "$W"
+timeout 600 python3 -B Scripts/dev/hot-corners-settings-regression.py --source "$PWD" --workspace $W/settings-fresh
+timeout 300 python3 -B Scripts/dev/hot-corners-service-regression.py
+timeout 900 python3 -B Scripts/dev/hot-corners-migration-regression.py --source "$PWD" --workspace $W/migration-fresh
+python3 -B Scripts/dev/hot-corners-migration-oracle-selftest.py
+ACTION_TEST_VM_UUID=20c0b416-2943-49fb-8aa0-eb7d29b1c8ea python3 -B Scripts/dev/hot-corners-migration-boundary-proof.py --workspace $W/migration-boundary-fresh
+timeout 1800 python3 -B Scripts/dev/hot-corners-e2e.py --source "$PWD" --workspace $W/e2e-fresh --case all
 ```
 
 `Scripts/dev/qmllint.sh` with no paths includes built-in QML. Its native import

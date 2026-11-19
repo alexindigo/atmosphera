@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import qs.Commons
-import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
 
@@ -15,12 +14,15 @@ Item {
   property color tintColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mSurface : AtmoColor.mOnSurface
 
   required property var screen
+  required property var wallpaperProvider
+  readonly property real displayScale: screen?.devicePixelRatio ?? 1
+  onDisplayScaleChanged: Qt.callLater(requestCachedWallpaper)
 
   // Request preprocessed wallpaper as soon as ALL prerequisites exist, in
   // any arrival order (screen bind, surface size, wallpaper cache load) —
   // the previous onCompleted/width/height event chain missed the locker's
   // timing entirely on the gtk-free fork and the background stayed black.
-  readonly property string _prereqKey: (screen && width > 0 && height > 0 && WallpaperService.isInitialized) ? (screen.name + ":" + width + "x" + height) : ""
+  readonly property string _prereqKey: (screen && width > 0 && height > 0 && wallpaperProvider.isInitialized) ? (screen.name + ":" + width + "x" + height) : ""
   on_PrereqKeyChanged: {
     if (_prereqKey !== "")
       Qt.callLater(requestCachedWallpaper);
@@ -28,19 +30,9 @@ Item {
 
   // Listen for wallpaper changes
   Connections {
-    target: WallpaperService
+    target: root.wallpaperProvider
     function onWallpaperChanged(screenName, path) {
       if (screen && screenName === screen.name) {
-        Qt.callLater(requestCachedWallpaper);
-      }
-    }
-  }
-
-  // Listen for display scale changes
-  Connections {
-    target: CompositorService
-    function onDisplayScalesChanged() {
-      if (screen && width > 0 && height > 0) {
         Qt.callLater(requestCachedWallpaper);
       }
     }
@@ -57,18 +49,18 @@ Item {
       return;
     }
 
-    if (!WallpaperService.isInitialized) {
+    if (!wallpaperProvider.isInitialized) {
       return;
     }
 
-    const originalPath = WallpaperService.getWallpaper(screen.name) || "";
+    const originalPath = wallpaperProvider.getWallpaper(screen.name) || "";
     if (originalPath === "") {
       resolvedWallpaperPath = "";
       return;
     }
 
     // Handle solid color paths
-    if (WallpaperService.isSolidColorPath(originalPath)) {
+    if (wallpaperProvider.isSolidColorPath(originalPath)) {
       resolvedWallpaperPath = "";
       return;
     }
@@ -79,7 +71,7 @@ Item {
       return;
     }
 
-    const compositorScale = CompositorService.getDisplayScale(screen.name);
+    const compositorScale = displayScale;
     const targetWidth = Math.round(width * compositorScale);
     const targetHeight = Math.round(height * compositorScale);
     if (targetWidth <= 0 || targetHeight <= 0) {

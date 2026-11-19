@@ -85,18 +85,8 @@ Singleton {
 
     detectCompositor();
 
-    // Boot recovery: session still locked at shell start with no live
-    // locker → spawn the configured locker for its A.1.3 re-engage.
-    // Delayed so LockerService's LockedHint + name watches converge.
     if (!root._isLockerProcess)
-      Qt.callLater(() => bootRecoveryTimer.start());
-  }
-
-  Timer {
-    id: bootRecoveryTimer
-    interval: 2000
-    repeat: false
-    onTriggered: root._bootRecover()
+      LockOwnerService.init();
   }
 
   Connections {
@@ -534,6 +524,10 @@ Singleton {
   }
 
   function executeSessionAction(action, defaultCommand) {
+    if (action === "lock") {
+      LockOwnerService.requestLock("session-action", false);
+      return true;
+    }
     const customCommand = getCustomCommand(action);
     if (customCommand) {
       Logger.i("Compositor", `Executing custom command for action: ${action} Command: ${customCommand}`);
@@ -629,272 +623,8 @@ Singleton {
     });
   }
 
-  function _spawnExternalLocker() {
-    var cmd = Settings.data.general.externalLockCommand;
-    if (cmd !== "") {
-      HooksService.executeLockHook();
-      Logger.i("Compositor", "Launching external locker:", cmd);
-      externalLockerProcess.command = ["sh", "-c", cmd];
-      externalLockerProcess.running = true;
-      return true;
-    }
-    Logger.w("Compositor", "External lock mode enabled but no command configured");
-    return false;
-  }
-
-  // --- Out-of-process lock actuation (no-modes model) ---
-  // The lock screen is ALWAYS a separate process: class 3 — a
-  // persistent contract service owning app.atmosphera.Locker (signal
-  // Lock()); class 2 — externalLockCommand spawned per lock; class 1 —
-  // the bundled locker config (default) spawned per lock. Spawned
-  // lockers self-engage and exit after unlock; engagement and lock
-  // state are observed via LockedHint (LockerService.locked). The
-  // in-process lock screen survives only as the spawn-failure fallback.
-  property bool _lockerSpawnPending: false
-  property int _lockerRespawnAttempts: 0
-  property int _lockerLivenessFails: 0
-  property bool _lockerRespawnInFlight: false
-  property string _spawnedLockerCmd: ""
-
-  function _bundledLockerCommand() {
-    return "qs -c atmosphera-lockscreen";
-  }
-
-  // The command a spawned (class 1–2) locker would be running under —
-  // the liveness pattern for respawn and boot-recovery probes. Leading
-  // VAR=value env assignments don't appear in the spawned process's
-  // cmdline, so the pgrep pattern strips them.
-  function _spawnedLockerCommand() {
-    var cmd = Settings.data.general.externalLockCommand;
-    return cmd !== "" ? cmd : root._bundledLockerCommand();
-  }
-
-  function _lockerLivenessPattern(cmd) {
-    var tokens = cmd.split(/\s+/);
-    var i = 0;
-    while (i < tokens.length && /^[A-Za-z_][A-Za-z0-9_]*=/.test(tokens[i]))
-      i++;
-    return tokens.slice(i).join(" ").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  // Spawn the locker so it survives the shell: detached AND outside the
-  // shell's cgroup — a systemd unit teardown of the shell (restart,
-  // crash-reap) kills plain detached children of the unit. On systemd
-  // the locker runs as its own transient user service; elsewhere plain
-  // detached spawn has no cgroup reaper to escape.
-  function _spawnLockerDetached(cmd) {
-    var quoted = "'" + cmd.replace(/'/g, "'\\''") + "'";
-    var probe = "if [ -S \"${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/systemd/private\" ] && command -v systemd-run >/dev/null 2>&1; then " + "exec systemd-run --user --collect --quiet -- sh -c " + quoted + "; " + "else exec sh -c " + quoted + "; fi";
-    Quickshell.execDetached(["sh", "-c", probe]);
-  }
-
-  // Route a lock request out-of-process. Class 3 present → signal
-  // (never spawn). Otherwise spawn the configured per-lock locker;
-  // engagement is confirmed by LockedHint within 3 s or the in-process
-  // fallback engages once (B.6). Callers guard on LockerService.locked.
-  function _engageOutOfProcessLocker() {
-    if (LockerService.contractAvailable) {
-      LockerService.lock();
-      return;
-    }
-    if (root._lockerSpawnPending)
-      return; // spawn already in flight
-    var cmd = root._spawnedLockerCommand();
-    Logger.i("Compositor", "Spawning locker:", cmd);
-    root._lockerSpawnPending = true;
-    root._spawnedLockerCmd = cmd;
-    root._lockerLivenessFails = 0; // spawn windows don't count as deaths
-    lockerSpawnTimer.restart();
-    root._spawnLockerDetached(cmd);
-  }
-
-  Connections {
-    target: LockerService
-    function onLockedChanged() {
-      if (LockerService.locked) {
-        root._lockerSpawnPending = false;
-        lockerSpawnTimer.stop();
-        root._lockerRespawnAttempts = 0;
-        root._lockerLivenessFails = 0;
-        root._armLivenessWatch();
-      } else {
-        root._lockerRespawnAttempts = 0; // clean unlock — healthy cycle
-        lockerLivenessTimer.stop();
-      }
-    }
-    // LockedHint convergence can land after the 2 s startup probe —
-    // retry boot recovery once the watch is live (idempotent).
-    function onLockedHintAvailableChanged() {
-      if (LockerService.lockedHintAvailable)
-        root._bootRecover();
-    }
-  }
-
-  // Invisible degraded path (B.6) — the only surviving use of the
-  // in-process lock screen.
-  function _engageInProcessFallback(reason) {
-    Logger.w("Compositor", reason + " — falling back to in-process lock screen");
-    if (!lockAndSuspendTimer.running && PanelService && PanelService.lockScreen && !PanelService.lockScreen.active)
-      PanelService.lockScreen.active = true;
-  }
-
-  // Spawned locker never engaged within 3 s -> in-process fallback (B.6).
-  Timer {
-    id: lockerSpawnTimer
-    interval: 3000
-    repeat: false
-    onTriggered: {
-      if (!root._lockerSpawnPending)
-        return;
-      if (LockerService.locked) {
-        // LockedHint was already set (boot recovery / respawn of a dead
-        // locker's session): re-engagement produces NO LockedHint
-        // transition, so process liveness is the confirmation here.
-        spawnLivenessProbe.running = true;
-        return;
-      }
-      root._lockerSpawnPending = false;
-      root._engageInProcessFallback("Spawned locker did not engage within 3 s");
-    }
-  }
-
-  Process {
-    id: spawnLivenessProbe
-    command: ["pgrep", "-f", root._lockerLivenessPattern(root._spawnedLockerCmd)]
-    onExited: function (exitCode) {
-      if (!root._lockerSpawnPending)
-        return;
-      root._lockerSpawnPending = false;
-      if (exitCode === 0) {
-        root._armLivenessWatch(); // alive + LockedHint=yes → engaged
-        return;
-      }
-      root._engageInProcessFallback("Spawned locker never appeared");
-    }
-  }
-
-  // Spawned-locker liveness: while locked, probe for the process we
-  // (would) spawn; two consecutive misses (6 s) = died while locked →
-  // bounded respawn (B.6). Class 3 is supervised by its own deployment.
-  function _armLivenessWatch() {
-    if (root._isLockerProcess || LockerService.contractAvailable)
-      return;
-    if (root._spawnedLockerCmd === "")
-      root._spawnedLockerCmd = root._spawnedLockerCommand();
-    root._lockerLivenessFails = 0;
-    lockerLivenessTimer.start();
-  }
-
-  Timer {
-    id: lockerLivenessTimer
-    interval: 3000
-    repeat: true
-    onTriggered: {
-      if (!LockerService.locked || LockerService.contractAvailable || root._lockerSpawnPending) {
-        stop();
-        return;
-      }
-      lockerLivenessProbe.running = true;
-    }
-  }
-
-  Process {
-    id: lockerLivenessProbe
-    command: ["pgrep", "-f", root._lockerLivenessPattern(root._spawnedLockerCmd)]
-    onExited: function (exitCode) {
-      if (!LockerService.locked || LockerService.contractAvailable || root._lockerSpawnPending) {
-        root._lockerLivenessFails = 0;
-        return;
-      }
-      if (exitCode === 0) {
-        root._lockerLivenessFails = 0;
-        return;
-      }
-      root._lockerLivenessFails++;
-      if (root._lockerLivenessFails >= 2)
-        root._respawnSpawnedLocker();
-    }
-  }
-
-  function _respawnSpawnedLocker() {
-    if (root._lockerRespawnInFlight)
-      return; // concurrent probes must not double-spawn
-    if (root._lockerRespawnAttempts >= 3) {
-      Logger.e("Compositor", "Spawned locker died while locked and respawn attempts are exhausted — the compositor locked-session background stays until a locker returns");
-      lockerLivenessTimer.stop();
-      return;
-    }
-    root._lockerRespawnAttempts++;
-    root._lockerLivenessFails = 0;
-    root._lockerRespawnInFlight = true;
-    Logger.w("Compositor", "Spawned locker died while locked — respawning (attempt " + root._lockerRespawnAttempts + "/3)");
-    root._spawnLockerDetached(root._spawnedLockerCmd);
-    respawnGraceTimer.restart();
-  }
-
-  // Grace covers the respawned process's boot+engage; probes during it
-  // cannot count misses.
-  Timer {
-    id: respawnGraceTimer
-    interval: 5000
-    repeat: false
-    onTriggered: {
-      root._lockerRespawnInFlight = false;
-      root._lockerLivenessFails = 0;
-    }
-  }
-
-  // Boot recovery: shell start while the session is still locked and no
-  // locker is alive (both died mid-lock) → spawn the configured locker;
-  // it re-engages per A.1.3. A live class-3 service (name watch) or a
-  // surviving spawned locker (liveness probe) makes this a no-op.
-  // Runs at startup and again when the LockedHint watch converges, and
-  // serves as the manual-recovery path for lock() while locked.
-  function _bootRecover() {
-    if (!LockerService.lockedHintAvailable || !LockerService.locked || LockerService.contractAvailable)
-      return;
-    if (root._spawnedLockerCmd === "")
-      root._spawnedLockerCmd = root._spawnedLockerCommand();
-    bootLivenessProbe.running = true;
-  }
-
-  Process {
-    id: bootLivenessProbe
-    command: ["pgrep", "-f", root._lockerLivenessPattern(root._spawnedLockerCmd)]
-    onExited: function (exitCode) {
-      if (!LockerService.locked || LockerService.contractAvailable)
-        return;
-      if (exitCode === 0) {
-        root._armLivenessWatch(); // surviving locker around a shell restart
-        return;
-      }
-      Logger.w("Compositor", "Session still locked at shell startup (LockedHint=yes) with no live locker — spawning for re-engagement");
-      root._engageOutOfProcessLocker();
-    }
-  }
-
   function lock() {
-    if (root._isLockerProcess)
-      return;
-    if (!Settings.data.general.lockScreenEnabled) {
-      Logger.i("Compositor", "Lock requested but lockScreenEnabled is false — skipping");
-      return;
-    }
-    Logger.i("Compositor", "LockScreen requested");
-    HooksService.runHandler("lockAction", () => {
-      if (executeSessionAction("lock"))
-        return;
-      if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
-        return; // legacy swaylock-mode
-      if (LockerService.locked) {
-        // Manual-recovery path: locked with no live locker (dead client,
-        // compositor background) → spawn for the takeover.
-        if (!LockerService.contractAvailable)
-          root._bootRecover();
-        return; // a live locker makes lock() idempotent
-      }
-      root._engageOutOfProcessLocker();
-    });
+    LockOwnerService.requestLock("compositor", false);
   }
 
   function hibernate() {
@@ -912,8 +642,6 @@ Singleton {
     }
   }
 
-  property int lockAndSuspendCheckCount: 0
-
   function lockAndSuspend() {
     if (root._isLockerProcess)
       return;
@@ -922,110 +650,12 @@ Singleton {
       suspend();
       return;
     }
-    Logger.i("Compositor", "Lock and suspend requested");
-
-    // if a custom lock command exists, execute it and suspend without wait
-    if (executeSessionAction("lock")) {
-      suspend();
-      return;
-    }
-
-    // Legacy swaylock-mode: spawn locker, then suspend immediately
-    if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker()) {
-      suspend();
-      return;
-    }
-
-    // Already locked (any class) → suspend immediately
-    if (LockerService.locked || (PanelService && PanelService.lockScreen && PanelService.lockScreen.active)) {
-      Logger.i("Compositor", "Screen already locked, suspending");
-      suspend();
-      return;
-    }
-
-    // Out-of-process engage (contract signal or per-lock spawn), then
-    // wait for LockedHint before suspending (timer, 3 s timeout
-    // suspends anyway).
-    HooksService.runHandler("lockAction", () => {
-      root._engageOutOfProcessLocker();
-    });
-    lockAndSuspendCheckCount = 0;
-    lockAndSuspendTimer.start();
+    LockOwnerService.requestLock("lock-and-suspend", true);
   }
 
-  Timer {
-    id: lockAndSuspendTimer
-    interval: 100
-    repeat: true
-    running: false
-
-    onTriggered: {
-      lockAndSuspendCheckCount++;
-
-      // LockedHint is the engagement confirmation for every class
-      if (LockerService.locked) {
-        Logger.i("Compositor", "Locker confirmed active, suspending");
-        stop();
-        lockAndSuspendCheckCount = 0;
-        suspend();
-        return;
-      }
-
-      if (lockAndSuspendCheckCount > 30) {
-        // Max 3 seconds wait
-        Logger.w("Compositor", "Locker failed to activate, suspending anyway");
-        stop();
-        lockAndSuspendCheckCount = 0;
-        suspend();
-        return;
-      }
-
-      // Check if lock screen is now active
-      if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
-        // Verify the lock screen component is loaded
-        if (PanelService.lockScreen.item) {
-          Logger.i("Compositor", "Lock screen confirmed active, suspending");
-          stop();
-          lockAndSuspendCheckCount = 0;
-          suspend();
-        } else {
-          // Lock screen is active but component not loaded yet, wait a bit more
-          if (lockAndSuspendCheckCount > 20) {
-            // Max 2 seconds wait
-            Logger.w("Compositor", "Lock screen active but component not loaded, suspending anyway");
-            stop();
-            lockAndSuspendCheckCount = 0;
-            suspend();
-          }
-        }
-      } else {
-        // Lock screen not active yet, keep checking
-        if (lockAndSuspendCheckCount > 30) {
-          // Max 3 seconds wait
-          Logger.w("Compositor", "Lock screen failed to activate, suspending anyway");
-          stop();
-          lockAndSuspendCheckCount = 0;
-          suspend();
-        }
-      }
-    }
+  Connections {
+    target: LockOwnerService
+    function onSuspendReady() { root.suspend(); }
   }
 
-  Process {
-    id: externalLockerProcess
-    running: false
-    command: []
-
-    stdout: StdioCollector {}
-    stderr: StdioCollector {}
-
-    onExited: function (exitCode) {
-      if (exitCode !== 0) {
-        Logger.e("Compositor", "External locker failed, exit code:", exitCode, "\nstderr:", stderr.text);
-        ToastService.showError(I18n.tr("toast.external-locker-failed"), I18n.tr("toast.external-locker-failed-description", {
-                                                                                  "code": exitCode
-                                                                                }), 5000);
-      }
-    }
-  }
 }

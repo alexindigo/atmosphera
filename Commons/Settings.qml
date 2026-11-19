@@ -7,13 +7,12 @@ import "../Helpers/SettingsDefaults.js" as Defaults
 import "../Helpers/SettingsDraftEditor.js" as DraftEditor
 import "../Helpers/SettingsListCommands.js" as Lists
 import qs.Commons
-import qs.Services.Plugins
-import qs.Services.UI
 
 Singleton {
   id: root
   readonly property var data: owner.values
   readonly property alias store: owner
+  readonly property bool readOnly: Quickshell.env("ATMOSPHERA_LOCKSCREEN") === "1"
   readonly property int settingsVersion: 62
   readonly property string shellName: SettingsPaths.shellName
   readonly property string configDir: SettingsPaths.configDir
@@ -48,6 +47,7 @@ Singleton {
 
   SettingsStore {
     id: owner
+    readOnly: root.readOnly
     legacyFile: root.settingsFile
     overridesDirectory: root.overridesDir.slice(0, -1)
     evidencePath: root.cacheDir + "settings-conflicts"
@@ -62,7 +62,6 @@ Singleton {
         root.shouldOpenSetupWizard = root.isFreshInstall;
         root.isLoaded = true;
         root.settingsLoaded();
-        root.upgradeSettings();
       } else if (status === ConfigStore.Error) {
         Logger.e("Settings", "Settings owner failed:", error);
       }
@@ -77,7 +76,7 @@ Singleton {
       }
     }
     onCompleted: result => {
-      if (["save", "autosave", "flush", "close", "saveGroup", "retryGroup", "apply", "overlayApply", "overlayReset", "importProfile"].indexOf(result.operation) === -1 && !(result.operation === "retainGroup" && result.status === "failed"))
+      if (["save", "saveSelected", "autosave", "flush", "close", "saveGroup", "retryGroup", "apply", "overlayApply", "overlayReset", "importProfile"].indexOf(result.operation) === -1 && !(result.operation === "retainGroup" && result.status === "failed"))
         return;
       root.settingsSaveCompleted(result);
       if (result.status === "saved")
@@ -107,19 +106,9 @@ Singleton {
         root.settingsReloaded();
       }
     }
-    onProjectionEffects: event => root._migrationEffects(event.effects)
-  }
-
-  Connections {
-    target: root.isLoaded ? Service : null
-    function onPluginsFullyLoadedChanged() {
-      root.upgradeSettings();
-    }
-    function onPluginLoaded() {
-      root.upgradeSettings();
-    }
-    function onPluginUnloaded() {
-      root.upgradeSettings();
+    onProjectionEffects: event => {
+      if (!root.readOnly)
+        root._migrationEffects(event.effects);
     }
   }
 
@@ -189,6 +178,9 @@ Singleton {
   function modelIsCurrent(path, model) {
     var info = owner.info(path);
     return Lists.settled(info) && info.publicationGeneration === model.generation;
+  }
+  function saveSelected(paths, callback) {
+    return typeof callback === "function" ? owner.saveSelected(paths, callback) : owner.saveSelected(paths);
   }
   function saveImmediate(callback) {
     return typeof callback === "function" ? owner.save(callback) : owner.save();
@@ -302,7 +294,7 @@ Singleton {
       return;
     }
     owner.reset(path, "user");
-    owner.save();
+    owner.saveSelected([path]);
   }
   function resetSection(key) {
     _reset([key]);
@@ -415,47 +407,6 @@ Singleton {
     });
   }
 
-  function upgradeSettings() {
-    if (!isLoaded || !Service.initialized || !Service.pluginsFullyLoaded || !BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0)
-      return;
-    function entries(registry, normalize, retainInstalled) {
-      var ids = Object.keys(registry.widgets);
-      // Installed but unloadable bar plugins remain visible placeholders.
-      if (retainInstalled) {
-        for (var plugin of Object.keys(Registry.installedPlugins)) {
-          var id = "plugin:" + plugin;
-          if (ids.indexOf(id) === -1 && Registry.isPluginDownloaded(plugin))
-            ids.push(id);
-        }
-      }
-      return ids.map(function (key) {
-        return {
-          key: key,
-          available: registry.hasWidget(key),
-          retain: retainInstalled && key.startsWith("plugin:") && Registry.isPluginDownloaded(key.substring(7)),
-          normalize: normalize && registry.widgetMetadata[key] !== undefined,
-          defaults: normalize ? registry.widgetMetadata[key] || {} : {}
-        };
-      });
-    }
-    var bar = {
-      ready: true,
-      entries: entries(BarWidgetRegistry, true, true)
-    };
-    var shortcuts = {
-      ready: true,
-      entries: entries(ControlCenterWidgetRegistry, false, false)
-    };
-    var desktop = {
-      ready: true,
-      entries: entries(DesktopWidgetRegistry, false, false)
-    };
-    for (var section of ["left", "center", "right"])
-      owner.updateRecordListPolicy("bar-" + section, bar);
-    for (var section of ["left", "right"])
-      owner.updateRecordListPolicy("shortcuts-" + section, shortcuts);
-    owner.updateRecordListPolicy("desktop-widgets", desktop);
-  }
   function _migrationEffects(effects) {
     // Only the historical six shell-effect wrappers remain production code.
     // Their effect execution is not, and never was, a settings save receipt.

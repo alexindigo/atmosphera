@@ -1,5 +1,189 @@
 # Changelog
 
+## [0.10.0] - 2026-11-18
+
+### 2026-11-18
+
+**Fix**
+
+Lock requests survive asynchronous replies and shell restarts without trusting
+an old locker or an earlier sleep window. Standalone and emergency lock screens
+use a local compose input context; closing a preview cannot release the real
+lock's input-method suppression. Hot Corners migration preserves old commands
+without overwriting newer edits, action pickers retain the selected choice,
+and the niri backend recovers fresh window state after connecting or reconnecting.
+
+- Retain lock requests until accepted (`5686c0cea`)
+- Bind locker confirmation to its D-Bus owner (`6d95cba51`)
+- Correlate sleep confirmation with the current lock (`176178e6c`)
+- Isolate lock input contexts and preview demands (`dc104e19a`)
+- Preserve Hot Corners profile migration (`9fe946023`)
+- Retain picker choice identity (`cd1fafb5e`)
+- Supersede stale action-editor input (`161ba1430`)
+- Hand niri bootstrap state to its event stream (`0e590f15a`)
+- Recover fresh niri seeds and derived window state (`ae3c0398f`)
+- Reset niri connection state and refresh layout projections (`87d82f593`)
+
+**Packaging**
+
+The 0.10.0 settings stack uses the published ConfigQml 0.5.1 release for
+packages, Nix, the development toolchain and lint metadata. The package floor
+requires 0.5.1 or newer, including its scoped-save API.
+
+- Require ConfigQml 0.5.1 (`ecbbc5d3d`)
+
+### 2026-11-17
+
+**Fix**
+
+Saving one setting persists that edit's declared scope rather than unrelated
+pending changes. Lock operations have one owner with managed locker units,
+an emergency fallback and secure handover; authentication remains required
+before unlocking. AUR and Nix installations include both named lock clients.
+
+- Scope per-edit settings persistence (`b56cf09df`)
+- Own lock operations through secure handover (`70002b60c`)
+- Persist native locker outcomes before teardown (`5993b5638`)
+- Assemble named lockers for Nix installs (`d1bc80f6a`)
+
+**Feature**
+
+Hot Corners are part of the shell, with per-corner actions and a configurable
+dwell delay under Settings > General. A searchable action catalog offers shell
+and supported plugin commands while retaining custom commands. Existing Hot
+Corners plugin settings are backed up and imported before the plugin is retired.
+Locker1 v2 correlates lock requests with their secured or unlocked state.
+
+- Add the shell action catalog (`096cfb2bb`)
+- Add Hot Corners settings (`c2c92cd89`)
+- Add shell Hot Corners surfaces (`b8ed78a1a`)
+- Import and retire the Hot Corners plugin (`d7bd80368`)
+- Correlate Locker1 requests (`80ec3e17c`)
+
+### 2026-11-16
+
+**Fix**
+
+Wi-Fi, connection and VPN views consume one event-driven NetworkManager state
+owner instead of independent polling loops. Failed interface reads can recover,
+certificate settings and network identities are retained, and unusual or empty
+SSIDs are ordinary data. What's New reads bundled release notes and records
+acknowledgment on dismissal instead of depending on an upgrade-log server.
+
+- Centralize NetworkManager state (`4ccffc580`)
+- Preserve certificate and Wi-Fi identities (`1d15b3f8f`)
+- Handle empty SSIDs (`384aada50`)
+- Treat every SSID as an ordinary map key (`945ea75e3`)
+- Own bundled changelog content and acknowledgment (`3d858fd36`)
+
+### 2026-11-15
+
+**Fix**
+
+Closing settings settles buffered input, including Clock format edits, before
+releasing the editor. Rejected input can be discarded explicitly, and plugin
+credentials use consistent metadata for portable profiles.
+
+- Settle buffered input before closing (`84331db04`)
+- Capture the current Clock format (`7660dd4c6`)
+- Allow discarding rejected live input (`678e098a7`)
+- Classify plugin credentials consistently (`8b0da825e`)
+
+**Feature**
+
+On niri, a framed bar can scroll windows and workspaces after a configurable
+edge hold, with progress feedback. Edge sensors respect the overview, bar
+visibility and reduced-motion settings, and retain a hold across surface handoffs.
+
+- Add edge-scrolling settings (`e5efe625a`)
+- Add edge-scrolling timing and geometry (`c827978fd`)
+- Add framed edge sensors and glow (`c0093c977`)
+- Preserve holds across surface handoffs (`02b5d17ea`)
+
+### 2026-11-14
+
+**Fix**
+
+The file chooser preserves typed paths and selection intent, and replacing an
+existing file requires explicit confirmation. External lock commands are checked
+asynchronously, distinguishing shell comments from literal hash characters.
+Shell ownership discovery retries across handoffs without treating lookup errors
+as an empty queue.
+
+- Preserve file path and selection intent (`eb10bfb3f`)
+- Require confirmation before replacing files (`9628f0018`)
+- Validate external lock commands asynchronously (`3c99ca906`)
+- Preserve hashes in command checks (`ba212900f`)
+- Inspect shell comments before validation (`54e546c4d`)
+- Retry ownership discovery across handoffs (`0d289b2d5`)
+
+**Feature**
+
+The file chooser supports file operations, configurable views, local path
+completion and save-name extensions. Its places rail supports bookmarks and
+volumes, navigation can be restored, and keyboard focus is exposed through
+native accessibility.
+
+- Add file operations (`286c2cceb`)
+- Add configurable views (`ddab18c9a`)
+- Resolve and complete local paths (`4b6092087`)
+- Handle save extensions (`00e5b2c03`)
+- Manage places and restore navigation (`4a93f582c`)
+- Expose accessible focus (`f17d76e51`)
+
+### 2026-11-13
+
+**Fix**
+
+The file chooser scrolls without repeatedly rebuilding its listing, uses a
+compact header and shows recent folders. Shell handoffs recover from a stuck
+previous owner rather than waiting indefinitely.
+
+- Improve chooser scrolling (`7d0f8fe0a`)
+- Compact the chooser header (`b6073edae`)
+- Show recent folders (`b0a1586fe`)
+- Recover handoffs from stuck owners (`9fd8929e9`)
+
+**Feature**
+
+The file chooser adds range and toggle selection, folder creation and a listing
+filter. These operations share its current navigation and selection state.
+
+- Add range and toggle selection (`2e2a36601`)
+- Create folders (`e6ae4d3a2`)
+- Filter the listing by name (`71c4ebcfc`)
+
+### 2026-11-12
+
+**Fix**
+
+Settings integration preserves the enabled notification server while restoring
+preferences. Notification delivery keeps its selected owner.
+
+- Preserve the enabled notification server (`c4e39a989`)
+
+### 2026-11-11
+
+**Refactor**
+
+Settings and plugin preferences move to ConfigQml's native ownership, typed
+sources and save receipts. Editors acknowledge completed saves, retain unknown
+configuration data and keep live previews separate from committed preferences.
+The shell continues to use the existing settings files and migration history.
+
+- Switch settings and plugin preferences to native ownership (`d715a70f6`)
+
+### 2026-11-10
+
+**Fix**
+
+Anchored panels keep their anchored edge still while resizing. Directory-watch
+fallback reloads compare source identity so unrelated directory activity does
+not repeatedly reload settings.
+
+- Keep the anchored panel edge still (`9f5b6fc5f`)
+- Filter directory fallback reloads by identity (`f68d9bc27`)
+
 ## [0.9.3] - 2026-11-12
 
 ### 2026-11-12

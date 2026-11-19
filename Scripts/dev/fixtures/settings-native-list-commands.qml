@@ -526,7 +526,7 @@ ShellRoot {
   }
   function save() {
     check(rejected === 7, "all busy callbacks observed");
-    store.save(function (result) {
+    store.saveSelected(paths, function (result) {
       try {
         receipt(result, "save");
         check(result.status === "saved", "actual preserving file receipt");

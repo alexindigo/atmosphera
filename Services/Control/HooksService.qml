@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Power
+import qs.Services.Locker
 import qs.Services.Theming
 import qs.Services.UI
 
@@ -56,34 +57,6 @@ Singleton {
         executeWallpaperHook(hook.path, hook.screenName);
       }
       executeColorGenerationHook();
-    }
-  }
-
-  // Track lock screen state for unlock hook
-  property bool wasLocked: false
-
-  Connections {
-    target: PanelService
-    function onLockScreenChanged() {
-      if (PanelService.lockScreen) {
-        lockScreenActiveConnection.target = PanelService.lockScreen;
-      }
-    }
-  }
-
-  Connections {
-    id: lockScreenActiveConnection
-    target: PanelService.lockScreen
-    function onActiveChanged() {
-      // Detect lock: was unlocked, now locked
-      if (!wasLocked && PanelService.lockScreen.active) {
-        executeLockHook();
-      }
-      // Detect unlock: was locked, now not locked
-      if (wasLocked && !PanelService.lockScreen.active) {
-        executeUnlockHook();
-      }
-      wasLocked = PanelService.lockScreen.active;
     }
   }
 
@@ -139,38 +112,6 @@ Singleton {
       Logger.d("HooksService", `Executed dark mode hook: ${command}`);
     } catch (e) {
       Logger.e("HooksService", `Failed to execute dark mode hook: ${e}`);
-    }
-  }
-
-  // Execute screen lock hook
-  function executeLockHook() {
-    const script = listenerCommandFor("screenLock", "screenLock");
-    if (!script) {
-      return;
-    }
-
-    try {
-      // Pass "lock" as $1 via shell arguments so the script receives it
-      Quickshell.execDetached(["sh", "-lc", script, "lock-hook", "lock"]);
-      Logger.d("HooksService", `Executed screen lock hook: ${script}`);
-    } catch (e) {
-      Logger.e("HooksService", `Failed to execute screen lock hook: ${e}`);
-    }
-  }
-
-  // Execute screen unlock hook
-  function executeUnlockHook() {
-    const script = listenerCommandFor("screenUnlock", "screenUnlock");
-    if (!script) {
-      return;
-    }
-
-    try {
-      // Pass "unlock" as $1 via shell arguments so the script receives it
-      Quickshell.execDetached(["sh", "-lc", script, "unlock-hook", "unlock"]);
-      Logger.d("HooksService", `Executed screen unlock hook: ${script}`);
-    } catch (e) {
-      Logger.e("HooksService", `Failed to execute screen unlock hook: ${e}`);
     }
   }
 
@@ -337,6 +278,10 @@ Singleton {
   }
 
   function runHandler(name, builtinCallback) {
+    if (name === "lockAction") {
+      LockOwnerService.requestLock("lock-handler", false);
+      return;
+    }
     const handler = handlerFor(name);
     if (!handler) {
       if (builtinCallback) builtinCallback();
@@ -412,12 +357,7 @@ Singleton {
   // Initialize the service
   function init() {
     Logger.i("HooksService", "Service started");
-    // Initialize lock screen state tracking
     Qt.callLater(() => {
-      if (PanelService.lockScreen) {
-        wasLocked = PanelService.lockScreen.active;
-        lockScreenActiveConnection.target = PanelService.lockScreen;
-      }
       // Initialize performance mode state tracking
       wasPerformanceModeEnabled = PowerProfileService.atmospheraPerformanceMode;
       // Execute startup hook

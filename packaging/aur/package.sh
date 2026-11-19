@@ -8,16 +8,10 @@ package() {
   # Exclude dev tooling and temp files from the installed tree
   rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/dev" "$pkgdir/etc/xdg/quickshell/atmosphera/Scripts/dev"
 
-  # Bundled per-process lock screen (the shell spawns it as
-  # `qs -c atmosphera-lockscreen`): sibling config whose symlinks into the
-  # main tree let the shared lock UIs render with fresh per-process
-  # singletons.
-  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen"
-  install -Dm644 Quickshell/atmosphera-lockscreen/shell.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/shell.qml"
-  install -Dm644 Quickshell/atmosphera-lockscreen/LockSession.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/LockSession.qml"
-  for d in Assets Bindings Commons Configs Helpers Modules Scripts Services Widgets builtin; do
-    ln -sfn "../atmosphera/$d" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$d"
-  done
+  # Quickshell scans every QML file in imported directories, including unused
+  # shell panels and registries. Install the reviewed runtime closure instead
+  # of exposing those directories wholesale to the per-process locker.
+  bash Scripts/bash/install-locker-configs "$PWD" "$pkgdir/etc/xdg/quickshell"
   rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/tmp"
 
   # Install dispatcher to PATH (handlers resolved via SELF_DIR auto-detect)

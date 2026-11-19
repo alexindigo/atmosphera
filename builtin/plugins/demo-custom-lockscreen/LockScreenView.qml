@@ -24,6 +24,7 @@ Item {
   // Wallpaper background
   AtmoWallpaperBackground {
     screen: root.screen
+    wallpaperProvider: root.lockScreenApi?.wallpaperProvider ?? WallpaperService
   }
 
   // Dark overlay for readability

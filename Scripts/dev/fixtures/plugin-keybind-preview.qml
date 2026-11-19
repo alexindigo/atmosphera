@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Services.Plugins
 import qs.Services.UI
@@ -104,8 +105,8 @@ ShellRoot {
     check(panel.getKeyLabel("Mod3") === "Custom-Mod3" && panel.descriptionColorOverride === "#112233", "actual selected label/description consumers");
     check(String(sharedPanel.keyColorAlt) === "#ff6b6b" && String(siblingPanel.keyColorAlt) === "#654321", "shared/sibling consumers isolated");
   }
-  function register(value) {
-    api = Service.createPluginAPI("keybind-cheatsheet", manifest, value, {}, {}, {});
+  function register(value, state) {
+    api = Service.createPluginAPI("keybind-cheatsheet", manifest, value, {}, {}, state);
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded["keybind-cheatsheet"] = {
       api: api
@@ -133,6 +134,13 @@ ShellRoot {
                            pluginApi: api
                          });
   }
+  function openOwner(callback) {
+    Service.loadPluginState("keybind-cheatsheet", function (state) {
+      Service._openSettingsOwner("keybind-cheatsheet", function (owner) {
+        callback(owner, state);
+      });
+    });
+  }
   function start() {
     if (started || !Settings.isLoaded)
       return;
@@ -140,10 +148,10 @@ ShellRoot {
     input.waitForJob();
     manifest = JSON.parse(input.text());
     if (verifyOnly) {
-      Service._openSettingsOwner("keybind-cheatsheet", function (value) {
+      openOwner(function (value, state) {
         try {
-          check(value!==null,"cold native owner opens");
-          root.register(value);
+          check(value !== null, "cold native owner opens");
+          root.register(value, state);
           root.phase = "restart";
         } catch (error) {
           console.error(String(error));
@@ -169,12 +177,40 @@ ShellRoot {
             }
           }
         ];
-    Service._openSettingsOwner("keybind-cheatsheet",function(owner){try{check(owner!==null,"native owner opens");register(owner);
-    Settings.saveResult(function(result){try{check(result.status==="saved","placement seed saved");
-        popup.openInstanceSettings(root.manifest, root.instance, "settings");
-        root.phase = "preview";
-    }catch(error){console.error(String(error));Qt.exit(2);}});
-    }catch(error){console.error(String(error));Qt.exit(2);}});
+    var seed = JSON.stringify(Settings.data.bar.widgets.left);
+    openOwner(function (owner, state) {
+      try {
+        check(owner !== null, "native owner opens");
+        register(owner, state);
+        Settings.saveResult(function (result) {
+          try {
+            check(result.status === "saved" || result.status === "nothing_to_save", "placement seed acknowledged: " + JSON.stringify(result));
+            seedFile.reload();
+            seedFile.waitForJob();
+            check(SettingsValues.equal(JSON.parse(seedFile.text()).widgets.left, JSON.parse(seed)), "exact placement seed on disk");
+            console.log("I4_KEYBIND_SEED:", result.status, seed);
+            popup.openInstanceSettings(root.manifest, root.instance, "settings");
+            root.phase = "preview";
+          } catch (error) {
+            console.error(String(error));
+            Qt.exit(2);
+          }
+        });
+      } catch (error) {
+        console.error(String(error));
+        Qt.exit(2);
+      }
+    });
+  }
+  FileView {
+    id: seedFile
+    path: Settings.configDir + "settings/bar.json"
+    printErrors: false
+  }
+  FileView {
+    id: stateFile
+    path: Registry.getPluginStateFile("keybind-cheatsheet")
+    printErrors: false
   }
   function drive() {
     if (phase === "preview" && popup.opened && popup.settingsPage) {
@@ -197,7 +233,8 @@ ShellRoot {
       popup.confirmDiscard();
       phase = "cancel";
     } else if (phase === "cancel" && !popup.visible && !popup.currentPlugin) {
-      if(instance.pluginSettings.keyColorAlt!=="#456789")return;
+      if (instance.pluginSettings.keyColorAlt !== "#456789")
+        return;
       check(String(panel.keyColorAlt) === "#456789" && main.cheatsheetDataVersion === parserVersion, "cancel reveals foreign edit without rollback or refresh");
       popup.openInstanceSettings(manifest, instance, "settings");
       phase = "apply";
@@ -216,7 +253,8 @@ ShellRoot {
       phase = "wait";
     } else if (phase === "wait" && !popup.busy) {
       check(!popup.saveFailed && !popup.dirty, "current receipt clears accepted work: " + JSON.stringify(lastResult) + " dirty=" + popup.dirty + " fields=" + JSON.stringify(dirtyFields(popup.settingsPage)));
-      if(instance.pluginSettings.keyColorAlt!=="#123456")return;
+      if (instance.pluginSettings.keyColorAlt !== "#123456")
+        return;
       check(savedNotices === 1, "one actual saved toast after current receipt");
       consumers();
       check(instance.pluginSettings.bindOverrides.fixture.opaque.keep && !instance.pluginSettings.bindOverrides.fixture.hidden, "selected override edit persisted");
@@ -225,13 +263,24 @@ ShellRoot {
     } else if (phase === "parser" && !popup.visible && !popup.currentPlugin && main.cheatsheetDataVersion > parserVersion) {
       check(JSON.stringify(sharedPanel.rawCategories).includes("Run: fixture-command"), "acknowledged refresh reaches actual parser and its path-specific output reaches the shared panel");
       api.saveSettings(function (result) {
-        check(result.status === "saved" || result.status === "nothing_to_save", "parser cache persisted");
-        console.log("I4_KEYBIND_PREVIEW: SAVED_PASS");
-        Qt.exit(0);
+        check(result.status === "saved" || result.status === "nothing_to_save", "preferences remain acknowledged after parser cache refresh");
+        root.phase = "state-file";
       });
       phase = "saving-cache";
+    } else if (phase === "state-file") {
+      stateFile.reload();
+      stateFile.waitForJob();
+      if (!stateFile.text().trim())
+        return;
+      var savedState = JSON.parse(stateFile.text());
+      if (!SettingsValues.equal(savedState.cheatsheetData, api.state.cheatsheetData))
+        return;
+      check(JSON.stringify(savedState.cheatsheetData).includes("Run: fixture-command"), "exact parser cache persisted in shared state");
+      console.log("I4_KEYBIND_PREVIEW: SAVED_PASS");
+      Qt.exit(0);
     } else if (phase === "restart") {
-      if(!instance.settingsReady||!sibling.settingsReady)return;
+      if (!instance.settingsReady || !sibling.settingsReady)
+        return;
       consumers();
       check(api.pluginSettings.bindOverrides.fixture.hidden && api.pluginSettings.bindOverrides.fixture.opaque.keep, "shared overrides unaffected after restart");
       check(instance.pluginSettings.bindOverrides.fixture.opaque.keep && !instance.pluginSettings.bindOverrides.fixture.hidden, "selected map after restart");

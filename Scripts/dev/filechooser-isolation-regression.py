@@ -16,7 +16,7 @@ import time
 from filechooser_isolation import cgroup, enter, input_command, profile_env
 from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_gate import request_gate
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 
 def command(argv, env=None, seconds=15, check=True):
@@ -50,7 +50,7 @@ def wait(fn, seconds=20):
 
 
 def instrument(shell, filename, handler, imports="", *, root_id="shellRoot"):
-    path = shell / filename
+    path = probe_owner_path(shell, root_id=root_id) if filename == "shell.qml" and root_id == "shellRoot" else shell / filename
     text = path.read_text()
     path.write_text(imports + "import Quickshell.Io\n" + inject_probe(text, handler, root_id=root_id))
 
@@ -241,7 +241,7 @@ def main():
         if observe_retention:
             add_checkpoint_handler(shell)
         if a.heap_probe:
-            path = shell / "shell.qml"
+            path = probe_owner_path(shell)
             text = path.read_text()
             needle = "    function collectGarbage(): void { gc(); }"
             assert text.count(needle) == 1

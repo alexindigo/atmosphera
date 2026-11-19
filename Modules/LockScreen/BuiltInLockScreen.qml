@@ -14,8 +14,10 @@ Item {
 
   required property var lockContext
   required property var screen
-  property bool compactMode: false
-  property bool animationsEnabled: false
+  property var lockScreenApi: null
+  property var pluginApi: null
+  property bool compactMode: lockScreenApi?.compactMode ?? false
+  property bool animationsEnabled: lockScreenApi?.animationsEnabled ?? false
 
   Item {
     id: batteryIndicator
@@ -35,6 +37,7 @@ Item {
   LockScreenBackground {
     id: backgroundComponent
     screen: builtInLockScreen.screen
+    wallpaperProvider: builtInLockScreen.lockScreenApi?.wallpaperProvider ?? WallpaperService
   }
 
   Item {

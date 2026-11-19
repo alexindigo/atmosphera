@@ -3,10 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.Commons
 import "../Helpers/QtObj2JS.js" as QtObj2JS
-import qs.Services.Power
-import qs.Services.System
-import qs.Services.UI
 
 // Centralized shell state management for small cache files
 Singleton {
@@ -51,7 +49,7 @@ Singleton {
                                           lastSeenTs: 0
                                         })
 
-      // UpdateService: changelog state
+      // Version: changelog state
       property var changelogState: ({
                                       lastSeenVersion: ""
                                     })
@@ -179,7 +177,7 @@ Singleton {
     };
   }
 
-  // Changelog state (UpdateService)
+  // Changelog state (Version)
   function setChangelogState(stateData) {
     adapter.changelogState = stateData;
     save();
@@ -229,28 +227,23 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  function buildStateSnapshot() {
+  // The cache owns persisted state, not the shell controllers using it.
+  // Consumers supply their live state so reading display/cache data cannot
+  // construct the panel, widget and plugin registry graph in a locker.
+  function buildStateSnapshot(runtimeState) {
     try {
       const settingsData = QtObj2JS.qtObjectToPlainObject(Settings.data);
       const shellStateData = ShellState?.data ? QtObj2JS.qtObjectToPlainObject(ShellState.data) || {} : {};
 
       return {
         settings: settingsData,
-        state: {
-          doNotDisturb: NotificationService.doNotDisturb,
-          atmospheraPerformanceMode: PowerProfileService.atmospheraPerformanceMode,
-          barVisible: BarService.isVisible,
-          openedPanel: PanelService.openedPanel?.objectName || "",
-          lockScreenActive: PanelService.lockScreen?.active || false,
-          wallpapers: WallpaperService.getWallpapersEffectiveMap(),
-          desktopWidgetsEditMode: DesktopWidgetRegistry.editMode || false,
-          // -------------
+        state: Object.assign({}, runtimeState || {}, {
           display: shellStateData.display || {},
           notificationsState: shellStateData.notificationsState || {},
           changelogState: shellStateData.changelogState || {},
           colorSchemesList: shellStateData.colorSchemesList || {},
           ui: shellStateData.ui || {}
-        }
+        })
       };
     } catch (error) {
       Logger.e("Settings", "Failed to build state snapshot:", error);

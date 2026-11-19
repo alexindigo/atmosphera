@@ -18,8 +18,7 @@ ColumnLayout {
       clicked: function () {
         if (PanelService.lockScreen && !PanelService.lockScreen.active) {
           saveSettings();
-          PanelService.lockScreen.active = true;
-          PanelService.lockScreen.previewMode = true;
+          PanelService.lockScreen.showPreview();
         }
       }
     }

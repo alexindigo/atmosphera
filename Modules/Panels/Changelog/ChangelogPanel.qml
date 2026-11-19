@@ -50,9 +50,5 @@ SmartPanel {
     }
   }
 
-  onClosed: {
-    if (UpdateService && Version.changelogCurrentVersion) {
-      Version.markChangelogSeen(Version.changelogCurrentVersion);
-    }
-  }
+  onClosed: Version.dismissChangelog()
 }

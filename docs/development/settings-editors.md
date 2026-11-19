@@ -1,5 +1,29 @@
 # Settings editor preparation
 
+## Scoped publication on the native owner
+
+Per-edit persistence uses `Settings.saveSelected(paths, callback)`, where paths
+is a nonempty array of segment-array leaves/namespaces. It forwards directly to
+native `saveSelected`; it never falls back to a root save. Callers name exactly
+the leaves they wrote. Resets publish their removed leaf/namespace through the
+same selected API. Native list/record commands keep their captured owning atomic
+leaf, including both owning leaves for a transfer, rather than addressing row
+members as settings paths.
+
+`Settings.saveResult(callback)` remains the full-prefix root save for profile
+save-everything and explicit whole-store test fences. Its unresolved-work refusal
+and blocker reporting are unchanged. Selected receipts still reach the shared
+completion/success/failure signals, and optional callbacks remain optional.
+The callback-only `Settings.saveImmediate(callback)` is retained unchanged for
+older plugin consumers; new shell per-edit callers use the explicitly named
+selected operation rather than overloading that compatibility entry point.
+
+This integration requires configqml >=0.5.1 for the Atmosphera 0.10.0 release.
+The package floor, Nix/devcontainer pins and lint metadata use that release's
+additive `saveSelected` API.
+
+## Earlier preparation contract
+
 Completion callbacks are optional: a missing/non-function observer is not
 invoked. Admission, persistence, owner notifications and internal editor state
 settlement still occur. A caller requiring a result supplies a function and

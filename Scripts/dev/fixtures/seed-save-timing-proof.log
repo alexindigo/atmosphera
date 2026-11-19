@@ -1,0 +1,32 @@
+ 03:00:02 up  1:18,  3 users,  load average: 0.24, 1.00, 1.36
+procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st gu
+ 0  0      0 5153792 442384 2231840  0    0   321  2885 1229    2  5  2 79  8  7  0
+ 0  0      0 5153644 442384 2231844  0    0     0     0  137   79  0  0 98  0  2  0
+ 0  0      0 5153644 442384 2231844  0    0     0     0   90   56  0  0 100 0  0  0
+ 0  0      0 5153644 442384 2231844  0    0     0     0   63   45  0  0 100 0  1  0
+ 0  0      0 5153644 442384 2231844  0    0     0     0   47   40  0  0 100 0  0  0
+  INFO: Launching config: "/home/tester/Projects/atcq/g/review10-native/seed-save-proof.qml"
+  INFO: Shell ID: "59edb3b95c9d9964feba3ef8ab20d10e" Path ID "59edb3b95c9d9964feba3ef8ab20d10e"
+  INFO: Saving logs to "/home/tester/Projects/atcq/runtime/seed-xytmv1q_/quickshell/by-id/rrn6cwiot/log.qslog"
+  INFO: Configuration Loaded
+  INFO qml: [36m[20261115-030009][0m [35m          I18n[0m Service started
+  INFO qml: [36m[20261115-030009][0m [35m          I18n[0m Loading "en" (locale: "en")
+  INFO qml: [36m[20261115-030009][0m [35m          I18n[0m Loaded translations for "en"
+  INFO qml: [36m[20261115-030009][0m [35mPluginRegistry[0m Loaded plugin states from: /home/tester/Projects/atcq/g/seed-save-proof/0/c/plugins.json
+  INFO qml: [36m[20261115-030009][0m [35mPluginRegistry[0m Scanning plugin folder: /home/tester/Projects/atcq/g/seed-save-proof/0/c/plugins
+  INFO qml: [36m[20261115-030009][0m [35mPluginRegistry[0m All plugin manifests loaded. Total plugins: 0
+ DEBUG qml: SEED_SAVE_RECEIPT: {"delay":0,"status":"saved","error":{"code":"","file":"","line":0,"operation":"","path":[],"sourceId":""},"rows":[{"id":"Clock","opaque":{"seed":true}}]}
+
+  INFO: Launching config: "/home/tester/Projects/atcq/g/review10-native/seed-save-proof.qml"
+  INFO: Shell ID: "59edb3b95c9d9964feba3ef8ab20d10e" Path ID "59edb3b95c9d9964feba3ef8ab20d10e"
+  INFO: Saving logs to "/home/tester/Projects/atcq/runtime/seed-jtye24et/quickshell/by-id/lsnacwiot/log.qslog"
+  INFO: Configuration Loaded
+  INFO qml: [36m[20261115-030013][0m [35m          I18n[0m Service started
+  INFO qml: [36m[20261115-030013][0m [35m          I18n[0m Loading "en" (locale: "en")
+  INFO qml: [36m[20261115-030013][0m [35m          I18n[0m Loaded translations for "en"
+  INFO qml: [36m[20261115-030013][0m [35mPluginRegistry[0m Loaded plugin states from: /home/tester/Projects/atcq/g/seed-save-proof/1200/c/plugins.json
+  INFO qml: [36m[20261115-030013][0m [35mPluginRegistry[0m Scanning plugin folder: /home/tester/Projects/atcq/g/seed-save-proof/1200/c/plugins
+  INFO qml: [36m[20261115-030013][0m [35mPluginRegistry[0m All plugin manifests loaded. Total plugins: 0
+ DEBUG qml: SEED_SAVE_RECEIPT: {"delay":1200,"status":"nothing_to_save","error":{"code":"","file":"","line":0,"operation":"","path":[],"sourceId":""},"rows":[{"id":"Clock","opaque":{"seed":true}}]}
+

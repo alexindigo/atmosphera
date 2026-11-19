@@ -1,8 +1,8 @@
 {
   "format": 1,
   "inputs": {
-    "Configs/defaults.json": "fb940a326872df6351c243d35b665af137e9783459164a1fc5ffdbd25bd70435",
-    "Configs/settings-schema-overlay.json": "c8689dd8043059820332e416b923436426f11ff5987e7b89a36d79e449af81aa"
+    "Configs/defaults.json": "e764edecb63a782ff4659a3e483f170359669ae39ee1b5d127b5fdc26452c10b",
+    "Configs/settings-schema-overlay.json": "4e8f5f59c3391eb1e61026ccd979c1b48cb8b4b98dcf3361cb808d1e89c5a6e7"
   },
   "paths": [
     {
@@ -359,6 +359,22 @@
         "displayMode"
       ],
       "type": "String"
+    },
+    {
+      "maximum": 1000,
+      "minimum": 200,
+      "path": [
+        "bar",
+        "edgeScrollHoldMs"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "edgeScrolling"
+      ],
+      "type": "Boolean"
     },
     {
       "path": [
@@ -7022,6 +7038,55 @@
         "forceBlackScreenCorners"
       ],
       "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "bottomLeft"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "bottomRight"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 1000,
+      "minimum": 100,
+      "path": [
+        "general",
+        "hotCorners",
+        "delayMs"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "topLeft"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "hotCorners",
+        "topRight"
+      ],
+      "type": "String"
     },
     {
       "path": [
