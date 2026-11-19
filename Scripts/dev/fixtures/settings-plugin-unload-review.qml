@@ -19,6 +19,7 @@ ShellRoot {
         id: root
         property bool started: false
         property var api: null
+        property var originalOwner: null
         property var main: null
         property var panel: null
         property var instanceApi: null
@@ -76,6 +77,7 @@ ShellRoot {
               check(owner && owner.status === "Ready", "actual native owner");
               var manifest = JSON.parse(Quickshell.env("PLUGIN_UNLOAD_MANIFEST"));
               api = Service.createPluginAPI(name, manifest, owner, {}, {}, {});
+              originalOwner = owner;
               var registered = Object.assign({}, Service.loadedPlugins);
               registered[name] = {
                 manifest: manifest,
@@ -433,6 +435,8 @@ ShellRoot {
             if (pluginId === root.name && root.mode === "reload-held")
               root.guard(function () {
                 root.check(root.held, "no replacement owner before held native publication");
+                root.check(!root.originalOwner || root.originalOwner.closed, "original preference owner retired");
+                root.check(Service.getPluginAPI(pluginId).settingsOwner !== root.originalOwner, "replacement uses a different native owner");
                 root.check(Service.getPluginAPI(pluginId).pluginSettings.scratchpadContent === root.expected, "replacement owner reads final destruction save");
                 root.completed = true;
                 root.passed();
