@@ -57,6 +57,7 @@ Singleton {
       "work": options && options.work ? JSON.parse(JSON.stringify(options.work)) : null,
       "prepare": options && typeof options.prepare === "function" ? options.prepare : null,
       "captureToken": options && options.captureToken ? String(options.captureToken) : "",
+      "resetPath": options && options.resetPath ? JSON.parse(JSON.stringify(options.resetPath)) : null,
       "setupReceipt": null, "settingsReceipt": null,
       "attemptId": 0, "status": "Waiting", "error": "", "callback": callback,
       "attemptEnded": false, "handoff": "" };
@@ -227,7 +228,15 @@ Singleton {
           record.settingsReceipt = result;
           root._deploy(record, attempt);
         }
-      }, record.id, record.captureToken);
+      }, record.id, record.captureToken, record.resetPath, function (environment) {
+        if (!root._current(record, attempt)) return;
+        // A reset's inherited environment is known only after the native
+        // capture is admitted, not when the reset is appended to the FIFO.
+        record.environment = String(environment);
+        if (root._queue[root._queue.length - 1] === record)
+          root._latestChoice = record.environment;
+        root._changed();
+      });
     } catch (exception) {
       root._settle(record, attempt, false, "Managed bindings save failed");
     }
@@ -309,6 +318,9 @@ Singleton {
     target: Settings
     function onBindingsEnvironmentRequested(environment, captureToken) {
       root.requestEnvironment(environment, null, {captureToken: captureToken});
+    }
+    function onBindingsResetRequested(path) {
+      root.requestEnvironment(Settings.data.bindings.environment, null, {resetPath: path});
     }
   }
 }
