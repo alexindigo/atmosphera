@@ -314,8 +314,12 @@ intervenes. Authentication in the actual holder is the user's newer unlock
 intent; it is not an unauthenticated unlock or an implicit cancellation of the
 pending power action. With `lockOnSuspend=false`, suspend may therefore follow
 that authenticated unlock. With `lockOnSuspend=true`, the logind delay-inhibitor
-path guarantees a lock before every sleep, including a fresh lock after such
-intervening authentication. Independent Locker1 ownership and configured
+path requests a lock for every sleep and holds sleep within logind's bounded
+delay window until the lock is confirmed. Managed holders confirm a fresh lock
+before sleep, including after such intervening authentication. An opaque
+external locker that never confirms cannot extend that window: when the
+inhibitor delay expires, logind proceeds (see the opaque-expiry proof).
+Independent Locker1 ownership and configured
 suspend handler/custom-command semantics remain unchanged.
 
 `locker-owner-proof.py --main-shell --case fast --suspend-after-inspect-race`
