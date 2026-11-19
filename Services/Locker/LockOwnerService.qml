@@ -472,7 +472,8 @@ Singleton {
         // After a shell restart, signals may have been missed. Ask the
         // accepting service about this exact request before trusting state.
         // In-flight and durably reconciled are deliberately different states.
-        publish("starting", "", false);
+        if (next.state !== "reconciling")
+          publish("starting", "", false);
         if (_contractQuery && _contractQuery.key === contractKey(d))
           return;
         var queried = {
@@ -486,6 +487,10 @@ Singleton {
           if (_contractQuery !== queried || _view?.descriptor?.generation !== queried.generation)
             return;
           queried.events = !result.ok || result.owner !== queried.owner ? ["failed"] : result.state === "secure" ? ["secured"] : result.state === "unlocked" ? ["secured", "unlocked"] : result.state === "pending" && !d.contractSecured ? [] : ["failed"];
+          // A failed bounded query withdraws the reconciliation barrier now;
+          // recovery must not wait for a retryable failure-note write.
+          if (queried.events.indexOf("failed") !== -1)
+            _contractFailed = true;
           _contractFacts = queried;
           Qt.callLater(pump);
         });

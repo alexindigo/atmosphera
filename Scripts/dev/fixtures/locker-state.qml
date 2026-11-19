@@ -266,6 +266,19 @@ ShellRoot {
             v.contractFailed = true;
             check("contract-v2-owner-loss-withdraws-confirmation", v, "engaged-unconfirmed(external)");
             v.contractFailed = false;
+            // A restored secured request is queried before any unseen event
+            // can probe; a failed query or unsecured request keeps recovery.
+            v.contractPending = true;
+            v.descriptor.sleepWindow = 3;
+            check("contract-v2-restored-query-defers-probe", v, "reconciling");
+            v.contractFailed = true;
+            check("contract-v2-failed-query-probes", v, "fallback", "launch", "emergency");
+            v.contractFailed = false;
+            v.descriptor.contractSecured = false;
+            check("contract-v2-unsecured-pending-probes", v, "fallback", "launch", "emergency");
+            v.descriptor.contractSecured = true;
+            delete v.descriptor.sleepWindow;
+            v.contractPending = false;
           } else {
             check("opaque-ignores-contract-secured", v, "engaged-unconfirmed(external)");
           }

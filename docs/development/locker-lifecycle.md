@@ -92,6 +92,12 @@ observation as LockedHint=false on niri, so no probe or second password follows.
 Direct owner replacement immediately withdraws confirmation. After a shell
 restart the owner queries `RequestState(id)` of the recorded owner and withholds
 confirmation until the complete result is persisted and freshly inspected.
+For a request already persisted as `Secured` by that same owner, the bounded
+query is a reconciliation barrier: an unseen deadline or sleep event does not
+start an emergency probe that could relock after a missed `Unlocked`. A failed,
+mismatched, `pending`, `failed` or `unknown` reply, name loss or owner change withdraws the barrier
+at once, before its failure note is written, and recovery proceeds. Requests
+never persisted as `Secured` keep their event-driven probes.
 Standalone shipped lockers serve version 2 through `LockClient`; managed clients
 never claim the name.
 

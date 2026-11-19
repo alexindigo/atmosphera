@@ -124,8 +124,15 @@ function decide(view) {
         // request ID from the owner that accepted it. A later name loss or
         // owner change withdraws that confirmation (dead holder, not unlock).
         if (d.snapshot.adapter === "contract" && d.contractSecured === true && d.contractVersion >= 2
-            && !view.contractFailed && !view.contractPending)
+            && !view.contractFailed) {
+            // A restored secure request may have authenticated while this
+            // shell was absent. Reconcile its accepting owner's bounded query
+            // and persisted facts before an overdue event can start a probe.
+            // Initial unconfirmed requests and failed owners retain recovery.
+            if (view.contractPending)
+                return decision("reconciling");
             return decision("engaged", "external", true);
+        }
         if (emergency && emergency.everSecure && !emergencyLive && !client("emergency").authenticated)
             return effect("fallback", "", false, "launch", "emergency");
         if (!real && d.snapshot.adapter !== "contract" && !view.realLaunchFailed)
