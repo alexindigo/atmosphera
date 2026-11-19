@@ -37,9 +37,15 @@ import Quickshell
 import qs.Commons
 
 ShellRoot {
-  SettingsBootstrap { id: bootstrap }
+  // Historical source trees do not provide this type. Resolve it only for
+  // trees that have the bootstrap, so the baseline still reaches Settings.
   Loader {
-    active: bootstrap.ready
+    id: bootstrap
+    active: Quickshell.env("PROBE_BOOTSTRAP") !== "0"
+    source: active ? Qt.resolvedUrl("Commons/SettingsBootstrap.qml") : ""
+  }
+  Loader {
+    active: !bootstrap.active || (bootstrap.item !== null && bootstrap.item.ready)
     sourceComponent: Component {
 Item {
   id: probe

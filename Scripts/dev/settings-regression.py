@@ -74,6 +74,7 @@ def case_env(session, case_dir):
         "ATMOSPHERA_CACHE_DIR": str(case_dir / "cache"),
         "ATMOSPHERA_SETTINGS_FILE": str(case_dir / "config" / "settings.json"),
         "ATMOSPHERA_DEBUG": "0",
+        "PROBE_BOOTSTRAP": "1" if (case_dir / "shell/Commons/SettingsBootstrap.qml").is_file() else "0",
     })
     return env
 

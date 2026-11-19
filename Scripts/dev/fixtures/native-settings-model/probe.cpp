@@ -54,7 +54,8 @@ void NativeStoreProbe::releasePacket(int index) {
     if (!m_core || index < 0 || index >= m_packets.size() || m_released.contains(index))
         qFatal("native packet release must select one owned undelivered packet");
     m_released.insert(index);
-    ConfigStoreTestAccess::inject(m_core, m_packets[index]);
+    const auto packet = m_packets[index];
+    ConfigStoreTestAccess::inject(m_core, packet);
 }
 
 void NativeStoreProbe::endPackets() {
