@@ -208,6 +208,15 @@ Repeat the real-main fast/slow proofs with the
 guest compositor launched by `niri-session` as `niri.service`, as well as the
 login-session scope launch.
 
+The real-main `locker-owner-proof.py --main-shell` fast and
+`--case slow --delay 5 --emergency-auth-before-ready` proofs also run in actual
+Sway and Labwc sessions. These compositors publish neither a logind lock hint
+nor a lock notification, so their compositor state comes from the holder's
+ext-session-lock trace: the compositor's `locked()` event and the authenticated
+`unlock_and_destroy`. The fast proof adds the console framebuffer sentinel as an
+independent desktop observation: visible before, hidden while secure, visible
+after PAM.
+
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
 `deadline-race`, `rejected`, `resources`, `external`, `contract`, `restart`, `ingress`, `preview`,
 `suspend`, `load`, `packaging`, `cold-load` and `orphan-acceptance`.

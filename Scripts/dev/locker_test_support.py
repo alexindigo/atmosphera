@@ -3,6 +3,7 @@ import errno
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import signal
 import select
@@ -46,8 +47,9 @@ def require_guest(work, source):
         assert run(['findmnt', '-T', str(path), '-n', '-o', 'FSTYPE']).stdout.strip() not in ('tmpfs', 'ramfs'), 'disk-backed paths required'
     os.environ.update(XDG_RUNTIME_DIR='/run/user/1000', DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/1000/bus')
     manager = dict(line.split('=', 1) for line in run(['systemctl', '--user', 'show-environment']).stdout.splitlines() if '=' in line)
-    assert manager.get('XDG_CURRENT_DESKTOP') in ('niri', 'Hyprland', 'mango', 'Mango'), 'real graphical session required'
-    for key in ('NIRI_SOCKET', 'HYPRLAND_INSTANCE_SIGNATURE', 'WAYLAND_DISPLAY', 'XDG_CURRENT_DESKTOP', 'XDG_SESSION_TYPE'):
+    desktop = manager.get('XDG_CURRENT_DESKTOP', '')
+    assert desktop in ('niri', 'Hyprland', 'mango', 'Mango', 'sway') or desktop.split(':')[0] == 'labwc', 'real graphical session required'
+    for key in ('NIRI_SOCKET', 'HYPRLAND_INSTANCE_SIGNATURE', 'SWAYSOCK', 'WAYLAND_DISPLAY', 'XDG_CURRENT_DESKTOP', 'XDG_SESSION_TYPE'):
         if key in manager:
             os.environ[key] = manager[key]
     assert os.environ.get('WAYLAND_DISPLAY'), 'graphical display required'
@@ -160,13 +162,44 @@ def restore_hypr_option(original):
     assert hypr_option() == original, 'restore option not restored'
 
 
+def wlroots_desktop():
+    """Sway/Labwc publish neither a logind lock hint nor lock notifications."""
+    desktop = os.environ.get('XDG_CURRENT_DESKTOP', '')
+    return desktop == 'sway' or desktop.split(':')[0] == 'labwc'
+
+
+def protocol_transitions(events):
+    """ext-session-lock state from holder traces: the compositor's locked()
+    event and the unlock_and_destroy request; a dead holder stays locked."""
+    rows = []
+    for event in events:
+        if event['kind'] != 'journal':
+            continue
+        if re.search(r'ext_session_lock_v1#\d+\.locked\(\)', event['message']):
+            locked = True
+        elif re.search(r'ext_session_lock_v1#\d+\.unlock_and_destroy\(', event['message']):
+            locked = False
+        else:
+            continue
+        rows.append(dict(kind='protocol-lock', locked=locked, observed=event['sourceMonotonic'],
+            invocation=event['invocation']))
+    return rows
+
+
 def compositor_transitions(events):
-    """Native Hyprland notifications, or niri's compositor-owned logind hint."""
+    """Native Hyprland notifications, niri's compositor-owned logind hint, or
+    the ext-session-lock protocol state on Sway/Labwc."""
+    if wlroots_desktop():
+        return protocol_transitions(events)
     kind = 'compositor-lock' if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE') else 'locked-hint'
     return [event for event in events if event['kind'] == kind]
 
 
 def compositor_locked(work, session):
+    if wlroots_desktop():
+        raw = (work / 'observer/events.jsonl').read_text()
+        transitions = protocol_transitions([json.loads(line) for line in raw.rpartition('\n')[0].splitlines()])
+        return bool(transitions) and transitions[-1]['locked']
     if not os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
         return run(['loginctl', 'show-session', session, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
     raw = (work / 'observer/events.jsonl').read_text()

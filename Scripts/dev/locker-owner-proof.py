@@ -17,7 +17,7 @@ import subprocess
 import threading
 import time
 
-from locker_test_support import compositor_locked, compositor_transitions, hypr_option, manage, recover_known_pam_hang, require_guest, run, wait_for
+from locker_test_support import compositor_locked, compositor_transitions, hypr_option, manage, recover_known_pam_hang, require_guest, run, wait_for, wlroots_desktop
 from locker_proof_oracles import authenticated_unlocks, process_report_commit
 
 
@@ -115,7 +115,10 @@ def main():
         (work / 'load-samples.json').write_text(json.dumps(telemetry, indent=2))
 
     sample_load('start')
-    if hypr_crash or args.sleep_signals or args.ui == 'demo' or args.ingress in ('keybind', 'hot-corner') or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+    # Sway/Labwc have no compositor lock notification: the fast path adds the
+    # console framebuffer as an independent locked/unlocked desktop oracle.
+    wlroots_sentinel = wlroots_desktop() and args.case == 'fast'
+    if wlroots_sentinel or hypr_crash or args.sleep_signals or args.ui == 'demo' or args.ingress in ('keybind', 'hot-corner') or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
     discovery = manage(source, {'operation': 'discover'})
     sid, takeover = discovery['session'], discovery['takeover']
@@ -503,7 +506,7 @@ def main():
     def start():
         nonlocal owner
         launch = ['systemd-run', '--user', '--unit=' + unit, '--collect', '--property=KillMode=control-group', '--property=TimeoutStopSec=2s']
-        keys = ('WAYLAND_DISPLAY', 'NIRI_SOCKET', 'HYPRLAND_INSTANCE_SIGNATURE', 'XDG_CURRENT_DESKTOP',
+        keys = ('WAYLAND_DISPLAY', 'NIRI_SOCKET', 'HYPRLAND_INSTANCE_SIGNATURE', 'SWAYSOCK', 'XDG_CURRENT_DESKTOP',
                 'XDG_SESSION_TYPE', 'XDG_RUNTIME_DIR', 'DBUS_SESSION_BUS_ADDRESS', 'TMPDIR', 'HOME', 'USER',
                 'XDG_CONFIG_DIRS', 'ATMOSPHERA_CONFIG_DIR', 'ATMOSPHERA_CACHE_DIR', 'ATMOSPHERA_STATE_DIR', 'WAYLAND_DEBUG', 'PATH')
         launch += ['--setenv=' + key + '=' + environment[key] for key in keys if key in environment]
@@ -579,7 +582,7 @@ def main():
         wait_for(lambda: (work / 'observer/ready.json').exists(), 10)
         assert not compositor_locked(work, sid), 'existing compositor lock'
         start()
-        if hypr_crash or args.sleep_signals or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+        if wlroots_sentinel or hypr_crash or args.sleep_signals or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
             from locker_framebuffer import Framebuffer
             sentinel_entry = work / 'desktop-sentinel.qml'
             shutil.copyfile(source / 'Scripts/dev/fixtures/locker-sentinel.qml', sentinel_entry)
@@ -719,6 +722,14 @@ def main():
                     and observation.get('sameInvocation') and not observation.get('gone'))
         wait_for(secured, 15)
         first = inspect()
+        if wlroots_sentinel:
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                console.capture(work / 'locked-desktop.ppm')
+                assert not console.sentinel_visible(), 'desktop sentinel visible while the holder is secure'
+            finally:
+                console.close()
         if args.suspend_after_inspect_race:
             wait_for((work / 'after-consume-inspect.json').exists, 15)
             captured = json.loads((work / 'after-consume-inspect.json').read_text())['value']
@@ -1432,6 +1443,9 @@ def main():
                     # A sentinel evidence/identity failure must not skip safe
                     # restoration after already-authenticated settlement.
                     hint = run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip()
+                    if wlroots_desktop():
+                        evidence = (work / 'observer/events.jsonl').exists()
+                        hint = 'yes' if not evidence or compositor_locked(work, sid) else 'no'
                     settled = current is not None and (not current.get('descriptor') or current['descriptor']['phase'] == 'settled')
                     if hint == 'no' and (unlocked or settled):
                         run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')

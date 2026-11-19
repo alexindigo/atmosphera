@@ -234,6 +234,7 @@ ShellRoot {
             return SimpleNamespace(stdout='no' if command[0] == 'loginctl' else 'foreign')
         env = dict(owner=None, sentinel_identity='owned', sentinel_unit='controlled.service', run=run,
             sid='fixture', current={'descriptor': {'phase': 'settled'}}, unlocked=True,
+            wlroots_desktop=lambda: False, compositor_locked=lambda *args: False,
             original_hash='controlled-not-a-password', credential=credential, original_shadow=shadow, work=work)
         try:
             exec(compile(ast.Module(body=[node], type_ignores=[]), str(path), 'exec'), env)
