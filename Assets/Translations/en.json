@@ -398,6 +398,9 @@
     }
   },
   "common": {
+    "discard": "Discard",
+    "discard-changes": "Discard unsaved changes?",
+    "editor-save-failed": "Could not save changes. Your edits are still here.",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Actions",

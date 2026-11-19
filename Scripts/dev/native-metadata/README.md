@@ -8,6 +8,42 @@ universe for ordinary `qmllint.sh`. Other installed modules remain unchanged.
 An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
+`dependencies/configqml-030` contains the **unmodified installed** ConfigQml
+0.3.0 qmldir/qmltypes from AUR `qt6-configqml 0.3.0-1`, installed inside the
+`atmosphera-configqml-settings` VM on ark with Qt6.12.0 (release source
+`78e9d1d779fdec8f3001cc974717db7aeb98d653`).
+When the tooling image lacks that module, the materializer copies these real
+registrar outputs into its private import universe, checking artifact hashes
+and the selected family's Qt version. An installed module takes precedence.
+No runtime plugin or fabricated type declarations are installed by this path.
+Rebuild this inventory together with configqml and Quickshell on Qt upgrades.
+The fallback includes the actual `profileMaxBytes` property; the selftest checks
+it through real qmllint with ConfigQml absent from a private SDK view, including
+a missing-property negative control. The installed module is never hidden or
+changed in the system SDK.
+
+Each dependency's `qt611-qs031/` variant is generated from the same immutable
+source with Qt 6.11.2 moc and qmltyperegistrar. Selection requires one exact SDK
+metatype match; unknown SDKs, ambiguous matches and changed artifacts fail.
+Only that variant's two descriptions and receipt enter the private import tree.
+This is tooling metadata, not a ConfigQml runtime build or a private-ABI claim.
+`configqml-metadata-generate.py` regenerates these outputs without changing source
+or installing libraries. In the assigned VM, with disk-backed TMPDIR:
+
+```sh
+python3 -B Scripts/dev/configqml-metadata-generate.py \
+  --source "$IMMUTABLE_CONFIGQML_SOURCE" --qt "$SDK/usr/lib/qt6" \
+  --reference Scripts/dev/native-metadata/dependencies/configqml-030 \
+  --output "$WORKSPACE/generated-configqml"
+LD_LIBRARY_PATH="$SDK/usr/lib" python3 -B Scripts/dev/qml-native-metadata-selftest.py \
+  --sdk "$SDK/usr/lib/qt6" -k configqml_fallback
+```
+
+First run the generator with the reference Qt 6.12 SDK and compare its qmltypes
+byte-for-byte with the installed reference. Preserve `generation.json`, source
+archives, SDK package signatures and hashes outside the repository; copy only
+`configqml.qmltypes`, `qmldir` and `manifest.json` into the variant directory.
+
 | # | Family | Source commit | Qt toolchain |
 |---|---|---|---|
 | 1 | `qt611-qs031` | `1a4716cde794a59928d9d9fc15f2afc7a95de360` (Quickshell 0.3.1) | 6.11.2 |

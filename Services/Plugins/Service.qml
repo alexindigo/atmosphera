@@ -3,6 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
+import "../../Helpers/PluginSettingsEditor.js" as PluginSettingsEditor
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services
@@ -19,6 +21,12 @@ Singleton {
   signal pluginReloaded(string pluginId)
   signal availablePluginsUpdated
   signal allPluginsLoaded
+  signal pluginSettingsCompleted(string pluginId, var result)
+
+  // The old plugin owner keeps one captured FIFO until I5 replaces its I/O with
+  // configqml stores. Never acknowledge a timer fire or a detached child start.
+  property var _settingsSaves: []
+  property bool _settingsSaveBusy: false
 
   // When available plugins are updated, check if we should perform update check
   onAvailablePluginsUpdated: {
@@ -194,14 +202,9 @@ Singleton {
                                                                                                   "plugin": registeredKey
                                                                                                 }));
                                // Load the plugin since it was already enabled (state persisted but files were missing)
-                               loadPlugin(registeredKey);
-
-                               // Add plugin widget to bar if it provides one
-                               var manifest = Registry.getPluginManifest(registeredKey);
-                               if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
-                                 var widgetId = "plugin:" + registeredKey;
-                                 addWidgetToBar(widgetId, "right");
-                               }
+                                loadPlugin(registeredKey, function () {
+                                  root.addWidgetToBar("plugin:" + registeredKey, "right");
+                                });
                              } else {
                                ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
                                                                                                  "error": error || "Unknown error"
@@ -620,23 +623,15 @@ Singleton {
     }
 
     Registry.setPluginEnabled(compositeKey, true);
-    loadPlugin(compositeKey);
-
-    // Add plugin widget to bar if it provides one (unless we're restoring from backup)
-    if (!skipAddToBar) {
-      var manifest = Registry.getPluginManifest(compositeKey);
-      if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
-        var widgetId = "plugin:" + compositeKey;
-        // Announce the auto-add so re-enabling doesn't surprise with a
-        // silently-changed bar layout (addWidgetToBar dedupes).
-        if (addWidgetToBar(widgetId, "right")) {
+    loadPlugin(compositeKey, skipAddToBar ? null : function (manifest) {
+        // Registration makes retained rows visible before the duplicate check.
+        if (root.addWidgetToBar("plugin:" + compositeKey, "right")) {
           ToastService.showNotice(I18n.tr("toast.plugin-widget-added"), I18n.tr("toast.plugin-widget-added-desc", {
                                                                                   "name": manifest.name || compositeKey,
                                                                                   "section": "right"
                                                                                 }), "puzzle");
         }
-      }
-    }
+    });
 
     // Update available plugins list (use plain ID to match against availablePlugins)
     var parsed = Registry.parseCompositeKey(compositeKey);
@@ -648,60 +643,74 @@ Singleton {
     return true;
   }
 
-  // Helper function to add a widget to the bar (global + all screen overrides)
-  function addWidgetToBar(widgetId, section) {
-    section = section || "right"; // Default to right section
+  // Selection is captured before any delayed submit; all local targets share
+  // one batch, so a missing/stale target cannot leave partial placement changes.
+  function _capturePlacementBatch(targets, onChanged) {
+    if (!targets.length)
+      return null;
+    var first = targets[0];
+    var commands = Settings.createRecordListEditor(first.path, first.listAddress, targets.slice(1).map(function (target) {
+      return {path: target.path, listAddress: target.listAddress, ensure: target.ensure === true};
+    }), {ensure: first.ensure === true});
+    if (!commands)
+      return null;
+    var edits = [];
+    targets.forEach(function (target, selection) {
+      target.edits.forEach(function (edit) {
+        edits.push(Object.assign({}, edit, {at: commands.target(selection)}));
+      });
+    });
+    return {
+      submit: function (callback) {
+        return commands.submit(edits, function (result) {
+          commands.detach();
+          if (result.status === "admitted" && result.refreshState === "current" && typeof onChanged === "function")
+            onChanged();
+          if (typeof callback === "function")
+            callback(result);
+        });
+      },
+      detach: function () { commands.detach(); }
+    };
+  }
 
-    // Check if widget already exists in any section (global)
+  function _firstPlacementMonitors(monitors) {
+    var names = [];
+    return monitors.slice().filter(function (monitor) {
+      if (names.indexOf(monitor.name) !== -1)
+        return false;
+      names.push(monitor.name);
+      return true;
+    });
+  }
+
+  function _screenWidgetTarget(name, section) {
+    return {path: ["bar", "screenOverrides"], listAddress: [{field: "name", equals: name}, {key: "widgets"}, {key: section}]};
+  }
+
+  function createBarWidgetInsertion(widgetId, section) {
+    section = section || "right";
     var sections = ["left", "center", "right"];
-    for (var s = 0; s < sections.length; s++) {
-      var widgets = Settings.data.bar.widgets[sections[s]] || [];
-      for (var i = 0; i < widgets.length; i++) {
-        if (widgets[i].id === widgetId) {
-          Logger.d("PluginService", "Widget already in bar:", widgetId);
-          return false;
-        }
-      }
-    }
+    if (sections.indexOf(section) === -1)
+      return null;
+    if (sections.some(function (key) { return Settings.data.bar.widgets[key].slice().some(function (row) { return row.id === widgetId; }); }))
+      return null;
+    var targets = [{path: ["bar", "widgets", section], listAddress: [],
+      edits: [{op: "insert", index: Settings.data.bar.widgets[section].length, value: {id: widgetId}}]}];
+    root._firstPlacementMonitors(Settings.data.bar.screenOverrides).forEach(function (monitor) {
+      if (!monitor.widgets || sections.some(function (key) { return (monitor.widgets[key] || []).some(function (row) { return row.id === widgetId; }); }))
+        return;
+      var target = root._screenWidgetTarget(monitor.name, section);
+      target.ensure = true;
+      target.edits = [{op: "insert", index: (monitor.widgets[section] || []).length, value: {id: widgetId}}];
+      targets.push(target);
+    });
+    return root._capturePlacementBatch(targets);
+  }
 
-    // Add to global
-    var globalWidgets = Settings.data.bar.widgets[section] || [];
-    globalWidgets.push({
-                         id: widgetId
-                       });
-    Settings.data.bar.widgets[section] = globalWidgets;
-
-    // Also add to any screen overrides that have widget configurations
-    var overrides = Settings.data.bar.screenOverrides || [];
-    for (var o = 0; o < overrides.length; o++) {
-      if (overrides[o] && overrides[o].widgets) {
-        var overrideWidgets = overrides[o].widgets;
-        var sectionWidgets = overrideWidgets[section] || [];
-        // Check if widget already exists in this override
-        var alreadyExists = false;
-        for (var j = 0; j < sections.length; j++) {
-          var owSec = overrideWidgets[sections[j]] || [];
-          for (var k = 0; k < owSec.length; k++) {
-            if (owSec[k].id === widgetId) {
-              alreadyExists = true;
-              break;
-            }
-          }
-          if (alreadyExists)
-            break;
-        }
-        if (!alreadyExists) {
-          sectionWidgets.push({
-                                id: widgetId
-                              });
-          overrideWidgets[section] = sectionWidgets;
-          Settings.setScreenOverride(overrides[o].name, "widgets", overrideWidgets);
-        }
-      }
-    }
-
-    Logger.i("PluginService", "Added widget", widgetId, "to bar section:", section);
-    return true;
+  function addWidgetToBar(widgetId, section) {
+    var command = root.createBarWidgetInsertion(widgetId, section);
+    return command ? command.submit() : false;
   }
 
   // Disable a plugin (compositeKey is the full key like "abc123:my-plugin" or plain "my-plugin")
@@ -727,98 +736,57 @@ Singleton {
     return true;
   }
 
-  // Helper function to remove a widget from all bar sections (global + screen overrides)
-  function removeWidgetFromBar(widgetId) {
-    var sections = ["left", "center", "right"];
-    var changed = false;
-
-    // Remove from global
-    for (var s = 0; s < sections.length; s++) {
-      var section = sections[s];
-      var widgets = Settings.data.bar.widgets[section] || [];
-      var newWidgets = [];
-
-      for (var i = 0; i < widgets.length; i++) {
-        if (widgets[i].id !== widgetId) {
-          newWidgets.push(widgets[i]);
-        } else {
-          changed = true;
-          Logger.i("PluginService", "Removed widget", widgetId, "from bar section:", section);
-        }
-      }
-
-      if (changed) {
-        Settings.data.bar.widgets[section] = newWidgets;
-      }
+  function _placementRemovals(rows, widgetId) {
+    var edits = [];
+    for (var i = rows.length - 1; i >= 0; --i) {
+      if (rows[i].id === widgetId)
+        edits.push({op: "remove", index: i});
     }
-
-    // Also remove from any screen overrides that have widget configurations
-    var overrides = Settings.data.bar.screenOverrides || [];
-    for (var o = 0; o < overrides.length; o++) {
-      if (overrides[o] && overrides[o].widgets) {
-        var overrideWidgets = overrides[o].widgets;
-        var overrideChanged = false;
-        for (var s2 = 0; s2 < sections.length; s2++) {
-          var sec = sections[s2];
-          var owWidgets = overrideWidgets[sec] || [];
-          var owNew = [];
-          for (var j = 0; j < owWidgets.length; j++) {
-            if (owWidgets[j].id !== widgetId) {
-              owNew.push(owWidgets[j]);
-            } else {
-              overrideChanged = true;
-              changed = true;
-              Logger.i("PluginService", "Removed widget", widgetId, "from screen override:", overrides[o].name, "section:", sec);
-            }
-          }
-          if (overrideChanged) {
-            overrideWidgets[sec] = owNew;
-          }
-        }
-        if (overrideChanged) {
-          Settings.setScreenOverride(overrides[o].name, "widgets", overrideWidgets);
-        }
-      }
-    }
-
-    // Signal the bar to refresh if widgets were removed
-    if (changed) {
-      BarService.widgetsRevision++;
-    }
-
-    return changed;
+    return edits;
   }
 
-  // Remove plugin desktop widgets from all monitors' saved settings
-  function removePluginDesktopWidgetsFromSettings(pluginId) {
-    var widgetId = "plugin:" + pluginId;
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var changed = false;
-
-    for (var m = 0; m < monitorWidgets.length; m++) {
-      var monitor = monitorWidgets[m];
-      var widgets = monitor.widgets || [];
-      var newWidgets = [];
-
-      for (var i = 0; i < widgets.length; i++) {
-        if (widgets[i].id !== widgetId) {
-          newWidgets.push(widgets[i]);
-        } else {
-          changed = true;
-          Logger.i("PluginService", "Removed desktop widget", widgetId, "from monitor:", monitor.name);
+  function createBarWidgetRemoval(widgetId) {
+    var sections = ["left", "center", "right"];
+    var targets = [];
+    sections.forEach(function (section) {
+      var edits = root._placementRemovals(Settings.data.bar.widgets[section], widgetId);
+      if (edits.length)
+        targets.push({path: ["bar", "widgets", section], listAddress: [], edits: edits});
+    });
+    root._firstPlacementMonitors(Settings.data.bar.screenOverrides).forEach(function (monitor) {
+      if (!monitor.widgets)
+        return;
+      sections.forEach(function (section) {
+        var edits = root._placementRemovals(monitor.widgets[section] || [], widgetId);
+        if (edits.length) {
+          var target = root._screenWidgetTarget(monitor.name, section);
+          target.edits = edits;
+          targets.push(target);
         }
-      }
+      });
+    });
+    return root._capturePlacementBatch(targets, function () { BarService.widgetsRevision++; });
+  }
 
-      if (newWidgets.length !== widgets.length) {
-        monitorWidgets[m].widgets = newWidgets;
-      }
-    }
+  function removeWidgetFromBar(widgetId) {
+    var command = root.createBarWidgetRemoval(widgetId);
+    return command ? command.submit() : false;
+  }
 
-    if (changed) {
-      Settings.data.desktopWidgets.monitorWidgets = monitorWidgets;
-    }
+  function createPluginDesktopRemoval(pluginId) {
+    var widgetId = "plugin:" + pluginId;
+    var targets = [];
+    root._firstPlacementMonitors(Settings.data.desktopWidgets.monitorWidgets).forEach(function (monitor) {
+      var edits = root._placementRemovals(monitor.widgets || [], widgetId);
+      if (edits.length)
+        targets.push({path: ["desktopWidgets", "monitorWidgets"], listAddress: [{field: "name", equals: monitor.name}, {key: "widgets"}], edits: edits});
+    });
+    return root._capturePlacementBatch(targets);
+  }
 
-    return changed;
+  function removePluginDesktopWidgetsFromSettings(pluginId) {
+    var command = root.createPluginDesktopRemoval(pluginId);
+    return command ? command.submit() : false;
   }
 
   // Load plugin settings and translations before instantiating components
@@ -844,8 +812,21 @@ Singleton {
   }
 
   // Load a plugin
-  function loadPlugin(pluginId) {
+  function _notifyBarRegistered(pluginId, component, manifest, callback) {
+    if (typeof callback !== "function")
+      return;
+    Qt.callLater(function () {
+      if (Registry.isPluginEnabled(pluginId) && root.loadedPlugins[pluginId]?.barWidget === component
+          && BarWidgetRegistry.getWidget("plugin:" + pluginId) === component && typeof callback === "function")
+        callback(manifest);
+    });
+  }
+
+  function loadPlugin(pluginId, onBarRegistered) {
     if (root.loadedPlugins[pluginId]) {
+      var existing = root.loadedPlugins[pluginId];
+      if (existing.barWidget)
+        root._notifyBarRegistered(pluginId, existing.barWidget, existing.manifest, onBarRegistered);
       Logger.w("PluginService", "Plugin already loaded:", pluginId);
       return;
     }
@@ -915,11 +896,13 @@ Singleton {
           pluginApi.barWidget = widgetComponent;
 
           // Register with BarWidgetRegistry
-          BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
+          var registered = BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
           Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
 
           // Now that the widget is registered, bump widgetsRevision so the bar can render it
           BarService.widgetsRevision++;
+          if (registered)
+            root._notifyBarRegistered(pluginId, widgetComponent, manifest, onBarRegistered);
         } else if (widgetComponent.status === Component.Error) {
           root.recordPluginError(pluginId, "barWidget", widgetComponent.errorString());
         }
@@ -1186,6 +1169,7 @@ Singleton {
 
         // Functions will be bound below
         property var saveSettings: null
+        property var createSettingsEditor: null
         property var saveState: null
         property var getConfig: null
         property var openPanel: null
@@ -1233,12 +1217,16 @@ Singleton {
     // ----------------------------------------
     // Bind functions
     // ----------------------------------------
-    api.saveSettings = function () {
-      savePluginSettings(pluginId, api.pluginSettings);
+    api.saveSettings = function (callback) {
+      savePluginSettings(pluginId, api.pluginSettings, callback);
 
       // Replace the entire pluginSettings object to trigger QML property bindings
       // Make a shallow copy so bindings detect the change
       api.pluginSettings = Object.assign({}, api.pluginSettings);
+    };
+
+    api.createSettingsEditor = function () {
+      return root.createPluginSettingsEditor(pluginId, api);
     };
 
     // Writes the shared state to disk and reassigns it, so bindings on
@@ -1598,27 +1586,74 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", writeCmd]);
   }
 
-  // Save plugin settings
-  function savePluginSettings(pluginId, settings) {
-    var settingsFile = Registry.getPluginSettingsFile(pluginId);
-    var settingsJson = JSON.stringify(settings, null, 2);
+  // Selected plugin-level editor. No runtime API or file changes until Apply;
+  // loading/unloading a different API invalidates the original capture.
+  function createPluginSettingsEditor(pluginId, api) {
+    return PluginSettingsEditor.create({
+      stamp: function () {
+        return root.getPluginAPI(pluginId) === api ? JSON.stringify(api.pluginSettings) : null;
+      },
+      value: function () { return api.pluginSettings; },
+      later: function (callback) { Qt.callLater(callback); },
+      commit: function (value, reset, callback) {
+        if (reset || value === null || typeof value !== "object" || Array.isArray(value)) {
+          Qt.callLater(function () { callback({status: "failed", error: {code: "editor-input"}}); });
+          return false;
+        }
+        api.pluginSettings = value;
+        api.saveSettings(callback);
+        return true;
+      }
+    });
+  }
 
-    // Use heredoc delimiter pattern to avoid all escaping issues
-    var delimiter = "PLUGIN_SETTINGS_EOF_" + Math.random().toString(36).substr(2, 9);
-    var fileEsc = settingsFile.replace(/'/g, "'\\''");
+  // Snapshot at submission, not when this request reaches the head. Callback is
+  // additive for existing plugins and receives an explicit three-status result.
+  function savePluginSettings(pluginId, settings, callback) {
+    var body = null;
+    try {
+      if (settings === null || typeof settings !== "object" || Array.isArray(settings))
+        throw new Error("settings object required");
+      body = JSON.stringify(settings);
+    } catch (error) {}
+    root._settingsSaves.push({pluginId: pluginId, body: body, callback: callback});
+    Qt.callLater(root._nextSettingsSave);
+  }
 
-    // Get parent directory and ensure it exists
-    var settingsDir = settingsFile.substring(0, settingsFile.lastIndexOf('/'));
-    var dirEsc = settingsDir.replace(/'/g, "'\\''");
+  function _nextSettingsSave() {
+    if (root._settingsSaveBusy || root._settingsSaves.length === 0)
+      return;
+    root._settingsSaveBusy = true;
+    var request = root._settingsSaves[0];
+    if (typeof request.body !== "string" || typeof request.pluginId !== "string" || !request.pluginId || request.pluginId === "." || request.pluginId === ".." || /[\/\\\x00]/.test(request.pluginId)) {
+      root._finishSettingsSave({status: "failed", error: {code: "plugin-settings-input"}});
+      return;
+    }
+    OwnedProcess.run(root, ["python3", Quickshell.shellDir + "/Scripts/python/src/settings/plugin-settings-save.py", Registry.getPluginSettingsFile(request.pluginId), Settings.cacheDir + "plugin-settings-conflicts"], request.body, function (child) {
+      var result = null;
+      try { result = JSON.parse(child.stdout); } catch (error) {}
+      if (!result || (result.status !== "saved" && result.status !== "nothing_to_save") || !child.success)
+        result = {status: "failed", error: {code: "plugin-settings-save"}};
+      root._finishSettingsSave(result);
+    });
+  }
 
-    // Build the shell command with heredoc (create dir first)
-    var writeCmd = "mkdir -p '" + dirEsc + "' && cat > '" + fileEsc + "' << '" + delimiter + "'\n" + settingsJson + "\n" + delimiter + "\n";
-
-    Logger.d("PluginService", "Saving settings to:", settingsFile);
-
-    // Use Quickshell.execDetached to execute the command (use array syntax)
-    var pid = Quickshell.execDetached(["sh", "-c", writeCmd]);
-    Logger.d("PluginService", "Write process started, PID:", pid);
+  function _finishSettingsSave(result) {
+    // Detach before either observer can reenter; keep busy through delivery so
+    // the next request cannot overtake this signal/callback pair.
+    var request = root._settingsSaves.shift();
+    var callback = request.callback;
+    request.callback = null;
+    try {
+      root.pluginSettingsCompleted(request.pluginId, result);
+      if (typeof callback === "function")
+        callback(result);
+    } catch (error) {
+      Logger.e("PluginService", "Plugin settings completion observer failed");
+    } finally {
+      root._settingsSaveBusy = false;
+      Qt.callLater(root._nextSettingsSave);
+    }
   }
 
   // Load manifest from file

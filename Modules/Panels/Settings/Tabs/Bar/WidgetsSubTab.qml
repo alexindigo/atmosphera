@@ -17,6 +17,8 @@ ColumnLayout {
   property var reorderWidgetInSection
   property var updateWidgetSettingsInSection
   property var moveWidgetBetweenSections
+  property var captureWidgetInteraction: null
+  property var captureWidgetSettings: null
 
   signal openPluginSettings(var manifest, string settingsEntryPoint, string section, int index)
 
@@ -45,6 +47,8 @@ ColumnLayout {
   NSectionEditor {
     sectionName: root.barIsVertical ? I18n.tr("positions.top") : I18n.tr("positions.left")
     sectionId: "left"
+    captureWidgetInteraction: root.captureWidgetInteraction
+    captureWidgetSettings: root.captureWidgetSettings
     barIsVertical: root.barIsVertical
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
@@ -63,6 +67,8 @@ ColumnLayout {
   NSectionEditor {
     sectionName: I18n.tr("positions.center")
     sectionId: "center"
+    captureWidgetInteraction: root.captureWidgetInteraction
+    captureWidgetSettings: root.captureWidgetSettings
     barIsVertical: root.barIsVertical
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
@@ -81,6 +87,8 @@ ColumnLayout {
   NSectionEditor {
     sectionName: root.barIsVertical ? I18n.tr("positions.bottom") : I18n.tr("positions.right")
     sectionId: "right"
+    captureWidgetInteraction: root.captureWidgetInteraction
+    captureWidgetSettings: root.captureWidgetSettings
     barIsVertical: root.barIsVertical
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry

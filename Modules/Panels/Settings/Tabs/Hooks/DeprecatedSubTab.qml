@@ -18,22 +18,19 @@ ColumnLayout {
     parent: Overlay.overlay
   }
 
-  function openEdit(label, description, placeholder, value, onSave, onTest) {
+  function openEdit(label, description, placeholder, path, onTest) {
+    if (editPopup.visible || editPopup.busy)
+      return;
     editPopup.hookLabel = label;
     editPopup.hookDescription = description;
     editPopup.hookPlaceholder = placeholder;
-    editPopup.initialValue = value;
-    try {
-      editPopup.saved.disconnect(editPopup._savedSlot);
-    } catch (e) {}
     try {
       editPopup.test.disconnect(editPopup._testSlot);
     } catch (e) {}
-    editPopup._savedSlot = onSave;
     editPopup._testSlot = onTest;
-    editPopup.saved.connect(editPopup._savedSlot);
     editPopup.test.connect(editPopup._testSlot);
-    editPopup.open();
+    var editor = Settings.createEditor(path);
+    editPopup.openEditor(editor, editor.initialValue);
   }
 
   Rectangle {
@@ -64,10 +61,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.session-label")
         description: I18n.tr("panels.hooks.session-description")
         value: Settings.data.hooks.session
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.session-placeholder"), value, newValue => {
-          Settings.data.hooks.session = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.session-placeholder"), "hooks.session", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val + " test"]);
         })
@@ -89,10 +83,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.wallpaper-changed-label")
         description: I18n.tr("panels.hooks.wallpaper-changed-description")
         value: Settings.data.hooks.wallpaperChange
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.wallpaper-changed-placeholder"), value, newValue => {
-          Settings.data.hooks.wallpaperChange = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.wallpaper-changed-placeholder"), "hooks.wallpaperChange", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_wallpaper_path").replace("$2", "test_screen").replace("$3", "dark")]);
         })
@@ -114,10 +105,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.theme-changed-label")
         description: I18n.tr("panels.hooks.theme-changed-description")
         value: Settings.data.hooks.darkModeChange
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.theme-changed-placeholder"), value, newValue => {
-          Settings.data.hooks.darkModeChange = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.theme-changed-placeholder"), "hooks.darkModeChange", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val.replace("$1", "true")]);
         })
@@ -139,10 +127,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.screen-lock-label")
         description: I18n.tr("panels.hooks.screen-lock-description")
         value: Settings.data.hooks.screenLock
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screen-lock-placeholder"), value, newValue => {
-          Settings.data.hooks.screenLock = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screen-lock-placeholder"), "hooks.screenLock", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })
@@ -164,10 +149,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.screen-unlock-label")
         description: I18n.tr("panels.hooks.screen-unlock-description")
         value: Settings.data.hooks.screenUnlock
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screen-unlock-placeholder"), value, newValue => {
-          Settings.data.hooks.screenUnlock = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screen-unlock-placeholder"), "hooks.screenUnlock", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })
@@ -189,10 +171,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.performance-mode-enabled-label")
         description: I18n.tr("panels.hooks.performance-mode-enabled-description")
         value: Settings.data.hooks.performanceModeEnabled
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.performance-mode-enabled-placeholder"), value, newValue => {
-          Settings.data.hooks.performanceModeEnabled = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.performance-mode-enabled-placeholder"), "hooks.performanceModeEnabled", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })
@@ -214,10 +193,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.performance-mode-disabled-label")
         description: I18n.tr("panels.hooks.performance-mode-disabled-description")
         value: Settings.data.hooks.performanceModeDisabled
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.performance-mode-disabled-placeholder"), value, newValue => {
-          Settings.data.hooks.performanceModeDisabled = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.performance-mode-disabled-placeholder"), "hooks.performanceModeDisabled", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })
@@ -239,10 +215,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.atmosphera-started-label")
         description: I18n.tr("panels.hooks.atmosphera-started-description")
         value: Settings.data.hooks.startup
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.atmosphera-started-placeholder"), value, newValue => {
-          Settings.data.hooks.startup = newValue;
-          Settings.saveImmediate();
-        }, val => {})
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.atmosphera-started-placeholder"), "hooks.startup", val => {})
       }
       NText {
         text: I18n.tr("panels.hooks.atmosphera-started-moved-to")
@@ -261,10 +234,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.color-generation-label")
         description: I18n.tr("panels.hooks.color-generation-description")
         value: Settings.data.hooks.colorGeneration
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.color-generation-placeholder"), value, newValue => {
-          Settings.data.hooks.colorGeneration = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.color-generation-placeholder"), "hooks.colorGeneration", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val.replace("$1", "dark")]);
         })
@@ -286,10 +256,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.desktop-left-click-label")
         description: I18n.tr("panels.hooks.desktop-left-click-description")
         value: Settings.data.hooks.desktopLeftClick
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-left-click-placeholder"), value, newValue => {
-          Settings.data.hooks.desktopLeftClick = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-left-click-placeholder"), "hooks.desktopLeftClick", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_screen").replace("$2", "0").replace("$3", "0")]);
         })
@@ -311,10 +278,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.desktop-right-click-label")
         description: I18n.tr("panels.hooks.desktop-right-click-description")
         value: Settings.data.hooks.desktopRightClick
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-right-click-placeholder"), value, newValue => {
-          Settings.data.hooks.desktopRightClick = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-right-click-placeholder"), "hooks.desktopRightClick", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_screen").replace("$2", "0").replace("$3", "0")]);
         })
@@ -336,10 +300,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.desktop-middle-click-label")
         description: I18n.tr("panels.hooks.desktop-middle-click-description")
         value: Settings.data.hooks.desktopMiddleClick
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-middle-click-placeholder"), value, newValue => {
-          Settings.data.hooks.desktopMiddleClick = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-middle-click-placeholder"), "hooks.desktopMiddleClick", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_screen").replace("$2", "0").replace("$3", "0")]);
         })
@@ -361,10 +322,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.screenoff-label")
         description: I18n.tr("panels.hooks.screenoff-description")
         value: Settings.data.idle.screenOffCommand
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screenoff-placeholder"), value, newValue => {
-          Settings.data.idle.screenOffCommand = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screenoff-placeholder"), "idle.screenOffCommand", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })
@@ -386,10 +344,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.lock-label")
         description: I18n.tr("panels.hooks.lock-description")
         value: Settings.data.idle.lockCommand
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.lock-placeholder"), value, newValue => {
-          Settings.data.idle.lockCommand = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.lock-placeholder"), "idle.lockCommand", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })
@@ -411,10 +366,7 @@ ColumnLayout {
         label: I18n.tr("panels.hooks.suspend-label")
         description: I18n.tr("panels.hooks.suspend-description")
         value: Settings.data.idle.suspendCommand
-        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.suspend-placeholder"), value, newValue => {
-          Settings.data.idle.suspendCommand = newValue;
-          Settings.saveImmediate();
-        }, val => {
+        onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.suspend-placeholder"), "idle.suspendCommand", val => {
           if (val)
             Quickshell.execDetached(["sh", "-lc", val]);
         })

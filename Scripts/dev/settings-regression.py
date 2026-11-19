@@ -31,6 +31,7 @@ import sys
 import threading
 import time
 from pathlib import Path
+from guest_profile import activate_profile, current_profile, profile_argument
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROBE_SRC = SCRIPT_DIR / "fixtures" / "settings-regression.qml"
@@ -58,19 +59,11 @@ SHELL_RUN_S = 30
 # ---------------------------------------------------------------- env
 
 def discover_session_env():
-    socks = sorted(glob.glob("/run/user/1000/niri.*.sock"))
-    if len(socks) != 1:
-        raise SystemExit(f"FATAL: expected exactly one niri socket in /run/user/1000, found {len(socks)}: {socks}")
-    if not os.path.exists("/run/user/1000/wayland-1"):
-        raise SystemExit("FATAL: /run/user/1000/wayland-1 missing — guest Wayland session not available")
+    session = current_profile().session_environment()
     for tool in ("qs", "dbus-run-session"):
         if shutil.which(tool) is None:
             raise SystemExit(f"FATAL: required tool not found on PATH: {tool}")
-    return {
-        "XDG_RUNTIME_DIR": "/run/user/1000",
-        "WAYLAND_DISPLAY": "wayland-1",
-        "NIRI_SOCKET": socks[0],
-    }
+    return session
 
 
 def case_env(session, case_dir):
@@ -322,14 +315,22 @@ def case_clean_start(runner, case_dir, case):
 
 
 def _simple_seed_case(seed_section, seed_obj, values, expected, required_warnings,
-                      forbidden_warnings=(), none_warnings=False):
+                       forbidden_warnings=(), none_warnings=False):
     def fn(runner, case_dir, case):
-        write_json_atomic(case_dir / "config" / "settings" / f"{seed_section}.json", seed_obj)
+        def localize(value):
+            if isinstance(value, str) and value.startswith("__CASE__/"):
+                return str(case_dir / "fixtures" / value.removeprefix("__CASE__/"))
+            if isinstance(value, dict):
+                return {key: localize(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [localize(item) for item in value]
+            return value
+        write_json_atomic(case_dir / "config" / "settings" / f"{seed_section}.json", localize(seed_obj))
         env = runner.env_for(case_dir, {"PROBE_CASE": "observe", "PROBE_VALUES": ",".join(values)})
         log, rc, to = runner.probe_leg(case_dir, env, "run.log")
         case.check(not to, "probe leg timed out")
         case.check(rc == 0, f"probe leg exit code {rc}")
-        case.check_probe_done(log, expected)
+        case.check_probe_done(log, localize(expected))
         case.check_warnings(log, required=required_warnings,
                             forbidden=forbidden_warnings, none=none_warnings)
         case.check_no_errors(log)
@@ -338,9 +339,10 @@ def _simple_seed_case(seed_section, seed_obj, values, expected, required_warning
 
 def case_legacy_initial(runner, case_dir, case):
     legacy = case_dir / "config" / "settings.json"
+    avatar = str(case_dir / "fixtures/probe-legacy.png")
     write_json_atomic(legacy, {
         "settingsVersion": 60,
-        "general": {"avatarImage": "/tmp/probe-legacy.png", "lockScreenMode": "legacy-x"},
+        "general": {"avatarImage": avatar, "lockScreenMode": "legacy-x"},
         "unknownLegacySection": {"x": 1},
     })
     seed_bytes = legacy.read_bytes()
@@ -350,7 +352,7 @@ def case_legacy_initial(runner, case_dir, case):
     })
     log, rc, to = runner.probe_leg(case_dir, env, "run.log")
     case.check(not to, "probe leg timed out")
-    case.check_probe_done(log, {"general.avatarImage": "/tmp/probe-legacy.png"})
+    case.check_probe_done(log, {"general.avatarImage": avatar})
     case.check_warnings(log, required=["general.lockScreenMode", "unknownLegacySection"])
     case.check_no_errors(log)
     case.check(legacy.read_bytes() == seed_bytes, "legacy settings.json bytes changed during startup")
@@ -520,16 +522,16 @@ CASES = {
     "clean-start": case_clean_start,
     "unknown-leaf-before-valid": _simple_seed_case(
         "general",
-        {"lockScreenMode": "x", "avatarImage": "/tmp/probe-before.png"},
+        {"lockScreenMode": "x", "avatarImage": "__CASE__/probe-before.png"},
         ["general.avatarImage"],
-        {"general.avatarImage": "/tmp/probe-before.png"},
+        {"general.avatarImage": "__CASE__/probe-before.png"},
         ["general.lockScreenMode"],
     ),
     "unknown-leaf-after-valid": _simple_seed_case(
         "general",
-        {"avatarImage": "/tmp/probe-after.png", "lockScreenMode": "x"},
+        {"avatarImage": "__CASE__/probe-after.png", "lockScreenMode": "x"},
         ["general.avatarImage"],
-        {"general.avatarImage": "/tmp/probe-after.png"},
+        {"general.avatarImage": "__CASE__/probe-after.png"},
         ["general.lockScreenMode"],
     ),
     "nested-unknown-beside-known": _simple_seed_case(
@@ -541,18 +543,18 @@ CASES = {
     ),
     "unknown-object-array-values": _simple_seed_case(
         "general",
-        {"unknownObject": {"a": 1}, "unknownArray": [1, 2], "avatarImage": "/tmp/probe-oa.png"},
+        {"unknownObject": {"a": 1}, "unknownArray": [1, 2], "avatarImage": "__CASE__/probe-oa.png"},
         ["general.avatarImage"],
-        {"general.avatarImage": "/tmp/probe-oa.png"},
+        {"general.avatarImage": "__CASE__/probe-oa.png"},
         ["general.unknownObject", "general.unknownArray"],
         forbidden_warnings=("general.unknownObject.a",),
     ),
     "qobject-prototype-names": _simple_seed_case(
         "general",
         {"objectName": "evil", "constructor": 1, "hasOwnProperty": True,
-         "avatarImage": "/tmp/probe-proto.png"},
+         "avatarImage": "__CASE__/probe-proto.png"},
         ["general.avatarImage", "general.objectName"],
-        {"general.avatarImage": "/tmp/probe-proto.png", "general.objectName": ""},
+        {"general.avatarImage": "__CASE__/probe-proto.png", "general.objectName": ""},
         ["general.objectName", "general.constructor", "general.hasOwnProperty"],
     ),
     "widget-array-arbitrary-fields": _simple_seed_case(
@@ -578,8 +580,8 @@ CASE_ORDER = list(CASES.keys())
 # ------------------------------------------------------------- runner
 
 class Runner:
-    def __init__(self, source, output, work_root):
-        self.workspace = HARNESS.Workspace(source, output, work_root)
+    def __init__(self, source, output, work_root, archive_completed=False):
+        self.workspace = HARNESS.Workspace(source, output, work_root, archive_completed=archive_completed)
         self.source, self.output = self.workspace.source, self.workspace.output
         self.session = discover_session_env()
         self.backup = HARNESS.Runner(self.workspace)
@@ -587,6 +589,7 @@ class Runner:
 
     def env_for(self, case_dir, extra):
         env = case_env(self.session, case_dir)
+        env.update(current_profile().child_environment("st-"))
         env.update(extra)
         return env
 
@@ -628,6 +631,8 @@ class Runner:
             try:
                 self.backup.lifecycle.assert_quiet()
                 restored = self.backup.restore()
+                if self.workspace.archive_completed and case_dir is not None:
+                    self.workspace.archive_case_tree(case_dir, self.backup.lifecycle)
             except Exception as e:
                 cleanup.append(repr(e))
                 if status != "FAIL":
@@ -658,6 +663,9 @@ def main():
     ap.add_argument("--work-root", required=True, help="fresh complete-copy/config/cache root on recovered scratch")
     ap.add_argument("--case", default="all",
                     help="case name, comma-separated list, or 'all'")
+    profile_argument(ap)
+    ap.add_argument("--archive-completed-copies", action="store_true",
+                    help="retain verified quiesced disposable trees as lossless archives on scratch")
     args = ap.parse_args()
 
     if not PROBE_SRC.exists():
@@ -676,7 +684,8 @@ def main():
     # Existing results/cases are refused before any session/backups/live process.
     output_existed = Path(args.output).exists()
     try:
-        runner = Runner(args.source, args.output, args.work_root)
+        activate_profile(args.guest_profile, require_console=True)
+        runner = Runner(args.source, args.output, args.work_root, args.archive_completed_copies)
     except Exception as error:
         print("SETTINGS_REGRESSION: BLOCKED — preflight: " + repr(error), flush=True)
         if not output_existed and (Path(args.output) / "ownership.json").is_file():

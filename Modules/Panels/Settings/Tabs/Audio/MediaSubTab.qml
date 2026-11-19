@@ -10,6 +10,16 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
+  function removeBlacklistedPlayer(playerName) {
+    const arr = (Settings.data.audio.mprisBlacklist || []).slice();
+    const idx = arr.findIndex(x => String(x) === playerName);
+    if (idx >= 0) {
+      arr.splice(idx, 1);
+      Settings.data.audio.mprisBlacklist = arr;
+      MediaService.updateCurrentPlayer();
+    }
+  }
+
   // Preferred player
   NTextInput {
     label: I18n.tr("panels.audio.media-primary-player-label")
@@ -82,15 +92,7 @@ ColumnLayout {
               baseSize: Style.baseWidgetSize * 0.8
               Layout.alignment: Qt.AlignVCenter
               Layout.rightMargin: Style.marginXS
-              onClicked: {
-                const arr = (Settings.data.audio.mprisBlacklist || []);
-                const idx = arr.findIndex(x => String(x) === modelData);
-                if (idx >= 0) {
-                  arr.splice(idx, 1);
-                  Settings.data.audio.mprisBlacklist = arr;
-                  MediaService.updateCurrentPlayer();
-                }
-              }
+              onClicked: root.removeBlacklistedPlayer(modelData)
             }
           }
 

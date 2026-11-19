@@ -20,6 +20,11 @@ RUN pacman -Sy --noconfirm --needed \
 COPY install-qml-deps.sh /usr/local/bin/install-qml-deps
 RUN bash /usr/local/bin/install-qml-deps
 
+# AST/provenance analysis tooling, not an application/runtime build. The grammar
+# archive is pinned and verified; install once per resource-capped tooling image.
+COPY settings-check-requirements.txt /opt/settings-check-requirements.txt
+RUN pip install --break-system-packages -r /opt/settings-check-requirements.txt
+
 RUN groupadd -g "$DEV_GID" dev \
   && useradd -m -u "$DEV_UID" -g "$DEV_GID" -G wheel -s /bin/bash dev \
   && echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/dev

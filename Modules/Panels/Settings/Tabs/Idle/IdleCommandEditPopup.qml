@@ -27,7 +27,64 @@ Popup {
 
   signal saved(int timeout, string command, string resumeCommand, string name)
 
-  property var _savedSlot: null
+  readonly property bool busy: session.busy
+  readonly property bool saveFailed: session.failed
+  readonly property bool discardPending: session.discardPending
+
+  function openEditor(handle, value, index) {
+    if (visible || session.busy)
+      return false;
+    editIndex = index;
+    setValue(value);
+    session.begin(handle, session.value);
+    open();
+    return true;
+  }
+
+  function setValue(value) {
+    if (session.busy)
+      return;
+    nameInput.text = value.name;
+    timeoutSpinBox.value = value.timeout;
+    commandInput.text = value.command;
+    resumeCommandInput.text = value.resumeCommand;
+  }
+
+  function submit(value) {
+    if (session.busy)
+      return;
+    setValue(value);
+    session.apply();
+  }
+
+  function requestClose() {
+    session.requestClose();
+  }
+
+  function confirmDiscard() {
+    session.confirmDiscard();
+  }
+
+  function keepEditing() {
+    session.discardPending = false;
+  }
+
+  NSettingsEditSession {
+    id: session
+    value: ({name: nameInput.text, timeout: timeoutSpinBox.value, command: commandInput.text, resumeCommand: resumeCommandInput.text})
+    onAccepted: value => {
+      root.saved(value.timeout, value.command, value.resumeCommand, value.name);
+      root.close();
+    }
+    onCloseRequested: root.close()
+  }
+
+  NSettingsDiscardDialog {
+    parent: root.contentItem
+    visible: session.discardPending
+    onDiscard: root.confirmDiscard()
+    onKeepEditing: root.keepEditing()
+  }
 
   background: Rectangle {
     color: AtmoColor.mSurface
@@ -37,10 +94,6 @@ Popup {
   }
 
   onOpened: {
-    nameInput.text = nameValue;
-    timeoutSpinBox.value = timeoutValue;
-    commandInput.text = commandValue;
-    resumeCommandInput.text = resumeCommandValue;
     if (showName) {
       nameInput.forceActiveFocus();
     } else {
@@ -63,12 +116,14 @@ Popup {
       }
       AtmoIconButton {
         icon: Icon.close
-        onClicked: root.close()
+        enabled: !session.busy
+        onClicked: root.requestClose()
       }
     }
 
     // Input Area
     ColumnLayout {
+      enabled: !session.busy
       Layout.fillWidth: true
       spacing: Style.marginM
 
@@ -108,6 +163,13 @@ Popup {
       }
     }
 
+    NText {
+      visible: session.failed
+      text: I18n.tr("common.editor-save-failed")
+      wrapMode: Text.WordWrap
+      Layout.fillWidth: true
+    }
+
     // Action Buttons
     RowLayout {
       Layout.fillWidth: true
@@ -120,7 +182,8 @@ Popup {
       NButton {
         text: I18n.tr("common.cancel")
         outlined: true
-        onClicked: root.close()
+        enabled: !session.busy
+        onClicked: root.requestClose()
       }
 
       NButton {
@@ -128,10 +191,8 @@ Popup {
         icon: Icon.check
         backgroundColor: AtmoColor.mPrimary
         textColor: AtmoColor.mOnPrimary
-        onClicked: {
-          root.saved(timeoutSpinBox.value, commandInput.text, resumeCommandInput.text, nameInput.text);
-          root.close();
-        }
+        enabled: !session.busy
+        onClicked: session.apply()
       }
     }
   }

@@ -44,6 +44,42 @@ NBox {
   property string settingsDialogComponent: "invalid-settings-dialog"
   property var screen: null // Screen reference for per-screen widget settings
   property var _activeDialog: null
+  property var captureWidgetInteraction: null
+  property var captureWidgetSettings: null
+  property var _menuInteraction: null
+  property string _menuSection: ""
+  property int _menuIndex: -1
+  property var _menuItems: []
+  property var _dragInteraction: null
+  property string _dragSection: ""
+  property int _dragIndex: -1
+  property bool _settingsOpening: false
+  property var _openingEditor: null
+  readonly property bool widgetMenuVisible: widgetMenu.visible
+  readonly property bool widgetSettingsVisible: !!root._activeDialog?.visible
+  readonly property bool widgetSettingsDirty: !!root._activeDialog?.settingsDirty
+  readonly property bool widgetSettingsDiscardPending: !!root._activeDialog?.discardPending
+  signal widgetCommandCompleted(var result)
+  signal widgetSettingsCompleted(var result)
+  signal widgetSettingsClosed
+
+  function saveWidgetSettings() {
+    if (root._activeDialog && typeof root._activeDialog.saveAndClose === "function")
+      root._activeDialog.saveAndClose();
+  }
+  function requestWidgetSettingsDiscard() {
+    if (root._activeDialog && typeof root._activeDialog.requestDiscard === "function")
+      root._activeDialog.requestDiscard();
+  }
+  function keepWidgetSettings() {
+    if (root._activeDialog && typeof root._activeDialog.keepEditing === "function")
+      root._activeDialog.keepEditing();
+  }
+  function confirmWidgetSettingsDiscard() {
+    if (root._activeDialog && typeof root._activeDialog.confirmDiscard === "function")
+      return root._activeDialog.confirmDiscard();
+    return false;
+  }
   property bool crossDropHoverActive: false
 
   function clearCrossSectionHover() {
@@ -98,6 +134,11 @@ NBox {
   readonly property bool showCrossSectionDropHint: crossDropHoverActive
 
   Component.onDestruction: {
+    root.cancelWidgetDrag();
+    if (_menuInteraction)
+      _menuInteraction.detach();
+    if (_openingEditor)
+      _openingEditor.detach();
     if (_activeDialog && _activeDialog.close) {
       var dialog = _activeDialog;
       _activeDialog = null;
@@ -120,6 +161,114 @@ NBox {
   signal dragPotentialEnded
   // The entry's section and index identify the placement whose instance settings open.
   signal openPluginSettingsRequested(var pluginManifest, string settingsEntryPoint, string section, int index)
+
+  function _widgetAt(index): var { return widgetRepeater.itemAt(index); }
+
+  function _submitWidgetInteraction(interaction, action, destination, section, index) {
+    if (interaction) {
+      return interaction.submit(action, destination, function (result) {
+        interaction.detach();
+        if (result.status !== "admitted" || result.refreshState !== "current")
+          Logger.w("NSectionEditor", "Widget command refused", result.error?.code || "list-edit-conflict");
+        root.widgetCommandCompleted(result);
+      });
+    }
+    if (typeof root.captureWidgetInteraction === "function") {
+      Qt.callLater(function () { root.widgetCommandCompleted({status: "failed", error: {code: "list-edit-conflict"}}); });
+      return false;
+    }
+    // Other caller classes retain their existing injected signals until ported.
+    if (action === "remove")
+      root.removeWidget(section, index);
+    else if (action === "reorder")
+      root.reorderWidget(section, index, destination);
+    else
+      root.moveWidget(section, index, destination);
+    return true;
+  }
+
+  function openWidgetMenu(index, x, y) {
+    var widget = root._widgetAt(index);
+    if (!widget)
+      return false;
+    widgetMenu.close();
+    if (root._menuInteraction)
+      root._menuInteraction.detach();
+    root._menuSection = root.sectionId;
+    root._menuIndex = index;
+    root._menuInteraction = typeof root.captureWidgetInteraction === "function" ? root.captureWidgetInteraction(root.sectionId, index) : null;
+    var items = [];
+    for (var i = 0; i < root.availableSections.length; ++i) {
+      var section = root.availableSections[i];
+      if (section === root.sectionId)
+        continue;
+      var label = root.getSectionLabel(section);
+      var position = root.barIsVertical && section === "left" ? "top" : root.barIsVertical && section === "right" ? "bottom" : section;
+      var display = I18n.hasTranslation("positions." + position) ? I18n.tr("positions." + position) : label.charAt(0).toUpperCase() + label.slice(1);
+      items.push({label: I18n.tr("tooltips.move-to-section", {section: display}), action: section, icon: root.getSectionIcon(section), visible: true});
+    }
+    items.push({label: I18n.tr("tooltips.remove-widget"), action: "remove", visible: true});
+    root._menuItems = items;
+    widgetMenu.openAtItem(widget, x || 0, y || 0);
+    return true;
+  }
+
+  function activateWidgetMenu(action) {
+    if (!widgetMenu.visible || !root._menuItems.some(function (entry) { return entry.action === action; }))
+      return false;
+    var interaction = root._menuInteraction;
+    root._menuInteraction = null;
+    var section = root._menuSection;
+    var index = root._menuIndex;
+    widgetMenu.close();
+    return root._submitWidgetInteraction(interaction, action === "remove" ? "remove" : "move", action, section, index);
+  }
+
+  function beginWidgetDrag(index) {
+    root.cancelWidgetDrag();
+    root._dragSection = root.sectionId;
+    root._dragIndex = index;
+    root._dragInteraction = typeof root.captureWidgetInteraction === "function" ? root.captureWidgetInteraction(root.sectionId, index) : null;
+    return typeof root.captureWidgetInteraction !== "function" || root._dragInteraction !== null;
+  }
+
+  function finishWidgetDrag(toIndex, toSection) {
+    var interaction = root._dragInteraction;
+    var section = root._dragSection;
+    var index = root._dragIndex;
+    root._dragInteraction = null;
+    root._dragIndex = -1;
+    if (index < 0)
+      return false;
+    if (toIndex >= 0 && toIndex !== index)
+      return root._submitWidgetInteraction(interaction, "reorder", toIndex, section, index);
+    if (toSection && toSection !== section)
+      return root._submitWidgetInteraction(interaction, "move", toSection, section, index);
+    if (interaction)
+      interaction.detach();
+    return false;
+  }
+
+  function cancelWidgetDrag() {
+    if (root._dragInteraction)
+      root._dragInteraction.detach();
+    root._dragInteraction = null;
+    root._dragIndex = -1;
+  }
+
+  NContextMenu {
+    id: widgetMenu
+    parent: Overlay.overlay
+    width: 240 * Style.uiScaleRatio
+    model: root._menuItems
+    onTriggered: action => root.activateWidgetMenu(action)
+    onClosed: {
+      if (!widgetMenu.visible && root._menuInteraction) {
+        root._menuInteraction.detach();
+        root._menuInteraction = null;
+      }
+    }
+  }
 
   color: AtmoColor.mSurface
   Layout.fillWidth: true
@@ -220,6 +369,11 @@ NBox {
 
   // Open settings for a widget
   function openWidgetSettings(index, widgetData) {
+    if (root._activeDialog || root._settingsOpening) {
+      if (root._activeDialog)
+        root._activeDialog.forceActiveFocus();
+      return;
+    }
     // Check if this is a plugin widget with a generic "settings" entry point
     var isPlugin = root.widgetRegistry && root.widgetRegistry.isPluginWidget(widgetData.id);
 
@@ -252,37 +406,47 @@ NBox {
 
     // Handle core widgets and plugin desktop widget settings
     {
+      var editor = typeof root.captureWidgetSettings === "function" ? root.captureWidgetSettings(root.sectionId, index) : null;
+      if (typeof root.captureWidgetSettings === "function" && !editor)
+        return;
+      root._settingsOpening = true;
+      root._openingEditor = editor;
       var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent));
 
       function instantiateAndOpen() {
-        if (root._activeDialog) {
-          try {
-            root._activeDialog.close();
-            root._activeDialog.destroy();
-          } catch (e) {}
-          root._activeDialog = null;
-        }
-
-        var dialog = component.createObject(Overlay.overlay, {
+        var properties = {
                                               "widgetIndex": index,
-                                              "widgetData": widgetData,
+                                              "widgetData": editor ? editor.initialValue : widgetData,
                                               "widgetId": widgetData.id,
                                               "sectionId": root.sectionId,
                                               "screen": root.screen,
                                               "barIsVertical": root.barIsVertical
-                                            });
+                                            };
+        if (editor)
+          properties.settingsEditor = editor;
+        var dialog = component.createObject(Overlay.overlay, properties);
+        root._settingsOpening = false;
+        root._openingEditor = null;
 
         if (dialog) {
           root._activeDialog = dialog;
-          dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
+          if (editor)
+            dialog.settingsSaveCompleted.connect(root.widgetSettingsCompleted);
+          if (!editor)
+            dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
           dialog.closed.connect(() => {
+            if (editor)
+              editor.detach();
             if (root._activeDialog === dialog) {
               root._activeDialog = null;
               dialog.destroy();
+              root.widgetSettingsClosed();
             }
           });
           dialog.open();
         } else {
+          if (editor)
+            editor.detach();
           Logger.e("NSectionEditor", "Failed to create settings dialog instance");
         }
       }
@@ -290,12 +454,20 @@ NBox {
       if (component.status === Component.Ready) {
         instantiateAndOpen();
       } else if (component.status === Component.Error) {
+        root._settingsOpening = false;
+        root._openingEditor = null;
+        if (editor)
+          editor.detach();
         Logger.e("NSectionEditor", component.errorString());
       } else {
         component.statusChanged.connect(function () {
           if (component.status === Component.Ready) {
             instantiateAndOpen();
           } else if (component.status === Component.Error) {
+            root._settingsOpening = false;
+            root._openingEditor = null;
+            if (editor)
+              editor.detach();
             Logger.e("NSectionEditor", component.errorString());
           }
         });
@@ -491,61 +663,6 @@ NBox {
               }
             }
 
-            // Context menu for moving widget to other sections
-            NContextMenu {
-              id: contextMenu
-              parent: Overlay.overlay
-              width: 240 * Style.uiScaleRatio
-              model: {
-                var items = [];
-                // Add move options for each available section (except current)
-                for (var i = 0; i < root.availableSections.length; i++) {
-                  var section = root.availableSections[i];
-                  if (section !== root.sectionId) {
-                    var label = root.getSectionLabel(section);
-                    var displayLabel = '';
-                    // Map section IDs to correct position keys based on bar orientation
-                    var positionKey = section;
-                    if (root.barIsVertical) {
-                      if (section === "left")
-                        positionKey = "top";
-                      else if (section === "right")
-                        positionKey = "bottom";
-                    }
-                    if (I18n.hasTranslation("positions." + positionKey)) {
-                      displayLabel = I18n.tr("positions." + positionKey);
-                    } else {
-                      displayLabel = label.charAt(0).toUpperCase() + label.slice(1);
-                    }
-
-                    items.push({
-                                 "label": I18n.tr("tooltips.move-to-section", {
-                                                    "section": displayLabel
-                                                  }),
-                                 "action": section,
-                                 "icon": root.getSectionIcon(section),
-                                 "visible": true
-                               });
-                  }
-                }
-                // Add remove option
-                items.push({
-                             "label": I18n.tr("tooltips.remove-widget"),
-                             "action": "remove",
-                             "visible": true
-                           });
-                return items;
-              }
-
-              onTriggered: action => {
-                if (action === "remove") {
-                  root.removeWidget(root.sectionId, widgetItem.index);
-                } else {
-                  root.moveWidget(root.sectionId, widgetItem.index, action);
-                }
-              }
-            }
-
             // MouseArea for the context menu - only active when not dragging
             MouseArea {
               id: contextMouseArea
@@ -561,7 +678,7 @@ NBox {
                 const localX = mouse.x;
                 const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
                 if (localX < buttonsStartX || parent.buttonsCount === 0) {
-                  contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
+                  root.openWidgetMenu(widgetItem.index, mouse.x, mouse.y);
                 }
               }
             }
@@ -757,7 +874,7 @@ NBox {
           for (var i = 0; i < widgetModel.length; i++) {
             if (i === draggedIndex)
               continue;
-            const widget = widgetRepeater.itemAt(i);
+            const widget = root._widgetAt(i);
             if (!widget || widget.widgetIndex === undefined)
               continue;
 
@@ -784,7 +901,7 @@ NBox {
 
           // Check if we should insert at position 0 (very beginning)
           if (widgetModel.length > 0 && draggedIndex !== 0) {
-            const firstWidget = widgetRepeater.itemAt(0);
+            const firstWidget = root._widgetAt(0);
             if (firstWidget) {
               const mapped = mapWidgetCoords(firstWidget);
               const dist = Math.sqrt(Math.pow(mouseX - mapped.x, 2) + Math.pow(mouseY - mapped.y, 2));
@@ -830,6 +947,7 @@ NBox {
         }
 
         function resetDragState() {
+          root.cancelWidgetDrag();
           root.clearCrossSectionHover();
           dragStarted = false;
           potentialDrag = false;
@@ -856,7 +974,7 @@ NBox {
 
           // Find which widget was clicked
           for (var i = 0; i < widgetModel.length; i++) {
-            const widget = widgetRepeater.itemAt(i);
+            const widget = root._widgetAt(i);
             if (widget && widget.widgetIndex !== undefined) {
               if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
                 const localX = mouse.x - widget.x;
@@ -869,6 +987,10 @@ NBox {
                   return;
                 } else {
                   // This is a draggable area
+                  if (!root.beginWidgetDrag(widget.widgetIndex)) {
+                    mouse.accepted = false;
+                    return;
+                  }
                   draggedIndex = widget.widgetIndex;
                   draggedWidget = widget;
                   draggedModelData = widget.modelData;
@@ -925,12 +1047,12 @@ NBox {
         onReleased: mouse => {
           if (root.draggable && dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
             // Perform the reorder
-            reorderWidget(sectionId, draggedIndex, dropTargetIndex);
+            root.finishWidgetDrag(dropTargetIndex, "");
           } else if (dragStarted && draggedIndex !== -1) {
             var globalPos = flowDragArea.mapToGlobal(mouse.x, mouse.y);
             var targetSectionId = root.findSectionAtGlobalPosition(globalPos.x, globalPos.y);
             if (targetSectionId !== "" && targetSectionId !== root.sectionId) {
-              root.moveWidget(root.sectionId, draggedIndex, targetSectionId);
+              root.finishWidgetDrag(-1, targetSectionId);
             }
           }
 

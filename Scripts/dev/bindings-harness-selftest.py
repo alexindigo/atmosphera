@@ -12,17 +12,22 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import tarfile
 from types import SimpleNamespace
+from guest_profile import activate_profile, profile_argument
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--source", required=True, type=Path)
     ap.add_argument("--output", required=True, type=Path)
+    profile_argument(ap)
     a = ap.parse_args()
-    if os.getuid() != 1000 or Path.home() != Path("/home/tester") or "52:54:00:cd:ea:a0" not in {
-            p.read_text().strip() for p in Path("/sys/class/net").glob("*/address")}:
-        raise SystemExit("HARNESS_REPAIR: BLOCKED — owned VM required")
+    try:
+        profile = activate_profile(a.guest_profile)
+    except (RuntimeError, OSError) as error:
+        print("HARNESS_REPAIR: BLOCKED — " + str(error), flush=True)
+        return 2
     if a.output.exists():
         raise SystemExit("HARNESS_REPAIR: BLOCKED — refusing existing output")
     if a.source.resolve() == a.output.resolve() or a.source.resolve() in a.output.resolve().parents:
@@ -131,6 +136,7 @@ def main():
     def reserve(root):
         w = h.Workspace.__new__(h.Workspace)
         w.live, w.copies = True, []
+        w.profile = profile
         w.source = root
         w.output, w.work_root = root / "journal", root / "work"
         w.budget = {"copy_bytes": 64 * h.MIB, "entries": 7000}
@@ -142,11 +148,11 @@ def main():
         refused(lambda: w.preflight(initial=True))
         state.update(inodes=100000)
         w.preflight(initial=True)
-        w.statvfs = lambda path: SimpleNamespace(f_bavail=63 * h.MIB if str(path) == "/run/user/1000" else state["bytes"],
+        w.statvfs = lambda path: SimpleNamespace(f_bavail=63 * h.MIB if Path(path) == profile.session_runtime else state["bytes"],
                                                f_frsize=1, f_favail=state["inodes"])
         refused(lambda: w.preflight(initial=True))
         w.statvfs = lambda path: SimpleNamespace(f_bavail=state["bytes"], f_frsize=1,
-                                               f_favail=4999 if str(path) == "/run/user/1000" else state["inodes"])
+                                                f_favail=4999 if Path(path) == profile.session_runtime else state["inodes"])
         refused(lambda: w.preflight(initial=True))
         w.statvfs = lambda path: SimpleNamespace(f_bavail=state["bytes"], f_frsize=1, f_favail=state["inodes"])
         w.copies = [root / "retained-1", root / "retained-2"]
@@ -420,6 +426,86 @@ def main():
         assert h.retained_state_errors([state], [])
         assert h.retained_state_errors([state], [dict(artifact, file_mode=0o644)])
 
+    def archive_completed(root):
+        source = root / "source"
+        source.mkdir()
+        (source / "payload").write_bytes(b"original source bytes")
+        (source / "link").symlink_to("payload")
+        workspace = h.Workspace(source, root / "journal", root / "work", live=False, archive_completed=True)
+        case, journal, tree = workspace.case("first")
+        (tree / "payload").write_bytes(b"retained disposable instrumentation")
+        (case / "config").mkdir()
+        (case / "config/generated-settings.json").write_bytes(b'{"synthetic":"must survive"}\n')
+        (case / "cache").mkdir()
+        (case / "cache/generated-cache").write_bytes(b"generated cache must survive too")
+        (tree / "payload").chmod(0o640)
+        ns = 1700000000123456789
+        os.utime(tree / "payload", ns=(ns, ns))
+        os.setxattr(tree / "payload", "user.i1", b"metadata survives")
+        lifecycle = h.OwnedLifecycle()
+        try:
+            workspace.archive_case_tree(case, lifecycle)
+            record = json.loads((journal / "archived-workspace.json").read_text())
+            archive = Path(record["archive"])
+            assert not case.exists() and record["verified_before_reclamation"]
+            assert hashlib.sha256(archive.read_bytes()).hexdigest() == record["sha256"]
+            with tarfile.open(archive, "r:gz") as saved:
+                assert saved.extractfile("first/tree/payload").read() == b"retained disposable instrumentation"
+                assert saved.getmember("first/tree/link").linkname == "payload"
+                assert saved.getmember("first/tree/payload").mode == 0o640
+                assert saved.getmember("first/tree/payload").pax_headers["mtime"] == "1700000000.123456789"
+                assert json.loads(saved.getmember("first/tree/payload").pax_headers["atmosphera.xattrs"])["user.i1"]
+                assert saved.extractfile("first/config/generated-settings.json").read() == b'{"synthetic":"must survive"}\n'
+                assert saved.extractfile("first/cache/generated-cache").read() == b"generated cache must survive too"
+            assert (source / "payload").read_bytes() == b"original source bytes"
+            workspace.case("second")
+            workspace.case("third")
+            refused(lambda: workspace.case("fourth"))
+        finally:
+            lifecycle.close()
+
+    def archive_refusal(root):
+        source = root / "source"
+        source.mkdir()
+        (source / "payload").write_bytes(b"must survive")
+        workspace = h.Workspace(source, root / "journal", root / "work", live=False, archive_completed=True)
+        case, journal, tree = workspace.case("first")
+        class Live:
+            def assert_quiet(self):
+                raise h.HarnessBlocked("controlled live producer")
+        refused(lambda: workspace.archive_case_tree(case, Live()))
+        assert (tree / "payload").read_bytes() == b"must survive" and not list(case.glob("*.tar.gz*"))
+        lifecycle = h.OwnedLifecycle()
+        original_sha = h.sha
+        try:
+            h.sha = lambda path: "corrupt-expected-digest" if Path(path).name == "payload" else original_sha(path)
+            refused(lambda: workspace.archive_case_tree(case, lifecycle))
+            assert (tree / "payload").read_bytes() == b"must survive"
+            assert not (journal / "archived-workspace.json").exists()
+        finally:
+            h.sha = original_sha
+            lifecycle.close()
+
+    def unavailable_input(root):
+        if profile.qmp_prefix:
+            assert "send-key" in profile.qmp_command({"execute": "send-key"})
+            return
+        class UnstartedRunner:
+            failures = []
+            bindings = SimpleNamespace(Blocked=h.HarnessBlocked)
+            ctx = SimpleNamespace(restore_all=lambda: None)
+            def start(self):
+                raise AssertionError("unavailable hardware still started the live case")
+            def stop(self):
+                pass
+            def audit_case_end(self):
+                pass
+            def restore(self):
+                return {"live_mutation": False}
+        summary = h.execute_selected([h.case_record("physical-only", (), "start", needs=("physical-input",))], UnstartedRunner(), root)
+        assert summary["status"] == "BLOCKED" and summary["executed_ids"] == []
+        assert summary["cases"][0]["restoration"] == {"live_mutation": False}
+
     for name, body in (("registry", registry), ("side-effect-free-discovery", discovery), ("aggregation", aggregation),
                        ("copies-refusal-complete-tree", copies), ("byte-inode-reserves", reserve),
                        ("ENOSPC-terminal-summary", enospc), ("orphan-writer-refusal", descendants),
@@ -428,7 +514,9 @@ def main():
                        ("settings-existing-case-refusal", settings_refusal), ("qs-client-timeout-TERM-only", timeout_term_only),
                        ("cross-run-complete-copy-ledger", cross_run_copy_limit),
                        ("corrective-json-type-equality", json_types), ("corrective-capture-tuple", capture_identity),
-                       ("corrective-terminal-delivery", terminal_oracle), ("corrective-complete-retention", retention_oracle)):
+                       ("corrective-terminal-delivery", terminal_oracle), ("corrective-complete-retention", retention_oracle),
+                       ("verified-disposable-archive", archive_completed), ("archive-refuses-live-or-corrupt", archive_refusal),
+                       ("unavailable-input-refuses-before-live-case", unavailable_input)):
         test(name, body)
     failures = [r for r in results if r["status"] == "FAIL"]
     summary = {"status": "FAIL" if failures else "PASS", "cases": results,

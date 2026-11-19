@@ -17,36 +17,29 @@ ColumnLayout {
     parent: Overlay.overlay
   }
 
-  function openEdit(label, description, placeholder, value, onSave, onTest) {
+  function openEdit(label, description, placeholder, name, onTest) {
+    if (editPopup.visible || editPopup.busy)
+      return;
     editPopup.hookLabel = label;
     editPopup.hookDescription = description;
     editPopup.hookPlaceholder = placeholder;
-    editPopup.initialValue = value;
-    try {
-      editPopup.saved.disconnect(editPopup._savedSlot);
-    } catch (e) {}
     try {
       editPopup.test.disconnect(editPopup._testSlot);
     } catch (e) {}
-    editPopup._savedSlot = onSave;
     editPopup._testSlot = onTest;
-    editPopup.saved.connect(editPopup._savedSlot);
     editPopup.test.connect(editPopup._testSlot);
-    editPopup.open();
+    var editor = Settings.createEditor("hooks.listeners." + name);
+    editPopup.openEditor(editor, editor.initialValue);
   }
 
   function renderListenerRow(name, defaultValue, label, description, placeholder, onTest) {
     var row = listenerRowComp.createObject(column, {
                                              label: label,
                                              description: description,
-                                             value: Settings.data.hooks.listeners[name] !== undefined ? Settings.data.hooks.listeners[name] : defaultValue
-                                           });
+                                             value: Qt.binding(function () { return Settings.data.hooks.listeners[name] !== undefined ? Settings.data.hooks.listeners[name] : defaultValue; })
+                                           }) as HookListenerRow;
     row.editClicked.connect(() => {
-      openEdit(label, description, placeholder, row.value, newValue => {
-        Settings.data.hooks.listeners[name] = newValue;
-        Settings.saveImmediate();
-        row.value = newValue;
-      }, onTest);
+      openEdit(label, description, placeholder, name, onTest);
     });
   }
 

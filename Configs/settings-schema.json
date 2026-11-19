@@ -1,0 +1,3663 @@
+{
+  "format": 1,
+  "inputs": {
+    "Configs/defaults.json": "fb940a326872df6351c243d35b665af137e9783459164a1fc5ffdbd25bd70435",
+    "Configs/settings-schema-overlay.json": "4978cb129988eda7ae82e8088f4dad64f94e2aa3dafbf61c294cd90e51019269"
+  },
+  "paths": [
+    {
+      "path": [
+        "appLauncher"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "autoPasteClipboard"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "clipboardWatchImageCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "clipboardWatchTextCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "clipboardWrapText"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "customLaunchPrefix"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "customLaunchPrefixEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "density"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableClipPreview"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableClipboardChips"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableClipboardHistory"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableClipboardSmartIcons"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableSessionSearch"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableSettingsSearch"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "enableWindowsSearch"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "iconMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "ignoreMouseInput"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "overviewLayer"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "appLauncher",
+        "pinnedApps"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "position"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "screenshotAnnotationTool"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "showCategories"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "showIconBackground"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "sortByMostUsed"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "terminalCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "appLauncher",
+        "viewMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "atmospheraPerformance"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "atmospheraPerformance",
+        "disableDesktopWidgets"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "atmospheraPerformance",
+        "disableWallpaper"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "audio"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "audio",
+        "mprisBlacklist"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "audio",
+        "preferredPlayer"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "audio",
+        "spectrumFrameRate"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "audio",
+        "spectrumMirrored"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "audio",
+        "visualizerType"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "audio",
+        "volumeFeedback"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "audio",
+        "volumeFeedbackSoundFile"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "audio",
+        "volumeOverdrive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "audio",
+        "volumeStep"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar"
+      ],
+      "type": "Group"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "autoHideDelay"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "autoShowDelay"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "backgroundOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "bar",
+        "barType"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "capsuleColorKey"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "capsuleOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "contentPadding"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "density"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "displayMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "enableExclusionZoneInset"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "fontScale"
+      ],
+      "type": "Real"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "frameRadius"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "frameThickness"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "hideOnOverview"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "marginHorizontal"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "marginVertical"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "middleClickAction"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "middleClickCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "middleClickFollowMouse"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "machineLocal": true,
+      "path": [
+        "bar",
+        "monitors"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "bar",
+        "mouseWheelAction"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "mouseWheelWrap"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "outerCorners"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "position"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "reverseScroll"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "rightClickAction"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "rightClickCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "bar",
+        "rightClickFollowMouse"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "fields": {
+          "name": {
+            "type": "String"
+          },
+          "position": {
+            "optional": true,
+            "type": "String"
+          },
+          "widgets": {
+            "fields": {
+              "center": {
+                "element": {
+                  "fields": {
+                    "id": {
+                      "type": "String"
+                    },
+                    "instanceSettings": {
+                      "fields": {},
+                      "optional": true,
+                      "type": "Record"
+                    }
+                  },
+                  "type": "Record"
+                },
+                "optional": true,
+                "type": "List"
+              },
+              "left": {
+                "element": {
+                  "fields": {
+                    "id": {
+                      "type": "String"
+                    },
+                    "instanceSettings": {
+                      "fields": {},
+                      "optional": true,
+                      "type": "Record"
+                    }
+                  },
+                  "type": "Record"
+                },
+                "optional": true,
+                "type": "List"
+              },
+              "right": {
+                "element": {
+                  "fields": {
+                    "id": {
+                      "type": "String"
+                    },
+                    "instanceSettings": {
+                      "fields": {},
+                      "optional": true,
+                      "type": "Record"
+                    }
+                  },
+                  "type": "Record"
+                },
+                "optional": true,
+                "type": "List"
+              }
+            },
+            "optional": true,
+            "type": "Record"
+          }
+        },
+        "type": "Record"
+      },
+      "machineLocal": true,
+      "path": [
+        "bar",
+        "screenOverrides"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "bar",
+        "showCapsule"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "showOnWorkspaceSwitch"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "showOutline"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "bar",
+        "useSeparateOpacity"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "bar",
+        "widgetSpacing"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "bar",
+        "widgets"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "fields": {
+          "id": {
+            "type": "String"
+          },
+          "instanceSettings": {
+            "fields": {},
+            "optional": true,
+            "type": "Record"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "bar",
+        "widgets",
+        "center"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "fields": {
+          "id": {
+            "type": "String"
+          },
+          "instanceSettings": {
+            "fields": {},
+            "optional": true,
+            "type": "Record"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "bar",
+        "widgets",
+        "left"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "fields": {
+          "id": {
+            "type": "String"
+          },
+          "instanceSettings": {
+            "fields": {},
+            "optional": true,
+            "type": "Record"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "bar",
+        "widgets",
+        "right"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "bindings"
+      ],
+      "type": "Group"
+    },
+    {
+      "choices": [
+        "none",
+        "macos"
+      ],
+      "path": [
+        "bindings",
+        "environment"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "brightness"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "fields": {
+          "device": {
+            "type": "String"
+          },
+          "output": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "machineLocal": true,
+      "path": [
+        "brightness",
+        "backlightDeviceMappings"
+      ],
+      "type": "List"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "brightness",
+        "brightnessStep"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "brightness",
+        "enableDdcSupport"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "brightness",
+        "enforceMinimum"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "calendar"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "fields": {
+          "enabled": {
+            "type": "Boolean"
+          },
+          "id": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "calendar",
+        "cards"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "colorSchemes"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "darkMode"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "generationMethod"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "manualSunrise"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "manualSunset"
+      ],
+      "type": "String"
+    },
+    {
+      "machineLocal": true,
+      "path": [
+        "colorSchemes",
+        "monitorForColors"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "predefinedScheme"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "schedulingMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "syncGsettings"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "colorSchemes",
+        "useWallpaperColors"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "controlCenter"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "fields": {
+          "enabled": {
+            "type": "Boolean"
+          },
+          "id": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "controlCenter",
+        "cards"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "controlCenter",
+        "diskPath"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "controlCenter",
+        "position"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "controlCenter",
+        "shortcuts"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "fields": {
+          "id": {
+            "type": "String"
+          },
+          "instanceSettings": {
+            "fields": {},
+            "optional": true,
+            "type": "Record"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "controlCenter",
+        "shortcuts",
+        "left"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "fields": {
+          "id": {
+            "type": "String"
+          },
+          "instanceSettings": {
+            "fields": {},
+            "optional": true,
+            "type": "Record"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "controlCenter",
+        "shortcuts",
+        "right"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "desktopContextMenu"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "desktopContextMenu",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "fields": {
+          "id": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "desktopContextMenu",
+        "items"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "desktopWidgets"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "gridSnap"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "gridSnapScale"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "iconBlendStrength"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "iconHueAdjustment"
+      ],
+      "type": "Real"
+    },
+    {
+      "element": {
+        "fields": {
+          "name": {
+            "type": "String"
+          },
+          "widgets": {
+            "element": {
+              "fields": {
+                "id": {
+                  "type": "String"
+                },
+                "instanceSettings": {
+                  "fields": {},
+                  "optional": true,
+                  "type": "Record"
+                }
+              },
+              "type": "Record"
+            },
+            "type": "List"
+          }
+        },
+        "type": "Record"
+      },
+      "machineLocal": true,
+      "path": [
+        "desktopWidgets",
+        "monitorWidgets"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "overviewEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "desktopWidgets",
+        "widgetContentPadding"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "dock"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "dock",
+        "animationSpeed"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "dock",
+        "backgroundOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "dock",
+        "colorizeIcons"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "deadOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "dock",
+        "displayMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "dockType"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "floatingRatio"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "dock",
+        "groupApps"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "groupClickAction"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "groupContextMenuMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "groupIndicatorStyle"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "inactiveIndicators"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "indicatorColor"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "indicatorOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "dock",
+        "indicatorThickness"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "dock",
+        "launcherIcon"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "launcherIconColor"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "launcherPosition"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "launcherUseDistroLogo"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "machineLocal": true,
+      "path": [
+        "dock",
+        "monitors"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "dock",
+        "onlySameOutput"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "dock",
+        "pinnedApps"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "dock",
+        "pinnedStatic"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "position"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "dock",
+        "showDockIndicator"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "showLauncherIcon"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "sitOnFrame"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "dock",
+        "size"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "general",
+        "allowPanelsOnScreenWithoutBar"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "allowPasswordWithFprintd"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "animationDisabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "animationSpeed"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "autoStartAuth"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "machineLocal": true,
+      "path": [
+        "general",
+        "avatarImage"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "boxRadiusRatio"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "clockFormat"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "clockStyle"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "compactLockScreen"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "dimmerOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "enableBlurBehind"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "enableLockScreenCountdown"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "enableLockScreenMediaControls"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "enableShadows"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "externalLockCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "forceBlackScreenCorners"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "iRadiusRatio"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "keybinds"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyDown"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyEnter"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyEscape"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyLeft"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyRemove"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyRight"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "general",
+        "keybinds",
+        "keyUp"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "general",
+        "language"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "lockOnSuspend"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "lockScreenAnimations"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "lockScreenBlur"
+      ],
+      "type": "Real"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "general",
+        "lockScreenCountdownDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "general",
+        "lockScreenEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "machineLocal": true,
+      "path": [
+        "general",
+        "lockScreenMonitors"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "general",
+        "lockScreenPlugin"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "general",
+        "lockScreenTint"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "passwordChars"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "radiusRatio"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "reverseScroll"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "scaleRatio"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "screenRadiusRatio"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "general",
+        "shadowDirection"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "general",
+        "shadowOffsetX"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "general",
+        "shadowOffsetY"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "general",
+        "showChangelogOnStartup"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "showHibernateOnLockScreen"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "showScreenCorners"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "showSessionButtonsOnLockScreen"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "general",
+        "smoothScrollEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hardwareHealth"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hardwareHealth",
+        "enableHistoryLog"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "hardwareHealth",
+        "sustainedPolls"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "hardwareHealth",
+        "thermalWarnings"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hardwareHealth",
+        "uncleanShutdownNotice"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "hardwareHealth",
+        "warnOffsetC"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "hooks"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "colorGeneration"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "darkModeChange"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "desktopLeftClick"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "desktopMiddleClick"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "desktopRightClick"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopLeftClick"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopLeftClick",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopLeftClick",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopMiddleClick"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopMiddleClick",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopMiddleClick",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopRightClick"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopRightClick",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "desktopRightClick",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "hibernateAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "hibernateAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "hibernateAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "lockAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "lockAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "lockAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "rebootAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "rebootAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "rebootAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "rebootToUefiAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "rebootToUefiAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "rebootToUefiAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "screenOffAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "screenOffAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "screenOffAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "shutdownAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "shutdownAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "shutdownAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "suspendAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "suspendAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "suspendAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "userspaceRebootAction"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "userspaceRebootAction",
+        "command"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "handlers",
+        "userspaceRebootAction",
+        "exclusive"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "colorGeneration"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "darkModeChange"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "performanceModeDisabled"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "performanceModeEnabled"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "screenLock"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "screenUnlock"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "startup"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "listeners",
+        "wallpaperChange"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "performanceModeDisabled"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "performanceModeEnabled"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "screenLock"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "screenUnlock"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "session"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "startup"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "hooks",
+        "wallpaperChange"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "icons"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "icons",
+        "setOrder"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "idle"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "idle",
+        "customCommands"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "idle",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "idle",
+        "fadeDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "idle",
+        "lockCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "idle",
+        "lockTimeout"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "idle",
+        "resumeLockCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "idle",
+        "resumeScreenOffCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "idle",
+        "resumeSuspendCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "idle",
+        "screenOffCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "idle",
+        "screenOffTimeout"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "idle",
+        "suspendCommand"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "idle",
+        "suspendTimeout"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "inputMethod"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "inputMethod",
+        "launchFcitx5"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "inputMethod",
+        "legacyI18nChecked"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "inputMethod",
+        "nextKeys"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "fields": {
+          "keys": {
+            "element": {
+              "type": "String"
+            },
+            "type": "List"
+          },
+          "label": {
+            "optional": true,
+            "type": "String"
+          },
+          "mode": {
+            "choices": [
+              "toggle",
+              "set"
+            ],
+            "type": "String"
+          },
+          "target": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "inputMethod",
+        "switches"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "location"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "location",
+        "analogClockInCalendar"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "autoLocate"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "location",
+        "firstDayOfWeek"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "location",
+        "hideWeatherCityName"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "hideWeatherTimezone"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "name"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "location",
+        "showCalendarEvents"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "showCalendarWeather"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "showWeekNumberInCalendar"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "use12hourFormat"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "useFahrenheit"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "weatherEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "weatherShowEffects"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "location",
+        "weatherTaliaMascotAlways"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "network"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "network",
+        "bluetoothAutoConnect"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "network",
+        "bluetoothDetailsViewMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "network",
+        "bluetoothHideUnnamedDevices"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "network",
+        "bluetoothRssiPollIntervalMs"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "network",
+        "bluetoothRssiPollingEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "network",
+        "disableDiscoverability"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "network",
+        "networkPanelView"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "network",
+        "wifiDetailsViewMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "nightLight"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "nightLight",
+        "autoSchedule"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "nightLight",
+        "dayTemp"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "nightLight",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "nightLight",
+        "forced"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "nightLight",
+        "manualSunrise"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "nightLight",
+        "manualSunset"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "nightLight",
+        "nightTemp"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "notifications"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "notifications",
+        "backgroundOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "notifications",
+        "clearDismissed"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "notifications",
+        "criticalUrgencyDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "notifications",
+        "density"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "notifications",
+        "enableBatteryToast"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "enableKeyboardLayoutToast"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "enableMarkdown"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "enableMediaToast"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "location"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "notifications",
+        "lowUrgencyDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "machineLocal": true,
+      "path": [
+        "notifications",
+        "monitors"
+      ],
+      "type": "List"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "notifications",
+        "normalUrgencyDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "notifications",
+        "overlayLayer"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "respectExpireTimeout"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "saveToHistory"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "notifications",
+        "saveToHistory",
+        "critical"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "saveToHistory",
+        "low"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "saveToHistory",
+        "normal"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "criticalSoundFile"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "excludedApps"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "lowSoundFile"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "normalSoundFile"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "separateSounds"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "notifications",
+        "sounds",
+        "volume"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "osd"
+      ],
+      "type": "Group"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "osd",
+        "autoHideMs"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "osd",
+        "backgroundOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "osd",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "maximum": 2147483647,
+        "minimum": -2147483648,
+        "type": "Integer"
+      },
+      "path": [
+        "osd",
+        "enabledTypes"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "osd",
+        "location"
+      ],
+      "type": "String"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "machineLocal": true,
+      "path": [
+        "osd",
+        "monitors"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "osd",
+        "overlayLayer"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "plugins"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "plugins",
+        "autoUpdate"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "plugins",
+        "notifyUpdates"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "sessionMenu"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "backgroundOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "sessionMenu",
+        "countdownDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "enableCountdown"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "largeButtonsLayout"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "largeButtonsStyle"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "position"
+      ],
+      "type": "String"
+    },
+    {
+      "element": {
+        "fields": {
+          "action": {
+            "type": "String"
+          },
+          "enabled": {
+            "type": "Boolean"
+          },
+          "keybind": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "sessionMenu",
+        "powerOptions"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "showHeader"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "showKeybinds"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "sessionMenu",
+        "useSharedOpacity"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "settingsVersion"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "systemMonitor"
+      ],
+      "type": "Group"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "batteryCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "batteryWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "cpuCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "cpuWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "systemMonitor",
+        "criticalColor"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "diskAvailCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "diskAvailWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "diskCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "diskWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "systemMonitor",
+        "enableDgpuMonitoring"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "systemMonitor",
+        "externalMonitor"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "gpuCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "gpuWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "memCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "memWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "swapCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "swapWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "tempCriticalThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "systemMonitor",
+        "tempWarningThreshold"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "systemMonitor",
+        "useCustomColors"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "systemMonitor",
+        "warningColor"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "templates"
+      ],
+      "type": "Group"
+    },
+    {
+      "element": {
+        "fields": {
+          "enabled": {
+            "type": "Boolean"
+          },
+          "id": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "templates",
+        "activeTemplates"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "templates",
+        "enableUserTheming"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "ui"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "ui",
+        "boxBorderEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "ui",
+        "fontDefault"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "ui",
+        "fontDefaultScale"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "ui",
+        "fontFixed"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "ui",
+        "fontFixedScale"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "ui",
+        "panelBackgroundOpacity"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "ui",
+        "panelsAttachedToBar"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "ui",
+        "scrollbarAlwaysVisible"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "ui",
+        "settingsPanelMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "ui",
+        "settingsPanelSideBarCardStyle"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "ui",
+        "tooltipsEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "ui",
+        "translucentWidgets"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper"
+      ],
+      "type": "Group"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "automationEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "machineLocal": true,
+      "path": [
+        "wallpaper",
+        "directory"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "enableMultiMonitorDirectories"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "enabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "fields": {
+          "appearance": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorScheme": {
+            "optional": true,
+            "type": "String"
+          },
+          "darkMode": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "generationMethod": {
+            "optional": true,
+            "type": "String"
+          },
+          "paletteColors": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "path": {
+            "type": "String"
+          },
+          "useWallpaperColors": {
+            "optional": true,
+            "type": "Boolean"
+          }
+        },
+        "type": "Record"
+      },
+      "path": [
+        "wallpaper",
+        "favorites"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "fillColor"
+      ],
+      "stringPattern": "(?:#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3}(?:[0-9a-fA-F]{2}|[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?)?)?|(?=[\\s\\S]{1,255}\\z)[ \\t]*(?:[aA][ \\t]*[lL][ \\t]*[iI][ \\t]*[cC][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[aA][ \\t]*[nN][ \\t]*[tT][ \\t]*[iI][ \\t]*[qQ][ \\t]*[uU][ \\t]*[eE][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[aA][ \\t]*[qQ][ \\t]*[uU][ \\t]*[aA]|[aA][ \\t]*[qQ][ \\t]*[uU][ \\t]*[aA][ \\t]*[mM][ \\t]*[aA][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[eE]|[aA][ \\t]*[zZ][ \\t]*[uU][ \\t]*[rR][ \\t]*[eE]|[bB][ \\t]*[eE][ \\t]*[iI][ \\t]*[gG][ \\t]*[eE]|[bB][ \\t]*[iI][ \\t]*[sS][ \\t]*[qQ][ \\t]*[uU][ \\t]*[eE]|[bB][ \\t]*[lL][ \\t]*[aA][ \\t]*[cC][ \\t]*[kK]|[bB][ \\t]*[lL][ \\t]*[aA][ \\t]*[nN][ \\t]*[cC][ \\t]*[hH][ \\t]*[eE][ \\t]*[dD][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN][ \\t]*[dD]|[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT]|[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[bB][ \\t]*[uU][ \\t]*[rR][ \\t]*[lL][ \\t]*[yY][ \\t]*[wW][ \\t]*[oO][ \\t]*[oO][ \\t]*[dD]|[cC][ \\t]*[aA][ \\t]*[dD][ \\t]*[eE][ \\t]*[tT][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[cC][ \\t]*[hH][ \\t]*[aA][ \\t]*[rR][ \\t]*[tT][ \\t]*[rR][ \\t]*[eE][ \\t]*[uU][ \\t]*[sS][ \\t]*[eE]|[cC][ \\t]*[hH][ \\t]*[oO][ \\t]*[cC][ \\t]*[oO][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE]|[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[lL]|[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[nN][ \\t]*[fF][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[nN][ \\t]*[sS][ \\t]*[iI][ \\t]*[lL][ \\t]*[kK]|[cC][ \\t]*[rR][ \\t]*[iI][ \\t]*[mM][ \\t]*[sS][ \\t]*[oO][ \\t]*[nN]|[cC][ \\t]*[yY][ \\t]*[aA][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[cC][ \\t]*[yY][ \\t]*[aA][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[kK][ \\t]*[hH][ \\t]*[aA][ \\t]*[kK][ \\t]*[iI]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[mM][ \\t]*[aA][ \\t]*[gG][ \\t]*[eE][ \\t]*[nN][ \\t]*[tT][ \\t]*[aA]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[oO][ \\t]*[lL][ \\t]*[iI][ \\t]*[vV][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[gG][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[oO][ \\t]*[rR][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[dD]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT]|[dD][ \\t]*[eE][ \\t]*[eE][ \\t]*[pP][ \\t]*[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[dD][ \\t]*[eE][ \\t]*[eE][ \\t]*[pP][ \\t]*[sS][ \\t]*[kK][ \\t]*[yY][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[dD][ \\t]*[iI][ \\t]*[mM][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[dD][ \\t]*[iI][ \\t]*[mM][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[dD][ \\t]*[oO][ \\t]*[dD][ \\t]*[gG][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[fF][ \\t]*[iI][ \\t]*[rR][ \\t]*[eE][ \\t]*[bB][ \\t]*[rR][ \\t]*[iI][ \\t]*[cC][ \\t]*[kK]|[fF][ \\t]*[lL][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[lL][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[fF][ \\t]*[oO][ \\t]*[rR][ \\t]*[eE][ \\t]*[sS][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[fF][ \\t]*[uU][ \\t]*[cC][ \\t]*[hH][ \\t]*[sS][ \\t]*[iI][ \\t]*[aA]|[gG][ \\t]*[aA][ \\t]*[iI][ \\t]*[nN][ \\t]*[sS][ \\t]*[bB][ \\t]*[oO][ \\t]*[rR][ \\t]*[oO]|[gG][ \\t]*[hH][ \\t]*[oO][ \\t]*[sS][ \\t]*[tT][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD]|[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD]|[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN][ \\t]*[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[hH][ \\t]*[oO][ \\t]*[nN][ \\t]*[eE][ \\t]*[yY][ \\t]*[dD][ \\t]*[eE][ \\t]*[wW]|[hH][ \\t]*[oO][ \\t]*[tT][ \\t]*[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[iI][ \\t]*[nN][ \\t]*[dD][ \\t]*[iI][ \\t]*[aA][ \\t]*[nN][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[iI][ \\t]*[nN][ \\t]*[dD][ \\t]*[iI][ \\t]*[gG][ \\t]*[oO]|[iI][ \\t]*[vV][ \\t]*[oO][ \\t]*[rR][ \\t]*[yY]|[kK][ \\t]*[hH][ \\t]*[aA][ \\t]*[kK][ \\t]*[iI]|[lL][ \\t]*[aA][ \\t]*[vV][ \\t]*[eE][ \\t]*[nN][ \\t]*[dD][ \\t]*[eE][ \\t]*[rR]|[lL][ \\t]*[aA][ \\t]*[vV][ \\t]*[eE][ \\t]*[nN][ \\t]*[dD][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[sS][ \\t]*[hH]|[lL][ \\t]*[aA][ \\t]*[wW][ \\t]*[nN][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[eE][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[fF][ \\t]*[fF][ \\t]*[oO][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[lL]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[cC][ \\t]*[yY][ \\t]*[aA][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD][ \\t]*[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[kK][ \\t]*[yY][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[tT][ \\t]*[eE][ \\t]*[eE][ \\t]*[lL][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[lL][ \\t]*[iI][ \\t]*[mM][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[mM][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[nN][ \\t]*[eE][ \\t]*[nN]|[mM][ \\t]*[aA][ \\t]*[gG][ \\t]*[eE][ \\t]*[nN][ \\t]*[tT][ \\t]*[aA]|[mM][ \\t]*[aA][ \\t]*[rR][ \\t]*[oO][ \\t]*[oO][ \\t]*[nN]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[aA][ \\t]*[qQ][ \\t]*[uU][ \\t]*[aA][ \\t]*[mM][ \\t]*[aA][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[oO][ \\t]*[rR][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[dD]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[pP][ \\t]*[uU][ \\t]*[rR][ \\t]*[pP][ \\t]*[lL][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[sS][ \\t]*[pP][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[gG][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[mM][ \\t]*[iI][ \\t]*[dD][ \\t]*[nN][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[mM][ \\t]*[iI][ \\t]*[nN][ \\t]*[tT][ \\t]*[cC][ \\t]*[rR][ \\t]*[eE][ \\t]*[aA][ \\t]*[mM]|[mM][ \\t]*[iI][ \\t]*[sS][ \\t]*[tT][ \\t]*[yY][ \\t]*[rR][ \\t]*[oO][ \\t]*[sS][ \\t]*[eE]|[mM][ \\t]*[oO][ \\t]*[cC][ \\t]*[cC][ \\t]*[aA][ \\t]*[sS][ \\t]*[iI][ \\t]*[nN]|[nN][ \\t]*[aA][ \\t]*[vV][ \\t]*[aA][ \\t]*[jJ][ \\t]*[oO][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[nN][ \\t]*[aA][ \\t]*[vV][ \\t]*[yY]|[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[lL][ \\t]*[aA][ \\t]*[cC][ \\t]*[eE]|[oO][ \\t]*[lL][ \\t]*[iI][ \\t]*[vV][ \\t]*[eE]|[oO][ \\t]*[lL][ \\t]*[iI][ \\t]*[vV][ \\t]*[eE][ \\t]*[dD][ \\t]*[rR][ \\t]*[aA][ \\t]*[bB]|[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[gG][ \\t]*[eE]|[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[gG][ \\t]*[eE][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[oO][ \\t]*[rR][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[dD]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[pP][ \\t]*[aA][ \\t]*[pP][ \\t]*[aA][ \\t]*[yY][ \\t]*[aA][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[pP]|[pP][ \\t]*[eE][ \\t]*[aA][ \\t]*[cC][ \\t]*[hH][ \\t]*[pP][ \\t]*[uU][ \\t]*[fF][ \\t]*[fF]|[pP][ \\t]*[eE][ \\t]*[rR][ \\t]*[uU]|[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[pP][ \\t]*[lL][ \\t]*[uU][ \\t]*[mM]|[pP][ \\t]*[oO][ \\t]*[wW][ \\t]*[dD][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[pP][ \\t]*[uU][ \\t]*[rR][ \\t]*[pP][ \\t]*[lL][ \\t]*[eE]|[rR][ \\t]*[eE][ \\t]*[dD]|[rR][ \\t]*[oO][ \\t]*[sS][ \\t]*[yY][ \\t]*[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[rR][ \\t]*[oO][ \\t]*[yY][ \\t]*[aA][ \\t]*[lL][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[sS][ \\t]*[aA][ \\t]*[dD][ \\t]*[dD][ \\t]*[lL][ \\t]*[eE][ \\t]*[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[sS][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN]|[sS][ \\t]*[aA][ \\t]*[nN][ \\t]*[dD][ \\t]*[yY][ \\t]*[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[sS][ \\t]*[hH][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL]|[sS][ \\t]*[iI][ \\t]*[eE][ \\t]*[nN][ \\t]*[nN][ \\t]*[aA]|[sS][ \\t]*[iI][ \\t]*[lL][ \\t]*[vV][ \\t]*[eE][ \\t]*[rR]|[sS][ \\t]*[kK][ \\t]*[yY][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[sS][ \\t]*[nN][ \\t]*[oO][ \\t]*[wW]|[sS][ \\t]*[pP][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[gG][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[sS][ \\t]*[tT][ \\t]*[eE][ \\t]*[eE][ \\t]*[lL][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[tT][ \\t]*[aA][ \\t]*[nN]|[tT][ \\t]*[eE][ \\t]*[aA][ \\t]*[lL]|[tT][ \\t]*[hH][ \\t]*[iI][ \\t]*[sS][ \\t]*[tT][ \\t]*[lL][ \\t]*[eE]|[tT][ \\t]*[oO][ \\t]*[mM][ \\t]*[aA][ \\t]*[tT][ \\t]*[oO]|[tT][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[sS][ \\t]*[pP][ \\t]*[aA][ \\t]*[rR][ \\t]*[eE][ \\t]*[nN][ \\t]*[tT]|[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT]|[wW][ \\t]*[hH][ \\t]*[eE][ \\t]*[aA][ \\t]*[tT]|[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE][ \\t]*[sS][ \\t]*[mM][ \\t]*[oO][ \\t]*[kK][ \\t]*[eE]|[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN])[ \\t]*)",
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "fillMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "hideWallpaperFilenames"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "linkLightAndDarkWallpapers"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "element": {
+        "fields": {
+          "directory": {
+            "type": "String"
+          },
+          "name": {
+            "type": "String"
+          }
+        },
+        "type": "Record"
+      },
+      "machineLocal": true,
+      "path": [
+        "wallpaper",
+        "monitorDirectories"
+      ],
+      "type": "List"
+    },
+    {
+      "element": {
+        "fields": {
+          "name": {
+            "type": "String"
+          },
+          "pools": {
+            "element": {
+              "fields": {
+                "active": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "id": {
+                  "type": "String"
+                },
+                "rotate": {
+                  "optional": true,
+                  "type": "Boolean"
+                }
+              },
+              "type": "Record"
+            },
+            "type": "List"
+          }
+        },
+        "type": "Record"
+      },
+      "machineLocal": true,
+      "path": [
+        "wallpaper",
+        "monitorPools"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "overviewBlur"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "overviewEnabled"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "overviewTint"
+      ],
+      "type": "Real"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "panelPosition"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "wallpaper",
+        "randomIntervalSec"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "setWallpaperOnAllMonitors"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "showHiddenFiles"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "skipStartupTransition"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "solidColor"
+      ],
+      "stringPattern": "(?:#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3}(?:[0-9a-fA-F]{2}|[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?)?)?|(?=[\\s\\S]{1,255}\\z)[ \\t]*(?:[aA][ \\t]*[lL][ \\t]*[iI][ \\t]*[cC][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[aA][ \\t]*[nN][ \\t]*[tT][ \\t]*[iI][ \\t]*[qQ][ \\t]*[uU][ \\t]*[eE][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[aA][ \\t]*[qQ][ \\t]*[uU][ \\t]*[aA]|[aA][ \\t]*[qQ][ \\t]*[uU][ \\t]*[aA][ \\t]*[mM][ \\t]*[aA][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[eE]|[aA][ \\t]*[zZ][ \\t]*[uU][ \\t]*[rR][ \\t]*[eE]|[bB][ \\t]*[eE][ \\t]*[iI][ \\t]*[gG][ \\t]*[eE]|[bB][ \\t]*[iI][ \\t]*[sS][ \\t]*[qQ][ \\t]*[uU][ \\t]*[eE]|[bB][ \\t]*[lL][ \\t]*[aA][ \\t]*[cC][ \\t]*[kK]|[bB][ \\t]*[lL][ \\t]*[aA][ \\t]*[nN][ \\t]*[cC][ \\t]*[hH][ \\t]*[eE][ \\t]*[dD][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN][ \\t]*[dD]|[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT]|[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[bB][ \\t]*[uU][ \\t]*[rR][ \\t]*[lL][ \\t]*[yY][ \\t]*[wW][ \\t]*[oO][ \\t]*[oO][ \\t]*[dD]|[cC][ \\t]*[aA][ \\t]*[dD][ \\t]*[eE][ \\t]*[tT][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[cC][ \\t]*[hH][ \\t]*[aA][ \\t]*[rR][ \\t]*[tT][ \\t]*[rR][ \\t]*[eE][ \\t]*[uU][ \\t]*[sS][ \\t]*[eE]|[cC][ \\t]*[hH][ \\t]*[oO][ \\t]*[cC][ \\t]*[oO][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE]|[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[lL]|[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[nN][ \\t]*[fF][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[nN][ \\t]*[sS][ \\t]*[iI][ \\t]*[lL][ \\t]*[kK]|[cC][ \\t]*[rR][ \\t]*[iI][ \\t]*[mM][ \\t]*[sS][ \\t]*[oO][ \\t]*[nN]|[cC][ \\t]*[yY][ \\t]*[aA][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[cC][ \\t]*[yY][ \\t]*[aA][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[kK][ \\t]*[hH][ \\t]*[aA][ \\t]*[kK][ \\t]*[iI]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[mM][ \\t]*[aA][ \\t]*[gG][ \\t]*[eE][ \\t]*[nN][ \\t]*[tT][ \\t]*[aA]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[oO][ \\t]*[lL][ \\t]*[iI][ \\t]*[vV][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[gG][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[oO][ \\t]*[rR][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[dD]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[dD][ \\t]*[aA][ \\t]*[rR][ \\t]*[kK][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT]|[dD][ \\t]*[eE][ \\t]*[eE][ \\t]*[pP][ \\t]*[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[dD][ \\t]*[eE][ \\t]*[eE][ \\t]*[pP][ \\t]*[sS][ \\t]*[kK][ \\t]*[yY][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[dD][ \\t]*[iI][ \\t]*[mM][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[dD][ \\t]*[iI][ \\t]*[mM][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[dD][ \\t]*[oO][ \\t]*[dD][ \\t]*[gG][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[fF][ \\t]*[iI][ \\t]*[rR][ \\t]*[eE][ \\t]*[bB][ \\t]*[rR][ \\t]*[iI][ \\t]*[cC][ \\t]*[kK]|[fF][ \\t]*[lL][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[lL][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[fF][ \\t]*[oO][ \\t]*[rR][ \\t]*[eE][ \\t]*[sS][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[fF][ \\t]*[uU][ \\t]*[cC][ \\t]*[hH][ \\t]*[sS][ \\t]*[iI][ \\t]*[aA]|[gG][ \\t]*[aA][ \\t]*[iI][ \\t]*[nN][ \\t]*[sS][ \\t]*[bB][ \\t]*[oO][ \\t]*[rR][ \\t]*[oO]|[gG][ \\t]*[hH][ \\t]*[oO][ \\t]*[sS][ \\t]*[tT][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD]|[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD]|[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN][ \\t]*[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[hH][ \\t]*[oO][ \\t]*[nN][ \\t]*[eE][ \\t]*[yY][ \\t]*[dD][ \\t]*[eE][ \\t]*[wW]|[hH][ \\t]*[oO][ \\t]*[tT][ \\t]*[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[iI][ \\t]*[nN][ \\t]*[dD][ \\t]*[iI][ \\t]*[aA][ \\t]*[nN][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[iI][ \\t]*[nN][ \\t]*[dD][ \\t]*[iI][ \\t]*[gG][ \\t]*[oO]|[iI][ \\t]*[vV][ \\t]*[oO][ \\t]*[rR][ \\t]*[yY]|[kK][ \\t]*[hH][ \\t]*[aA][ \\t]*[kK][ \\t]*[iI]|[lL][ \\t]*[aA][ \\t]*[vV][ \\t]*[eE][ \\t]*[nN][ \\t]*[dD][ \\t]*[eE][ \\t]*[rR]|[lL][ \\t]*[aA][ \\t]*[vV][ \\t]*[eE][ \\t]*[nN][ \\t]*[dD][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[sS][ \\t]*[hH]|[lL][ \\t]*[aA][ \\t]*[wW][ \\t]*[nN][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[eE][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[fF][ \\t]*[fF][ \\t]*[oO][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[cC][ \\t]*[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[lL]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[cC][ \\t]*[yY][ \\t]*[aA][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD][ \\t]*[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[kK][ \\t]*[yY][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[sS][ \\t]*[tT][ \\t]*[eE][ \\t]*[eE][ \\t]*[lL][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[lL][ \\t]*[iI][ \\t]*[mM][ \\t]*[eE]|[lL][ \\t]*[iI][ \\t]*[mM][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[lL][ \\t]*[iI][ \\t]*[nN][ \\t]*[eE][ \\t]*[nN]|[mM][ \\t]*[aA][ \\t]*[gG][ \\t]*[eE][ \\t]*[nN][ \\t]*[tT][ \\t]*[aA]|[mM][ \\t]*[aA][ \\t]*[rR][ \\t]*[oO][ \\t]*[oO][ \\t]*[nN]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[aA][ \\t]*[qQ][ \\t]*[uU][ \\t]*[aA][ \\t]*[mM][ \\t]*[aA][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[oO][ \\t]*[rR][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[dD]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[pP][ \\t]*[uU][ \\t]*[rR][ \\t]*[pP][ \\t]*[lL][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[sS][ \\t]*[pP][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[gG][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[mM][ \\t]*[eE][ \\t]*[dD][ \\t]*[iI][ \\t]*[uU][ \\t]*[mM][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[mM][ \\t]*[iI][ \\t]*[dD][ \\t]*[nN][ \\t]*[iI][ \\t]*[gG][ \\t]*[hH][ \\t]*[tT][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[mM][ \\t]*[iI][ \\t]*[nN][ \\t]*[tT][ \\t]*[cC][ \\t]*[rR][ \\t]*[eE][ \\t]*[aA][ \\t]*[mM]|[mM][ \\t]*[iI][ \\t]*[sS][ \\t]*[tT][ \\t]*[yY][ \\t]*[rR][ \\t]*[oO][ \\t]*[sS][ \\t]*[eE]|[mM][ \\t]*[oO][ \\t]*[cC][ \\t]*[cC][ \\t]*[aA][ \\t]*[sS][ \\t]*[iI][ \\t]*[nN]|[nN][ \\t]*[aA][ \\t]*[vV][ \\t]*[aA][ \\t]*[jJ][ \\t]*[oO][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[nN][ \\t]*[aA][ \\t]*[vV][ \\t]*[yY]|[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[lL][ \\t]*[aA][ \\t]*[cC][ \\t]*[eE]|[oO][ \\t]*[lL][ \\t]*[iI][ \\t]*[vV][ \\t]*[eE]|[oO][ \\t]*[lL][ \\t]*[iI][ \\t]*[vV][ \\t]*[eE][ \\t]*[dD][ \\t]*[rR][ \\t]*[aA][ \\t]*[bB]|[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[gG][ \\t]*[eE]|[oO][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[gG][ \\t]*[eE][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[oO][ \\t]*[rR][ \\t]*[cC][ \\t]*[hH][ \\t]*[iI][ \\t]*[dD]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[gG][ \\t]*[oO][ \\t]*[lL][ \\t]*[dD][ \\t]*[eE][ \\t]*[nN][ \\t]*[rR][ \\t]*[oO][ \\t]*[dD]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[pP][ \\t]*[aA][ \\t]*[lL][ \\t]*[eE][ \\t]*[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT][ \\t]*[rR][ \\t]*[eE][ \\t]*[dD]|[pP][ \\t]*[aA][ \\t]*[pP][ \\t]*[aA][ \\t]*[yY][ \\t]*[aA][ \\t]*[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[pP]|[pP][ \\t]*[eE][ \\t]*[aA][ \\t]*[cC][ \\t]*[hH][ \\t]*[pP][ \\t]*[uU][ \\t]*[fF][ \\t]*[fF]|[pP][ \\t]*[eE][ \\t]*[rR][ \\t]*[uU]|[pP][ \\t]*[iI][ \\t]*[nN][ \\t]*[kK]|[pP][ \\t]*[lL][ \\t]*[uU][ \\t]*[mM]|[pP][ \\t]*[oO][ \\t]*[wW][ \\t]*[dD][ \\t]*[eE][ \\t]*[rR][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[pP][ \\t]*[uU][ \\t]*[rR][ \\t]*[pP][ \\t]*[lL][ \\t]*[eE]|[rR][ \\t]*[eE][ \\t]*[dD]|[rR][ \\t]*[oO][ \\t]*[sS][ \\t]*[yY][ \\t]*[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[rR][ \\t]*[oO][ \\t]*[yY][ \\t]*[aA][ \\t]*[lL][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[sS][ \\t]*[aA][ \\t]*[dD][ \\t]*[dD][ \\t]*[lL][ \\t]*[eE][ \\t]*[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[sS][ \\t]*[aA][ \\t]*[lL][ \\t]*[mM][ \\t]*[oO][ \\t]*[nN]|[sS][ \\t]*[aA][ \\t]*[nN][ \\t]*[dD][ \\t]*[yY][ \\t]*[bB][ \\t]*[rR][ \\t]*[oO][ \\t]*[wW][ \\t]*[nN]|[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[sS][ \\t]*[eE][ \\t]*[aA][ \\t]*[sS][ \\t]*[hH][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL]|[sS][ \\t]*[iI][ \\t]*[eE][ \\t]*[nN][ \\t]*[nN][ \\t]*[aA]|[sS][ \\t]*[iI][ \\t]*[lL][ \\t]*[vV][ \\t]*[eE][ \\t]*[rR]|[sS][ \\t]*[kK][ \\t]*[yY][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[aA][ \\t]*[yY]|[sS][ \\t]*[lL][ \\t]*[aA][ \\t]*[tT][ \\t]*[eE][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[yY]|[sS][ \\t]*[nN][ \\t]*[oO][ \\t]*[wW]|[sS][ \\t]*[pP][ \\t]*[rR][ \\t]*[iI][ \\t]*[nN][ \\t]*[gG][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN]|[sS][ \\t]*[tT][ \\t]*[eE][ \\t]*[eE][ \\t]*[lL][ \\t]*[bB][ \\t]*[lL][ \\t]*[uU][ \\t]*[eE]|[tT][ \\t]*[aA][ \\t]*[nN]|[tT][ \\t]*[eE][ \\t]*[aA][ \\t]*[lL]|[tT][ \\t]*[hH][ \\t]*[iI][ \\t]*[sS][ \\t]*[tT][ \\t]*[lL][ \\t]*[eE]|[tT][ \\t]*[oO][ \\t]*[mM][ \\t]*[aA][ \\t]*[tT][ \\t]*[oO]|[tT][ \\t]*[rR][ \\t]*[aA][ \\t]*[nN][ \\t]*[sS][ \\t]*[pP][ \\t]*[aA][ \\t]*[rR][ \\t]*[eE][ \\t]*[nN][ \\t]*[tT]|[tT][ \\t]*[uU][ \\t]*[rR][ \\t]*[qQ][ \\t]*[uU][ \\t]*[oO][ \\t]*[iI][ \\t]*[sS][ \\t]*[eE]|[vV][ \\t]*[iI][ \\t]*[oO][ \\t]*[lL][ \\t]*[eE][ \\t]*[tT]|[wW][ \\t]*[hH][ \\t]*[eE][ \\t]*[aA][ \\t]*[tT]|[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE]|[wW][ \\t]*[hH][ \\t]*[iI][ \\t]*[tT][ \\t]*[eE][ \\t]*[sS][ \\t]*[mM][ \\t]*[oO][ \\t]*[kK][ \\t]*[eE]|[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW]|[yY][ \\t]*[eE][ \\t]*[lL][ \\t]*[lL][ \\t]*[oO][ \\t]*[wW][ \\t]*[gG][ \\t]*[rR][ \\t]*[eE][ \\t]*[eE][ \\t]*[nN])[ \\t]*)",
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "sortOrder"
+      ],
+      "type": "String"
+    },
+    {
+      "maximum": 2147483647,
+      "minimum": -2147483648,
+      "path": [
+        "wallpaper",
+        "transitionDuration"
+      ],
+      "type": "Integer"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "transitionEdgeSmoothness"
+      ],
+      "type": "Real"
+    },
+    {
+      "element": {
+        "type": "String"
+      },
+      "path": [
+        "wallpaper",
+        "transitionType"
+      ],
+      "type": "List"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "useOriginalImages"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "useSolidColor"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "useWallhaven"
+      ],
+      "type": "Boolean"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "viewMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenApiKey"
+      ],
+      "sensitive": true,
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenCategories"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenOrder"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenPurity"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenQuery"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenRatios"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenResolutionHeight"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenResolutionMode"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenResolutionWidth"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallhavenSorting"
+      ],
+      "type": "String"
+    },
+    {
+      "path": [
+        "wallpaper",
+        "wallpaperChangeMode"
+      ],
+      "type": "String"
+    }
+  ],
+  "sections": [
+    "appLauncher",
+    "atmospheraPerformance",
+    "audio",
+    "bar",
+    "bindings",
+    "brightness",
+    "calendar",
+    "colorSchemes",
+    "controlCenter",
+    "desktopContextMenu",
+    "desktopWidgets",
+    "dock",
+    "general",
+    "hardwareHealth",
+    "hooks",
+    "icons",
+    "idle",
+    "inputMethod",
+    "location",
+    "network",
+    "nightLight",
+    "notifications",
+    "osd",
+    "plugins",
+    "sessionMenu",
+    "systemMonitor",
+    "templates",
+    "ui",
+    "wallpaper"
+  ]
+}

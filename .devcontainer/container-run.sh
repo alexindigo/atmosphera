@@ -93,6 +93,7 @@ else
 fi
 
 FINGERPRINT="$({ sha256sum < "$DEVCONTAINER_DIR/Dockerfile"
+                  sha256sum < "$DEVCONTAINER_DIR/settings-check-requirements.txt"
                   sha256sum < "$DEVCONTAINER_DIR/atmo-dev.sh"
                   sha256sum < "$DEVCONTAINER_DIR/install-qml-deps.sh"
                   echo "dev uid=$IMG_UID gid=$IMG_GID"; } | sha256sum | cut -c1-16)"
@@ -140,6 +141,14 @@ if [ -n "${ATMOSPHERA_PLUGIN_SNAPSHOT_DIR:-}" ]; then
     [[ -d "$SNAPSHOT_DIR" && "$SNAPSHOT_DIR" == "$GIT_DIR"/plugin-lint.* ]] \
         || fail "plugin snapshot must be a private directory under this worktree's Git directory."
     RUN_ARGS+=(-v "$SNAPSHOT_DIR:/atmosphera-plugin-snapshot:ro")
+fi
+
+if [ -n "${ATMOSPHERA_SETTINGS_SNAPSHOT_DIR:-}" ]; then
+    SNAPSHOT_DIR="$(realpath -- "$ATMOSPHERA_SETTINGS_SNAPSHOT_DIR")"
+    GIT_DIR="$(git -C "$REPO_ROOT" rev-parse --absolute-git-dir)"
+    [[ -d "$SNAPSHOT_DIR" && "$SNAPSHOT_DIR" == "$GIT_DIR"/settings-lint.* ]] \
+        || fail "settings snapshot must be a private directory under this worktree's Git directory."
+    RUN_ARGS+=(-v "$SNAPSHOT_DIR:/atmosphera-settings-snapshot:ro")
 fi
 
 if [ "$ENGINE_KIND" = podman ]; then

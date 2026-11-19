@@ -16,6 +16,7 @@ PanelWindow {
   required property ShellScreen shellScreen
   property string windowType: "popupmenu"  // Used for namespace and registration
   property int presentationGeneration: 0
+  property int _contentGeneration: 0
   property bool _closing: false
   onVisibleChanged: {
     presentationGeneration++;
@@ -31,6 +32,7 @@ PanelWindow {
   // reference also becomes null when externally owned content is destroyed.
   property QtObject popupContentItem: null
   onPopupContentItemChanged: {
+    _contentGeneration++;
     if (!popupContentItem && visible && !_closing)
       close();
   }
@@ -129,26 +131,30 @@ PanelWindow {
 
   // Adopt the actual menu, including caller-supplied tray/context menus.
   function showContextMenu(menu) {
-    if (menu) {
-      close();
-      popupContentItem = menu;
-      open();
-    }
+    if (!menu || !close())
+      return false;
+    popupContentItem = menu;
+    open();
+    return true;
   }
 
   // Dialog callers prepare/open their content; this window owns its lifetime
   // as a presentation and observes closure just as it does for hosted menus.
-  function showDialog(dialog) {
-    close();
+  function showDialog(dialog, generation) {
+    // Asynchronous component construction may finish after a newer request.
+    if (!dialog || (generation !== undefined && generation !== presentationGeneration) || !close())
+      return false;
     popupContentItem = dialog;
     hasDialog = true;
     open();
+    return true;
   }
 
   // Show a dynamic context menu with model and callback at shellScreen coordinates
   // Used for items in other window layers (e.g., desktop widgets in bottom layer)
   function showDynamicContextMenu(model, screenX, screenY, callback) {
-    close();
+    if (!close())
+      return false;
     dynamicMenu.model = model;
     dynamicMenuCallback = callback;
 
@@ -160,6 +166,7 @@ PanelWindow {
     popupContentItem = dynamicMenu;
     dynamicMenu.visible = true;
     open();
+    return true;
   }
 
   // Invisible anchor point for dynamic menu positioning
@@ -176,14 +183,37 @@ PanelWindow {
 
   function close() {
     if (_closing)
-      return;
+      return false;
     _closing = true;
+    const content = popupContentItem;
+    // A guarded child owns permission to end its presentation. Keep its host,
+    // bindings and callback dependencies until it actually accepts closure.
+    if (content && typeof content.requestClose === "function") {
+      const accepted = content.requestClose();
+      if (accepted !== true) {
+        visible = true;
+        BarService.popupOpen = true;
+        _closing = false;
+        // Hiding the native window also hides its Qt Popup surface. Restore
+        // that presentation after the window's visibility transition settles.
+        const contentGeneration = _contentGeneration;
+        Qt.callLater(function () {
+          if (root.popupContentItem === content && root._contentGeneration === contentGeneration) {
+            root.visible = true;
+            if (!content.visible && typeof content.open === "function") {
+              content.open();
+              content.requestClose();
+            }
+          }
+        });
+        return false;
+      }
+    }
     presentationGeneration++;
     visible = false;
     BarService.popupOpen = false;
     // Detach before asking the child to close: its signals cannot reenter
     // this transition or accidentally close a replacement presentation.
-    const content = popupContentItem;
     popupContentItem = null;
     hasDialog = false;
     dynamicMenuCallback = null;
@@ -194,10 +224,12 @@ PanelWindow {
     if (content) {
       if (typeof content.hideMenu === "function") {
         content.hideMenu();
-      } else if (typeof content.close === "function") {
+      } else if (typeof content.requestClose !== "function" && typeof content.close === "function") {
         content.close();
       }
     }
+    // A child close callback may already have adopted a new presentation.
+    return popupContentItem === null;
   }
 
   // Full-shellScreen click catcher - click anywhere outside content closes the window

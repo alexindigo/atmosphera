@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../../../Helpers/SectionWidgetCommands.js" as SectionCommands
 import qs.Commons
 import qs.Services.Plugins
 import qs.Services.System
@@ -175,6 +176,8 @@ ColumnLayout {
 
     ShortcutsSubTab {
       availableWidgets: availableWidgets
+      captureWidgetInteraction: root.captureWidgetInteraction
+      captureWidgetSettings: root.captureWidgetSettings
       onAddWidgetToSection: (widgetId, section) => _addWidgetToSection(widgetId, section)
       onRemoveWidgetFromSection: (section, index) => _removeWidgetFromSection(section, index)
       onReorderWidgetInSection: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
@@ -199,54 +202,73 @@ ColumnLayout {
         });
       }
     }
-    Settings.data.controlCenter.shortcuts[section].push(newWidget);
+    var editor = Settings.createRecordListEditor(["controlCenter", "shortcuts", section], []);
+    if (!editor)
+      return false;
+    return editor.submit([{op: "insert", index: editor.initialValue.length, value: newWidget}], function () { editor.detach(); });
+  }
+
+  function captureWidgetInteraction(section, index) {
+    var sections = [
+      {id: "left", path: ["controlCenter", "shortcuts", "left"], listAddress: [], length: Settings.data.controlCenter.shortcuts.left.length},
+      {id: "right", path: ["controlCenter", "shortcuts", "right"], listAddress: [], length: Settings.data.controlCenter.shortcuts.right.length}
+    ];
+    return SectionCommands.capture({sections: sections,
+      createEditor: function (path, address, targets) { return Settings.createRecordListEditor(path, address, targets); },
+      later: function (callback) { Qt.callLater(callback); }, onChanged: function () {}}, section, index);
+  }
+
+  function _submitWidgetInteraction(section, index, action, destination) {
+    var interaction = root.captureWidgetInteraction(section, index);
+    if (!interaction)
+      return false;
+    return interaction.submit(action, destination, function (result) {
+      if (result.status !== "admitted" || result.refreshState !== "current")
+        Logger.w("ControlCenterTab", "Widget command refused", result.error?.code || "list-edit-conflict");
+      interaction.detach();
+    });
   }
 
   function _removeWidgetFromSection(section, index) {
-    if (index >= 0 && index < Settings.data.controlCenter.shortcuts[section].length) {
-      var newArray = Settings.data.controlCenter.shortcuts[section].slice();
-      var removedWidgets = newArray.splice(index, 1);
-      Settings.data.controlCenter.shortcuts[section] = newArray;
-    }
+    return root._submitWidgetInteraction(section, index, "remove", null);
   }
 
   function _reorderWidgetInSection(section, fromIndex, toIndex) {
-    if (fromIndex >= 0 && fromIndex < Settings.data.controlCenter.shortcuts[section].length && toIndex >= 0 && toIndex < Settings.data.controlCenter.shortcuts[section].length) {
-
-      // Create a new array to avoid modifying the original
-      var newArray = Settings.data.controlCenter.shortcuts[section].slice();
-      var item = newArray[fromIndex];
-      newArray.splice(fromIndex, 1);
-      newArray.splice(toIndex, 0, item);
-
-      Settings.data.controlCenter.shortcuts[section] = newArray;
-    }
+    return root._submitWidgetInteraction(section, fromIndex, "reorder", toIndex);
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {
-    // Get the widget from the source section
-    if (index >= 0 && index < Settings.data.controlCenter.shortcuts[fromSection].length) {
-      var widget = Settings.data.controlCenter.shortcuts[fromSection][index];
+    return root._submitWidgetInteraction(fromSection, index, "move", toSection);
+  }
 
-      // Remove from source section
-      var sourceArray = Settings.data.controlCenter.shortcuts[fromSection].slice();
-      sourceArray.splice(index, 1);
-      Settings.data.controlCenter.shortcuts[fromSection] = sourceArray;
-
-      // Add to target section
-      var targetArray = Settings.data.controlCenter.shortcuts[toSection].slice();
-      targetArray.push(widget);
-      Settings.data.controlCenter.shortcuts[toSection] = targetArray;
+  function captureWidgetSettings(section, index) {
+    var commands = Settings.createRecordListEditor(["controlCenter", "shortcuts", section], []);
+    if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length) {
+      if (commands)
+        commands.detach();
+      return null;
     }
+    return {
+      initialValue: commands.initialValue[index],
+      submit: function (fields, callback) {
+        var edits = fields && typeof fields === "object" && !Array.isArray(fields) ? Object.keys(fields).filter(function (key) {
+          return key !== "id";
+        }).map(function (key) { return {op: "set", index: index, field: key, value: fields[key]}; }) : [];
+        return commands.submit(edits, function (result) {
+          if (result.status === "admitted" && result.refreshState === "current") {
+            Settings.saveResult(callback);
+          } else if (typeof callback === "function") {
+            callback({status: "failed", error: result.error || {code: "list-edit-conflict"}});
+          }
+        });
+      },
+      detach: function () { commands.detach(); }
+    };
   }
 
   function _updateWidgetSettingsInSection(section, index, settings) {
-    // Create a new array to trigger QML's change detection for persistence.
-    // This is crucial for Settings.data to detect the change and persist it.
-    var newSectionArray = Settings.data.controlCenter.shortcuts[section].slice();
-    newSectionArray[index] = settings;
-    Settings.data.controlCenter.shortcuts[section] = newSectionArray;
-    Settings.saveImmediate();
+    var editor = root.captureWidgetSettings(section, index);
+    return editor ? editor.submit(settings, function () { editor.detach(); }) : false;
   }
 
   // Base list model for all combo boxes

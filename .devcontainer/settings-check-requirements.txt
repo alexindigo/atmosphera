@@ -1,0 +1,2 @@
+tree-sitter==0.25.2
+https://files.pythonhosted.org/packages/1b/7a/6299e4da0a02b6a792c28caaf03c128f42349a0c154cf77ab16fd5627ffc/tree_sitter_qmljs-0.3.1.tar.gz#sha256=8cf59d0a94fb4d593db2cfe5b66eb90e1accb98f47d10abe4b10ff78438716b0
