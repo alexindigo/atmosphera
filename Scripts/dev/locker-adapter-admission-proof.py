@@ -72,6 +72,26 @@ def main():
         assert not result['committed'] and not state['units']['emergency']['retire'], (result, state)
     case('exit-between-inspect-and-handover-retains-emergency', handover_dead)
 
+    def terminal_publication_not_ready():
+        nonlocal state
+        state = fresh()
+        real = record('real')
+        real.pop('protocolReport')
+        real['grant'] = False
+        parent = adapter.proc_identity(os.getppid())
+        real['clientIdentity'] = parent
+        state['units'] = {'real': real}
+        observed = dict(sameInvocation=True, gone=False, members=[parent])
+        with patch.object(adapter, 'Session', Session), patch.object(adapter, 'observe', return_value=observed), \
+                patch.object(adapter, 'client_reply', return_value={}):
+            adapter.manage(dict(operation='client', session='fixture', generation='g', role='real', pid=os.getppid(),
+                status={'session': 'fixture', 'generation': 'g', 'role': 'real', 'ready': True, 'terminal': True,
+                        'settlement': 'retired'}))
+            assert not state['units']['real']['client']['ready'], state['units']['real']['client']
+            granted = adapter.manage(dict(operation='grant', session='fixture', generation='g', role='real'))
+        assert not granted['granted'], granted
+    case('terminal-client-publication-is-not-ready', terminal_publication_not_ready)
+
     def dead_secure(consumer):
         nonlocal state
         state = fresh()

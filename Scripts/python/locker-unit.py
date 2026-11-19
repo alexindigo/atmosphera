@@ -546,6 +546,8 @@ def manage(job):
             if payload.get('session') != data['session'] or payload.get('generation') != data['generation'] or payload.get('role') != role:
                 raise Refused('client protocol identity mismatch')
             record['client'] = {key: payload.get(key) is True for key in CLIENT_FIELDS}
+            # A client that publishes a terminal state is never ready for grant.
+            record['client']['ready'] = record['client']['ready'] and not record['client']['terminal']
             settlement = payload.get('settlement', '')
             record['client']['settlement'] = settlement if settlement in ('finished', 'retired', 'authenticated-unlock', 'authentication-revoked', 'stale-generation') else ''
             record['client']['observedAt'] = time.monotonic()
