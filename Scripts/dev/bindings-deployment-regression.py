@@ -28,6 +28,7 @@ import select
 import tarfile
 from guest_profile import (ProfileBlocked as HarnessBlocked, activate_profile,
                            current_profile, profile_argument, protect_owned_process)
+from native_settings_controls import prepare as prepare_native_controls
 
 HERE = Path(__file__).resolve().parent
 FILES = [".config/niri/config.kdl", ".config/niri/atmosphera.kdl",
@@ -875,6 +876,11 @@ class Runner:
         self.live_started = False
         self.gates = []
         shutil.copy2(HERE / "fixtures/bindings-deployment.qml", self.tree / "deployment-probe.qml")
+        native_build, native_record = prepare_native_controls(self.source)
+        atomic_json(self.case / "native-controls.json", native_record)
+        self.native_schedule = self.case / "native-schedule.json"
+        self.native_rules = []
+        atomic_json(self.native_schedule, {"rules": self.native_rules})
         self.config = self.work_case / "config"
         (self.config / "settings").mkdir(parents=True)
         (self.work_case / "cache").mkdir()
@@ -888,15 +894,22 @@ class Runner:
             "PATH": str(self.tree / "Scripts/bash") + ":" + os.environ["PATH"],
         })
         self.env.update(self.workspace.profile.child_environment("bd-"))
+        self.env.update(QML_IMPORT_PATH=str(native_build),
+                        LD_PRELOAD=str(native_build / "libatmosphera_native_io.so"),
+                        ATCQ_NATIVE_SCHEDULE=str(self.native_schedule))
         self.logpath = self.case / "qs.log"
         self.event_log_paths = [self.logpath]
         if before_launch:
             before_launch()
         self.record_copy_changes(name)
         command = ["qs", "-p", str(self.entry)]
+        launch_env = self.env
         if mode == "runtime-consumers":
-            command = ["dbus-run-session", "--", *command]
-        self.process = subprocess.Popen(command, env=self.env, stdout=subprocess.PIPE,
+            # Preload only qs, not the private-bus launcher. Otherwise the
+            # launcher's inherited PID fence correctly excludes its qs child.
+            command = ["dbus-run-session", "--", "env", "LD_PRELOAD=" + self.env["LD_PRELOAD"], *command]
+            launch_env = {key: value for key, value in self.env.items() if key != "LD_PRELOAD"}
+        self.process = subprocess.Popen(command, env=launch_env, stdout=subprocess.PIPE,
                                         stderr=subprocess.STDOUT, start_new_session=True)
         self.lifecycle.track(self.process)
         self.live_started = True
@@ -948,14 +961,36 @@ class Runner:
             time.sleep(.1)
         raise RuntimeError(f"timed out awaiting {description}; see {self.logpath}")
 
-    def ipc(self, method, *args):
+    def ipc_wire(self, method, *args):
         p = run(["qs", "-p", str(self.entry), "ipc", "call", "deploymentprobe", method, *args], env=self.env, timeout=15)
         if p.returncode:
             raise RuntimeError(f"fixture IPC failed: {p.stdout}{p.stderr}")
         return p.stdout
 
-    def private_state(self, label):
-        transfer = json.loads(self.ipc("auditPrivateBegin"))
+    def ipc(self, method, *args):
+        response = self.ipc_wire(method, *args)
+        if method != "auditPrivateBegin":
+            try:
+                header = json.loads(response)
+            except json.JSONDecodeError:
+                header = None
+            if isinstance(header, dict) and header.get("protocol") == "deployment-private-v1":
+                if set(header) != {"protocol", "id", "length"}:
+                    raise HarnessBlocked("invalid private snapshot transfer header")
+                self.private_json_serial = getattr(self, "private_json_serial", 0) + 1
+                return self.private_transfer(header, f"ipc-{method}-{self.private_json_serial}")
+        return response
+
+    def begin_private_transfer(self, method, *args):
+        # Capture once on the producer step; drain the immutable evidence only
+        # after the causal schedule is queued. Observation must not become a
+        # wait that lets autosave overtake an intended pending-input stimulus.
+        header = json.loads(self.ipc_wire(method, *args))
+        if not isinstance(header, dict) or set(header) != {"protocol", "id", "length"} or header["protocol"] != "deployment-private-v1":
+            raise HarnessBlocked("invalid deferred private snapshot transfer header")
+        return header
+
+    def private_transfer(self, transfer, label):
         if type(transfer.get("id")) is not int or type(transfer.get("length")) is not int or not 0 < transfer["length"] < 16 * MIB:
             raise HarnessBlocked("invalid private snapshot transfer identity/length")
         pieces = []
@@ -969,6 +1004,10 @@ class Runner:
         response = "".join(pieces)
         atomic_json(self.case / (label + "-transfer.json"), dict(transfer, frames=len(pieces),
                     sha256=hashlib.sha256(response.encode("ascii")).hexdigest()))
+        return response
+
+    def private_state(self, label):
+        response = self.private_transfer(json.loads(self.ipc("auditPrivateBegin")), label)
         try:
             state = json.loads(response)
         except json.JSONDecodeError:
@@ -988,7 +1027,21 @@ class Runner:
     def retained_artifacts(self, directory):
         return [dict(json.loads(p.read_text()), file_mode=stat.S_IMODE(p.stat().st_mode),
                      directory_mode=stat.S_IMODE(p.parent.stat().st_mode))
-                for p in sorted(directory.glob("*.json"))]
+                 for p in sorted(directory.glob("*.json"))]
+
+    def native_evidence(self, directory):
+        artifacts = []
+        for path in sorted(directory.rglob("metadata.json")):
+            metadata = json.loads(path.read_text())
+            body = path.parent / "bytes"
+            self.check(stat.S_IMODE(path.stat().st_mode) == 0o600 and
+                       stat.S_IMODE(path.parent.stat().st_mode) == 0o700, "native evidence permissions are not private")
+            if metadata["bytesState"] == "available":
+                self.check(body.is_file() and stat.S_IMODE(body.stat().st_mode) == 0o600,
+                           "native complete evidence is missing its private byte artifact")
+            artifacts.append(dict(metadata=metadata, directory=str(path.parent),
+                bytesBase64=base64.b64encode(body.read_bytes()).decode() if body.is_file() else None))
+        return artifacts
 
     def stop(self):
         try:
@@ -1421,6 +1474,28 @@ class Runner:
                        for e in self.events()) == 1, token + ": callback was delivered more than once")
         return self.callback(token, event)
 
+    def native_gate(self, name, phase, section, *, file=None, **facts):
+        marker = self.case / (name + "-entered")
+        fifo = self.case / (name + "-release")
+        os.mkfifo(fifo, 0o600)
+        self.native_rules.append(dict(phase=phase, file=str(file or self.config / "settings" / (section + ".json")),
+                                      marker=str(marker), gate=str(fifo), **facts))
+        atomic_json(self.native_schedule, {"rules": self.native_rules})
+        self.gates.append((marker, fifo))
+        return marker, fifo
+
+    def native_fault(self, name, phase, sections):
+        enabled = self.case / (name + "-enabled")
+        enabled.touch(mode=0o600)
+        markers = []
+        for section in sections:
+            marker = self.case / (name + "-" + section + "-entered")
+            self.native_rules.append(dict(phase=phase, file=str(self.config / "settings" / (section + ".json")),
+                marker=str(marker), enabled=str(enabled), repeat=True, error="controlled-native-" + name))
+            markers.append(marker)
+        atomic_json(self.native_schedule, {"rules": self.native_rules})
+        return enabled, markers
+
     def gate(self, name, executable, condition, after=False):
         # Fault injection stays in this case's disposable tree. The real
         # executable runs after an explicit FIFO release, never after a sleep.
@@ -1447,12 +1522,12 @@ class Runner:
         self.gates.append((marker, fifo))
         return marker, fifo
 
-    def release(self, fifo):
+    def release(self, fifo, failure=False):
         # The reader's marker proves it has reached the gate. Nonblocking open
         # keeps a broken test from hanging without a restoration checkpoint.
         fd = os.open(fifo, os.O_WRONLY | os.O_NONBLOCK)
         try:
-            os.write(fd, b"continue\n")
+            os.write(fd, b"1\n" if failure else b"0\n")
         finally:
             os.close(fd)
 
@@ -1465,7 +1540,7 @@ class Runner:
             directory.chmod(0o555)
             self.ipc("request", "macos", "failed-save")
             result = self.wait_callback("failed-save")
-            self.check(not result["success"] and result["error"] == "Settings I/O failed: PermissionError"
+            self.check(not result["success"] and result["error"] == "lock-failed"
                        and result["state"] == "Stopped", "specific unwritable-directory I/O failure was not propagated before callback")
             self.check(not any(e["event"] == "stage" and e["detail"]["requestId"] == result["requestId"]
                        and e["detail"]["attemptId"] == result["attemptId"]
@@ -1514,7 +1589,7 @@ class Runner:
 
     def pending_edits(self):
         self.start("pending-edits")
-        marker, fifo = self.gate("persist", "python3", '[[ "${1:-}" == */section-io.py && "${2:-}" == promote && "${3:-}" == */ui.json ]]')
+        marker, fifo = self.native_gate("persist", "rename", "ui")
         try:
             self.ipc("editScale", "1.2")
             self.wait(marker.exists, "in-flight settings write")
@@ -1541,26 +1616,47 @@ class Runner:
 
     def queued_save_failure(self):
         self.start("queued-save-failure")
-        marker, fifo = self.gate("failed-persist", "python3", '[[ "${1:-}" == */section-io.py && "${2:-}" == promote && "${3:-}" == */ui.json ]]')
-        wrapper = self.tree / "Scripts/bash/python3"
-        wrapper.write_text(wrapper.read_text().replace("fi\nexec", "  exit 13\nfi\nexec"))
+        marker, fifo = self.native_gate("failed-persist", "rename", "ui")
         try:
             self.ipc("editScale", "1.2")
             self.wait(marker.exists, "failing in-flight write")
             self.ipc("save", "failed-revision")
             self.ipc("editScale", "1.7")
             self.ipc("save", "later-revision")
+            before_release = self.private_state("queued-save-before-failure")
+            self.check(all(self.callback(token, "save-callback") is None for token in ("failed-revision", "later-revision")),
+                       "queued saves were not pending behind the original held publication")
         finally:
             if marker.exists():
-                self.release(fifo)
+                self.release(fifo, failure=True)
+        receipts = {}
         for token in ("failed-revision", "later-revision"):
-            self.check(not self.wait_callback(token, "save-callback")["success"],
-                       token + ": a failed requested write was reported as saved")
+            receipts[token] = self.wait_callback(token, "save-callback")
+            self.check(receipts[token]["success"], token + ": native later save did not retry/cover the requested work")
+        first, later = (receipts[token]["receipt"] for token in ("failed-revision", "later-revision"))
+        after = self.private_state("queued-save-after-replies")
+        ui_inputs = [row for row in before_release["native"]["inputs"] if row["path"] == ["ui", "fontDefaultScale"]]
+        self.check(len(ui_inputs) == 2, "queued original/later UI inputs were not captured separately")
+        old_input, new_input = (int(row["sequence"]) for row in ui_inputs)
+        # Integration decision20: later ordinary requests own their attempts;
+        # they do not inherit the earlier publication's terminal failure.
+        self.check(first["status"] == "saved" and old_input <= int(first["inputPrefix"]) < new_input and
+                   any(p["sourceId"] == "ui" and p["success"] for p in first["publications"]) and
+                   later["status"] in ("saved", "nothing_to_save") and int(later["inputPrefix"]) >= new_input and
+                   int(later["requestId"]) > int(first["requestId"]), "queued native receipts lost their actual attempts/prefixes")
+        self.check(any(f["status"] == "failed" and old_input <= int(f["inputPrefix"]) < new_input and f["code"] == "controlled-native-rename"
+                       for f in after["native"]["failures"]), "later native retry erased the original failed publication")
+        atomic_json(self.case / "queued-save-failure-assertion.json", {"before_release": before_release,
+            "decision": 20, "receipts": receipts, "after": after,
+            "disk": json.loads((self.config / "settings/ui.json").read_text())})
         self.check(json.loads((self.config / "settings/ui.json").read_text())["fontDefaultScale"] == 1.7,
                    "a failed earlier write discarded the later revision")
         self.ipc("save", "after-failure")
         self.check(self.wait_callback("after-failure", "save-callback")["success"],
-                   "failure from a completed batch poisoned a later save")
+                    "failure from a completed batch poisoned a later save")
+        self.restart_fixture()
+        self.check(self.status("queued-save-cold-consumer")["detail"]["scale"] == 1.7,
+                   "latest queued choice did not reach the cold consumer")
 
     def fifo(self, generation=False):
         self.start("fifo-generation" if generation else "fifo-deployment")
@@ -1663,15 +1759,13 @@ class Runner:
 
     def io_failure(self, stage):
         self.start("io-failure-" + stage)
-        marker, fifo = self.gate("failed-" + stage, "python3", '[[ "${1:-}" == */section-io.py && "${2:-}" == ' + stage + ' ]]')
-        wrapper = self.tree / "Scripts/bash/python3"
-        wrapper.write_text(wrapper.read_text().replace("fi\nexec", '  printf \'{"ok":false,"error":"injected I/O failure"}\\n\'\n  exit 17\nfi\nexec'))
+        marker, fifo = self.native_gate("failed-" + stage, "write" if stage == "prepare" else "rename", "bindings")
         try:
             self.ipc("request", "macos", "io-head")
             self.wait(marker.exists, "held I/O " + stage)
             self.ipc("request", "none", "io-tail")
         finally:
-            if marker.exists(): self.release(fifo)
+            if marker.exists(): self.release(fifo, failure=True)
         result = self.wait_callback("io-head")
         self.check(not result["success"] and result["state"] == "Stopped", stage + " did not stop before callback")
         self.ipc("editScale", "1.45")
@@ -1686,7 +1780,7 @@ class Runner:
 
     def conflict(self):
         self.start("prepared-conflict")
-        marker, fifo = self.gate("prepared-held", "python3", '[[ "${1:-}" == */section-io.py && "${2:-}" == promote ]]')
+        marker, fifo = self.native_gate("prepared-held", "rename", "bindings")
         original = (self.config / "settings/bindings.json").read_bytes()
         try:
             self.ipc("request", "macos", "conflict-head")
@@ -1719,47 +1813,53 @@ class Runner:
 
     def capture_operation(self, aba=False):
         def gate_debounce():
-            settings = self.tree / "Commons/Settings.qml"
+            settings = self.tree / "Commons/SettingsStore.qml"
             text = settings.read_text()
-            original = '      root.notifyEffectiveChanges();\n      saveTimer.start();'
+            original = '  autoSave: true'
             if text.count(original) != 1:
                 raise HarnessBlocked("ordinary debounce seam is not uniquely characterized")
             settings.write_text(text.replace(original,
-                '      root.notifyEffectiveChanges();\n      // HARNESS_CAPTURE_CLOCK_GATE: explicit saves remain real; automatic enqueue is paused.'))
+                '  autoSave: false // HARNESS_CAPTURE_CLOCK_GATE: explicit saves remain real.'))
         self.start("capture-operation-ABA" if aba else "capture-operation-held", before_launch=gate_debounce)
-        marker, fifo = self.gate("capture-old-publication", "python3",
-            '[[ "${1:-}" == */section-io.py && "${2:-}" == promote && "${3:-}" == */settings/ui.json ]]')
+        marker, fifo = self.native_gate("capture-old-publication", "rename", "ui")
         target = self.config / "settings/ui.json"
         latest = 1.25 if aba else 1.75
         try:
             self.ipc("auditSaveScale", "1.25", "old-write")
             self.wait(marker.exists, "old captured ordinary write held before publication")
+            original = self.private_state("old-native-capture-held")
+            frozen = original["frozenCapture"]
+            self.check(frozen["requestId"] in original["native"]["pendingRequests"],
+                       "held original save is not pending in the actual owner")
             if aba:
                 self.ipc("auditCaptureABA", "1.75", "1.25")
             else:
                 self.ipc("auditCaptureScale", "1.75")
-            captured = self.audit_state("newer-capture-before-old-completion")
-            self.check(captured["persistQueueLength"] == 0 and captured["activeSection"] == "ui",
-                       "newer capture was already enqueued; held-write sequence not established")
-            self.check(captured["activeRevision"] == captured["latestUIRevision"],
-                       "held old write is not the latest enqueued revision")
-            self.check("fontDefaultScale" in captured["pendingUI"], "newer local capture was not recorded")
+            captured = self.private_state("newer-capture-before-old-completion")
+            self.check(captured["frozenCapture"] == frozen and
+                       int(captured["native"]["inputPrefix"]) == int(frozen["inputPrefix"]) + (2 if aba else 1),
+                       "newer local inputs were not captured independently of the held save")
+            self.check(captured["current"]["consumer"]["uiScale"] == latest,
+                       "newer local input did not reach the held-write consumer")
         finally:
             if marker.exists(): self.release(fifo)
         old = self.wait_callback("old-write", "save-callback")
         self.check(old["success"], "held original ordinary save failed")
         old_identity = target.stat().st_ino
-        completed = self.audit_state("newer-capture-after-old-completion")
-        self.check(completed["latestUIRevision"] == captured["latestUIRevision"]
-                   and completed["persistQueueLength"] == 0 and completed["activeSection"] == "",
-                   "automatic enqueue masked the still-unqueued completion boundary")
-        self.check(completed["pendingUI"].get("fontDefaultScale") == captured["pendingUI"].get("fontDefaultScale"),
+        completed = self.private_state("newer-capture-after-old-completion")
+        self.check(old["receipt"]["requestId"] == frozen["requestId"] and
+                   old["receipt"]["inputPrefix"] == frozen["inputPrefix"] and
+                   completed["native"]["inputPrefix"] == captured["native"]["inputPrefix"] and
+                   json.loads(target.read_text())["fontDefaultScale"] == 1.25,
+                   "held save changed capture or automatic enqueue masked its completion boundary")
+        self.check(completed["native"]["inputs"] == captured["native"]["inputs"] and
+                   completed["current"]["consumer"]["uiScale"] == latest,
                    "old write completion erased a newer captured operation")
         self.ipc("save", "later-capture-save")
         later = self.wait_callback("later-capture-save", "save-callback")
         actual_raw = target.read_text()
         actual = json.loads(actual_raw)
-        consumer = self.audit_state("capture-final-consumer")
+        consumer = self.private_state("capture-final-consumer")
         atomic_json(self.case / "capture-operation-outcome.json", {
             "aba": aba, "captured": captured, "after_old": completed, "old_callback": old,
             "later_callback": later, "expected": {"fontDefaultScale": latest},
@@ -1767,7 +1867,9 @@ class Runner:
             "old_inode": old_identity, "final_inode": target.stat().st_ino})
         self.check(later["success"], "later save of retained capture failed")
         self.check(json_equal(actual, {"fontDefaultScale": latest}), "newer captured operation did not reach disk")
-        self.check(consumer["uiScale"] == latest, "newer capture did not reach the Settings consumer")
+        self.check(consumer["current"]["consumer"]["uiScale"] == latest and
+                   later["receipt"]["inputPrefix"] == captured["native"]["inputPrefix"],
+                   "newer capture did not reach the Settings consumer/save prefix")
         if aba:
             self.check(target.stat().st_ino != old_identity, "same-path ABA capture was silently erased without its later publication")
 
@@ -1786,20 +1888,24 @@ class Runner:
             self.check(not first["success"], "ordinary permission failure was not established")
         finally:
             directory.chmod(0o755)
-        captured = self.audit_state("ordinary-original-capture")
-        self.check(captured["ordinaryCaptureExists"], "ordinary capture identity observation was not established")
+        captured = self.private_state("ordinary-original-capture")
+        frozen = captured["frozenCapture"]
+        self.check(frozen["requestId"] == first["receipt"]["requestId"] and
+                   frozen["inputPrefix"] == first["receipt"]["inputPrefix"],
+                   "ordinary capture identity/prefix observation was not established")
         external = {"fontDefaultScale": 1.0, "futureRaw": {"foreign": [None, False, 0, ""]}}
         count = sum(e["event"] == "settings-reloaded" for e in self.events())
         temp = target.with_suffix(".external")
         temp.write_text(json.dumps(external) + "\n"); temp.replace(target)
         self.wait(lambda: sum(e["event"] == "settings-reloaded" for e in self.events()) > count,
                   "foreign observation after ordinary failure")
-        terminal = sum(e["event"] in ("saved", "save-failed") for e in self.events())
+        terminal = len(self.events())
         # Arm a real, fresh unrelated edit's debounce after foreign acceptance;
         # the original edit's timer may have already fired during the first fault.
         self.ipc("auditEdit", "general.scaleRatio", "1.25")
-        self.wait(lambda: sum(e["event"] in ("saved", "save-failed") for e in self.events()) > terminal,
-                  "actual ordinary debounce terminal notification")
+        self.wait(lambda: any(e["event"] == "native-save-completed" and e["detail"]["status"] == "saved" and
+                              any(c["path"] == ["general", "scaleRatio"] for c in e["detail"]["coverage"])
+                              for e in self.events()[terminal:]), "actual general input's saved debounce coverage")
         after_debounce = json.loads(target.read_text())
         if new_edit:
             self.ipc("auditCaptureScale", "1.7")
@@ -1808,53 +1914,63 @@ class Runner:
         unrelated = self.wait_callback("ordinary-unrelated-save", "save-callback")
         actual = json.loads(target.read_text())
         observed = self.audit_state("ordinary-after-foreign-save")
-        atomic_json(self.case / "ordinary-foreign-assertion.json", {"new_edit": new_edit,
-            "first_callback": first, "captured": captured, "expected": external,
+        expected_local = dict(external, fontDefaultScale=1.7 if new_edit else 1.3)
+        atomic_json(self.case / "ordinary-foreign-assertion.json", {"new_edit": new_edit, "decision": 20,
+            "first_callback": first, "captured": captured, "expected": expected_local, "foreign": external,
             "after_debounce": after_debounce, "actual": actual, "callback": unrelated, "observed": observed})
-        self.check(json_equal(after_debounce, external), "debounce recaptured failed ordinary bytes against foreign data")
-        self.check(json_equal(actual, external), "unrelated save overwrote foreign data using a recaptured failed ordinary intent")
-        self.check(not unrelated["success"], "unresolved ordinary conflict falsely reported save success")
-        self.check(observed["ordinaryCaptureUnchanged"], "failed ordinary input identity or bytes changed")
+        self.check(json_equal(after_debounce, dict(external, fontDefaultScale=1.3)),
+                   "native debounce retry lost the pending local choice or foreign unknown data")
+        self.check(json_equal(actual, expected_local), "native full save lost the latest local choice or foreign other-path data")
+        self.check(unrelated["success"] and unrelated["receipt"]["status"] in ("saved", "nothing_to_save"),
+                   "successful native retry/rebase was not acknowledged truthfully")
         owned = self.private_state("ordinary-retained-owner")
-        self.check(owned["captureStillOwned"] and json_equal(owned["capture"], owned["frozenCapture"]),
-                   "failed ordinary detached capture tuple changed or lost its continuing owner")
+        self.check(owned["frozenCapture"] == frozen and owned["native"]["inputs"][:len(frozen["inputs"])] == frozen["inputs"] and
+                   any(failure["requestId"] == frozen["requestId"] for failure in owned["native"]["failures"]),
+                   "failed ordinary input identity/fingerprint tuple changed or lost its failure record")
         self.check(json.loads((self.config / "settings/general.json").read_text())["scaleRatio"] == 1.25,
                    "unrelated ordinary section did not persist")
-        target.write_bytes(original_bytes)  # explicit external resolution, never owner rollback
+        target.write_bytes(original_bytes)  # After acknowledgement this is a newer external choice, not Retry.
         self.ipc("save", "ordinary-explicit-resolution")
         resolved = self.wait_callback("ordinary-explicit-resolution", "save-callback")
-        expected = dict(original, fontDefaultScale=1.7 if new_edit else 1.3)
+        self.ipc("auditRead", "ui", "ordinary-post-ack-external-read", "normal")
+        self.check(self.wait_callback("ordinary-post-ack-external-read", "audit-read")["success"], "post-ack external choice was not admitted")
+        expected = original
         final = json.loads(target.read_text())
         atomic_json(self.case / "ordinary-resolution-assertion.json", {
             "expected": expected, "actual": final, "callback": resolved,
             "consumer": self.audit_state("ordinary-resolved-consumer")})
-        self.check(resolved["success"] and json_equal(final, expected), "explicit ordinary resolution did not preserve original and later captures")
+        self.check(resolved["success"] and json_equal(final, expected), "clean save resurrected acknowledged work over the newer external choice")
         self.check(self.audit_state("ordinary-resolution-live-consumer")["uiScale"] == expected["fontDefaultScale"],
-                   "resolved ordinary capture did not reach the live consumer")
+                   "post-ack external choice did not reach the live consumer")
         self.ipc("auditEdit", "general.scaleRatio", "1.35")
         self.ipc("save", "ordinary-later-clean-save")
         self.check(self.wait_callback("ordinary-later-clean-save", "save-callback")["success"],
                    "completed ordinary failure poisoned a genuinely later save")
         self.check(json_equal(json.loads(target.read_text()), expected), "later save replayed stale ordinary bytes")
+        self.restart_fixture()
+        self.check(self.audit_state("ordinary-post-ack-cold-consumer")["uiScale"] == 1.0 and
+                   json_equal(json.loads(target.read_text()), expected), "post-ack external choice did not survive cold restart")
 
     def read_ownership(self, throwing=False):
         def seed():
             (self.config / "settings/ui.json").write_text('{"fontDefaultScale":1.0}\n')
         self.start("read-callback-owner" if throwing else "reversed-inspectors", before_launch=seed)
-        marker, fifo = self.gate("old-ui-inspection", "python3",
-            '[[ "${1:-}" == */section-io.py && "${2:-}" == inspect && "${3:-}" == */settings/ui.json ]]', after=True)
         target = self.config / "settings/ui.json"
         held = None
+        route_active = True
+        self.ipc("nativePacketsBegin")
+        def packets():
+            return json.loads(self.ipc("nativePackets"))
+        def reads(value):
+            return [row for row in packets() if row["operation"] == "reload" and row["status"] == "reloaded"
+                    and row["values"].get("ui.fontDefaultScale") == value]
         try:
             self.ipc("auditRead", "ui", "old-read", "throw" if throwing else "normal")
-            self.wait(lambda: marker.with_name(marker.name + ".payload").exists() and
-                      marker.with_name(marker.name + ".payload").stat().st_size > 0,
-                      "real old inspection snapshot held before delivery")
-            old_payload = json.loads(marker.with_name(marker.name + ".payload").read_text())
-            self.check(old_payload["state"]["data"]["fontDefaultScale"] == 1.0, "old read snapshot not established")
+            self.wait(lambda: bool(reads(1.0)), "actual old native inspection packet held before delivery")
+            old_payload = reads(1.0)[0]
+            self.check(self.callback("old-read", "audit-read") is None, "old read escaped its native delivery hold")
             if throwing:
-                held = self.gate("new-general-publication", "python3",
-                    '[[ "${1:-}" == */section-io.py && "${2:-}" == promote && "${3:-}" == */settings/general.json ]]')
+                held = self.native_gate("new-general-publication", "rename", "general")
                 self.ipc("auditEdit", "general.scaleRatio", "1.25")
                 self.ipc("save", "new-job")
                 self.wait(held[0].exists, "different ordinary job held at real publication")
@@ -1862,9 +1978,21 @@ class Runner:
                 temporary = target.with_suffix(".external")
                 temporary.write_text('{"fontDefaultScale":1.4}\n'); temporary.replace(target)
                 self.ipc("auditRead", "ui", "new-read", "normal")
-                self.wait_callback("new-read", "audit-read")
-            self.release(fifo)
+                self.wait(lambda: bool(reads(1.4)), "real newer native read packet held")
+                newer = reads(1.4)[-1]
+                self.check(int(newer["generation"]) > int(old_payload["generation"]), "new read is not a later real publication")
+                # Native result-only packets contain deltas, not complete value
+                # publications. Deliver every actual newer observation through
+                # that receipt, while keeping the older read itself held.
+                for packet in packets():
+                    if packet["index"] <= newer["index"] and int(packet["generation"]) > int(old_payload["generation"]):
+                        self.ipc("nativePacketRelease", str(packet["index"]))
+                self.check(self.private_state("new-native-read-before-old")["current"]["consumer"]["uiScale"] == 1.4,
+                           "newer native snapshot was not accepted before releasing the old inspection")
+            self.ipc("nativePacketRelease", str(old_payload["index"]))
             old_callback = self.wait_callback("old-read", "audit-read")
+            self.ipc("nativePacketsEnd")
+            route_active = False
             if held:
                 self.release(held[1])
                 new_callback = self.wait_callback("new-job", "save-callback")
@@ -1872,17 +2000,19 @@ class Runner:
                 self.check(json.loads((self.config / "settings/general.json").read_text()).get("scaleRatio") == 1.25,
                            "new ordinary owner did not publish after old read callback")
             else:
+                self.check(self.wait_callback("new-read", "audit-read")["success"], "newer native read callback was lost")
                 observed = self.audit_state("read-order-final-consumer")
                 atomic_json(self.case / "read-order-assertion.json", {"old_payload": old_payload,
                     "old_callback": old_callback, "consumer": observed, "actual": json.loads(target.read_text())})
                 self.check(observed["uiScale"] == 1.4, "late inspection rolled back the newer Settings consumer")
                 self.check(json.loads(target.read_text()) == {"fontDefaultScale": 1.4}, "late inspection replaced newer disk state")
         finally:
-            for gate in [(marker, fifo)] + ([held] if held else []):
-                if gate[0].exists():
-                    try: self.release(gate[1])
-                    except OSError as error:
-                        if error.errno != 6: raise
+            if route_active:
+                self.ipc("nativePacketsEnd")
+            if held and held[0].exists():
+                try: self.release(held[1])
+                except OSError as error:
+                    if error.errno != 6: raise
 
     def missing_acceptance(self):
         self.start("missing-acceptance")
@@ -1894,7 +2024,7 @@ class Runner:
                   "actual missing-file acceptance notification")
         observed = next(e["detail"] for e in self.events() if e["event"] == "audit-missing-acceptance")
         atomic_json(self.case / "missing-acceptance-assertion.json", observed)
-        self.check(observed["exists"] is False and observed["identity"] == "missing",
+        self.check(observed["exists"] is False and bool(observed["identity"]),
                    "missing existence/full identity was not settled before notification")
         self.wait(lambda: self.status("missing-settled")["detail"]["owner"]["state"] == "Idle",
                   "missing-file captured fallback handoff")
@@ -1962,130 +2092,174 @@ class Runner:
         atomic_json(self.case / "acceptance-reasons.json", outcomes)
 
     def promotion_conflicts(self, publication_error=False, retention_fault=False):
-        self.start("promotion-conflicts")
+        return self.native_promotion_observations(publication_error, retention_fault)
+
+    def native_promotion_observations(self, publication_error=False, retention_fault=False, arrival=False):
+        self.start("native-retention-arrival" if arrival else "native-promotion-conflicts")
         target = self.config / "settings/bindings.json"
         original = target.read_bytes()
         holder = self.work_case / "original-binding-preimage"
-        conflicts = self.work_case / "cache/settings-conflicts"
-        if retention_fault:
-            conflicts.mkdir(mode=0o555)
-        marker, fifo = self.gate("disputed-promotion", "python3",
-            '[[ "${1:-}" == */section-io.py && "${2:-}" == promote && "${3:-}" == */settings/bindings.json ]]')
-        foreign = []
-        inspected = []
+        evidence = self.work_case / "cache/settings-conflicts"
+        before = self.native_gate("disputed-preflight", "parent-preflight", "bindings")
+        gates = [before]
+        packets_active = False
+        versions = []
+        def author(number):
+            value = {"environment": "none", "futureRaw": {
+                "arrival" if arrival else "version": number, "values": [None, False, 0, ""]}}
+            body = (json.dumps(value) + "\n").encode()
+            gate = self.native_gate("foreign-" + str(number), "read-after", "bindings", sha256=hashlib.sha256(body).hexdigest())
+            gates.append(gate)
+            temp = target.with_suffix(".external"); temp.write_bytes(body); temp.replace(target)
+            return value, body, gate
+        def acquired(number, body, gate):
+            self.wait(gate[0].exists, "actual native acquired foreign F" + str(number))
+            row = json.loads(gate[0].read_text())["observation"]
+            self.check(base64.b64decode(row["bytesBase64"]) == body and row["presence"] == "present",
+                       "native foreign acquisition changed authored complete F" + str(number))
+            versions.append(row)
+            return row
         try:
-            self.ipc("request", "macos", "disputed-head")
-            self.wait(marker.exists, "captured head held at actual promotion")
-            self.ipc("request", "none", "disputed-tail")
-            if not publication_error:
-                target.rename(holder)  # Preserve the exact prepared inode/preimage for the real helper.
-            for number in (1, 2):
-                value = {"environment": "none", "futureRaw": {"version": number, "values": [None, False, 0, ""]}}
-                authored = (json.dumps(value) + "\n").encode()
-                expected_sha = hashlib.sha256(authored).hexdigest()
-                temporary = target.with_suffix(".external")
-                temporary.write_bytes(authored); temporary.replace(target)
-                inspected.append(self.inspected_state(target))
-                self.wait(lambda: any(v["sha256"] == expected_sha and v["identity"]
-                                      for v in self.audit_state("promotion-observations")["observedVersions"]),
-                          "complete foreign observation F" + str(number))
-                foreign.append(value)
-            if not publication_error:
+            self.ipc("request", "macos", "arrival-head" if arrival else "disputed-head")
+            self.wait(before[0].exists, "actual retained native writer before locked preflight")
+            self.ipc("request", "none", "arrival-tail" if arrival else "disputed-tail")
+            self.ipc("nativePacketsBegin"); packets_active = True
+            if not publication_error: target.rename(holder)
+            first, body, gate = author(1)
+            self.release(before[1])
+            acquired(1, body, gate)
+            if retention_fault: evidence.chmod(0o555)
+            self.release(gate[1])
+            self.wait(lambda: any(p["operation"] == "saveGroup" for p in json.loads(self.ipc("nativePackets"))),
+                      "actual native disputed attempt completion held before delivery")
+            second, body, gate = author(2)
+            retaining = None
+            if arrival:
+                retaining = self.native_gate("arrival-retention", "retain-before", "bindings", file=evidence,
+                    sourceId="bindings", sha256=hashlib.sha256(body).hexdigest())
+                gates.append(retaining)
+            self.ipc("auditRead", "bindings", "observed-F2", "normal")
+            acquired(2, body, gate)
+            self.release(gate[1])
+            if arrival:
+                self.wait(retaining[0].exists, "actual native F2 retention while application head remains pending")
+                self.check(self.callback("arrival-head") is None, "native head completed before required retention")
+                third, body, gate = author(3)
+                self.ipc("auditRead", "bindings", "observed-F3", "normal")
+                self.check(self.status("arrival-during-retention")["detail"]["owner"]["state"] == "Running",
+                           "F3 arrived after actual application job disposal")
+                self.release(retaining[1])
+                acquired(3, body, gate)
+                self.release(gate[1])
+            elif not publication_error:
                 target.unlink(); holder.rename(target)
-            self.release(fifo)
-            first = self.wait_callback("disputed-head")
-            self.check(not first["success"] and first["state"] == "Stopped", "observed dispute did not stop the head")
-            self.check(self.callback("disputed-tail") is None, "disputed promotion advanced its retained tail")
-            boundary = self.private_state("disputed-before-first-retry")
-            artifacts = self.retained_artifacts(conflicts)
-            versions = boundary["terminals"]["disputed-head"]["bindings"][first["requestId"]]
-            self.check(versions.get("unresolvedConflict") is True, "first failed callback lost unresolved conflict latch")
-            for state in inspected:
-                self.check(any(json_equal(state, observed) for observed in versions.get("foreignObservations", [])),
-                           "complete inspected foreign state missing at first failed callback")
-            if not retention_fault:
-                self.failures.extend(retained_state_errors(inspected, artifacts))
-            atomic_json(self.case / "first-callback-conflict-artifacts.json", {"expected": inspected, "artifacts": artifacts})
-            if retention_fault:
-                self.check("PermissionError" in first["error"], "real retention failure was not visible")
-                conflicts.chmod(0o700)
-            self.ipc("retry", "disputed-unresolved-retry")
-            retry = self.wait_callback("disputed-unresolved-retry")
-            retained = [json.loads(p.read_text())["observed"] for p in conflicts.glob("*.json")]
-            retained_data = [state.get("data", {}) for state in retained]
-            atomic_json(self.case / "foreign-retention-assertion.json", {"publication_error": publication_error,
-                "retention_fault": retention_fault, "expected": foreign, "retained": retained,
-                "first_callback": first, "retry_callback": retry, "actual": json.loads(target.read_text())})
-            for number, value in enumerate(foreign, 1):
-                self.check(any(json_equal(value, v) for v in retained_data), "foreign observation F" + str(number) + " was not retained")
-            self.failures.extend(retained_state_errors(inspected, self.retained_artifacts(conflicts)))
-            self.check(not retry["success"], "disputed owner output falsely resolved conflict on Retry")
-            self.check(self.callback("disputed-tail") is None, "unresolved Retry advanced retained tail")
-            target.write_bytes(original)  # Explicit external restoration of the captured preimage.
-            self.ipc("retry", "disputed-resolved-retry")
-            resolved = self.wait_callback("disputed-resolved-retry")
-            self.check(resolved["success"], "genuine external resolution could not retry original capture")
-            self.check(self.wait_callback("disputed-tail")["success"], "resolved dispute lost original waiting tail")
-            self.wait(lambda: self.status("dispute-final-settled")["detail"]["owner"]["state"] != "Running",
-                      "final captured dispute attempt settles")
-            self.check(self.status("dispute-final-state")["detail"]["owner"]["state"] == "Idle",
-                       "explicitly resolved dispute left another captured request stopped")
+            expected_reloads = 2 if arrival else 1
+            self.wait(lambda: sum(p["operation"] == "reload" for p in json.loads(self.ipc("nativePackets"))) >= expected_reloads,
+                      "all actually acquired later native observations settled before application callback")
+            held = json.loads(self.ipc("nativePackets"))
+            self.ipc("nativePacketsEnd"); packets_active = False
+            head = "arrival-head" if arrival else "disputed-head"
+            tail = "arrival-tail" if arrival else "disputed-tail"
+            result = self.wait_callback(head)
+            self.check(not result["success"] and result["state"] == "Stopped", "actual disputed native head did not stop")
+            self.check(result["error"] == ("evidence-retention" if retention_fault else "source-preimage-conflict"),
+                       "actual native dispute/retention cause was lost")
+            self.check(self.callback(tail) is None, "disputed native attempt advanced original waiting tail")
+            first_boundary = self.private_state("native-disputed-first-terminal")
+            retry = None
+            resolved = None
+            if not arrival:
+                if retention_fault: evidence.chmod(0o700)
+                self.ipc("retry", "disputed-unresolved-retry")
+                retry = self.wait_callback("disputed-unresolved-retry")
+                if publication_error:
+                    self.check(not retry["success"] and self.callback(tail) is None,
+                               "foreign unresolved native preimage authorized overwrite or advanced tail")
+                else:
+                    self.check(retry["success"] and retry["requestId"] == result["requestId"] and
+                               retry["attemptId"] == result["attemptId"] + 1,
+                               "native content-equal restoration did not resolve same head/new attempt")
+                    self.check(self.wait_callback(tail)["success"], "native resolved dispute lost original waiting tail")
+                target.write_bytes(original)
+                self.ipc("retry", "disputed-resolved-retry")
+                resolved = self.wait_callback("disputed-resolved-retry")
+                if publication_error:
+                    self.check(resolved["success"] and self.wait_callback(tail)["success"],
+                               "explicit native preimage restoration failed original head/tail")
+                else:
+                    self.check(not resolved["success"] and resolved["error"] == "No stopped head is available for Retry",
+                               "already settled native head was replayed after external restoration")
+            artifacts = self.native_evidence(evidence)
+            for number, version in enumerate(versions, 1):
+                self.check(any(a["bytesBase64"] == version["bytesBase64"] and
+                               a["metadata"]["revision"] == version["revision"] for a in artifacts),
+                           "complete acquired native foreign F" + str(number) + " was not durably retained")
+            atomic_json(self.case / ("retention-arrival-assertion.json" if arrival else "foreign-retention-assertion.json"),
+                dict(nativeSerialIO=True, publication_error=publication_error, retention_fault=retention_fault,
+                     expected=versions, held=held, result=result, first=first_boundary, retry=retry,
+                     resolved=resolved, artifacts=artifacts, actual=json.loads(target.read_text())))
         finally:
+            if evidence.exists(): evidence.chmod(0o700)
             if holder.exists():
                 if target.exists(): target.unlink()
                 holder.rename(target)
-            if retention_fault and conflicts.exists(): conflicts.chmod(0o700)
-            if marker.exists():
-                try: self.release(fifo)
-                except OSError as error:
-                    if error.errno != 6: raise
+            for marker, fifo in gates:
+                if marker.exists():
+                    try: self.release(fifo)
+                    except OSError as error:
+                        if error.errno != 6: raise
+            if packets_active: self.ipc("nativePacketsEnd")
 
     def setup_failed_bundle(self, preexisting=False):
         self.start("setup-failed-bundle", "wizard")
-        fault_directory = self.work_case / "readonly-setup-temporary"
-        fault_directory.mkdir(mode=0o555)
-        enabled = self.case / "setup-fault-enabled"
-        enabled.touch()
-        wrapper = self.tree / "Scripts/bash/python3"
-        real = shlex.quote(shutil.which("python3"))
-        wrapper.write_text('#!/usr/bin/env bash\nset -eu\n'
-            'if [[ "${1:-}" == */section-io.py && "${2:-}" == prepare && '
-            '( "${3:-}" == */settings/general.json || "${3:-}" == */settings/bar.json ) ]] && '
-            '[ -e ' + shlex.quote(str(enabled)) + ' ]; then\n'
-            '  exec ' + real + ' "$1" "$2" "$3" ' + shlex.quote(str(fault_directory / "prepared")) + '\nfi\n'
-            'exec ' + real + ' "$@"\n')
-        wrapper.chmod(0o755)
+        enabled, markers = self.native_fault("setup-preparation", "write", ("general", "bar"))
+        def native():
+            return json.loads(self.ipc("auditNativeState"))
+        def group(state, identity):
+            matches = [row for row in state["groups"] if row["requestKey"] == identity + ":setup"]
+            self.check(len(matches) == 1, "actual setup retained group missing or duplicated")
+            return matches[0]
         self.ipc("auditWizardSelection")
         if preexisting:
             self.ipc("auditWizardApplySelection")
             self.wait(lambda: any(e["event"] == "save-failed" for e in self.events()) and
-                      self.audit_state("setup-prior-fault-settled")["activeSection"] == "",
+                      not native()["pendingRequests"],
                       "actual setup step's prior failed ordinary captures")
-        initial_event_count = len(self.events())
+        prior = native()
         self.ipc("auditWizardFinish")
         self.wait(lambda: self.status("setup-first-failed")["detail"]["wizardSubmitted"] and
                   self.status("setup-first-terminal")["detail"]["wizardSubmitted"]["status"] in ("Stopped", "Succeeded"),
                   "first actual setup submission terminal result")
         first = self.status("setup-first-result")["detail"]
         self.check(first["wizardOpen"] and first["owner"]["stage"] == "setup-save",
-                   "first ordinary setup failure did not retain the open wizard")
+                    "first ordinary setup failure did not retain the open wizard")
         identity = first["wizardSubmitted"]["id"]
+        first_native = native()
+        first_group = group(first_native, identity)
+        self.check(first_group["state"] == "stopped" and any(marker.exists() for marker in markers),
+                   "setup failure did not reach the real native publication boundary")
         before = len(self.events())
-        if first["owner"]["state"] == "Stopped":
-            self.ipc("auditWizardFinish")
-            self.wait(lambda: any(e["event"] == "handoff" and e["detail"]["requestId"] == identity
-                                 and e["detail"]["attemptId"] == 2 for e in self.events()), "unchanged setup Retry result")
-        else:
-            before = initial_event_count
+        self.check(first["owner"]["state"] == "Stopped", "failed native setup advanced the queue")
+        self.ipc("auditWizardFinish")
+        self.wait(lambda: any(e["event"] == "handoff" and e["detail"]["requestId"] == identity
+                             and e["detail"]["attemptId"] == 2 for e in self.events()), "unchanged setup Retry result")
         second = self.status("setup-unchanged-retry")["detail"]
+        second_native = native()
+        second_group = group(second_native, identity)
         advanced = [e for e in self.events()[before:] if e["event"] == "stage"
                     and e["detail"]["stage"] in ("save", "deploy", "generate-handoff")]
-        atomic_json(self.case / "setup-barrier-assertion.json", {"first": first, "second": second,
-            "advanced_stages": advanced, "general": json.loads((self.config / "settings/general.json").read_text())})
+        atomic_json(self.case / "setup-barrier-assertion.json", {"prior": prior, "first": first, "second": second,
+            "first_native": first_native, "second_native": second_native, "advanced_stages": advanced,
+            "general": json.loads((self.config / "settings/general.json").read_text())})
         self.check(second["wizardOpen"] and second["owner"]["state"] == "Stopped"
                    and second["owner"]["stage"] == "setup-save" and not advanced,
-                   "unchanged setup Retry bypassed failed ordinary captures")
-        enabled.unlink()  # Resolve only the task-owned injected temporary destination fault.
+                    "unchanged setup Retry bypassed failed ordinary captures")
+        self.check(first_group["token"] == second_group["token"] and
+                   first_group["capturePrefix"] == second_group["capturePrefix"] and
+                   len(second_group["attempts"]) == 2 and
+                   all(attempt["status"] == "failed" for attempt in second_group["attempts"]),
+                   "unchanged Retry replaced or bypassed the failed native capture")
+        enabled.unlink()  # Resolve only the task-owned native preparation fault.
         if second["owner"]["state"] == "Stopped":
             self.ipc("auditWizardFinish")
             self.wait(lambda: not self.status("setup-resolved")["detail"]["wizardOpen"], "resolved actual wizard closes")
@@ -2095,7 +2269,12 @@ class Runner:
         self.check(general.get("scaleRatio") == 1.2 and bar.get("position") == "bottom",
                    "setup completion omitted its actual ordinary writes")
         self.check(self.status("setup-complete")["detail"]["wizardSubmitted"]["id"] == identity,
-                   "setup Retry replaced the submitted request identity")
+                    "setup Retry replaced the submitted request identity")
+        self.restart_fixture()
+        cold = self.private_state("setup-restarted-consumer")
+        self.check(cold["current"]["consumer"]["generalScale"] == 1.2,
+                   "acknowledged setup choice did not reach the restarted consumer")
+        atomic_json(self.case / "setup-cold-consumer.json", cold)
 
     def terminal_reentry(self, status=False, startup=False):
         self.start("terminal-startup-observers" if startup else ("terminal-status-reentry" if status else "terminal-signal-reentry"),
@@ -2221,9 +2400,13 @@ class Runner:
         temporary.write_bytes(authored); temporary.replace(publication)
         self.wait(lambda: any(e["event"] == "corrective-listener" for e in self.events()), "one-shot real property listener")
         listener_serial = next(e["serial"] for e in self.events() if e["event"] == "corrective-listener")
-        self.wait(lambda: any(e["event"] in ("saved", "save-failed") and e["serial"] > listener_serial
-                              for e in self.events()),
-                  "real debounce/save terminal notification")
+        def covered_listener_save():
+            return any(e["event"] == "native-save-completed" and e["serial"] > listener_serial and
+                       e["detail"]["status"] == "saved" and any(
+                           coverage["path"] == (["bar", "widgets", "left"] if record else ["ui", "fontDefaultScale"])
+                           and int(coverage["inputThrough"]) >= 1 for coverage in e["detail"]["coverage"])
+                       for e in self.events())
+        self.wait(covered_listener_save, "actual native saved coverage for the listener's local input")
         if kind == "save":
             self.check(self.wait_callback("corrective-listener-save", "save-callback")["success"], "reentrant save was swallowed or failed")
         expected = json.loads(json.dumps(external))
@@ -2238,16 +2421,26 @@ class Runner:
         self.check(json_equal(actual, expected), "external assignment absorbed the listener's local edit into its baseline")
         if kind == "save":
             at_call = private["terminals"]["listener-after-save-call"]
-            self.check(at_call["captureDepth"] > 0 and at_call["active"] is None,
-                       "external applicator released I/O before the nested save transaction settled")
+            before = private["terminals"]["listener-before-edit"]["native"]["owner"]
+            after = at_call["native"]["owner"]
+            self.check(int(after["inputPrefix"]) > int(before["inputPrefix"]) and bool(after["pendingRequests"]) and
+                       after["paths"]["ui.fontDefaultScale"]["admittedFingerprint"] ==
+                       before["paths"]["ui.fontDefaultScale"]["admittedFingerprint"],
+                       "nested save lost its local input/detached callback before external notification settled")
         if legacy:
             self.check(publication.read_bytes() == authored, "listener edit rewrote legacy bytes")
         atomic_json(self.case / "corrective-listener-assertion.json", {"kind": kind, "legacy": legacy,
             "expected": expected, "actual": actual, "authored_base64": base64.b64encode(authored).decode()})
         self.restart_fixture()
+        expected_consumer = json.loads(json.dumps(expected["widgets"]["left"])) if record else None
+        if record:
+            # The undeclared numeric member is an opaque ConfigNumber after
+            # disk admission, not a declared Real. Keep its exact token contract
+            # separate from the unchanged raw-JSON assertions above and below.
+            expected_consumer[0]["externalValue"] = {"decimal": "1.4"}
         self.check(self.audit_state("listener-restarted")["uiScale"] == 1.7 if not record else
-                   json_equal(self.private_state("record-restarted")["current"]["consumer"]["widgetsLeft"], expected["widgets"]["left"]),
-                   "listener local edit did not reach the restarted consumer")
+                   json_equal(self.private_state("record-restarted")["current"]["consumer"]["widgetsLeft"], expected_consumer),
+                    "listener local edit did not reach the restarted consumer")
         self.check(json_equal(json.loads(target.read_text()) if target.exists() else None, expected),
                    "listener local raw intent did not survive same-tree restart")
 
@@ -2274,15 +2467,14 @@ class Runner:
         if legacy:
             self.ipc("auditRead", "legacy", "parent-initial-legacy", "normal")
             self.check(self.wait_callback("parent-initial-legacy", "audit-read")["success"], "initial legacy inspection failed")
-        self.wait(lambda: any(e["event"] in ("saved", "save-failed") for e in self.events()), "initial real debounce completion")
-        captured = json.loads(self.ipc("correctiveCapture", "general.keybinds.keyUp", json_ipc_text(["F9"])))
-        atomic_json(self.case / "pending-parent-captured-private.json", captured)
-        self.check(captured["decodedNativeArray"] and captured["decoded"] == ["F9"] and
-                   captured["current"]["consumer"]["keyUp"] == ["F9"], "pending parent stimulus is not the authored array")
-        self.check(captured["current"]["active"] is None and not captured["current"]["queue"],
-                   "pending descendant was enqueued before the parent-add schedule")
-        self.check("keybinds.keyUp" in captured["current"]["pending"].get("general", {}), "pending descendant was not captured")
-        accepted = captured["current"]["accepted"]["legacy" if legacy else "general"]["data"]
+        # Startup no longer materializes defaults as a spurious user write.
+        # Preserve the before-capture settlement barrier using an actual native
+        # flush receipt; a clean no-op must not pretend to emit settingsSaved.
+        self.ipc("settle", "pending-parent-startup-settled")
+        self.check(self.wait_callback("pending-parent-startup-settled", "save-callback")["success"],
+                   "initial native settlement failed")
+        accepted_bytes = target.read_bytes()
+        accepted = json.loads((self.config / "settings.json").read_bytes()) if legacy else json.loads(accepted_bytes)
         prior_parent = accepted.get("general", {}).get("keybinds") if legacy else accepted.get("keybinds")
         self.check((prior_parent is not None) == removed, "authored parent add/remove precondition was not established")
         external = dict(legacy_initial if legacy else initial)
@@ -2294,9 +2486,21 @@ class Runner:
             external["keybinds"] = parent
         publication = self.config / "settings.json" if legacy else target
         authored = (json.dumps(external) + "\n").encode()
+        transfer = self.begin_private_transfer("correctiveCapture", "general.keybinds.keyUp", json_ipc_text(["F9"]))
+        # Check the actual file before authoring the foreign parent, not after
+        # draining a large diagnostic body across multiple IPC round trips.
+        unpublished = target.read_bytes() == accepted_bytes
         temporary = publication.with_suffix(".external")
         temporary.write_bytes(authored); temporary.replace(publication)
         self.ipc("auditRead", "legacy" if legacy else "general", "pending-parent-read", "normal")
+        captured = json.loads(self.private_transfer(transfer, "pending-parent-captured"))
+        atomic_json(self.case / "pending-parent-captured-private.json", captured)
+        self.check(captured["decodedNativeArray"] and captured["decoded"] == ["F9"] and
+                   captured["current"]["consumer"]["keyUp"] == ["F9"], "pending parent stimulus is not the authored array")
+        self.check(unpublished and captured["before"]["revision"] == captured["after"]["revision"],
+                   "pending descendant was enqueued before the parent-add schedule")
+        self.check(captured["current"]["native"]["paths"]["general.keybinds.keyUp"]["latestInput"] != captured["beforeInput"]["latestInput"],
+                   "pending descendant was not captured")
         self.wait_callback("pending-parent-read", "audit-read")
         consumer = self.private_state("pending-parent-applied")["current"]["consumer"]
         self.check(consumer["keyUp"] == ["F9"], "external parent addition clobbered the protected descendant")
@@ -2380,12 +2584,13 @@ class Runner:
         self.start("corrective-missing-lifetime", before_launch=seed)
         target = self.config / "settings/ui.json"
         self.ipc("correctiveReset", "ui.fontDefaultScale")
-        self.wait(lambda: not target.exists() and self.audit_state("ordinary-delete-complete")["activeSection"] == "",
+        self.wait(lambda: not target.exists() and not self.audit_state("ordinary-delete-complete")["native"]["pendingRequests"],
                   "actual owned ordinary UI deletion")
         self.ipc("auditRead", "ui", "own-missing-echo", "normal")
         self.wait_callback("own-missing-echo", "audit-read")
         own = self.private_state("ordinary-owned-missing")["current"]
-        self.check(own["confirmed"]["ui"]["identity"] == "missing", "owned ordinary deletion was not confirmed")
+        self.check(any(state["sourceId"] == "ui" and state["presence"] == "absent" for state in own["native"]["sources"]),
+                   "owned ordinary deletion was not confirmed")
         temp = target.with_suffix(".external"); temp.write_text('{"fontDefaultScale":2.0}\n'); temp.replace(target)
         self.ipc("auditRead", "ui", "foreign-recreation", "normal")
         self.wait_callback("foreign-recreation", "audit-read")
@@ -2409,19 +2614,23 @@ class Runner:
         self.start("corrective-initial-ownership", before_launch=seed)
         target = self.config / "settings/general.json"
         authored = target.read_bytes()
-        captured = json.loads(self.ipc("correctiveCapture", "general.scaleRatio", json_ipc_text(1.17)))
-        atomic_json(self.case / "initial-ownership-capture-private.json", captured)
-        self.check(json_equal(captured["before"]["data"], initial), "initial accepted data already differs from authored file")
-        self.check(json_equal(captured["after"], captured["before"]), "local capture mutated the initial accepted version")
-        self.check(not captured["shared"], "initial accepted parsed tree shares the mutable local overlay")
-        self.check(captured["current"]["active"] is None and not captured["current"]["queue"],
-                   "initial ownership observation occurred after persistence enqueue")
-        expected = dict(initial, scaleRatio=1.17)
-        self.check(json_equal(captured["current"]["overrides"]["general"], expected) and
-                   captured["current"]["consumer"]["generalScale"] == 1.17,
-                   "local capture lost its separate overlay/live consumer")
-        self.check(target.read_bytes() == authored, "initial ownership boundary unexpectedly published")
+        transfer = self.begin_private_transfer("correctiveCapture", "general.scaleRatio", json_ipc_text(1.17))
+        unpublished = target.read_bytes() == authored
         self.ipc("save", "initial-ownership-save")
+        captured = json.loads(self.private_transfer(transfer, "initial-ownership-captured"))
+        atomic_json(self.case / "initial-ownership-capture-private.json", captured)
+        self.check(unpublished and captured["before"]["presence"] == "present",
+                   "initial accepted source differs from the authored file")
+        self.check(json_equal(captured["after"], captured["before"]), "local capture mutated the initial accepted version")
+        before_input = captured["beforeInput"]
+        after_input = captured["current"]["native"]["paths"]["general.scaleRatio"]
+        self.check(before_input["contentRevision"] == after_input["contentRevision"] and
+                   before_input["latestInput"] != after_input["latestInput"],
+                   "local ingress mutated the worker-admitted initial version or lost the new input")
+        expected = dict(initial, scaleRatio=1.17)
+        self.check(captured["current"]["consumer"]["generalScale"] == 1.17,
+                   "local capture lost its separate overlay/live consumer")
+        self.check(unpublished, "initial ownership boundary unexpectedly published")
         saved = self.wait_callback("initial-ownership-save", "save-callback")
         self.check(saved["success"], "initial ownership local save failed")
         self.check(json_equal(json.loads(target.read_text()), expected), "initial ownership save lost complete raw tree")
@@ -2430,420 +2639,230 @@ class Runner:
                    "initial ownership edit did not reach restarted consumer")
         self.check(json_equal(json.loads(target.read_text()), expected), "initial ownership raw types did not survive restart")
 
-    def instrument_inspection_trace(self):
-        model = self.tree / "Helpers/SettingsModel.js"
-        text = model.read_text()
-        dispatch = '        root._readsInFlight[section] = (root._readsInFlight[section] || 0) + 1;'
-        delivery = '            var state = success ? payload.state : null;'
-        if text.count(dispatch) != 1 or text.count(delivery) != 1:
-            raise HarnessBlocked("inspection diagnostic anchors are not unique")
-        text = text.replace(dispatch, dispatch + '\n        console.log("INSPECTION_DIAG|" + JSON.stringify({ "event": "dispatch", "section": section, "serial": observation.serial, "generation": observation.generation, "authority": observation.authority, "publication": observation.publication, "writer": observation.writer ? observation.writer.revision : 0, "stage": observation.writerStage, "requesting": callbacks.map(function (waiter) { return waiter.job ? waiter.job.revision : 0; }) }));')
-        text = text.replace(delivery, delivery + '\n            console.log("INSPECTION_DIAG|" + JSON.stringify({ "event": "delivery", "section": section, "serial": observation.serial, "generation": observation.generation, "authority": observation.authority, "publication": observation.publication, "writer": root._activePersist ? root._activePersist.revision : 0, "stage": root._activePersist ? root._activePersist.stage : "", "identity": state ? state.identity : "", "sha256": state ? state.sha256 : "", "exists": state ? state.exists : null }));')
-        model.write_text(text)
-        atomic_json(self.case / "inspection-diagnostic-diff.json", {"diff": "".join(difflib.unified_diff(
-            (self.source / "Helpers/SettingsModel.js").read_text().splitlines(True), text.splitlines(True),
-            fromfile="candidate/SettingsModel.js", tofile="diagnostic/SettingsModel.js"))})
-
-    def instrument_inspection_context(self):
-        settings = self.tree / "Commons/Settings.qml"
-        model = self.tree / "Helpers/SettingsModel.js"
-        text, bridge = model.read_text(), settings.read_text()
-        signature = "    function runSectionIo(mode, section, temporary, input, complete, path) {"
-        transport = '        effect("io", {token: token, owner: owner, mode: mode, section: section, temporary: temporary, input: input, path: path});'
-        command = '    command.splice(2, 0, effect.mode);'
-        ending = '            delivered(stale ? false : success, state, stale ? "Stale Settings observation" : error, stale);\n        });'
-        if any(text.count(anchor) != 1 for anchor in (signature, transport, ending)) or bridge.count(command) != 1:
-            raise HarnessBlocked("inspection context anchors are not unique")
-        text = text.replace(signature, signature.replace("path)", "path, diagnosticContext)"))
-        text = text.replace(transport, transport.replace('path: path}', 'path: path, diagnosticContext: diagnosticContext}'))
-        text = text.replace(ending, ending.rsplit('});', 1)[0] + '}, undefined, { "serial": observation.serial, "generation": observation.generation, "authority": observation.authority, "publication": observation.publication, "writer": observation.writer ? observation.writer.revision : 0, "stage": observation.writerStage });')
-        bridge = bridge.replace(command, command + '\n    if (effect.diagnosticContext)\n      command = ["env", "INSPECTION_GATE_CONTEXT=" + JSON.stringify(effect.diagnosticContext)].concat(command);')
-        model.write_text(text)
-        settings.write_text(bridge)
-        atomic_json(self.case / "inspection-context-diff.json", {"diffs": {str(path.relative_to(self.tree)): "".join(difflib.unified_diff(
-            (self.source / path.relative_to(self.tree)).read_text().splitlines(True), body.splitlines(True),
-            fromfile="candidate/" + path.name, tofile="diagnostic/" + path.name))
-            for path, body in ((model, text), (settings, bridge))},
-            "claim": "safe serial/fence/writer/stage metadata only; no raw payload in environment"})
-
-    def inspection_trace(self):
-        result = []
-        for line in self.logpath.read_text().splitlines():
-            marker = "INSPECTION_DIAG|"
-            if marker in line:
-                result.append(json.loads(line.split(marker, 1)[1]))
-        return result
-
-    def gate_inspected_versions(self, states):
-        directory = self.case / "inspected-gates"
-        directory.mkdir(mode=0o700)
-        wrapper = self.tree / "Scripts/bash/python3"
-        if wrapper.exists():
-            raise HarnessBlocked("inspected-version gate would overwrite another wrapper")
-        code = '''import json,os,subprocess,sys,uuid
-from pathlib import Path
-real=REAL
-args=sys.argv[1:]
-if len(args)>=3 and args[0].endswith('/section-io.py') and args[1]=='inspect' and args[2].endswith('/settings/ui.json'):
-    p=subprocess.run([real,*args],capture_output=True)
-    payload=json.loads(p.stdout)
-    state=payload.get('state',{})
-    label=STATES.get(state.get('sha256'))
-    if label and not (Path(DIRECTORY)/(label+'-open')).exists():
-        root=Path(DIRECTORY)/(label+'-'+uuid.uuid4().hex)
-        root.mkdir(mode=0o700)
-        (root/'payload.json').write_bytes(p.stdout); (root/'payload.json').chmod(0o600)
-        os.mkfifo(root/'release',0o600)
-        (root/'entered.json').write_text(json.dumps({'label':label,'pid':os.getpid(),'sha256':state.get('sha256'),'identity':state.get('identity')}))
-        if not (Path(DIRECTORY)/(label+'-open')).exists():
-            with (root/'release').open() as stream: stream.readline()
-    sys.stdout.buffer.write(p.stdout); sys.stderr.buffer.write(p.stderr)
-    raise SystemExit(p.returncode)
-os.execv(real,[real,*args])
-'''
-        wrapper.write_text("#!" + sys.executable + "\n" + "REAL=" + repr(sys.executable) + "\nSTATES=" + repr(states) +
-                           "\nDIRECTORY=" + repr(str(directory)) + "\n" + code)
-        wrapper.chmod(0o700)
-        return directory
-
-    def held_inspections(self, directory, label):
-        result = []
-        for marker in directory.glob(label + "-*/entered.json"):
-            gate = (marker, marker.parent / "release")
-            if gate not in self.gates:
-                self.gates.append(gate)
-            result.append(marker.parent)
-        return sorted(result)
-
-    def release_inspection_version(self, directory, label):
-        (directory / (label + "-open")).touch(exist_ok=True)
-        for root in self.held_inspections(directory, label):
-            if not (root / "released").exists():
-                self.release(root / "release")
-                (root / "released").touch()
-
     def corrective_forward_reads(self):
         first = {"fontDefaultScale": 1.4, "futureRaw": {"version": 1, "values": [False, 0, None, ""]}}
         second = {"fontDefaultScale": 1.7, "futureRaw": {"version": 2, "values": [False, 0, None, ""]}}
         authored = {label: (json.dumps(value) + "\n").encode() for label, value in (("F1", first), ("F2", second))}
         def seed():
             (self.config / "settings/ui.json").write_text('{"fontDefaultScale":1.0}\n')
-            self.instrument_inspection_trace()
         self.start("corrective-forward-inspectors", before_launch=seed)
         target = self.config / "settings/ui.json"
         self.ipc("auditRead", "ui", "forward-initial-read", "normal")
         self.wait_callback("forward-initial-read", "audit-read")
-        for turn in range(3):
-            self.status("forward-initial-settled-" + str(turn))
-        directory = self.gate_inspected_versions({hashlib.sha256(raw).hexdigest(): label for label, raw in authored.items()})
+        self.ipc("nativePacketsBegin")
+        held = {}
+        def reads(value):
+            return [row for row in json.loads(self.ipc("nativePackets")) if row["operation"] == "reload"
+                    and row["status"] == "reloaded" and row["values"].get("ui.fontDefaultScale") == value]
         try:
-            for label in ("F1", "F2"):
+            for label, scale in (("F1", 1.4), ("F2", 1.7)):
                 temp = target.with_suffix(".external"); temp.write_bytes(authored[label]); temp.replace(target)
-                self.wait(lambda: bool(self.held_inspections(directory, label)), "actual " + label + " inspector held after inspection")
-            held = {label: self.held_inspections(directory, label) for label in ("F1", "F2")}
-            payloads = {label: [json.loads((root / "payload.json").read_text())["state"] for root in roots] for label, roots in held.items()}
-            trace_before = self.inspection_trace()
-            deliveries = [row for row in trace_before if row["event"] == "delivery" and row["section"] == "ui"]
-            self.check(not any(row["sha256"] in (hashlib.sha256(raw).hexdigest() for raw in authored.values()) for row in deliveries),
-                       "a relevant watcher delivery escaped before the forward schedule")
-            self.release_inspection_version(directory, "F1")
-            first_sha = hashlib.sha256(authored["F1"]).hexdigest()
-            self.wait(lambda: any(row["event"] == "delivery" and row["section"] == "ui" and row["sha256"] == first_sha
-                                 for row in self.inspection_trace()), "actual F1 watcher delivery")
+                self.ipc("auditRead", "ui", "forward-" + label, "normal")
+                self.wait(lambda: bool(reads(scale)), "actual " + label + " native read held before delivery")
+                held[label] = reads(scale)[-1]
+            before = self.private_state("forward-before-delivery")["current"]
+            self.check(before["consumer"]["uiScale"] == 1.0 and not any(row["released"] for row in json.loads(self.ipc("nativePackets"))),
+                       "a relevant native read delivery escaped before the forward schedule")
+            for packet in json.loads(self.ipc("nativePackets")):
+                if packet["index"] <= held["F1"]["index"]:
+                    self.ipc("nativePacketRelease", str(packet["index"]))
             first_consumer = self.private_state("forward-first-accepted")["current"]
             self.check(first_consumer["consumer"]["uiScale"] == 1.4, "first forward watcher state was not accepted")
-            self.release_inspection_version(directory, "F2")
-            second_sha = hashlib.sha256(authored["F2"]).hexdigest()
-            self.wait(lambda: any(row["event"] == "delivery" and row["section"] == "ui" and row["sha256"] == second_sha
-                                 for row in self.inspection_trace()), "actual F2 watcher delivery")
-            trace = self.inspection_trace()
-            relevant = [row for row in trace if row["event"] == "delivery" and row["section"] == "ui" and
-                        row["sha256"] in (hashlib.sha256(raw).hexdigest() for raw in authored.values())]
-            dispatch = {row["serial"]: row for row in trace if row["event"] == "dispatch" and row["section"] == "ui"}
-            self.check(bool(relevant) and len({dispatch[row["serial"]]["generation"] for row in relevant}) == 1,
-                       "forward inspectors did not dispatch at the same acceptance generation")
+            for packet in json.loads(self.ipc("nativePackets")):
+                if not packet["released"] and packet["index"] <= held["F2"]["index"]:
+                    self.ipc("nativePacketRelease", str(packet["index"]))
+            self.check(held["F1"]["inputPrefix"] == held["F2"]["inputPrefix"] and
+                       int(held["F2"]["generation"]) > int(held["F1"]["generation"]),
+                       "forward reads did not share the same input fence with ordered actual publications")
             consumer = self.private_state("forward-read-final")["current"]
-            atomic_json(self.case / "forward-read-assertion.json", {"payloads": payloads, "trace": trace,
-                "relevant": relevant, "first_consumer": first_consumer, "consumer": consumer, "disk": json.loads(target.read_text())})
-            self.check(consumer["consumer"]["uiScale"] == 1.7 and
-                       json_equal(consumer["accepted"]["ui"]["data"], second), "higher forward inspector was falsely rejected after earlier acceptance")
+            atomic_json(self.case / "forward-read-assertion.json", {"held": held, "packets": json.loads(self.ipc("nativePackets")),
+                "first_consumer": first_consumer, "consumer": consumer, "disk": json.loads(target.read_text())})
+            self.check(consumer["consumer"]["uiScale"] == 1.7, "higher forward inspector was falsely rejected after earlier acceptance")
             self.check(json_equal(json.loads(target.read_text()), second), "forward inspectors replaced authored newer disk data")
         finally:
-            for label in ("F1", "F2"):
-                self.release_inspection_version(directory, label)
+            self.ipc("nativePacketsEnd")
+        for label in ("F1", "F2"):
+            self.check(self.wait_callback("forward-" + label, "audit-read")["success"], "forward native read callback was lost")
 
     def corrective_readback(self, variant):
-        def seed():
-            self.instrument_inspection_trace()
-            self.instrument_inspection_context()
-        self.start("corrective-readback-" + variant, before_launch=seed)
+        return self.native_readback(variant)
+
+    def native_readback(self, variant):
+        self.start("corrective-readback-" + variant)
         target = self.config / "settings/bindings.json"
-        entered, fifo = self.case / "readback-inspection-entered", self.case / "readback-inspection-release"
-        os.mkfifo(fifo, 0o600); self.gates.append((entered, fifo))
-        wrapper = self.tree / "Scripts/bash/python3"
-        if wrapper.exists():
-            raise HarnessBlocked("readback gate would overwrite another wrapper")
-        code = '''import json,os,sys
-from pathlib import Path
-context=json.loads(os.environ.get('INSPECTION_GATE_CONTEXT','{}'))
-args=sys.argv[1:]
-marker=Path(MARKER)
-if len(args)>=3 and args[0].endswith('/section-io.py') and args[1]=='inspect' and args[2].endswith('/settings/bindings.json') and context.get('stage')=='readback' and not marker.exists():
-    marker.write_text(json.dumps(context)); marker.chmod(0o600)
-    with Path(FIFO).open() as stream: stream.readline()
-os.execv(REAL,[REAL,*args])
-'''
-        wrapper.write_text("#!" + sys.executable + "\nMARKER=" + repr(str(entered)) + "\nFIFO=" + repr(str(fifo)) +
-                           "\nREAL=" + repr(sys.executable) + "\n" + code); wrapper.chmod(0o700)
+        entered, fifo = self.native_gate("readback-inspection", "readback", "bindings")
+        acquired = None
         try:
             self.ipc("request", "macos", "readback-head")
-            self.wait(entered.exists, "actual owner-dispatched readback inspection")
+            self.wait(entered.exists, "actual native writer reached post-publication readback")
             self.ipc("request", "none", "readback-tail")
-            owner = json.loads(entered.read_text())
-            before = self.private_state("readback-owner-before-foreign")["current"]
-            self.check(owner["writer"] == before["active"]["revision"] and before["active"]["stage"] == "readback",
-                       "readback gate does not belong to the actual live writer")
+            before = self.private_state("readback-owner-before-foreign")
+            self.check(any(g["state"] == "saving" for g in before["native"]["groups"]),
+                       "native readback gate has no actual saving retained group")
             if variant == "missing":
                 target.unlink()
+                authored = b""
             else:
-                raw = target.read_bytes() if variant == "identity" else (json.dumps({"environment": "macos",
+                authored = target.read_bytes() if variant == "identity" else (json.dumps({"environment": "macos",
                     "futureRaw": {"foreignReadback": [False, 0, None, ""]}}) + "\n").encode()
-                temporary = target.with_suffix(".external"); temporary.write_bytes(raw); temporary.replace(target)
+                temporary = target.with_suffix(".external"); temporary.write_bytes(authored); temporary.replace(target)
             expected = self.inspected_state(target)
-            atomic_json(self.case / "readback-authored-witness.json", expected)
+            acquired = self.native_gate("readback-acquired", "read-after", "bindings", sha256=hashlib.sha256(authored).hexdigest())
             self.release(fifo)
+            self.wait(acquired[0].exists, "native backend acquired actual readback disagreement")
+            read = json.loads(acquired[0].read_text())["observation"]
+            self.check(base64.b64decode(read["bytesBase64"]) == authored and
+                       read["presence"] == ("absent" if variant == "missing" else "present"),
+                       "native readback result does not match authored bytes/presence")
+            self.release(acquired[1])
             result = self.wait_callback("readback-head")
             boundary = self.private_state("readback-before-retry")
-            intent = boundary["terminals"]["readback-head"]["bindings"][result["requestId"]]
-            artifacts = self.retained_artifacts(self.work_case / "cache/settings-conflicts")
-            atomic_json(self.case / "readback-retention-assertion.json", {"variant": variant, "expected": expected,
-                "result": result, "intent": intent, "artifacts": artifacts, "trace": self.inspection_trace()})
-            self.check(not result["success"] and result["state"] == "Stopped", "readback disagreement did not stop actual head")
-            self.check(intent.get("unresolvedConflict") is True, "actual readback disagreement lost its unresolved latch")
-            self.check(any(json_equal(expected, state) for state in intent.get("foreignObservations", [])),
-                       "actual complete readback witness was omitted from retained intent")
-            self.failures.extend(retained_state_errors([expected], artifacts))
+            artifacts = self.native_evidence(self.work_case / "cache/settings-conflicts")
+            matching = [a for a in artifacts if a["metadata"]["sourceId"] == "bindings" and
+                        a["metadata"]["revision"] == read["revision"] and a["metadata"]["phase"] == "readback"]
+            self.check(not result["success"] and result["state"] == "Stopped" and result["error"] == "readback-mismatch",
+                       "actual native readback disagreement did not stop head with truthful cause")
+            self.check(any(g["state"] == "stopped" and any(a["status"] == "failed" for a in g["attempts"])
+                           for g in boundary["native"]["groups"]), "native failed readback group/attempt was not retained")
+            self.check(any(a["metadata"]["presence"] == read["presence"] and
+                           (a["bytesBase64"] == read["bytesBase64"] if variant != "missing" else a["metadata"]["bytesState"] == "absent")
+                           for a in matching), "actual complete readback witness was omitted from durable native evidence")
             self.check(self.callback("readback-tail") is None, "readback dispute advanced retained tail")
+            atomic_json(self.case / "readback-retention-assertion.json", dict(variant=variant, expected=expected,
+                before=before, acquired=read, result=result, boundary=boundary, artifacts=artifacts))
         finally:
-            if entered.exists():
-                try: self.release(fifo)
-                except OSError as error:
-                    if error.errno != 6: raise
+            for gate in ((entered, fifo), acquired):
+                if gate and gate[0].exists():
+                    try: self.release(gate[1])
+                    except OSError as error:
+                        if error.errno != 6: raise
 
     def corrective_readback_postjoin(self):
-        def seed():
-            self.instrument_inspection_trace(); self.instrument_inspection_context()
-        self.start("corrective-readback-postjoin", before_launch=seed)
+        return self.native_readback_postjoin()
+
+    def native_readback_postjoin(self):
+        self.start("corrective-readback-postjoin")
         target = self.config / "settings/bindings.json"
-        directory = self.case / "postjoin-gates"; directory.mkdir(mode=0o700)
-        wrapper = self.tree / "Scripts/bash/python3"
-        if wrapper.exists():
-            raise HarnessBlocked("postjoin wrapper would overwrite an existing gate")
-        code = '''import json,os,subprocess,sys,uuid
-from pathlib import Path
-args=sys.argv[1:]
-context=json.loads(os.environ.get('INSPECTION_GATE_CONTEXT','{}'))
-if len(args)>=3 and args[0].endswith('/section-io.py') and args[1]=='inspect' and args[2].endswith('/settings/bindings.json') and context.get('stage')=='readback':
-    p=subprocess.run([REAL,*args],capture_output=True)
-    state=json.loads(p.stdout).get('state',{})
-    label='F' if 'futureRaw' in state.get('data',{}) else 'A'
-    if not (Path(DIRECTORY)/(label+'-open')).exists():
-        root=Path(DIRECTORY)/(label+'-'+uuid.uuid4().hex); root.mkdir(mode=0o700)
-        (root/'payload.json').write_bytes(p.stdout); (root/'payload.json').chmod(0o600)
-        os.mkfifo(root/'release',0o600)
-        (root/'entered.json').write_text(json.dumps(dict(context,label=label,sha256=state.get('sha256'),identity=state.get('identity'))))
-        if not (Path(DIRECTORY)/(label+'-open')).exists():
-            with (root/'release').open() as stream: stream.readline()
-    sys.stdout.buffer.write(p.stdout); sys.stderr.buffer.write(p.stderr)
-    raise SystemExit(p.returncode)
-os.execv(REAL,[REAL,*args])
-'''
-        wrapper.write_text("#!" + sys.executable + "\nREAL=" + repr(sys.executable) + "\nDIRECTORY=" + repr(str(directory)) + "\n" + code)
-        wrapper.chmod(0o700)
+        before = self.native_gate("postjoin-readback", "readback", "bindings")
+        own, later = None, None
+        packets_active = False
+        foreign = {"environment": "macos", "futureRaw": {"postJoin": [False, 0, None, ""]}}
+        foreign_bytes = (json.dumps(foreign) + "\n").encode()
         try:
             self.ipc("request", "macos", "postjoin-head")
-            self.wait(lambda: bool(self.held_inspections(directory, "A")), "actual owned A readback payload held")
+            self.wait(before[0].exists, "native writer reached actual readback boundary")
+            own_bytes = target.read_bytes()
+            own = self.native_gate("postjoin-own-acquired", "read-after", "bindings", sha256=hashlib.sha256(own_bytes).hexdigest())
+            later = self.native_gate("postjoin-foreign-acquired", "read-after", "bindings", sha256=hashlib.sha256(foreign_bytes).hexdigest())
+            self.ipc("nativePacketsBegin"); packets_active = True
+            self.release(before[1])
+            self.wait(own[0].exists, "actual owned A readback held before return")
+            own_read = json.loads(own[0].read_text())["observation"]
             self.ipc("request", "none", "postjoin-tail")
-            foreign = {"environment": "macos", "futureRaw": {"postJoin": [False, 0, None, ""]}}
-            temporary = target.with_suffix(".external"); temporary.write_text(json.dumps(foreign) + "\n"); temporary.replace(target)
+            temporary = target.with_suffix(".external"); temporary.write_bytes(foreign_bytes); temporary.replace(target)
             expected = self.inspected_state(target)
-            self.wait(lambda: bool(self.held_inspections(directory, "F")), "actual later foreign F inspection held")
-            before = {label: [json.loads((root / "entered.json").read_text()) for root in self.held_inspections(directory, label)] for label in ("A", "F")}
-            self.check(min(row["serial"] for row in before["F"]) > min(row["serial"] for row in before["A"]), "postjoin F is not a later dispatched read")
-            self.release_inspection_version(directory, "A")
-            own_sha = json.loads((self.held_inspections(directory, "A")[0] / "payload.json").read_text())["state"]["sha256"]
-            self.wait(lambda: any(row["event"] == "delivery" and row["section"] == "bindings" and row["sha256"] == own_sha
-                                 for row in self.inspection_trace()), "actual A delivery joins outstanding F")
-            self.check(self.callback("postjoin-head") is None, "owner completed before outstanding later read joined")
-            self.release_inspection_version(directory, "F")
+            self.ipc("auditRead", "bindings", "postjoin-F", "normal")
+            self.release(own[1])
+            # The native worker serializes IO, unlike the retired parallel
+            # helpers. Hold its unchanged completion at delivery while the
+            # genuinely queued later F read is acquired; never fabricate a join.
+            self.wait(later[0].exists, "native later F read acquired before application completion")
+            foreign_read = json.loads(later[0].read_text())["observation"]
+            self.check(base64.b64decode(own_read["bytesBase64"]) == own_bytes and
+                       base64.b64decode(foreign_read["bytesBase64"]) == foreign_bytes and
+                       own_read["revision"] != foreign_read["revision"], "native postjoin reads lost their actual distinct versions")
+            self.check(self.callback("postjoin-head") is None and self.callback("postjoin-tail") is None,
+                       "native postjoin delivery gate did not retain the actual head/tail")
+            self.release(later[1])
+            self.wait(lambda: any(p["operation"] == "reload" and p["status"] == "reloaded"
+                                 for p in json.loads(self.ipc("nativePackets"))), "native later F completion held")
+            held = json.loads(self.ipc("nativePackets"))
+            own_packet = next(p for p in held if p["operation"] == "saveGroup")
+            foreign_packet = next(p for p in held if p["operation"] == "reload" and p["status"] == "reloaded")
+            self.check(own_packet["index"] < foreign_packet["index"] and
+                       int(own_packet["generation"]) < int(foreign_packet["generation"]),
+                       "native postjoin did not retain actual ordered own/later generations")
+            for packet in held:
+                if packet["index"] <= own_packet["index"]:
+                    self.ipc("nativePacketRelease", str(packet["index"]))
+            self.check(self.callback("postjoin-tail") is None, "original waiting tail overtook actual head completion")
+            self.ipc("nativePacketsEnd"); packets_active = False
             result = self.wait_callback("postjoin-head")
-            boundary = self.private_state("postjoin-terminal-before-retry")
-            intent = boundary["terminals"]["postjoin-head"]["bindings"][result["requestId"]]
-            artifacts = self.retained_artifacts(self.work_case / "cache/settings-conflicts")
-            atomic_json(self.case / "postjoin-assertion.json", {"dispatches": before, "expected": expected,
-                "result": result, "intent": intent, "artifacts": artifacts, "trace": self.inspection_trace()})
-            self.check(not result["success"] and result["state"] == "Stopped", "readback reported success against stale pre-join own state")
-            self.check(intent.get("unresolvedConflict") is True, "later postjoin foreign state lost unresolved latch")
-            self.check(any(json_equal(expected, state) for state in intent.get("foreignObservations", [])), "postjoin omitted complete foreign witness")
-            self.failures.extend(retained_state_errors([expected], artifacts))
-            self.check(self.callback("postjoin-tail") is None, "postjoin dispute advanced original tail")
+            self.check(result["success"], "native verified A publication lost its truthful successful completion")
+            self.check(self.wait_callback("postjoin-tail")["success"], "native postjoin lost original waiting tail")
+            self.check(self.wait_callback("postjoin-F", "audit-read")["success"], "actual later F read callback was lost")
+            self.wait(lambda: self.status("postjoin-settled")["detail"]["owner"]["state"] == "Idle",
+                      "postjoin later accepted choice and original tail settle")
+            actual = json.loads(target.read_text())
+            artifacts = self.native_evidence(self.work_case / "cache/settings-conflicts")
+            self.check(json_equal(actual, foreign), "native postjoin lost the later external choice or its raw unknown data")
+            self.check(any(a["bytesBase64"] == foreign_read["bytesBase64"] and
+                           a["metadata"]["revision"] == foreign_read["revision"] for a in artifacts),
+                       "native postjoin lost the exact acquired later foreign witness")
+            atomic_json(self.case / "postjoin-assertion.json", dict(nativeSerialIO=True, expected=expected,
+                own=own_read, foreign=foreign_read, held=held, result=result, actual=actual, artifacts=artifacts))
         finally:
-            for label in ("A", "F"):
-                self.release_inspection_version(directory, label)
+            for gate in (before, own, later):
+                if gate and gate[0].exists():
+                    try: self.release(gate[1])
+                    except OSError as error:
+                        if error.errno != 6: raise
+            if packets_active: self.ipc("nativePacketsEnd")
 
     def corrective_setup_suffix(self):
         self.start("corrective-setup-suffix", "wizard")
-        directory = self.work_case / "setup-readonly"; directory.mkdir(mode=0o555)
-        marker, fifo = self.case / "setup-A-entered", self.case / "setup-A-release"
-        os.mkfifo(fifo, 0o600); self.gates.append((marker, fifo))
-        ledger = self.case / "setup-general-publications.jsonl"
-        wrapper = self.tree / "Scripts/bash/python3"
-        assert not wrapper.exists()
-        code = '''import json,os,subprocess,sys
-from pathlib import Path
-args=sys.argv[1:]
-if len(args)>=3 and args[0].endswith('/section-io.py') and args[1] in ('prepare','promote') and args[2].endswith('/settings/general.json'):
-    wire=sys.stdin.buffer.read()
-    payload=json.loads(wire)
-    scale=json.loads(payload['raw']).get('scaleRatio') if args[1]=='prepare' else None
-    marker=Path(MARKER)
-    if scale==1.1 and not marker.exists():
-        marker.write_text(json.dumps(payload)); marker.chmod(0o600)
-        with Path(FIFO).open() as stream: stream.readline()
-        args[3]=READONLY
-    p=subprocess.run([REAL,*args],input=wire,capture_output=True)
-    if args[1]=='promote':
-        with Path(LEDGER).open('a') as stream:
-            os.chmod(LEDGER,0o600)
-            stream.write(json.dumps({'revision':int(args[3].rsplit('-',1)[1]),'exit':p.returncode,'payload':json.loads(p.stdout)})+'\\n')
-    sys.stdout.buffer.write(p.stdout); sys.stderr.buffer.write(p.stderr)
-    raise SystemExit(p.returncode)
-os.execv(REAL,[REAL,*args])
-'''
-        wrapper.write_text("#!" + sys.executable + "\nREAL=" + repr(sys.executable) + "\nMARKER=" + repr(str(marker)) +
-                           "\nFIFO=" + repr(str(fifo)) + "\nREADONLY=" + repr(str(directory / "prepared")) +
-                           "\nLEDGER=" + repr(str(ledger)) + "\n" + code)
-        wrapper.chmod(0o700)
+        marker, fifo = self.native_gate("setup-A", "write", "general")
         target = self.config / "settings/general.json"
         try:
             self.ipc("auditWizardScale", "1.1")
             self.ipc("save", "setup-capture-A")
-            self.wait(marker.exists, "genuine A preparation held before PermissionError")
+            self.wait(marker.exists, "actual A preparation held before controlled failure")
             self.ipc("auditWizardScale", "1.2")
             self.ipc("save", "setup-capture-B")
             self.ipc("auditWizardFinish")
             captured = self.private_state("setup-ordered-bundle-captured")
             identity = self.status("setup-ordered-submission")["detail"]["wizardSubmitted"]["id"]
-            bundle = captured["current"]["bundles"][identity]
-            general = [intent for intent in bundle["intents"] if intent["section"] == "general"]
-            self.check(len(general) == 2 and [json.loads(intent["json"])["scaleRatio"] for intent in general] == [1.1, 1.2],
-                       "actual wizard bundle did not capture ordered A/B values")
-            self.release(fifo)
-            self.wait(lambda: self.status("setup-ordered-first-status")["detail"]["wizardSubmitted"]["status"] == "Stopped",
-                      "actual failed setup bundle terminal result")
-            self.check(not self.wait_callback("setup-capture-A", "save-callback")["success"], "A did not genuinely fail")
-            self.wait_callback("setup-capture-B", "save-callback")
-            first = self.private_state("setup-ordered-first-failure")
-            first_bundle = first["current"]["bundles"][identity]
-            first_general = [intent for intent in first_bundle["intents"] if intent["section"] == "general"]
-            self.check(first_general[0]["failed"] and not first_general[1]["failed"], "older failure/newer success schedule was not established")
-            self.check(json.loads(target.read_text())["scaleRatio"] == 1.2, "B did not publish before bundle Retry")
-            self.check(self.status("setup-ordered-stopped")["detail"]["wizardOpen"], "failed predecessor closed the actual wizard")
-            initial_revisions = [intent["lastRevision"] for intent in first_general]
-            self.ipc("auditWizardFinish")
-            self.wait(lambda: not self.status("setup-ordered-retry-status")["detail"]["wizardOpen"], "unchanged actual wizard Retry closes")
-            final = self.private_state("setup-ordered-after-retry")
-            final_bundle = final["current"]["bundles"][identity]
-            final_general = [intent for intent in final_bundle["intents"] if intent["section"] == "general"]
-            replayed = [intent["lastRevision"] for intent in final_general]
-            publications = [json.loads(line) for line in ledger.read_text().splitlines()]
-            atomic_json(self.case / "setup-suffix-assertion.json", {"identity": identity, "captured": general,
-                "first": first, "final": final, "initial_revisions": initial_revisions, "replayed": replayed,
-                "publications": publications, "disk": json.loads(target.read_text())})
-            self.check(replayed[0] > initial_revisions[0] and replayed[1] > replayed[0],
-                       "setup Retry reused B's obsolete success instead of replaying the ordered suffix")
-            for revision, scale in zip(replayed, (1.1, 1.2)):
-                self.check(any(record["revision"] == revision and record["exit"] == 0 and
-                               record["payload"]["state"]["data"]["scaleRatio"] == scale for record in publications),
-                           "exact setup capture revision did not actually republish")
-            self.check(json.loads(target.read_text())["scaleRatio"] == 1.2, "setup Retry closed with stale predecessor on disk")
-            self.check(final["current"]["consumer"]["generalScale"] == 1.2, "setup final covered value did not reach consumer")
-            self.check([frozen_capture(intent) for intent in general] == [frozen_capture(intent) for intent in final_general],
-                       "setup Retry mutated or recaptured submitted immutable A/B captures")
-            self.check(self.status("setup-ordered-identity")["detail"]["wizardSubmitted"]["id"] == identity,
-                       "setup suffix Retry replaced actual submitted request ID")
+            self.release(fifo, failure=True)
+            a = self.wait_callback("setup-capture-A", "save-callback")
+            b = self.wait_callback("setup-capture-B", "save-callback")
+            self.wait(lambda: self.status("setup-ordered-terminal")["detail"]["wizardSubmitted"]["status"] in ("Stopped", "Succeeded"),
+                      "actual submitted wizard terminal result")
+            terminal = self.status("setup-ordered-first-status")["detail"]
+            final = self.private_state("setup-ordered-terminal-native")
+            self.check(not a["success"] and b["success"] and a["receipt"]["status"] == "failed" and
+                       b["receipt"]["status"] == "saved", "original A-failed/B-success schedule was not established")
+            self.check(any(failure["requestId"] == a["receipt"]["requestId"] and failure["status"] == "failed"
+                           for failure in final["native"]["failures"]), "B success erased the recorded A failure")
+            # Integration decision19: latest choice already saved; Finish may
+            # succeed. The two setup-failure cases retain failed-group Retry.
+            submitted = terminal["wizardSubmitted"]
+            self.check(submitted["id"] == identity and submitted["status"] == "Succeeded" and
+                       submitted["attemptId"] == 1 and submitted["handoff"] == "Accepted" and not terminal["wizardOpen"],
+                       "already saved latest setup choice did not finish/close on its original attempt")
+            self.check(json.loads(target.read_text())["scaleRatio"] == 1.2 and
+                       final["current"]["consumer"]["generalScale"] == 1.2, "latest saved choice did not reach file/consumer")
+            self.restart_fixture()
+            cold = self.private_state("setup-ordered-cold-consumer")
+            self.check(cold["current"]["consumer"]["generalScale"] == 1.2,
+                       "latest setup choice did not survive a cold consumer restart")
+            atomic_json(self.case / "setup-suffix-assertion.json", {"decision": 19, "identity": identity,
+                "captured": captured, "a": a, "b": b, "terminal": terminal, "final": final,
+                "cold": cold, "disk": json.loads(target.read_text())})
         finally:
             if marker.exists():
                 try: self.release(fifo)
                 except OSError as error:
                     if error.errno != 6: raise
 
-    def helper_failure_boundaries(self, target, variant):
-        directory = self.case / "helper-boundaries"
-        directory.mkdir(mode=0o700)
-        enabled = directory / "enabled"; enabled.touch()
-        helper = self.tree / "Scripts/python/src/settings/section-io.py"
-        original = helper.read_text()
-        prefix = '''
-def diagnostic_boundary(label, path, state=None):
-    if str(path)!=DIAGNOSTIC_TARGET or not (DIAGNOSTIC_ROOT/'enabled').exists():
-        return
-    marker=DIAGNOSTIC_ROOT/(label+'.json')
-    if marker.exists():
-        return
-    fifo=DIAGNOSTIC_ROOT/(label+'.release')
-    os.mkfifo(fifo,0o600)
-    with marker.open('x') as stream:
-        os.chmod(marker,0o600)
-        json.dump({'label':label,'state':state},stream)
-    with fifo.open() as stream:
-        stream.readline()
-
-'''
-        prefix = "\nDIAGNOSTIC_ROOT=Path(" + repr(str(directory)) + ")\nDIAGNOSTIC_TARGET=" + repr(str(target)) + "\n" + prefix
-        if variant in ("preimage", "invalid"):
-            anchor = "    current = inspect(path)"
-            replacement = "    diagnostic_boundary('before', path)\n" + anchor + "\n    diagnostic_boundary('acquired', path, current)"
-        else:
-            anchor = "        os.replace(temporary, path)"
-            replacement = anchor + "\n        diagnostic_boundary('replaced', path)"
-        assert original.count(anchor) == 1
-        text = original.replace(anchor, replacement)
-        if variant in ("readback", "publication"):
-            anchor = "    confirmed = inspect(path)"
-            replacement = anchor + "\n    diagnostic_boundary('acquired', path, confirmed)"
-            if variant == "publication":
-                replacement += "\n    if str(path)==DIAGNOSTIC_TARGET and (DIAGNOSTIC_ROOT/'enabled').exists():\n        raise RuntimeError('Characterized post-replacement terminal failure')"
-            assert text.count(anchor) == 1
-            text = text.replace(anchor, replacement)
-        assert text.count("def main():") == 1
-        text = text.replace("def main():", prefix + "def main():")
-        helper.write_text(text)
-        atomic_json(self.case / "helper-boundary-diff.json", {"diff": "".join(difflib.unified_diff(
-            original.splitlines(True), text.splitlines(True), fromfile="candidate/section-io.py", tofile="diagnostic/section-io.py"))})
-        wrapper = self.tree / "Scripts/bash/python3"
-        assert not wrapper.exists()
-        code = '''import json,os,sys,uuid
-from pathlib import Path
-args=sys.argv[1:]
-root=Path(DIRECTORY)
-if len(args)>=3 and args[0].endswith('/section-io.py') and args[1]=='inspect' and args[2]==TARGET and any((root/name).exists() for name in ('before.json','replaced.json')) and not (root/'watchers-open').exists():
-    gate=root/('watchers-'+uuid.uuid4().hex); gate.mkdir(mode=0o700)
-    os.mkfifo(gate/'release',0o600)
-    (gate/'entered.json').write_text(json.dumps({'label':'watcher','pid':os.getpid()}))
-    if not (root/'watchers-open').exists():
-        with (gate/'release').open() as stream: stream.readline()
-os.execv(REAL,[REAL,*args])
-'''
-        wrapper.write_text("#!" + sys.executable + "\nDIRECTORY=" + repr(str(directory)) + "\nTARGET=" + repr(str(target)) +
-                           "\nREAL=" + repr(sys.executable) + "\n" + code)
-        wrapper.chmod(0o700)
-        return directory, enabled
-
     def corrective_helper_failure(self, variant):
+        if variant == "preimage":
+            return self.native_helper_preimage()
+        return self.native_helper_boundary(variant)
+
+    def native_helper_boundary(self, variant):
+        self.check(variant in ("invalid", "readback", "publication"), "unknown native helper boundary")
         binding = variant == "publication"
         def seed():
-            self.instrument_inspection_trace(); self.instrument_inspection_context()
             if not binding:
                 (self.config / "settings/ui.json").write_text('{"fontDefaultScale":1.0}\n')
         self.start("corrective-helper-" + variant, before_launch=seed)
@@ -2854,152 +2873,194 @@ os.execv(REAL,[REAL,*args])
             self.ipc("auditRead", "ui", "helper-accept-invalid", "normal")
             self.wait_callback("helper-accept-invalid", "audit-read")
         original = target.read_bytes()
-        directory, enabled = self.helper_failure_boundaries(target, variant)
-        conflicts = self.work_case / "cache/settings-conflicts"
-        if not binding:
-            conflicts.mkdir(mode=0o555, exist_ok=True); conflicts.chmod(0o555)
-        held = self.work_case / "helper-original-version"
-        registered = set()
-        def boundary(label):
-            marker = directory / (label + ".json")
-            self.wait(lambda: marker.exists() and marker.stat().st_size > 0, "real helper " + label + " boundary")
-            if label not in registered:
-                self.gates.append((marker, directory / (label + ".release"))); registered.add(label)
-            return json.loads(marker.read_text())
+        evidence = self.work_case / "cache/settings-conflicts"
+        holder = self.work_case / "helper-original-version"
+        before = self.native_gate("helper-before", "read-before" if variant == "invalid" else "readback", section)
+        acquired = None
+        retaining = None
         try:
-            if binding:
-                self.ipc("request", "macos", "helper-head")
-            else:
-                self.ipc("auditSaveScale", "1.7", "helper-head")
-            phase = "replaced" if variant in ("readback", "publication") else "before"
-            boundary(phase)
-            if binding:
-                self.ipc("request", "none", "helper-tail")
-            if variant in ("preimage", "readback"):
-                target.rename(held)
-                target.write_text(json.dumps({"fontDefaultScale": 1.0, "futureRaw": {"helper": variant, "values": [False, 0, None, ""]}}) + "\n")
-            expected = self.inspected_state(target)
-            atomic_json(self.case / "helper-authored-witness.json", expected)
-            self.release(directory / (phase + ".release"))
-            acquired = boundary("acquired")["state"]
-            self.check(json_equal(acquired, expected), "helper did not genuinely acquire the authored complete state")
-            if held.exists():
-                target.unlink(); held.rename(target)
-            self.release_inspection_version(directory, "watchers")
-            # All watcher-only inspections now acquire restored bytes, not F.
-            self.release(directory / "acquired.release")
-            result = self.wait_callback("helper-head", "callback" if binding else "save-callback")
-            private = self.private_state("helper-first-terminal")
-            terminal = private["terminals"]["helper-head"]
-            intent = terminal["bindings"][result["requestId"]] if binding else terminal["ordinary"]["ui"][0]
-            atomic_json(self.case / "helper-failure-assertion.json", {"variant": variant, "expected": expected,
-                "acquired": acquired, "result": result, "intent": intent, "trace": self.inspection_trace()})
-            self.check(not result["success"], "real helper fault reported save success")
-            if not binding:
-                self.check("PermissionError" in result["error"], "real conflict-destination PermissionError was not reported")
-                self.check(intent.get("unresolvedConflict") is True, "helper retention failure lost unresolved latch")
-                self.check(any(json_equal(expected, state) for state in intent.get("foreignObservations", [])),
-                           "helper retention failure lost its only complete acquired witness")
-                if variant == "readback":
-                    self.check(intent.get("publicationUncertain") is True, "helper readback failure lost publication uncertainty")
-            else:
-                self.check("RuntimeError" in result["error"], "characterized post-replacement error was not preserved")
-                self.check(intent.get("publicationUncertain") is True, "post-replacement failure lost publication uncertainty")
-                self.check(self.callback("helper-tail") is None, "publication uncertainty advanced retained tail")
-            enabled.unlink()
-            if not binding: conflicts.chmod(0o700)
-            if variant in ("readback", "publication"):
-                if binding: self.ipc("retry", "helper-own-output-retry")
-                else: self.ipc("save", "helper-own-output-retry")
-                retried = self.wait_callback("helper-own-output-retry", "callback" if binding else "save-callback")
-                self.check(not retried["success"], "unconfirmed local publication falsely resolved on Retry")
-                atomic_json(self.case / "helper-own-output-retry.json", retried)
-            target.write_bytes(original if variant != "invalid" else intent["json"].encode())
-            if binding: self.ipc("retry", "helper-external-resolution")
-            else: self.ipc("save", "helper-external-resolution")
-            resolved = self.wait_callback("helper-external-resolution", "callback" if binding else "save-callback")
-            self.check(resolved["success"], "helper fault could not recover after genuine external resolution")
-            if binding:
-                self.check(self.wait_callback("helper-tail")["success"], "resolved helper fault lost original tail")
-            else:
-                self.failures.extend(retained_state_errors([expected], self.retained_artifacts(conflicts)))
-                self.check(json.loads(target.read_text())["fontDefaultScale"] == 1.7, "resolved helper capture did not reach disk")
-                self.check(self.private_state("helper-recovered-consumer")["current"]["consumer"]["uiScale"] == 1.7,
-                           "resolved helper capture did not reach live consumer")
-        finally:
-            if enabled.exists(): enabled.unlink()
-            if not binding and conflicts.exists(): conflicts.chmod(0o700)
-            if held.exists():
-                if target.exists(): target.unlink()
-                held.rename(target)
-            self.release_inspection_version(directory, "watchers")
-            for label in registered:
-                try: self.release(directory / (label + ".release"))
-                except OSError as error:
-                    if error.errno != 6: raise
-
-    def corrective_retention_arrival(self, publication_error=False):
-        def seed():
-            self.instrument_inspection_trace(); self.instrument_inspection_context()
-        self.start("corrective-retention-arrival", before_launch=seed)
-        target = self.config / "settings/bindings.json"
-        original = target.read_bytes()
-        holder = self.work_case / "retention-original-preimage"
-        promotion = self.gate("arrival-promotion", "python3",
-            '[[ "${1:-}" == */section-io.py && "${2:-}" == promote && "${3:-}" == */settings/bindings.json ]]')
-        retained = self.gate("arrival-retention", "python3",
-            '[[ "${1:-}" == */section-io.py && "${2:-}" == retain && "${3:-}" == */settings/bindings.json ]]')
-        expected = []
-        def author(number):
-            value = {"environment": "none", "futureRaw": {"arrival": number, "values": [False, 0, None, ""]}}
-            temporary = target.with_suffix(".external")
-            temporary.write_text(json.dumps(value) + "\n"); temporary.replace(target)
-            state = self.inspected_state(target)
-            self.wait(lambda: any(row["event"] == "delivery" and row["section"] == "bindings"
-                                  and row["identity"] == state["identity"] for row in self.inspection_trace()),
-                      "matching live writer observes F" + str(number))
-            expected.append(state)
-        try:
-            self.ipc("request", "macos", "arrival-head")
-            self.wait(promotion[0].exists, "real promotion gate")
-            self.ipc("request", "none", "arrival-tail")
-            if not publication_error:
+            if binding: self.ipc("request", "macos", "helper-head")
+            else: self.ipc("auditSaveScale", "1.7", "helper-head")
+            self.wait(before[0].exists, "actual native helper " + variant + " boundary")
+            captured = self.private_state("native-helper-captured")
+            if binding: self.ipc("request", "none", "helper-tail")
+            if variant == "readback":
                 target.rename(holder)
-            author(1); author(2)
-            if not publication_error:
+                target.write_text(json.dumps({"fontDefaultScale": 1.0, "futureRaw": {
+                    "helper": variant, "values": [False, 0, None, ""]}}) + "\n")
+            expected_bytes = target.read_bytes()
+            expected = self.inspected_state(target)
+            digest = hashlib.sha256(expected_bytes).hexdigest()
+            acquired = self.native_gate("helper-acquired", "read-after", section, sha256=digest)
+            if not binding:
+                # A failed earlier observation in the same transaction queues
+                # subsequent witnesses under decision23, rather than calling the
+                # destination again. The final exact-byte check covers both.
+                if variant == "invalid":
+                    retaining = self.native_gate("helper-retaining", "retain-before", section,
+                        file=evidence, sourceId=section, sha256=digest)
+                evidence.chmod(0o555)
+            # A post-replacement error uses the installed backend's fault hook;
+            # its subsequent read still obtains the exact real own-output bytes.
+            self.release(before[1], failure=binding)
+            self.wait(acquired[0].exists, "native backend genuinely acquired the helper witness")
+            read = json.loads(acquired[0].read_text())["observation"]
+            self.check(base64.b64decode(read["bytesBase64"]) == expected_bytes,
+                       "native helper did not acquire the complete authored witness")
+            if holder.exists():
                 target.unlink(); holder.rename(target)
-            self.release(promotion[1])
-            self.wait(retained[0].exists, "actual asynchronous retention of first observed version")
-            self.check(self.callback("arrival-head") is None, "owner completed before real retention")
-            author(3)
-            during = self.private_state("arrival-during-retention")
-            self.check(during["current"]["active"] is not None, "F3 arrived after job disposal")
-            self.release(retained[1])
-            result = self.wait_callback("arrival-head")
-            boundary = self.private_state("arrival-first-terminal")
-            intent = boundary["terminals"]["arrival-head"]["bindings"][result["requestId"]]
-            artifacts = self.retained_artifacts(self.work_case / "cache/settings-conflicts")
-            atomic_json(self.case / "retention-arrival-assertion.json", {"publication_error": publication_error,
-                "expected": expected, "during": during, "result": result, "intent": intent,
-                "artifacts": artifacts, "trace": self.inspection_trace()})
-            self.check(not result["success"] and result["state"] == "Stopped", "arrival dispute did not stop matching head")
-            self.check(intent.get("unresolvedConflict") is True, "retention arrival cleared unresolved latch")
-            for number, state in enumerate(expected, 1):
-                self.check(any(json_equal(state, observed) for observed in intent.get("foreignObservations", [])),
-                           "retention arrival F" + str(number) + " absent before job disposal")
-            self.failures.extend(retained_state_errors(expected, artifacts))
-            self.check(self.callback("arrival-tail") is None, "retention arrival advanced retained tail")
-            if publication_error:
-                self.check("Accepted preimage changed" in result["error"], "actual helper publication error was replaced")
+            self.release(acquired[1])
+            observation = None
+            if retaining:
+                self.wait(retaining[0].exists, "native helper attempts actual evidence retention")
+                observation = json.loads(retaining[0].read_text())["observation"]
+                self.check(observation["revision"] == read["revision"] and
+                           base64.b64decode(observation["bytesBase64"]) == expected_bytes,
+                           "retention request changed the actual acquired bytes/revision")
+                self.release(retaining[1])
+            result = self.wait_callback("helper-head", "callback" if binding else "save-callback")
+            first = self.private_state("helper-first-terminal")
+            self.check(not result["success"], "native helper fault reported save success")
+            if binding:
+                self.check(result["error"] == "controlled-native-readback" and result["state"] == "Stopped",
+                           "post-replacement native failure was not preserved")
+                self.check(self.callback("helper-tail") is None, "publication uncertainty advanced retained tail")
+            else:
+                self.check(result["receipt"]["error"]["code"] == "evidence-retention",
+                           "real native evidence permission failure was not reported")
+                evidence.chmod(0o700)
+            retried = None
+            tail_settled = None
+            if variant in ("readback", "publication"):
+                self.ipc("retry" if binding else "save", "helper-own-output-retry")
+                retried = self.wait_callback("helper-own-output-retry", "callback" if binding else "save-callback")
+                if binding:
+                    # The native backend has an exact published revision and a
+                    # successful own-output read, despite the injected terminal
+                    # error. Same-head Retry can verify that witness (#19).
+                    self.check(retried["success"] and retried["requestId"] == result["requestId"] and
+                               retried["attemptId"] == result["attemptId"] + 1,
+                               "native verified own-output Retry did not preserve same head/new attempt")
+                    self.check(self.wait_callback("helper-tail")["success"], "verified native Retry lost original tail")
+                    self.wait(lambda: self.status("helper-tail-settling")["detail"]["owner"]["state"] == "Idle",
+                              "actual native requests settle after the original waiting tail")
+                    tail_settled = self.status("helper-tail-final-choice")
+                    self.check(tail_settled["environment"] == "none" and json.loads(target.read_text())["environment"] == "none",
+                               "own uncertain-publication echo replayed macos over the user's later None choice")
+                else:
+                    self.check(not retried["success"], "unconfirmed own output falsely resolved on Retry")
+            target.write_bytes(original if variant != "invalid" else b'{"fontDefaultScale":1.7}\n')
+            self.ipc("retry" if binding else "save", "helper-external-resolution")
+            recovered = self.wait_callback("helper-external-resolution", "callback" if binding else "save-callback")
+            external_resolution = recovered
+            if binding:
+                self.check(not recovered["success"] and recovered["error"] == "No stopped head is available for Retry",
+                           "settled native head was unexpectedly replayed after newer external restoration")
+                self.ipc("auditRead", "bindings", "helper-post-ack-external", "normal")
+                self.wait_callback("helper-post-ack-external", "audit-read")
+                self.check(target.read_bytes() == original, "acknowledged native output overwrote newer external choice")
+            else:
+                if variant == "invalid":
+                    # Preserve the original external1.7 stimulus and its truthful
+                    # frozen-base refusal, then resolve against the actual native
+                    # accepted preimage rather than the retired helper's JSON.
+                    self.check(not recovered["success"] and recovered["receipt"]["error"]["code"] == "source-preimage-conflict" and
+                               json.loads(target.read_text())["fontDefaultScale"] == 1.7,
+                               "invalid-source frozen retry lost latest external choice or hid its conflict")
+                    target.write_bytes(b'{"fontDefaultScale":1.0}\n')
+                    self.ipc("save", "helper-native-base-resolution")
+                    recovered = self.wait_callback("helper-native-base-resolution", "save-callback")
+                self.check(recovered["success"], "native helper fault failed after genuine accepted-base resolution")
+                self.check(json.loads(target.read_text())["fontDefaultScale"] == 1.7 and
+                           self.private_state("helper-recovered-consumer")["current"]["consumer"]["uiScale"] == 1.7,
+                           "resolved native helper capture missed disk/live consumer")
+            artifacts = self.native_evidence(evidence)
+            self.check(any(a["bytesBase64"] == read["bytesBase64"] and a["metadata"]["revision"] == read["revision"]
+                           for a in artifacts), "complete native helper witness was lost across failure/retry")
+            atomic_json(self.case / "helper-failure-assertion.json", dict(variant=variant, expected=expected,
+                acquired=read, observation=observation, captured=captured, result=result, first=first,
+                ownOutputRetry=retried, tailSettled=tail_settled, externalResolution=external_resolution, recovered=recovered,
+                artifacts=artifacts, final=json.loads(target.read_text())))
         finally:
+            if evidence.exists(): evidence.chmod(0o700)
             if holder.exists():
                 if target.exists(): target.unlink()
                 holder.rename(target)
-            for marker, fifo in (promotion, retained):
+            for gate in (before, acquired, retaining):
+                if gate and gate[0].exists():
+                    try: self.release(gate[1])
+                    except OSError as error:
+                        if error.errno != 6: raise
+
+    def native_helper_preimage(self):
+        initial = {"fontDefaultScale": 1.0}
+        def seed():
+            (self.config / "settings/ui.json").write_text(json.dumps(initial) + "\n")
+        self.start("corrective-helper-preimage", before_launch=seed)
+        target = self.config / "settings/ui.json"
+        original = target.read_bytes()
+        foreign = (json.dumps({"fontDefaultScale": 1.0, "futureRaw": {
+            "helper": "preimage", "values": [False, 0, None, ""]}}) + "\n").encode()
+        digest = hashlib.sha256(foreign).hexdigest()
+        evidence = self.work_case / "cache/settings-conflicts"
+        before = self.native_gate("helper-before", "read-before", "ui")
+        acquired = self.native_gate("helper-acquired", "read-after", "ui", sha256=digest)
+        retaining = self.native_gate("helper-retaining", "retain-before", "ui", file=evidence, sourceId="ui", sha256=digest)
+        holder = self.work_case / "helper-original-version"
+        try:
+            self.ipc("auditSaveScale", "1.7", "helper-head")
+            self.wait(before[0].exists, "real native helper preflight read held")
+            captured = self.private_state("native-helper-captured")
+            target.rename(holder); target.write_bytes(foreign)
+            expected = self.inspected_state(target)
+            self.release(before[1])
+            self.wait(acquired[0].exists, "native helper acquired the actual foreign preimage")
+            read = json.loads(acquired[0].read_text())["observation"]
+            self.check(base64.b64decode(read["bytesBase64"]) == foreign and read["presence"] == "present",
+                       "native helper did not acquire the complete authored foreign bytes")
+            # The worker already retained its original preflight before read().
+            # Obstruct only the now-acquired foreign evidence, then restore the
+            # physical original while the genuine read result remains held.
+            evidence.chmod(0o555)
+            target.unlink(); holder.rename(target)
+            self.release(acquired[1])
+            self.wait(retaining[0].exists, "actual native foreign evidence retention")
+            observation = json.loads(retaining[0].read_text())["observation"]
+            self.check(observation["requestId"] == captured["frozenCapture"]["requestId"] and
+                       observation["revision"] == read["revision"] and base64.b64decode(observation["bytesBase64"]) == foreign,
+                       "native retained observation is not the actual writer's complete acquired version")
+            self.release(retaining[1])
+            failed = self.wait_callback("helper-head", "save-callback")
+            self.check(not failed["success"] and failed["receipt"]["error"]["code"] == "evidence-retention",
+                       "real native evidence destination failure was not reported")
+            self.check(target.read_bytes() == original, "failed evidence retention published over the restored preimage")
+            first = self.private_state("native-helper-first-failure")
+            evidence.chmod(0o700)
+            self.ipc("save", "helper-external-resolution")
+            recovered = self.wait_callback("helper-external-resolution", "save-callback")
+            self.check(recovered["success"] and json.loads(target.read_text())["fontDefaultScale"] == 1.7 and
+                       self.private_state("native-helper-recovered")["current"]["consumer"]["uiScale"] == 1.7,
+                       "native failed capture did not recover to the user's latest choice")
+            artifacts = self.native_evidence(evidence)
+            self.check(any(artifact["bytesBase64"] == observation["bytesBase64"] and
+                           artifact["metadata"]["revision"] == observation["revision"] for artifact in artifacts),
+                       "only complete acquired foreign observation was lost across retention failure/retry")
+            atomic_json(self.case / "helper-failure-assertion.json", dict(variant="preimage", expected=expected,
+                acquired=read, observation=observation, failed=failed, first=first, recovered=recovered,
+                artifacts=artifacts, final=json.loads(target.read_text())))
+        finally:
+            if evidence.exists(): evidence.chmod(0o700)
+            if holder.exists():
+                if target.exists(): target.unlink()
+                holder.rename(target)
+            for marker, fifo in (before, acquired, retaining):
                 if marker.exists():
                     try: self.release(fifo)
                     except OSError as error:
                         if error.errno != 6: raise
+
+    def corrective_retention_arrival(self, publication_error=False):
+        return self.native_promotion_observations(publication_error, arrival=True)
 
     def external_transitions(self):
         legacy_data = {"settingsVersion": 60, "bindings": {"environment": "macos"},
@@ -3228,7 +3289,8 @@ os.execv(REAL,[REAL,*args])
             self.ipc("runtimeConsumerEdit", "runtime-save-failed")
             saved = self.wait_callback("runtime-save-failed", "save-callback")
             self.check(not saved["success"], "runtime consumer test did not observe the intended real save failure")
-            self.check("Settings I/O failed: PermissionError" in saved["error"], "runtime save failed for an unrelated reason")
+            self.check(saved["receipt"]["error"]["code"] == "lock-failed",
+                       "runtime save failed for an unrelated native IO reason")
             self.check({"bar", "notifications"}.issubset({e["detail"] for e in self.events() if e["event"] == "effective-change"}),
                        "failed persistence did not emit both public effective section changes")
             after_notify = notify(suppressed)
@@ -3252,46 +3314,34 @@ os.execv(REAL,[REAL,*args])
             directory.chmod(mode)
 
     def callback_lifecycle(self):
-        def gate_defaults():
-            settings = self.tree / "Commons/Settings.qml"
-            text = settings.read_text()
-            path = '    path: Quickshell.shellDir + "/Configs/defaults.json"'
-            getter = '  function getDefaultValue(path) {'
-            if text.count(path) != 1 or text.count(getter) != 1:
-                raise HarnessBlocked("actual default FileView/getter diagnostic anchors are not unique")
-            text = text.replace(path, '    path: "" // HARNESS_DEFAULTS_GATE: actual FileView load is released explicitly.')
-            text = text.replace(getter, '  function __harnessDefaultLoad() {\n'
-                '    if (defaultSettingsFileView.path === "")\n'
-                '      defaultSettingsFileView.path = Quickshell.shellDir + "/Configs/defaults.json";\n'
-                '    else defaultSettingsFileView.reload();\n'
-                '  }\n\n' + getter)
-            settings.write_text(text)
-        self.start("callback-lifecycle", before_launch=gate_defaults)
+        self.start("callback-lifecycle")
         def facade():
             return json.loads(self.ipc("modelFacadeState"))
-        unloaded = facade()
-        self.check(not unloaded["defaultDefined"], "actual bound getter did not observe the gated pre-load default state")
         default_file = self.tree / "Configs/defaults.json"
         original_default_bytes = default_file.read_bytes()
         expected_default = json.loads(original_default_bytes)["ui"]["fontDefaultScale"]
-        self.ipc("modelDefaults", "__harnessDefaultLoad")
-        self.wait(lambda: facade()["defaultDefined"] and facade()["boundDefault"] == expected_default,
-                  "actual bound default getter after FileView load")
         loaded = facade()
+        self.check(loaded["defaultDefined"] and loaded["boundDefault"] == expected_default,
+                   "actual bound generated default is not available after native readiness")
+        # Defaults are immutable build metadata after the owner cutover, not a
+        # runtime FileView. Preserve the source-corruption/restoration schedule
+        # and observe that neither transition mutates runtime defaults or intent.
         try:
             default_file.write_text('{"controlledInvalidDefault":')
-            self.ipc("modelDefaults", "__harnessDefaultLoad")
-            self.wait(lambda: not facade()["defaultDefined"], "actual bound getter after characterized defaults parse failure")
             failed = facade()
+            self.check(failed["defaultDefined"] and failed["boundDefault"] == expected_default and
+                       failed["native"]["inputPrefix"] == loaded["native"]["inputPrefix"],
+                       "runtime authored-default corruption changed immutable metadata or created input")
         finally:
             default_file.write_bytes(original_default_bytes)
-            self.ipc("modelDefaults", "__harnessDefaultLoad")
-            self.wait(lambda: facade()["defaultDefined"] and facade()["boundDefault"] == expected_default,
-                      "actual bound getter after default source restoration")
+        restored = facade()
+        self.check(restored["defaultDefined"] and restored["boundDefault"] == expected_default and
+                   restored["native"]["inputPrefix"] == loaded["native"]["inputPrefix"],
+                   "authored-default restoration changed the generated bound getter or created input")
         atomic_json(self.case / "supplemental-production-default-binding.json", {
-            "unloaded": unloaded, "loaded": loaded, "parse_failure": failed, "restored": facade(),
+            "loaded": loaded, "source_corruption": failed, "restored": restored,
             "source_default_sha256": hashlib.sha256(original_default_bytes).hexdigest(),
-            "scope": "actual Settings FileView completion/parse-failure and actual bound getter, not the inert test bridge"})
+            "scope": "actual Settings generated default binding; runtime source edits are not metadata reloads"})
         self.ipc("requestThrow", "none", "throwing-request")
         self.ipc("request", "macos", "after-throw")
         self.check(self.wait_callback("throwing-request")["success"], "throwing callback request failed")
@@ -3305,15 +3355,18 @@ os.execv(REAL,[REAL,*args])
         self.check(self.wait_callback("after-save-throw", "save-callback")["success"], "save exception stranded later caller")
         self.ipc("modelCallbackReentry")
         self.wait(lambda: any(e["event"] == "model-facade-contract" for e in self.events()),
-                  "actual synchronous empty-save callback registry/reentry")
+                   "actual asynchronous empty-save callback registry/reentry")
         contract = next(e["detail"] for e in self.events() if e["event"] == "model-facade-contract")
-        self.check(contract["atSignal"]["serial"] == contract["beforeSerial"] + 1 and
-                   contract["atSignal"]["registered"] == 0 and contract["afterSerial"] == contract["beforeSerial"] + 2 and
-                   contract["afterRegistered"] == 0, "actual callback registration/detachment crossed the wrong invocation boundary")
-        self.check([e["event"] for e in contract["events"]] == ["signal", "signal", "nested-callback", "outer-callback"] and
-                   all(e.get("success") is True and not e.get("error") and e.get("returned") is False
-                       for e in contract["events"] if e["event"].endswith("callback")),
-                   "actual empty-save signals/callbacks changed synchronous ordering, result or reentry")
+        self.check(int(contract["nested"]) > int(contract["outer"]) and
+                   contract["outer"] not in contract["atSignal"]["pendingRequests"] and
+                   not contract["after"]["pendingRequests"],
+                   "actual native callback registration/detachment crossed the wrong invocation boundary")
+        self.check([e["event"] for e in contract["events"]] == ["signal", "outer-callback", "signal", "nested-callback"] and
+                   [e["requestId"] for e in contract["events"]] == [contract["outer"], contract["outer"], contract["nested"], contract["nested"]] and
+                   all(e["status"] == "nothing_to_save" and e["requestId"] not in e["pending"] for e in contract["events"]) and
+                   all(e.get("returned") is True for e in contract["events"] if e["event"].endswith("callback")) and
+                   contract["savedSignals"] == 0,
+                   "empty saves violated async signal-before-callback order, no-op truthfulness or reentry")
         atomic_json(self.case / "supplemental-production-callback-registry.json", contract)
         self.ipc("hugeSave", "huge-stdin")
         self.check(self.wait_callback("huge-stdin", "save-callback")["success"], "huge stdin JSON failed")

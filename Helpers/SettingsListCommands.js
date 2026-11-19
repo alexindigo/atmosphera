@@ -47,6 +47,23 @@ function selector(value) {
     return "";
 }
 
+// Addresses are selectors, not serialized records. Native owned copies may
+// reorder record keys without changing the selected row/container.
+function addressIdentity(address) {
+    if (!Array.isArray(address))
+        return "";
+    var parts = [];
+    for (var i = 0; i < address.length; ++i) {
+        var part = address[i];
+        var kind = selector(part);
+        if (!kind)
+            return "";
+        parts.push(kind === "match" ? [kind, part.field, part.equals]
+            : [kind, kind === "index" ? part.index : part.key]);
+    }
+    return JSON.stringify(parts);
+}
+
 function policy(path, address) {
     if (!Array.isArray(path) || !Array.isArray(address))
         return "";
@@ -106,7 +123,7 @@ function display(store, target) {
                 return target.ensure ? [] : null;
         }
     }
-    return sequence(value) ? copy(value) : null;
+    return sequence(value) ? store.copyValue(value) : null;
 }
 
 function settled(info) {
@@ -161,12 +178,15 @@ function create(store, path, listAddress, additionalLists, captureOptions, later
         return settled(info) && info.pathGeneration === target.captured.pathGeneration
                 && info.publicationGeneration === target.captured.publicationGeneration;
     }
-    function selectedEndpoint(endpoint) {
+    function registeredEndpoint(endpoint) {
         return targets.find(function (target) {
             return endpoint && target.policyId === endpoint.policyId
-                    && JSON.stringify(target.address) === JSON.stringify(endpoint.listAddress)
-                    && target.captured.publicationGeneration === endpoint.generation;
+                    && addressIdentity(target.address) === addressIdentity(endpoint.listAddress);
         });
+    }
+    function selectedEndpoint(endpoint) {
+        var target = registeredEndpoint(endpoint);
+        return target && target.captured.publicationGeneration === endpoint.generation ? target : null;
     }
     function endpoint(targetIndex, ensure) {
         var target = targets[targetIndex === undefined ? 0 : targetIndex];
@@ -176,6 +196,44 @@ function create(store, path, listAddress, additionalLists, captureOptions, later
         if (ensure === true || (ensure === undefined && target.ensure))
             value.ensure = true;
         return value;
+    }
+    // Preserve the command facade's synchronous shape/range refusal without
+    // replaying preference values. Only list lengths change during validation;
+    // row mapping, schema admission and all actual edits stay on the worker.
+    function validateRanges(commands) {
+        var lengths = targets.map(function (target) { return display(store, target).length; });
+        function index(value, size, insertion) {
+            if (!Number.isSafeInteger(value) || value < 0 || value > size || (!insertion && value === size))
+                throw new Error("list-edit-operation");
+        }
+        commands.forEach(function (edit) {
+            if (edit.op === "transfer" || edit.op === "copy") {
+                var from = targets.indexOf(selectedEndpoint(edit.from));
+                var to = targets.indexOf(selectedEndpoint(edit.to));
+                if (from < 0 || to < 0) throw new Error("list-edit-operation");
+                if (edit.op === "copy") {
+                    // Copy inherits the entire raw list, not an indexed row.
+                    // The worker checks destination absence and raw projection.
+                    lengths[to] = lengths[from];
+                    return;
+                }
+                index(edit.from.index, lengths[from], false);
+                index(edit.to.index, lengths[to] - (from === to ? 1 : 0), true);
+                lengths[from]--;
+                lengths[to]++;
+                return;
+            }
+            var target = edit.at ? targets.indexOf(selectedEndpoint(edit.at)) : 0;
+            if (target < 0) throw new Error("list-edit-operation");
+            var selected = edit.index;
+            if (["set", "unset", "remove", "insert", "move"].indexOf(edit.op) === -1)
+                throw new Error("list-edit-operation");
+            index(selected, lengths[target], edit.op === "insert");
+            if (edit.op === "insert") lengths[target]++;
+            else if (edit.op === "remove") lengths[target]--;
+            else if (edit.op === "move") index(edit.to, lengths[target], false);
+            else if (typeof edit.field !== "string" || !edit.field.length) throw new Error("list-edit-operation");
+        });
     }
     editor = {
         initialValue: display(store, targets[0]),
@@ -198,24 +256,29 @@ function create(store, path, listAddress, additionalLists, captureOptions, later
             var commands;
             var active = [targets[0]];
             try {
-                commands = copy(edits);
+                commands = store.copyValue(edits);
                 if (!Array.isArray(commands) || commands.length === 0)
                     throw new Error("list-edit-operation");
                 commands.forEach(function (edit) {
                     var endpoints = edit.op === "transfer" || edit.op === "copy" ? [edit.from, edit.to] : edit.at ? [edit.at] : [];
                     endpoints.forEach(function (value) {
                         var target = selectedEndpoint(value);
+                        if (!target && registeredEndpoint(value) && typeof value.generation === "string"
+                                && /^(0|[1-9][0-9]*)$/.test(value.generation))
+                            throw new Error("list-edit-conflict");
                         if (!target)
                             throw new Error("list-edit-operation");
                         if (active.indexOf(target) === -1)
                             active.push(target);
                     });
                 });
-            } catch (error) { return failed("list-edit-operation", callback); }
+            } catch (error) { return failed(error.message === "list-edit-conflict" ? "list-edit-conflict" : "list-edit-operation", callback); }
             if (!active.every(current)) {
                 conflicted = true;
                 return failed("list-edit-conflict", callback);
             }
+            try { validateRanges(commands); }
+            catch (error) { return failed("list-edit-operation", callback); }
             busy = true;
             var submitted;
             try {

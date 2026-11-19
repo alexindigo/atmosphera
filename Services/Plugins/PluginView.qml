@@ -17,6 +17,7 @@ Item {
   property string entryPoint: ""
   property string url: ""
   property var api: null
+  readonly property bool apiReady: api !== null && api.settingsReady !== false
   property var context: ({})
   property bool active: true
   property bool asynchronous: true
@@ -41,7 +42,7 @@ Item {
   function _reload() {
     _failed = false;
     _initial = null;
-    if (!active || url === "") {
+    if (!active || !apiReady || url === "") {
       loader.sourceComponent = null;
       return;
     }
@@ -65,6 +66,7 @@ Item {
   // Component.onCompleted, so initial bindings never trigger extra loads.
   onUrlChanged: if (_ready) _reload()
   onApiChanged: if (_ready) _reload()
+  onApiReadyChanged: if (_ready) _reload()
   onEntryPointChanged: if (_ready) _reload()
   onActiveChanged: if (_ready) _reload()
 

@@ -36,7 +36,15 @@ Popup {
   property var _pageApi: null
   property int _inputFence: 0
   property var _previewFence: null
+  property var _cancelOpening: null
+  property var _lifetime: ({alive: true})
   signal settingsCompleted(var result)
+  signal presentationInvalidated
+  Component.onDestruction: {
+    _lifetime.alive = false;
+    if (_cancelOpening) _cancelOpening();
+    if (_editor) _editor.release();
+  }
 
   NSettingsInputGuard {
     id: inputEdits
@@ -185,6 +193,7 @@ Popup {
         NButton {
           text: I18n.tr("common.apply")
           icon: Icon.check
+          visible: root._editor !== null && root._editor.writable !== false
           enabled: !root.busy && root.settingsPage !== null && root._editor !== null
           onClicked: root.applySettings()
         }
@@ -252,17 +261,19 @@ Popup {
   }
 
   onClosed: {
+    if (_cancelOpening) { _cancelOpening(); _cancelOpening = null; }
     resetInstanceDialog.close();
     discardDialog.close();
     // Clear both source and sourceComponent to ensure full cleanup
     settingsLoader.sourceComponent = null;
     settingsLoader.source = "";
     if (_editor)
-      _editor.discard();
+      _editor.release();
     _editor = null;
     if (_pageApi)
       _pageApi.destroy();
     _pageApi = null;
+    _busy = false;
     _failed = false;
     currentPlugin = null;
     inputEdits.reset();
@@ -292,7 +303,7 @@ Popup {
 
   function _open(pluginManifest, settingsEntryPoint, instanceApi) {
     // A second open must never replace an existing dirty/busy page implicitly.
-    if (visible || _busy)
+    if (visible || _busy || _editor !== null)
       return false;
     resetInstanceDialog.close();
     currentPlugin = pluginManifest;
@@ -313,11 +324,6 @@ Popup {
     _editor = currentPluginApi.createSettingsEditor();
     if (!_editor)
       return false;
-    _pageApi = pageApiFactory.createObject(root, {
-                                           base: currentPluginApi,
-                                           initialSettings: JSON.parse(JSON.stringify(_editor.initialValue)),
-                                           pluginSettings: JSON.parse(JSON.stringify(_editor.initialValue))
-                                         });
     _failed = false;
 
     // Get plugin directory
@@ -327,12 +333,39 @@ Popup {
     var settingsEntry = pluginManifest.entryPoints[_settingsEntryPoint];
     _settingsUrl = "file://" + pluginDir + "/" + settingsEntry + "?v=" + (Registry.pluginLoadVersions[pluginId] || 0);
 
-    _loadPage();
+    var editor = _editor;
+    var lifetime = _lifetime;
+    _cancelOpening = editor.whenReady(function (result) {
+      if (!lifetime.alive || root._editor !== editor) return;
+      root._cancelOpening = null;
+      if (result.status === "opened") { root._openEditorPage(editor); return; }
+      root._failed = true;
+      root.settingsCompleted(result);
+      if (root.showToastOnSave)
+        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
+      editor.discard();
+      root._editor = null;
+      root.currentPlugin = null;
+      root.currentPluginApi = null;
+      root.currentInstanceApi = null;
+      // No page ever opened and no editable work remains. Release an adopted
+      // transparent host through its existing presentation lifetime contract.
+      root._failed = false;
+      root.presentationInvalidated();
+    });
+    return true;
+  }
 
+  function _openEditorPage(editor) {
+    _pageApi = pageApiFactory.createObject(root, {
+      base: currentPluginApi, editor: editor,
+      initialSettings: Settings.store.copyValue(editor.initialValue),
+      pluginSettings: editor.values
+    });
+    _loadPage();
     var preferred = (settingsPage && settingsPage.preferredWidth !== undefined) ? settingsPage.preferredWidth + padding * 2 : 0;
     width = Math.max(preferred, _minWidth);
     open();
-    return true;
   }
 
   function _loadPage() {
@@ -352,7 +385,7 @@ Popup {
   }
 
   function applySettings() {
-    if (!_editor || !settingsPage || _busy)
+    if (!_editor || _editor.writable === false || !settingsPage || _busy)
       return;
     inputEdits.commit();
     // Page saveSettings is synchronous staging, never a recursive owner Apply.
@@ -377,7 +410,7 @@ Popup {
       if (reset)
         _editor.resetOverrides(completed);
       else
-        _editor.apply(JSON.parse(JSON.stringify(_pageApi.pluginSettings)), completed);
+        _editor.apply(_pageApi.pluginSettings, completed);
     } catch (error) {
       _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, reset);
     }
@@ -425,8 +458,9 @@ Popup {
   }
 
   function confirmDiscard() {
-    if (_busy || (_editor && _editor.discard() === false))
-      return false;
+    if (_busy) return false;
+    if (_cancelOpening) { _cancelOpening(); _cancelOpening = null; }
+    if (_editor && _editor.discard() === false) return false;
     _editor = null;
     discardDialog.close();
     close();

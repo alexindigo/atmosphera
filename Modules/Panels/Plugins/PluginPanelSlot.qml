@@ -29,6 +29,16 @@ SmartPanel {
   // Reference to the plugin content loader (set when panel content is created)
   property var contentLoader: null
 
+  Connections {
+    target: Service
+    function onPluginUnloaded(pluginId) {
+      if (root.currentPluginId !== pluginId)
+        return;
+      root.unloadPluginPanel();
+      root.close();
+    }
+  }
+
   readonly property var _pluginContext: ({
                                            "screen": root.screen
                                          })

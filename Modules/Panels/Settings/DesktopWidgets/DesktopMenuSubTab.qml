@@ -9,6 +9,8 @@ ColumnLayout {
   enabled: Settings.data.desktopWidgets.enabled
   spacing: Style.marginL
 
+  readonly property var menuItemsModel: Settings.store.listModel(["desktopContextMenu", "items"])
+
   readonly property var availableItems: [
     {
       "id": "add-app-shortcut",
@@ -44,16 +46,18 @@ ColumnLayout {
 
     Repeater {
       id: menuItemsRepeater
-      model: Settings.data.desktopContextMenu.items
+      model: root.menuItemsModel
 
       RowLayout {
+        required property var model
+        required property int index
         spacing: Style.marginS
         Layout.fillWidth: true
 
         NToggle {
           Layout.fillWidth: true
           label: {
-            var itemId = modelData.id;
+            var itemId = model.id;
             for (var i = 0; i < root.availableItems.length; i++) {
               if (root.availableItems[i].id === itemId)
                 return I18n.tr(root.availableItems[i].labelKey);
@@ -152,6 +156,7 @@ ColumnLayout {
   }
 
   function _removeItem(index) {
+    if (!_modelCurrent()) return;
     var items = (Settings.data.desktopContextMenu.items || []).slice();
     if (index >= 0 && index < items.length) {
       items.splice(index, 1);
@@ -160,6 +165,7 @@ ColumnLayout {
   }
 
   function _swapItems(a, b) {
+    if (!_modelCurrent()) return;
     var items = (Settings.data.desktopContextMenu.items || []).slice();
     if (a >= 0 && a < items.length && b >= 0 && b < items.length) {
       var temp = items[a];
@@ -167,5 +173,9 @@ ColumnLayout {
       items[b] = temp;
       Settings.data.desktopContextMenu.items = items;
     }
+  }
+
+  function _modelCurrent() {
+    return Settings.modelIsCurrent(["desktopContextMenu", "items"], menuItemsModel);
   }
 }

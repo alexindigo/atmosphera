@@ -97,13 +97,14 @@ SmartPanel {
       spacing: Style.marginL
 
       Repeater {
-        model: Settings.data.controlCenter.cards
+        model: Settings.store.listModel(["controlCenter", "cards"])
         Loader {
-          active: modelData.enabled && (modelData.id !== "weather-card" || Settings.data.location.weatherEnabled)
+          required property var model
+          active: model.enabled && (model.id !== "weather-card" || Settings.data.location.weatherEnabled)
           visible: active
           Layout.fillWidth: true
           Layout.preferredHeight: {
-            switch (modelData.id) {
+            switch (model.id) {
             case "profile-card":
               return profileHeight;
             case "shortcuts-card":
@@ -121,7 +122,7 @@ SmartPanel {
             }
           }
           sourceComponent: {
-            switch (modelData.id) {
+            switch (model.id) {
             case "profile-card":
               return profileCard;
             case "shortcuts-card":

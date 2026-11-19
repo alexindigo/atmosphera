@@ -342,12 +342,8 @@ ColumnLayout {
   }
 
   onSelectedDirectoryChanged: {
-    if (typeof Settings !== "undefined" && Settings.data && Settings.data.wallpaper) {
-      Settings.data.wallpaper.directory = selectedDirectory;
-    }
-    if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
-      WallpaperService.refreshWallpapersList();
-    }
+    // A bound/initial selection is presentation, not user intent. The wizard
+    // owns preference changes through directoryChanged and wallpaperChanged.
     Qt.callLater(refreshWallpapers);
   }
 

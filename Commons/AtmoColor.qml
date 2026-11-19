@@ -22,6 +22,43 @@ Singleton {
   id: root
 
   property bool reloadColors: false
+  property var _reloadCallbacks: []
+  // The initial path assignment owns the bootstrap read. Requests arriving
+  // during a read or normalization belong to a later read, never this one.
+  property var _colorRead: ({
+                              callbacks: []
+                            })
+  property bool _colorReloadPending: false
+
+  function _startColorRead() {
+    if (_colorRead || !_colorReloadPending)
+      return;
+    _colorRead = {
+      callbacks: _reloadCallbacks
+    };
+    _reloadCallbacks = [];
+    _colorReloadPending = false;
+    reloadColors = true;
+    customColorsFile.reload();
+  }
+
+  function reloadFromDisk(callback) {
+    if (!Settings.directoriesCreated || customColorsFile.path === undefined) {
+      Qt.callLater(function () {
+        callback({
+                   status: "failed",
+                   error: {
+                     code: "colors-not-ready"
+                   }
+                 });
+      });
+      return;
+    }
+    _reloadCallbacks.push(callback);
+    externalColorReloadTimer.stop();
+    _colorReloadPending = true;
+    Qt.callLater(root._startColorRead);
+  }
 
   // Debounce external reload requests (file watcher + directory watcher)
   // so atomic replacements only trigger one reload.
@@ -32,8 +69,8 @@ Singleton {
     onTriggered: {
       if (customColorsFile.path !== undefined) {
         Logger.d("Color", "Reloading colors from disk");
-        reloadColors = true;
-        customColorsFile.reload();
+        root._colorReloadPending = true;
+        root._startColorRead();
       }
     }
   }
@@ -42,7 +79,6 @@ Singleton {
     if (!Settings.directoriesCreated || customColorsFile.path === undefined) {
       return;
     }
-    _loadVersion++;
     externalColorReloadTimer.restart();
   }
 
@@ -459,30 +495,45 @@ Singleton {
   property int _loadVersion: 0
   readonly property var roleKeys: SchemeSnapshot.roleKeys
 
-  function settleColorLoad(version, normalized, failure) {
-    if (version !== _loadVersion)
-      return;
-    if (normalized) {
+  function settleColorLoad(version, normalized, failure, read) {
+    const current = version === _loadVersion;
+    if (current && normalized) {
       const variant = normalized[Settings.data.colorSchemes.darkMode ? "dark" : "light"];
       for (const key of root.roleKeys)
         customColorsData[key] = variant[key];
-    } else {
+    } else if (current) {
       Logger.w("Color", "Colour load rejected; keeping last good colours:", failure || "normalization failed");
     }
     Qt.callLater(function () {
       if (version === root._loadVersion)
         root.skipTransition = false;
+      if (read && root._colorRead === read) {
+        root._colorRead = null;
+        Qt.callLater(root._startColorRead);
+        for (const callback of read.callbacks) {
+          try {
+            callback({
+                       status: current && normalized ? "reloaded" : "failed",
+                       error: {
+                         code: current && normalized ? "" : "colors-load"
+                       }
+                     });
+          } catch (error) {
+            Logger.e("Color", "Reload callback failed:", error);
+          }
+        }
+      }
     });
   }
 
-  function rejectColorLoad(reason) {
-    settleColorLoad(++_loadVersion, null, reason);
+  function rejectColorLoad(reason, read) {
+    settleColorLoad(++_loadVersion, null, reason, read);
   }
 
-  function loadColors(data) {
+  function loadColors(data, read) {
     const version = ++_loadVersion;
     ColorSchemeService.normalizeScheme(data, function (normalized, failure) {
-      root.settleColorLoad(version, normalized, failure);
+      root.settleColorLoad(version, normalized, failure, read);
     });
   }
 
@@ -494,21 +545,14 @@ Singleton {
     onFileChanged: scheduleExternalColorReload()
     onLoaded: {
       try {
-        root.loadColors(JSON.parse(text()));
+        root.loadColors(JSON.parse(text()), root._colorRead);
       } catch (error) {
-        root.rejectColorLoad("Invalid colours JSON: " + error);
+        root.rejectColorLoad("Invalid colours JSON: " + error, root._colorRead);
       }
     }
 
-    // Trigger initial load when path changes from empty to actual path
-    onPathChanged: {
-      if (path !== undefined) {
-        root._loadVersion++;
-        reload();
-      }
-    }
     onLoadFailed: function (error) {
-      root.rejectColorLoad("Cannot read colours file: " + error);
+      root.rejectColorLoad("Cannot read colours file: " + error, root._colorRead);
       if (reloadColors) {
         reloadColors = false;
         return;

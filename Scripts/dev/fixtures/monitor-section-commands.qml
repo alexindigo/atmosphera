@@ -1,6 +1,7 @@
 // Actual monitor owner/factory contract; inert until the named VM runner invokes it.
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services.UI
 import qs.Modules.Panels.Settings.Bar as Bar
@@ -15,9 +16,27 @@ Item {
   property int globalWrites: 0
   property int refusals: 0
   property var live: null
-  Bar.MonitorWidgetsConfig { id: monitor; screen: root.testScreen }
+  property var continuation: null
+  property var afterFault: null
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
+  readonly property var monitor: monitorLoader.item
+  Loader { id: monitorLoader; active: Settings.isLoaded; sourceComponent: Bar.MonitorWidgetsConfig { screen: root.testScreen } }
   function check(ok, message) { if (!ok) throw new Error("I4_MONITOR_ASSERT: " + message); }
-  function fail(error) { console.error(String(error)); Qt.exit(2); }
+  function fail(error) { console.error(String(error)); if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair",function(){});return;} Qt.exit(2); }
+  function later(next) {check(continuation===null,"one scheduled fixture continuation");continuation=next;readyWait.start();}
+  Timer {
+    id:readyWait;interval:20;repeat:true
+    onTriggered:{try{
+      if(!root.monitor)return;
+      var paths=[["bar","widgets","left"],["bar","widgets","center"],["bar","widgets","right"],["bar","screenOverrides"]];
+      var probes=paths.map(function(path){return Settings.createRecordListEditor(path,[]);});
+      var ready=probes.every(function(probe){return !!probe;});
+      probes.forEach(function(probe){if(probe)probe.detach();});
+      if(!ready)return;
+      stop();var next=root.continuation;root.continuation=null;next();
+    }catch(error){stop();root.fail(error);}}
+  }
   function shown(): var { return Settings.getBarWidgetsForScreen(name); }
   function seed() {
     Settings.data.bar.widgets.left = [{id: "Volume", tag: "first", opaque: {keep: true}}, {id: "Volume", tag: "second"}];
@@ -32,17 +51,18 @@ Item {
     check(Settings.data.bar.screenOverrides[0].widgets === undefined, "no inherited preference created");
     check(Settings.data.bar.screenOverrides[1].widgets.left[0].tag === "duplicate", "later duplicate untouched");
   }
-  function reject(interaction, action, target, code, next) {
+  function reject(interaction, action, target, code, next, workerValidation) {
     var before = JSON.stringify(Settings.data.bar.screenOverrides);
-    check(!interaction.submit(action, target, function (result) {
+    var queued = interaction.submit(action, target, function (result) {
       try {
         check(result.status === "failed" && result.error.code === code, code);
         check(JSON.stringify(Settings.data.bar.screenOverrides) === before, "refused interaction changes nothing");
         interaction.detach();
         refusals++;
-        next();
+        later(next);
       } catch (error) { fail(error); }
-    }), "synchronous refused admission");
+    });
+    check(workerValidation ? queued : !queued, "refusal ingress contract " + code + "/" + refusals);
     check(JSON.stringify(Settings.data.bar.screenOverrides) === before, "no transient inheritance on refusal");
   }
   function staleGlobal() {
@@ -59,12 +79,14 @@ Item {
     reject(interaction, "move", "center", "list-edit-conflict", function () {
       untouched();
       seed();
+      later(function () {
       var route = monitor.captureWidgetInteraction("left", 0);
       Settings.setScreenOverride(name, "widgets", {left: [{id: "Volume", tag: "foreign"}], center: [], right: []});
       reject(route, "remove", null, "list-edit-conflict", function () {
         check(shown().left[0].tag === "foreign", "concurrent creator retained");
         seed();
-        invalidThenMove();
+        later(invalidThenMove);
+      });
       });
     });
   }
@@ -94,17 +116,18 @@ Item {
   }
   function firstLiveEdit() {
     seed();
+    later(function () {
     live = monitor.captureWidgetSettings("left", 0);
     check(live !== null && live.initialValue.tag === "first", "live editor captures inherited row");
     live.initialValue.opaque.keep = false;
     untouched();
-    Settings.setBindingsUnresolved(true);
+    fault("block",function () {
     var before = writes;
     check(live.submit({edited: true}, function (result) {
       try {
         check(result.status === "failed", "real failed save receipt");
         check(shown().left[0].edited === true && shown().left[0].opaque.keep && writes === before + 1, "failed save retains one inherited admission");
-        Settings.setBindingsUnresolved(false);
+        fault("repair",function () {
         Settings.data.bar.widgets.left = [{id: "Volume", tag: "new-global"}];
         Settings.data.bar.widgets.center = [{id: "Clock", tag: "new-center"}];
         // The first copy is already admitted. Retry only this field command and
@@ -117,8 +140,11 @@ Item {
             missingSection();
           } catch (error) { fail(error); }
         }), "later local edit ignores unused copy sources");
+        });
       } catch (error) { fail(error); }
     }), "first inherited field input admitted");
+    });
+    });
   }
   function missingSection() {
     var existing = monitor.captureWidgetSettings("left", 0);
@@ -131,6 +157,7 @@ Item {
       try {
         check(result.status === "failed" && result.error.code === "list-edit-conflict", "live repeated-row replacement refuses");
         existing.detach();
+        later(function () {
         check(monitor._addWidgetToSection("Clock", "center"), "missing section insert");
         Settings.saveResult(function (saved) {
           try {
@@ -145,6 +172,7 @@ Item {
             }), "existing route move");
           } catch (error) { fail(error); }
         });
+        });
       } catch (error) { fail(error); }
     }), "live stale input refused");
   }
@@ -157,11 +185,13 @@ Item {
   }
   function disabledStoredOverride() {
     Settings.setScreenOverride(name, "enabled", false);
+    later(function () {
     var interaction = monitor.captureWidgetInteraction("left", 0);
     check(interaction !== null, "disabled unreachable path captured for refusal");
     reject(interaction, "remove", null, "list-edit-operation", function () {
       Settings.setScreenOverride(name, "enabled", true);
-      finalSave();
+      later(finalSave);
+    }, true);
     });
   }
   function finalSave() {
@@ -187,16 +217,28 @@ Item {
         return;
       }
       seed();
+      later(function () {
       var owned = monitor._getWidgetsContainer();
       owned.right.push({id: "unpublished"});
       untouched();
       check(Settings.data.bar.widgets.right.length === 0, "read copy has no live aliases");
       staleGlobal();
+      });
     } catch (error) { fail(error); }
   }
   Connections { target: Settings.data.bar; function onScreenOverridesChanged() { root.writes++; } }
   Connections { target: Settings.data.bar.widgets; function onLeftChanged() { root.globalWrites++; } function onCenterChanged() { root.globalWrites++; } function onRightChanged() { root.globalWrites++; } }
   Connections { target: Settings; function onSettingsLoaded() { root.begin(); } }
+  function fault(mode,callback){afterFault=callback;faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
+  Process {
+    id:faultProcess
+    onExited:code=>{try{
+      root.check(code===0,"private real-IO fault prerequisite");
+      root.faultBlocked=command[command.length-1]==="block";
+      if(root.exitAfterRepair){Qt.exit(2);return;}
+      var callback=root.afterFault;root.afterFault=null;callback();
+    }catch(error){root.fail(error);}}
+  }
   Component.onCompleted: begin()
   Timer { interval: 90000; running: true; onTriggered: root.fail("monitor commands watchdog") }
 }

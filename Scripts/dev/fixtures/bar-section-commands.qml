@@ -19,8 +19,12 @@ PanelWindow {
   property int settingsCaptures: 0
   property int revisionBefore: 0
   property bool iconsReady: false
+  property var continuation: null
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
   readonly property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
-  Bar.BarTab { id: owner; visible: false }
+  readonly property var owner: ownerLoader.item
+  Loader { id: ownerLoader; active: Settings.isLoaded; visible: false; sourceComponent: Bar.BarTab {} }
   ListModel { id: available; ListElement { key: "Clock"; name: "Clock" } }
   ColumnLayout {
     anchors.fill: parent
@@ -29,8 +33,8 @@ PanelWindow {
       id: left
       sectionName: "Left"; sectionId: "left"; availableWidgets: available
       widgetRegistry: BarWidgetRegistry
-      widgetModel: Settings.data.bar.widgets.left
-      captureWidgetInteraction: owner.captureWidgetInteraction
+      widgetModel: Settings.isLoaded ? Settings.data.bar.widgets.left : []
+      captureWidgetInteraction: owner ? owner.captureWidgetInteraction : null
       onMoveWidget: (section, index, target) => owner._moveWidgetBetweenSections(section, index, target)
       onRemoveWidget: (section, index) => owner._removeWidgetFromSection(section, index)
       onReorderWidget: (section, from, to) => owner._reorderWidgetInSection(section, from, to)
@@ -44,8 +48,8 @@ PanelWindow {
       id: center
       sectionName: "Center"; sectionId: "center"; availableWidgets: available
       widgetRegistry: BarWidgetRegistry
-      widgetModel: Settings.data.bar.widgets.center
-      captureWidgetInteraction: owner.captureWidgetInteraction
+      widgetModel: Settings.isLoaded ? Settings.data.bar.widgets.center : []
+      captureWidgetInteraction: owner ? owner.captureWidgetInteraction : null
       onMoveWidget: (section, index, target) => owner._moveWidgetBetweenSections(section, index, target)
       onRemoveWidget: (section, index) => owner._removeWidgetFromSection(section, index)
       onReorderWidget: (section, from, to) => owner._reorderWidgetInSection(section, from, to)
@@ -55,8 +59,8 @@ PanelWindow {
       id: right
       sectionName: "Right"; sectionId: "right"; availableWidgets: available
       widgetRegistry: BarWidgetRegistry
-      widgetModel: Settings.data.bar.widgets.right
-      captureWidgetInteraction: owner.captureWidgetInteraction
+      widgetModel: Settings.isLoaded ? Settings.data.bar.widgets.right : []
+      captureWidgetInteraction: owner ? owner.captureWidgetInteraction : null
       onMoveWidget: (section, index, target) => owner._moveWidgetBetweenSections(section, index, target)
       onRemoveWidget: (section, index) => owner._removeWidgetFromSection(section, index)
       onReorderWidget: (section, from, to) => owner._reorderWidgetInSection(section, from, to)
@@ -72,14 +76,23 @@ PanelWindow {
       root.begin();
     }
   }
-  function fail(error) { console.error(String(error)); Qt.exit(2); }
+  function fail(error) { console.error(String(error)); if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair");return;} Qt.exit(2); }
   function rows() { return [{id: "Volume", tag: "first", opaque: {keep: true}}, {id: "Volume", tag: "second", opaque: {keep: true}}]; }
   function seed() {
     Settings.data.bar.widgets.left = rows();
     Settings.data.bar.widgets.center = [{id: "Clock", tag: "destination"}];
     Settings.data.bar.widgets.right = [];
   }
-  function later(callback) { Qt.callLater(function () { try { callback(); } catch (error) { root.fail(error); } }); }
+  function later(callback) {check(continuation===null,"one fixture continuation");continuation=callback;readyWait.start();}
+  Timer {
+    id:readyWait;interval:20;repeat:true
+    onTriggered:{try{
+      if(!root.owner)return;
+      var probes=["left","center","right"].map(function(section){return Settings.createRecordListEditor(["bar","widgets",section],[]);});
+      var ready=probes.every(function(probe){return !!probe;});probes.forEach(function(probe){if(probe)probe.detach();});
+      if(!ready)return;stop();var next=root.continuation;root.continuation=null;next();
+    }catch(error){stop();root.fail(error);}}
+  }
   function openLeft(action) {
     check(left.openWidgetMenu(0) && left.widgetMenuVisible, "real menu opened");
     return left.activateWidgetMenu(action);
@@ -146,9 +159,11 @@ PanelWindow {
       } else if (stage === 2) {
         refused(result);
         check(Settings.data.bar.widgets.left.length === 2 && Settings.data.bar.widgets.center[0].tag === "destination", "both menu owners retained");
-        stage = 3;
-        revisionBefore = BarService.widgetsRevision;
-        check(openLeft("center"), "menu transfer admitted");
+        later(function () {
+          stage = 3;
+          revisionBefore = BarService.widgetsRevision;
+          check(openLeft("center"), "menu transfer admitted");
+        });
       } else if (stage === 3) {
         check(result.status === "admitted" && result.refreshState === "current", "menu current admission");
         check(Settings.data.bar.widgets.left.length === 1 && Settings.data.bar.widgets.center[1].tag === "first" && Settings.data.bar.widgets.center[1].opaque.keep, "menu consumer original row");
@@ -186,9 +201,7 @@ PanelWindow {
         later(function () {
           check(Settings.data.bar.widgets.center[0].id === "Clock", "insert consumer");
           stage = 8;
-          Settings.setBindingsUnresolved(true);
-          left.openWidgetSettings(0, Settings.data.bar.widgets.left[0]);
-          check(settingsCaptures === 1, "settings owner captured before component creation");
+          fault("block");
         });
       }
     } catch (error) { fail(error); }
@@ -204,9 +217,7 @@ PanelWindow {
         check(left.widgetSettingsDiscardPending, "explicit discard confirmation");
         left.keepWidgetSettings();
         check(left.widgetSettingsDirty && !left.widgetSettingsDiscardPending, "cancel discard retains input");
-        Settings.setBindingsUnresolved(false);
-        stage = 9;
-        left.saveWidgetSettings();
+        fault("repair");
       } else if (stage === 9) {
         check(result.status !== "failed" && !left.widgetSettingsDirty, "same captured Popup retry acknowledged");
       }
@@ -250,13 +261,26 @@ PanelWindow {
       }
       seed();
       Settings.data.bar.screenOverrides = [{name: Quickshell.screens[0].name, widgets: {left: [{id: "Volume", tag: "screen-untouched"}], center: [], right: []}}];
+      later(function () {
       if (typeof owner.captureWidgetInteraction === "function")
         optionalActor();
       else
         firstMenu();
+      });
     } catch (error) { fail(error); }
   }
   Connections { target: Settings; function onSettingsLoaded() { root.begin(); } }
+  function fault(mode){faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
+  Process {
+    id:faultProcess
+    onExited:code=>{try{
+      root.check(code===0,"private real-IO fault prerequisite");
+      root.faultBlocked=command[command.length-1]==="block";
+      if(root.exitAfterRepair){Qt.exit(2);return;}
+      if(root.faultBlocked){left.openWidgetSettings(0,Settings.data.bar.widgets.left[0]);root.check(root.settingsCaptures===1,"settings owner captured before component creation");}
+      else{root.stage=9;left.saveWidgetSettings();}
+    }catch(error){root.fail(error);}}
+  }
   Component.onCompleted: begin()
   Timer { interval: 90000; running: true; onTriggered: root.fail("bar section watchdog") }
 }

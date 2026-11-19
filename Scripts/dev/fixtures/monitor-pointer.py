@@ -15,6 +15,9 @@ def exercise(R, W, source, installed, out, label, env, client, run):
     runtime = work / "r"
     runtime.mkdir(mode=0o700)
     config = work / "c"
+    (config / "settings/plugins").mkdir(parents=True)
+    for directory in (W / ("mk" + label), W / ("mv" + label)):
+        directory.mkdir(parents=True)
     socket = work / "u.sock"
     unit = "atcq-monitor-pointer-" + label
     setting = {**env, **client, "QT_QPA_PLATFORM": "wayland", "XDG_RUNTIME_DIR": str(runtime),

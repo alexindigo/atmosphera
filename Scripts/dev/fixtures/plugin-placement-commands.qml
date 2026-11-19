@@ -18,6 +18,7 @@ Scope {
   property int stage: 0
   property int polls: 0
   property bool registrationObserved: false
+  property var continuation: null
   readonly property string removed: "plugin:i4-remove"
   readonly property string added: "plugin:i4-add"
   function check(ok, text) {
@@ -37,6 +38,23 @@ Scope {
         fail(error);
       }
     });
+  }
+  function settled(next) {
+    check(continuation === null, "one fixture settlement continuation");
+    continuation = next; settlement.start();
+  }
+  Timer {
+    id: settlement; interval: 20; repeat: true
+    onTriggered: {
+      try {
+        var paths = [["bar","widgets","left"],["bar","widgets","center"],["bar","widgets","right"],["bar","screenOverrides"],["desktopWidgets","monitorWidgets"]];
+        var probes = paths.map(function (path) { return Settings.createRecordListEditor(path, []); });
+        var ready = probes.every(function (probe) { return !!probe; });
+        probes.forEach(function (probe) { if (probe) probe.detach(); });
+        if (!ready) return;
+        stop(); var next = root.continuation; root.continuation = null; next();
+      } catch (error) { stop(); root.fail(error); }
+    }
   }
   function seedBar() {
     Settings.data.bar.widgets.left = [
@@ -144,6 +162,7 @@ Scope {
         return;
       }
       seedBar();
+      settled(function () {
       if (Quickshell.env("I4_PARENT") === "1") {
         Service.removeWidgetFromBar(removed);
         check(Settings.data.bar.screenOverrides[0].widgets.center === undefined, "absent removal section stays absent");
@@ -155,6 +174,7 @@ Scope {
       command.detach();
       check(Settings.data.bar.screenOverrides[0].widgets.right === undefined, "cancel does not ensure a section");
       staleInsert();
+      });
     } catch (error) {
       fail(error);
     }
@@ -173,14 +193,14 @@ Scope {
       try {
         check(result.status === "failed" && result.error.code === "list-edit-conflict", "insertion target ABA refuses");
         check(JSON.stringify(Settings.data.bar.screenOverrides) === before && Settings.data.bar.widgets.right.length === 0, "stale insertion changes no owner");
-        invalidInsert();
+        settled(invalidInsert);
       } catch (error) {
         fail(error);
       }
     }), "stale insertion admission false");
   }
   function invalidInsert() {
-    Settings.data.bar.screenOverrides = [
+    var invalid = [
           {
             name: "i4-good",
             widgets: {}
@@ -192,12 +212,32 @@ Scope {
             }
           }
         ];
-    var before = JSON.stringify(Settings.data.bar.screenOverrides), count = rightWrites;
-    check(!Service.addWidgetToBar(added, "right"), "late null destination refuses");
-    check(rightWrites === count && JSON.stringify(Settings.data.bar.screenOverrides) === before, "invalid target causes no global or earlier target write");
-    seedBar();
+    var before = JSON.stringify(Settings.data.bar.screenOverrides), count = rightWrites, screens = screenWrites;
+    var refused = false;
+    try { Settings.data.bar.screenOverrides = invalid; }
+    catch (error) { refused = String(error).indexOf("not-nullable") !== -1; }
+    check(refused && rightWrites === count && screenWrites === screens && JSON.stringify(Settings.data.bar.screenOverrides) === before,
+          "invalid null destination is atomically refused at typed ingress");
+    var command = Settings.createRecordListEditor(["bar","widgets","right"], [], [
+      {path:["bar","screenOverrides"],listAddress:[{field:"name",equals:"i4-a"},{key:"widgets"},{key:"right"}],ensure:true}
+    ]);
+    check(command !== null, "actual multi-owner invalid-batch capture");
+    command.submit([
+      {op:"insert",index:0,value:{id:added}},
+      {op:"insert",index:0,value:null,at:command.target(1)}
+    ], function (result) {
+      try {
+        check(result.status === "failed", "late null batch member refuses");
+        check(rightWrites === count && screenWrites === screens && Settings.data.bar.widgets.right.length === 0 && JSON.stringify(Settings.data.bar.screenOverrides) === before,
+              "invalid late member causes no global or earlier target write");
+        command.detach(); seedBar(); settled(insertBar);
+      } catch (error) { fail(error); }
+    });
+  }
+  function insertBar() {
     var screens = screenWrites, right = rightWrites;
     check(Service.addWidgetToBar(added, "right"), "actual immediate insertion");
+    settled(function () {
     check(screenWrites === screens + 1 && rightWrites === right + 1, "one assignment per insertion owner");
     var rows = Settings.data.bar.screenOverrides;
     check(rows[0].widgets.right[0].id === added && rows[1].widgets.right[1].id === added && rows[3].widgets.right[0].id === added, "all selected targets inserted");
@@ -206,6 +246,7 @@ Scope {
     var noChange = screenWrites + leftWrites + centerWrites + rightWrites;
     check(!Service.addWidgetToBar(added, "left") && noChange === screenWrites + leftWrites + centerWrites + rightWrites, "duplicate add is inert");
     receipt(staleRemove);
+    });
   }
   function staleRemove() {
     var command = Service.createBarWidgetRemoval(removed);
@@ -219,7 +260,7 @@ Scope {
     check(!command.submit(function (result) {
       try {
         check(result.status === "failed" && screenWrites === count && leftWrites === left && JSON.stringify(Settings.data.bar.screenOverrides) === before, "one stale supplied owner prevents every removal");
-        removeBar();
+        settled(removeBar);
       } catch (error) {
         fail(error);
       }
@@ -228,12 +269,14 @@ Scope {
   function removeBar() {
     var count = screenWrites, left = leftWrites, center = centerWrites, right = rightWrites;
     check(Service.removeWidgetFromBar(removed), "actual bar removal");
+    settled(function () {
     check(screenWrites === count + 1 && leftWrites === left + 1 && centerWrites === center + 1 && rightWrites === right, "each touched leaf once, untouched global not assigned");
     var rows = Settings.data.bar.screenOverrides;
     check(rows[0].widgets.center === undefined && rows[1].widgets.left === undefined && rows[1].widgets.center === undefined, "absent removal section stays absent");
     check(rows[2].widgets.left[0].tag === "duplicate" && rows[0].widgets.left[0].opaque.keep, "duplicate and surviving unknown row preserved");
     check(Settings.data.bar.widgets.left.length === 1 && Settings.data.bar.widgets.center.length === 0, "reverse-index repeated removals");
     receipt(desktop);
+    });
   }
   function desktop() {
     Settings.data.desktopWidgets.monitorWidgets = [
@@ -279,6 +322,9 @@ Scope {
             opaque: "desktop-absent"
           }
         ];
+    settled(staleDesktop);
+  }
+  function staleDesktop() {
     var command = Service.createPluginDesktopRemoval("i4-remove");
     var current = Settings.data.desktopWidgets.monitorWidgets;
     Settings.data.desktopWidgets.monitorWidgets = current.concat([
@@ -292,13 +338,17 @@ Scope {
     check(!command.submit(function (result) {
       try {
         check(result.status === "failed" && desktopWrites === count, "stale desktop batch changes nothing");
+        settled(function () {
         check(Service.removePluginDesktopWidgetsFromSettings("i4-remove"), "actual desktop cleanup");
+        settled(function () {
         check(desktopWrites === count + 1, "desktop cleanup is one owning-leaf assignment across monitors");
         var rows = Settings.data.desktopWidgets.monitorWidgets;
         check(rows[0].opaque === "desktop-a" && rows[0].widgets[0].opaque.keep && rows[1].widgets.length === 0, "desktop unknown ancestry and empty list retained");
         check(rows[2].widgets[0].tag === "duplicate" && rows[3].widgets === undefined, "later duplicate and missing widgets untouched");
         check(!Service.removePluginDesktopWidgetsFromSettings("i4-remove") && desktopWrites === count + 1, "duplicate-only leftover does not cause a second cleanup");
         receipt(startRegistration);
+        });
+        });
       } catch (error) {
         fail(error);
       }

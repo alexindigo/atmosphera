@@ -2,6 +2,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Modules.Panels.Settings.Bar as Bar
 import qs.Services.UI
@@ -35,15 +36,58 @@ PanelWindow {
     publication.reload();
     publication.waitForJob();
     var stored = JSON.parse(publication.text()).screenOverrides[0].widgets.left;
-    check(JSON.stringify(stored) === JSON.stringify(rows()) && stored[0].iconColor === "primary", "original queued publication reaches file");
+    check(SettingsValues.equal(stored, rows()) && stored[0].iconColor === "primary", "original queued publication reaches file");
   }
+  property var continuation: null
+  property var afterFault: null
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
   function check(ok, name) {
     if (!ok)
       throw new Error("I4_BAR_ASSERT: " + name);
   }
   function fail(error) {
     console.error(String(error));
+    if (faultBlocked && !faultProcess.running) {
+      exitAfterRepair = true;
+      fault("repair", function () {});
+      return;
+    }
     Qt.exit(2);
+  }
+  function later(next) {
+    check(continuation === null, "one fixture continuation");
+    continuation = next;
+    readyWait.start();
+  }
+  Timer {
+    id: readyWait
+    interval: 20
+    repeat: true
+    onTriggered: {
+      try {
+        var paths = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["bar", "screenOverrides"]];
+        var probes = paths.map(function (path) {
+          return Settings.createRecordListEditor(path, []);
+        });
+        var ready = probes.every(function (probe) {
+          return !!probe;
+        });
+        probes.forEach(function (probe) {
+          if (probe)
+            probe.detach();
+        });
+        if (!ready)
+          return;
+        stop();
+        var next = root.continuation;
+        root.continuation = null;
+        next();
+      } catch (error) {
+        stop();
+        root.fail(error);
+      }
+    }
   }
   function rows() {
     return Settings.getBarWidgetsForScreen(testScreen.name).left;
@@ -96,187 +140,204 @@ PanelWindow {
   }
   function stale() {
     seed();
-    capture();
-    var old = JSON.parse(JSON.stringify(rows()));
-    assign([old[1], old[0]]);
-    var before = JSON.stringify(rows());
-    editor.submit({
-                    displayMode: "alwaysShow"
-                  }, function (result) {
-                    try {
-                      rejected(result, "list-edit-conflict");
-                      aba();
-                    } catch (error) {
-                      fail(error);
-                    }
-                  });
-    check(JSON.stringify(rows()) === before, "captured bar refuses repeated-ID replacement " + route);
+    later(function () {
+      capture();
+      var old = JSON.parse(JSON.stringify(rows()));
+      assign([old[1], old[0]]);
+      var before = JSON.stringify(rows());
+      editor.submit({
+                      displayMode: "alwaysShow"
+                    }, function (result) {
+                      try {
+                        rejected(result, "list-edit-conflict");
+                        aba();
+                      } catch (error) {
+                        fail(error);
+                      }
+                    });
+      check(JSON.stringify(rows()) === before, "captured bar refuses repeated-ID replacement " + route);
+    });
   }
   function aba() {
     seed();
-    capture();
-    var old = JSON.parse(JSON.stringify(rows()));
-    assign([
-             {
-               id: "intervening"
-             }
-           ]);
-    assign(old);
-    check(editor.submit({
-                          displayMode: "alwaysShow"
-                        }, function (result) {
-                          try {
-                            rejected(result, "list-edit-conflict");
-                            if (route === 0)
-                              routing();
-                            else
-                              failedSave();
-                          } catch (error) {
-                            fail(error);
-                          }
-                        }) === false, "notified ABA refused " + route);
-    check(rows()[0].displayMode === undefined, "ABA unchanged consumer " + route);
-  }
-  function routing() {
-    seed();
-    capture();
-    Settings.data.bar.screenOverrides = [
-          {
-            name: testScreen.name,
-            widgets: {
-              left: [
-                {
-                  id: "Volume"
-                }
-              ],
-              center: [],
-              right: []
-            }
-          }
-        ];
-    check(editor.submit({
-                          displayMode: "alwaysShow"
-                        }, function (result) {
-                          try {
-                            rejected(result, "list-edit-conflict");
-                            check(rows()[0].displayMode === undefined && Settings.data.bar.widgets.left[0].displayMode === undefined, "both routes unchanged");
-                            Settings.data.bar.screenOverrides = [
-                                  {
-                                    name: testScreen.name,
-                                    enabled: false,
-                                    widgets: {
-                                      left: [
-                                        {
-                                          id: "Volume"
-                                        }
-                                      ],
-                                      center: [],
-                                      right: []
-                                    }
-                                  }
-                                ];
-                            seed();
-                            capture();
-                            editor.submit({
-                                            displayMode: "alwaysHide"
-                                          }, function (disabled) {
-                                            try {
-                                              check(disabled.status !== "failed", "disabled override receipt");
-                                              check(Settings.data.bar.widgets.left[0].displayMode === "alwaysHide", "disabled override displayed global consumer");
-                                              check(Settings.data.bar.screenOverrides[0].widgets.left[0].displayMode === undefined, "disabled override untouched");
-                                              Settings.data.bar.screenOverrides = [];
-                                              failedSave();
-                                            } catch (error) {
-                                              fail(error);
-                                            }
-                                          });
-                          } catch (error) {
-                            fail(error);
-                          }
-                        }) === false, "route change refused");
-  }
-  function failedSave() {
-    seed();
-    capture();
-    Settings.setBindingsUnresolved(true);
-    check(editor.submit({
-                          displayMode: "alwaysShow"
-                        }, function (result) {
-                          try {
-                            check(result.status === "failed", "failed aggregate receipt " + route);
-                            check(rows()[0].displayMode === "alwaysShow", "failed save retains admitted input " + route);
-                            Settings.setBindingsUnresolved(false);
-                            check(editor.submit({
-                                                  displayMode: "alwaysShow"
-                                                }, function (retry) {
-                                                  try {
-                                                    check(retry.status !== "failed", "same session retry " + route);
-                                                    saved();
-                                                  } catch (error) {
-                                                    fail(error);
-                                                  }
-                                                }) === true, "retry admitted " + route);
-                          } catch (error) {
-                            fail(error);
-                          }
-                        }) === true, "failure input admitted " + route);
-  }
-  function saved() {
-    seed();
-    capture();
-    var fields = {
-      id: "legacy page id is not field intent",
-      displayMode: "alwaysHide"
-    };
-    check(editor.submit(fields, function (result) {
-      try {
-        check(result.status === "saved" || result.status === "nothing_to_save", "acknowledged field edit " + route);
-        check(rows()[0].displayMode === "alwaysHide" && rows()[0].id === "Volume", "actual edited consumer " + route);
-        check(rows()[0].opaque === "first" && rows()[1].opaque === "second" && rows()[1].displayMode === undefined, "unrelated fields and repeated sibling preserved " + route);
-        var held = editor;
-        held.detach();
-        check(held.submit({
-                            displayMode: "onhover"
-                          }, function (detached) {
+    later(function () {
+      capture();
+      var old = JSON.parse(JSON.stringify(rows()));
+      assign([
+               {
+                 id: "intervening"
+               }
+             ]);
+      assign(old);
+      check(editor.submit({
+                            displayMode: "alwaysShow"
+                          }, function (result) {
                             try {
-                              rejected(detached, "list-editor-closed");
-                              if (route === 0) {
-                                route = 1;
-                                stale();
-                              } else {
-                                finalChecks();
-                                dialogCases();
-                              }
+                              rejected(result, "list-edit-conflict");
+                              if (route === 0)
+                                routing();
+                              else
+                                failedSave();
                             } catch (error) {
                               fail(error);
                             }
-                          }) === false, "detached refuses new input " + route);
-      } catch (error) {
-        fail(error);
-      }
-    }) === true, "edit admitted " + route);
-    fields.displayMode = "mutated after submission";
-    check(editor.submit({
-                          displayMode: "onhover"
-                        }, function (busy) {
-                          try {
-                            rejected(busy, "list-editor-busy");
-                          } catch (error) {
-                            fail(error);
-                          }
-                        }) === false, "busy refusal " + route);
+                          }) === false, "notified ABA refused " + route);
+      check(rows()[0].displayMode === undefined, "ABA unchanged consumer " + route);
+    });
+  }
+  function routing() {
+    seed();
+    later(function () {
+      capture();
+      Settings.data.bar.screenOverrides = [
+            {
+              name: testScreen.name,
+              widgets: {
+                left: [
+                  {
+                    id: "Volume"
+                  }
+                ],
+                center: [],
+                right: []
+              }
+            }
+          ];
+      check(editor.submit({
+                            displayMode: "alwaysShow"
+                          }, function (result) {
+                            try {
+                              rejected(result, "list-edit-conflict");
+                              check(rows()[0].displayMode === undefined && Settings.data.bar.widgets.left[0].displayMode === undefined, "both routes unchanged");
+                              Settings.data.bar.screenOverrides = [
+                                    {
+                                      name: testScreen.name,
+                                      enabled: false,
+                                      widgets: {
+                                        left: [
+                                          {
+                                            id: "Volume"
+                                          }
+                                        ],
+                                        center: [],
+                                        right: []
+                                      }
+                                    }
+                                  ];
+                              seed();
+                              later(function () {
+                                capture();
+                                editor.submit({
+                                                displayMode: "alwaysHide"
+                                              }, function (disabled) {
+                                                try {
+                                                  check(disabled.status !== "failed", "disabled override receipt");
+                                                  check(Settings.data.bar.widgets.left[0].displayMode === "alwaysHide", "disabled override displayed global consumer");
+                                                  check(Settings.data.bar.screenOverrides[0].widgets.left[0].displayMode === undefined, "disabled override untouched");
+                                                  Settings.data.bar.screenOverrides = [];
+                                                  failedSave();
+                                                } catch (error) {
+                                                  fail(error);
+                                                }
+                                              });
+                              });
+                            } catch (error) {
+                              fail(error);
+                            }
+                          }) === false, "route change refused");
+    });
+  }
+  function failedSave() {
+    seed();
+    later(function () {
+      capture();
+      fault("block", function () {
+        check(editor.submit({
+                              displayMode: "alwaysShow"
+                            }, function (result) {
+                              try {
+                                check(result.status === "failed", "failed aggregate receipt " + route);
+                                check(rows()[0].displayMode === "alwaysShow", "failed save retains admitted input " + route);
+                                fault("repair", function () {
+                                  check(editor.submit({
+                                                        displayMode: "alwaysShow"
+                                                      }, function (retry) {
+                                                        try {
+                                                          check(retry.status !== "failed", "same session retry " + route);
+                                                          saved();
+                                                        } catch (error) {
+                                                          fail(error);
+                                                        }
+                                                      }) === true, "retry admitted " + route);
+                                });
+                              } catch (error) {
+                                fail(error);
+                              }
+                            }) === true, "failure input admitted " + route);
+      });
+    });
+  }
+  function saved() {
+    seed();
+    later(function () {
+      capture();
+      var fields = {
+        id: "legacy page id is not field intent",
+        displayMode: "alwaysHide"
+      };
+      check(editor.submit(fields, function (result) {
+        try {
+          check(result.status === "saved" || result.status === "nothing_to_save", "acknowledged field edit " + route);
+          check(rows()[0].displayMode === "alwaysHide" && rows()[0].id === "Volume", "actual edited consumer " + route);
+          check(rows()[0].opaque === "first" && rows()[1].opaque === "second" && rows()[1].displayMode === undefined, "unrelated fields and repeated sibling preserved " + route);
+          var held = editor;
+          held.detach();
+          check(held.submit({
+                              displayMode: "onhover"
+                            }, function (detached) {
+                              try {
+                                rejected(detached, "list-editor-closed");
+                                if (route === 0) {
+                                  route = 1;
+                                  stale();
+                                } else {
+                                  finalChecks();
+                                  dialogCases();
+                                }
+                              } catch (error) {
+                                fail(error);
+                              }
+                            }) === false, "detached refuses new input " + route);
+        } catch (error) {
+          fail(error);
+        }
+      }) === true, "edit admitted " + route);
+      fields.displayMode = "mutated after submission";
+      check(editor.submit({
+                            displayMode: "onhover"
+                          }, function (busy) {
+                            try {
+                              rejected(busy, "list-editor-busy");
+                            } catch (error) {
+                              fail(error);
+                            }
+                          }) === false, "busy refusal " + route);
+    });
   }
   function dialogCases() {
     seed();
-    dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
-    dialog.widgetData = dialog.settingsEditor.initialValue;
-    dialog.open();
-    Settings.setBindingsUnresolved(true);
-    check(dialog.queueSettings({
-                                 displayMode: "alwaysHide"
-                               }), "dialog queues owned fields");
-    dialog.saveAndClose();
-    check(dialog.visible && dialog.saveBusy, "close waits for actual receipt");
+    later(function () {
+      dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
+      dialog.widgetData = dialog.settingsEditor.initialValue;
+      dialog.open();
+      fault("block", function () {
+        check(dialog.queueSettings({
+                                     displayMode: "alwaysHide"
+                                   }), "dialog queues owned fields");
+        dialog.saveAndClose();
+        check(dialog.visible && dialog.saveBusy, "close waits for actual receipt");
+      });
+    });
   }
   function dialogResult(result) {
     try {
@@ -284,8 +345,7 @@ PanelWindow {
         check(result.status === "failed" && dialog.visible && dialog.settingsDirty && dialog.saveFailed, "failed receipt retains real dialog work");
         check(rows()[0].displayMode === "alwaysHide", "failure retains admitted consumer");
         dialogStage = 1;
-        Settings.setBindingsUnresolved(false);
-        Qt.callLater(function () {
+        fault("repair", function () {
           dialog.saveAndClose();
         });
       } else if (dialogStage === 1) {
@@ -294,16 +354,18 @@ PanelWindow {
           try {
             check(!dialog.visible, "real dialog closes after successful retry");
             seed();
-            dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
-            dialog.widgetData = dialog.settingsEditor.initialValue;
-            dialog.open();
-            var old = JSON.parse(JSON.stringify(rows()));
-            assign([old[1], old[0]]);
-            dialogStage = 2;
-            dialog.queueSettings({
-                                   displayMode: "alwaysHide"
-                                 });
-            dialog.saveAndClose();
+            later(function () {
+              dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
+              dialog.widgetData = dialog.settingsEditor.initialValue;
+              dialog.open();
+              var old = JSON.parse(JSON.stringify(rows()));
+              assign([old[1], old[0]]);
+              dialogStage = 2;
+              dialog.queueSettings({
+                                     displayMode: "alwaysHide"
+                                   });
+              dialog.saveAndClose();
+            });
           } catch (error) {
             root.fail(error);
           }
@@ -318,7 +380,7 @@ PanelWindow {
         check(!dialog.discardPending && dialog.visible && dialog.settingsDirty, "cancel discard retains dialog work");
         dialog.requestDiscard();
         check(dialog.confirmDiscard() === true, "explicitly confirmed discard");
-        Qt.callLater(function () {
+        later(function () {
           try {
             check(!dialog.visible && !dialog.settingsDirty && rows()[0].displayMode === undefined, "confirmed local discard does not roll back or write settings");
             dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
@@ -395,6 +457,29 @@ PanelWindow {
     }
   }
   Component.onCompleted: begin()
+  function fault(mode, callback) {
+    afterFault = callback;
+    faultProcess.command = ["python3", "-B", Quickshell.env("I5_DESKTOP_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
+    faultProcess.running = true;
+  }
+  Process {
+    id: faultProcess
+    onExited: code => {
+      try {
+        root.check(code === 0, "private real-IO fault prerequisite");
+        root.faultBlocked = command[command.length - 1] === "block";
+        if (root.exitAfterRepair) {
+          Qt.exit(2);
+          return;
+        }
+        var callback = root.afterFault;
+        root.afterFault = null;
+        callback();
+      } catch (error) {
+        root.fail(error);
+      }
+    }
+  }
   Timer {
     interval: 120000
     running: true

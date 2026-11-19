@@ -80,12 +80,12 @@ SmartPanel {
       }
       if (work.wallpaper !== "" && typeof WallpaperService !== "undefined")
         WallpaperService.changeWallpaper(work.wallpaper, undefined);
-      Settings.saveSetupWork(work, function (success, error) {
-        if (success) Version.markChangelogSeen(Version.currentVersion);
-        complete(success, error);
+      Settings.saveSetupWork(work, function (result) {
+        if (result.status === "saved" || result.status === "nothing_to_save") Version.markChangelogSeen(Version.currentVersion);
+        complete(result);
       }, requestId);
     } catch (error) {
-      complete(false, "Captured ordinary setup could not be saved");
+      complete({status: "failed", error: {code: "setup-save"}});
     }
   }
 

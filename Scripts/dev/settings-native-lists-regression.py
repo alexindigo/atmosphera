@@ -66,9 +66,12 @@ def main():
     results = []
     try:
         for name, old, new, failure in [
-            ('negative-opaque-copy', b'copy(own(value, key), next)', b'copy(key === "__proto__" ? {} : own(value, key), next)', 'opaque display members 0'),
+            ('negative-opaque-copy', b'return sequence(value) ? store.copyValue(value) : null;',
+             b'var rows = sequence(value) ? store.copyValue(value) : null; if (rows) rows.forEach(function (row) { if (row && typeof row === "object") row["__proto__"] = {}; }); return rows;', 'opaque display members 0'),
             ('negative-instance-preservation', b'preservedFields: ["instanceSettings"]', b'preservedFields: []', 'normalization preserves instance override'),
             ('negative-same-owner-refresh', b'targets.forEach(function (target) {\n                                if (active.some', b'active.forEach(function (target) {\n                                if (active.some', 'same owner endpoint refresh'),
+            ('negative-address-key-order', b'addressIdentity(target.address) === addressIdentity(endpoint.listAddress)',
+             b'JSON.stringify(target.address) === JSON.stringify(endpoint.listAddress)', 'container command queued'),
         ]:
             target, content = (policies, original) if name == 'negative-instance-preservation' else (helper, original_helper)
             assert old in content
@@ -107,7 +110,7 @@ def main():
         assert files['bar']['screenOverrides'][0]['widgets']['right'][0]['tag'] == 'same-leaf'
         results.append(dict(id='native-save-restart', status='PASS', legacyIdentity=before, files=files))
         (args.output/'result.json').write_text(json.dumps(dict(status='PASS', cases=results), indent=2)+'\n')
-        print('SETTINGS_NATIVE_LISTS: PASS (seven leaves, native fences/mapping/transfer/containers, save/file/cold restart, 3 rejecting controls)')
+        print('SETTINGS_NATIVE_LISTS: PASS (seven leaves, native fences/mapping/transfer/containers, save/file/cold restart, 4 rejecting controls)')
     finally:
         policies.write_bytes(original)
         helper.write_bytes(original_helper)

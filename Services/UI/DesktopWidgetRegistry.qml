@@ -309,7 +309,7 @@ Singleton {
       return null;
     }
     return {
-      initialValue: Lists.copy(commands.initialValue[index]),
+      initialValue: Settings.store.copyValue(commands.initialValue[index]),
       submit: function (fields, callback) {
         var edits = fields && typeof fields === "object" && !Array.isArray(fields) ? Object.keys(fields).filter(function (key) {
           return key !== "id";

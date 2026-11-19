@@ -1,6 +1,7 @@
 // Inert real-owner transfer boundary; the VM driver relocates it to shell root.
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import "../../../Helpers/RecordListEditor.js" as Lists
 
@@ -14,6 +15,10 @@ Item {
   property int desktopWrites: 0
   property int centerWrites: 0
   property var session: null
+  property var continuation: null
+  property var afterFault: null
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
   property var cases: [
     {from: ["bar", "widgets", "left"], to: ["bar", "widgets", "center"], source: [], destination: []},
     {from: ["controlCenter", "shortcuts", "left"], to: ["controlCenter", "shortcuts", "right"], source: [], destination: []},
@@ -25,7 +30,17 @@ Item {
     if (!ok)
       throw new Error("I4_TRANSFER_ASSERT: " + name);
   }
-  function fail(error) { console.error(String(error)); Qt.exit(2); }
+  function fail(error) {console.error(String(error));if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair",function(){});return;}Qt.exit(2);}
+  function later(next){check(continuation===null,"one fixture continuation");continuation=next;readyWait.start();}
+  Timer {
+    id:readyWait;interval:20;repeat:true
+    onTriggered:{try{
+      var paths=[["bar","widgets","left"],["bar","widgets","center"],["controlCenter","shortcuts","left"],["controlCenter","shortcuts","right"],["bar","screenOverrides"],["desktopWidgets","monitorWidgets"]];
+      var probes=paths.map(function(path){return Settings.createRecordListEditor(path,[]);});
+      var ready=probes.every(function(probe){return !!probe;});probes.forEach(function(probe){if(probe)probe.detach();});
+      if(!ready)return;stop();var next=root.continuation;root.continuation=null;next();
+    }catch(error){stop();root.fail(error);}}
+  }
   function value(path) {
     var node = Settings.data;
     for (var i = 0; i < path.length; ++i)
@@ -96,6 +111,7 @@ Item {
         failed(result, "list-edit-conflict");
         check(state(entry) === before, "repeated-ID stale source unchanged");
         write(entry.from, original);
+        later(function () {
         session = capture(entry);
         var target = value(entry.to);
         var altered = Lists.copy(target);
@@ -106,9 +122,10 @@ Item {
           try {
             failed(aba, "list-edit-conflict");
             check(Lists.stamp(value(entry.to)) === Lists.stamp(target), "destination notified ABA retained");
-            transfer(entry);
+            later(function () {transfer(entry);});
           } catch (error) { fail(error); }
         }), "destination ABA refused");
+        });
       } catch (error) { fail(error); }
     }), "source stale refused");
   }
@@ -192,12 +209,12 @@ Item {
   function save() {
     finalChecks();
     check(refused === cases.length * 11 + 1, "all refusal callbacks delivered");
-    Settings.setBindingsUnresolved(true);
+    fault("block",function () {
     Settings.saveResult(function (failedSave) {
       try {
         check(failedSave.status === "failed", "failed aggregate save is not admitted/saved");
         finalChecks();
-        Settings.setBindingsUnresolved(false);
+        fault("repair",function () {
         // Retry persistence, never replay the membership command.
         Settings.saveResult(function (result) {
           try {
@@ -207,7 +224,9 @@ Item {
             Qt.exit(0);
           } catch (error) { fail(error); }
         });
+        });
       } catch (error) { fail(error); }
+    });
     });
   }
   function begin() {
@@ -229,8 +248,10 @@ Item {
       Settings.data.controlCenter.shortcuts.right = Lists.copy(destination);
       Settings.data.bar.screenOverrides = [{name: "offline.屏/1", opaque: "screen", widgets: {left: Lists.copy(rows), center: [], right: Lists.copy(destination)}}];
       Settings.data.desktopWidgets.monitorWidgets = [{name: "offline.屏/1", widgets: Lists.copy(rows)}, {name: "other.屏/2", opaque: "desktop", widgets: Lists.copy(destination)}];
+      later(function () {
       session = capture(cases[0]);
       invalid();
+      });
     } catch (error) { fail(error); }
   }
   Connections { target: Settings.data.bar; function onScreenOverridesChanged() { root.screenWrites++; } }
@@ -238,5 +259,13 @@ Item {
   Connections { target: Settings.data.bar.widgets; function onCenterChanged() { root.centerWrites++; } }
   Connections { target: Settings; function onSettingsLoaded() { root.begin(); } }
   Component.onCompleted: begin()
+  function fault(mode,callback){afterFault=callback;faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
+  Process {
+    id:faultProcess
+    onExited:code=>{try{
+      root.check(code===0,"private real-IO fault prerequisite");root.faultBlocked=command[command.length-1]==="block";
+      if(root.exitAfterRepair){Qt.exit(2);return;}var callback=root.afterFault;root.afterFault=null;callback();
+    }catch(error){root.fail(error);}}
+  }
   Timer { interval: 90000; running: true; onTriggered: root.fail("transfer watchdog") }
 }

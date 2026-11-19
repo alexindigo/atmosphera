@@ -253,8 +253,12 @@ def main():
                 raise ValueError('runtime store requires absolute declared paths')
             text = compile_store(manifest, overlays, args.plugin_directory, args.user_file,
                                  args.config_file, args.evidence_directory)
-            args.runtime_store.mkdir(parents=True, exist_ok=True, mode=0o700)
-            path = args.runtime_store/('Plugin'+hashlib.sha256(text.encode()).hexdigest()+'.qml')
+            # Qt caches a complete imported directory listing. Keep each
+            # immutable declaration in its own complete directory before its
+            # first import; loading another plugin never mutates that listing.
+            directory = args.runtime_store/hashlib.sha256(text.encode()).hexdigest()
+            directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+            path = directory/'Store.qml'
             if path.exists():
                 if path.read_text() != text:
                     raise ValueError('immutable schema cache mismatch')

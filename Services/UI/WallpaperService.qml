@@ -346,7 +346,7 @@ Singleton {
   }
 
   function setSolidColor(colorString) {
-    Settings.data.wallpaper.solidColor = colorString;
+    Settings.data.wallpaper.solidColor = String(colorString);
     Settings.data.wallpaper.useSolidColor = true;
   }
 

@@ -6,12 +6,15 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
+import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
   property bool started: false
   property int applies: 0
   property string phase: "start"
+  property var api: null
+  property var manifest: null
   FileView {
     id: inputs
     path: Quickshell.env("I4_READONLY_INPUTS")
@@ -27,32 +30,45 @@ ShellRoot {
       return;
     started = true;
     inputs.waitForJob();
-    var manifest = JSON.parse(inputs.text());
-    var api = Service.createPluginAPI(manifest.id, manifest, {}, {}, {}, {});
+    manifest = JSON.parse(inputs.text());
+    phase = "waiting-owner";
+    if (typeof Service._openSettingsOwner === "function") {
+      Service._openSettingsOwner(manifest.id, function (owner) {
+        try {
+          root.check(owner !== null, "actual native preference owner opened");
+          root.register(owner);
+        } catch (error) { console.error(String(error)); Qt.exit(2); }
+      });
+    } else register({});
+  }
+  function register(owner) {
+    api = Service.createPluginAPI(manifest.id, manifest, owner, {}, {}, {});
     var factory = api.createSettingsEditor;
     api.createSettingsEditor = function () {
       var editor = factory();
-      return {
-        initialValue: editor.initialValue,
-        discard: editor.discard,
-        apply: function (value, callback) {
-          root.applies++;
-          editor.apply(value, callback);
-        }
-      };
+      if (typeof api.settingsReady === "boolean") {
+        root.check(editor && editor.ready && editor.writable === false && editor.fields.length === 0, "native informational session has no writable selection");
+      }
+      return EditorProbe.observe(editor, function () { root.applies++; });
     };
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded[manifest.id] = {
       api: api
     };
     Service.loadedPlugins = loaded;
-    popup.openPluginSettings(manifest, "settings");
-    phase = "opened";
+    phase = "waiting-api";
   }
   function drive() {
-    if (phase === "opened" && popup.opened && popup.settingsPage && popup.settingsPage.implicitHeight > 0) {
+    if (phase === "waiting-api") {
+      check(!api.settingsOwner || api.settingsOwner.status !== "Error", "native owner open: " + (api.settingsOwner ? api.settingsOwner.error : ""));
+      if (typeof api.settingsReady === "boolean" && !api.settingsReady) return;
+      popup.openPluginSettings(manifest, "settings");
+      phase = "opened";
+    } else if (phase === "opened" && popup.opened && popup.settingsPage && popup.settingsPage.implicitHeight > 0) {
       check(typeof popup.settingsPage.saveSettings !== "function", "informational component has no writer");
       check(!popup.dirty && applies === 0, "constructor creates no intent");
+      popup.applySettings();
+      check(!popup.busy && !popup.dirty && applies === 0, "informational page cannot submit Apply");
       popup.requestClose();
       phase = "closed";
     } else if (phase === "closed" && !popup.visible && !popup.currentPlugin) {
