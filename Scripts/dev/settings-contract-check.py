@@ -27,6 +27,7 @@ def check(root):
         ('build-settings-schema.py',['--check']),
         ('check-settings-writes.py',['--check']),
         ('build-settings-search-index.py',['--check']),
+        ('builtin-plugin-settings-check.py',[]),
         ('settings-schema-selftest.py',[]),
         ('settings-formatter-selftest.py',[]),
         ('settings-writes-selftest.py',[]),

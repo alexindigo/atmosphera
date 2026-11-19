@@ -8,6 +8,7 @@ import qs.Commons
 import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Keyboard
+import qs.Services.Locker
 import qs.Services.Media
 import qs.Services.Plugins
 import qs.Services.UI
@@ -21,6 +22,13 @@ Loader {
   readonly property bool needsSpectrum: root.active && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none"
 
   onActiveChanged: {
+    // This loader is presentation-only. Legacy callers setting active to lock
+    // are forwarded to the owner and never acquire an in-shell session lock.
+    if (root.active && !root.previewMode) {
+      LockOwnerService.requestLock("panel", false);
+      root.active = false;
+      return;
+    }
     // Suppress fcitx5 IME composition while locked — prevents CJK IME
     // leaks (JP mozc unmasked) and lock-client crashes on focus handoff
     // (noctalia#2212). Restore previous IM state on unlock.
@@ -66,11 +74,19 @@ Loader {
   }
 
   Component.onDestruction: {
+    InputMethodService.exitSecureMode();
     SpectrumService.unregisterComponent("lockscreen");
     LockKeysService.unregisterComponent("lockscreen");
   }
 
   property bool previewMode: false
+
+  function showPreview() {
+    if (LockOwnerService.state !== "unlocked")
+      return;
+    previewMode = true;
+    active = true;
+  }
 
   Timer {
     id: unloadAfterUnlockTimer
@@ -90,7 +106,6 @@ Loader {
       LockContext {
         id: lockContext
         onUnlocked: {
-          lockSession.locked = false;
           root.scheduleUnloadAfterUnlock();
           lockContext.passwordText = "";
         }
@@ -107,13 +122,27 @@ Loader {
         return (Quickshell.screens || []).some(s => configured.includes(s.name));
       }
 
-      WlSessionLock {
-        id: lockSession
-
-        Component.onCompleted: lockSession.locked = root.active
-
-        WlSessionLockSurface {
+      Variants {
+        model: Quickshell.screens
+        delegate: PanelWindow {
           id: lockSurface
+          required property var modelData
+          screen: modelData
+          anchors {
+            top: true
+            bottom: true
+            left: true
+            right: true
+          }
+          WlrLayershell.layer: WlrLayer.Overlay
+          WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
+          NScopedShortcut {
+            scope: lockSurface.contentItem
+            sequence: "Escape"
+            enabled: root.active && root.previewMode
+            onActivated: root.active = false
+          }
 
           Loader {
             anchors.fill: parent
@@ -219,16 +248,6 @@ Loader {
         interval: 30000
         running: root.active && root.previewMode
         onTriggered: {
-          lockSession.locked = false;
-          root.active = false;
-        }
-      }
-
-      Shortcut {
-        sequence: "Escape"
-        enabled: root.active && root.previewMode
-        onActivated: {
-          lockSession.locked = false;
           root.active = false;
         }
       }

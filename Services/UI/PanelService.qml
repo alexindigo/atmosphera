@@ -8,7 +8,7 @@ import qs.Services.Compositor
 Singleton {
   id: root
 
-  // A ref. to the lockScreen, so it's accessible from anywhere.
+  // Preview/presentation only. This loader is never secure-lock evidence.
   property var lockScreen: null
 
   // Panels

@@ -19,7 +19,10 @@ Singleton {
   property string currentIM: ""
   property string currentGroup: ""
   property string currentLayout: ""
-  property bool secureModeActive: false
+  property bool _previewSecureMode: false
+  readonly property bool secureModeActive: LockerService.locked || root._previewSecureMode
+
+  onSecureModeActiveChanged: root._reconcileSecure()
 
   // ——— IM metadata (reactive, refreshed on IM change) ———
   property var availableIMs: ([])
@@ -948,27 +951,11 @@ Singleton {
     "it": "🇮🇹"
   }
 
-  // ——— Out-of-process lock trigger ———
-  // Secure mode follows the compositor-side LockedHint, which covers
-  // every locker class (bundled config, swaylock, contract service,
-  // in-process fallback alike). The in-process LockScreen.active path
-  // in Modules/LockScreen stays as a redundant trigger (idempotent).
-  Connections {
-    target: LockerService
-    function onLockedChanged() {
-      if (LockerService.locked)
-        root.enterSecureMode();
-      else
-        root.exitSecureMode();
-    }
-  }
-
-  // ——— Lock screen (secure mode) ———
-  // Secure mode is a desired state, secureModeActive, which the shell sets from
-  // its lock state (LockerService.locked, covering every locker class) and
-  // LockScreen.active (redundant, idempotent). The bundled locker process never
-  // references this service, so the shell is the only instance that holds and
-  // releases fcitx5 for the lock.
+  // The shell's actual-lock observation and its presentation-only preview are
+  // independent demands. Preview cleanup cannot release an actual lock, nor
+  // can an actual unlock release a still-visible preview. The lock-only roots
+  // select Qt's local compose context before QGuiApplication construction;
+  // they never depend on this shell or compete to restore its fcitx snapshot.
   //
   // _reconcileSecure() converges fcitx5 to the desired state. It runs on each
   // request and whenever fcitx5 appears, so a lock that arrives before fcitx5 is
@@ -982,23 +969,11 @@ Singleton {
   property var _secureSnapshot: null
 
   function enterSecureMode() {
-    if (root.secureModeActive)
-      return;  // idempotent
-    root.secureModeActive = true;
-    Logger.i("InputMethodService", "enterSecureMode — IME suppressed");
-    root._reconcileSecure();
-
-    // TODO: xkb layout → force "us" when xkbAvailable is implemented
+    root._previewSecureMode = true;
   }
 
   function exitSecureMode() {
-    if (!root.secureModeActive)
-      return;  // idempotent
-    root.secureModeActive = false;
-    Logger.i("InputMethodService", "exitSecureMode — IME restored");
-    root._reconcileSecure();
-
-    // TODO: restore xkb layout when xkbAvailable is implemented
+    root._previewSecureMode = false;
   }
 
   function _reconcileSecure() {
@@ -1027,12 +1002,9 @@ Singleton {
         "im": root.currentIM,
         "active": root.active
       };
-      // Disable fcitx5 composition while locked.
-      // This prevents CJK IME leaks (JP mozc unmasked) and lock-client
-      // crashes (noctalia#2212 Rime/Shuangpin focus-handoff).
-      // qtwayland 6.11.1 text-input-v3 ordering bug means password
-      // content_type arrives too late — deactivating the IME entirely
-      // is the only reliable mitigation from QML today.
+      // Suppress remote composition in the shell preview and preserve the
+      // user's fcitx state across actual locks. Lock-only clients independently
+      // use compose, avoiding the Qt 6.11.1 password content-type ordering bug.
       root._call("Deactivate", [], function (error) {
         if (!error)
           root._secureSnapshot = snap;

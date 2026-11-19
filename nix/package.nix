@@ -4,6 +4,7 @@
   # Optional QtPdf renderer for PDF preview in the file chooser.
   pdfPreviewSupport ? false,
   runtimeDeps ? [
+    quickshell
     brightnessctl
     cliphist
     ddcutil
@@ -13,7 +14,9 @@
     imagemagick
     wget
     glib # gio trash implements the freedesktop Trash specification
-    (python3.withPackages (pp: lib.optional calendarSupport pp.pygobject3))
+    # The real logind delay-inhibitor fd needs both bindings, independently of
+    # optional calendar integration.
+    (python3.withPackages (pp: [ pp.dbus-python pp.pygobject3 ]))
   ],
 
   lib,
@@ -93,6 +96,11 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/atmosphera $out/bin
     cp -r . $out/share/atmosphera
 
+    # Named `qs -c` configs resolve XDG_CONFIG_DIRS, not QS_CONFIG_PATH.
+    mkdir -p $out/etc/xdg/quickshell
+    ln -s ../../../share/atmosphera $out/etc/xdg/quickshell/atmosphera
+    bash Scripts/bash/install-locker-configs "$PWD" "$out/etc/xdg/quickshell"
+
     # atmosphera — unified CLI dispatcher (replaces the old symlink to qs)
     install -Dm755 Scripts/bash/atmosphera $out/bin/atmosphera
 
@@ -113,6 +121,8 @@ stdenvNoCC.mkDerivation {
       --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"
+      --set-default XDG_CONFIG_DIRS /etc/xdg
+      --prefix XDG_CONFIG_DIRS : "$out/etc/xdg"
       --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )

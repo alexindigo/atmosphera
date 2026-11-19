@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Assemble the same reviewed locker closure for every installation route.
+set -euo pipefail
+source_root=$1
+configs=$2
+cd "$source_root"
+
+install -dm755 "$configs/atmosphera-lockscreen"
+install -m644 Quickshell/atmosphera-lockscreen/{shell,LockSession}.qml "$configs/atmosphera-lockscreen/"
+while IFS= read -r file; do
+  case "$file" in ''|'#'*) continue ;; esac
+  install -Dm644 "$file" "$configs/atmosphera-lockscreen/$file"
+done < Quickshell/atmosphera-lockscreen/runtime-files.txt
+install -Dm644 Commons/LockerSettings.qml "$configs/atmosphera-lockscreen/Commons/Settings.qml"
+for directory in Assets Configs Scripts Shaders; do
+  ln -sfn "../atmosphera/$directory" "$configs/atmosphera-lockscreen/$directory"
+done
+
+install -dm755 "$configs/atmosphera-emergency-lock/Services/Locker"
+install -m644 Quickshell/atmosphera-emergency-lock/*.qml "$configs/atmosphera-emergency-lock/"
+install -m644 Services/Locker/{LockAuth,LockClient}.qml "$configs/atmosphera-emergency-lock/Services/Locker/"
+install -dm755 "$configs/atmosphera-emergency-lock/Helpers"
+install -m644 Helpers/OwnedProcess.js Helpers/OwnedProcessChild.qml "$configs/atmosphera-emergency-lock/Helpers/"
+install -Dm644 Scripts/python/locker-unit.py "$configs/atmosphera-emergency-lock/Scripts/python/locker-unit.py"

@@ -23,13 +23,13 @@ Singleton {
 
   readonly property bool contractAvailable: _contractAvailable
   readonly property bool locked: _locked
-  // False until the seat session's LockedHint has been read once —
-  // consumers degrade to the in-process flag while this is false.
+  // Corroborating session state only, never a candidate's secure ack.
   readonly property bool lockedHintAvailable: _lockedHintAvailable
 
   property bool _contractAvailable: false
   property bool _locked: false
   property bool _lockedHintAvailable: false
+  signal sessionUnlocked
 
   // --- class-3 contract presence + invocation ---
 
@@ -52,12 +52,165 @@ Singleton {
     }
   }
 
-  // Class-3 invocation: dispatch Lock(); false when no contract service.
-  function lock() {
-    if (!root._contractAvailable)
-      return false;
-    contract.call("Lock", []);
-    return true;
+  // --- Locker1 v2 correlated observation (docs/locker1-contract.md) ---
+  // Each owner lifetime has a fixed unique-destination subscription. Requests,
+  // replies and signals carry that lifetime, never a mutable name's identity.
+  readonly property string contractOwner: _contractOwner
+  readonly property var contractObservations: _contractObservations
+  property var _contractObservations: ({})
+  property string _contractOwner: ""
+  property int _contractRevision: 0
+  property var _contractSubscription: null
+  signal contractObserved(string requestId)
+
+  function _settle(reply, done) {
+    if (!reply) {
+      done(null);
+      return;
+    }
+    var settled = false;
+    var finish = function () {
+      if (settled)
+        return;
+      settled = true;
+      done(reply);
+    };
+    reply.finished.connect(finish);
+    if (reply.isFinished)
+      finish();
+  }
+
+  function _resolveOwner(done) {
+    var revision = _contractRevision;
+    root._settle(busDaemon.call("GetNameOwner", ["app.atmosphera.Locker"]), function (reply) {
+      if (revision !== root._contractRevision) {
+        done("", root._contractRevision);
+        return;
+      }
+      var owner = reply && !reply.isError ? String(reply.value || "") : "";
+      root._changeOwner(owner);
+      done(owner, root._contractRevision);
+    });
+  }
+
+  function _changeOwner(owner) {
+    if (_contractOwner === owner)
+      return;
+    _contractRevision++;
+    if (_contractSubscription) {
+      _contractSubscription.enabled = false;
+      _contractSubscription.destroy();
+      _contractSubscription = null;
+    }
+    _contractOwner = owner;
+    if (owner !== "")
+      _contractSubscription = contractSubscription.createObject(root, {owner: owner, revision: _contractRevision});
+  }
+
+  function _ownerCall(owner, revision, iface, member, args, signature, done) {
+    if (owner !== _contractOwner || revision !== _contractRevision) {
+      done(null);
+      return;
+    }
+    var pending = SessionBus.asyncCall({service: owner, path: "/app/atmosphera/Locker",
+      iface: iface, member: member, arguments: args, signature: signature, autoStart: false});
+    _settle(pending, function (reply) {
+      // A daemon round trip also fences a name change whose watcher delivery
+      // has not run yet. A->B->A is rejected by the lifetime revision as well.
+      root._resolveOwner(function (current, currentRevision) {
+        done(current === owner && currentRevision === revision ? reply : null);
+      });
+    });
+  }
+
+  function _observe(owner, revision, requestId, event) {
+    if (typeof requestId !== "string" || requestId === "" || owner !== _contractOwner || revision !== _contractRevision)
+      return;
+    var next = Object.assign({}, root._contractObservations);
+    var senders = Object.assign({}, next[requestId] || {});
+    // A new name owner cannot overwrite facts already delivered by the owner
+    // that accepted this request, especially its authenticated Unlocked.
+    var entry = Object.assign({}, senders[owner] || {});
+    entry.owner = owner;
+    entry[event] = true;
+    senders[owner] = entry;
+    next[requestId] = senders;
+    root._contractObservations = next;
+    contractObserved(requestId);
+  }
+
+  // Class-3 invocation. A v2 service receives the generation's request ID;
+  // older services keep the original Lock(). complete({ok, owner, version}).
+  function requestContract(requestId, complete) {
+    if (!root._contractAvailable) {
+      complete({ok: false});
+      return;
+    }
+    root._resolveOwner(function (owner, revision) {
+      if (owner === "") {
+        complete({ok: false});
+        return;
+      }
+      root._ownerCall(owner, revision, "org.freedesktop.DBus.Properties", "Get", ["app.atmosphera.Locker1", "Version"], "ss", function (versionReply) {
+        if (!versionReply) {
+          complete({ok: false});
+          return;
+        }
+        var value = versionReply && !versionReply.isError ? Number(versionReply.value) : 1;
+        var version = Number.isInteger(value) && value >= 2 ? value : 1;
+        root._ownerCall(owner, revision, "app.atmosphera.Locker1", version >= 2 ? "LockRequest" : "Lock", version >= 2 ? [requestId] : [], version >= 2 ? "s" : "", function (reply) {
+          complete({ok: !!reply && !reply.isError, owner: owner, version: version});
+        });
+      });
+    });
+  }
+
+  // Restart reconciliation: the service's own view of one request.
+  function queryContract(requestId, complete) {
+    if (!root._contractAvailable) {
+      complete({ok: false});
+      return;
+    }
+    root._resolveOwner(function (owner, revision) {
+      if (owner === "") {
+        complete({ok: false});
+        return;
+      }
+      root._ownerCall(owner, revision, "app.atmosphera.Locker1", "RequestState", [requestId], "s", function (reply) {
+        complete({ok: !!reply && !reply.isError, owner: owner, state: reply && !reply.isError ? String(reply.value) : ""});
+      });
+    });
+  }
+
+  DBus {
+    id: busDaemon
+    service: "org.freedesktop.DBus"
+    path: "/org/freedesktop/DBus"
+    iface: "org.freedesktop.DBus"
+    connection: SessionBus
+    propertiesEnabled: false
+    signalsEnabled: false
+  }
+
+  DBusServiceWatcher {
+    service: "app.atmosphera.Locker"
+    onOwnerChanged: (oldOwner, newOwner) => root._changeOwner(newOwner)
+  }
+
+  Component {
+    id: contractSubscription
+    DBusSignalWatcher {
+      required property string owner
+      required property int revision
+      service: owner
+      path: "/app/atmosphera/Locker"
+      iface: "app.atmosphera.Locker1"
+      member: ""
+      onReceived: (member, args) => {
+        if (member === "Secured" || member === "Unlocked")
+          root._observe(owner, revision, args && args.length > 0 ? args[0] : "", member === "Secured" ? "secured" : "unlocked");
+      }
+    }
   }
 
   // --- LockedHint watch (universal lock state) ---
@@ -67,6 +220,8 @@ Singleton {
       return;
     root._locked = active;
     Logger.i("LockerService", active ? "locked" : "unlocked");
+    if (!active)
+      sessionUnlocked();
   }
 
   function _convergeLockedHint() {
@@ -84,30 +239,28 @@ Singleton {
       done();
   }
 
-  // The seat0 session id (bare `loginctl show-session` does not resolve
-  // the graphical session from a systemd user service — resolve via the
-  // session list).
-  Process {
-    id: seatSessionQuery
-    command: ["sh", "-c", "loginctl list-sessions --no-legend | awk '$4==\"seat0\" {print $1; exit}'"]
-    running: true
-    stdout: StdioCollector {}
-    onExited: function (exitCode) {
-      var id = (stdout.text || "").trim();
-      if (exitCode !== 0 || id === "")
+  // The owner discovers the display-bound graphical session, not SSH/seat0.
+  // The owner calls this on every pump until the proxy is attached; a failed
+  // lookup is retried with backoff instead of leaving LockedHint unobserved.
+  readonly property bool sessionObserved: sessionProxy.path !== ""
+  property bool _sessionLookupPending: false
+  property real _sessionRetryAt: 0
+  property int _sessionRetryDelay: 1000
+
+  function observeSession(id) {
+    if (id === "" || sessionProxy.path !== "" || _sessionLookupPending || Date.now() < _sessionRetryAt)
+      return;
+    _sessionLookupPending = true;
+    root._settle(logindManager.call("GetSession", [id]), function (reply) {
+      _sessionLookupPending = false;
+      if (!reply || reply.isError || !reply.values || reply.values.length === 0) {
+        _sessionRetryAt = Date.now() + _sessionRetryDelay;
+        _sessionRetryDelay = Math.min(_sessionRetryDelay * 2, 30000);
         return;
-      var reply = logindManager.call("GetSession", [id]);
-      if (!reply)
-        return;
-      var done = function () {
-        if (reply.isError || !reply.values || reply.values.length === 0)
-          return;
-        sessionProxy.path = String(reply.values[0]);
-      };
-      reply.finished.connect(done);
-      if (reply.isFinished)
-        done();
-    }
+      }
+      _sessionRetryDelay = 1000;
+      sessionProxy.path = String(reply.values[0]);
+    });
   }
 
   DBus {

@@ -1,0 +1,307 @@
+#!/usr/bin/env python3
+"""Continuous guest-only lock evidence; never requests or releases a lock.
+
+Subscribe to compositor-originated logind changes before publishing ready.
+Retain the user journal with source monotonic timestamps and exact unit samples.
+Framebuffers are captured separately from Ark at the runner's barriers, not via
+Wayland screencopy. EOF on stdin or SIGTERM closes this observer and its journal.
+"""
+import argparse
+import json
+import os
+from pathlib import Path
+import signal
+import stat
+import subprocess
+import sys
+import time
+import re
+import shlex
+from datetime import datetime
+
+from locker_test_support import manage, require_guest, run
+
+
+def compositor_journal_event(record, identity):
+    """Normalize only the selected compositor lifetime's journal source."""
+    if not identity or identity.get('source') != 'journal':
+        return None
+    if record.get('_PID') != str(identity['pid']) or record.get('_UID') != str(identity['uid']):
+        return None
+    process = Path('/proc') / str(identity['pid'])
+    assert (process / 'stat').read_text().split(') ', 1)[1].split()[19] == identity['start'], 'compositor identity changed'
+    monotonic = int(record['__MONOTONIC_TIMESTAMP']) / 1_000_000
+    if monotonic < identity['since']:
+        return None
+    return dict(message=record['MESSAGE'], sourceMonotonic=monotonic,
+        pid=identity['pid'], start=identity['start'], source='journal')
+
+
+def read_initial_notification(fd, pending, timeout):
+    """Read the initial state with the same raw reader as later callbacks.
+
+    Records arriving in the same chunk stay in ``pending`` for the callback,
+    never in a buffered reader the raw-fd callback cannot see.
+    """
+    import select
+    deadline = time.monotonic() + timeout
+    while b'\n' not in pending:
+        assert select.select([fd], [], [], max(0, deadline - time.monotonic()))[0], 'native notification startup timed out'
+        chunk = os.read(fd, 65536)
+        assert chunk, 'native notification stream closed during startup'
+        pending.extend(chunk)
+    line, _, rest = pending.partition(b'\n')
+    pending[:] = rest
+    initial = json.loads(line)
+    assert initial.get('kind') == 'compositor-initial', 'native notification did not start with its initial state'
+    return initial
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--work', type=Path, required=True)
+    args = parser.parse_args()
+    source, work = require_guest(args.work, Path(__file__).resolve().parents[2])
+    import dbus
+    import dbus.mainloop.glib
+    from gi.repository import GLib
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    bus = dbus.SystemBus()
+    sid = manage(source, {'operation': 'discover'})['session']
+    manager = dbus.Interface(bus.get_object('org.freedesktop.login1', '/org/freedesktop/login1'),
+                             'org.freedesktop.login1.Manager')
+    session_path = str(manager.GetSession(sid))
+    session = bus.get_object('org.freedesktop.login1', session_path)
+    properties = dbus.Interface(session, 'org.freedesktop.DBus.Properties')
+    loop = GLib.MainLoop()
+    output = (work / 'events.jsonl').open('x')
+
+    def emit(kind, **values):
+        output.write(json.dumps(dict(kind=kind, observed=time.monotonic(), **values)) + '\n')
+        output.flush()
+
+    compositor_stream = None
+    compositor_identity = None
+    compositor_pending = bytearray()
+    notification = None
+    notification_pending = bytearray()
+    clock_offset = time.monotonic() - time.time()
+    if os.environ.get('NIRI_SOCKET'):
+        # Bind either stdout or journal evidence to the exact socket owner,
+        # not a historical file or an arbitrary niri-named journal record.
+        socket_path = os.environ['NIRI_SOCKET']
+        assert Path(socket_path).is_socket()
+        inodes = {line.split()[6] for line in Path('/proc/net/unix').read_text().splitlines()[1:]
+                  if len(line.split()) >= 8 and line.split()[7] == socket_path}
+        matches = []
+        for process in Path('/proc').glob('[0-9]*'):
+            try:
+                if (process / 'exe').resolve().name != 'niri':
+                    continue
+                def target(link):
+                    try:
+                        return link.readlink().as_posix()
+                    except FileNotFoundError:
+                        return ''  # an unrelated descriptor closed during the scan
+                if not any(target(link) in {'socket:[' + inode + ']' for inode in inodes}
+                           for link in (process / 'fd').iterdir()):
+                    continue
+                matches.append(process)
+            except (PermissionError, FileNotFoundError, ProcessLookupError):
+                continue
+        assert len(matches) == 1, 'cannot identify the exact niri compositor socket owner'
+        process = matches[0]
+        compositor_identity = {'pid': int(process.name), 'uid': process.stat().st_uid,
+            'start': (process / 'stat').read_text().split(') ', 1)[1].split()[19],
+            'socket': socket_path, 'source': 'journal', 'since': time.monotonic()}
+        fd = process / 'fd/1'
+        if stat.S_ISREG(fd.stat().st_mode):
+            compositor_stream = fd.open('rb')
+            compositor_stream.seek(0, os.SEEK_END)
+            identity = os.fstat(compositor_stream.fileno())
+            compositor_identity.update(source='file', file=str(fd.readlink()), inode=identity.st_ino,
+                device=identity.st_dev, offset=compositor_stream.tell())
+        emit('compositor-source', **compositor_identity)
+
+    if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+        instances = json.loads(run(['hyprctl', '-j', 'instances']).stdout)
+        instance = [item for item in instances if item['instance'] == os.environ['HYPRLAND_INSTANCE_SIGNATURE']]
+        assert len(instance) == 1
+        process = Path('/proc') / str(instance[0]['pid'])
+        compositor_identity = {'pid': instance[0]['pid'],
+            'start': (process / 'stat').read_text().split(') ', 1)[1].split()[19],
+            'instance': instance[0]['instance']}
+        emit('compositor-source', **compositor_identity)
+        protocol = source / 'Scripts/dev/fixtures/locker-hypr-notify.xml'
+        header, code = work / 'hypr-notify-client.h', work / 'hypr-notify-protocol.c'
+        run(['wayland-scanner', 'client-header', str(protocol), str(header)])
+        run(['wayland-scanner', 'private-code', str(protocol), str(code)])
+        binary = work / 'hypr-notify'
+        flags = shlex.split(run(['pkg-config', '--cflags', '--libs', 'wayland-client']).stdout)
+        build = run(['cc', '-Wall', '-Wextra', '-Werror', '-I' + str(work),
+            str(source / 'Scripts/dev/fixtures/locker-hypr-notify.c'), str(code), '-o', str(binary), *flags])
+        (work / 'hypr-notify-build.txt').write_text(build.stdout + build.stderr)
+        notification = subprocess.Popen([str(binary)], stdout=subprocess.PIPE,
+            stderr=(work / 'hypr-notify-stderr.txt').open('w'))
+        # Initial roundtrip is bounded; ready never precedes native subscription.
+        initial = read_initial_notification(notification.stdout.fileno(), notification_pending, 5)
+        emit(initial.pop('kind'), **initial)
+        if initial.get('locked'):
+            raise AssertionError('a pre-existing Hyprland lock is not a test target')
+
+    def consume_compositor():
+        if compositor_stream is None:
+            return True
+        process = Path('/proc') / str(compositor_identity['pid'])
+        assert (process / 'stat').read_text().split(') ', 1)[1].split()[19] == compositor_identity['start'], 'compositor identity changed'
+        compositor_pending.extend(compositor_stream.read())
+        while b'\n' in compositor_pending:
+            line, _, remainder = compositor_pending.partition(b'\n')
+            compositor_pending[:] = remainder
+            message = re.sub(r'\x1b\[[0-9;]*m', '', line.decode(errors='replace'))
+            timestamp = re.match(r'^(\d{4}-\d\d-\d\dT\S+)', message)
+            source = datetime.fromisoformat(timestamp[1]).timestamp() + clock_offset if timestamp else None
+            emit('compositor-log', message=message, sourceMonotonic=source,
+                pid=compositor_identity['pid'], start=compositor_identity['start'], source='file')
+        return True
+
+    def consume_notifications(chunk):
+        notification_pending.extend(chunk)
+        while b'\n' in notification_pending:
+            line, _, rest = notification_pending.partition(b'\n')
+            notification_pending[:] = rest
+            value = json.loads(line)
+            emit(value.pop('kind'), **value)
+
+    def read_notifications(channel, condition):
+        if condition & GLib.IO_IN:
+            consume_notifications(os.read(notification.stdout.fileno(), 65536))
+            return True
+        emit('observer-error', message='native Hyprland notification stream closed')
+        loop.quit()
+        return False
+
+    def read_compositor():
+        try:
+            return consume_compositor()
+        except Exception as error:
+            emit('observer-error', message='compositor log: ' + str(error))
+            loop.quit()
+            return False
+
+    def changed(interface, values, invalidated):
+        if str(interface) == 'org.freedesktop.login1.Session' and 'LockedHint' in values:
+            emit('locked-hint', locked=bool(values['LockedHint']))
+
+    def prepare_for_sleep(sleeping):
+        emit('prepare-for-sleep', sleeping=bool(sleeping),
+             boottime=time.clock_gettime(time.CLOCK_BOOTTIME))
+
+    bus.add_signal_receiver(changed, signal_name='PropertiesChanged',
+                            dbus_interface='org.freedesktop.DBus.Properties',
+                             bus_name='org.freedesktop.login1', path=session_path)
+    bus.add_signal_receiver(prepare_for_sleep, signal_name='PrepareForSleep',
+                            dbus_interface='org.freedesktop.login1.Manager',
+                            bus_name='org.freedesktop.login1', path='/org/freedesktop/login1')
+    emit('initial', locked=bool(properties.Get('org.freedesktop.login1.Session', 'LockedHint')), session=sid)
+    journal_errors = (work / 'journal-stderr.txt').open('w')
+    cursor_text = run(['journalctl', '--user', '-b', '-n', '1', '--show-cursor', '--output=json', '--no-pager']).stdout
+    cursor = re.search(r'(?m)^-- cursor: (\S+)', cursor_text)
+    assert cursor, 'cannot establish journal replay cursor before readiness'
+    journal = subprocess.Popen(['journalctl', '--user', '-b', '--follow', '--no-tail', '--after-cursor=' + cursor[1], '--output=json', '--no-pager'],
+                               stdout=subprocess.PIPE, stderr=journal_errors)
+    pending = bytearray()
+
+    def consume_journal(chunk):
+        pending.extend(chunk)
+        while b'\n' in pending:
+            line, _, remainder = pending.partition(b'\n')
+            pending[:] = remainder
+            record = json.loads(line)
+            message = record.get('MESSAGE', '')
+            # journalctl -o json represents messages containing control bytes
+            # (including niri's ANSI colors) as arrays of unsigned bytes.
+            if isinstance(message, list):
+                try:
+                    message = bytes(message).decode('utf-8', 'replace')
+                except (TypeError, ValueError):
+                    continue
+            if not isinstance(message, str) or 'wl_keyboard' in message:
+                continue
+            record['MESSAGE'] = message
+            compositor = compositor_journal_event(record, compositor_identity)
+            if compositor:
+                emit('compositor-log', **compositor)
+            unit = record.get('_SYSTEMD_USER_UNIT', '')
+            if (record.get('_COMM') == 'niri' or unit.startswith(('atmosphera-lockscreen-', 'atmosphera-emergency-lock-', 'atmosphera-lock-', 'locker-orphan-proof-', 'locker-contract-', 'locker-capability-'))):
+                emit('journal', sourceMonotonic=int(record['__MONOTONIC_TIMESTAMP']) / 1_000_000,
+                     invocation=record.get('_SYSTEMD_INVOCATION_ID', ''), pid=record.get('_PID', ''), unit=unit, message=message)
+
+    def read_journal(channel, condition):
+        if condition & GLib.IO_IN:
+            chunk = os.read(journal.stdout.fileno(), 262144)
+            if chunk:
+                try:
+                    consume_journal(chunk)
+                except Exception as error:
+                    emit('observer-error', message='journal: ' + str(error))
+                    loop.quit()
+                    return False
+                return True
+        if condition & (GLib.IO_HUP | GLib.IO_ERR):
+            emit('observer-error', message='journal follower exited unexpectedly')
+            loop.quit()
+            return False
+        return True
+
+    def sample():
+        try:
+            emit('units', view=manage(source, {'operation': 'inspect', 'session': sid}))
+        except Exception as error:
+            emit('observer-error', message=str(error))
+            loop.quit()
+            return False
+        return True
+
+    def closed(channel, condition):
+        if condition & GLib.IO_IN:
+            if os.read(sys.stdin.fileno(), 4096):
+                return True
+        loop.quit()
+        return False
+
+    GLib.io_add_watch(journal.stdout.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, read_journal)
+    GLib.io_add_watch(sys.stdin.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, closed)
+    GLib.timeout_add(500, sample)
+    GLib.timeout_add(50, read_compositor)
+    if notification is not None:
+        GLib.io_add_watch(notification.stdout.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, read_notifications)
+        consume_notifications(b'')  # records read together with the initial state
+    signal.signal(signal.SIGTERM, lambda *_: loop.quit())
+    try:
+        if not sample():
+            raise RuntimeError('initial observer sample failed')
+        (work / 'ready.json').write_text(json.dumps({'session': sid, 'monotonic': time.monotonic(), 'pid': os.getpid(),
+                                                    'compositor': compositor_identity}))
+        loop.run()
+        sample()
+    finally:
+        journal.terminate()
+        # journalctl flushes buffered records on termination. Waiting without
+        # draining its pipe can deadlock once that final batch fills the pipe.
+        remaining, _ = journal.communicate(timeout=10)
+        consume_journal(remaining)
+        read_compositor()
+        if compositor_stream is not None:
+            compositor_stream.close()
+        if notification is not None:
+            notification.terminate()
+            remaining, _ = notification.communicate(timeout=10)
+            consume_notifications(remaining)
+        journal_errors.close()
+        emit('end')
+        output.close()
+
+
+if __name__ == '__main__':
+    main()
