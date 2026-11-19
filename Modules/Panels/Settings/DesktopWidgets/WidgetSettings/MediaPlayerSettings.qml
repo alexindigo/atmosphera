@@ -21,16 +21,9 @@ ColumnLayout {
   property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
   property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : widgetMetadata.roundedCorners
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.showBackground = valueShowBackground;
-    settings.visualizerType = valueVisualizerType;
-    settings.hideMode = valueHideMode;
-    settings.showButtons = valueShowButtons;
-    settings.showAlbumArt = valueShowAlbumArt;
-    settings.showVisualizer = valueShowVisualizer;
-    settings.roundedCorners = valueRoundedCorners;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NToggle {
@@ -40,7 +33,7 @@ ColumnLayout {
     checked: valueShowBackground
     onToggled: checked => {
       valueShowBackground = checked;
-      saveSettings();
+      saveSettings({showBackground: valueShowBackground});
     }
     defaultValue: widgetMetadata.showBackground
   }
@@ -52,7 +45,7 @@ ColumnLayout {
     checked: valueRoundedCorners
     onToggled: checked => {
       valueRoundedCorners = checked;
-      saveSettings();
+      saveSettings({roundedCorners: valueRoundedCorners});
     }
     defaultValue: widgetMetadata.roundedCorners
   }
@@ -64,7 +57,7 @@ ColumnLayout {
     checked: valueShowAlbumArt
     onToggled: checked => {
       valueShowAlbumArt = checked;
-      saveSettings();
+      saveSettings({showAlbumArt: valueShowAlbumArt});
     }
     defaultValue: widgetMetadata.showAlbumArt
   }
@@ -76,7 +69,7 @@ ColumnLayout {
     checked: valueShowVisualizer
     onToggled: checked => {
       valueShowVisualizer = checked;
-      saveSettings();
+      saveSettings({showVisualizer: valueShowVisualizer});
     }
     defaultValue: widgetMetadata.showVisualizer
   }
@@ -88,7 +81,7 @@ ColumnLayout {
     checked: valueShowButtons
     onToggled: checked => {
       valueShowButtons = checked;
-      saveSettings();
+      saveSettings({showButtons: valueShowButtons});
     }
     defaultValue: widgetMetadata.showButtons
   }
@@ -115,7 +108,7 @@ ColumnLayout {
     currentKey: valueVisualizerType
     onSelected: key => {
       valueVisualizerType = key;
-      saveSettings();
+      saveSettings({visualizerType: valueVisualizerType});
     }
     defaultValue: widgetMetadata.visualizerType
   }
@@ -141,7 +134,7 @@ ColumnLayout {
     currentKey: valueHideMode
     onSelected: key => {
       valueHideMode = key;
-      saveSettings();
+      saveSettings({hideMode: valueHideMode});
     }
     defaultValue: widgetMetadata.hideMode
   }

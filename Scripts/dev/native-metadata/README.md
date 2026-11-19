@@ -8,10 +8,11 @@ universe for ordinary `qmllint.sh`. Other installed modules remain unchanged.
 An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
-`dependencies/configqml-030` contains the **unmodified installed** ConfigQml
-0.3.0 qmldir/qmltypes from AUR `qt6-configqml 0.3.0-1`, installed inside the
+`dependencies/configqml-051` contains the **unmodified installed** ConfigQml
+0.5.1 qmldir/qmltypes from the published `qt6-configqml 0.5.1-1`, built with
+the in-repository AUR recipe and installed inside the
 `atmosphera-configqml-settings` VM on ark with Qt6.12.0 (release source
-`78e9d1d779fdec8f3001cc974717db7aeb98d653`).
+`b50ccafbd990d6049b846bc4654890126d24506c`).
 When the tooling image lacks that module, the materializer copies these real
 registrar outputs into its private import universe, checking artifact hashes
 and the selected family's Qt version. An installed module takes precedence.
@@ -33,7 +34,7 @@ or installing libraries. In the assigned VM, with disk-backed TMPDIR:
 ```sh
 python3 -B Scripts/dev/configqml-metadata-generate.py \
   --source "$IMMUTABLE_CONFIGQML_SOURCE" --qt "$SDK/usr/lib/qt6" \
-  --reference Scripts/dev/native-metadata/dependencies/configqml-030 \
+  --reference Scripts/dev/native-metadata/dependencies/configqml-051 \
   --output "$WORKSPACE/generated-configqml"
 LD_LIBRARY_PATH="$SDK/usr/lib" python3 -B Scripts/dev/qml-native-metadata-selftest.py \
   --sdk "$SDK/usr/lib/qt6" -k configqml_fallback

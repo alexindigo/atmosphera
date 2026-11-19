@@ -21,14 +21,9 @@ ColumnLayout {
   property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : widgetMetadata.roundedCorners
   property string valueLayout: widgetData.layout !== undefined ? widgetData.layout : widgetMetadata.layout
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.statType = valueStatType;
-    settings.diskPath = valueDiskPath;
-    settings.showBackground = valueShowBackground;
-    settings.roundedCorners = valueRoundedCorners;
-    settings.layout = valueLayout;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -65,7 +60,7 @@ ColumnLayout {
     }
     onSelected: key => {
       valueStatType = key;
-      saveSettings();
+      saveSettings({statType: valueStatType});
     }
     defaultValue: widgetMetadata.statType
   }
@@ -85,7 +80,7 @@ ColumnLayout {
       currentKey: valueDiskPath
       onSelected: key => {
       valueDiskPath = key;
-      saveSettings();
+      saveSettings({diskPath: valueDiskPath});
     }
       defaultValue: widgetMetadata.diskPath
     }
@@ -101,7 +96,7 @@ ColumnLayout {
       checked: valueShowBackground
       onToggled: checked => {
       valueShowBackground = checked;
-      saveSettings();
+      saveSettings({showBackground: valueShowBackground});
     }
       defaultValue: widgetMetadata.showBackground
     }
@@ -114,7 +109,7 @@ ColumnLayout {
       checked: valueRoundedCorners
       onToggled: checked => {
       valueRoundedCorners = checked;
-      saveSettings();
+      saveSettings({roundedCorners: valueRoundedCorners});
     }
       defaultValue: widgetMetadata.roundedCorners
     }
@@ -141,7 +136,7 @@ ColumnLayout {
       ]
       onSelected: key => {
       valueLayout = key;
-      saveSettings();
+      saveSettings({layout: valueLayout});
     }
       defaultValue: widgetMetadata.layout
     }

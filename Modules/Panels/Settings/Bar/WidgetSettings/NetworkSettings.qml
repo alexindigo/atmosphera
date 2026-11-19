@@ -19,12 +19,9 @@ ColumnLayout {
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
   property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.displayMode = valueDisplayMode;
-    settings.iconColor = valueIconColor;
-    settings.textColor = valueTextColor;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -48,7 +45,7 @@ ColumnLayout {
     currentKey: root.valueDisplayMode
     onSelected: key => {
       root.valueDisplayMode = key;
-      saveSettings();
+      saveSettings({displayMode: root.valueDisplayMode});
     }
     defaultValue: widgetMetadata.displayMode
   }
@@ -58,7 +55,7 @@ ColumnLayout {
     currentKey: valueIconColor
     onSelected: key => {
       valueIconColor = key;
-      saveSettings();
+      saveSettings({iconColor: valueIconColor});
     }
     defaultValue: widgetMetadata.iconColor
   }
@@ -67,7 +64,7 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
       valueTextColor = key;
-      saveSettings();
+      saveSettings({textColor: valueTextColor});
     }
     defaultValue: widgetMetadata.textColor
   }

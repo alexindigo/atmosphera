@@ -127,11 +127,17 @@ Singleton {
         overridesDirWatcher.reload();
       });
     } else if (effect.kind === "reload") {
-      var view = effect.section === "legacy" ? settingsFileView : root._sectionViews[effect.section];
-      if (view)
-        view.reload();
-      else
-        root.finishObservedRead(effect.section);
+      // FileView still owns its completing operation while emitting loaded /
+      // loadFailed. A same-path reload from that stack can be silently lost.
+      // Every model observation crosses this asynchronous transport boundary.
+      var section = effect.section;
+      Qt.callLater(function () {
+        var view = section === "legacy" ? settingsFileView : root._sectionViews[section];
+        if (view)
+          view.reload();
+        else
+          root.finishObservedRead(section);
+      });
     } else if (effect.kind === "effective") {
       try {
         for (var si = 0; si < effect.sections.length; si++)

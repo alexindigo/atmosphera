@@ -37,19 +37,9 @@ ColumnLayout {
     }
   }
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.hideMode = valueHideMode;
-    settings.onlySameOutput = valueOnlySameOutput;
-    settings.onlyActiveWorkspaces = valueOnlyActiveWorkspaces;
-    settings.colorizeIcons = valueColorizeIcons;
-    settings.showTitle = valueShowTitle;
-    settings.smartWidth = valueSmartWidth;
-    settings.maxTaskbarWidth = valueMaxTaskbarWidth;
-    settings.titleWidth = parseInt(titleWidthInput.text) || widgetMetadata.titleWidth;
-    settings.showPinnedApps = valueShowPinnedApps;
-    settings.iconScale = valueIconScale;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -73,7 +63,7 @@ ColumnLayout {
     currentKey: root.valueHideMode
     onSelected: key => {
       root.valueHideMode = key;
-      saveSettings();
+      saveSettings({hideMode: root.valueHideMode});
     }
     defaultValue: widgetMetadata.hideMode
   }
@@ -85,7 +75,7 @@ ColumnLayout {
     checked: root.valueOnlySameOutput
     onToggled: checked => {
       root.valueOnlySameOutput = checked;
-      saveSettings();
+      saveSettings({onlySameOutput: root.valueOnlySameOutput});
     }
     defaultValue: widgetMetadata.onlySameOutput
   }
@@ -97,7 +87,7 @@ ColumnLayout {
     checked: root.valueOnlyActiveWorkspaces
     onToggled: checked => {
       root.valueOnlyActiveWorkspaces = checked;
-      saveSettings();
+      saveSettings({onlyActiveWorkspaces: root.valueOnlyActiveWorkspaces});
     }
     defaultValue: widgetMetadata.onlyActiveWorkspaces
   }
@@ -109,7 +99,7 @@ ColumnLayout {
     checked: root.valueColorizeIcons
     onToggled: checked => {
       root.valueColorizeIcons = checked;
-      saveSettings();
+      saveSettings({colorizeIcons: root.valueColorizeIcons});
     }
     defaultValue: widgetMetadata.colorizeIcons
   }
@@ -121,7 +111,7 @@ ColumnLayout {
     checked: root.valueShowPinnedApps
     onToggled: checked => {
       root.valueShowPinnedApps = checked;
-      saveSettings();
+      saveSettings({showPinnedApps: root.valueShowPinnedApps});
     }
     defaultValue: widgetMetadata.showPinnedApps
   }
@@ -138,7 +128,7 @@ ColumnLayout {
     defaultValue: widgetMetadata.iconScale
     onMoved: value => {
       root.valueIconScale = value;
-      saveSettings();
+      saveSettings({iconScale: root.valueIconScale});
     }
     text: Math.round(root.valueIconScale * 100) + "%"
   }
@@ -150,7 +140,7 @@ ColumnLayout {
     checked: root.valueShowTitle
     onToggled: checked => {
       root.valueShowTitle = checked;
-      saveSettings();
+      saveSettings({showTitle: root.valueShowTitle});
     }
     enabled: !isVerticalBar
     defaultValue: widgetMetadata.showTitle
@@ -164,7 +154,7 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.title-width-description")
     text: widgetData.titleWidth || widgetMetadata.titleWidth
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
-    onTextChanged: saveSettings()
+    onTextEdited: saveSettings({titleWidth: parseInt(text) || widgetMetadata.titleWidth})
     defaultValue: String(widgetMetadata.titleWidth)
   }
 
@@ -176,7 +166,7 @@ ColumnLayout {
     checked: root.valueSmartWidth
     onToggled: checked => {
       root.valueSmartWidth = checked;
-      saveSettings();
+      saveSettings({smartWidth: root.valueSmartWidth});
     }
     defaultValue: widgetMetadata.smartWidth
   }
@@ -194,7 +184,7 @@ ColumnLayout {
     defaultValue: widgetMetadata.maxTaskbarWidth
     onMoved: value => {
       root.valueMaxTaskbarWidth = Math.round(value);
-      saveSettings();
+      saveSettings({maxTaskbarWidth: root.valueMaxTaskbarWidth});
     }
     text: Math.round(root.valueMaxTaskbarWidth) + "%"
   }

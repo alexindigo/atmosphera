@@ -27,6 +27,8 @@ def main():
     assert paths[('bar','screenOverrides')]['machineLocal']
     assert all(not node.get('idField') for node in paths.values())
     assert paths[('bar','widgets','left')]['element']['fields']['instanceSettings']['optional']
+    assert paths[('bar','widgets','left')]['element']['open']
+    assert paths[('bar','widgets','left')]['element']['fields']['instanceSettings']['open']
     assert 'stringPattern' in paths[('wallpaper','fillColor')]
     checked = 0
     with tempfile.TemporaryDirectory(prefix='schema-contract-') as name:
@@ -61,6 +63,8 @@ def main():
         negative('unreviewed identity', lambda r: overlay_edit(r,lambda d:d['entries'].append(
             {'path':['calendar','cards'],'ref':'cards','idField':'id'})))
         negative('cyclic reference', lambda r: overlay_edit(r,lambda d:d['definitions'].update(strings={'ref':'strings'})))
+        negative('open on scalar', lambda r: overlay_edit(r,lambda d:d['definitions']['color'].update(open=True)))
+        negative('non-Boolean open', lambda r: overlay_edit(r,lambda d:d['definitions']['widget'].update(open='yes')))
         negative('bad element default', lambda r: overlay_edit(r,lambda d:d['definitions'].update(strings={'type':'List','element':{'type':'Boolean'}})))
         negative('unvalidated color', lambda r: overlay_edit(r,lambda d:d.update(
             entries=[e for e in d['entries'] if e['path']!=['wallpaper','fillColor']])))

@@ -51,6 +51,13 @@ QtObject {
   // Plugin settings with this placement's instanceSettings on top. Reactive to
   // plugin-level saves (base) and to instance saves (PluginInstances.revision).
   property var pluginSettings: PluginInstances.effectiveSettings(base ? base.pluginSettings : null, placement, PluginInstances.revision)
+  readonly property var settingsView: settingsPreviewOwner.values
+  property QtObject settingsPreviewOwner: PluginSettingsPreview {
+    sourceValue: PluginInstances.effectiveSettings(root.base ? root.base.settingsView : null, root.placement, PluginInstances.revision)
+    currentOwner: function () { return PluginInstances.previewBindingStamp(root.base, root.placement, PluginInstances.revision); }
+  }
+
+  function createSettingsPreview() { return settingsPreviewOwner.open(); }
 
   // Stores only the values that differ from the plugin settings, in this
   // placement's entry. The plugin settings file is never written.

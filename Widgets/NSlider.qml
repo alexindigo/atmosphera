@@ -16,6 +16,19 @@ Slider {
   property string tooltipDirection: "auto"
   property bool hovering: false
 
+  // Automatic persistence may publish live values, but only explicit Apply or
+  // close ends a gesture and gathers deferred release values.
+  function commitEdit(endGesture) {
+    if (!pressed)
+      return true;
+    if (endGesture === false)
+      return live;
+    if (!live)
+      value = valueAt(position);
+    pressed = false;
+    return true;
+  }
+
   readonly property color effectiveFillColor: enabled ? fillColor : AtmoColor.mOutline
 
   readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * Style.uiScaleRatio) / 2) * 2

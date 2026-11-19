@@ -36,27 +36,11 @@ ColumnLayout {
   property real valuePillSize: widgetData.pillSize !== undefined ? widgetData.pillSize : widgetMetadata.pillSize
   property string valueFontWeight: widgetData.fontWeight !== undefined ? widgetData.fontWeight : widgetMetadata.fontWeight
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.labelMode = valueLabelMode;
-    settings.hideUnoccupied = valueHideUnoccupied;
-    settings.characterCount = valueCharacterCount;
-    settings.followFocusedScreen = valueFollowFocusedScreen;
-    settings.showApplications = valueShowApplications;
-    settings.showApplicationsHover = valueShowApplicationsHover;
-    settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
-    settings.colorizeIcons = valueColorizeIcons;
-    settings.unfocusedIconsOpacity = valueUnfocusedIconsOpacity;
-    settings.groupedBorderOpacity = valueGroupedBorderOpacity;
-    settings.enableScrollWheel = valueEnableScrollWheel;
-    settings.iconScale = valueIconScale;
-    settings.focusedColor = valueFocusedColor;
-    settings.occupiedColor = valueOccupiedColor;
-    settings.emptyColor = valueEmptyColor;
-    settings.showBadge = valueShowBadge;
-    settings.pillSize = valuePillSize;
-    settings.fontWeight = valueFontWeight;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
+    else
+      characterCountInput.commitEdit();
   }
 
   NComboBox {
@@ -84,20 +68,21 @@ ColumnLayout {
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => {
       valueLabelMode = key;
-      saveSettings();
+      saveSettings({labelMode: valueLabelMode});
     }
     minimumWidth: 200
   }
 
   NSpinBox {
+    id: characterCountInput
     label: I18n.tr("bar.workspace.character-count-label")
     description: I18n.tr("bar.workspace.character-count-description")
     from: 1
     to: 10
     value: valueCharacterCount
-    onValueChanged: {
+    onValueModified: {
       valueCharacterCount = value;
-      saveSettings();
+      saveSettings({characterCount: valueCharacterCount});
     }
     visible: valueLabelMode === "name"
   }
@@ -113,7 +98,7 @@ ColumnLayout {
     showReset: true
     onMoved: value => {
       valuePillSize = value;
-      saveSettings();
+      saveSettings({pillSize: valuePillSize});
     }
     text: Math.round(valuePillSize * 100) + "%"
     visible: !valueShowApplications
@@ -144,7 +129,7 @@ ColumnLayout {
     currentKey: widgetData.fontWeight || widgetMetadata.fontWeight
     onSelected: key => {
       valueFontWeight = key;
-      saveSettings();
+      saveSettings({fontWeight: valueFontWeight});
     }
     minimumWidth: 200
   }
@@ -155,7 +140,7 @@ ColumnLayout {
     checked: valueHideUnoccupied
     onToggled: checked => {
       valueHideUnoccupied = checked;
-      saveSettings();
+      saveSettings({hideUnoccupied: valueHideUnoccupied});
     }
   }
 
@@ -165,7 +150,7 @@ ColumnLayout {
     checked: valueShowLabelsOnlyWhenOccupied
     onToggled: checked => {
       valueShowLabelsOnlyWhenOccupied = checked;
-      saveSettings();
+      saveSettings({showLabelsOnlyWhenOccupied: valueShowLabelsOnlyWhenOccupied});
     }
   }
 
@@ -175,7 +160,7 @@ ColumnLayout {
     checked: valueFollowFocusedScreen
     onToggled: checked => {
       valueFollowFocusedScreen = checked;
-      saveSettings();
+      saveSettings({followFocusedScreen: valueFollowFocusedScreen});
     }
   }
 
@@ -185,7 +170,7 @@ ColumnLayout {
     checked: valueEnableScrollWheel
     onToggled: checked => {
       valueEnableScrollWheel = checked;
-      saveSettings();
+      saveSettings({enableScrollWheel: valueEnableScrollWheel});
     }
   }
 
@@ -199,7 +184,7 @@ ColumnLayout {
     checked: valueShowApplications
     onToggled: checked => {
       valueShowApplications = checked;
-      saveSettings();
+      saveSettings({showApplications: valueShowApplications});
     }
   }
 
@@ -209,7 +194,7 @@ ColumnLayout {
     checked: valueShowApplicationsHover
     onToggled: checked => {
       valueShowApplicationsHover = checked;
-      saveSettings();
+      saveSettings({showApplicationsHover: valueShowApplicationsHover});
     }
     visible: valueShowApplications
   }
@@ -220,7 +205,7 @@ ColumnLayout {
     checked: valueShowBadge
     onToggled: checked => {
       valueShowBadge = checked;
-      saveSettings();
+      saveSettings({showBadge: valueShowBadge});
     }
     visible: valueShowApplications
   }
@@ -231,7 +216,7 @@ ColumnLayout {
     checked: valueColorizeIcons
     onToggled: checked => {
       valueColorizeIcons = checked;
-      saveSettings();
+      saveSettings({colorizeIcons: valueColorizeIcons});
     }
     visible: valueShowApplications
   }
@@ -247,7 +232,7 @@ ColumnLayout {
     defaultValue: widgetMetadata.unfocusedIconsOpacity
     onMoved: value => {
       valueUnfocusedIconsOpacity = value;
-      saveSettings();
+      saveSettings({unfocusedIconsOpacity: valueUnfocusedIconsOpacity});
     }
     text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
     visible: valueShowApplications
@@ -264,7 +249,7 @@ ColumnLayout {
     defaultValue: widgetMetadata.groupedBorderOpacity
     onMoved: value => {
       valueGroupedBorderOpacity = value;
-      saveSettings();
+      saveSettings({groupedBorderOpacity: valueGroupedBorderOpacity});
     }
     text: Math.floor(valueGroupedBorderOpacity * 100) + "%"
     visible: valueShowApplications
@@ -281,7 +266,7 @@ ColumnLayout {
     defaultValue: widgetMetadata.iconScale
     onMoved: value => {
       valueIconScale = value;
-      saveSettings();
+      saveSettings({iconScale: valueIconScale});
     }
     text: Math.round(valueIconScale * 100) + "%"
     visible: valueShowApplications
@@ -297,7 +282,7 @@ ColumnLayout {
     currentKey: valueFocusedColor
     onSelected: key => {
       valueFocusedColor = key;
-      saveSettings();
+      saveSettings({focusedColor: valueFocusedColor});
     }
   }
 
@@ -307,7 +292,7 @@ ColumnLayout {
     currentKey: valueOccupiedColor
     onSelected: key => {
       valueOccupiedColor = key;
-      saveSettings();
+      saveSettings({occupiedColor: valueOccupiedColor});
     }
   }
 
@@ -317,7 +302,7 @@ ColumnLayout {
     currentKey: valueEmptyColor
     onSelected: key => {
       valueEmptyColor = key;
-      saveSettings();
+      saveSettings({emptyColor: valueEmptyColor});
     }
   }
 }

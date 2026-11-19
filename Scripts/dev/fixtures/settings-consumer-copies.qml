@@ -3,11 +3,11 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Services.Plugins
-import qs.Services.UI
 import qs.Modules.Bar.Extras as Extras
 import qs.Modules.Panels.Settings.Bar as BarSettings
 import qs.Modules.Panels.Settings.Tabs.Audio as AudioSettings
+import qs.Services.Plugins
+import qs.Services.UI
 
 Item {
   id: root
@@ -27,12 +27,23 @@ Item {
     shellScreen: root.testScreen
     widgetSection: "left"
     widgetIndex: 0
-    trayItem: ({"tooltipTitle": "I4 synthetic tray", "menu": null})
+    trayItem: ({
+                 "tooltipTitle": "I4 synthetic tray",
+                 "menu": null
+               })
   }
 
   function check(ok, name) {
     if (!ok)
       throw new Error("I4_CONSUMER_ASSERT: " + name);
+  }
+
+  function finishProcess(code) {
+    // A cold consumer may finish before the application's main exec starts.
+    // Queue every terminal path through the same process-lifecycle boundary.
+    Qt.callLater(function () {
+      Qt.exit(code);
+    });
   }
 
   function screenWidgets() {
@@ -57,45 +68,80 @@ Item {
       if (verifyOnly) {
         finalChecks();
         console.log("I4_CONSUMER_COPIES: RESTART_PASS");
-        Qt.exit(0);
+        finishProcess(0);
         return;
       }
-      Settings.data.bar.widgets.left = [{"id": "Tray", "pinned": [], "opaque": "keep"}];
+      Settings.data.bar.widgets.left = [
+            {
+              "id": "Tray",
+              "pinned": [],
+              "opaque": "keep"
+            }
+          ];
       Settings.data.bar.widgets.center = [];
       Settings.data.bar.widgets.right = [];
       Settings.data.bar.screenOverrides = [];
       Settings.data.audio.mprisBlacklist = ["alpha", "beta", "gamma"];
-      Settings.data.desktopWidgets.monitorWidgets = [{"name": "offline", "opaque": "monitor", "widgets": [{"id": "plugin:i4-keep", "opaque": "widget"}, {"id": "plugin:i4-remove"}]}];
+      Settings.data.desktopWidgets.monitorWidgets = [
+            {
+              "name": "offline",
+              "opaque": "monitor",
+              "widgets": [
+                {
+                  "id": "plugin:i4-keep",
+                  "opaque": "widget"
+                },
+                {
+                  "id": "plugin:i4-remove"
+                }
+              ]
+            }
+          ];
 
       var copy = monitor._getWidgetsContainer();
       check(Object.keys(copy).sort().join(",") === "center,left,right", "namespace copy contains only declared data leaves");
-      copy.right.push({"id": "unpublished"});
+      copy.right.push({
+                        "id": "unpublished"
+                      });
       check(!Settings.hasScreenOverride(testScreen.name, "widgets"), "copy getter creates no choice");
       check(Settings.data.bar.widgets.right.length === 0, "copy getter does not alias global");
       monitor._addWidgetToSection("I4-A", "right");
       monitor._addWidgetToSection("I4-B", "right");
       monitor._reorderWidgetInSection("right", 0, 1);
       check(screenWidgets().right[0].id === "I4-B", "monitor reorder");
-      monitor._updateWidgetSettingsInSection("right", 0, {"id": "I4-B", "opaque": "updated"});
+      monitor._updateWidgetSettingsInSection("right", 0, {
+                                               "id": "I4-B",
+                                               "opaque": "updated"
+                                             });
       monitor._moveWidgetBetweenSections("right", 0, "center");
       check(screenWidgets().center[0].opaque === "updated" && screenWidgets().right[0].id === "I4-A", "monitor atomic move");
       monitor._removeWidgetFromSection("center", 0);
       monitor._removeWidgetFromSection("right", 0);
-      BarService.updateWidgetSettings("", "left", 0, {"compact": true});
-      BarService.updateWidgetSettings(testScreen.name, "left", 0, {"compact": true});
-      tray.addToPinned(function(pin) {
+      BarService.updateWidgetSettings("", "left", 0, {
+                                        "compact": true
+                                      });
+      BarService.updateWidgetSettings(testScreen.name, "left", 0, {
+                                        "compact": true
+                                      });
+      tray.addToPinned(function (pin) {
         try {
           check(pin.status !== "failed", "tray pin receipt");
           check(screenWidgets().left[0].pinned[0] === "I4 synthetic tray", "tray pin owner");
-          tray.removeFromPinned(function(unpin) {
+          tray.removeFromPinned(function (unpin) {
             try {
               check(unpin.status !== "failed", "tray unpin receipt");
               root.finishOtherWriters();
-            } catch (error) { root.fail(error); }
+            } catch (error) {
+              root.fail(error);
+            }
           });
-        } catch (error) { root.fail(error); }
+        } catch (error) {
+          root.fail(error);
+        }
       });
-    } catch (error) { fail(error); }
+    } catch (error) {
+      fail(error);
+    }
   }
 
   function finishOtherWriters() {
@@ -103,34 +149,42 @@ Item {
       media.removeBlacklistedPlayer("beta");
       check(Service.addWidgetToBar("plugin:i4-added", "right"), "plugin add command");
       check(Settings.data.bar.widgets.right[0].id === "plugin:i4-added" && screenWidgets().right[0].id === "plugin:i4-added", "plugin global and screen add");
-      Settings.saveImmediate(function(result) {
+      Settings.saveImmediate(function (result) {
         try {
           // I4 deliberately exercises the active old owner's Boolean callback.
           // I5 must port this witness with the facade's structured receipt API.
           check(result === true, "add receipt");
           check(Service.removeWidgetFromBar("plugin:i4-added"), "plugin remove command");
           check(Service.removePluginDesktopWidgetsFromSettings("i4-remove"), "desktop remove command");
-          Settings.saveImmediate(function(finalResult) {
+          Settings.saveImmediate(function (finalResult) {
             try {
               check(finalResult === true, "final receipt");
               finalChecks();
               console.log("I4_CONSUMER_COPIES: SAVED_PASS");
-              Qt.exit(0);
-            } catch (error) { root.fail(error); }
+              root.finishProcess(0);
+            } catch (error) {
+              root.fail(error);
+            }
           });
-        } catch (error) { root.fail(error); }
+        } catch (error) {
+          root.fail(error);
+        }
       });
-    } catch (error) { fail(error); }
+    } catch (error) {
+      fail(error);
+    }
   }
 
   function fail(error) {
     console.error(String(error));
-    Qt.exit(2);
+    finishProcess(2);
   }
 
   Connections {
     target: Settings
-    function onSettingsLoaded() { root.begin(); }
+    function onSettingsLoaded() {
+      root.begin();
+    }
   }
   Component.onCompleted: begin()
   Timer {

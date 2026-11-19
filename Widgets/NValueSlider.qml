@@ -9,7 +9,7 @@ RowLayout {
 
   property real from: 0
   property real to: 1
-  property real value: 0
+  property alias value: slider.value
   property real stepSize: 0.01
   property var cutoutColor: AtmoColor.mSurface
   property bool snapAlways: true
@@ -75,7 +75,6 @@ RowLayout {
         Layout.fillWidth: true
         from: root.from
         to: root.to
-        value: root.value
         stepSize: root.stepSize
         cutoutColor: root.cutoutColor
         snapAlways: root.snapAlways

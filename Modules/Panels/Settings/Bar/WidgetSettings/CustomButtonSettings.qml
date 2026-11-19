@@ -35,41 +35,19 @@ ColumnLayout {
   property string valueIpcIdentifier: widgetData.ipcIdentifier !== undefined ? widgetData.ipcIdentifier : widgetMetadata.ipcIdentifier
   property string valueGeneralTooltipText: widgetData.generalTooltipText !== undefined ? widgetData.generalTooltipText : widgetMetadata.generalTooltipText
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.icon = valueIcon;
-    settings.iconPosition = valueIconPosition;
-    settings.leftClickExec = leftClickExecInput.text;
-    settings.leftClickUpdateText = leftClickUpdateText.checked;
-    settings.rightClickExec = rightClickExecInput.text;
-    settings.rightClickUpdateText = rightClickUpdateText.checked;
-    settings.middleClickExec = middleClickExecInput.text;
-    settings.middleClickUpdateText = middleClickUpdateText.checked;
-    settings.wheelMode = separateWheelToggle.internalChecked ? "separate" : "unified";
-    settings.wheelExec = wheelExecInput.text;
-    settings.wheelUpExec = wheelUpExecInput.text;
-    settings.wheelDownExec = wheelDownExecInput.text;
-    settings.wheelUpdateText = wheelUpdateText.checked;
-    settings.wheelUpUpdateText = wheelUpUpdateText.checked;
-    settings.wheelDownUpdateText = wheelDownUpdateText.checked;
-    settings.textCommand = textCommandInput.text;
-    settings.textCollapse = textCollapseInput.text;
-    settings.textStream = valueTextStream;
-    settings.parseJson = valueParseJson;
-    settings.showIcon = valueShowIcon;
-    settings.showExecTooltip = valueShowExecTooltip;
-    settings.showTextTooltip = valueShowTextTooltip;
-    settings.hideMode = valueHideMode;
-    settings.maxTextLength = {
-      "horizontal": valueMaxTextLengthHorizontal,
-      "vertical": valueMaxTextLengthVertical
-    };
-    settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10);
-    settings.colorizeSystemIcon = valueColorizeSystemIcon;
-    settings.colorizeSystemText = valueColorizeSystemText;
-    settings.ipcIdentifier = valueIpcIdentifier;
-    settings.generalTooltipText = valueGeneralTooltipText;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
+    else {
+      horizontalLengthInput.commitEdit();
+      verticalLengthInput.commitEdit();
+    }
+  }
+
+  function saveTextLength() {
+    saveSettings({maxTextLength: Object.assign(Object.create(null), widgetData.maxTextLength || {}, {
+      horizontal: valueMaxTextLengthHorizontal, vertical: valueMaxTextLengthVertical
+    })});
   }
 
   NTabBar {
@@ -117,7 +95,7 @@ ColumnLayout {
           description: I18n.tr("bar.custom-button.left-click-description")
           placeholderText: I18n.tr("placeholders.enter-command")
           text: widgetData?.leftClickExec || widgetMetadata.leftClickExec
-          onTextChanged: saveSettings()
+          onTextEdited: saveSettings({leftClickExec: text})
           defaultValue: widgetMetadata.leftClickExec
         }
 
@@ -131,7 +109,7 @@ ColumnLayout {
           checked: widgetData?.leftClickUpdateText ?? widgetMetadata.leftClickUpdateText
           onToggled: isChecked => {
             checked = isChecked;
-            saveSettings();
+            saveSettings({leftClickUpdateText: isChecked});
           }
           defaultValue: widgetMetadata.leftClickUpdateText
         }
@@ -147,7 +125,7 @@ ColumnLayout {
           description: I18n.tr("bar.custom-button.right-click-description")
           placeholderText: I18n.tr("placeholders.enter-command")
           text: widgetData?.rightClickExec || widgetMetadata.rightClickExec
-          onTextChanged: saveSettings()
+          onTextEdited: saveSettings({rightClickExec: text})
           defaultValue: widgetMetadata.rightClickExec
         }
 
@@ -161,7 +139,7 @@ ColumnLayout {
           checked: widgetData?.rightClickUpdateText ?? widgetMetadata.rightClickUpdateText
           onToggled: isChecked => {
             checked = isChecked;
-            saveSettings();
+            saveSettings({rightClickUpdateText: isChecked});
           }
           defaultValue: widgetMetadata.rightClickUpdateText
         }
@@ -177,7 +155,7 @@ ColumnLayout {
           description: I18n.tr("bar.custom-button.middle-click-description")
           placeholderText: I18n.tr("placeholders.enter-command")
           text: widgetData?.middleClickExec || widgetMetadata.middleClickExec
-          onTextChanged: saveSettings()
+          onTextEdited: saveSettings({middleClickExec: text})
           defaultValue: widgetMetadata.middleClickExec
         }
 
@@ -191,7 +169,7 @@ ColumnLayout {
           checked: widgetData?.middleClickUpdateText ?? widgetMetadata.middleClickUpdateText
           onToggled: isChecked => {
             checked = isChecked;
-            saveSettings();
+            saveSettings({middleClickUpdateText: isChecked});
           }
           defaultValue: widgetMetadata.middleClickUpdateText
         }
@@ -206,7 +184,7 @@ ColumnLayout {
         checked: internalChecked
         onToggled: checked => {
           internalChecked = checked;
-          saveSettings();
+          saveSettings({wheelMode: checked ? "separate" : "unified"});
         }
         defaultValue: widgetMetadata.wheelMode === "separate"
       }
@@ -226,7 +204,7 @@ ColumnLayout {
             description: I18n.tr("bar.custom-button.wheel-description")
             placeholderText: I18n.tr("placeholders.enter-command")
             text: widgetData?.wheelExec || widgetMetadata?.wheelExec
-            onTextChanged: saveSettings()
+            onTextEdited: saveSettings({wheelExec: text})
             defaultValue: widgetMetadata.wheelExec
           }
 
@@ -240,7 +218,7 @@ ColumnLayout {
             checked: widgetData?.wheelUpdateText ?? widgetMetadata?.wheelUpdateText
             onToggled: isChecked => {
               checked = isChecked;
-              saveSettings();
+              saveSettings({wheelUpdateText: isChecked});
             }
             defaultValue: widgetMetadata.wheelUpdateText
           }
@@ -261,7 +239,7 @@ ColumnLayout {
               description: I18n.tr("bar.custom-button.wheel-up-description")
               placeholderText: I18n.tr("placeholders.enter-command")
               text: widgetData?.wheelUpExec || widgetMetadata?.wheelUpExec
-              onTextChanged: saveSettings()
+              onTextEdited: saveSettings({wheelUpExec: text})
               defaultValue: widgetMetadata.wheelUpExec
             }
 
@@ -275,7 +253,7 @@ ColumnLayout {
               checked: widgetData?.wheelUpUpdateText ?? widgetMetadata?.wheelUpUpdateText
               onToggled: isChecked => {
                 checked = isChecked;
-                saveSettings();
+                saveSettings({wheelUpUpdateText: isChecked});
               }
               defaultValue: widgetMetadata.wheelUpUpdateText
             }
@@ -291,7 +269,7 @@ ColumnLayout {
               description: I18n.tr("bar.custom-button.wheel-down-description")
               placeholderText: I18n.tr("placeholders.enter-command")
               text: widgetData?.wheelDownExec || widgetMetadata?.wheelDownExec
-              onTextChanged: saveSettings()
+              onTextEdited: saveSettings({wheelDownExec: text})
               defaultValue: widgetMetadata.wheelDownExec
             }
 
@@ -305,7 +283,7 @@ ColumnLayout {
               checked: widgetData?.wheelDownUpdateText ?? widgetMetadata?.wheelDownUpdateText
               onToggled: isChecked => {
                 checked = isChecked;
-                saveSettings();
+                saveSettings({wheelDownUpdateText: isChecked});
               }
               defaultValue: widgetMetadata.wheelDownUpdateText
             }
@@ -325,7 +303,7 @@ ColumnLayout {
         checked: valueShowIcon
         onToggled: checked => {
           valueShowIcon = checked;
-          saveSettings();
+          saveSettings({showIcon: valueShowIcon});
         }
         visible: textCommandInput.text !== ""
         defaultValue: widgetMetadata.showIcon
@@ -358,7 +336,7 @@ ColumnLayout {
         initialIcon: valueIcon
         onIconSelected: function (iconName) {
           valueIcon = iconName;
-          saveSettings();
+          saveSettings({icon: valueIcon});
         }
       }
 
@@ -389,7 +367,7 @@ ColumnLayout {
         currentKey: valueIconPosition
         onSelected: key => {
           valueIconPosition = key;
-          saveSettings();
+          saveSettings({iconPosition: valueIconPosition});
         }
         defaultValue: widgetMetadata.iconPosition
       }
@@ -400,7 +378,7 @@ ColumnLayout {
         currentKey: valueColorizeSystemIcon
         onSelected: key => {
           valueColorizeSystemIcon = key;
-          saveSettings();
+          saveSettings({colorizeSystemIcon: valueColorizeSystemIcon});
         }
         defaultValue: widgetMetadata.colorizeSystemIcon
       }
@@ -411,9 +389,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.general-tooltip-text-description")
         placeholderText: I18n.tr("placeholders.enter-tooltip")
         text: valueGeneralTooltipText
-        onTextChanged: {
+        onTextEdited: {
           valueGeneralTooltipText = text;
-          saveSettings();
+          saveSettings({generalTooltipText: valueGeneralTooltipText});
         }
         defaultValue: widgetMetadata.generalTooltipText
       }
@@ -425,7 +403,7 @@ ColumnLayout {
         checked: valueShowExecTooltip
         onToggled: checked => {
           valueShowExecTooltip = checked;
-          saveSettings();
+          saveSettings({showExecTooltip: valueShowExecTooltip});
         }
         defaultValue: widgetMetadata.showExecTooltip
       }
@@ -437,7 +415,7 @@ ColumnLayout {
         checked: valueShowTextTooltip
         onToggled: checked => {
           valueShowTextTooltip = checked;
-          saveSettings();
+          saveSettings({showTextTooltip: valueShowTextTooltip});
         }
         defaultValue: widgetMetadata.showTextTooltip
       }
@@ -448,9 +426,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.ipc-identifier-description")
         placeholderText: I18n.tr("placeholders.enter-ipc-identifier")
         text: valueIpcIdentifier
-        onTextChanged: {
+        onTextEdited: {
           valueIpcIdentifier = text;
-          saveSettings();
+          saveSettings({ipcIdentifier: valueIpcIdentifier});
         }
         defaultValue: widgetMetadata.ipcIdentifier
       }
@@ -466,33 +444,35 @@ ColumnLayout {
         currentKey: valueColorizeSystemText
         onSelected: key => {
           valueColorizeSystemText = key;
-          saveSettings();
+          saveSettings({colorizeSystemText: valueColorizeSystemText});
         }
         defaultValue: widgetMetadata.colorizeSystemText
       }
 
       NSpinBox {
+        id: horizontalLengthInput
         label: I18n.tr("bar.custom-button.max-text-length-horizontal-label")
         description: I18n.tr("bar.custom-button.max-text-length-horizontal-description")
         from: 0
         to: 100
         value: valueMaxTextLengthHorizontal
-        onValueChanged: {
+        onValueModified: {
           valueMaxTextLengthHorizontal = value;
-          saveSettings();
+          saveTextLength();
         }
         defaultValue: widgetMetadata.maxTextLength.horizontal
       }
 
       NSpinBox {
+        id: verticalLengthInput
         label: I18n.tr("bar.custom-button.max-text-length-vertical-label")
         description: I18n.tr("bar.custom-button.max-text-length-vertical-description")
         from: 0
         to: 100
         value: valueMaxTextLengthVertical
-        onValueChanged: {
+        onValueModified: {
           valueMaxTextLengthVertical = value;
-          saveSettings();
+          saveTextLength();
         }
         defaultValue: widgetMetadata.maxTextLength.vertical
       }
@@ -504,7 +484,7 @@ ColumnLayout {
         checked: valueTextStream
         onToggled: checked => {
           valueTextStream = checked;
-          saveSettings();
+          saveSettings({textStream: valueTextStream});
         }
         defaultValue: widgetMetadata.textStream
       }
@@ -516,7 +496,7 @@ ColumnLayout {
         checked: valueParseJson
         onToggled: checked => {
           valueParseJson = checked;
-          saveSettings();
+          saveSettings({parseJson: valueParseJson});
         }
         defaultValue: widgetMetadata.parseJson
       }
@@ -528,7 +508,7 @@ ColumnLayout {
         description: valueTextStream ? I18n.tr("bar.custom-button.display-command-output-stream-description") : I18n.tr("bar.custom-button.display-command-output-description")
         placeholderText: I18n.tr("placeholders.command-example")
         text: widgetData?.textCommand || widgetMetadata.textCommand
-        onTextChanged: saveSettings()
+        onTextEdited: saveSettings({textCommand: text})
         defaultValue: widgetMetadata.textCommand
       }
 
@@ -540,7 +520,7 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.collapse-condition-description")
         placeholderText: I18n.tr("placeholders.enter-text-to-collapse")
         text: widgetData?.textCollapse || widgetMetadata.textCollapse
-        onTextChanged: saveSettings()
+        onTextEdited: saveSettings({textCollapse: text})
         defaultValue: widgetMetadata.textCollapse
       }
 
@@ -552,7 +532,7 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.refresh-interval-description")
         placeholderText: String(widgetMetadata.textIntervalMs)
         text: widgetData && widgetData.textIntervalMs !== undefined ? String(widgetData.textIntervalMs) : ""
-        onTextChanged: saveSettings()
+        onTextEdited: saveSettings({textIntervalMs: parseInt(text || placeholderText, 10)})
         defaultValue: String(widgetMetadata.textIntervalMs)
       }
 
@@ -577,7 +557,7 @@ ColumnLayout {
         currentKey: valueHideMode
         onSelected: key => {
           valueHideMode = key;
-          saveSettings();
+          saveSettings({hideMode: valueHideMode});
         }
         visible: textCommandInput.text !== "" && valueTextStream == true
         defaultValue: widgetMetadata.hideMode

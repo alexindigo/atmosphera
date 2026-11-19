@@ -6,12 +6,13 @@ import "../Helpers/RecordListEditor.js" as RecordListEditor
 QtObject {
   id: root
   property var editor: null
+  property var inputGuard: null
   property var pending: null
   property bool busy: false
   property bool failed: false
   property bool closePending: false
   property int _sequence: 0
-  readonly property bool dirty: pending !== null
+  readonly property bool dirty: pending !== null || (inputGuard && inputGuard.dirty)
   signal completed(var result)
   signal closeRequested
   property Timer _timer: Timer {
@@ -48,7 +49,11 @@ QtObject {
   function flush() {
     if (busy)
       return;
+    if (inputGuard)
+      inputGuard.commit(closePending);
     if (pending === null) {
+      if (inputGuard)
+        inputGuard.acknowledge(inputGuard.capture());
       if (closePending) {
         closePending = false;
         closeRequested();
@@ -56,6 +61,7 @@ QtObject {
       return;
     }
     var submitted = RecordListEditor.copy(pending);
+    var inputFence = inputGuard ? inputGuard.capture() : 0;
     var sequence = _sequence;
     var delivered = false;
     busy = true;
@@ -74,16 +80,15 @@ QtObject {
       }
       if (sequence === root._sequence)
         root.pending = null;
+      if (root.inputGuard)
+        root.inputGuard.acknowledge(inputFence);
       root.completed(result);
-      if (root.pending !== null) {
-        if (root.closePending)
-          root.flush();
-        else
-          root._timer.restart();
-      } else if (root.closePending) {
-        root.closePending = false;
-        root.closeRequested();
-      }
+      // A receipt covers its captured input generation only. A focused field
+      // can still buffer newer text without having queued a field patch yet.
+      if (root.closePending)
+        root.flush();
+      else if (root.pending !== null)
+        root._timer.restart();
     }
     try {
       if (!editor || typeof editor.submit !== "function")
@@ -111,6 +116,8 @@ QtObject {
     pending = null;
     failed = false;
     closePending = false;
+    if (inputGuard)
+      inputGuard.reset();
     if (editor && typeof editor.detach === "function")
       editor.detach();
     closeRequested();

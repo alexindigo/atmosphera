@@ -37,22 +37,9 @@ ColumnLayout {
     }
   }
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.hideMode = valueHideMode;
-    // No longer store hideWhenIdle separately; kept for backward compatibility only
-    settings.showAlbumArt = valueShowAlbumArt;
-    settings.panelShowAlbumArt = valuePanelShowAlbumArt;
-    settings.showArtistFirst = valueShowArtistFirst;
-    settings.showVisualizer = valueShowVisualizer;
-    settings.visualizerType = valueVisualizerType;
-    settings.scrollingMode = valueScrollingMode;
-    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
-    settings.useFixedWidth = valueUseFixedWidth;
-    settings.showProgressRing = valueShowProgressRing;
-    settings.compactMode = valueCompactMode;
-    settings.textColor = valueTextColor;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -80,7 +67,7 @@ ColumnLayout {
     currentKey: root.valueHideMode
     onSelected: key => {
       root.valueHideMode = key;
-      saveSettings();
+      saveSettings({hideMode: root.valueHideMode});
     }
     defaultValue: widgetMetadata.hideMode
   }
@@ -91,7 +78,7 @@ ColumnLayout {
     checked: valueShowAlbumArt
     onToggled: checked => {
       valueShowAlbumArt = checked;
-      saveSettings();
+      saveSettings({showAlbumArt: valueShowAlbumArt});
     }
     defaultValue: widgetMetadata.showAlbumArt
   }
@@ -102,7 +89,7 @@ ColumnLayout {
     checked: valueShowArtistFirst
     onToggled: checked => {
       valueShowArtistFirst = checked;
-      saveSettings();
+      saveSettings({showArtistFirst: valueShowArtistFirst});
     }
     defaultValue: widgetMetadata.showArtistFirst
   }
@@ -113,7 +100,7 @@ ColumnLayout {
     checked: valueShowVisualizer
     onToggled: checked => {
       valueShowVisualizer = checked;
-      saveSettings();
+      saveSettings({showVisualizer: valueShowVisualizer});
     }
     defaultValue: widgetMetadata.showVisualizer
   }
@@ -139,7 +126,7 @@ ColumnLayout {
     currentKey: valueVisualizerType
     onSelected: key => {
       valueVisualizerType = key;
-      saveSettings();
+      saveSettings({visualizerType: valueVisualizerType});
     }
     minimumWidth: 200
     defaultValue: widgetMetadata.visualizerType
@@ -152,7 +139,7 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.max-width-description")
     placeholderText: widgetMetadata.maxWidth
     text: valueMaxWidth
-    onTextChanged: saveSettings()
+    onTextEdited: saveSettings({maxWidth: parseInt(text) || widgetMetadata.maxWidth})
     defaultValue: String(widgetMetadata.maxWidth)
   }
 
@@ -162,7 +149,7 @@ ColumnLayout {
     checked: valueUseFixedWidth
     onToggled: checked => {
       valueUseFixedWidth = checked;
-      saveSettings();
+      saveSettings({useFixedWidth: valueUseFixedWidth});
     }
     defaultValue: widgetMetadata.useFixedWidth
   }
@@ -173,7 +160,7 @@ ColumnLayout {
     checked: valueShowProgressRing
     onToggled: checked => {
       valueShowProgressRing = checked;
-      saveSettings();
+      saveSettings({showProgressRing: valueShowProgressRing});
     }
     defaultValue: widgetMetadata.showProgressRing
   }
@@ -182,7 +169,7 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
       valueTextColor = key;
-      saveSettings();
+      saveSettings({textColor: valueTextColor});
     }
     defaultValue: widgetMetadata.textColor
   }
@@ -207,7 +194,7 @@ ColumnLayout {
     currentKey: valueScrollingMode
     onSelected: key => {
       valueScrollingMode = key;
-      saveSettings();
+      saveSettings({scrollingMode: valueScrollingMode});
     }
     minimumWidth: 200
     defaultValue: widgetMetadata.scrollingMode
@@ -230,7 +217,7 @@ ColumnLayout {
     checked: valuePanelShowAlbumArt
     onToggled: checked => {
       valuePanelShowAlbumArt = checked;
-      saveSettings();
+      saveSettings({panelShowAlbumArt: valuePanelShowAlbumArt});
     }
     defaultValue: widgetMetadata.panelShowAlbumArt
   }
@@ -241,7 +228,7 @@ ColumnLayout {
     checked: valueCompactMode
     onToggled: checked => {
       valueCompactMode = checked;
-      saveSettings();
+      saveSettings({compactMode: valueCompactMode});
     }
     defaultValue: widgetMetadata.compactMode
   }

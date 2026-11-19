@@ -25,14 +25,9 @@ ColumnLayout {
   property bool valueEnableColorization: widgetData.enableColorization !== undefined ? widgetData.enableColorization : widgetMetadata.enableColorization
   property string valueColorizeSystemIcon: widgetData.colorizeSystemIcon !== undefined ? widgetData.colorizeSystemIcon : widgetMetadata.colorizeSystemIcon
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.icon = valueIcon;
-    settings.useDistroLogo = valueUseDistroLogo;
-    settings.customIconPath = valueCustomIconPath;
-    settings.enableColorization = valueEnableColorization;
-    settings.colorizeSystemIcon = valueColorizeSystemIcon;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NToggle {
@@ -41,7 +36,7 @@ ColumnLayout {
     checked: valueUseDistroLogo
     onToggled: checked => {
       valueUseDistroLogo = checked;
-      saveSettings();
+      saveSettings({useDistroLogo: valueUseDistroLogo});
     }
     defaultValue: widgetMetadata.useDistroLogo
   }
@@ -52,7 +47,7 @@ ColumnLayout {
     checked: valueEnableColorization
     onToggled: checked => {
       valueEnableColorization = checked;
-      saveSettings();
+      saveSettings({enableColorization: valueEnableColorization});
     }
     defaultValue: widgetMetadata.enableColorization
   }
@@ -64,7 +59,7 @@ ColumnLayout {
     currentKey: valueColorizeSystemIcon
     onSelected: function (key) {
       valueColorizeSystemIcon = key;
-      saveSettings();
+      saveSettings({colorizeSystemIcon: valueColorizeSystemIcon});
     }
     defaultValue: widgetMetadata.colorizeSystemIcon
   }
@@ -115,7 +110,7 @@ ColumnLayout {
     onIconSelected: iconName => {
       valueIcon = iconName;
       valueCustomIconPath = "";
-      saveSettings();
+      saveSettings({icon: valueIcon, customIconPath: valueCustomIconPath});
     }
   }
 
@@ -128,7 +123,7 @@ ColumnLayout {
     onAccepted: paths => {
       if (paths.length > 0) {
         valueCustomIconPath = paths[0];
-        saveSettings();
+        saveSettings({customIconPath: valueCustomIconPath});
       }
     }
   }

@@ -21,16 +21,13 @@ ColumnLayout {
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
   property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : widgetMetadata.roundedCorners
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.width = valueWidth;
-    settings.height = valueHeight;
-    settings.visualizerType = valueVisualizerType;
-    settings.colorName = valueColorName;
-    settings.hideWhenIdle = valueHideWhenIdle;
-    settings.showBackground = valueShowBackground;
-    settings.roundedCorners = valueRoundedCorners;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
+    else {
+      widthInput.commitEdit();
+      heightInput.commitEdit();
+    }
   }
 
   NTextInput {
@@ -41,11 +38,11 @@ ColumnLayout {
     text: String(valueWidth)
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
     inputMethodHints: Qt.ImhDigitsOnly
-    onEditingFinished: {
+    onEditCommitted: {
       const parsed = parseInt(text);
       if (!isNaN(parsed) && parsed > 0) {
         valueWidth = parsed;
-        saveSettings();
+        saveSettings({width: valueWidth});
       } else {
         text = String(valueWidth);
       }
@@ -61,11 +58,11 @@ ColumnLayout {
     text: String(valueHeight)
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
     inputMethodHints: Qt.ImhDigitsOnly
-    onEditingFinished: {
+    onEditCommitted: {
       const parsed = parseInt(text);
       if (!isNaN(parsed) && parsed > 0) {
         valueHeight = parsed;
-        saveSettings();
+        saveSettings({height: valueHeight});
       } else {
         text = String(valueHeight);
       }
@@ -94,7 +91,7 @@ ColumnLayout {
     currentKey: valueVisualizerType
     onSelected: key => {
       valueVisualizerType = key;
-      saveSettings();
+      saveSettings({visualizerType: valueVisualizerType});
     }
     defaultValue: widgetMetadata.visualizerType
   }
@@ -106,7 +103,7 @@ ColumnLayout {
     currentKey: valueColorName
     onSelected: key => {
       valueColorName = key;
-      saveSettings();
+      saveSettings({colorName: valueColorName});
     }
     defaultValue: widgetMetadata.colorName
   }
@@ -118,7 +115,7 @@ ColumnLayout {
     checked: valueHideWhenIdle
     onToggled: checked => {
       valueHideWhenIdle = checked;
-      saveSettings();
+      saveSettings({hideWhenIdle: valueHideWhenIdle});
     }
     defaultValue: widgetMetadata.hideWhenIdle
   }
@@ -134,7 +131,7 @@ ColumnLayout {
     checked: valueShowBackground
     onToggled: checked => {
       valueShowBackground = checked;
-      saveSettings();
+      saveSettings({showBackground: valueShowBackground});
     }
     defaultValue: widgetMetadata.showBackground
   }
@@ -147,7 +144,7 @@ ColumnLayout {
     checked: valueRoundedCorners
     onToggled: checked => {
       valueRoundedCorners = checked;
-      saveSettings();
+      saveSettings({roundedCorners: valueRoundedCorners});
     }
     defaultValue: widgetMetadata.roundedCorners
   }

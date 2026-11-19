@@ -40,29 +40,9 @@ ColumnLayout {
   property bool valueShowDiskAvailable: widgetData.showDiskAvailable !== undefined ? widgetData.showDiskAvailable : widgetMetadata.showDiskAvailable
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.compactMode = valueCompactMode;
-    settings.iconColor = valueIconColor;
-    settings.textColor = valueTextColor;
-    settings.useMonospaceFont = valueUseMonospaceFont;
-    settings.usePadding = valueUsePadding;
-    settings.showCpuUsage = valueShowCpuUsage;
-    settings.showCpuCores = valueShowCpuCores;
-    settings.showCpuFreq = valueShowCpuFreq;
-    settings.showCpuTemp = valueShowCpuTemp;
-    settings.showGpuTemp = valueShowGpuTemp;
-    settings.showLoadAverage = valueShowLoadAverage;
-    settings.showMemoryUsage = valueShowMemoryUsage;
-    settings.showMemoryAsPercent = valueShowMemoryAsPercent;
-    settings.showSwapUsage = valueShowSwapUsage;
-    settings.showNetworkStats = valueShowNetworkStats;
-    settings.showDiskUsage = valueShowDiskUsage;
-    settings.showDiskUsageAsPercent = valueShowDiskUsageAsPercent;
-    settings.showDiskAvailable = valueShowDiskAvailable;
-    settings.diskPath = valueDiskPath;
-
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NToggle {
@@ -72,7 +52,7 @@ ColumnLayout {
     checked: valueCompactMode
     onToggled: checked => {
       valueCompactMode = checked;
-      saveSettings();
+      saveSettings({compactMode: valueCompactMode});
     }
     defaultValue: widgetMetadata.compactMode
   }
@@ -82,7 +62,7 @@ ColumnLayout {
     currentKey: valueIconColor
     onSelected: key => {
       valueIconColor = key;
-      saveSettings();
+      saveSettings({iconColor: valueIconColor});
     }
     defaultValue: widgetMetadata.iconColor
   }
@@ -91,7 +71,7 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
       valueTextColor = key;
-      saveSettings();
+      saveSettings({textColor: valueTextColor});
     }
     visible: !valueCompactMode
     defaultValue: widgetMetadata.textColor
@@ -104,7 +84,7 @@ ColumnLayout {
     checked: valueUseMonospaceFont
     onToggled: checked => {
       valueUseMonospaceFont = checked;
-      saveSettings();
+      saveSettings({useMonospaceFont: valueUseMonospaceFont});
     }
     visible: !valueCompactMode
     defaultValue: widgetMetadata.useMonospaceFont
@@ -117,7 +97,7 @@ ColumnLayout {
     checked: valueUsePadding && !isVerticalBar && valueUseMonospaceFont
     onToggled: checked => {
       valueUsePadding = checked;
-      saveSettings();
+      saveSettings({usePadding: valueUsePadding});
     }
     visible: !valueCompactMode
     enabled: !isVerticalBar && valueUseMonospaceFont
@@ -136,7 +116,7 @@ ColumnLayout {
     checked: valueShowCpuUsage
     onToggled: checked => {
       valueShowCpuUsage = checked;
-      saveSettings();
+      saveSettings({showCpuUsage: valueShowCpuUsage});
     }
     defaultValue: widgetMetadata.showCpuUsage
   }
@@ -149,7 +129,7 @@ ColumnLayout {
     checked: valueShowCpuCores
     onToggled: checked => {
       valueShowCpuCores = checked;
-      saveSettings();
+      saveSettings({showCpuCores: valueShowCpuCores});
     }
     visible: valueCompactMode
   }
@@ -162,7 +142,7 @@ ColumnLayout {
     checked: valueShowCpuFreq
     onToggled: checked => {
       valueShowCpuFreq = checked;
-      saveSettings();
+      saveSettings({showCpuFreq: valueShowCpuFreq});
     }
     defaultValue: widgetMetadata.showCpuFreq
   }
@@ -175,7 +155,7 @@ ColumnLayout {
     checked: valueShowCpuTemp
     onToggled: checked => {
       valueShowCpuTemp = checked;
-      saveSettings();
+      saveSettings({showCpuTemp: valueShowCpuTemp});
     }
     defaultValue: widgetMetadata.showCpuTemp
   }
@@ -188,7 +168,7 @@ ColumnLayout {
     checked: valueShowLoadAverage
     onToggled: checked => {
       valueShowLoadAverage = checked;
-      saveSettings();
+      saveSettings({showLoadAverage: valueShowLoadAverage});
     }
     defaultValue: widgetMetadata.showLoadAverage
   }
@@ -201,7 +181,7 @@ ColumnLayout {
     checked: valueShowGpuTemp
     onToggled: checked => {
       valueShowGpuTemp = checked;
-      saveSettings();
+      saveSettings({showGpuTemp: valueShowGpuTemp});
     }
     visible: SystemStatService.gpuAvailable
     defaultValue: widgetMetadata.showGpuTemp
@@ -215,7 +195,7 @@ ColumnLayout {
     checked: valueShowMemoryUsage
     onToggled: checked => {
       valueShowMemoryUsage = checked;
-      saveSettings();
+      saveSettings({showMemoryUsage: valueShowMemoryUsage});
     }
     defaultValue: widgetMetadata.showMemoryUsage
   }
@@ -228,7 +208,7 @@ ColumnLayout {
     checked: valueShowMemoryAsPercent
     onToggled: checked => {
       valueShowMemoryAsPercent = checked;
-      saveSettings();
+      saveSettings({showMemoryAsPercent: valueShowMemoryAsPercent});
     }
     visible: valueShowMemoryUsage
     defaultValue: widgetMetadata.showMemoryAsPercent
@@ -242,7 +222,7 @@ ColumnLayout {
     checked: valueShowSwapUsage
     onToggled: checked => {
       valueShowSwapUsage = checked;
-      saveSettings();
+      saveSettings({showSwapUsage: valueShowSwapUsage});
     }
     defaultValue: widgetMetadata.showSwapUsage
   }
@@ -255,7 +235,7 @@ ColumnLayout {
     checked: valueShowNetworkStats
     onToggled: checked => {
       valueShowNetworkStats = checked;
-      saveSettings();
+      saveSettings({showNetworkStats: valueShowNetworkStats});
     }
     defaultValue: widgetMetadata.showNetworkStats
   }
@@ -272,7 +252,7 @@ ColumnLayout {
     checked: valueShowDiskUsage
     onToggled: checked => {
       valueShowDiskUsage = checked;
-      saveSettings();
+      saveSettings({showDiskUsage: valueShowDiskUsage});
     }
     defaultValue: widgetMetadata.showDiskUsage
   }
@@ -285,7 +265,7 @@ ColumnLayout {
     checked: valueShowDiskUsageAsPercent
     onToggled: checked => {
       valueShowDiskUsageAsPercent = checked;
-      saveSettings();
+      saveSettings({showDiskUsageAsPercent: valueShowDiskUsageAsPercent});
     }
     defaultValue: widgetMetadata.showDiskUsageAsPercent
   }
@@ -298,7 +278,7 @@ ColumnLayout {
     checked: valueShowDiskAvailable
     onToggled: checked => {
       valueShowDiskAvailable = checked;
-      saveSettings();
+      saveSettings({showDiskAvailable: valueShowDiskAvailable});
     }
     defaultValue: widgetMetadata.showDiskAvailable
   }
@@ -318,7 +298,7 @@ ColumnLayout {
       currentKey: valueDiskPath
       onSelected: key => {
       valueDiskPath = key;
-      saveSettings();
+      saveSettings({diskPath: valueDiskPath});
     }
       defaultValue: widgetMetadata.diskPath
     }

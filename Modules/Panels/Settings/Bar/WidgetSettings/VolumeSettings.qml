@@ -21,13 +21,9 @@ ColumnLayout {
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
   property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.displayMode = valueDisplayMode;
-    settings.middleClickCommand = valueMiddleClickCommand;
-    settings.iconColor = valueIconColor;
-    settings.textColor = valueTextColor;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -51,7 +47,7 @@ ColumnLayout {
     currentKey: valueDisplayMode
     onSelected: key => {
       valueDisplayMode = key;
-      saveSettings();
+      saveSettings({displayMode: valueDisplayMode});
     }
     defaultValue: widgetMetadata.displayMode
   }
@@ -61,7 +57,7 @@ ColumnLayout {
     currentKey: valueIconColor
     onSelected: key => {
       valueIconColor = key;
-      saveSettings();
+      saveSettings({iconColor: valueIconColor});
     }
     defaultValue: widgetMetadata.iconColor
   }
@@ -70,7 +66,7 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
       valueTextColor = key;
-      saveSettings();
+      saveSettings({textColor: valueTextColor});
     }
     defaultValue: widgetMetadata.textColor
   }
@@ -81,9 +77,9 @@ ColumnLayout {
     description: I18n.tr("panels.audio.on-middle-clicked-description")
     placeholderText: I18n.tr("panels.audio.external-mixer-placeholder")
     text: valueMiddleClickCommand
-    onTextChanged: {
+    onTextEdited: {
       valueMiddleClickCommand = text;
-      saveSettings();
+      saveSettings({middleClickCommand: valueMiddleClickCommand});
     }
     defaultValue: widgetMetadata.middleClickCommand
   }
