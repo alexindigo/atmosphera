@@ -2,8 +2,10 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.MainScreen
 import qs.Modules.Panels.Plugins
 import qs.Services.Plugins
+import qs.Widgets
 
 ShellRoot {
   readonly property var modelData: Quickshell.screens[0]
@@ -29,6 +31,10 @@ ShellRoot {
         property bool failedSave: false
         property var editor: null
         property var previewSession: null
+        property var popup: null
+        property var popupHost: null
+        property bool popupOpeningRefused: false
+        property bool popupSubmitted: false
         property int discardedEditorCount: 0
         property bool editorApplied: false
         readonly property string mode: Quickshell.env("PLUGIN_UNLOAD_CASE")
@@ -88,7 +94,7 @@ ShellRoot {
                     });
                   });
                 } else {
-                  check(api.pluginSettings.scratchpadContent === (mode === "manual-unsaved" || mode.startsWith("editor-") && mode !== "editor-apply-held" ? "original" : expected), "cold shared consumer");
+                  check(api.pluginSettings.scratchpadContent === (mode === "manual-unsaved" || mode === "popup-open-refused" || mode.startsWith("editor-") && mode !== "editor-apply-held" ? "original" : expected), "cold shared consumer");
                   console.log("PLUGIN_UNLOAD: COLD_PASS");
                   Qt.exit(0);
                 }
@@ -102,6 +108,27 @@ ShellRoot {
                     passed();
                   });
                 });
+                return;
+              }
+              if (mode.startsWith("popup-")) {
+                if (mode === "popup-open-refused") {
+                  popupHost = popupHostFactory.createObject(root);
+                  popup = popupFactory.createObject(popupHost.contentItem, {
+                                                      screen: Quickshell.screens[0]
+                                                    });
+                  check(popupHost.showDialog(popup), "actual pending host adopted");
+                  instanceApi = PluginInstances.apiFor(name, address);
+                  popup.settingsCompleted.connect(function (result) {
+                    root.popupOpeningRefused = result.status === "failed";
+                  });
+                  check(popup.openInstanceSettings(manifest, instanceApi), "invalid placement editor open queued");
+                } else {
+                  popup = popupFactory.createObject(popupWindow.contentItem, {
+                                                      screen: Quickshell.screens[0]
+                                                    });
+                  check(popup.openPluginSettings(manifest), "actual popup open requested");
+                }
+                popupCheck.start();
                 return;
               }
               if (mode.startsWith("editor-")) {
@@ -184,6 +211,63 @@ ShellRoot {
               retire();
             });
           });
+        }
+        Component {
+          id: popupFactory
+          NPluginSettingsPopup {}
+        }
+        Component {
+          id: popupHostFactory
+          PopupMenuWindow {
+            shellScreen: Quickshell.screens[0]
+          }
+        }
+        PanelWindow {
+          id: popupWindow
+          visible: root.mode.startsWith("popup-")
+          implicitWidth: 800
+          implicitHeight: 600
+        }
+        Timer {
+          id: popupCheck
+          interval: 50
+          repeat: true
+          onTriggered: root.guard(function () {
+            if (root.mode === "popup-open-refused") {
+              if (!root.popupOpeningRefused)
+                return;
+              root.check(!root.popup.visible && !root.popupHost.visible && root.popupHost.popupContentItem === null, "refused unopened editor releases actual transparent host");
+              root.passed();
+              return;
+            }
+            if (!root.popupSubmitted) {
+              if (!root.popup || !root.popup.visible || !root.popup.settingsPage)
+                return;
+              root.popupSubmitted = true;
+              root.popup.applySettings();
+              root.check(root.popup.busy, "actual popup Apply is busy");
+              if (root.mode === "popup-close-held")
+                root.popup.close();
+              else
+                root.popup.destroy();
+              Service.unloadPlugin(root.name, true, function (result) {
+                root.guard(function () {
+                  root.check(root.held, "popup release cannot complete retirement before held write");
+                  root.check(result.status !== "failed", "released popup editor lets retirement settle");
+                  root.check((Service._pluginEntries[root.name] || []).length === 0, "no retained popup consumer");
+                  persisted.reload();
+                  persisted.waitForJob();
+                  root.check(JSON.parse(persisted.text()).scratchpadContent === root.expected, "popup Apply persisted before retirement");
+                  root.passed();
+                });
+              });
+              return;
+            }
+            root.check(!root.completed && root.api.pluginSettings !== null, "native hold retains preference owner");
+            root.held = true;
+            console.log("PLUGIN_UNLOAD: HELD_PASS");
+            stop();
+          })
         }
         function editorCase() {
           if (mode === "editor-preview-lifetime") {

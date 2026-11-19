@@ -29,8 +29,10 @@ also inspects final target bytes, link identity and failed destination contents.
 
 The current owner uses `Scripts/dev/fixtures/settings-plugin-receipts-native.qml`.
 It retains asynchronous ordered receipts, signal-before-callback delivery,
-reentry, rejected input, owned submitted values, real IO failure, linked-file
-publication and a separate cold consumer. Independent native owners are sequenced
+rejected input, owned submitted values, real IO failure, linked-file publication
+and a separate cold consumer. This witness checks work queued before completion
+and explicit sequencing across independent native owners, not same-owner callback
+reentry while another request remains queued. Independent owners are sequenced
 at the caller boundary rather than through the removed shared serializer. The
 old-owner fixture remains in historical pre-cutover trees, not the current tree.
 This prerequisite does not complete plugin popup/instance editing or catalog work.
