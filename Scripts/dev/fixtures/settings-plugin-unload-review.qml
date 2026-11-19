@@ -39,7 +39,9 @@ ShellRoot {
         property int discardedEditorCount: 0
         property bool editorApplied: false
         readonly property string mode: Quickshell.env("PLUGIN_UNLOAD_CASE")
-        readonly property bool placement: mode === "placement" || mode === "placement-held"
+        readonly property bool placement: mode === "placement" || mode.startsWith("placement-")
+        readonly property bool placementRetry: mode.startsWith("placement-retry-")
+        readonly property string placementWritten: mode === "placement-retry-current" ? "latest retry intent" : mode === "placement-retry-superseded" || mode === "placement-retry-external" ? "later successful save" : expected
         readonly property bool cold: Quickshell.env("PLUGIN_UNLOAD_COLD") === "1"
         readonly property string name: "notes-scratchpad"
         readonly property string expected: "unsaved scratchpad destruction consumer"
@@ -89,7 +91,8 @@ ShellRoot {
                   PluginInstances.openRuntime(api, address, function (result) {
                     guard(function () {
                       var value = mode === "editor-instance-discard" ? "instance initial" : mode === "editor-instance-reset" ? "original" : expected;
-                      check(result.status === "opened" && result.editor.values.scratchpadContent === value, "cold placement consumer");
+                      check(result.status === "opened" && result.editor.values.scratchpadContent === (placementRetry ? placementWritten : value), "cold placement consumer");
+                      if (placementRetry) check(Settings.data.bar.position === "top", "cold unrelated key remains unsaved");
                       result.editor.detach();
                       console.log("PLUGIN_UNLOAD: COLD_PASS");
                       Qt.exit(0);
@@ -159,6 +162,10 @@ ShellRoot {
                 return;
               }
               if (placement) {
+                if (placementRetry) {
+                  Settings.store.autoSave = false;
+                  Settings.data.bar.position = "top";
+                }
                 Settings.data.bar.widgets.left = [
                       {
                         id: "plugin:" + name
@@ -373,7 +380,7 @@ ShellRoot {
           });
         }
         function retire() {
-          if (mode === "placement-held") {
+          if (mode === "placement-held" || placementRetry) {
             enableFile.setText("1");
             enableFile.waitForJob();
           }
@@ -383,6 +390,31 @@ ShellRoot {
             Service.unloadPlugin(name, true, function (result) {
               guard(function () {
                 check(ownerAtUnload, "unload observers retain preferences");
+                if (placementRetry && result.status === "failed" && !failedSave) {
+                  failedSave = true;
+                  check(!api.settingsOwner.closed && instanceApi.settingsReady, "failed placement keeps same native owner and runtime");
+                  if (mode === "placement-retry-current") instanceApi.pluginSettings.scratchpadContent = placementWritten;
+                  if (mode === "placement-retry-superseded" || mode === "placement-retry-external") {
+                    instanceApi.pluginSettings.scratchpadContent = placementWritten;
+                    var savedLater = function (saved) {
+                      guard(function () {
+                        check(saved.status !== "failed", "later same-key requested save succeeds");
+                        if (mode === "placement-retry-external") receipt = true; // Actual external native completion, not an API signal.
+                        instanceApi.pluginSettings.scratchpadContent = "post-success unrequested edit";
+                        Settings.data.bar.position = "bottom";
+                        api.pluginSettings.scratchpadContent = "unrelated shared manual edit";
+                        supersededCheck.start();
+                      });
+                    };
+                    if (mode === "placement-retry-external") Settings.store.saveSelected([["bar", "widgets", "left"]], savedLater);
+                    else instanceApi.saveSettings(savedLater);
+                  } else {
+                    Settings.data.bar.position = "bottom";
+                    api.pluginSettings.scratchpadContent = "unrelated shared manual edit";
+                    Service.unloadPlugin(name, true, finish);
+                  }
+                  return;
+                }
                 if (mode === "failed-save" && result.status === "failed") {
                   failedSave = true;
                   check(!api.settingsOwner.closed && Service._settingsOwners[name] === api.settingsOwner, "failed work retained without recreation");
@@ -406,6 +438,16 @@ ShellRoot {
           guard(function () {
             check(result.status !== "failed", "publication settled before unload completion");
             check(mode !== "failed-save" || failedSave, "actual failed publication preceded explicit Retry");
+            if (placementRetry) {
+              check(failedSave, "actual failed placement request preceded Retry");
+              barPersisted.reload(); barPersisted.waitForJob();
+              var bar = JSON.parse(barPersisted.text());
+              check(bar.widgets.left[0].instanceSettings.scratchpadContent === placementWritten, "Retry publishes requested-key current intent, never superseded intent");
+              check(bar.position === "top", "Retry excludes unrelated pending key in same file");
+              check(Settings.data.bar.position === "bottom", "unrelated pending intent is retained, not discarded");
+              if (mode === "placement-retry-superseded" || mode === "placement-retry-external") check(Settings.data.bar.widgets.left[0].instanceSettings.scratchpadContent === "post-success unrequested edit", "later success prevents Retry of newly unrequested same-key input");
+              console.log("PLUGIN_UNLOAD: RETRY_SCOPE_READBACK " + mode + " unrelated-unsaved=true requested-confirmed=true");
+            }
             check(receipt === (mode !== "manual-unsaved"), "requested publication receipt");
             check(api.settingsOwner === null || api.settingsOwner.closed, "owner retired after last consumer");
             if (placement)
@@ -416,6 +458,17 @@ ShellRoot {
             persisted.waitForJob();
             check(JSON.parse(persisted.text()).scratchpadContent === (placement || mode === "manual-unsaved" ? "original" : expected), "shared disk publication");
             completed = true;
+            if (placementRetry) {
+              // The Settings owner was constructed with autosave enabled and
+              // normally publishes pending intent at engine exit. AFTER the
+              // live receipt/raw/pending assertions above, restore only this
+              // fixture's synthetic unsaved edits for an uncontaminated cold
+              // consumer. This is test cleanup, never part of product Retry.
+              Settings.data.bar.position = bar.position;
+              Settings.data.bar.widgets.left = bar.widgets.left;
+              Qt.callLater(root.passed);
+              return;
+            }
             passed();
           });
         }
@@ -442,6 +495,16 @@ ShellRoot {
                 root.passed();
               });
           }
+        }
+        Timer {
+          id: supersededCheck
+          interval: 30
+          repeat: true
+          onTriggered: root.guard(function () {
+            if (Settings.data.bar.widgets.left[0].instanceSettings.scratchpadContent !== "post-success unrequested edit") return;
+            stop();
+            Service.unloadPlugin(root.name, true, root.finish);
+          })
         }
         Timer {
           id: editorCheck
@@ -518,6 +581,11 @@ ShellRoot {
         FileView {
           id: persisted
           path: Settings.configDir + "settings/plugins/notes-scratchpad.json"
+          printErrors: false
+        }
+        FileView {
+          id: barPersisted
+          path: Settings.configDir + "settings/bar.json"
           printErrors: false
         }
         FileView {

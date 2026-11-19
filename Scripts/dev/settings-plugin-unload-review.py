@@ -19,7 +19,8 @@ from presentation_harness import run_harness
 CASES = ('destruction', 'closed-api', 'panel-slot', 'placement', 'reload-held',
          'placement-held', 'manual-unsaved', 'failed-save', 'editor-discard',
          'editor-unload', 'editor-apply-held', 'editor-instance-discard', 'editor-instance-reset',
-          'editor-preview-lifetime', 'popup-apply-held', 'popup-close-held', 'popup-open-refused')
+           'editor-preview-lifetime', 'popup-apply-held', 'popup-close-held', 'popup-open-refused',
+           'placement-retry-scope', 'placement-retry-current', 'placement-retry-superseded', 'placement-retry-external')
 
 
 def main():
@@ -65,11 +66,11 @@ Item {
                    PLUGIN_UNLOAD_MANIFEST=(plugin / 'manifest.json').read_text(), PLUGIN_UNLOAD_CASE=case)
         held = case in ('reload-held', 'placement-held', 'editor-apply-held', 'popup-apply-held', 'popup-close-held')
         marker, gate = work / 'held.json', work / 'release'
-        if held or case == 'failed-save':
-            if case == 'placement-held':
+        if held or case == 'failed-save' or case.startswith('placement-retry-'):
+            if case == 'placement-held' or case.startswith('placement-retry-'):
                 target = config / 'settings/bar.json'
             rule = dict(file=str(target), phase='rename', marker=str(marker))
-            if case == 'placement-held':
+            if case == 'placement-held' or case.startswith('placement-retry-'):
                 rule['enabled'] = str(work / 'enabled')
                 env['PLUGIN_UNLOAD_ENABLE'] = str(work / 'enabled')
             if held:
@@ -124,7 +125,7 @@ Item {
                 text = (work / 'engine.log').read_text()
                 assert 'PLUGIN_UNLOAD: PASS' in text and not any(token in text for token in (
                     'TypeError:', 'ReferenceError:', 'SyntaxError:', '_ASSERT:', 'Failed to load configuration')), text[-6000:]
-                if case == 'failed-save':
+                if case == 'failed-save' or case.startswith('placement-retry-'):
                     assert marker.exists(), 'native publication failure was exercised'
                 if case != 'closed-api':
                     cold_env = dict(env, PLUGIN_UNLOAD_COLD='1')

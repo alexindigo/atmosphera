@@ -40,25 +40,35 @@ Singleton {
     _cache[key] = {base: base, api: api};
     return api;
   }
-  function _dropPlugin(pluginKey) {
+  function _dropPlugin(pluginKey, callback) {
+    var pending = 0;
+    var complete = false;
+    function released() {
+      pending--;
+      if (complete && pending === 0 && typeof callback === "function") Qt.callLater(callback);
+    }
     for (var key of Object.keys(_cache)) {
       if (_cache[key].base.pluginId === pluginKey) {
+        pending++;
+        _cache[key].api.Component.destruction.connect(released);
         _cache[key].api.destroy();
         delete _cache[key];
       }
     }
     revision++;
+    complete = true;
+    if (pending === 0 && typeof callback === "function") Qt.callLater(callback);
   }
-  function settlePlugin(pluginKey, callback) {
+  function settlePlugin(pluginKey, callback, retry) {
     var apis = Object.keys(_cache).filter(function (key) {
       return root._cache[key].base.pluginId === pluginKey;
     }).map(function (key) { return root._cache[key].api; });
     function next(index) {
-      if (index === apis.length) { root._dropPlugin(pluginKey); callback({status: "nothing_to_save"}); return; }
+      if (index === apis.length) { root._dropPlugin(pluginKey, function () { callback({status: "nothing_to_save"}); }); return; }
       Service.waitForPluginSaves(apis[index], function (result) {
         if (result.status === "failed") callback(result);
         else next(index + 1);
-      });
+      }, retry);
     }
     next(0);
   }
