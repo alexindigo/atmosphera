@@ -137,6 +137,8 @@ ShellRoot {
         check("handover-grant-acquisition-window", v, "handing-over");
         v.now = 10;
         check("stalled-granted-candidate-retired", v, "handing-over", "stop", "real");
+        if (Lifecycle.decide(v).effect.unlessSecure !== true)
+          throw new Error("timeout retirement must keep a newly secure candidate");
         v.descriptor.units.real.client.secure = true;
         check("secure-granted-candidate-kept", v, "engaged", "", "", true);
         v.descriptor.units.real.client.secure = false;

@@ -92,6 +92,23 @@ def main():
         assert not granted['granted'], granted
     case('terminal-client-publication-is-not-ready', terminal_publication_not_ready)
 
+    def timeout_stop_keeps_secure(secure):
+        nonlocal state
+        state = fresh()
+        real = record('real')
+        real.pop('protocolReport')
+        real['client']['secure'] = secure
+        state['units'] = {'real': real}
+        stops = []
+        with patch.object(adapter, 'Session', Session), patch.object(adapter, 'observe', return_value=live), \
+                patch.object(adapter, 'refresh_report', lambda *args: None), \
+                patch.object(adapter, 'stop_record', side_effect=lambda r: stops.append(r['name']) or {'gone': True}):
+            adapter.manage(dict(operation='stop', session='fixture', generation='g', role='real', unlessSecure=True))
+        assert stops == ([] if secure else ['fixture-real']), stops
+        assert state['units']['real']['retire'] is not secure
+    case('timeout-stop-keeps-newly-secure-candidate', lambda: timeout_stop_keeps_secure(True))
+    case('timeout-stop-retires-insecure-candidate', lambda: timeout_stop_keeps_secure(False))
+
     def dead_secure(consumer):
         nonlocal state
         state = fresh()

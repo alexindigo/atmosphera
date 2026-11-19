@@ -632,7 +632,8 @@ Singleton {
       effect("recover", {});
     } else {
       effect(action.kind, {
-               role: action.role
+               role: action.role,
+               unlessSecure: action.unlessSecure === true
              });
     }
   }

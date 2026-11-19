@@ -106,8 +106,11 @@ function decide(view) {
         }
         // A granted candidate gets the emergency budget to acquire. A stalled
         // one is retired without a protocol unlock; emergency is restored.
-        if (realLive && now >= (real.grantedAt ?? d.handoverAt) + (d.emergencyAt - d.requestedAt))
-            return effect("handing-over", "", false, "stop", "real");
+        if (realLive && now >= (real.grantedAt ?? d.handoverAt) + (d.emergencyAt - d.requestedAt)) {
+            var stalled = effect("handing-over", "", false, "stop", "real");
+            stalled.effect.unlessSecure = true;
+            return stalled;
+        }
         if (!realLive)
             return effect("fallback", "", false, "launch", "emergency");
         return decision("handing-over");

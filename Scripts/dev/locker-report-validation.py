@@ -90,6 +90,7 @@ def main():
     check('auth-report-needs-private-fence', 'locked')
     assert record['client']['secure'] and not record['client'].get('authenticated')
     data['authRole'] = 'emergency'
+    record['client']['ready'] = True
     check('matching-authenticated-unlock', 'authenticated-unlock')
     assert record['client']['terminal'] and record['client']['authenticated'] and not record['client']['secure']
     assert not record['client']['ready'], 'terminal report kept handover readiness'

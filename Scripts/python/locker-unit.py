@@ -611,6 +611,10 @@ def manage(job):
             return {'unlock': True, 'retire': False}
         if operation == 'stop':
             record = data['units'][role]
+            if job.get('unlessSecure') is True and (record.get('client') or {}).get('secure') and not observe(record)['gone']:
+                # A timeout retirement re-checks the refreshed report in this
+                # transaction: a candidate that just locked is kept.
+                return {'stopped': False, 'secure': True}
             if (role == 'emergency' and data['snapshot']['adapter'] != 'bundled'
                     and data.get('sessionUnlockObserved') and data['phase'] not in ('unlocking', 'settled')
                     and not observe(record)['gone'] and not (record.get('client') or {}).get('terminal')):
