@@ -240,18 +240,27 @@ Singleton {
   }
 
   // The owner discovers the display-bound graphical session, not SSH/seat0.
+  // The owner calls this on every pump until the proxy is attached; a failed
+  // lookup is retried with backoff instead of leaving LockedHint unobserved.
+  readonly property bool sessionObserved: sessionProxy.path !== ""
+  property bool _sessionLookupPending: false
+  property real _sessionRetryAt: 0
+  property int _sessionRetryDelay: 1000
+
   function observeSession(id) {
-      var reply = logindManager.call("GetSession", [id]);
-      if (!reply)
+    if (id === "" || sessionProxy.path !== "" || _sessionLookupPending || Date.now() < _sessionRetryAt)
+      return;
+    _sessionLookupPending = true;
+    root._settle(logindManager.call("GetSession", [id]), function (reply) {
+      _sessionLookupPending = false;
+      if (!reply || reply.isError || !reply.values || reply.values.length === 0) {
+        _sessionRetryAt = Date.now() + _sessionRetryDelay;
+        _sessionRetryDelay = Math.min(_sessionRetryDelay * 2, 30000);
         return;
-      var done = function () {
-        if (reply.isError || !reply.values || reply.values.length === 0)
-          return;
-        sessionProxy.path = String(reply.values[0]);
-      };
-      reply.finished.connect(done);
-      if (reply.isFinished)
-        done();
+      }
+      _sessionRetryDelay = 1000;
+      sessionProxy.path = String(reply.values[0]);
+    });
   }
 
   DBus {

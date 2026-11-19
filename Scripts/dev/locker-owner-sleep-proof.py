@@ -32,6 +32,7 @@ ShellRoot {
   property var confirmations: []
   property bool premature: false
   property bool finished: false
+  property var sleepJobs: []
 
   function copy(value) { return JSON.parse(JSON.stringify(value)); }
   function respond(callback, value) {
@@ -55,7 +56,7 @@ ShellRoot {
   function receive(job, callback) {
     if (job.operation === "inspect") {
       inspections++;
-      if (scenario === "sleep-inflight" && inspections === 1)
+      if ((scenario === "sleep-inflight" || scenario === "resume-then-sleep") && inspections === 1)
         heldInspect = callback;
       else
         respond(callback, inspect());
@@ -70,7 +71,13 @@ ShellRoot {
         heldConsume = callback;
       else
         respond(callback, {pending: true});
-    } else if (job.operation === "sleep-window" || job.operation === "settings") {
+    } else if (job.operation === "sleep-window") {
+      sleepJobs.push(job.active);
+      if (job.active && !descriptor.sleepWindowActive)
+        descriptor.sleepWindow = (descriptor.sleepWindow || 0) + 1;
+      descriptor.sleepWindowActive = job.active;
+      respond(callback, descriptor);
+    } else if (job.operation === "settings") {
       respond(callback, descriptor);
     } else if (job.operation === "intent") {
       if (descriptor.phase !== "unlocking" && descriptor.phase !== "settled")
@@ -95,7 +102,7 @@ ShellRoot {
     function onSleepConfirmed(window, confirmed, opaque) {
       if (confirmed) {
         root.confirmations.push({window: window, generation: root.descriptor.generation});
-        if (window !== "window-2" || root.ticks < 5 || root.descriptor.phase === "unlocking")
+        if (root.scenario === "sleep-inflight" && (window !== "window-2" || root.ticks < 5 || root.descriptor.phase === "unlocking"))
           root.premature = true;
       }
     }
@@ -111,6 +118,13 @@ ShellRoot {
       LockOwnerService.observeSleepWindow(true, "window-1");
       LockOwnerService.observeSleepWindow(true, "window-2");
     }
+    if (scenario === "resume-then-sleep") {
+      // Resume and the next sleep both arrive while an adapter call is held.
+      descriptor.sleepWindow = 1;
+      descriptor.sleepWindowActive = true;
+      LockOwnerService.observeSleepWindow(false, "");
+      LockOwnerService.observeSleepWindow(true, "window-3");
+    }
   }
   Timer {
     interval: 20
@@ -119,7 +133,10 @@ ShellRoot {
     onTriggered: {
       root.ticks++;
       if (root.ticks === 5) {
-        if (root.heldInspect) {
+        if (root.heldInspect && root.scenario === "resume-then-sleep") {
+          root.respond(root.heldInspect, root.inspect());
+          root.heldInspect = null;
+        } else if (root.heldInspect) {
         var old = root.copy(root.inspect());
           root.authenticate();
           root.respond(root.heldInspect, old);
@@ -135,7 +152,9 @@ ShellRoot {
       if (root.ticks < 30)
         return;
       var passed = !root.premature;
-      if (root.scenario === "sleep-inflight")
+      if (root.scenario === "resume-then-sleep")
+        passed = passed && JSON.stringify(root.sleepJobs) === "[false,true]" && root.descriptor.sleepWindow === 2;
+      else if (root.scenario === "sleep-inflight")
         passed = passed && root.confirmations.length > 0 && root.begins === 1
           && root.confirmations.every(function (row) { return row.generation === "generation-1"; });
       else
@@ -145,7 +164,8 @@ ShellRoot {
       LockOwnerService._initialized = false;
       console.log("OWNER_SLEEP_RESULT " + JSON.stringify({scenario: root.scenario, passed: passed,
         premature: root.premature, begins: root.begins, suspends: root.suspends,
-        consumedAt: root.consumedAt, suspendedAt: root.suspendedAt, confirmations: root.confirmations}));
+        consumedAt: root.consumedAt, suspendedAt: root.suspendedAt, confirmations: root.confirmations,
+        sleepJobs: root.sleepJobs, sleepWindow: root.descriptor.sleepWindow}));
       Qt.exit(passed ? 0 : 1);
     }
   }
@@ -179,7 +199,7 @@ def main():
         'signal sessionUnlocked; function observeSession(id) {} }\n')
     (shell / 'shell.qml').write_text(ROOT)
     results = []
-    for scenario in ('sleep-inflight', 'suspend-auth', 'suspend-normal'):
+    for scenario in ('sleep-inflight', 'suspend-auth', 'suspend-normal', 'resume-then-sleep'):
         process = subprocess.run(['qs', '-p', str(shell), '--no-color'],
             env=dict(os.environ, LOCKER_REVIEW_CASE=scenario, QT_QPA_PLATFORM='offscreen'),
             check=False, text=True, capture_output=True, timeout=15)

@@ -142,8 +142,10 @@ those writes fail. Contract confirmation remains withheld until restart-query
 facts are persisted. An accepted owner's buffered authenticated Unlocked is
 retained across replacement and transient IO failures and is persisted before
 any recovery probe. Observations are indexed by request and unique sender.
-Sleep-transition receipts acknowledge only the captured revision; a refusal
-restores it only when no newer transition has arrived. Adapter failures retry
+Sleep transitions reach the adapter in arrival order, so a resume and the next
+sleep both arrive even while the owner is busy; a new window is never taken for
+a retry. A refused transition goes back in front of newer ones, except a refused
+start that a newer resume already superseded. Adapter failures retry
 on the existing owner timer, not a callback spin loop.
 `locker-owner-progress-proof.py` exercises these actual-owner receipt boundaries;
 it does not establish native locking or authentication.

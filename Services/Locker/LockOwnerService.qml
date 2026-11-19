@@ -36,7 +36,10 @@ Singleton {
   property bool _initialized: false
   property bool _pendingRequest: false
   property bool _pendingSuspend: false
-  property int _pendingSleepWindow: -1
+  // Unacknowledged sleep transitions in arrival order (true = window start).
+  // A resume and the next start both reach the adapter, so a new window is
+  // never mistaken for a retry of the previous one.
+  property var _sleepTransitions: []
   property string _reason: ""
   property string _error: ""
   property var _view: null
@@ -83,7 +86,7 @@ Singleton {
       lockHook: HooksService.listenerCommandFor("screenLock", "screenLock"),
       unlockHook: HooksService.listenerCommandFor("screenUnlock", "screenUnlock"),
       suspendAfterSecure: _pendingSuspend,
-      sleepWindow: _pendingSleepWindow === 1,
+      sleepWindow: _sleepTransitions.length > 0 && _sleepTransitions[_sleepTransitions.length - 1] === true,
       reason: _reason
     };
   }
@@ -129,7 +132,7 @@ Singleton {
     _pendingRequest = true;
     _pendingSuspend = _pendingSuspend || suspendAfterSecure === true;
     if (reason === "prepare-for-sleep")
-      _pendingSleepWindow = 1;
+      queueSleepTransition(true);
     _reason = reason || "lock";
     init();
     pump();
@@ -149,8 +152,26 @@ Singleton {
     // Each sleep window needs its own owner-bound confirmation.
     if (active)
       _contractQueried = "";
-    _pendingSleepWindow = active ? 1 : 0;
+    queueSleepTransition(active);
     pump();
+  }
+
+  function queueSleepTransition(active) {
+    if (_sleepTransitions.length === 0 || _sleepTransitions[_sleepTransitions.length - 1] !== active)
+      _sleepTransitions = _sleepTransitions.concat([active]);
+  }
+
+  // A refused receipt goes back in front of any newer transitions, except a
+  // refused start that a newer resume has already superseded.
+  function restoreSleepTransitions(transitions) {
+    var merged = transitions.slice();
+    for (var i = 0; i < _sleepTransitions.length; i++) {
+      if (merged.length === 0 || merged[merged.length - 1] !== _sleepTransitions[i])
+        merged.push(_sleepTransitions[i]);
+    }
+    if (_sleepTransitions.length > 0 && merged.length > 1 && merged[0] === true && merged[1] === false)
+      merged.shift();
+    _sleepTransitions = merged;
   }
 
   function pump() {
@@ -161,12 +182,13 @@ Singleton {
         if (reply.ok) {
           _session = reply.value.session;
           _takeover = reply.value.takeover;
-          LockerService.observeSession(_session);
           Qt.callLater(pump);
         }
       });
       return;
     }
+    if (!LockerService.sessionObserved)
+      LockerService.observeSession(_session);
     var sleepRevision = _sleepRevision;
     call("inspect", {}, function (reply) {
       if (!reply.ok)
@@ -270,7 +292,9 @@ Singleton {
 
   function pendingContractUnlock(d) {
     var observed = LockerService.contractObservations[d.contractRequestId]?.[d.contractOwner];
-    return d.snapshot.adapter === "contract" && !d.contractUnlocked && ((observed?.secured && observed?.unlocked) || (_contractFacts?.generation === d.generation && _contractFacts.events.indexOf("unlocked") !== -1));
+    // Secure history may come from the descriptor: a restarted shell can
+    // receive the accepted owner's Unlocked without having seen Secured.
+    return d.snapshot.adapter === "contract" && !d.contractUnlocked && ((observed?.unlocked && (observed.secured || d.contractSecured === true)) || (_contractFacts?.generation === d.generation && _contractFacts.events.indexOf("unlocked") !== -1));
   }
 
   function lifecycleDecision(d, prehookPending) {
@@ -296,8 +320,8 @@ Singleton {
       if (_pendingRequest) {
         var config = snapshot();
         var submitted = takeRequest();
-        var sleepWindow = _pendingSleepWindow;
-        _pendingSleepWindow = -1;
+        var sleepTransitions = _sleepTransitions;
+        _sleepTransitions = [];
         _settingsPending = false;
         call("begin", {
                snapshot: config,
@@ -317,8 +341,7 @@ Singleton {
                  };
                } else {
                  restoreRequest(submitted);
-                 if (_pendingSleepWindow === -1)
-                   _pendingSleepWindow = sleepWindow;
+                 restoreSleepTransitions(sleepTransitions);
                  // The existing pump timer owns retries after adapter errors.
                  return;
                }
@@ -376,16 +399,14 @@ Singleton {
              });
       return;
     }
-    if (_pendingSleepWindow !== -1) {
-      var sleepActive = _pendingSleepWindow === 1;
-      var sleepRevision = _sleepRevision;
-      _pendingSleepWindow = -1;
+    if (_sleepTransitions.length > 0) {
+      var sleepActive = _sleepTransitions[0];
+      _sleepTransitions = _sleepTransitions.slice(1);
       call("sleep-window", {
              active: sleepActive
            }, function (reply) {
              if (!reply.ok) {
-               if (_sleepRevision === sleepRevision && _pendingSleepWindow === -1)
-                 _pendingSleepWindow = sleepActive ? 1 : 0;
+               restoreSleepTransitions([sleepActive]);
                return;
              }
              Qt.callLater(pump);
@@ -527,7 +548,9 @@ Singleton {
     if (next.confirmed && d.suspendPending) {
       var generation = d.generation;
       call("consume-suspend", {}, function (reply) {
-        if (reply.ok && reply.value.pending)
+        if (!reply.ok)
+          return; // the durable intent stays pending; the pump timer retries
+        if (reply.value.pending)
           _suspendReceipt = generation;
         Qt.callLater(pump);
       });

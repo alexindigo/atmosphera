@@ -36,6 +36,7 @@ ShellRoot {
   property bool finished: false
   property var oldQueryReply: null
   property int sleepConfirmations: 0
+  property int observesAtAttach: -1
 
   function respond(callback, value) {
     Qt.callLater(function () { callback({stdout: JSON.stringify({ok: true, value: value})}); });
@@ -108,6 +109,16 @@ ShellRoot {
       }
       if (root.scenario === "owner-replacement-inflight" && root.ticks === 3)
         LockerService.contractOwner = ":1.20";
+      if (root.scenario === "restored-unlocked-owner-loss" && root.ticks === 2) {
+        // The restarted shell receives the accepted owner's Unlocked (never
+        // its Secured), then the owner exits before the next reconciliation.
+        LockerService.contractObservations = {request: {":1.10": {owner: ":1.10", unlocked: true}}};
+        LockerService.contractOwner = "";
+      }
+      if (root.scenario === "session-observe-retry" && root.ticks === 8) {
+        root.observesAtAttach = LockerService.observes;
+        LockerService.sessionObserved = true;
+      }
       LockOwnerService.pump();
       if (root.ticks < 5 || ((root.scenario === "query-persistence" || root.scenario === "sleep-query-inflight") && root.ticks < 10))
         root.premature = root.premature || LockOwnerService.secure || (root.probes > 0 && root.scenario !== "owner-replacement-inflight");
@@ -137,6 +148,10 @@ ShellRoot {
         passed = passed && root.wasSecure && root.withdrawn && root.probes === 1 && !LockOwnerService.secure;
       else if (root.scenario === "query-pending" || root.scenario.indexOf("query-error") === 0 || root.scenario === "query-owner-mismatch" || root.scenario === "owner-replacement-inflight")
         passed = passed && !LockOwnerService.secure && root.probes === 1;
+      else if (root.scenario === "restored-unlocked-owner-loss")
+        passed = passed && !LockOwnerService.secure && root.probes === 0 && root.settlements === 1;
+      else if (root.scenario === "session-observe-retry")
+        passed = passed && LockOwnerService.secure && root.observesAtAttach >= 2 && LockerService.observes === root.observesAtAttach;
       else if (root.scenario === "query-unlocked")
         passed = passed && !LockOwnerService.secure && root.probes === 0 && root.settlements === 1;
       else if (root.scenario === "sleep-query-inflight")
@@ -150,7 +165,8 @@ ShellRoot {
       console.log("OWNER_CONTRACT_RESULT " + JSON.stringify({scenario: root.scenario, passed: passed,
         overdue: root.overdue,
         premature: root.premature, secure: LockOwnerService.secure, withdrawn: root.withdrawn, probes: root.probes,
-        queries: LockerService.queries, sleepConfirmations: root.sleepConfirmations}));
+        queries: LockerService.queries, sleepConfirmations: root.sleepConfirmations,
+        observes: LockerService.observes, observesAtAttach: root.observesAtAttach}));
       Qt.exit(passed ? 0 : 1);
     }
   }
@@ -180,12 +196,14 @@ def main():
     (shell / 'Services/Locker/LockerService.qml').write_text('pragma Singleton\nimport QtQuick\nQtObject { '
         'property bool contractAvailable: true; property string contractOwner: ":1.10"; '
         'property var contractObservations: ({}); property var reply: null; property int queries: 0; signal sessionUnlocked; '
-        'function queryContract(id, complete) { queries++; reply = complete; } function observeSession(id) {} }\n')
+        'property bool sessionObserved: false; property int observes: 0; '
+        'function queryContract(id, complete) { queries++; reply = complete; } function observeSession(id) { observes++; } }\n')
     (shell / 'shell.qml').write_text(ROOT)
     results = []
     scenarios = ('query-inflight', 'query-persistence', 'query-pending', 'owner-replacement', 'query-unlocked',
                  'sleep-query-inflight', 'sleep-after-auth', 'query-error', 'query-owner-mismatch',
-                 'query-error-persist-failure', 'owner-replacement-inflight')
+                 'query-error-persist-failure', 'owner-replacement-inflight', 'restored-unlocked-owner-loss',
+                 'session-observe-retry')
     for scenario, overdue in [(s, False) for s in scenarios] + [(s, True) for s in scenarios]:
         process = subprocess.run(['qs', '-p', str(shell), '--no-color'],
             env=dict(os.environ, LOCKER_REVIEW_CASE=scenario, LOCKER_REVIEW_OVERDUE='1' if overdue else '0', QT_QPA_PLATFORM='offscreen'),
