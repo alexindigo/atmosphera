@@ -36,3 +36,15 @@ reentry while another request remains queued. Independent owners are sequenced
 at the caller boundary rather than through the removed shared serializer. The
 old-owner fixture remains in historical pre-cutover trees, not the current tree.
 This prerequisite does not complete plugin popup/instance editing or catalog work.
+
+## Load and retirement ownership
+
+Service.loadPlugin retains one generation while settings, state, translations and
+data-only registrations complete. Its optional third callback receives `loaded`
+or `failed`; the existing second callback remains bar-registration specific.
+Duplicate requests join that generation and receive independent completions.
+Only initialization loads decrement startup accounting, once per generation.
+Unload cancels the generation before native owner retirement, so a late reader
+cannot register components or data with a retired owner. Plugin-created reentrant
+unload also invalidates the remaining registrations. A replacement workflow must
+await this full-load receipt, not treat starting loadPlugin as successful loading.
