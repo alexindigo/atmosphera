@@ -362,13 +362,13 @@ ShellRoot {
     check(Commands.addressIdentity(address) === Commands.addressIdentity(store.copyValue(address)), "native copy preserves selector identity");
     reordered[0].equals = "different";
     check(Commands.addressIdentity(address) !== Commands.addressIdentity(reordered), "different matched row remains distinct");
-    check(Commands.addressIdentity(address) !== Commands.addressIdentity([
-                                                                           {
-                                                                             field: "name",
-                                                                             equals: address[0].equals,
-                                                                             unknown: true
-                                                                           }
-                                                                         ]), "invalid selector is not an endpoint");
+    check(Commands.addressIdentity([
+                                     {
+                                       field: "name",
+                                       equals: address[0].equals,
+                                       unknown: true
+                                     }
+                                   ]) === "", "invalid selector is not an endpoint");
     var session = editor(2, [
                            {
                              path: paths[5],
