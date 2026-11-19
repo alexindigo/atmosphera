@@ -62,6 +62,7 @@ def main():
     path.chmod(0o600)
     target = root / 'untrusted-target'
     target.write_text(json.dumps(report))
+    target.chmod(0o600)  # otherwise valid: only the symlink itself may be refused
     path.unlink()
     path.symlink_to(target)
     check('reject-symlink', 'unknown')
@@ -91,11 +92,13 @@ def main():
     data['authRole'] = 'emergency'
     check('matching-authenticated-unlock', 'authenticated-unlock')
     assert record['client']['terminal'] and record['client']['authenticated'] and not record['client']['secure']
+    assert not record['client']['ready'], 'terminal report kept handover readiness'
     data['authRole'] = None
     record = copy.deepcopy(original)
     path.write_text(json.dumps(dict(report, event='finished', everSecure=False)))
     check('refusal-is-terminal-never-secure', 'finished')
     assert record['client']['terminal'] and not record['client']['secure'] and not record['client']['authenticated']
+    assert not record['client']['ready'], 'terminal refusal kept handover readiness'
     (work / 'result.json').write_text(json.dumps({'checks': results,
         'scope': 'identity/sequence/durability input validation, not synthetic auth acceptance'}, indent=2))
     (work / 'result.txt').write_text('PASS report-validation ' + str(len(results)) + '\n')

@@ -131,7 +131,16 @@ ShellRoot {
         v.units.emergency.gone = true;
         check("grant-only-after-empty", v, "handing-over", "grant", "real");
         v.descriptor.units.real.grant = true;
+        v.descriptor.units.real.grantedAt = 7;
         check("handover-grant-awaits-secure", v, "handing-over");
+        v.now = 9.9;
+        check("handover-grant-acquisition-window", v, "handing-over");
+        v.now = 10;
+        check("stalled-granted-candidate-retired", v, "handing-over", "stop", "real");
+        v.descriptor.units.real.client.secure = true;
+        check("secure-granted-candidate-kept", v, "engaged", "", "", true);
+        v.descriptor.units.real.client.secure = false;
+        v.now = 7;
         v.units.real.gone = true;
         check("granted-client-failure-recovery", v, "fallback", "launch", "emergency");
         v.units.real.gone = false;
@@ -161,13 +170,23 @@ ShellRoot {
         v.authenticatedUnlockObserved = true;
         check("correlated-unlock-observation", v, "unlocking", "settle");
         v.units.real.gone = false;
+        v.descriptor.units.real.client.ready = true;
         check("unlock-fence-revokes-ready", v, "unlocking");
         v.descriptor.phase = "settled";
         check("late-ready-cannot-reopen", v, "unlocked");
         for (var adapter of ["opaque", "contract"]) {
           v = fixture(adapter);
-          if (adapter === "opaque")
+          if (adapter === "opaque") {
+            check("opaque-real-launch-before-deadline", v, "starting", "launch", "real");
+            v.now = 3;
+            // Retryable hook work before the real launch cannot defer the deadline.
+            check("opaque-deadline-outranks-unlaunched-real", v, "fallback", "launch", "emergency");
+            v.descriptor.probeEvents.deadline = "emergency-i0";
+            check("opaque-real-launch-after-deadline-probe", v, "starting", "launch", "real");
+            delete v.descriptor.probeEvents.deadline;
+            v.now = 1;
             unit(v, "real");
+          }
           v.now = 3;
           check(adapter + "-probe-at-deadline", v, "fallback", "launch", "emergency");
           unit(v, "emergency", {

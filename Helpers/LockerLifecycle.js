@@ -104,6 +104,10 @@ function decide(view) {
                 return effect("handing-over", "", false, "stop", "real");
             return effect("handing-over", "", false, "grant", "real");
         }
+        // A granted candidate gets the emergency budget to acquire. A stalled
+        // one is retired without a protocol unlock; emergency is restored.
+        if (realLive && now >= (real.grantedAt ?? d.handoverAt) + (d.emergencyAt - d.requestedAt))
+            return effect("handing-over", "", false, "stop", "real");
         if (!realLive)
             return effect("fallback", "", false, "launch", "emergency");
         return decision("handing-over");
@@ -135,7 +139,10 @@ function decide(view) {
         }
         if (emergency && emergency.everSecure && !emergencyLive && !client("emergency").authenticated)
             return effect("fallback", "", false, "launch", "emergency");
-        if (!real && d.snapshot.adapter !== "contract" && !view.realLaunchFailed)
+        // The deadline probe outranks a real launch still queued behind
+        // retryable hook work; once probed, the real launch proceeds.
+        var deadlineDue = now >= d.emergencyAt && !(d.probeEvents || {}).deadline;
+        if (!real && d.snapshot.adapter !== "contract" && !view.realLaunchFailed && !deadlineDue)
             return effect("starting", "", false, "launch", "real");
         var events = probeEvents();
         if (events.length && emergencyLive && !client("emergency").terminal)

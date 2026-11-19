@@ -80,7 +80,9 @@ def refresh_report(data, role, record):
             path = Path(info['path'])
             if path.parent != runtime_root() or not path.name.endswith('.report.json'):
                 raise Refused('invalid client report path')
-            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+            # O_NONBLOCK: a FIFO without writer must be rejected, not block
+            # every other operation behind this session lock.
+            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
             with os.fdopen(fd) as stream:
                 metadata = os.fstat(stream.fileno())
                 if metadata.st_uid != os.getuid() or stat.S_IMODE(metadata.st_mode) != 0o600 or not stat.S_ISREG(metadata.st_mode):
@@ -140,7 +142,8 @@ def refresh_report(data, role, record):
     else:
         authenticated = report['event'] == 'authenticated-unlock'
         record['protocolOutcome'] = 'authenticated-unlock' if authenticated else 'finished'
-        client.update(locked=False, secure=False, terminal=True, authenticated=authenticated,
+        # A terminal client can no longer be granted or receive a handover.
+        client.update(ready=False, locked=False, secure=False, terminal=True, authenticated=authenticated,
             settlement='authenticated-unlock' if authenticated else 'finished')
 
 
@@ -563,6 +566,7 @@ def manage(job):
             if role == 'real' and other and data['handoverCommitted'] and not observe(other)['gone']:
                 return {'granted': False}
             record['grant'] = True
+            record['grantedAt'] = time.monotonic()
             session.write(data)
             return {'granted': True}
         if operation == 'handover':
