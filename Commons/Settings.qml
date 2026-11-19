@@ -35,7 +35,6 @@ Singleton {
   property var _groups: Object.create(null)
   property var _groupOrder: []
   property string _acceptedEnvironment: "none"
-  property int _resetSerial: 0
 
   signal settingsLoaded
   signal settingsSaved
@@ -44,6 +43,7 @@ Singleton {
   signal settingsReloaded
   signal settingExternallyChanged(string path)
   signal bindingsEnvironmentRequested(string environment, string captureToken)
+  signal bindingsResetRequested(var path)
   signal effectiveSettingsChanged(string section)
 
   SettingsStore {
@@ -95,8 +95,9 @@ Singleton {
     onSourceAccepted: event => {
       for (var fact of event.facts) {
         if (fact.path.join(".") === "bindings.environment") {
+          var previousEnvironment = root._acceptedEnvironment;
           root._acceptedEnvironment = fact.present ? fact.value : "none";
-          if (root.isLoaded && event.origin === "external")
+          if (root.isLoaded && event.origin === "external" && root._acceptedEnvironment !== previousEnvironment)
             root.bindingsEnvironmentRequested(root._acceptedEnvironment, "");
         }
       }
@@ -216,7 +217,7 @@ Singleton {
     var state = owner.groupInfo(token).state;
     return state === "stopped" ? owner.retryGroup(token, callback) : owner.saveGroup(token, callback);
   }
-  function _retain(key, paths, edits, callback) {
+  function _retain(key, paths, edits, callback, retained) {
     if (_groups[key])
       return _saveGroup(_groups[key], callback);
     return owner.retainGroup({
@@ -232,13 +233,26 @@ Singleton {
                                }
                                root._groups[key] = result.groupToken;
                                root._groupOrder.push(result.groupToken);
+                               if (typeof retained === "function")
+                                 retained();
                                root._saveGroup(result.groupToken, callback);
                              });
   }
-  function saveBindingsEnvironment(environment, callback, identity, captureToken) {
+  function saveBindingsEnvironment(environment, callback, identity, captureToken, resetPath, captured) {
     if (captureToken) {
       _groups[identity] = captureToken;
       return _saveGroup(captureToken, callback);
+    }
+    if (resetPath) {
+      return _retain(identity, [["bindings"]], [
+                       {
+                         path: resetPath,
+                         present: false
+                       }
+                     ], callback, function () {
+                       if (typeof captured === "function")
+                         captured(root.data.bindings.environment);
+                     });
     }
     return _retain(identity, [["bindings"]], [
                      {
@@ -285,22 +299,9 @@ Singleton {
   }
   function _reset(path) {
     if (_managedBindings && path[0] === "bindings") {
-      owner.retainGroup({
-                          requestKey: "bindings-reset-" + (++_resetSerial),
-                          paths: [["bindings"]],
-                          edits: [
-                            {
-                              path: path,
-                              present: false
-                            }
-                          ],
-                          dependencies: _dependencies()
-                        }, function (result) {
-                          if (result.status === "retained") {
-                            root._groupOrder.push(result.groupToken);
-                            root.bindingsEnvironmentRequested(root.data.bindings.environment, result.groupToken);
-                          }
-                        });
+      // Queue the intent first. Only the FIFO head may reserve native bindings
+      // paths; a later reset cannot become an earlier request's dependency.
+      root.bindingsResetRequested(path.slice());
       return;
     }
     owner.reset(path, "user");
