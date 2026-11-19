@@ -181,8 +181,9 @@ Singleton {
   }
 
   function effect(operation, extra) {
-    call(operation, extra, function () {
-      Qt.callLater(pump);
+    call(operation, extra, function (reply) {
+      if (reply.ok)
+        Qt.callLater(pump);
     });
   }
 
@@ -203,7 +204,8 @@ Singleton {
                fact.events.shift();
              if (!reply.ok && reply.error === "contract owner changed")
                _contractFailed = true;
-             Qt.callLater(pump);
+             if (reply.ok)
+               Qt.callLater(pump);
            });
       return true;
     }
@@ -216,7 +218,7 @@ Singleton {
       }
       _contractFacts = null;
     }
-    var observed = LockerService.contractObservations[d.contractRequestId];
+    var observed = LockerService.contractObservations[d.contractRequestId]?.[d.contractOwner];
     if (observed && d.contractOwner && d.contractVersion >= 2) {
       var pending = observed.secured && !d.contractSecured ? "secured" : observed.unlocked && d.contractSecured && !d.contractUnlocked ? "unlocked" : "";
       if (pending !== "" && _contractRejected !== d.contractRequestId + ":" + observed.owner + ":" + pending) {
@@ -226,14 +228,15 @@ Singleton {
                owner: observed.owner,
                event: pending
              }, function (reply) {
-               if (!reply.ok) {
+               if (!reply.ok && (reply.error === "contract owner changed" || reply.error === "stale contract request")) {
                  // A different owner's claim is refused once and recorded as a
                  // failure of the accepted request, never retried as evidence.
                  _contractRejected = rejected;
                  if (reply.error === "contract owner changed")
                    _contractFailed = true;
                }
-               Qt.callLater(pump);
+               if (reply.ok)
+                 Qt.callLater(pump);
              });
         return true;
       }
@@ -263,6 +266,22 @@ Singleton {
 
   function contractKey(d) {
     return d.generation + ":" + d.contractRequestId + ":" + d.contractOwner + ":" + _sleepRevision;
+  }
+
+  function pendingContractUnlock(d) {
+    var observed = LockerService.contractObservations[d.contractRequestId]?.[d.contractOwner];
+    return d.snapshot.adapter === "contract" && !d.contractUnlocked && ((observed?.secured && observed?.unlocked) || (_contractFacts?.generation === d.generation && _contractFacts.events.indexOf("unlocked") !== -1));
+  }
+
+  function lifecycleDecision(d, prehookPending) {
+    var view = Object.assign({}, _view, {
+                               takeover: _takeover,
+                               realLaunchFailed: d.realLaunchFailed || (prehookPending && _view.now >= d.emergencyAt),
+                               contractFailed: d.contractFailed || _contractFailed,
+                               contractPending: d.snapshot.adapter === "contract" && (_contractFacts !== null || (d.contractOwner && d.contractVersion >= 2 && _contractQueried !== contractKey(d))),
+                               sessionUnlockObserved: d.sessionUnlockObserved
+                             });
+    return Lifecycle.decide(view);
   }
 
   function reconcile() {
@@ -308,6 +327,28 @@ Singleton {
       }
       return;
     }
+    // Authentication observations must settle before owner-loss recovery can
+    // probe. A transient disk refusal retains this barrier, not a second lock.
+    if (pendingContractUnlock(d) && persistContract(d))
+      return;
+    if (_unlockObserved && !d.sessionUnlockObserved) {
+      effect("note", {
+               sessionUnlockObserved: true
+             });
+      return;
+    }
+    var units = d.units;
+    var prehookPending = d.phase !== "unlocking" && d.snapshot.prehook && (!units.prehook || !_view.units.prehook.gone);
+    var next = lifecycleDecision(d, prehookPending);
+    if (publishDecision(d, next))
+      return;
+    var urgent = next.effect && !(next.effect.role === "real" && (next.effect.kind === "launch" || next.effect.kind === "grant"));
+    // Deadlines, holder recovery and teardown never queue behind settings,
+    // hooks, intent receipts, notes or a delayed external-service query.
+    if (urgent) {
+      applyDecision(d, next);
+      return;
+    }
     if (_pendingRequest && d.phase !== "unlocking") {
       var request = takeRequest();
       // A request while an external lock is unconfirmed probes once (addendum
@@ -337,14 +378,21 @@ Singleton {
     }
     if (_pendingSleepWindow !== -1) {
       var sleepActive = _pendingSleepWindow === 1;
+      var sleepRevision = _sleepRevision;
       _pendingSleepWindow = -1;
-      effect("sleep-window", {
-               active: sleepActive
-             });
+      call("sleep-window", {
+             active: sleepActive
+           }, function (reply) {
+             if (!reply.ok) {
+               if (_sleepRevision === sleepRevision && _pendingSleepWindow === -1)
+                 _pendingSleepWindow = sleepActive ? 1 : 0;
+               return;
+             }
+             Qt.callLater(pump);
+           });
       return;
     }
 
-    var units = d.units;
     if (d.snapshot.adapter === "bundled" && _settingsGeneration !== d.generation) {
       _settingsGeneration = d.generation;
       _settingsPending = true;
@@ -354,13 +402,14 @@ Singleton {
       call("settings", {
              settingsJson: SettingsInput.capture(Settings.data, Settings.store)
            }, function (reply) {
-             if (!reply.ok)
+             if (!reply.ok) {
                _settingsPending = true;
+               return;
+             }
              Qt.callLater(pump);
            });
       return;
     }
-    var prehookPending = false;
     if (d.phase !== "unlocking" && d.snapshot.prehook) {
       if (!units.prehook) {
         effect("launch", {
@@ -444,13 +493,17 @@ Singleton {
       }
     }
 
-    var view = Object.assign({}, _view, {
-                               takeover: _takeover,
-                               realLaunchFailed: d.realLaunchFailed || prehookPending,
-                               contractFailed: d.contractFailed || _contractFailed,
-                               sessionUnlockObserved: d.sessionUnlockObserved
-                             });
-    var next = Lifecycle.decide(view);
+    applyDecision(d, next);
+  }
+
+  function applyDecision(d, next) {
+    var units = d.units;
+    if (!next.effect)
+      return;
+    applyAction(d, units, next.effect);
+  }
+
+  function publishDecision(d, next) {
     publish(next.state, next.holder, next.confirmed);
     if (_sleepWindow !== "")
       sleepConfirmed(_sleepWindow, next.confirmed, d.snapshot.adapter !== "bundled");
@@ -464,7 +517,7 @@ Singleton {
         _suspendReceipt = "";
         suspendReady();
       }
-      return;
+      return true;
     }
     if (next.confirmed && d.suspendPending) {
       var generation = d.generation;
@@ -473,11 +526,12 @@ Singleton {
           _suspendReceipt = generation;
         Qt.callLater(pump);
       });
-      return;
+      return true;
     }
-    if (!next.effect)
-      return;
-    var action = next.effect;
+    return false;
+  }
+
+  function applyAction(d, units, action) {
     if (action.kind === "launch") {
       var command = action.role === "real" ? d.snapshot.command : "qs -c atmosphera-emergency-lock";
       call("launch", {
@@ -489,7 +543,7 @@ Singleton {
                effect("note", {
                         realLaunchFailed: true
                       });
-             else
+             else if (reply.ok)
                Qt.callLater(pump);
            });
     } else if (action.kind === "note-unlock") {

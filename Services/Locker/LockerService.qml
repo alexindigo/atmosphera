@@ -127,14 +127,14 @@ Singleton {
     if (typeof requestId !== "string" || requestId === "" || owner !== _contractOwner || revision !== _contractRevision)
       return;
     var next = Object.assign({}, root._contractObservations);
-    var entry = Object.assign({}, next[requestId] || {});
-    // First owner wins per request; a different owner's later claim is kept
-    // separately so the adapter can refuse it, never merged into the first.
-    if (entry.owner && entry.owner !== owner)
-      entry = {owner: owner, ownerChanged: true};
+    var senders = Object.assign({}, next[requestId] || {});
+    // A new name owner cannot overwrite facts already delivered by the owner
+    // that accepted this request, especially its authenticated Unlocked.
+    var entry = Object.assign({}, senders[owner] || {});
     entry.owner = owner;
     entry[event] = true;
-    next[requestId] = entry;
+    senders[owner] = entry;
+    next[requestId] = senders;
     root._contractObservations = next;
     contractObserved(requestId);
   }

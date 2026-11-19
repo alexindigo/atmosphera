@@ -103,8 +103,10 @@ ShellRoot {
         unit(v, "real", {
                ready: true
              });
+        v.now = 2.9;
+        check("ready-before-emergency-deadline", v, "starting", "grant", "real");
         v.now = 29.9;
-        check("ready-before-deadline", v, "starting", "grant", "real");
+        check("ready-without-secure-holder-after-emergency-deadline", v, "fallback", "launch", "emergency");
         v.now = 30;
         check("ready-on-deadline", v, "fallback", "stop", "real");
         v.now = 30.1;

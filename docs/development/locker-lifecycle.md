@@ -122,6 +122,19 @@ settlement before starting the next generation instead of being silently lost.
 async receipt orderings with the actual QML owner and a controlled adapter;
 it is not native lock, sleep or PAM evidence.
 
+Each reconciliation evaluates the lifecycle before retryable preparation and
+housekeeping. Emergency deadlines, recovery and authenticated teardown outrank
+settings, hook, intent and note retries; confirmation is still published while
+those writes fail. Contract confirmation remains withheld until restart-query
+facts are persisted. An accepted owner's buffered authenticated Unlocked is
+retained across replacement and transient IO failures and is persisted before
+any recovery probe. Observations are indexed by request and unique sender.
+Sleep-transition receipts acknowledge only the captured revision; a refusal
+restores it only when no newer transition has arrived. Adapter failures retry
+on the existing owner timer, not a callback spin loop.
+`locker-owner-progress-proof.py` exercises these actual-owner receipt boundaries;
+it does not establish native locking or authentication.
+
 `locker-unit.py` fences effects by session, generation, InvocationID and cgroup.
 Its startup bound covers ungranted preparation while the main shell is absent;
 it never infers successful unlock from process death. Client protocol refusal

@@ -45,11 +45,23 @@ ShellRoot {
   }
   Timer {
     id: signalCheck
-    interval: 300
+    interval: 10
+    repeat: true
     onTriggered: {
       var observations = LockerService.contractObservations;
-      console.log("CONTRACT_IDENTITY_RESULT " + JSON.stringify({ok: !observations.old && observations.current?.secured === true,
-        owner: observations.current?.owner}));
+      var current = observations.current?.[LockerService.contractOwner];
+      if (!current?.secured) return;
+      // Keep A's already-delivered authentication fact when B reports R.
+      var ownerB = LockerService.contractOwner;
+      var revision = LockerService._contractRevision;
+      LockerService._observe(ownerB, revision, "retained", "secured");
+      LockerService._observe(ownerB, revision, "retained", "unlocked");
+      LockerService._changeOwner(":1.999999");
+      LockerService._observe(":1.999999", LockerService._contractRevision, "retained", "secured");
+      var kept = LockerService.contractObservations.retained;
+      console.log("CONTRACT_IDENTITY_RESULT " + JSON.stringify({ok: !observations.old && current.secured === true
+        && kept[ownerB]?.unlocked === true && kept[":1.999999"]?.secured === true,
+        owner: ownerB}));
       Qt.quit();
     }
   }

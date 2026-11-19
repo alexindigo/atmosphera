@@ -124,7 +124,7 @@ function decide(view) {
         // request ID from the owner that accepted it. A later name loss or
         // owner change withdraws that confirmation (dead holder, not unlock).
         if (d.snapshot.adapter === "contract" && d.contractSecured === true && d.contractVersion >= 2
-            && !view.contractFailed)
+            && !view.contractFailed && !view.contractPending)
             return decision("engaged", "external", true);
         if (emergency && emergency.everSecure && !emergencyLive && !client("emergency").authenticated)
             return effect("fallback", "", false, "launch", "emergency");
@@ -141,15 +141,19 @@ function decide(view) {
         return decision(emergencyLive ? "fallback" : "starting");
     }
 
+    // The original emergency deadline outranks preparation of a real client
+    // that has not even launched (for example after refused hook/settings IO).
+    if (!real && now >= d.emergencyAt && !emergencyLive && (!emergency || now >= emergency.startedAt + 1))
+        return effect("fallback", "", false, "launch", "emergency");
     if (!real && !view.realLaunchFailed && now < d.deadline)
         return effect("starting", "", false, "launch", "real");
     if (realLive && !real.grant && now >= d.deadline)
         return effect("fallback", "", false, "stop", "real");
     if (!emergencyLive && (view.realLaunchFailed || (real && !realLive) || now >= d.deadline))
         return effect("fallback", "", false, "launch", "emergency");
-    if (realLive && client("real").ready && !real.grant && !emergency && now < d.deadline)
-        return effect("starting", "", false, "grant", "real");
     if (now >= d.emergencyAt && !emergencyLive && (!emergency || now >= emergency.startedAt + 1))
         return effect("fallback", "", false, "launch", "emergency");
+    if (realLive && client("real").ready && !real.grant && !emergency && now < d.deadline)
+        return effect("starting", "", false, "grant", "real");
     return decision(emergency ? "fallback" : "starting");
 }
