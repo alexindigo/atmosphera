@@ -12,11 +12,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('source', 'installed', 'output', 'work-root'):
         parser.add_argument('--'+name, type=Path, required=True)
+    parser.add_argument('--case', choices=('all', 'opening', 'preopen-swap', 'preview-refusal', 'reset-refusal'), default='all')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     args.work_root.mkdir(parents=True, exist_ok=False)
     probes = []
-    for name in ('live', 'lifetime'):
+    for name in ('live', 'lifetime', 'open-lifetime'):
         probe = args.installed/('i5-instance-'+name+'.qml')
         with probe.open('xb') as stream:
             fixture = (args.source/'Scripts/dev/fixtures'/('settings-instance-'+name+'.qml')).read_bytes()
@@ -44,10 +45,11 @@ def main():
         (root/'c/settings/bar.json').write_text(json.dumps(dict(widgets=dict(left=[row]))))
         return root
 
-    def run(name, root, probe, restart=False, failure=None):
+    def run(name, root, probe, restart=False, failure=None, opening_case=''):
         env = dict(os.environ, I5_PLUGIN_DIR=str(root/'plugin'), I5_INSTANCE_RESTART='1' if restart else '0',
                    ATMOSPHERA_CONFIG_DIR=str(root/'c'), ATMOSPHERA_CACHE_DIR=str(root/'cache'),
-                   ATMOSPHERA_STATE_DIR=str(root/'state'), QML_DISABLE_DISK_CACHE='1')
+                   ATMOSPHERA_STATE_DIR=str(root/'state'), QML_DISABLE_DISK_CACHE='1',
+                   ATMOSPHERA_SETTINGS_FILE=str(root/'c/settings.json'), I5_OPEN_CASE=opening_case)
         result = subprocess.run(['timeout', '40', 'qs', '-p', str(probe), '--no-color'],
                                 env=env, capture_output=True, text=True, timeout=45)
         text = result.stdout+result.stderr
@@ -57,7 +59,8 @@ def main():
         if failure:
             assert result.returncode == 2 and failure in text, text[-4000:]
         else:
-            marker = 'I5_INSTANCE_LIFETIME: PASS' if probe == probes[1] else 'I5_INSTANCE_LIVE: PASS'
+            marker = ('I5_INSTANCE_LIFETIME: PASS' if probe == probes[1] else
+                      'I5_INSTANCE_OPEN: PASS' if probe == probes[2] else 'I5_INSTANCE_LIVE: PASS')
             assert result.returncode == 0 and marker in text, text[-4000:]
             assert not any(error in text for error in ('TypeError:', 'ReferenceError:', 'SyntaxError:', '_ASSERT:')), text[-4000:]
 
@@ -66,6 +69,17 @@ def main():
     roots = []
     cases = []
     try:
+        for name in ('preopen-swap', 'preview-refusal', 'reset-refusal'):
+            if args.case not in ('all', 'opening', name):
+                continue
+            directory = seed(name)
+            roots.append(directory)
+            run(name, directory, probes[2], opening_case=name)
+            cases.append(dict(id=name, status='PASS'))
+        if args.case != 'all':
+            (args.output/'result.json').write_text(json.dumps(dict(status='PASS', cases=cases), indent=2)+'\n')
+            print('SETTINGS_PLUGIN_NATIVE_OPENING: PASS (captured selection, factory preview, one-shot reset)')
+            return
         live = seed('live')
         roots.append(live)
         before = identity(live/'plugin/code/settings.json')

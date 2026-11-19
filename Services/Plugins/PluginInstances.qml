@@ -105,6 +105,10 @@ Singleton {
     var submitted = false;
     var scope = previewBase || (base ? base.settingsHandle : null);
     var main = Settings.store;
+    // A placement belongs to the displayed publication at the request boundary.
+    // Waiting for settled input must not recapture a different row at this index.
+    var selected = address(placement);
+    var ownerGeneration = selected ? main.info(selected.path).publicationGeneration : null;
     function disconnect() {
       main.completed.disconnect(attempt);
       main.statusChanged.disconnect(attempt);
@@ -125,15 +129,17 @@ Singleton {
         active = false; disconnect(); callback({status: "failed", error: {code: "overlay-owner"}}); return;
       }
       if (!main.ready) return;
-      var selected = address(placement);
       if (!selected) {
         active = false; disconnect(); callback({status: "failed", error: {code: "overlay-identity"}}); return;
       }
       if (!Lists.settled(main.info(selected.path)) || !base.settingsOwner.store.settingsKeys.every(function (key) { return Lists.settled(scope.info([key])); })) return;
+      if (main.info(selected.path).publicationGeneration !== ownerGeneration) {
+        active = false; disconnect(); callback({status: "failed", error: {code: "overlay-identity"}}); return;
+      }
       submitted = true;
       disconnect();
       main.openOverlay({mode: mode, base: scope, ownerPath: selected.path,
-        ownerGeneration: main.info(selected.path).publicationGeneration,
+        ownerGeneration: ownerGeneration,
         entryPath: selected.entry, identityPath: [{key: "id"}], identityValue: "plugin:" + base.pluginId,
         overrideKey: "instanceSettings", mergePolicy: "recursive_objects_replace_lists", differencePolicy: "top_level_omit_equal"}, function (result) {
           if (!active) { if (result.editor) result.editor.detach(); return; }
