@@ -68,9 +68,10 @@ void NativeModelOwner::componentComplete() {
         if (control->phase != phase || (!control->source.isEmpty() && QFileInfo(file).baseName() != control->source)) return QString();
         control->phase.clear(); control->observed = phase; control->waiting = true;
         if (guard) QMetaObject::invokeMethod(guard, [guard] { if (guard) emit guard->changed(); }, Qt::QueuedConnection);
-        if (!control->released.wait_for(lock, std::chrono::seconds(12), [&] { return control->proceed || control->stopping; }))
-            return QString("test-control-deadline");
+        const bool released = control->released.wait_for(lock, std::chrono::seconds(12), [&] { return control->proceed || control->stopping; });
         control->waiting = false; control->proceed = false;
+        if (guard) QMetaObject::invokeMethod(guard, [guard] { if (guard) emit guard->changed(); }, Qt::QueuedConnection);
+        if (!released) return QString("test-control-deadline");
         return std::exchange(control->error, {});
     };
     m_store = new ConfigStore(options, this);

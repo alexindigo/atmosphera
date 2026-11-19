@@ -2,6 +2,7 @@
 // Never substitutes file bytes or a success receipt. Children cannot use it.
 #include "configjsonbackend.h"
 #include "configevidence_p.h"
+#include "configshutdown_p.h"
 #include <QCryptographicHash>
 #include <QElapsedTimer>
 #include <QFile>
@@ -9,6 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSaveFile>
 #include <QThread>
 #include <dlfcn.h>
 #include <fcntl.h>
@@ -62,21 +64,28 @@ QString control(const QString &phase, const QString &target, const QJsonObject &
         if (!marker.startsWith(root) || marker.contains("/../") ||
             (error.isEmpty() && (!gate.startsWith(root) || gate.contains("/../") || QFileInfo(gate).isSymLink())))
             qFatal("native IO test rule escapes its directory");
-        QFile claim(marker);
+        // Claim separately: marker existence is a readiness receipt, not an
+        // in-progress write. Readers may use every resource it describes.
+        QFile claim(marker + QStringLiteral(".claim"));
         if (!claim.open(QIODevice::WriteOnly | QIODevice::NewOnly)) {
-            if (QFileInfo::exists(marker)) {
+            if (QFileInfo::exists(claim.fileName())) {
                 if (rule["repeat"].toBool() && !error.isEmpty()) return error;
                 continue;
             }
             qFatal("native IO test rule claim failed");
         }
-        if (!claim.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner)) qFatal("native IO test marker permissions");
-        claim.write(QJsonDocument(QJsonObject{{"phase", phase}, {"file", target}, {"pid", int(subject)},
-            {"thread", QString::number(quintptr(QThread::currentThreadId()))}, {"observation", facts}}).toJson(QJsonDocument::Compact));
         claim.close();
+        const int descriptor = error.isEmpty()
+            ? ::open(QFile::encodeName(gate).constData(), O_RDONLY | O_NONBLOCK | O_CLOEXEC | O_NOFOLLOW) : -1;
+        if (error.isEmpty() && descriptor < 0) qFatal("native IO test gate unavailable");
+        QSaveFile publication(marker);
+        if (!publication.open(QIODevice::WriteOnly) ||
+            !publication.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner))
+            qFatal("native IO test marker unavailable");
+        const auto bytes = QJsonDocument(QJsonObject{{"phase", phase}, {"file", target}, {"pid", int(subject)},
+            {"thread", QString::number(quintptr(QThread::currentThreadId()))}, {"observation", facts}}).toJson(QJsonDocument::Compact);
+        if (publication.write(bytes) != bytes.size() || !publication.commit()) qFatal("native IO test marker publication failed");
         if (!error.isEmpty()) return error;
-        const int descriptor = ::open(QFile::encodeName(gate).constData(), O_RDONLY | O_NONBLOCK | O_CLOEXEC | O_NOFOLLOW);
-        if (descriptor < 0) qFatal("native IO test gate unavailable");
         QElapsedTimer deadline; deadline.start(); QByteArray release;
         while (deadline.elapsed() < 30000 && !release.contains('\n')) {
             struct pollfd watch{descriptor, POLLIN, 0};
@@ -93,6 +102,28 @@ QString control(const QString &phase, const QString &target, const QJsonObject &
 }
 
 namespace configqml {
+void ConfigWorkerOwner::detach() {
+    using Function = void (*)(ConfigWorkerOwner *);
+    static const auto forward = original<Function>("_ZN9configqml17ConfigWorkerOwner6detachEv");
+    forward(this);
+    // The old consumer has detached, while accepted IO remains worker-owned.
+    // Test-only evidence for the real engine-lifetime boundary, not a QML
+    // request-to-reload marker. Never intercept or alter detach itself.
+    const auto marker = qEnvironmentVariable("ATCQ_NATIVE_DETACH_MARKER");
+    if (!marker.isEmpty() && subjectProcess && ::getpid() == subject) {
+        QFile claim(marker + QStringLiteral(".claim"));
+        if (claim.open(QIODevice::WriteOnly | QIODevice::NewOnly)) {
+            claim.close();
+            QSaveFile publication(marker);
+            if (!publication.open(QIODevice::WriteOnly) ||
+                !publication.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner))
+                qFatal("native detach evidence unavailable");
+            const auto bytes = QJsonDocument(QJsonObject{{"phase", "owner-detached"}, {"pid", int(subject)}}).toJson(QJsonDocument::Compact);
+            if (publication.write(bytes) != bytes.size() || !publication.commit()) qFatal("native detach evidence failed");
+        }
+    }
+}
+
 QString ConfigJsonBackend::fault(const QString &phase, const QString &file) const {
     const auto injected = control(phase, file);
     if (!injected.isEmpty()) return injected;
