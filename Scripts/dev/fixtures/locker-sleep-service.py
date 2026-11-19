@@ -8,6 +8,7 @@ exit models completion/resume and makes logind emit PrepareForSleep(false).
 import argparse
 import json
 from pathlib import Path
+import subprocess
 import time
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -19,8 +20,13 @@ def publish(name, value):
     temporary.write_text(json.dumps(value))
     temporary.replace(path)
 
-publish('sleep-service-entered.json', {'monotonic': time.monotonic(),
-    'kernelSleepInvoked': False})
+entered = {'monotonic': time.monotonic(), 'kernelSleepInvoked': False}
+observe_session = args.work / 'sleep-observe-session'
+if observe_session.exists():
+    entered['lockedHintAtEntry'] = subprocess.run(['loginctl', 'show-session',
+        observe_session.read_text(), '-p', 'LockedHint', '--value'], check=True,
+        capture_output=True, text=True, timeout=5).stdout.strip()
+publish('sleep-service-entered.json', entered)
 deadline = time.monotonic() + 60
 while not args.work.joinpath('release-sleep-service').exists() and time.monotonic() < deadline:
     time.sleep(.02)

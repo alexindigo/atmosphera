@@ -63,8 +63,14 @@ def main():
     parser.add_argument('--real-suspend', action='store_true')
     parser.add_argument('--sleep-signals', action='store_true', help='Real logind/inhibitor path with a no-kernel-sleep service barrier')
     parser.add_argument('--sleep-route', choices=('lock-and-suspend', 'prepare-for-sleep'), default='lock-and-suspend')
+    parser.add_argument('--suspend-after-inspect-race', action='store_true', help='Authenticate before delivering the captured final inspect; lockOnSuspend stays false')
+    parser.add_argument('--suspend-race-lock-on-suspend', action='store_true', help='Prove the same intervening-PAM ordering with lockOnSuspend enabled')
     parser.add_argument('--recover-known-pam-hang', action='store_true', help='Record and recover only a verified native PAM syslog deadlock; never the secure holder')
     args = parser.parse_args()
+    if args.suspend_after_inspect_race and (not args.main_shell or args.case != 'fast' or args.sleep_signals):
+        parser.error('--suspend-after-inspect-race requires actual-main fast without the optional sleep helper')
+    if args.suspend_race_lock_on_suspend and not args.suspend_after_inspect_race:
+        parser.error('--suspend-race-lock-on-suspend requires --suspend-after-inspect-race')
     if args.main_shell and args.case not in ('fast', 'adoption', 'slow', 'boundary', 'external', 'opaque-expiry'):
         parser.error('--main-shell currently proves fast/adoption/slow/boundary/external; other main-shell acceptance remains separate')
     if args.ingress != 'ipc' and not args.main_shell:
@@ -131,13 +137,25 @@ def main():
             '+ JSON.stringify({pid: Quickshell.processId})); } }\n')
         path.write_text(text.replace(anchor, anchor + observation))
     entry = root / ('shell.qml' if args.main_shell else 'locker-owner-proof.qml')
+    if args.suspend_after_inspect_race:
+        # Observe the independent notification/inspect ordering. Delay only the
+        # real signal forwarding in this disposable install; never fabricate an
+        # unlock or alter the managed client's private authentication fence.
+        path = root / 'Services/Locker/LockerService.qml'
+        text = path.read_text()
+        assert text.count('      sessionUnlocked();') == 1
+        assert text.count('  id: root\n') == 1
+        text = text.replace('      sessionUnlocked();', '      delayedUnlockObservation.restart();')
+        text = text.replace('  id: root\n', '  id: root\n  Timer { id: delayedUnlockObservation; interval: 10000; onTriggered: root.sessionUnlocked(); }\n')
+        path.write_text(text)
+        (work / 'sleep-observe-session').write_text(sid)
     if not args.main_shell:
         entry.write_text((source / 'Scripts/dev/fixtures/locker-owner.qml').read_text())
     settings = work / 'config'
     settings.mkdir()
     configuration = {'settingsVersion': 62,
         'general': {'lockScreenEnabled': True, 'lockScreenPlugin': 'demo-custom-lockscreen' if args.ui == 'demo' else 'default',
-                     'lockOnSuspend': args.sleep_signals, 'showChangelogOnStartup': False}}
+                     'lockOnSuspend': args.sleep_signals or args.suspend_race_lock_on_suspend, 'showChangelogOnStartup': False}}
     marker = work / 'hook-events'
     if args.case in ('opaque', 'report-unknown'):
         configuration['general']['externalLockCommand'] = 'sleep 40'
@@ -237,12 +255,14 @@ def main():
         binary.chmod(0o700)
         (work / 'ready-at-delay').write_text(str(args.delay))
         environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
-    if args.sleep_signals:
+    if args.sleep_signals or args.suspend_after_inspect_race:
         binary = work / 'bin/python3'
         binary.parent.mkdir(exist_ok=True)
         shutil.copyfile(source / 'Scripts/dev/fixtures/locker-adapter-barrier.py', binary)
         binary.chmod(0o700)
         environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
+        if args.suspend_after_inspect_race:
+            (work / 'hold-after-consume-inspect').touch(mode=0o600)
     unit = 'locker-owner-proof.service'
     password = secrets.token_hex(16)
     credential = work / 'credential'
@@ -390,6 +410,11 @@ def main():
 
     def ingress():
         nonlocal original_niri_config, restore_niri_config, suspend_command, kernel_cursor
+        if args.suspend_after_inspect_race:
+            if args.suspend_race_lock_on_suspend:
+                sleep_harness.held()
+            ipc('sessionMenu', 'lockAndSuspend')
+            return
         if args.sleep_signals:
             sleep_harness.held()
             cursor = run(['sudo', '-n', 'journalctl', '-b', '-k', '-n', '1', '--show-cursor', '--no-pager']).stdout
@@ -543,7 +568,7 @@ def main():
             'newOwner': owner, 'before': before, 'stopped': stopped, 'after': after}, indent=2))
 
     try:
-        if args.sleep_signals:
+        if args.sleep_signals or args.suspend_after_inspect_race:
             from locker_sleep_support import SleepHarness
             sleep_harness = SleepHarness(source, work)
             sleep_harness.install()
@@ -694,6 +719,64 @@ def main():
                     and observation.get('sameInvocation') and not observation.get('gone'))
         wait_for(secured, 15)
         first = inspect()
+        if args.suspend_after_inspect_race:
+            wait_for((work / 'after-consume-inspect.json').exists, 15)
+            captured = json.loads((work / 'after-consume-inspect.json').read_text())['value']
+            assert captured['descriptor']['generation'] == first['descriptor']['generation']
+            assert captured['descriptor']['units']['real']['client']['secure']
+            assert configuration['general']['lockOnSuspend'] is args.suspend_race_lock_on_suspend
+            auth_at = time.monotonic()
+            authenticate()
+            try:
+                wait_for(lambda: not compositor_locked(work, sid), 5)
+            except AssertionError:
+                if not args.recover_known_pam_hang:
+                    raise
+                recover_known_pam_hang(source, sid, 'real', work)
+                authenticate()
+                wait_for(lambda: not compositor_locked(work, sid), 10)
+            before_release = inspect()
+            assert before_release['descriptor']['phase'] == 'unlocking'
+            (work / 'release-after-consume-inspect').touch(mode=0o600)
+            wait_for((work / 'sleep-service-entered.json').exists, 20)
+            entered = json.loads((work / 'sleep-service-entered.json').read_text())
+            at_sleep = inspect()
+            locked_at_sleep = compositor_locked(work, sid)
+            events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+            ordering = authenticated_unlocks(events, 1)
+            (work / 'suspend-race-result.json').write_text(json.dumps({
+                'lockOnSuspend': args.suspend_race_lock_on_suspend, 'authInputAt': auth_at, 'captured': captured,
+                'beforeRelease': before_release, 'sleepServiceEntered': entered,
+                'atSleep': at_sleep, 'lockedAtSleep': locked_at_sleep, 'pamOrdering': ordering}, indent=2))
+            if args.suspend_race_lock_on_suspend:
+                assert locked_at_sleep and entered['lockedHintAtEntry'] == 'yes', 'lockOnSuspend did not relock before actual sleep entry'
+                holder = at_sleep['descriptor']['units']['real']
+                assert at_sleep['descriptor']['generation'] != captured['descriptor']['generation']
+                def relock_events():
+                    observed = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+                    return [row['sourceMonotonic'] for row in observed if row['kind'] == 'journal'
+                        and row['invocation'] == holder['identity']['InvocationID']
+                        and re.search(r'ext_session_lock_v1#\d+\.locked\(\)', row['message'])]
+                secure_events = wait_for(relock_events, 10)
+                sleep_harness.entered(min(secure_events))
+                wait_for(lambda: any(row['kind'] == 'prepare-for-sleep' and not row['sleeping']
+                    for row in [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]), 15)
+                assert compositor_locked(work, sid), 'lock not intact through PrepareForSleep(false)'
+                authenticate()
+                wait_for(lambda: not compositor_locked(work, sid), 10)
+                wait_for(lambda: inspect()['descriptor']['phase'] == 'settled', 15)
+                wait_for(lambda: sum(row['kind'] == 'journal' and 'unlock_and_destroy' in row.get('message', '')
+                    for row in [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]) == 2, 10)
+                events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
+                (work / 'pam-unlock-ordering.json').write_text(json.dumps(authenticated_unlocks(events, 2), indent=2))
+            else:
+                assert not locked_at_sleep and entered['lockedHintAtEntry'] == 'no', 'intervening successful PAM ordering not exercised'
+                (work / 'release-sleep-service').touch(mode=0o600)
+            wait_for(lambda: inspect()['descriptor']['phase'] == 'settled', 15)
+            unlocked = True
+            (work / 'result.txt').write_text('PASS suspend with intervening PAM, lockOnSuspend=' + str(args.suspend_race_lock_on_suspend) + '\n')
+            print('PASS suspend with intervening PAM, lockOnSuspend=' + str(args.suspend_race_lock_on_suspend), work)
+            return
         if args.ingress == 'hot-corner':
             # End this gesture while locked; a pointer left in the corner can
             # start a fresh dwell when the shell returns after authentication.

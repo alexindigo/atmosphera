@@ -292,6 +292,24 @@ LockedHint stays false, and no protocol lock/unlock request is allowed. This is
 presentation-only; normal inset desktop margins are not a secure-output defect.
 Escape is scoped to each preview window's live content, not an off-window root.
 
+Lock-and-suspend guarantees a lock before sleep unless successful authentication
+intervenes. Authentication in the actual holder is the user's newer unlock
+intent; it is not an unauthenticated unlock or an implicit cancellation of the
+pending power action. With `lockOnSuspend=false`, suspend may therefore follow
+that authenticated unlock. With `lockOnSuspend=true`, the logind delay-inhibitor
+path guarantees a lock before every sleep, including a fresh lock after such
+intervening authentication. Independent Locker1 ownership and configured
+suspend handler/custom-command semantics remain unchanged.
+
+`locker-owner-proof.py --main-shell --case fast --suspend-after-inspect-race`
+characterizes actual PAM unlock between capture and delivery of the post-consume
+inspect reply, with `lockOnSuspend=false`. The same command with
+`--suspend-race-lock-on-suspend` verifies native relock before the real inhibitor
+fd closes and the no-kernel-sleep service enters, and a lock intact through
+PrepareForSleep(false). The fixture delays only the separate unlock notification
+in a disposable staged install; native authentication, adapter transactions and
+the actual main power-action consumer are unchanged.
+
 `suspend --delays 0,5,40 --sleep-signals` exercises actual main lock-and-suspend
 and externally initiated sleep through the real logind manager, signals and
 delay-inhibitor fd. A guest-only runtime override substitutes a bounded service

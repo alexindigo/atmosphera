@@ -69,7 +69,12 @@ if len(sys.argv) == 3 and sys.argv[1].endswith('/Scripts/python/locker-unit.py')
     # Execute in this same process: client/authenticated publications deliberately
     # require the helper's PPid to be the exact GUI client. A proxy child would
     # (correctly) be rejected by that production identity fence.
-    if operation != 'handover' or (work / 'ready-at-delay').exists():
+    stale_suspend = (work / 'hold-after-consume-inspect').exists()
+    if stale_suspend and operation == 'consume-suspend':
+        (work / 'suspend-consume-seen').touch(mode=0o600)
+    hold_inspect = (stale_suspend and operation == 'inspect'
+        and (work / 'suspend-consume-seen').exists() and not (work / 'after-consume-inspect.json').exists())
+    if not hold_inspect and (operation != 'handover' or (work / 'ready-at-delay').exists()):
         runpy.run_path(sys.argv[0], run_name='__main__')
         raise AssertionError('adapter unexpectedly returned without an exit code')
     output = io.StringIO()
@@ -81,7 +86,16 @@ if len(sys.argv) == 3 and sys.argv[1].endswith('/Scripts/python/locker-unit.py')
             code = exit.code
     if code == 0:
         reply = json.loads(output.getvalue())
-        if reply['ok'] and reply['value']['committed']:
+        if hold_inspect and reply['ok']:
+            # Capture the completed real inspect transaction, outside its flock.
+            # Authentication remains free to commit before the old bytes arrive.
+            (work / 'after-consume-inspect.json').write_text(output.getvalue())
+            deadline = time.monotonic() + 45
+            while not (work / 'release-after-consume-inspect').exists():
+                if time.monotonic() >= deadline:
+                    raise RuntimeError('test did not release the post-consume inspect reply')
+                time.sleep(.01)
+        elif operation == 'handover' and reply['ok'] and reply['value']['committed']:
             (work / 'handover-at-barrier.json').write_text(json.dumps({'pid': os.getpid(), 'monotonic': time.monotonic()}))
             deadline = time.monotonic() + 30
             while not (work / 'release-handover').exists():
