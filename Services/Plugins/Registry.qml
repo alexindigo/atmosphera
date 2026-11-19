@@ -105,6 +105,10 @@ Singleton {
   // Signals
   signal pluginsChanged
   property var _reloadCallback: null
+  property var _registryRead: ({callback: null})
+  property bool _registryWriting: false
+  property bool _registryWritePending: false
+  property int _scanGeneration: 0
 
   function reloadFromDisk(callback) {
     if (_reloadCallback || !pluginsFileView.path) {
@@ -112,12 +116,55 @@ Singleton {
       return;
     }
     _reloadCallback = callback;
-    pluginsFileView.reload();
+    Qt.callLater(root._pumpRegistry);
   }
-  function _completeReload(success) {
-    var callback = _reloadCallback;
-    _reloadCallback = null;
-    if (callback) callback({status: success ? "reloaded" : "failed", error: {code: success ? "" : "registry-load"}});
+  function _pumpRegistry() {
+    if (_registryRead || _registryWriting)
+      return;
+    if (_registryWritePending) {
+      _registryWritePending = false;
+      _registryWriting = true;
+      pluginsFileView.writeAdapter();
+    } else if (_reloadCallback) {
+      _registryRead = {callback: _reloadCallback};
+      pluginsFileView.reload();
+    }
+  }
+  function _completeReload(success, operation) {
+    Qt.callLater(function () {
+      if (root._registryRead !== operation)
+        return;
+      root._registryRead = null;
+      const callback = operation.callback;
+      if (callback)
+        root._reloadCallback = null;
+      Qt.callLater(root._pumpRegistry);
+      if (callback)
+        callback({status: success ? "reloaded" : "failed", error: {code: success ? "" : "registry-load"}});
+    });
+  }
+  function _validRegistry(data) {
+    function object(value) { return value !== null && typeof value === "object" && !Array.isArray(value); }
+    if (!object(data) || (data.version !== undefined && (!Number.isInteger(data.version) || data.version < 0)))
+      return false;
+    if (data.states !== undefined) {
+      if (!object(data.states)) return false;
+      for (const key of Object.keys(data.states)) {
+        const state = data.states[key];
+        if (!object(state) || (state.enabled !== undefined && typeof state.enabled !== "boolean") ||
+            (state.sourceUrl !== undefined && state.sourceUrl !== null && typeof state.sourceUrl !== "string"))
+          return false;
+      }
+    }
+    if (data.sources !== undefined) {
+      if (!Array.isArray(data.sources)) return false;
+      for (const source of data.sources) {
+        if (!object(source)) return false;
+        for (const field of ["url", "path", "name"])
+          if (source[field] !== undefined && typeof source[field] !== "string") return false;
+      }
+    }
+    return true;
   }
 
   // In-memory plugin cache (populated by scanning disk)
@@ -142,11 +189,21 @@ Singleton {
     }
 
     onLoaded: {
+      const operation = root._registryRead;
+      var data;
+      try {
+        data = JSON.parse(text());
+        if (!root._validRegistry(data)) throw new Error("invalid registry state");
+      } catch (error) {
+        Logger.e("PluginRegistry", "Registry load rejected; keeping active state:", error);
+        root._completeReload(false, operation);
+        return;
+      }
       Logger.i("PluginRegistry", "Loaded plugin states from:", path);
-      root.pluginStates = pluginStateAdapter.states || {};
-      root.pluginSources = pluginStateAdapter.sources || [];
-      root._loadedVersion = pluginStateAdapter.version;
-      root._v5Pending = pluginStateAdapter.version < 5;
+      root.pluginStates = data.states || {};
+      root.pluginSources = data.sources || [];
+      root._loadedVersion = data.version === undefined ? root.currentVersion : data.version;
+      root._v5Pending = root._loadedVersion < 5;
 
       var needsSave = false;
       for (var i = 0; i < root.pluginSources.length; i++) {
@@ -177,26 +234,35 @@ Singleton {
       }
 
       root.migratePluginData(function () {
-        scanPluginFolder(function (success) { root._completeReload(success); });
+        scanPluginFolder(function (success) { root._completeReload(success, operation); });
       });
     }
 
     onLoadFailed: function (error) {
-      if (root._reloadCallback) {
-        root._completeReload(false);
+      const operation = root._registryRead;
+      if (operation.callback) {
+        root._completeReload(false, operation);
         return;
       }
       Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
       root.pluginStates = {};
       root.pluginSources = [];
-      root.scanPluginFolder();
+      root.scanPluginFolder(function (success) { root._completeReload(success, operation); });
+    }
+    onSaved: {
+      root._registryWriting = false;
+      Qt.callLater(root._pumpRegistry);
+    }
+    onSaveFailed: {
+      root._registryWriting = false;
+      Qt.callLater(root._pumpRegistry);
     }
   }
 
   function init() {
     Logger.d("PluginRegistry", "Initialized");
     // Force instantiation of PluginService to set up signal listener
-    Service.initialized;
+    return Service.initialized;
   }
 
   // Icon set consolidation (v3): noctalia-icons-legacy merged into
@@ -877,6 +943,7 @@ for key in sys.argv[3:]:
   // Scan plugin folder to discover installed plugins (single process reads all manifests)
   function scanPluginFolder(callback) {
     Logger.i("PluginRegistry", "Scanning plugin folder:", root.pluginsDir);
+    const generation = ++root._scanGeneration;
 
     var scanProcess = Qt.createQmlObject(`
       import QtQuick
@@ -892,6 +959,7 @@ for key in sys.argv[3:]:
       var output = String(scanProcess.stdout.text || "");
       var sections = output.split("@@PLUGIN@@");
       var loadedCount = 0;
+      var installed = {};
 
       for (var i = 1; i < sections.length; i++) {
         var section = sections[i];
@@ -911,7 +979,7 @@ for key in sys.argv[3:]:
 
           if (validation.valid) {
             manifest.compositeKey = pluginId;
-            root.installedPlugins[pluginId] = manifest;
+            installed[pluginId] = manifest;
             Logger.i("PluginRegistry", "Loaded plugin:", pluginId, "-", manifest.name);
 
             if (!root.pluginStates[pluginId]) {
@@ -929,9 +997,12 @@ for key in sys.argv[3:]:
       }
 
       Logger.i("PluginRegistry", "All plugin manifests loaded. Total plugins:", loadedCount);
-      root.pluginsChanged();
+      if (exitCode === 0 && generation === root._scanGeneration) {
+        root.installedPlugins = installed;
+        root.pluginsChanged();
+      }
       scanProcess.destroy();
-      if (callback) callback(exitCode === 0);
+      if (callback) callback(exitCode === 0 && generation === root._scanGeneration);
     });
   }
 
@@ -997,10 +1068,8 @@ for key in sys.argv[3:]:
     pluginStateAdapter.states = root.pluginStates;
     pluginStateAdapter.sources = root.pluginSources;
 
-    Qt.callLater(() => {
-      pluginsFileView.writeAdapter();
-      Logger.d("PluginRegistry", "Plugin states saved");
-    });
+    root._registryWritePending = true;
+    Qt.callLater(root._pumpRegistry);
   }
 
   // Enable/disable a plugin
