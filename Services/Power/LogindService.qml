@@ -16,7 +16,11 @@ Singleton {
 
   function publishSecure(window, confirmed, opaque) {
     if (inhibitor.running && window !== "" && window === _sleepWindow)
-      inhibitor.write(JSON.stringify({window: window, secure: confirmed, opaque: opaque}) + "\n");
+      inhibitor.write(JSON.stringify({
+                                       window: window,
+                                       secure: confirmed,
+                                       opaque: opaque
+                                     }) + "\n");
   }
 
   Process {
@@ -27,11 +31,19 @@ Singleton {
     stdout: SplitParser {
       onRead: data => {
         var event;
-        try { event = JSON.parse(data); }
-        catch (error) { Logger.e("LogindService", "Invalid inhibitor event"); return; }
+        try {
+          event = JSON.parse(data);
+        } catch (error) {
+          Logger.e("LogindService", "Invalid inhibitor event");
+          return;
+        }
         if (event.event === "acquired") {
           root.available = true;
           Logger.i("LogindService", "Delay inhibitor acquired");
+        } else if (event.event === "released" || event.event === "unavailable") {
+          root.available = false;
+          if (event.event === "unavailable")
+            Logger.e("LogindService", "Delay inhibitor unavailable: " + event.reason);
         } else if (event.event === "prepare") {
           root._sleepWindow = event.window || "";
           LockOwnerService.observeSleepWindow(event.sleeping, root._sleepWindow);
@@ -42,7 +54,9 @@ Singleton {
         }
       }
     }
-    stderr: SplitParser { onRead: data => Logger.e("LogindService", data) }
+    stderr: SplitParser {
+      onRead: data => Logger.e("LogindService", data)
+    }
     onExited: code => {
       root._sleepWindow = "";
       root.available = false;
@@ -56,12 +70,15 @@ Singleton {
   Timer {
     id: retry
     interval: 1000
-    onTriggered: if (root.enabled) inhibitor.running = true
+    onTriggered: if (root.enabled)
+                   inhibitor.running = true
   }
 
   Connections {
     target: LockOwnerService
-    function onSleepConfirmed(window, confirmed, opaque) { root.publishSecure(window, confirmed, opaque); }
+    function onSleepConfirmed(window, confirmed, opaque) {
+      root.publishSecure(window, confirmed, opaque);
+    }
   }
 
   function init() {

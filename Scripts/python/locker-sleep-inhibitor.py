@@ -24,7 +24,7 @@ def main():
     properties = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
     max_delay = int(properties.Get('org.freedesktop.login1.Manager', 'InhibitDelayMaxUSec')) / 1_000_000
     state = {'fd': None, 'secure': False, 'opaque': False, 'sleeping': False, 'window': '',
-             'started': None, 'expired': False}
+             'started': None, 'expired': False, 'failed': False}
     loop = GLib.MainLoop()
 
     def emit(event, **values):
@@ -32,9 +32,10 @@ def main():
 
     def release():
         if state['fd'] is not None:
+            closing = time.monotonic()
             os.close(state['fd'])
             state['fd'] = None
-            emit('released', secure=state['secure'])
+            emit('released', secure=state['secure'], closeMonotonic=closing)
 
     def acquire():
         if state['fd'] is None:
@@ -53,7 +54,16 @@ def main():
         state['window'] = secrets.token_hex(24) if start else ''
         emit('prepare', sleeping=bool(start), window=state['window'], secure=False)
         if not start:
-            acquire()
+            try:
+                acquire()
+            except (dbus.DBusException, OSError) as error:
+                # dbus-python otherwise logs a callback exception and keeps an
+                # fd-less helper alive. Exit this lifetime so QML withdraws
+                # availability and its existing retry timer starts a new one.
+                state['failed'] = True
+                emit('unavailable', reason=str(error))
+                loop.quit()
+                return False
 
     def check_window():
         if state['sleeping'] and state['started'] is not None and not state['expired']:
@@ -100,13 +110,22 @@ def main():
     GLib.io_add_watch(sys.stdin.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, receive)
     GLib.timeout_add(50, check_window)
     try:
-        acquire()
+        try:
+            acquire()
+        except dbus.DBusException as error:
+            if error.get_dbus_name() != 'org.freedesktop.login1.OperationInProgress':
+                raise
+            # A helper started during sleep cannot get a delay fd. It still
+            # owes the owner the active window, without pretending to hold one.
+            # If sleep ended during the call, prepare(false) reacquires normally.
+            emit('unavailable', reason=str(error))
         # Converge a sleep already in preparation after the subscription exists.
-        prepare(bool(properties.Get('org.freedesktop.login1.Manager', 'PreparingForSleep')))
-        loop.run()
+        if prepare(bool(properties.Get('org.freedesktop.login1.Manager', 'PreparingForSleep'))) is not False:
+            loop.run()
     finally:
         release()
+    return 1 if state['failed'] else 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

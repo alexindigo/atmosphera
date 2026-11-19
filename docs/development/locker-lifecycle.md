@@ -300,6 +300,12 @@ held before the request, native secure before its actual release, service entry,
 real PrepareForSleep(false), inhibitor reacquisition and the lock intact on the
 guest framebuffer. The original service ExecStart is restored in finally.
 No kernel sleep is invoked; the kernel journal must contain no suspend entry.
+If the helper starts during logind's OperationInProgress refusal, it still
+converges PreparingForSleep and publishes the active window without claiming
+an inhibitor fd. Resume acquisition failure ends that helper lifetime so the
+existing QML retry timer can recover. Availability is withdrawn on release or
+acquisition refusal. `locker-inhibitor-recovery-proof.py` exercises those actual
+entry/callback paths with controlled D-Bus replies, separately from native sleep.
 `--real-suspend` is rejected: real S3 is not testable in this VM and must be
 checked on the user's machine. This proof is not hardware suspend/resume proof.
 
