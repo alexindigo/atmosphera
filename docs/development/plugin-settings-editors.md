@@ -121,3 +121,23 @@ unload refusals, real IO failure and Retry, sparse unknown fields, Reset, runtim
 consumers and separate cold verification. The old-owner fixture belongs to the
 pre-cutover commits and is not shipped in the current tree. The gate selects the
 native witness at cutover; historical trees retain their own old-owner fixture.
+
+## Runtime placement save and retirement Retry
+
+Placement `saveSettings` requests selected publication of its owning atomic
+settings key (for example `bar.widgets.left`), not a whole-store save. Failed
+receipts retain their attempted, unconfirmed coverage keys. An explicit Retry
+publishes the **current values of those same keys** through ConfigQml 0.5.1
+`saveSelected`. A newer edit to a covered key is the user's latest intent for
+that key. Keys outside the failed coverage are not saved, including unrelated
+pending keys in the same JSON file or shared plugin settings. Successful later
+requested coverage supersedes earlier failures on those keys; retirement never
+retries newly unrequested edits after that success.
+
+This is a current-intent Retry, not an exact original-value capture. ConfigQml
+0.5.1 returns retained-group tokens asynchronously, so overlapping requests cannot
+name an earlier token before its callback. A future native queued-capture facility
+could support exact original-boundary Retry. It is not required for this contract.
+List/record keys remain atomic: Retry does not invent a per-row persistence unit.
+Same-owner retries retain the existing ready native owner until requested work
+settles, then wait for placement API destruction before releasing that owner.

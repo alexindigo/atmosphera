@@ -48,3 +48,21 @@ Unload cancels the generation before native owner retirement, so a late reader
 cannot register components or data with a retired owner. Plugin-created reentrant
 unload also invalidates the remaining registrations. A replacement workflow must
 await this full-load receipt, not treat starting loadPlugin as successful loading.
+
+Update and hot reload keep one replacement operation through retirement, optional
+installation, and full replacement loading. Failure retains the operation for a
+same-owner Retry. Update does not install files after a failed final save and does
+not clear its notice until replacement loading succeeds. Failed update/reload
+operations expose the existing error toast's Retry action, bound to that retained
+operation; stale actions cannot start another replacement. Hot reload emits its
+success signal/toast only after the replacement native owner and registrations
+are ready. Uninstall also waits for retirement before removing files.
+
+Updates preserve placement settings in place during retirement, rather than
+disabling/removing the placements and restoring a stale layout snapshot over
+concurrent user edits. A disabled plugin stays disabled after updating. Shared
+and placement requested saves use bounded native saveSelected publication;
+current-intent Retry and later-success supersession are described in
+[plugin-settings-editors.md](plugin-settings-editors.md#runtime-placement-save-and-retirement-retry).
+Any successful native writer on those covered keys supersedes earlier failed
+coverage, including dialogs and autosave, not only another plugin API save.
