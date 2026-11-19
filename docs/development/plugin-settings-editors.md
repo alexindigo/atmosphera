@@ -1,5 +1,7 @@
 # Plugin editor owner preparation
 
+## Historical pre-cutover contract
+
 Plugin APIs expose `createSettingsEditor()`. The returned selected-value handle
 has `initialValue`, `apply(value, callback)`, `resetOverrides(callback)` (instance
 only), and `discard()`. It is separate from the live runtime API. Unapplied values
@@ -89,6 +91,29 @@ suppressed equal/nested ABA is still its documented limitation; I5 replaces this
 factory with the actual normalized worker command/overlay contract.
 
 ## Native cutover witness
+
+Native editors open asynchronously and own their editable values. Do not pass a
+detached copy of `initialValue` to Apply:
+
+```qml
+var editor = pluginApi.createSettingsEditor();
+editor.whenReady(function (result) {
+  if (result.status !== "opened") {
+    editor.discard();
+    return;
+  }
+  editor.values.label = "New label"; // A field declared by this plugin's schema.
+  editor.apply(editor.values, function (receipt) {
+    // Inspect receipt.status and receipt.refreshState before saved feedback.
+  });
+});
+```
+
+`discard()` still refuses while busy. A presentation that is already closing or
+being destroyed calls `release()` instead: the editor owns its deferred detach
+through native Apply/Reset settlement and suppresses the released presentation's
+completion callback. This does not authorize discarding user edits on an ordinary
+Close; the popup's confirmation flow remains responsible for that decision.
 
 The current owner uses `Scripts/dev/fixtures/settings-plugin-editors-native.qml`.
 It retains shared Cancel/Apply, all four placement addresses, ABA/reorder/base/

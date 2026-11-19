@@ -11,6 +11,7 @@ QtObject {
   required property var fields
   property bool writable: true
   property bool closed: false
+  property bool _releasePending: false
   property string openError: ""
   property var _initial: ({})
   property var _lifetime: ({alive: true})
@@ -23,6 +24,21 @@ QtObject {
   readonly property var previewValues: handle ? (handle.preview || handle.values) : null
   readonly property var initialValue: _initial
   signal rebased(var result)
+  onBusyChanged: {
+    if (!busy && _releasePending)
+      Qt.callLater(root._releaseWhenIdle);
+  }
+
+  // A destroyed presentation cannot own the final busy-editor cleanup.
+  // Keep the release request with the editor through native settlement.
+  function release() {
+    _releasePending = true;
+    Qt.callLater(root._releaseWhenIdle);
+  }
+  function _releaseWhenIdle() {
+    if (_releasePending && !closed && !busy)
+      discard();
+  }
 
   function copyValue(value) { return Settings.store.copyValue(value); }
 
@@ -79,7 +95,7 @@ QtObject {
   function apply(value, callback) {
     if (ownerCurrent && !ownerCurrent()) return refuse(callback, "editor-owner");
     if (!writable) return refuse(callback, "editor-read-only");
-    if (closed || !ready || busy || value !== values) return refuse(callback, "editor-state");
+    if (closed || _releasePending || !ready || busy || value !== values) return refuse(callback, "editor-state");
     var lifetime = _lifetime;
     return handle.apply(function (result) {
       if (!lifetime.alive || root.closed) return;
@@ -97,18 +113,18 @@ QtObject {
         if (refresh === "current") root._initial = root.snapshot();
         root.rebased({refreshState: refresh});
       }
-      if (typeof callback === "function") callback(Object.assign({}, result, {refreshState: refresh}));
+      if (!root._releasePending && typeof callback === "function") callback(Object.assign({}, result, {refreshState: refresh}));
     });
   }
   function resetOverrides(callback) {
     if (ownerCurrent && !ownerCurrent()) return refuse(callback, "editor-owner");
     if (!writable) return refuse(callback, "editor-read-only");
-    if (!ready || busy) return refuse(callback, "editor-state");
+    if (_releasePending || !ready || busy) return refuse(callback, "editor-state");
     var lifetime = _lifetime;
     return handle.resetOverrides(function (result) {
       if (!lifetime.alive || root.closed) return;
       if (result.refreshState === "current" && result.status !== "failed") root._initial = root.snapshot();
-      if (typeof callback === "function") callback(result);
+      if (!root._releasePending && typeof callback === "function") callback(result);
     });
   }
   function discard() {

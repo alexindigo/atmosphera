@@ -19,7 +19,7 @@ from presentation_harness import run_harness
 CASES = ('destruction', 'closed-api', 'panel-slot', 'placement', 'reload-held',
          'placement-held', 'manual-unsaved', 'failed-save', 'editor-discard',
          'editor-unload', 'editor-apply-held', 'editor-instance-discard', 'editor-instance-reset',
-         'editor-preview-lifetime')
+          'editor-preview-lifetime', 'popup-apply-held', 'popup-close-held', 'popup-open-refused')
 
 
 def main():
@@ -45,6 +45,17 @@ def main():
         (config / 'plugins.json').write_text('{"version":5,"states":{},"sources":[]}')
         plugin = config / 'plugins/notes-scratchpad'
         shutil.copytree(plugins / 'notes-scratchpad', plugin)
+        if case.startswith('popup-'):
+            (plugin / 'Settings.qml').write_text('''import QtQuick
+Item {
+ property var pluginApi: null
+ implicitWidth: 240; implicitHeight: 80
+ function saveSettings() {
+  pluginApi.pluginSettings.scratchpadContent = "unsaved scratchpad destruction consumer";
+  pluginApi.saveSettings();
+ }
+}
+''')
         target = preferences / 'notes-scratchpad.json'
         target.write_text('{"scratchpadContent":"original","opaque":{"keep":true}}')
         runtime = profile.child_environment('ul-')
@@ -52,7 +63,7 @@ def main():
                    ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_SETTINGS_FILE=str(config / 'settings.json'),
                    ATMOSPHERA_CACHE_DIR=str(work / 'cache'), ATMOSPHERA_STATE_DIR=str(work / 'state'),
                    PLUGIN_UNLOAD_MANIFEST=(plugin / 'manifest.json').read_text(), PLUGIN_UNLOAD_CASE=case)
-        held = case in ('reload-held', 'placement-held', 'editor-apply-held')
+        held = case in ('reload-held', 'placement-held', 'editor-apply-held', 'popup-apply-held', 'popup-close-held')
         marker, gate = work / 'held.json', work / 'release'
         if held or case == 'failed-save':
             if case == 'placement-held':
@@ -102,7 +113,7 @@ def main():
                             while not marker.exists() or not (live/'shell.log').exists() or 'PLUGIN_UNLOAD: HELD_PASS' not in (live/'shell.log').read_text():
                                 assert not future.done() and time.monotonic() < deadline, 'real IO/consumer hold not reached'
                                 time.sleep(.02)
-                            if case in ('reload-held', 'editor-apply-held'):
+                            if case in ('reload-held', 'editor-apply-held', 'popup-apply-held', 'popup-close-held'):
                                 assert json.loads(target.read_text())['scratchpadContent'] == 'original'
                             release()
                     finally:
