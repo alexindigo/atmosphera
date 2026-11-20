@@ -110,7 +110,41 @@ Singleton {
     }
     return value || null;
   }
-  function _open(base, placement, mode, callback, previewBase) {
+  // Read facts only: no values here are later submitted to a writer. Capture
+  // the same displayed leaf generation and settled base that openOverlay uses.
+  function captureSettingsFields(base, placement) {
+    var selected = address(placement);
+    var scope = base ? base.settingsHandle : null;
+    if (!selected || !scope || !base.settingsOwner || base.settingsOwner.closed || Service.getPluginAPI(base.pluginId) !== base)
+      return null;
+    var main = Settings.store;
+    var ownerInfo = main.info(selected.path);
+    if (!Lists.settled(ownerInfo)) return null;
+    var entry = entryFor(placement);
+    if (!entry || entry.id !== "plugin:" + base.pluginId) return null;
+    var fields = Object.create(null);
+    var generations = Object.create(null);
+    var overrides = entry.instanceSettings || Object.create(null);
+    for (var key of base.settingsOwner.store.settingsKeys) {
+      var info = scope.info([key]);
+      if (!Lists.settled(info)) return null;
+      generations[key] = info.publicationGeneration;
+      fields[key] = {inheritedPresent: info.present, overridden: Object.prototype.hasOwnProperty.call(overrides, key)};
+      if (info.present) fields[key].inheritedValue = main.copyValue(scope.values[key]);
+    }
+    return {
+      fields: fields,
+      current: function () {
+        return Service.getPluginAPI(base.pluginId) === base && !base.settingsOwner.closed &&
+            main.info(selected.path).publicationGeneration === ownerInfo.publicationGeneration &&
+            Lists.settled(main.info(selected.path)) && Object.keys(generations).every(function (key) {
+              var now = scope.info([key]);
+              return Lists.settled(now) && now.publicationGeneration === generations[key];
+            });
+      }
+    };
+  }
+  function _open(base, placement, mode, callback, previewBase, captureFields) {
     var active = true;
     var submitted = false;
     var scope = previewBase || (base ? base.settingsHandle : null);
@@ -148,13 +182,23 @@ Singleton {
       }
       submitted = true;
       disconnect();
+      var capture = captureFields ? captureSettingsFields(base, placement) : null;
+      if (captureFields && !capture) {
+        active = false; callback({status: "failed", error: {code: "settings-field-capture"}}); return;
+      }
       main.openOverlay({mode: mode, base: scope, ownerPath: selected.path,
         ownerGeneration: ownerGeneration,
         entryPath: selected.entry, identityPath: [{key: "id"}], identityValue: "plugin:" + base.pluginId,
         overrideKey: "instanceSettings", mergePolicy: "recursive_objects_replace_lists", differencePolicy: "top_level_omit_equal"}, function (result) {
           if (!active) { if (result.editor) result.editor.detach(); return; }
-          active = false;
-          callback(result);
+           active = false;
+           if (result.status === "opened" && captureFields) {
+             if (!capture.current()) {
+               result.editor.detach(); callback({status: "failed", error: {code: "settings-field-capture"}}); return;
+             }
+             result.fieldCapture = capture;
+           }
+           callback(result);
         });
     }
     main.completed.connect(attempt);
@@ -170,16 +214,16 @@ Singleton {
   }
   function openRuntime(base, placement, callback) { return _open(base, Lists.copy(placement), "live", callback); }
   function openPreviewView(base, placement, scope, callback) { return _open(base, Lists.copy(placement), "view", callback, scope); }
-  function createSettingsEditor(pluginKey, placement, base) {
+  function createSettingsEditor(pluginKey, placement, base, fieldIntent) {
     if (!base || !base.settingsOwner || base.settingsOwner.closed || !placement || Service.getPluginAPI(pluginKey) !== base) return null;
     var editor = editorFactory.createObject(root, {fields: base.settingsOwner.store.settingsKeys});
     Service.retainPluginEditor(editor, base);
     var lifetime = editor._lifetime;
     editor.cancelOpen = _open(base, Lists.copy(placement), "editor", function (result) {
       if (!lifetime.alive || editor.closed) { if (result.editor) result.editor.detach(); return; }
-      if (result.status === "opened") editor.attach(result.editor);
+      if (result.status === "opened") { editor.fieldCapture = result.fieldCapture || null; editor.attach(result.editor); }
       else editor.openError = result.error?.code || "overlay-open";
-    });
+    }, null, fieldIntent === true);
     return editor;
   }
 }

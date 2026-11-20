@@ -30,13 +30,14 @@ def input_fingerprints(args):
     def selected(root, names):
         return {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
                 for name in names if (root / name).is_file()}
-    fixtures = ['Scripts/dev/' + Path(__file__).name] + [str(path.relative_to(args.source)) for path in
+    fixtures = ['Scripts/dev/' + Path(__file__).name, 'Scripts/dev/fixtures/plugin-settings-fields-native.qml'] + [str(path.relative_to(args.source)) for path in
                 sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-host-*')) if path.is_file()]
     result = dict(harness=selected(args.source, fixtures))
     result['candidateShell'] = selected(args.source, [
         'Scripts/python/src/settings/plugin-schema.py', 'Configs/plugin-settings-overlays.json',
         'Services/Plugins/PluginInstances.qml', 'Services/Plugins/PluginPreferenceEditor.qml',
         'Services/Plugins/PluginSettingsPageApi.qml', 'Services/Plugins/PluginSettingsSession.qml',
+        'Services/Plugins/PluginSettingsFields.qml', 'Services/Plugins/PluginInstanceApi.qml',
         'Services/Plugins/PluginLoader.qml', 'Widgets/NPluginSettingsPopup.qml',
         'Services/UI/DesktopWidgetRegistry.qml',
         'Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml'])
@@ -190,6 +191,62 @@ def metadata_case(args, profile):
                   productionPageProtection=False)
     write_json(out / 'result.json', result)
     print('CASE metadata: PASS (compiler only; P001 protection pending)', flush=True)
+    return result
+
+
+def fields_case(args, profile):
+    case, out = args.work_root / 'fields', args.output / 'fields'
+    case.mkdir()
+    out.mkdir()
+    results = []
+    for family in ('global-bar', 'monitor-bar', 'control-center', 'desktop'):
+        selected_case, selected_out = case / family, out / family
+        selected_case.mkdir()
+        selected_out.mkdir()
+        results.append(fields_family(args, profile, selected_case, selected_out, family))
+    result = dict(id='fields', status='PASS', placementFamilies=results, productionPageAdoption=False,
+                  pluginScopeReset='pending final shared-scope field unit')
+    write_json(out / 'result.json', result)
+    print('CASE fields: PASS (four native placement families; no page switched)', flush=True)
+    return result
+
+
+def fields_family(args, profile, case, out, family):
+    install = case / 'install'
+    shutil.copytree(args.source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shared, _ = seed_todo(case, args.plugins)
+    before = shared.read_bytes()
+    fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-fields-native.qml'
+    env = {'PHA_FIELDS_FAMILY': family}
+    text = run_fixture(profile, install, case, out, fixture, extra_env=env)
+    bad = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')
+    if 'PLUGIN_SETTINGS_FIELDS: NATIVE_OPERATIONS_COMPLETE' not in text or shared.read_bytes() != before or any(marker in text for marker in bad):
+        raise RuntimeError('native fields endpoint or exact shared-byte preservation failed')
+    shard = 'bar' if family in ('global-bar', 'monitor-bar') else 'controlCenter' if family == 'control-center' else 'desktopWidgets'
+    stored = json.loads((case / ('config/settings/' + shard + '.json')).read_text())
+    rows = (stored['widgets']['left'] if family == 'global-bar' else
+            stored['screenOverrides'][0]['widgets']['left'] if family == 'monitor-bar' else
+            stored['shortcuts']['left'] if family == 'control-center' else stored['monitorWidgets'][0]['widgets'])
+    expected = {'todos', 'pages', 'current_page_id', 'count', 'completedCount', 'opaque'}
+    overrides = rows[0]['instanceSettings']
+    if set(overrides) != expected or overrides['opaque'] != dict(keep='legacy') or overrides['todos'][0]['id'] != 91:
+        raise RuntimeError('independent field Reset protected-content/opaque readback mismatch')
+    if 'instanceSettings' in rows[1]:
+        raise RuntimeError('native field intent reached sibling placement')
+    cold = out / 'cold'
+    cold.mkdir()
+    text = run_fixture(profile, install, case, cold, fixture, extra_env=dict(env, PHA_FIELDS_COLD='1'))
+    if 'PLUGIN_SETTINGS_FIELDS: COLD_PASS' not in text or shared.read_bytes() != before or any(marker in text for marker in bad):
+        raise RuntimeError('separate native field cold consumer failed')
+    result = dict(id=family, status='PASS', actualNativeEditor=True,
+                  instanceFieldIntent=True, instanceFieldAndWholeReset=True,
+                  compoundReadIsolation=True, legacyContentAndOpaquePreserved=True,
+                  sharedBytesUnchanged=True, siblingOverridesAbsent=True,
+                  separateColdConsumer=True, productionPageAdoption=False,
+                   pluginScopeReset='pending final shared-scope field unit')
+    write_json(out / 'result.json', result)
+    print('CASE fields.' + family + ': PASS (native instance preparation; no page switched)', flush=True)
     return result
 
 
@@ -359,7 +416,7 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     for name in ('baseline-source', 'baseline-plugins'):
         parser.add_argument('--' + name, type=Path)
-    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'all'), required=True)
+    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'fields', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'all'), required=True)
     parser.add_argument('--finding', choices=RED_IDS, help='one red characterization, never full-suite success')
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
@@ -393,8 +450,8 @@ def main():
 
         record('RUNNING')
         try:
-            if args.case in ('startup', 'metadata'):
-                cases.append(startup(args, profile) if args.case == 'startup' else metadata_case(args, profile))
+            if args.case in ('startup', 'metadata', 'fields'):
+                cases.append({'startup': startup, 'metadata': metadata_case, 'fields': fields_case}[args.case](args, profile))
                 status = cases[-1]['status']
                 write_json(args.output / 'result.json', record(status))
                 return 0 if status == 'PASS' else 2

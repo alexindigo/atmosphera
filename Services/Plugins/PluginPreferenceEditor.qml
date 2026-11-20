@@ -8,6 +8,9 @@ QtObject {
   property var handle: null
   property var inputScope: null
   property var ownerCurrent: null
+  // Optional field-intent capture. Legacy callers are unchanged until the
+  // selected settings session requests this additional read-only metadata.
+  property var fieldCapture: null
   required property var fields
   property bool writable: true
   property bool closed: false

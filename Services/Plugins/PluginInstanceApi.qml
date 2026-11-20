@@ -137,8 +137,8 @@ QtObject {
     return editor;
   }
 
-  function createSettingsEditor() {
-    return PluginInstances.createSettingsEditor(pluginId, placement, base);
+  function createSettingsEditor(fieldIntent) {
+    return PluginInstances.createSettingsEditor(pluginId, placement, base, fieldIntent === true);
   }
 
   function openPanel(screen, buttonItem) {

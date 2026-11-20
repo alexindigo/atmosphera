@@ -90,6 +90,35 @@ old-owner preparation, not an intent-revision, partial-shard or I6 timing claim.
 
 ## Captured placement commands
 
+### Native field capability preparation
+
+`PluginSettingsFields` wraps one already-selected native editor. Pages are not
+switched to it yet. Stable frozen handles expose cloned compound presentations,
+captured inherited/stored-override facts, explicit set/reset intent and accepted
+receipt recapture. Content/operational handles are denied in instance scope.
+Whole instance configuration Reset removes only declared configuration leaves;
+it does not use the legacy all-data `resetOverrides` operation.
+
+The opt-in `createSettingsEditor(true)` captures read facts with the same settled
+base and owning-leaf generations as native overlay selection. A changed capture
+refuses opening. The facts are never sent back as a persistence snapshot.
+Existing callers without the flag retain their current editor contract.
+
+The guest-only host/assets driver's `fields` preparation case exercises global
+bar, monitor bar, Control Center and desktop owners independently. Each checks
+false/equal/empty intent, individual/whole configuration Reset, denied content
+capabilities, compound alias isolation, a sibling runtime and independent raw
+protected-content/opaque readback, followed by a separate cold engine. Native
+overlay Apply must preserve untouched known/equal overrides; stock ConfigQml
+0.5.1 fails that guard. Use the recorded combined native candidate, not a QML
+preservation writer.
+
+Plugin-scope `stageReset` dispatch is reserved for the final shared-scope field
+integration and witness. This preparation does not certify its read capture,
+page presentation, generic loader role or any catalog page adoption. The current
+generic popup still has its legacy writable page API and all-data Reset until
+the coupled P001-first host/catalog change replaces them.
+
 The old-owner instance editor captures its `Settings.createRecordListEditor`
 session before opening. All four placement addresses (global bar, screen bar,
 control-center and desktop) submit `set`/`unset` for `instanceSettings` only.
