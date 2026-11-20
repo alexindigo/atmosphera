@@ -39,6 +39,35 @@ instance-file IO/partial-publication witness.
 
 ## Popup and page staging
 
+### P001 safety before field-only catalog adoption
+
+The runtime desktop generic Settings route uses the same captured placement
+popup as the Desktop Widgets list gear. Only the selected session applies;
+closing the old live-field dialog cannot save a generic page. Core and
+`desktopWidgetSettings` pages keep their live-field contract.
+
+On the existing page API, `scopeKind` identifies `plugin` versus `instance`.
+Todo's configuration controls stage only explicit user edits. Ordinary Save
+does not collect tasks, pages or current-page content. Its shared page commands
+retain their existing selected native owner; instance pages disable them.
+For reviewed usage metadata, configuration Reset unsets only configuration
+leaves, preserving content, operational and opaque placement overrides.
+Unreviewed pages retain their earlier Reset contract until catalog adoption.
+
+`plugin-settings-p001-safety-regression.py` proves both actual desktop routes,
+real keyboard edits, permission failure/Retry, configuration Reset, twelve
+independent persisted boundaries, shared-page content commands and separate
+cold Main/Desktop consumers. This is not full field-only/catalog adoption.
+That integration replaces the mutable namespace and session-level reviewed
+Reset dispatch; it must not keep a second generic path.
+
+Protected equal overrides also require the ConfigQml untouched-overlay
+preservation correction, verified here with native commit `6941cbc488c9d0fcdbed29abbc974953f80790d6`
+(combined with staged-removal `54934518d7d294ebe4ba704922d926c3c689d7f9`).
+Stock 0.5.1 does not supply that behavior. Release dependency pins are updated
+with the actual native patch release as part of the following integration;
+this local safety pair is not a standalone release on the old native pins.
+
 The popup delegates its selected editor lifecycle to `PluginSettingsSession`.
 That service owns opening, page API creation, staging/Apply, actual receipt
 acceptance, dirty Close admission and deferred editor release. The popup keeps

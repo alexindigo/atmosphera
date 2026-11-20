@@ -46,10 +46,18 @@ Popup {
     page: root.settingsPage
     presentationOpen: root.visible
     inputDirty: inputEdits.dirty
-    commitInputs: function () { inputEdits.commit(); }
-    captureInputs: function () { return inputEdits.capture(); }
-    acknowledgeInputs: function (fence) { inputEdits.acknowledge(fence); }
-    resetInputs: function () { inputEdits.reset(); }
+    commitInputs: function () {
+      inputEdits.commit();
+    }
+    captureInputs: function () {
+      return inputEdits.capture();
+    }
+    acknowledgeInputs: function (fence) {
+      inputEdits.acknowledge(fence);
+    }
+    resetInputs: function () {
+      inputEdits.reset();
+    }
     onPresentRequested: {
       root._loadPage();
       var preferred = root.settingsPage && root.settingsPage.preferredWidth !== undefined ? root.settingsPage.preferredWidth + root.padding * 2 : 0;
@@ -63,7 +71,10 @@ Popup {
       inputEdits.reset();
       root._loadPage();
     }
-    onCloseAccepted: { discardDialog.close(); root.close(); }
+    onCloseAccepted: {
+      discardDialog.close();
+      root.close();
+    }
     onDiscardRequired: discardDialog.open()
     onSettingsCompleted: result => root.settingsCompleted(result)
     onPresentationInvalidated: root.presentationInvalidated()
@@ -81,7 +92,6 @@ Popup {
   readonly property var settingsPage: loadedPage()
   readonly property var resetButton: resetInstanceButton
   readonly property var resetConfirmation: resetInstanceDialog
-
 
   background: Rectangle {
     color: AtmoColor.mSurface
@@ -296,8 +306,8 @@ Popup {
   // settings with this placement's overrides on top), and Reset drops the
   // overrides. `instanceApi` comes from PluginInstances.apiFor; null when the
   // plugin is not loaded.
-  function openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint) {
-    return settingsSession.openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint);
+  function openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor) {
+    return settingsSession.openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor);
   }
 
   function _loadPage() {

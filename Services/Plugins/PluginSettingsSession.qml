@@ -21,7 +21,7 @@ QtObject {
   property var pageApi: null
   property bool busy: false
   property bool failed: false
-  readonly property bool dirty: failed || inputDirty || (pageApi && pageApi.staged) ||
+  readonly property bool dirty: failed || inputDirty || (editor && editor.dirty) || (pageApi && pageApi.staged) ||
       (page && (typeof page.settingsDirty !== "boolean" || page.settingsDirty))
   property string settingsUrl: ""
   property string settingsEntryPoint: "settings"
@@ -42,23 +42,24 @@ QtObject {
   function openPluginSettings(manifest, entryPoint) {
     return _open(manifest, entryPoint, null);
   }
-  function openInstanceSettings(manifest, instanceApi, entryPoint) {
+  function openInstanceSettings(manifest, instanceApi, entryPoint, capturedEditor) {
     if (!instanceApi) { openingFailed(); return false; }
-    return _open(manifest, entryPoint, instanceApi);
+    return _open(manifest, entryPoint, instanceApi, capturedEditor);
   }
-  function _open(manifest, entryPoint, instanceApi) {
+  function _open(manifest, entryPoint, instanceApi, capturedEditor) {
     if (presentationOpen || busy || editor !== null) return false;
     currentPlugin = manifest;
     var key = manifest.compositeKey || manifest.id;
     currentInstanceApi = instanceApi || null;
     currentPluginApi = instanceApi || Service.getPluginAPI(key);
     if (!currentPluginApi) { openingFailed(); return false; }
-    editor = currentPluginApi.createSettingsEditor();
+    editor = capturedEditor || currentPluginApi.createSettingsEditor();
     if (!editor) return false;
     failed = false;
     resetInputs();
     settingsEntryPoint = entryPoint || "settings";
-    settingsUrl = "file://" + Registry.getPluginDir(key) + "/" + manifest.entryPoints[settingsEntryPoint] + "?v=" + (Registry.pluginLoadVersions[key] || 0);
+    var entry = manifest.entryPoints[settingsEntryPoint];
+    settingsUrl = "file://" + Registry.getPluginDir(key) + "/" + entry + (entry.indexOf("?") === -1 ? "?" : "&") + "v=" + (Registry.pluginLoadVersions[key] || 0);
     var selected = editor;
     var lifetime = _lifetime;
     _cancelOpening = selected.whenReady(function (result) {
@@ -111,11 +112,28 @@ QtObject {
     var lifetime = _lifetime;
     try {
       var completed = function (result) { if (lifetime.alive) root._finish(result, reset); };
-      if (reset) editor.resetOverrides(completed);
+      if (reset) _resetReviewedConfiguration(completed);
       else editor.apply(pageApi.pluginSettings, completed);
     } catch (error) {
       _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, reset);
     }
+  }
+  // P001 safety on the existing page API. The field-only catalog integration
+  // replaces this session-level dispatch with its field capability Reset.
+  function _resetReviewedConfiguration(callback) {
+    var base = currentInstanceApi.base;
+    var metadata = base.settingsOwner.store.settingsEditorMetadata;
+    if (!metadata || metadata.ready !== true) {
+      // Unported pages retain their existing native Reset contract. Never
+      // guess usage for an unreviewed schema during this independent unit.
+      editor.resetOverrides(callback);
+      return;
+    }
+    for (var key of Object.keys(metadata.fields)) {
+      if (metadata.fields[key].usage === "configuration" && !editor.handle.unset([key]))
+        throw new Error("settings-configuration-reset");
+    }
+    editor.apply(editor.values, callback);
   }
   function _finish(result, reset) {
     var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";

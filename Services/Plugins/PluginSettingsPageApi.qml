@@ -7,6 +7,7 @@ QtObject {
   id: root
   required property var base
   required property var editor
+  readonly property string scopeKind: base && base.placement ? "instance" : "plugin"
   property var pluginSettings: ({})
   property var initialSettings: ({})
   property var _preview: null
