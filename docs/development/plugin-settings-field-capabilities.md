@@ -103,3 +103,16 @@ each manifest entry and Settings child in both scopes through its actual page
 signal, native Apply/Reset and independent files; it does not construct Main.
 The focused selected-client and Pomodoro input gates provide their additional
 real-input/runtime-consumer proof. ConfigQml >=0.5.2 is required.
+
+`plugin-settings-lock-focus-regression.py` is a separate, explicitly authorized
+real-lock proof, not the in-shell preview test. It uses an explicit guest profile
+and the installed bundled locker on the guest's niri session. Candidate and
+previous NToggle variants must keep the actual password input focused through
+Tab/Backtab, isolate an independent background input/toggle, reject a wrong PAM
+password, then show successful PAM before the single protocol unlock. No test
+method grants authentication, changes focus or unlocks. Successful cleanup
+restores the guest credential and joins the actual holder; failure preserves
+private recovery material inside the guest and never kills a secure holder.
+Inherited locker diagnostics are compared and reported separately from focus
+outcomes. This focused test does not certify a clean locker runtime or replace
+the locker lifecycle/Locker1 contract matrices.

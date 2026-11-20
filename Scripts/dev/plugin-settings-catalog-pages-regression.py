@@ -49,7 +49,17 @@ def main():
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent):
             parser.error('fresh roots must belong to the verified profile')
-    ids = [item for item in args.ids.split(',') if item]
+    ids = args.ids.split(',')
+    # This executable is also used for focused cohorts. A missing/empty cohort
+    # must not silently turn an aggregate invocation into a 0/0 green result.
+    if not ids or any(not plugin or Path(plugin).name != plugin or plugin in ('.', '..') for plugin in ids):
+        parser.error('--ids must name a nonempty comma-separated cohort')
+    if len(set(ids)) != len(ids):
+        parser.error('--ids contains duplicate catalog entries')
+    for plugin in ids:
+        manifest_path = args.plugins / plugin / 'manifest.json'
+        if not manifest_path.is_file() or not json.loads(manifest_path.read_text()).get('entryPoints', {}).get('settings'):
+            parser.error('--ids names a missing generic Settings entry: ' + plugin)
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         args.work_root.mkdir(exist_ok=False)
