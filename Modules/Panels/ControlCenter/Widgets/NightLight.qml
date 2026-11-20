@@ -28,7 +28,6 @@ AtmoIconButtonHot {
 
   onRightClicked: {
     var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-    settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-    settingsPanel.open();
+    settingsPanel.openToTab(SettingsPanel.Tab.Display, -1);
   }
 }

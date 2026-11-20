@@ -104,8 +104,9 @@ Singleton {
   function closeContextMenu(screen) {
     var popupMenuWindow = getPopupMenuWindow(screen);
     if (popupMenuWindow) {
-      popupMenuWindow.close();
+      return popupMenuWindow.close();
     }
+    return true;
   }
 
   // Show a tray menu with proper handling for all compositors
@@ -235,9 +236,14 @@ Singleton {
 
   // Helper to keep only one panel open at any time
   function willOpenPanel(panel) {
+    // Refusal must happen before context menus, focus or presentation slots
+    // change. A replacement cannot cover a retained dirty Settings page.
+    if (panel.exclusiveOpen !== false && openedPanel && openedPanel !== panel && openedPanel.canClose && !openedPanel.canClose())
+      return false;
     // The per-screen boundary arbitrates pending popup leases as well as
     // already-visible menus. Later intentional panel-item menus remain valid.
-    closeContextMenu(panel.screen);
+    if (closeContextMenu(panel.screen) === false)
+      return false;
     if (panel.exclusiveOpen === false) {
       coexistingPanel = panel;
       assignToSlot(2, panel);
@@ -277,6 +283,10 @@ Singleton {
   // Open launcher panel (handles both normal and overlay mode)
   function openLauncher(screen) {
     if (Settings.data.appLauncher.overviewLayer) {
+      if (openedPanel && openedPanel.canClose && !openedPanel.canClose())
+        return false;
+      if (closeContextMenu(screen) === false)
+        return false;
       // Close any regular panel first
       if (openedPanel) {
         closingPanel = openedPanel;

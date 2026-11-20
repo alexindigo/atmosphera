@@ -332,8 +332,7 @@ SmartPanel {
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
                 var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper;
-                settingsPanel.open();
+                settingsPanel.openToTab(SettingsPanel.Tab.Wallpaper, -1);
               }
             }
 

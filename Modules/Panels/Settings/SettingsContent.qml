@@ -42,7 +42,8 @@ Item {
   property int requestedTab: 0
 
   // Exposed state for parent to access
-  property int currentTabIndex: 0
+  readonly property int currentTabIndex: _currentTabIndex
+  property int _currentTabIndex: 0
 
   // Tab → settings root-key map for the per-tab reset button.
   // Tabs without a dedicated settings root key are omitted (button hidden).
@@ -168,13 +169,15 @@ Item {
   function navigateToResult(entry) {
     if (entry.tab < 0 || entry.tab >= tabsModel.length)
       return;
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
 
     highlightLabelKey = entry.labelKey;
     _pendingSubTab = (entry.subTab !== null && entry.subTab !== undefined) ? entry.subTab : -1;
 
     const alreadyOnTab = (currentTabIndex === entry.tab);
     navigatingFromSearch = true;
-    currentTabIndex = entry.tab;
+    _currentTabIndex = entry.tab;
     navigatingFromSearch = false;
 
     if (alreadyOnTab && activeTabContent) {
@@ -190,10 +193,13 @@ Item {
 
     // Clear highlight after a delay
     highlightClearTimer.restart();
+    return true;
   }
 
   // Navigate to a tab and optionally a subtab (simpler than navigateToResult, no highlighting)
   function navigateToTab(tabId, subTabIndex) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     // Find the tab index by tab ID
     let tabIndex = -1;
     for (let i = 0; i < tabsModel.length; i++) {
@@ -212,7 +218,7 @@ Item {
     // Check if we're already on this tab
     const alreadyOnTab = (currentTabIndex === tabIndex);
 
-    currentTabIndex = tabIndex;
+    _currentTabIndex = tabIndex;
 
     if (alreadyOnTab && activeTabContent && hasSubTab) {
       // Tab is already loaded, apply subtab directly
@@ -241,13 +247,15 @@ Item {
 
   function searchActivate() {
     if (searchSelectedIndex >= 0 && searchSelectedIndex < searchResults.length) {
-      navigateToResult(searchResults[searchSelectedIndex]);
-      searchInput.text = "";
+      if (navigateToResult(searchResults[searchSelectedIndex]))
+        searchInput.text = "";
     }
   }
 
   // Set sub-tab on the currently loaded tab content. Returns true if an NTabBar was found.
   function setSubTabIndex(subTabIndex) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     if (activeTabContent) {
       return setSubTabRecursive(activeTabContent, subTabIndex);
     }
@@ -664,13 +672,15 @@ Item {
   }
 
   function selectTabById(tabId) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     for (var i = 0; i < tabsModel.length; i++) {
       if (tabsModel[i].id === tabId) {
-        currentTabIndex = i;
+        _currentTabIndex = i;
         return;
       }
     }
-    currentTabIndex = 0;
+    _currentTabIndex = 0;
   }
 
   function initialize() {
@@ -761,14 +771,23 @@ Item {
   // Tab navigation functions
   function selectNextTab() {
     if (tabsModel.length > 0) {
-      currentTabIndex = (currentTabIndex + 1) % tabsModel.length;
+      selectTabIndex((currentTabIndex + 1) % tabsModel.length);
     }
   }
 
   function selectPreviousTab() {
     if (tabsModel.length > 0) {
-      currentTabIndex = (currentTabIndex - 1 + tabsModel.length) % tabsModel.length;
+      selectTabIndex((currentTabIndex - 1 + tabsModel.length) % tabsModel.length);
     }
+  }
+
+  function selectTabIndex(index) {
+    if (index === currentTabIndex)
+      return true;
+    if (index < 0 || index >= tabsModel.length || !SettingsPanelService.admitPresentationChange())
+      return false;
+    _currentTabIndex = index;
+    return true;
   }
 
   // Main UI
@@ -1059,8 +1078,8 @@ Item {
                   }
                   onClicked: {
                     root.searchSelectedIndex = index;
-                    root.navigateToResult(modelData);
-                    searchInput.text = "";
+                    if (root.navigateToResult(modelData))
+                      searchInput.text = "";
                   }
                 }
               }
@@ -1164,18 +1183,12 @@ Item {
                     }
                   }
                   onClicked: {
-                    root.currentTabIndex = index;
+                    root.selectTabIndex(index);
                     // Hide tooltip on click
                     if (!root.sidebarExpanded) {
                       TooltipService.hide();
                     }
                   }
-                }
-              }
-
-              onCurrentIndexChanged: {
-                if (currentIndex !== root.currentTabIndex) {
-                  root.currentTabIndex = currentIndex;
                 }
               }
 

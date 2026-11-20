@@ -29,6 +29,8 @@ FloatingWindow {
   // Navigate to a specific tab and optional subtab.
   // Works whether the window is already visible or just becoming visible.
   function navigateTo(tab, subTab) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     navigationGeneration++;
     navigationTimer.stop();
     const tabId = tab !== undefined ? tab : 0;
@@ -51,6 +53,8 @@ FloatingWindow {
   // Navigate to a search result entry.
   // Works whether the window is already visible or just becoming visible.
   function navigateToEntry(entry) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     navigationGeneration++;
     if (isInitialized) {
       navigationTimer.entry = entry;
@@ -80,6 +84,15 @@ FloatingWindow {
   }
 
   // Sync visibility with service
+  Connections {
+    // Quickshell FloatingWindow is a proxy, not QtQuick.Window. Native Close
+    // admission is on its actual QQuickWindow, before it hides the popup tree.
+    target: root.contentItem.Window.window
+    function onClosing(event) {
+      event.accepted = false;
+      SettingsPanelService.closeWindow();
+    }
+  }
   onVisibleChanged: {
     if (visible) {
       SettingsPanelService.isWindowOpen = true;

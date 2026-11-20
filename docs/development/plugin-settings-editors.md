@@ -62,6 +62,30 @@ discard; busy excludes competing input/actions. A second Open refuses replacemen
 Ordinary Close uses dirty confirmation. Genuine presentation loss uses native
 deferred `release()` and fences late callbacks, not a forced busy discard.
 
+Settings hosts inject `registerPresentation` into the generic popup. From native
+editor selection through release, its host registers only a request-Close
+callback with SettingsPanelService. Tab/sidebar/search/subtab, native window
+Close, service Close and panel replacement consult that admission before hiding
+or replacing content. A refusal keeps the same page/input and confirmation;
+neither a retained editor alone nor a post-destruction discard is sufficient.
+After explicit Apply or Discard, retry the requested navigation. No old request
+automatically navigates a later session. Ordinary panels without an injected
+Close admission retain their existing behavior.
+
+An unexpected native hide or direct `Popup.close()` also cannot unload a dirty
+or busy selected page. The popup asks the same session, keeps that exact loaded
+page on refusal and restores its presentation. PanelService propagates the
+runtime popup host's Close refusal before claiming a replacement panel, rather
+than covering a retained dialog with another keyboard owner.
+
+Discard of unapplied input is nonpublishing. It does not undo an already
+requested Apply: ConfigQml retains admitted requested persistence through
+detach, including a failed publication. The main Settings owner's autosave may
+later publish that admitted placement intent; the manual plugin owner does not
+autosave it. Failed receipts still cannot acknowledge input or a refresh.
+`plugin-settings-navigation-regression.py` separates those two cases and records
+independent final files, instead of promising rollback of requested native work.
+
 The native editor captures base and owning-leaf generations. A changed capture,
 same-ID replacement, reorder, base change or owner loss cannot retarget it to a
 new placement. A closed/conflicted editor cannot recapture an index to recover.

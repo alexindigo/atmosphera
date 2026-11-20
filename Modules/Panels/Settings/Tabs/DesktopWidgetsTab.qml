@@ -152,6 +152,7 @@ ColumnLayout {
   // Shared Plugin Settings Popup
   NPluginSettingsPopup {
     id: pluginSettingsDialog
+    registerPresentation: SettingsPanelService.registerEditorPresentation
     parent: Overlay.overlay
     showToastOnSave: false
   }

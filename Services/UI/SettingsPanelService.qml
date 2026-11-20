@@ -26,7 +26,29 @@ Singleton {
   signal windowOpened
   signal windowClosed
 
+  // Hosts inject this registration into their generic popup. The service owns
+  // transition admission, while each selected session owns Close decisions.
+  property var _editorPresentations: []
+
+  function registerEditorPresentation(requestClose) {
+    var token = { requestClose: requestClose };
+    _editorPresentations = _editorPresentations.concat([token]);
+    return function () {
+      root._editorPresentations = root._editorPresentations.filter(function (entry) { return entry !== token; });
+    };
+  }
+
+  function admitPresentationChange() {
+    var captured = _editorPresentations.slice();
+    for (var i = captured.length - 1; i >= 0; i--)
+      if (!captured[i].requestClose())
+        return false;
+    return true;
+  }
+
   function openToEntry(entry, screen) {
+    if (!admitPresentationChange())
+      return false;
     if (Settings.data.ui.settingsPanelMode === "window") {
       requestedEntry = entry;
       if (settingsWindow) {
@@ -52,6 +74,8 @@ Singleton {
   // Respects user's settingsPanelMode setting (window vs panel)
   // For panel mode, screen parameter is required
   function openToTab(tab, subTab, screen) {
+    if (!admitPresentationChange())
+      return false;
     const tabId = tab !== undefined ? tab : 0;
     const subTabId = subTab !== undefined ? subTab : -1;
 
@@ -77,6 +101,8 @@ Singleton {
   }
 
   function openWindow(tab) {
+    if (!admitPresentationChange())
+      return false;
     requestedTab = tab !== undefined ? tab : 0;
     requestedSubTab = -1;
     if (settingsWindow) {
@@ -88,6 +114,8 @@ Singleton {
   }
 
   function closeWindow() {
+    if (!admitPresentationChange())
+      return false;
     if (settingsWindow) {
       settingsWindow.visible = false;
       isWindowOpen = false;

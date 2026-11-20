@@ -442,6 +442,7 @@ NBox {
 
   // Plugin settings dialog
   NPluginSettingsPopup {
+    registerPresentation: SettingsPanelService.registerEditorPresentation
     id: pluginSettingsDialog
     parent: Overlay.overlay
     showToastOnSave: false

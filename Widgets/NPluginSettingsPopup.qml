@@ -36,6 +36,30 @@ Popup {
   signal settingsCompleted(var result)
   signal presentationInvalidated
 
+  // Optional host-owned transition admission, injected without knowing the
+  // containing tab/window/service. The returned function releases registration.
+  property var registerPresentation: null
+  property var _releasePresentation: null
+
+  Connections {
+    target: settingsSession
+    function onEditorChanged() {
+      if (settingsSession.editor && !root._releasePresentation && root.registerPresentation) {
+        root._releasePresentation = root.registerPresentation(function () { return root.requestClose(); });
+      } else if (!settingsSession.editor) {
+        root._unregisterPresentation();
+      }
+    }
+  }
+
+  function _unregisterPresentation() {
+    var release = _releasePresentation;
+    _releasePresentation = null;
+    if (release)
+      release();
+  }
+  Component.onDestruction: _unregisterPresentation()
+
   NSettingsInputGuard {
     id: inputEdits
     target: settingsLoader
@@ -324,6 +348,17 @@ Popup {
   }
 
   onClosed: {
+    // A native host hide or a caller using Popup.close() is not permission to
+    // destroy dirty/busy input. Only the session's admitted Close clears the
+    // editor first. Keep this exact loaded page through a refused hide.
+    if (settingsSession.editor && !settingsSession.requestClose()) {
+      var selected = settingsSession.editor;
+      Qt.callLater(function () {
+        if (settingsSession.editor === selected)
+          root.open();
+      });
+      return;
+    }
     resetInstanceDialog.close();
     discardDialog.close();
     // Clear both source and sourceComponent to ensure full cleanup
