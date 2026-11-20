@@ -38,8 +38,8 @@ def main():
         shutil.copytree(args.install_source or args.source, install, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
         for part in ('config/settings/plugins', 'config/plugins/session-fixture', 'cache', 'state'):
             (case / part).mkdir(parents=True)
-        manifest = dict(id='session-fixture', name='Session fixture', version='1.0.0', entryPoints=dict(settings='Page.qml'), metadata=dict(
-            defaultSettings=dict(label='default'), settingsSchema=dict(version=1, fields=dict(label=dict(type='String')))))
+        manifest = dict(id='session-fixture', name='Session fixture', author='Atmosphera fixture', description='Selected-session native contract fixture', version='1.0.0', entryPoints=dict(settings='Page.qml'), metadata=dict(
+            defaultSettings=dict(label='default'), settingsSchema=dict(version=1, fields=dict(label=dict(type='String', editorUsage='configuration')))))
         runner.write_json(case / 'config/plugins/session-fixture/manifest.json', manifest)
         runner.write_json(case / 'config/settings.json', dict(settingsVersion=62))
         runner.write_json(case / 'config/plugins.json', dict(version=6, states={}, sources=[]))
@@ -86,8 +86,8 @@ def main():
                 fixture, fault, args.source / 'Scripts/dev/fixtures/plugin-settings-session-page.qml')})
             runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, nativeApply=True, realIoFailureAndRetry=True,
                 savedButStaleRetention=True, dirtyCloseKeepDiscard=True, busyExclusion=True, signalBeforeCallbacks=True,
-                instanceReset=True, independentPersistedReadback=True, separateColdConsumer=True, fieldOnlyRoleAdoption=False))
-            print('PLUGIN_SETTINGS_SESSION: PASS (native persistence/receipt/close/cold; extraction only)', flush=True)
+                instanceReset=True, independentPersistedReadback=True, separateColdConsumer=True, fieldOnlyRoleAdoption=True))
+            print('PLUGIN_SETTINGS_SESSION: PASS (native persistence/receipt/close/cold; field-only page)', flush=True)
         finally:
             (case / 'config/settings/plugins').chmod(0o755)
 

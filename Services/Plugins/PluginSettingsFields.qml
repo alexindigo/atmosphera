@@ -20,6 +20,30 @@ QtObject {
                            })
   readonly property bool ready: !!editor && editor.ready && !!metadata && metadata.ready === true && !!capture
   readonly property bool busy: !!editor && editor.busy
+  property var _presentations: Object.create(null)
+  readonly property var undisplayedOverrides: configurationKeys.filter(function (key) {
+    return !root._presentations[key] && (root._own(root.capture?.fields, key)?.overridden === true || root._pending[key] === "set");
+  }).map(function (key) {
+    return root.field(key);
+  })
+
+  // A field chrome reports only its own presentation lifetime. The host never
+  // queries a page's controls or reads their values to discover missing fields.
+  function _presented(key) {
+    var next = Object.assign(Object.create(null), _presentations);
+    next[key] = (next[key] || 0) + 1;
+    _presentations = next;
+    var alive = true;
+    var lifetime = _lifetime;
+    return function () {
+      if (!alive || !lifetime.alive)
+        return;
+      alive = false;
+      var remaining = Object.assign(Object.create(null), root._presentations);
+      remaining[key] = Math.max(0, (remaining[key] || 0) - 1);
+      root._presentations = remaining;
+    };
+  }
   readonly property string error: Object.keys(_errors).length ? "settings-field-input" : ""
   readonly property var configurationKeys: ready ? Object.keys(metadata.fields).filter(function (key) {
     return root.metadata.fields[key].usage === "configuration";
@@ -158,6 +182,11 @@ QtObject {
                               sensitive: {
                                 value: metadata.fields[key].sensitive === true,
                                 enumerable: true
+                              },
+                              presented: {
+                                value: function () {
+                                  return root._presented(key);
+                                }
                               },
                               value: {
                                 get: function () {

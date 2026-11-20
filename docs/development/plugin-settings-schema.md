@@ -52,11 +52,11 @@ with the shell's compiler and fails when one does not resolve.
 
 The inert `Scripts/dev/build-plugin-settings-schema.py` validates metadata and
 emits a ConfigSchema using the existing main-schema declaration emitter. It reads
-only the selected manifest and host metadata, never user settings. This is build/
-test preparation; it does not switch the production plugin owner. I5 constructs
-each lazy per-plugin store from the selected immutable descriptor, with the actual
-source/fallback/lifecycle contract. Do not treat descriptor presence as proof of
-complete caller/schema compatibility without the catalog audit.
+only the selected manifest and host metadata, never user settings. The helper
+does not itself construct a live preference owner. Production
+`PluginPreferenceOwner` lazily constructs each store from that same immutable
+descriptor with its actual source/fallback/lifecycle contract. Descriptor
+presence alone does not prove caller/schema compatibility without the audit.
 
 The compatibility catalog covers the frozen exact versions of all 159 finite
 plugins. Each descriptor was compiled against that version's original authored
@@ -65,7 +65,7 @@ video-wallpaper 2.0.11 arbitrary-root-key runtimes deliberately have no finite
 overlay. An unknown id/version without authored metadata still fails closed.
 Authored current descriptors retain their own flags and optional fields.
 
-### Page usage metadata preparation
+### Generic page usage metadata
 
 Top-level settings descriptors may declare `editorUsage` as `configuration`,
 `content` or `operational`. This shell annotation is stripped before native
@@ -77,8 +77,9 @@ sensitive descendants of atomic fields).
 Authored usage takes precedence. A reviewed exact-version catalog entry may
 supply missing usage only for an already declared key; it cannot replace the
 authored type/default or invent fields. Missing/invalid usage makes this page
-metadata unready without disabling the runtime schema. No current page is
-switched to a new writer by this preparation.
+metadata unready without disabling the runtime schema. The generic session
+requires ready metadata before creating its field-only page API. The current
+catalog declares usage on every generic page's top-level settings leaves.
 
 `plugin-settings-page-metadata-test.py` checks this separation. The named-guest
 `plugin-settings-host-assets-regression.py --case metadata` additionally opens
@@ -126,10 +127,10 @@ worker's whole-source `fallbackFor` policy, not a field-level projection fallbac
 `incompatible` exact-version gate. Both old/new video-wallpaper preparatory
 versions, old mawaqit, and both shell-profiles versions require their corresponding
 runtime port. A present descriptor or successful inert compile does not make those
-new-owner runtime paths compatible. Files are retained on diagnosis. The current
-old production loader is unchanged: I5 must enforce this gate when constructing
-the new owners and lift entries only alongside the actual coupled runtime port.
-No transitional projection loader has been added.
+new-owner runtime paths compatible. Files are retained on diagnosis. The runtime
+store compiler enforces compatibility when `PluginPreferenceOwner` constructs
+an owner. Exact incompatible entries are lifted only alongside the corresponding
+runtime port; no transitional projection loader is used.
 
 ### Verification boundary
 

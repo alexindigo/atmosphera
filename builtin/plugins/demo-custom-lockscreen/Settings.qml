@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services.Media
 import qs.Services.Compositor
+import qs.Services.Media
 import qs.Services.UI
 import qs.Widgets
 
@@ -10,6 +10,7 @@ ColumnLayout {
   id: root
 
   property var pluginApi: null
+  readonly property bool settingsDirty: false
 
   readonly property var auxButtons: [
     {
@@ -26,21 +27,27 @@ ColumnLayout {
 
   spacing: Style.marginL
 
-  NToggle {
-    label: "Show media controls"
-    checked: pluginApi?.pluginSettings?.showMediaControls !== false
-    onToggled: checked => {
-      pluginApi.pluginSettings.showMediaControls = checked;
-      saveSettings();
+  NPluginSettingsField {
+    field: root.pluginApi?.field("showMediaControls") ?? null
+    NToggle {
+      label: "Show media controls"
+      checked: pluginApi?.pluginSettings?.showMediaControls !== false
+      onToggled: checked => {
+        root.pluginApi.field("showMediaControls").set(checked);
+        saveSettings();
+      }
     }
   }
 
-  NToggle {
-    label: "Show session buttons"
-    checked: pluginApi?.pluginSettings?.showSessionButtons !== false
-    onToggled: checked => {
-      pluginApi.pluginSettings.showSessionButtons = checked;
-      saveSettings();
+  NPluginSettingsField {
+    field: root.pluginApi?.field("showSessionButtons") ?? null
+    NToggle {
+      label: "Show session buttons"
+      checked: pluginApi?.pluginSettings?.showSessionButtons !== false
+      onToggled: checked => {
+        root.pluginApi.field("showSessionButtons").set(checked);
+        saveSettings();
+      }
     }
   }
 

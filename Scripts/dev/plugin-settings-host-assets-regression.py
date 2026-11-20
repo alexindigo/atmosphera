@@ -33,12 +33,18 @@ def input_fingerprints(args):
     fixtures = ['Scripts/dev/' + Path(__file__).name, 'Scripts/dev/fixtures/plugin-settings-fields-native.qml'] + [str(path.relative_to(args.source)) for path in
                 sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-host-*')) if path.is_file()]
     result = dict(harness=selected(args.source, fixtures))
+    if os.environ.get('PHA_INPUT_INJECTOR'):
+        injector = Path(os.environ['PHA_INPUT_INJECTOR'])
+        result['inputInjector'] = dict(path=str(injector), sha256=hashlib.sha256(injector.read_bytes()).hexdigest())
     result['candidateShell'] = selected(args.source, [
         'Scripts/python/src/settings/plugin-schema.py', 'Configs/plugin-settings-overlays.json',
         'Services/Plugins/PluginInstances.qml', 'Services/Plugins/PluginPreferenceEditor.qml',
         'Services/Plugins/PluginSettingsPageApi.qml', 'Services/Plugins/PluginSettingsSession.qml',
         'Services/Plugins/PluginSettingsFields.qml', 'Services/Plugins/PluginInstanceApi.qml',
+        'Services/Plugins/PluginSettingsRead.js', 'Services/Plugins/PluginContract.js',
+        'Services/Plugins/PluginView.qml', 'Services/Plugins/Service.qml',
         'Services/Plugins/PluginLoader.qml', 'Widgets/NPluginSettingsPopup.qml',
+        'Widgets/NPluginSettingsField.qml', 'Widgets/NTextInputButton.qml',
         'Services/UI/DesktopWidgetRegistry.qml',
         'Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml'])
     result['candidatePlugins'] = selected(args.plugins, [
@@ -74,7 +80,29 @@ def seed_todo(case, plugins):
     return path, values
 
 
-def run_fixture(profile, install, case, output, fixture, installed=False, extra_env=None):
+def remove_completed_installs(case, output):
+    """Retain receipts/configurations, not rebuildable per-run shell copies.
+
+    Only call after the complete case (including cold readers) has finished.
+    Failed cases keep their input copy for diagnosis. Source/baseline exports
+    are outside these exclusively created case roots and are never selected.
+    """
+    removed = []
+    for parent, directories, _ in os.walk(case):
+        if 'install' not in directories:
+            continue
+        directories.remove('install')
+        install = Path(parent) / 'install'
+        if not (install / 'shell.qml').is_file() or not (install / 'Scripts/dev').is_dir():
+            continue
+        if install.is_symlink() or install.resolve() != install or not install.is_relative_to(case) or (install / '.git').exists():
+            raise RuntimeError('completed-install cleanup refused an unowned path')
+        removed.append(str(install))
+        shutil.rmtree(install)
+    write_json(output / 'install-cleanup.json', dict(removed=removed, retained='receipts, isolated configuration and source fingerprints'))
+
+
+def run_fixture(profile, install, case, output, fixture, installed=False, extra_env=None, extra_lint=(), timeout=60):
     target = fixture if installed else install / fixture.name
     if not installed:
         shutil.copy2(fixture, target)
@@ -98,7 +126,7 @@ def run_fixture(profile, install, case, output, fixture, installed=False, extra_
                                    stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         guard = protect_owned_process(process)
         try:
-            code = process.wait(timeout=60)
+            code = process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             guard.terminate()
             code = process.wait(timeout=10)
@@ -112,7 +140,7 @@ def run_fixture(profile, install, case, output, fixture, installed=False, extra_
     vfs = list((Path(env['XDG_RUNTIME_DIR']) / 'quickshell/vfs').iterdir())
     if len(vfs) != 1:
         raise RuntimeError('actual Quickshell lint universe missing or ambiguous')
-    lint = subprocess.run(['bash', str(install / 'Scripts/dev/qmllint.sh'), str(target)],
+    lint = subprocess.run(['bash', str(install / 'Scripts/dev/qmllint.sh'), str(target)] + [str(path) for path in extra_lint],
                           env=dict(env, QS_VFS=str(vfs[0])), cwd=install,
                           capture_output=True, text=True, timeout=120)
     (output / 'lint.log').write_text(lint.stdout + lint.stderr)
@@ -207,7 +235,7 @@ def fields_case(args, profile):
     result = dict(id='fields', status='PASS', placementFamilies=results, productionPageAdoption=False,
                   pluginScopeReset='pending final shared-scope field unit')
     write_json(out / 'result.json', result)
-    print('CASE fields: PASS (four native placement families; no page switched)', flush=True)
+    print('CASE fields: PASS (four native placement families; adapter gate, not page adoption)', flush=True)
     return result
 
 
@@ -246,7 +274,7 @@ def fields_family(args, profile, case, out, family):
                   separateColdConsumer=True, productionPageAdoption=False,
                    pluginScopeReset='pending final shared-scope field unit')
     write_json(out / 'result.json', result)
-    print('CASE fields.' + family + ': PASS (native instance preparation; no page switched)', flush=True)
+    print('CASE fields.' + family + ': PASS (native instance adapter; page adoption not certified)', flush=True)
     return result
 
 
@@ -282,6 +310,75 @@ def red_todo(args, profile):
                   separateColdConsumers=True)
     write_json(out / 'result.json', result)
     print('RED_CONTROL P001: REPRODUCED', flush=True)
+    return result
+
+
+def todo_case(args, profile):
+    case, out = args.work_root / 'todo', args.output / 'todo'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.source, install, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shared, _ = seed_todo(case, args.plugins)
+    before = shared.read_bytes()
+    fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-host-todo.qml'
+    bad = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')
+    observations = out / 'persisted'
+    observations.mkdir()
+    env = dict(PHA_TODO_DISK_PROBE=str(args.source / 'Scripts/dev/fixtures/plugin-settings-host-todo-disk.py'),
+               PHA_TODO_SHARED_SHA256=hashlib.sha256(before).hexdigest(), PHA_TODO_OBSERVATIONS=str(observations))
+    try:
+        text = run_fixture(profile, install, case, out, fixture, extra_env=env)
+    finally:
+        (case / 'config/settings').chmod(0o755)
+    if 'PLUGIN_SETTINGS_TODO: NATIVE_OPERATIONS_COMPLETE' not in text or any(item in text for item in bad):
+        raise RuntimeError('actual Todo page/route/runtime gate failed')
+    if shared.read_bytes() != before:
+        raise RuntimeError('Todo instance operations changed shared bytes')
+    rows = json.loads((case / 'config/settings/desktopWidgets.json').read_text())['monitorWidgets'][0]['widgets']
+    expected = dict(todos=[dict(id=91, text='legacy task', completed=False, pageId=0, priority='medium', details='')],
+                    pages=[dict(id=0, name='Legacy')], current_page_id=0, count=1, completedCount=0, opaque=dict(keep='legacy'))
+    if rows != [dict(id='plugin:todo', tag='keep', instanceSettings=expected), dict(id='plugin:todo')]:
+        raise RuntimeError('independent Todo protected/opaque/sibling/config Reset readback failed')
+    cold = out / 'cold'
+    cold.mkdir()
+    text = run_fixture(profile, install, case, cold, fixture, extra_env=dict(env, PHA_TODO_COLD='1'))
+    if 'PLUGIN_SETTINGS_TODO: COLD_PASS' not in text or any(item in text for item in bad) or shared.read_bytes() != before:
+        raise RuntimeError('separate cold Todo Main/Desktop consumer failed')
+    expected_observations = {str(route) + '-' + phase + '.json' for route in (0, 1)
+                             for phase in ('untouched', 'discard', 'apply', 'field-reset', 'failed', 'retry', 'reset')}
+    if {path.name for path in observations.iterdir()} != expected_observations:
+        raise RuntimeError('missing independent intermediate persisted endpoint')
+    result = dict(id='todo', status='PASS', actualRuntimeRegistry=True, actualDesktopListGear=True,
+                  untouchedClose=True, configDiscard=True, configApply=True, wholeConfigurationReset=True,
+                  sharedBytesPreserved=True, legacyAndOpaquePreserved=True, coldMainAndDesktop=True,
+                  genuineControlInput=True, fieldReset=True, realIoFailureAndRetry=True, intermediatePersistedReadbacks=14,
+                  completeCatalog=False, inheritedDesktopConstructionDiagnosticNotExercised=True)
+    write_json(out / 'result.json', result)
+    print('CASE todo: PASS (two real routes, keyboard input, IO Retry, Reset, protected bytes and cold consumers; catalog still pending)', flush=True)
+    return result
+
+
+def input_case(args, profile):
+    case, out = args.work_root / 'input', args.output / 'input'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.source, install, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    for part in ('config', 'cache', 'state'):
+        (case / part).mkdir()
+    fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-host-input.qml'
+    text = run_fixture(profile, install, case, out, fixture)
+    if 'PLUGIN_SETTINGS_INPUT: PASS' not in text or any(item in text for item in ('TypeError:', 'ReferenceError:', 'SyntaxError:')):
+        raise RuntimeError('real input canary failed')
+    injector = Path(os.environ['PHA_INPUT_INJECTOR'])
+    if not injector.resolve().is_relative_to(profile.work_base):
+        raise RuntimeError('injector is outside the task workspace')
+    result = dict(id='input', status='PASS', injector=str(injector), sha256=hashlib.sha256(injector.read_bytes()).hexdigest(),
+                  literalSlash=True, nativeTextField=True, nativeModalField=True, shiftedPunctuationAndCase=True,
+                  nativeButton=True, namedEscape=True, namedSpace=True, controlA=True)
+    write_json(out / 'result.json', result)
+    print('CASE input: PASS (real Wayland input and control canaries)', flush=True)
     return result
 
 
@@ -416,7 +513,7 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     for name in ('baseline-source', 'baseline-plugins'):
         parser.add_argument('--' + name, type=Path)
-    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'fields', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'all'), required=True)
+    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'fields', 'todo', 'input', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'all'), required=True)
     parser.add_argument('--finding', choices=RED_IDS, help='one red characterization, never full-suite success')
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
@@ -427,6 +524,10 @@ def main():
         parser.error('red requires explicit baseline trees')
     if args.finding and args.case != 'red':
         parser.error('--finding is only valid for red characterization')
+    if args.case in ('input', 'todo', 'red', 'catalog', 'all'):
+        injector = Path(os.environ.get('PHA_INPUT_INJECTOR', ''))
+        if not injector.is_absolute() or not injector.resolve().is_relative_to(profile.work_base) or not injector.is_file() or not os.access(injector, os.X_OK):
+            parser.error('PHA_INPUT_INJECTOR must select a task-owned executable under the verified guest work root')
     profile.prepare_roots()
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -450,10 +551,12 @@ def main():
 
         record('RUNNING')
         try:
-            if args.case in ('startup', 'metadata', 'fields'):
-                cases.append({'startup': startup, 'metadata': metadata_case, 'fields': fields_case}[args.case](args, profile))
+            if args.case in ('startup', 'metadata', 'fields', 'todo', 'input'):
+                cases.append({'startup': startup, 'metadata': metadata_case, 'fields': fields_case, 'todo': todo_case, 'input': input_case}[args.case](args, profile))
                 status = cases[-1]['status']
                 write_json(args.output / 'result.json', record(status))
+                if status == 'PASS':
+                    remove_completed_installs(args.work_root, args.output)
                 return 0 if status == 'PASS' else 2
             elif args.case == 'red':
                 for finding in (args.finding,) if args.finding else RED_IDS:
@@ -470,6 +573,7 @@ def main():
                     record('RUNNING')
                 if not args.finding and len(cases) == len(RED_IDS) and all(c['status'] == 'REPRODUCED' for c in cases):
                     write_json(args.output / 'result.json', record('RED_CONTROLS_PASS'))
+                    remove_completed_installs(args.work_root, args.output)
                     print('RED_CONTROLS: PASS (characterization only; production correction pending)', flush=True)
                     return 0
             else:

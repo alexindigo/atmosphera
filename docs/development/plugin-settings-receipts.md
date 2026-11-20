@@ -1,4 +1,16 @@
-# Plugin save acknowledgement preparation
+# Plugin save acknowledgments
+
+## Current generic page completion
+
+The field-only page API stages explicit field intent; its `saveSettings(callback)`
+only registers a completion observer. `PluginSettingsSession` owns one selected
+native Apply. Only `saved` or `nothing_to_save` with `refreshState: current`
+acknowledge work. Field metadata is recaptured before completion signals, which
+precede callbacks. Failed/stale results retain page input and preview for Retry
+or confirmed discard. Busy excludes competing actions. See
+[editor ownership](plugin-settings-editors.md) for scope and lifetime.
+
+## Historical pre-cutover save transport
 
 Until I5 replaces the plugin settings owner with configqml, `saveSettings(callback)`
 is additive: existing callers can omit the callback. The callback receives explicit

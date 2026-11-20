@@ -1,10 +1,12 @@
 # Selected plugin preview
 
-`pluginApi.settingsView` is the effective read view for preview-aware consumers;
-`pluginSettings` remains the preference/write boundary. A settings page calls its
-injected `previewSettings(patch)` with top-level setting leaves. This updates only
-the selected owner's presentation patch and the page's local data, never its
-persistent owner. Shared and placement API objects have independent sessions.
+Runtime `pluginApi.settingsView` is the effective read view for preview-aware
+consumers; runtime `pluginSettings` remains their preference/write boundary.
+Generic pages instead receive isolated reads and explicit field capabilities.
+Their injected `previewSettings(patch)` admits declared configuration leaves
+through those same field setters before updating the selected preview. The page
+cannot use preview as a content writer or bypass native Apply. No disk
+publication occurs until Apply. Shared and placement APIs have independent sessions.
 An inherited placement reads the shared preview, then its stored overrides, then
 its own preview patch, in that order. A placement preview never changes shared
 or sibling settings.
@@ -15,6 +17,8 @@ retain the preview and local work. Discard/destruction releases only that sessio
 revealing current underlying values without restoring an opening snapshot. An old
 session cannot clear a replacement session; callbacks after owner destruction are
 inert.
+
+## Historical pre-cutover owner
 
 The old instance owner uses a conservative list-structure fence (excluding
 instanceSettings). Ambiguous replacement/reorder stops runtime projection onto a

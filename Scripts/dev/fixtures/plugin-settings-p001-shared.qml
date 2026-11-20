@@ -1,4 +1,4 @@
-// Actual Todo shared page on the independent P001 safety API, not catalog proof.
+// Actual Todo shared page on the field-only capability, not catalog proof.
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -30,11 +30,14 @@ ShellRoot {
     NPluginSettingsPopup {
       id: popup
       screen: Quickshell.screens[0]
-      onSettingsCompleted: function (receipt) { root.result = receipt; }
+      onSettingsCompleted: function (receipt) {
+        root.result = receipt;
+      }
     }
   }
   function check(ok, message) {
-    if (!ok) throw new Error("P001_SHARED_ASSERT: " + message);
+    if (!ok)
+      throw new Error("P001_SHARED_ASSERT: " + message);
   }
   function contents() {
     check(main.rawTodos.length === 2 && main.rawTodos[0].id === 1, "Main tasks remain");
@@ -42,16 +45,23 @@ ShellRoot {
     check(api.pluginSettings.count === 2 && api.pluginSettings.completedCount === 0, "operational counters remain");
   }
   function begin() {
-    if (started || !Settings.isLoaded) return;
+    if (started || !Settings.isLoaded)
+      return;
     started = true;
     manifestFile.waitForJob();
     var manifest = JSON.parse(manifestFile.text());
-    Registry.installedPlugins = {todo: manifest};
+    Registry.installedPlugins = {
+      todo: manifest
+    };
     Service._openSettingsOwner("todo", function (owner) {
       try {
         check(owner !== null, "native shared owner");
         api = Service.createPluginAPI("todo", manifest, owner, {}, {}, {});
-        Service.loadedPlugins = {todo: {api: api}};
+        Service.loadedPlugins = {
+          todo: {
+            api: api
+          }
+        };
         var component = Qt.createComponent("file://" + api.pluginDir + "/" + manifest.entryPoints.main);
         check(component.status === Component.Ready, component.errorString());
         main = PluginLoader.createObject("todo", "main", component, root, api, {});
@@ -65,7 +75,9 @@ ShellRoot {
         }
         check(popup.openPluginSettings(manifest, "settings"), "shared popup request");
         phase = "page";
-      } catch (error) { fail(error); }
+      } catch (error) {
+        fail(error);
+      }
     });
   }
   function fail(error) {
@@ -82,7 +94,7 @@ ShellRoot {
       check(popup.openPluginSettings(api.manifest, "settings"), "reopen shared page");
       phase = "config";
     } else if (phase === "config" && popup.opened && popup.settingsPage) {
-      popup.settingsPage.stageConfiguration("exportEmptySections", true);
+      check(popup._pageApi.field("exportEmptySections").set(true), "explicit shared configuration field intent");
       check(popup.applySettings(), "selected config Apply");
       phase = "config-result";
     } else if (phase === "config-result" && result && !popup.busy) {
@@ -96,7 +108,7 @@ ShellRoot {
     } else if (phase === "content-result" && result && !popup.busy && api.pluginSettings.pages[1].name === "Renamed") {
       check(result.status === "saved" && result.refreshState === "current", "accepted content receipt");
       contents();
-      check(Object.keys(popup.settingsPage.contentIntents).length === 0, "acknowledged content intents consumed");
+      check(popup._pageApi.contentField("pages").pendingIntent === "" && !popup.settingsPage.namesPending, "acknowledged content intents consumed");
       check(popup.requestClose(), "shared Close after current save");
       console.log("P001_SHARED: PASS");
       Qt.exit(0);
@@ -104,14 +116,20 @@ ShellRoot {
   }
   Connections {
     target: Settings
-    function onSettingsLoaded() { root.begin(); }
+    function onSettingsLoaded() {
+      root.begin();
+    }
   }
   Timer {
     interval: 60
     running: true
     repeat: true
     onTriggered: {
-      try { root.drive(); } catch (error) { root.fail(error); }
+      try {
+        root.drive();
+      } catch (error) {
+        root.fail(error);
+      }
     }
   }
   Timer {

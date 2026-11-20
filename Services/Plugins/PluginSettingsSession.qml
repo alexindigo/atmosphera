@@ -1,4 +1,5 @@
 import QtQuick
+import "PluginSettingsRead.js" as Read
 import qs.Commons
 import qs.Services.Plugins
 
@@ -19,17 +20,26 @@ QtObject {
   readonly property bool isInstance: currentInstanceApi !== null
   property var editor: null
   property var pageApi: null
+  property var fields: null
+  property var _preview: null
+  property var _initial: ({})
   property bool busy: false
   property bool failed: false
-  readonly property bool dirty: failed || inputDirty || (editor && editor.dirty) || (pageApi && pageApi.staged) ||
-      (page && (typeof page.settingsDirty !== "boolean" || page.settingsDirty))
+  readonly property bool dirty: failed || inputDirty || (editor && editor.dirty) || (fields && fields.error !== "") || (pageApi && pageApi.staged) || (page && (typeof page.settingsDirty !== "boolean" || page.settingsDirty))
   property string settingsUrl: ""
   property string settingsEntryPoint: "settings"
   property int _inputFence: 0
   property var _previewFence: null
   property var _cancelOpening: null
-  property var _lifetime: ({alive: true})
-  property Component _pageApiFactory: Component { PluginSettingsPageApi {} }
+  property var _lifetime: ({
+                             alive: true
+                           })
+  property Component _pageApiFactory: Component {
+    PluginSettingsPageApi {}
+  }
+  property Component _fieldsFactory: Component {
+    PluginSettingsFields {}
+  }
   signal presentRequested
   signal reloadRequested
   signal closeAccepted
@@ -43,18 +53,26 @@ QtObject {
     return _open(manifest, entryPoint, null);
   }
   function openInstanceSettings(manifest, instanceApi, entryPoint, capturedEditor) {
-    if (!instanceApi) { openingFailed(); return false; }
+    if (!instanceApi) {
+      openingFailed();
+      return false;
+    }
     return _open(manifest, entryPoint, instanceApi, capturedEditor);
   }
   function _open(manifest, entryPoint, instanceApi, capturedEditor) {
-    if (presentationOpen || busy || editor !== null) return false;
+    if (presentationOpen || busy || editor !== null)
+      return false;
     currentPlugin = manifest;
     var key = manifest.compositeKey || manifest.id;
     currentInstanceApi = instanceApi || null;
     currentPluginApi = instanceApi || Service.getPluginAPI(key);
-    if (!currentPluginApi) { openingFailed(); return false; }
-    editor = capturedEditor || currentPluginApi.createSettingsEditor();
-    if (!editor) return false;
+    if (!currentPluginApi) {
+      openingFailed();
+      return false;
+    }
+    editor = capturedEditor || currentPluginApi.createSettingsEditor(true);
+    if (!editor)
+      return false;
     failed = false;
     resetInputs();
     settingsEntryPoint = entryPoint || "settings";
@@ -63,102 +81,223 @@ QtObject {
     var selected = editor;
     var lifetime = _lifetime;
     _cancelOpening = selected.whenReady(function (result) {
-      if (!lifetime.alive || root.editor !== selected) return;
+      if (!lifetime.alive || root.editor !== selected)
+        return;
       root._cancelOpening = null;
       if (result.status === "opened") {
+        var base = root.isInstance ? root.currentInstanceApi.base : root.currentPluginApi;
+        var capture = selected.fieldCapture;
+        var metadata = base.settingsOwner.store.settingsEditorMetadata;
+        if (!capture || !capture.current() || !metadata || metadata.ready !== true) {
+          root._openingRefused(selected, {
+                                 status: "failed",
+                                 refreshState: "not_refreshed",
+                                 error: {
+                                   code: "settings-field-contract"
+                                 }
+                               });
+          return;
+        }
+        var placement = root.isInstance ? Read.freeze(root.currentInstanceApi.placement) : null;
+        root.fields = root._fieldsFactory.createObject(root, {
+                                                         editor: selected,
+                                                         scopeKind: root.isInstance ? "instance" : "plugin",
+                                                         metadata: metadata,
+                                                         capture: capture,
+                                                         recapture: function () {
+                                                           return placement ? PluginInstances.captureSettingsFields(base, placement) : Service.captureSharedSettingsFields(base);
+                                                         }
+                                                       });
+        root._initial = Read.freeze(selected.initialValue);
         root.pageApi = root._pageApiFactory.createObject(root, {
-          base: root.currentPluginApi, editor: selected,
-          initialSettings: Settings.store.copyValue(selected.initialValue), pluginSettings: selected.values
-        });
+                                                           capability: root._capability(root.currentPluginApi, selected, root.fields)
+                                                         });
         root.presentRequested();
         return;
       }
-      root.failed = true;
-      root.settingsCompleted(result);
-      root.openingFailed();
-      selected.discard();
-      root.editor = null;
-      root.currentPlugin = null;
-      root.currentPluginApi = null;
-      root.currentInstanceApi = null;
-      root.failed = false;
-      root.presentationInvalidated();
+      root._openingRefused(selected, result);
     });
     return true;
   }
+  function _openingRefused(selected, result) {
+    root.failed = true;
+    root.settingsCompleted(result);
+    root.openingFailed();
+    selected.discard();
+    root.editor = null;
+    root.currentPlugin = null;
+    root.currentPluginApi = null;
+    root.currentInstanceApi = null;
+    root.failed = false;
+    root.presentationInvalidated();
+  }
+  function _capability(base, selected, selectedFields) {
+    var result = Object.create(null);
+    for (var name of ["pluginId", "pluginDir", "manifest", "mainInstance", "barWidget", "desktopWidget", "launcherProvider", "controlCenterWidget", "panelOpenScreen", "ipcHandlers", "pluginTranslations", "pluginFallbackTranslations", "currentLanguage", "translationVersion", "state", "stateLoaded", "saveState", "getConfig", "openPanel", "closePanel", "togglePanel",
+                      "openLauncher", "closeLauncher", "toggleLauncher", "withCurrentScreen", "tr", "trp", "hasTranslation"])
+      _forward(result, base, name);
+    Object.assign(result, {
+                    scopeKind: selectedFields.scopeKind,
+                    runtimeContext: base.settingsContext,
+                    readSettings: function () {
+                      return selectedFields.readSettings();
+                    },
+                    initialSettings: function () {
+                      return root._initial;
+                    },
+                    field: function (key) {
+                      return selectedFields.field(key);
+                    },
+                    contentField: function (key) {
+                      return selectedFields.contentField(key);
+                    },
+                    resetFields: function (keys) {
+                      return selectedFields.resetFields(keys);
+                    },
+                    copyValue: function (value) {
+                      return selected.copyValue(value);
+                    },
+                    previewDirty: function () {
+                      return root._preview ? root._preview.pending() : false;
+                    },
+                    previewSettings: function (patch) {
+                      if (!patch || typeof patch !== "object" || Array.isArray(patch))
+                        return false;
+                      var keys = Object.keys(patch);
+                      if (!keys.every(function (key) {
+                        return selectedFields.configurationKeys.indexOf(key) !== -1;
+                      }))
+                        return false;
+                      for (var key of keys)
+                        if (!selectedFields.field(key).set(patch[key]))
+                          return false;
+                      if (!root._preview)
+                        root._preview = base.createSettingsPreview(selected);
+                      return !!root._preview && root._preview.update(patch);
+                    }
+                  });
+    return Object.freeze(result);
+  }
+  function _forward(target, source, name) {
+    Object.defineProperty(target, name, {
+                            get: function () {
+                              return source[name];
+                            },
+                            enumerable: true
+                          });
+  }
   function resetInstanceSettings() {
-    if (!currentInstanceApi || !editor || busy) return false;
+    if (!currentInstanceApi || !editor || !fields || !fields.ready || !pageApi || !page || busy)
+      return false;
     _submit(true);
     return true;
   }
   function applySettings() {
-    if (!editor || editor.writable === false || !page || busy) return false;
+    if (!editor || editor.writable === false || !page || busy)
+      return false;
     commitInputs();
     busy = true;
     try {
-      if (typeof page.saveSettings === "function") page.saveSettings();
+      if (typeof page.saveSettings === "function")
+        page.saveSettings();
+      if (fields.error)
+        throw new Error("settings-field-input");
       _submit(false);
     } catch (error) {
-      _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, false);
+      _finish({
+                status: "failed",
+                refreshState: "not_refreshed",
+                error: {
+                  code: "editor-input"
+                }
+              }, false);
     }
     return true;
   }
   function _submit(reset) {
     _inputFence = captureInputs();
-    _previewFence = pageApi.capturePreview();
+    _previewFence = _preview ? _preview.capture() : null;
     busy = true;
     pageApi.busy = true;
     failed = false;
     var lifetime = _lifetime;
     try {
-      var completed = function (result) { if (lifetime.alive) root._finish(result, reset); };
-      if (reset) _resetReviewedConfiguration(completed);
-      else editor.apply(pageApi.pluginSettings, completed);
+      var completed = function (result) {
+        if (lifetime.alive)
+          root._finish(result, reset);
+      };
+      if (reset) {
+        if (!fields.resetConfiguration(completed))
+          _finish({
+                    status: "failed",
+                    refreshState: "not_refreshed",
+                    error: {
+                      code: "settings-field-reset"
+                    }
+                  }, true);
+      } else
+        editor.apply(editor.values, completed);
     } catch (error) {
-      _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, reset);
+      _finish({
+                status: "failed",
+                refreshState: "not_refreshed",
+                error: {
+                  code: "editor-input"
+                }
+              }, reset);
     }
-  }
-  // P001 safety on the existing page API. The field-only catalog integration
-  // replaces this session-level dispatch with its field capability Reset.
-  function _resetReviewedConfiguration(callback) {
-    var base = currentInstanceApi.base;
-    var metadata = base.settingsOwner.store.settingsEditorMetadata;
-    if (!metadata || metadata.ready !== true) {
-      // Unported pages retain their existing native Reset contract. Never
-      // guess usage for an unreviewed schema during this independent unit.
-      editor.resetOverrides(callback);
-      return;
-    }
-    for (var key of Object.keys(metadata.fields)) {
-      if (metadata.fields[key].usage === "configuration" && !editor.handle.unset([key]))
-        throw new Error("settings-configuration-reset");
-    }
-    editor.apply(editor.values, callback);
   }
   function _finish(result, reset) {
     var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";
     failed = !accepted;
-    if (accepted) pageApi.refresh(editor.initialValue, _previewFence);
-    if (accepted && !reset) acknowledgeInputs(_inputFence);
+    if (accepted && !fields.acknowledge(result)) {
+      result = {
+        status: "failed",
+        refreshState: "not_refreshed",
+        error: {
+          code: "settings-field-capture"
+        }
+      };
+      accepted = false;
+      failed = true;
+    }
+    if (accepted) {
+      _initial = Read.freeze(editor.initialValue);
+      if (_preview)
+        _preview.acknowledge(_previewFence);
+    }
+    if (accepted && !reset)
+      acknowledgeInputs(_inputFence);
     // Preserve signal-before-callback and action exclusion through delivery.
     settingsCompleted(result);
     pageApi.complete(result);
     pageApi.busy = false;
     busy = false;
-    if (!accepted) return;
-    if (reset) reloadRequested();
+    if (!accepted)
+      return;
+    if (reset)
+      reloadRequested();
     saved();
   }
   function requestClose() {
-    if (busy) return false;
+    if (busy)
+      return false;
     commitInputs();
-    if (dirty) { discardRequired(); return false; }
+    if (dirty) {
+      discardRequired();
+      return false;
+    }
     return confirmDiscard();
   }
   function confirmDiscard() {
-    if (busy) return false;
-    if (_cancelOpening) { _cancelOpening(); _cancelOpening = null; }
-    if (editor && editor.discard() === false) return false;
+    if (busy)
+      return false;
+    if (_cancelOpening) {
+      _cancelOpening();
+      _cancelOpening = null;
+    }
+    if (editor && editor.discard() === false)
+      return false;
     editor = null;
     closeAccepted();
     return true;
@@ -166,11 +305,22 @@ QtObject {
   // Called after an admitted close has torn down the page. Real presentation
   // loss uses the editor's existing deferred release, not forced busy discard.
   function presentationClosed() {
-    if (_cancelOpening) { _cancelOpening(); _cancelOpening = null; }
-    if (editor) editor.release();
+    if (_cancelOpening) {
+      _cancelOpening();
+      _cancelOpening = null;
+    }
+    if (editor)
+      editor.release();
     editor = null;
-    if (pageApi) pageApi.destroy();
+    if (pageApi)
+      pageApi.destroy();
     pageApi = null;
+    if (_preview)
+      _preview.close();
+    _preview = null;
+    if (fields)
+      fields.destroy();
+    fields = null;
     busy = false;
     failed = false;
     currentPlugin = null;
@@ -180,7 +330,9 @@ QtObject {
   }
   Component.onDestruction: {
     _lifetime.alive = false;
-    if (_cancelOpening) _cancelOpening();
-    if (editor) editor.release();
+    if (_cancelOpening)
+      _cancelOpening();
+    if (editor)
+      editor.release();
   }
 }

@@ -15,7 +15,7 @@ Column {
   }
   function saveSettings() {
     if (submitInput)
-      pluginApi.pluginSettings.label = labelText;
+      pluginApi.field("label").set(labelText);
     completionOrder = "";
     pluginApi.saveSettings(function (result) {
       root.callbacks++;

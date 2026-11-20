@@ -448,7 +448,7 @@ Singleton {
                                                 index: widgetIndex
                                               });
           // Native selection begins before component loading or any callback.
-          genericEditor = genericApi ? genericApi.createSettingsEditor() : null;
+          genericEditor = genericApi ? genericApi.createSettingsEditor(true) : null;
           if (!genericEditor)
             return refused(editor);
         }

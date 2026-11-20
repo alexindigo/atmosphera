@@ -15,9 +15,11 @@ expected = dict(todos=[dict(id=91, text='legacy task', completed=False, pageId=0
                 pages=[dict(id=0, name='Legacy')], current_page_id=0, count=1, completedCount=0, opaque=dict(keep='legacy'))
 if phase != 'reset' and route == 0:
     expected['showCompleted'] = False
-if phase in ('apply', 'failed', 'retry'):
+if phase in ('untouched', 'discard') and route == 0:
+    expected['isExpanded'] = True
+if phase in ('apply', 'field-reset', 'failed', 'retry'):
     expected['exportEmptySections'] = True
-if phase in ('apply', 'failed', 'retry'):
+if phase == 'apply':
     expected['exportPath'] = '/synthetic/export'
 if phase == 'retry':
     expected['exportFormat'] = 'json'

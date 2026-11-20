@@ -1,5 +1,4 @@
-// Independent P001 safety witness on the existing selected page API.
-// Real runtime registry and Desktop Widgets list gear,
+// P001 candidate witness: real runtime registry and Desktop Widgets list gear,
 // actual Todo Settings/Main/Desktop, selected native persistence and cold read.
 import QtQuick
 import Quickshell
@@ -162,6 +161,55 @@ ShellRoot {
     check(api.pluginSettings.pages.length === 2 && api.pluginSettings.current_page_id === 7, "shared pages remain");
     check(instanceApi.pluginSettings.pages[0].name === "Legacy" && instanceApi.pluginSettings.count === 1 && instanceApi.pluginSettings.completedCount === 0, "legacy pages/counters remain");
   }
+  function boundaries() {
+    var pageApi = popup._pageApi;
+    check(pageApi.runtimeContext === instanceApi.settingsContext && pageApi.runtimeContext !== api.settingsContext, "one stable selected runtime context per API");
+    check(Object.isFrozen(pageApi.capability) && Object.isFrozen(pageApi.pluginSettings), "page receives frozen capabilities and owned read projection");
+    var denied = false;
+    try {
+      pageApi.pluginSettings = {
+        todos: []
+      };
+    } catch (error) {
+      denied = true;
+    }
+    check(denied, "whole generic namespace assignment refused");
+    var projection = pageApi.pluginSettings;
+    try {
+      projection.todos[0].text = "projection mutation";
+      projection.todos.push({
+                              id: 92
+                            });
+    } catch (error) {}
+    // QV4 can grow a frozen array's local length before push throws. The agreed
+    // contract is alias isolation, not a new GUI store: even that owned display
+    // mutation cannot enter the native namespace or a later Apply.
+    check(popup._editor.values.todos[0].text === "legacy task" && popup._editor.values.todos.length === 1 && pageApi.capability.readSettings().todos.length === 1 && instanceApi.pluginSettings.todos.length === 1 && !popup._editor.dirty, "owned compound display mutation cannot reach native publication");
+    var field = pageApi.field("priorityColors");
+    check(field === pageApi.field("priorityColors"), "stable field handles");
+    var colors = field.value;
+    colors.high = "foreign projection";
+    check(field.value.high !== "foreign projection" && !popup._editor.dirty, "field compound alias isolated");
+    var url = "file://" + api.pluginDir + "/" + api.manifest.entryPoints.settings;
+    denied = false;
+    try {
+      PluginLoader.initialProperties("settings", url, api, {});
+    } catch (error) {
+      denied = String(error).indexOf("settings-editor-api-required") !== -1;
+    }
+    check(denied, "Loader.setSource caller cannot obtain runtime initial properties");
+    var component = Qt.createComponent(url);
+    check(PluginLoader.createObject("todo", "settings", component, host.contentItem, api, {}) === null, "direct generic creation refuses runtime API before page construction");
+    var view = viewFactory.createObject(host.contentItem, {
+                                          pluginKey: "todo",
+                                          entryPoint: "settings",
+                                          url: url,
+                                          api: api
+                                        });
+    check(view.failed && view.item === null, "PluginView refuses runtime API before page construction");
+    view.destroy();
+    Service.clearPluginError("todo");
+  }
   function findPopup(object) {
     return find(object, function (item) {
       return typeof item.openInstanceSettings === "function" && typeof item.applySettings === "function";
@@ -235,7 +283,8 @@ ShellRoot {
                     id: "plugin:todo",
                     tag: "keep",
                     instanceSettings: Object.assign({}, legacy, {
-                                                      showCompleted: false
+                                                      showCompleted: false,
+                                                      isExpanded: true
                                                     })
                   },
                   {
@@ -277,10 +326,15 @@ ShellRoot {
       openRoute();
     } else if (phase === "page" && popup.opened && popup.settingsPage) {
       contents();
-      check(popup._pageApi.scopeKind === "instance" && !popup.settingsPage.sharedContent, "instance content controls disabled");
-      check(popup._pageApi.pluginSettings.todos[0].id === 91, "existing selected page namespace has effective content");
+      check(popup._pageApi.apiRole === "settings-editor" && popup._pageApi.scopeKind === "instance", "instance editor role");
+      check(popup._pageApi.editor === undefined && popup._pageApi.base === undefined && popup._pageApi.pluginSettings.todos[0].id === 91, "read-only page without native/live writer");
       check(!popup.dirty && !popup._editor.dirty, "open submits no intent");
       if (stage === 0) {
+        if (route === 0)
+          check(popup.undisplayedOverrideFields.some(function (field) {
+            return field.key === "isExpanded";
+          }), "host summary includes configuration absent from the page");
+        boundaries();
         check(popup.requestClose(), "untouched Close does not save");
         observe("untouched", function () {
           root.phase = "closed";
@@ -288,19 +342,32 @@ ShellRoot {
       } else if (stage === 1) {
         prepareTyping();
       } else if (stage === 2) {
+        if (route === 0) {
+          var hiddenRow = find(popup.contentItem, function (item) {
+            return item.modelData === "isExpanded" && item.field?.key === "isExpanded";
+          });
+          check(!!hiddenRow, "host-owned hidden override row rendered");
+          var reset = find(hiddenRow, function (item) {
+            return typeof item.clicked === "function" && item.text === I18n.tr("common.reset");
+          });
+          check(!!reset, "host-owned hidden override Reset control");
+          reset.clicked();
+          check(popup._pageApi.field("isExpanded").pendingIntent === "reset" && instanceApi.pluginSettings.isExpanded, "summary Reset stages native intent without publication");
+        }
         prepareTyping();
       } else if (stage === 3) {
-        var format = find(popup.settingsPage, function (item) {
-          return item.label === api.tr("settings.export_format.label") && typeof item.selected === "function";
-        });
-        check(format !== null, "real format control");
-        format.selected("json");
+        var field = popup._pageApi.field("exportPath");
+        check(field.overridden && field.reset() && field.value === field.inheritedValue, "field Reset immediately presents inherited value");
+        check(popup.applySettings(), "field Reset Apply requested");
+        phase = "field-reset";
+      } else if (stage === 4) {
+        check(popup._pageApi.field("exportFormat").set("json"), "explicit field retained through IO failure");
         failedPage = popup.settingsPage;
         failedEditor = popup._editor;
         permissions.command = ["chmod", "500", Settings.configDir + "settings"];
         phase = "make-unwritable";
         permissions.running = true;
-      } else if (stage === 4) {
+      } else if (stage === 5) {
         check(popup.resetInstanceSettings(), "declared config Reset requested");
         phase = "reset";
       }
@@ -323,11 +390,7 @@ ShellRoot {
           root.phase = "closed";
         });
       } else if (stage === 2) {
-        var toggle = find(popup.settingsPage, function (item) {
-          return item.label === api.tr("settings.export_empty_sections.label") && typeof item.toggled === "function";
-        });
-        check(toggle !== null, "real export toggle");
-        toggle.toggled(true);
+        check(popup._pageApi.field("exportEmptySections").set(true), "config intent for Apply");
         check(popup.applySettings(), "single native Apply requested");
         phase = "apply";
       }
@@ -338,9 +401,17 @@ ShellRoot {
         root.check(root.popup.requestClose(), "Close after acknowledged Apply");
         root.phase = "closed";
       });
+    } else if (phase === "field-reset" && completion && instanceApi.pluginSettings.exportPath === api.pluginSettings.exportPath) {
+      check(completion.status === "saved" && completion.refreshState === "current" && !popup._pageApi.field("exportPath").overridden, "field Reset acknowledged and recaptured");
+      check(instanceApi.pluginSettings.exportEmptySections, "field Reset preserves unrelated configuration");
+      contents();
+      observe("field-reset", function () {
+        root.check(root.popup.requestClose(), "Close after field Reset");
+        root.phase = "closed";
+      });
     } else if (phase === "failed-apply" && completion && !popup.busy) {
       check(completion.status === "failed" && popup.saveFailed, "real destination IO failure is not acknowledged");
-      check(popup.settingsPage === failedPage && popup._editor === failedEditor && popup.settingsPage.valueExportFormat === "json", "failed input/page/editor retained");
+      check(popup.settingsPage === failedPage && popup._editor === failedEditor && popup._pageApi.field("exportFormat").value === "json", "failed input/page/editor retained");
       check(!popup.requestClose() && popup.discardPending, "failed Close requires explicit discard");
       popup.keepEditing();
       observe("failed", function () {
@@ -366,13 +437,13 @@ ShellRoot {
     } else if (phase === "closed" && (!popup || !popup.visible)) {
       contents();
       stage++;
-      if (stage === 5) {
+      if (stage === 6) {
         stage = 0;
         route++;
       }
       if (route === 2) {
-        check(closes === 5, "unused field capture cleanup exactly once per runtime presentation");
-        console.log("PLUGIN_SETTINGS_P001_SAFETY: NATIVE_OPERATIONS_COMPLETE");
+        check(closes === 6, "unused field capture cleanup exactly once per runtime presentation");
+        console.log("PLUGIN_SETTINGS_TODO: NATIVE_OPERATIONS_COMPLETE");
         Qt.exit(0);
         return;
       }

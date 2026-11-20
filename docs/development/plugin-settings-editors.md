@@ -1,213 +1,105 @@
-# Plugin editor owner preparation
+# Plugin settings editors
 
-## Historical pre-cutover contract
+## One selected native owner
 
-Plugin APIs expose `createSettingsEditor()`. The returned selected-value handle
-has `initialValue`, `apply(value, callback)`, `resetOverrides(callback)` (instance
-only), and `discard()`. It is separate from the live runtime API. Unapplied values
-are owned copies and Cancel changes neither owner nor files. Apply owns its input
-before assignment, awaits the actual persistence callback and reports additive
-`refreshState: current | stale | not_refreshed` facts. Busy/discard/closed requests
-are refused. Failed old-owner input may already be live; discard never rolls it
-back. Retrying that own admitted value remains possible.
+The generic `settings` page is an editor, not a live runtime plugin. Settings ->
+Plugins selects plugin scope. Global/monitor Bar, Control Center, Desktop
+Widgets list gear and runtime desktop generic Settings select their captured
+placement. Explicit plugin-level IPC/BarService entry points remain plugin-level.
+Core and `desktopWidgetSettings` pages keep their separate live-field contract.
 
-The shared factory captures the selected plugin settings and loaded API identity.
-The instance factory captures that base plus the complete owning leaf: one global
-bar/shortcut list, all screenOverrides, or all desktop monitorWidgets. Reordering
-same-type placements, editing another row in that leaf, deleting the placement,
-changing the shared base or unloading/replacing the API refuses the stale editor.
-Sparse merge/difference stays with the existing PluginInstances owner. Reset
-explicitly removes all overrides, without writing the shared plugin file. Both
-legacy instance save/reset methods also accept additive structured callbacks.
+`PluginSettingsSession` owns the existing ConfigQml draft/overlay, field capture,
+page capability, Apply/Reset, receipts and release. `NPluginSettingsPopup` renders
+that session and supplies input commit/capture/acknowledgment callbacks. There
+is no second settings engine or page snapshot writer. `PluginLoader` requires
+the editor role before constructing a generic page through either creation path.
 
-Shared-base fences compare values; list commands additionally capture old-owner
-notification generations. Notification-suppressed equal/nested ABA remains
-undetectable: these are not configqml intent revisions. I5 replaces the factories with real configqml
-selected drafts and two-owner overlay editors, worker merge/difference and
-normalized-list generation mapping. Do not carry the transitional JS value-stamp
-adapter into the new production owner. There is no per-row ConfigScope or claimed
-cross-file transaction here.
+The runtime desktop fallback captures the placement before asynchronous loading
+and opens the same session as the list gear. Generic Close never invokes the
+removed live-dialog Save-on-Close path. The field-only API supersedes the earlier
+P001 safety unit's mutable namespace and reviewed session Reset dispatch.
 
-The inert `plugin-settings-editors.qml` fixture exercises shared Cancel and Apply,
-submitted-alias ownership, repeated-ID move/base/unload conflicts, a real failed
-save and retry, all four placement addresses, sparse unknown-override preservation,
-instance reset, persisted files and cold restarted effective consumers. The
-failure witness uses the old owner's unresolved-managed-work aggregate failure;
-ordinary routes can already be confirmed even when that full receipt fails, so a
-subsequent retry may truthfully be `nothing_to_save`. It is not an injected
-instance-file IO/partial-publication witness.
+## Page intent
 
-## Popup and page staging
+See [field capabilities](plugin-settings-field-capabilities.md) for the complete
+page surface. `pluginSettings`/`initialSettings` are isolated read projections;
+only `field(key).set(value)` and `field(key).reset()` submit configuration intent.
+The control's user event or committed input owns that call, not initialization,
+translation, range projection or an effective-value comparison. Atomic lists,
+records and maps remain one declared preference leaf.
 
-### P001 safety before field-only catalog adoption
+`NPluginSettingsField` takes the injected handle and presents inherited/stored
+override state, pending intent and Reset. Undisplayed configuration overrides
+appear in the host summary without their values. Native equal-to-base omission
+removes an explicitly edited equal override. Untouched known/opaque overrides
+are retained. Plugin-level changes propagate only through inherited fields.
 
-The runtime desktop generic Settings route uses the same captured placement
-popup as the Desktop Widgets list gear. Only the selected session applies;
-closing the old live-field dialog cannot save a generic page. Core and
-`desktopWidgetSettings` pages keep their live-field contract.
+Pages may keep local input buffers. Their synchronous `saveSettings()` commits
+only those buffered field intents. `settingsDirty` is a read-only local-input
+predicate, never a Save. `pluginApi.saveSettings(callback)` only registers a
+completion observer; it neither ingests a snapshot nor publishes. The session
+calls one native Apply with the selected editor's own `values` identity.
 
-On the existing page API, `scopeKind` identifies `plugin` versus `instance`.
-Todo's configuration controls stage only explicit user edits. Ordinary Save
-does not collect tasks, pages or current-page content. Its shared page commands
-retain their existing selected native owner; instance pages disable them.
-For reviewed usage metadata, configuration Reset unsets only configuration
-leaves, preserving content, operational and opaque placement overrides.
-Unreviewed pages retain their earlier Reset contract until catalog adoption.
+Legacy shared content remains in place. `contentField(key)` exists only in
+plugin scope for explicit content commands. Instance configuration cannot obtain
+it; operational leaves have no generic Settings setter. Todo instance pages
+explain why shared page/task management is unavailable. Configuration Apply and
+Reset never collect tasks/pages/current-page/counters or opaque content.
 
-`plugin-settings-p001-safety-regression.py` proves both actual desktop routes,
-real keyboard edits, permission failure/Retry, configuration Reset, twelve
-independent persisted boundaries, shared-page content commands and separate
-cold Main/Desktop consumers. This is not full field-only/catalog adoption.
-That integration replaces the mutable namespace and session-level reviewed
-Reset dispatch; it must not keep a second generic path.
+## Reset, results and lifetime
 
-Protected equal overrides require ConfigQml >=0.5.2, which releases
-untouched-overlay preservation and native draft `stageReset`. Stock 0.5.1
-does not supply either behavior. Package, Nix and devcontainer pins select
-the signed `v0.5.2` release, not the earlier local combined candidate.
+Field Reset is staged: native `unset([key])` for an instance, native
+`stageReset([[key]], callback)` for a plugin draft. A finite multi-field control
+uses `resetFields(keys)`. Native lower-level presentation replaces the removed
+choice; a manifest-default assignment is not Reset. Discard does not publish it.
+Whole instance Reset removes declared configuration overrides only, followed by
+one Apply. It never calls the native all-data `resetOverrides` on mixed content.
 
-The popup delegates its selected editor lifecycle to `PluginSettingsSession`.
-That service owns opening, page API creation, staging/Apply, actual receipt
-acceptance, dirty Close admission and deferred editor release. The popup keeps
-layout, focus, confirmation presentation and loading/unloading the page. Native
-controls enter through callbacks supplied by the presentation, not service
-queries into a widget's internals.
+Only `saved` or `nothing_to_save` with `refreshState: current` acknowledge work.
+Accepted-current field recapture precedes observers. `settingsCompleted` precedes
+callbacks. Failed/stale results retain input/preview for Retry or confirmed
+discard; busy excludes competing input/actions. A second Open refuses replacement.
+Ordinary Close uses dirty confirmation. Genuine presentation loss uses native
+deferred `release()` and fences late callbacks, not a forced busy discard.
 
-`plugin-settings-session-regression.py` runs the actual popup and native owners
-in the explicitly profiled VM: dirty Close/Keep/Discard, held and no-op receipts,
-real permission failure/Retry, stale success retention, selected instance
-Apply/Reset, independent files and separate cold consumers. This extraction
-does not itself change page writer capabilities, desktop scope or the catalog;
-those remain the coupled field-intent integration.
+The native editor captures base and owning-leaf generations. A changed capture,
+same-ID replacement, reorder, base change or owner loss cannot retarget it to a
+new placement. A closed/conflicted editor cannot recapture an index to recover.
 
-`PluginSettingsSession` creates a selected editor and the popup passes its
-`PluginSettingsPageApi` through PluginLoader's existing initial-properties
-boundary. Its `pluginSettings` belongs to that page, not the live runtime API.
-The page's synchronous `saveSettings()` gathers local controls into this value.
-`pluginApi.saveSettings(callback)` stages input only; multiple calls do not apply
-or write disk. The popup owns exactly one Apply after page staging returns.
-Callbacks receive the actual owner result, after the popup's `settingsCompleted`
-signal. Pages must use the callback/signal for saved feedback rather than claiming
-success when staging returns. Explicit state/config/application actions retain
-their existing owners and are not part of the preference transaction.
+ConfigQml >=0.5.2 is required for untouched-overlay preservation and native
+staged draft Reset as well as selected publication. Package, Nix and devcontainer
+pins select the signed release; stock 0.5.1 lacks those first two contracts.
 
-Pages may expose reactive `readonly property bool settingsDirty` covering all
-locally buffered input. This must not call Save or otherwise publish changes.
-Without that contract the popup conservatively confirms Close even when its API
-has no staged input: local control state cannot safely be inferred from draft
-dirtiness. Failed/stale Apply always retains the page and requires explicit
-discard. Busy blocks Apply, Reset, Close, page input and auxiliary buttons.
-Close buttons and Escape share the confirmation flow; outside auto-close is
-disabled. A second Open refuses to replace an existing editor.
+## Selected runtime consumers
 
-Only `saved`/`nothing_to_save` **and** `refreshState: current` allow saved feedback.
-Reset has its own explicit confirmation and uses the captured editor's
-`resetOverrides(callback)`. It reloads the page only after that same accepted
-receipt; failures retain the page/confirmation. Page initialization and confirmed
-Cancel never invoke the live owner's preference writer. Destruction still follows
-the existing owner lifetime: already admitted failed input is not rolled back.
-
-The inert `plugin-settings-popup.qml` witness hosts the actual popup and page in
-a real Wayland window. It covers buffered dirty-close/keep/discard, no load/Cancel
-write, staging twice with one Apply, held actual receipts, busy competition,
-failed destination retention, truthful saved-but-stale handling, shared/instance
-consumers, acknowledged instance reset, unknown owner fields, legacy-page Close
-confirmation, independent disk readback and separate cold restart. This remains
-old-owner preparation, not an intent-revision, partial-shard or I6 timing claim.
-
-## Captured placement commands
-
-### Native field capability preparation
-
-`PluginSettingsFields` wraps one already-selected native editor. Pages are not
-switched to it yet. Stable frozen handles expose cloned compound presentations,
-captured inherited/stored-override facts, explicit set/reset intent and accepted
-receipt recapture. Content/operational handles are denied in instance scope.
-Whole instance configuration Reset removes only declared configuration leaves;
-it does not use the legacy all-data `resetOverrides` operation.
-
-The opt-in `createSettingsEditor(true)` captures read facts with the same settled
-base and owning-leaf generations as native overlay selection. A changed capture
-refuses opening. The facts are never sent back as a persistence snapshot.
-Existing callers without the flag retain their current editor contract.
-
-The guest-only host/assets driver's `fields` preparation case exercises global
-bar, monitor bar, Control Center and desktop owners independently. Each checks
-false/equal/empty intent, individual/whole configuration Reset, denied content
-capabilities, compound alias isolation, a sibling runtime and independent raw
-protected-content/opaque readback, followed by a separate cold engine. Native
-overlay Apply must preserve untouched known/equal overrides; stock ConfigQml
-0.5.1 fails that guard. Use the recorded combined native candidate, not a QML
-preservation writer.
-
-Plugin-scope `stageReset` dispatch is reserved for the final shared-scope field
-integration and witness. This preparation does not certify its read capture,
-page presentation, generic loader role or any catalog page adoption. The current
-generic popup still has its legacy writable page API and all-data Reset until
-the coupled P001-first host/catalog change replaces them.
-
-The old-owner instance editor captures its `Settings.createRecordListEditor`
-session before opening. All four placement addresses (global bar, screen bar,
-control-center and desktop) submit `set`/`unset` for `instanceSettings` only.
-They do not replace an entire normalized display row. Runtime instance views
-capture at their immediate save/reset command boundary; delayed editors retain
-the original generation/address, including across failed-save retry.
-
-Command admission and its current refresh must complete before requesting a
-save receipt. An intervening list publication, including notified ABA with the
-same final value, fails rather than recapturing the current row. Whole-leaf and
-shared-base value fences remain additive under the old owner. Notification-
-suppressed equal/nested ABA is still its documented limitation; I5 replaces this
-factory with the actual normalized worker command/overlay contract.
-
-## Native cutover witness
-
-Native editors open asynchronously and own their editable values. Do not pass a
-detached copy of `initialValue` to Apply:
-
-```qml
-var editor = pluginApi.createSettingsEditor();
-editor.whenReady(function (result) {
-  if (result.status !== "opened") {
-    editor.discard();
-    return;
-  }
-  editor.values.label = "New label"; // A field declared by this plugin's schema.
-  editor.apply(editor.values, function (receipt) {
-    // Inspect receipt.status and receipt.refreshState before saved feedback.
-  });
-});
-```
-
-`discard()` still refuses while busy. A presentation that is already closing or
-being destroyed calls `release()` instead: the editor owns its deferred detach
-through native Apply/Reset settlement and suppresses the released presentation's
-completion callback. This does not authorize discarding user edits on an ordinary
-Close; the popup's confirmation flow remains responsible for that decision.
-
-The current owner uses `Scripts/dev/fixtures/settings-plugin-editors-native.qml`.
-It retains shared Cancel/Apply, all four placement addresses, ABA/reorder/base/
-unload refusals, real IO failure and Retry, sparse unknown fields, Reset, runtime
-consumers and separate cold verification. The old-owner fixture belongs to the
-pre-cutover commits and is not shipped in the current tree. The gate selects the
-native witness at cutover; historical trees retain their own old-owner fixture.
+Runtime APIs retain their live preference contract, distinct from page APIs.
+Each API owns a stable read-only `settingsContext`. Configuration-dependent
+Main-owned clients use that captured context, not the shared Main configuration
+for every instance. One API shared across views keeps one client. Retired query
+generations cannot publish into replacement accounts, repositories or locations.
 
 ## Runtime placement save and retirement Retry
 
-Placement `saveSettings` requests selected publication of its owning atomic
-settings key (for example `bar.widgets.left`), not a whole-store save. Failed
-receipts retain their attempted, unconfirmed coverage keys. An explicit Retry
-publishes the **current values of those same keys** through ConfigQml 0.5.1
-`saveSelected`. A newer edit to a covered key is the user's latest intent for
-that key. Keys outside the failed coverage are not saved, including unrelated
-pending keys in the same JSON file or shared plugin settings. Successful later
-requested coverage supersedes earlier failures on those keys; retirement never
-retries newly unrequested edits after that success.
+Placement `saveSettings` requests selected publication of its owning atomic key,
+not a whole-store save. Failed receipts retain unconfirmed coverage. Explicit
+Retry publishes the current values of those same keys through native
+`saveSelected`; later success on covered keys supersedes earlier failures.
+Unrequested keys and shared plugin settings are not included. This is current-
+intent Retry, not an exact original-value capture or per-row transaction.
+Retirement retains the ready native owner until requested work settles, then
+waits for placement API destruction before releasing that owner.
 
-This is a current-intent Retry, not an exact original-value capture. ConfigQml
-0.5.1 returns retained-group tokens asynchronously, so overlapping requests cannot
-name an earlier token before its callback. A future native queued-capture facility
-could support exact original-boundary Retry. It is not required for this contract.
-List/record keys remain atomic: Retry does not invent a per-row persistence unit.
-Same-owner retries retain the existing ready native owner until requested work
-settles, then wait for placement API destruction before releasing that owner.
+## Verification boundaries
+
+The P001 safety regression command now runs field-only real desktop routes,
+keyboard input, permission failure/Retry, protected configuration Reset,
+independent files, explicit shared content commands and separate cold consumers.
+The session suite separately covers held/current/no-op/stale receipts, busy and
+dirty-close behavior. Four-family native fields and shared-field gates cover
+sparse metadata and staged Reset. Catalog page tests cover both scopes and
+their loaded children, but do not construct every Main or claim unrelated
+runtime defects fixed. Focused selected-client and P169 three-input tests carry
+their own consumer claims. The final integration matrices remain separate gates.
+
+Historical old-owner preparations and mutable page examples remain in Git
+history; they are not current extension instructions.

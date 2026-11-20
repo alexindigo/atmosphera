@@ -34,7 +34,14 @@ ShellRoot {
         readonly property var manifest: JSON.parse(Quickshell.env("I5_VIDEO_MANIFEST"))
         Component {
           id: pageApiFactory
-          PluginSettingsPageApi {}
+          PluginSettingsSession {
+            commitInputs: function () {}
+            captureInputs: function () {
+              return 0;
+            }
+            acknowledgeInputs: function (fence) {}
+            resetInputs: function () {}
+          }
         }
         function check(ok, label) {
           if (!ok)
@@ -439,21 +446,19 @@ ShellRoot {
           } else if (phase === "timer") {
             check(record(name).volume === 0.875 && record("caller-mutated") === undefined, "timer captured target before caller mutation");
             check(items.timer._pending === null && !items.timer.failed, "timer acknowledged and cleared captured work");
-            var editor = api.createSettingsEditor();
-            check(editor && editor.ready, "selected native draft");
-            var pageApi = pageApiFactory.createObject(root, {
-                                                        base: api,
-                                                        editor: editor,
-                                                        pluginSettings: editor.values,
-                                                        initialSettings: editor.initialValue
-                                                      });
-            items.page = component("Settings.qml", {
-                                     pluginApi: pageApi
-                                   });
-            items.page.currentWallpaper = "settings-choice";
-            items.page.saveSettings();
-            phase = "settings";
-            editor.apply(editor.values, function (result) {
+            var session = pageApiFactory.createObject(root);
+            items.settingsSession = session;
+            phase = "settings-opening";
+            session.presentRequested.connect(function () {
+              items.page = component("Settings.qml", {
+                                       pluginApi: session.pageApi
+                                     });
+              session.page = items.page;
+              items.page.saveMonitorProperty("currentWallpaper", "settings-choice");
+              phase = "settings";
+              session.applySettings();
+            });
+            session.settingsCompleted.connect(function (result) {
               try {
                 check(result.status === "saved" && result.refreshState === "current", "Settings actual draft Apply receipt");
                 check(record(name).currentWallpaper === "settings-choice" && items.panel.currentWallpaper === "settings-choice", "Settings to runtime consumer");
@@ -469,6 +474,7 @@ ShellRoot {
                 Qt.exit(2);
               }
             });
+            check(session.openPluginSettings(manifest), "selected field-only settings session");
           }
         }
         Component.onCompleted: begin()

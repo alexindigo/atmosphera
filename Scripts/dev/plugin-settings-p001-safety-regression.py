@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P001 safety pair gate. Only run inside the explicitly verified task guest."""
+"""P001 consumer gate after field-only supersession. Assigned guest only."""
 import argparse
 import fcntl
 import hashlib
@@ -34,10 +34,11 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         args.work_root.mkdir(exist_ok=False)
         args.output.mkdir(exist_ok=False)
-        receipts = []
+        # The 14-readback field witness supersedes the interim mutable-API
+        # route fixture. Keep the existing command as the P001 entry point.
+        receipts = [runner.todo_case(args, profile)]
         for kind, fixture_name, marker in (
-            ('routes', 'plugin-settings-p001-safety.qml', 'PLUGIN_SETTINGS_P001_SAFETY: NATIVE_OPERATIONS_COMPLETE'),
-            ('shared', 'plugin-settings-p001-shared.qml', 'P001_SHARED: PASS')):
+            ('shared', 'plugin-settings-p001-shared.qml', 'P001_SHARED: PASS'),):
             case, out = args.work_root / kind, args.output / kind
             case.mkdir()
             out.mkdir()
@@ -45,12 +46,8 @@ def main():
             shutil.copytree(args.source, install, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
             shared_path, expected = runner.seed_todo(case, args.plugins)
             before = shared_path.read_bytes()
-            observations = out / 'persisted'
-            observations.mkdir()
             fixture = args.source / 'Scripts/dev/fixtures' / fixture_name
-            env = dict(PHA_TODO_SHARED_SHA256=hashlib.sha256(before).hexdigest(),
-                       PHA_TODO_OBSERVATIONS=str(observations),
-                       PHA_TODO_DISK_PROBE=str(args.source / 'Scripts/dev/fixtures/plugin-settings-p001-safety-disk.py'))
+            env = dict(PHA_TODO_SHARED_SHA256=hashlib.sha256(before).hexdigest())
             try:
                 text = runner.run_fixture(profile, install, case, out, fixture, extra_env=env)
             finally:
@@ -58,18 +55,10 @@ def main():
             bad = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')
             if marker not in text or any(item in text for item in bad):
                 raise RuntimeError(kind + ': missing endpoint or runtime diagnostics')
-            if kind == 'routes':
-                if shared_path.read_bytes() != before or len(list(observations.glob('*.json'))) != 12:
-                    raise RuntimeError('route independent shared/readback gate')
-                placement = json.loads((case / 'config/settings/desktopWidgets.json').read_text())
-                row = placement['monitorWidgets'][0]['widgets'][0]
-                if set(row['instanceSettings']) != {'todos', 'pages', 'current_page_id', 'count', 'completedCount', 'opaque'}:
-                    raise RuntimeError('Reset did not remove only configuration overrides')
-            else:
-                expected['pages'][1]['name'] = 'Renamed'
-                expected['exportEmptySections'] = True
-                if json.loads(shared_path.read_text()) != expected:
-                    raise RuntimeError('shared explicit-command independent readback')
+            expected['pages'][1]['name'] = 'Renamed'
+            expected['exportEmptySections'] = True
+            if json.loads(shared_path.read_text()) != expected:
+                raise RuntimeError('shared explicit-command independent readback')
             cold = out / 'cold'
             cold.mkdir()
             text = runner.run_fixture(profile, install, case, cold, fixture, extra_env=dict(env, PHA_TODO_COLD='1'))
@@ -83,8 +72,8 @@ def main():
                                args.source / 'Services/UI/DesktopWidgetRegistry.qml']}
         inputs['todo/Settings.qml'] = hashlib.sha256((args.plugins / 'todo/Settings.qml').read_bytes()).hexdigest()
         runner.write_json(args.output / 'result.json', dict(status='PASS', cases=receipts, inputs=inputs,
-            genuineKeyboardInput=True, intermediatePersistedReadbacks=12, realIoFailureAndRetry=True,
-            protectedConfigurationReset=True, completeCatalog=False, inputInjectorSha256=hashlib.sha256(injector.read_bytes()).hexdigest()))
+            genuineKeyboardInput=True, intermediatePersistedReadbacks=14, realIoFailureAndRetry=True,
+            protectedConfigurationReset=True, fieldOnlySupersession=True, completeCatalog=False, inputInjectorSha256=hashlib.sha256(injector.read_bytes()).hexdigest()))
         print('PLUGIN_SETTINGS_P001_SAFETY: PASS', flush=True)
 
 

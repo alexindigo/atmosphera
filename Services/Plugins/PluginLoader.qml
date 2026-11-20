@@ -63,6 +63,8 @@ Singleton {
   // Initial properties for setSource/createObject: pluginApi, plus every
   // context name of this entry point that the entry file declares on its root.
   function initialProperties(entryPoint, url, api, context) {
+    if (!PluginContract.acceptsApi(entryPoint, api))
+      throw new Error("settings-editor-api-required: " + String(url));
     var props = {
       "pluginApi": api
     };
@@ -132,9 +134,10 @@ Singleton {
       Service.recordPluginError(pluginKey, entryPoint, "Component is not ready");
       return null;
     }
-    var initial = initialProperties(entryPoint, component.url, api, context);
+    var initial;
     var instance;
     try {
+      initial = initialProperties(entryPoint, component.url, api, context);
       instance = component.createObject(parent, initial);
     } catch (e) {
       Service.recordPluginError(pluginKey, entryPoint, "Failed to instantiate " + String(component.url) + ": " + String(e));

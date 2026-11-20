@@ -15,7 +15,8 @@ Column {
       throw new Error("preview refused");
   }
   function saveSettings() {
-    if(stageOnSave)pluginApi.pluginSettings.label = labelText;
+    if (stageOnSave)
+      pluginApi.field("label").set(labelText);
     pluginApi.saveSettings();
   }
   NTextInput {

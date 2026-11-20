@@ -32,6 +32,7 @@ Popup {
   readonly property bool dirty: settingsSession.dirty
   readonly property var _editor: settingsSession.editor
   readonly property var _pageApi: settingsSession.pageApi
+  readonly property var undisplayedOverrideFields: settingsSession.fields ? settingsSession.fields.undisplayedOverrides : []
   signal settingsCompleted(var result)
   signal presentationInvalidated
 
@@ -141,6 +142,40 @@ Popup {
         color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
+      }
+
+      ColumnLayout {
+        visible: root.undisplayedOverrideFields.length > 0
+        Layout.fillWidth: true
+        NText {
+          text: I18n.tr("panels.plugins.additional-overrides")
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+        }
+        Repeater {
+          // QML list models project enumerable data and cannot transport a
+          // capability's non-enumerable methods. Model identities, inject the
+          // stable handle from its owning field adapter at the delegate.
+          model: root.undisplayedOverrideFields.map(function (field) {
+            return field.key;
+          })
+          RowLayout {
+            required property var modelData
+            readonly property var field: settingsSession.fields.field(modelData)
+            Layout.fillWidth: true
+            NText {
+              Layout.fillWidth: true
+              // Keys identify the declared field; values, including secrets,
+              // are never rendered by this host-owned summary.
+              text: field.key
+            }
+            NButton {
+              text: I18n.tr("common.reset")
+              enabled: !root.busy && field.pendingIntent !== "reset"
+              onClicked: field.reset()
+            }
+          }
+        }
       }
 
       // Separator
