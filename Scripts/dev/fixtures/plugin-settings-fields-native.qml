@@ -142,6 +142,7 @@ ShellRoot {
         for (var key of ["todos", "pages", "current_page_id", "count", "completedCount", "undeclared"])
           check(rejected.field(key) === null, "nonconfiguration field denied: " + key);
         check(rejected.contentField("todos") === null && rejected.error !== "", "instance cannot obtain shared content writer");
+        check(!rejected.resetFields(["showCompleted", "todos"]), "multi-field Reset validates every capability before any native edit");
         check(!editor.dirty, "denied capabilities did not create native intent");
         rejected.destroy();
         check(flag.reset() && flag.pendingIntent === "reset" && flag.value === true && flag.overridden, "Reset presents captured inheritance before receipt");
@@ -170,17 +171,22 @@ ShellRoot {
               check(fields.field("exportPath").set(""), "explicit empty String accepted");
               apply(function () {
                 check(selected.pluginSettings.exportPath === "", "empty value reaches runtime consumer");
-                fields.resetConfiguration(function (receipt) {
-                  try {
-                    check(receipt.status !== "failed" && receipt.refreshState === "current" && fields.acknowledge(receipt), "whole configuration Reset acknowledged");
-                    for (var key of fields.configurationKeys)
-                      check(!Object.prototype.hasOwnProperty.call(PluginInstances.entryFor(placement).instanceSettings, key), "configuration override removed: " + key);
-                    check(PluginInstances.entryFor(placement).instanceSettings.opaque.keep === "legacy", "opaque sibling preserved");
-                    protectedValues();
-                    phase = "rendered";
-                  } catch (error) {
-                    fail(error);
-                  }
+                check(fields.resetFields(["exportPath", "showBackground"]), "multi-field Reset submits separate native atomic paths");
+                check(fields.field("exportPath").pendingIntent === "reset" && fields.field("showBackground").pendingIntent === "reset", "both requested fields retain reset intent");
+                apply(function () {
+                  check(!Object.prototype.hasOwnProperty.call(PluginInstances.entryFor(placement).instanceSettings, "exportPath") && !Object.prototype.hasOwnProperty.call(PluginInstances.entryFor(placement).instanceSettings, "showBackground"), "multi-field native removal persisted");
+                  fields.resetConfiguration(function (receipt) {
+                    try {
+                      check(receipt.status !== "failed" && receipt.refreshState === "current" && fields.acknowledge(receipt), "whole configuration Reset acknowledged");
+                      for (var key of fields.configurationKeys)
+                        check(!Object.prototype.hasOwnProperty.call(PluginInstances.entryFor(placement).instanceSettings, key), "configuration override removed: " + key);
+                      check(PluginInstances.entryFor(placement).instanceSettings.opaque.keep === "legacy", "opaque sibling preserved");
+                      protectedValues();
+                      phase = "rendered";
+                    } catch (error) {
+                      fail(error);
+                    }
+                  });
                 });
               });
             });

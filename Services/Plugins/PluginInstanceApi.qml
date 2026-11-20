@@ -1,4 +1,5 @@
 import QtQuick
+import "PluginSettingsRead.js" as Read
 import qs.Commons
 import qs.Services.Plugins
 
@@ -53,7 +54,9 @@ QtObject {
   property var _lastSettingsSave: null
   property var _settingsSaveWaiters: []
   property string _openError: ""
-  property var _lifetime: ({alive: true})
+  property var _lifetime: ({
+                             alive: true
+                           })
   property var _cancelOpen: null
   property var _cancelPreviewOpen: null
   property var _inheritedPreview: null
@@ -64,25 +67,52 @@ QtObject {
   readonly property string settingsError: _openError || (runtime ? runtime.error : "")
   readonly property var pluginSettings: runtime ? runtime.values : null
   readonly property var settingsView: settingsPreviewOwner.values
+  readonly property var settingsContext: Read.context(function () {
+    var owner = root.base ? root.base.settingsOwner : null;
+    return Read.values(root.settingsView, owner && !owner.closed && owner.store ? owner.store.settingsKeys : [], function (value) {
+      return Settings.store.copyValue(value);
+    });
+  }, function () {
+    return Service.getPluginAPI(root.pluginId) === root.base && root.settingsReady;
+  })
   property PluginSettingsPreview settingsPreviewOwner: PluginSettingsPreview {
-    draftFactory: function () { return root.createSettingsEditor(); }
+    draftFactory: function () {
+      return root.createSettingsEditor();
+    }
     sourceValue: root._inheritedPreview && root._inheritedPreview.ready ? root._inheritedPreview.values : root.pluginSettings
-    currentOwner: function () { return root.settingsReady ? root.runtime.placementToken : null; }
+    currentOwner: function () {
+      return root.settingsReady ? root.runtime.placementToken : null;
+    }
   }
 
-  function createSettingsPreview(editor) { return settingsPreviewOwner.open(editor); }
+  function createSettingsPreview(editor) {
+    return settingsPreviewOwner.open(editor);
+  }
 
   function _refreshPreviewView() {
-    if (!_constructed) return;
+    if (!_constructed)
+      return;
     var token = {};
     var lifetime = _lifetime;
     _previewGeneration = token;
-    if (_cancelPreviewOpen) { _cancelPreviewOpen(); _cancelPreviewOpen = null; }
-    if (_inheritedPreview) { _inheritedPreview.detach(); _inheritedPreview = null; }
-    if (!_sharedPreviewBase) return;
+    if (_cancelPreviewOpen) {
+      _cancelPreviewOpen();
+      _cancelPreviewOpen = null;
+    }
+    if (_inheritedPreview) {
+      _inheritedPreview.detach();
+      _inheritedPreview = null;
+    }
+    if (!_sharedPreviewBase)
+      return;
     _cancelPreviewOpen = PluginInstances.openPreviewView(base, placement, _sharedPreviewBase, function (result) {
-      if (!lifetime.alive || root._previewGeneration !== token) { if (result.editor) result.editor.detach(); return; }
-      if (result.status === "opened") root._inheritedPreview = result.editor;
+      if (!lifetime.alive || root._previewGeneration !== token) {
+        if (result.editor)
+          result.editor.detach();
+        return;
+      }
+      if (result.status === "opened")
+        root._inheritedPreview = result.editor;
     });
   }
   on_SharedPreviewBaseChanged: _refreshPreviewView()
@@ -91,18 +121,28 @@ QtObject {
     _constructed = true;
     var lifetime = _lifetime;
     _cancelOpen = PluginInstances.openRuntime(base, placement, function (result) {
-      if (!lifetime.alive) { if (result.editor) result.editor.detach(); return; }
-      if (result.status === "opened") root.runtime = result.editor;
-      else root._openError = result.error?.code || "overlay-open";
+      if (!lifetime.alive) {
+        if (result.editor)
+          result.editor.detach();
+        return;
+      }
+      if (result.status === "opened")
+        root.runtime = result.editor;
+      else
+        root._openError = result.error?.code || "overlay-open";
     });
     _refreshPreviewView();
   }
   Component.onDestruction: {
     _lifetime.alive = false;
-    if (_cancelOpen) _cancelOpen();
-    if (_cancelPreviewOpen) _cancelPreviewOpen();
-    if (_inheritedPreview) _inheritedPreview.detach();
-    if (runtime) runtime.detach();
+    if (_cancelOpen)
+      _cancelOpen();
+    if (_cancelPreviewOpen)
+      _cancelPreviewOpen();
+    if (_inheritedPreview)
+      _inheritedPreview.detach();
+    if (runtime)
+      runtime.detach();
   }
 
   // Stores only the values that differ from the plugin settings, in this
@@ -117,21 +157,31 @@ QtObject {
     if (!editor) {
       var lifetime = _lifetime;
       Qt.callLater(function () {
-        if (lifetime.alive && typeof callback === "function") callback({status: "failed", refreshState: "not_refreshed", error: {code: "overlay-owner"}});
+        if (lifetime.alive && typeof callback === "function")
+          callback({
+                     status: "failed",
+                     refreshState: "not_refreshed",
+                     error: {
+                       code: "overlay-owner"
+                     }
+                   });
       });
       return false;
     }
     editor.whenReady(function (opened) {
       if (opened.status !== "opened") {
         editor.discard();
-        if (typeof callback === "function") callback(opened);
+        if (typeof callback === "function")
+          callback(opened);
         return;
       }
       editor.resetOverrides(function (result) {
         // Only current acknowledged success closes this one-shot editor.
         // Failed/stale work stays owned by the returned editor for retry.
-        if (result.status !== "failed" && result.refreshState === "current") editor.discard();
-        if (typeof callback === "function") callback(result);
+        if (result.status !== "failed" && result.refreshState === "current")
+          editor.discard();
+        if (typeof callback === "function")
+          callback(result);
       });
     });
     return editor;
