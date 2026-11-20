@@ -18,9 +18,10 @@ The callback-only `Settings.saveImmediate(callback)` is retained unchanged for
 older plugin consumers; new shell per-edit callers use the explicitly named
 selected operation rather than overloading that compatibility entry point.
 
-This integration requires configqml >=0.5.1 for the Atmosphera 0.10.0 release.
-The package floor, Nix/devcontainer pins and lint metadata use that release's
-additive `saveSelected` API.
+This integration requires configqml >=0.5.2. The package floor and
+Nix/devcontainer pins select the released native staged draft Reset and
+untouched-overlay preservation contracts as well as `saveSelected`.
+Atmosphera 0.10.0 originally required 0.5.1 for `saveSelected` alone.
 
 ## Earlier preparation contract
 
