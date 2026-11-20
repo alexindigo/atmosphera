@@ -25,6 +25,13 @@ ShellRoot {
   property var chosen: null
   property var queue: []
   property int waited: 0
+  // Native preflight durably retains evidence. Measured all-10 retention was
+  // 6331 ms, plus all-14 ordinary open max 3289 ms. A finite 15000 ms opening
+  // budget includes loaded-disk headroom; it is never renewed by polling.
+  readonly property int nativeOpenBudgetMs: 15000
+  readonly property int nativeResultBudgetMs: 18000
+  property double phaseStarted: Date.now()
+  onPhaseChanged: phaseStarted = Date.now()
   readonly property var scopes: ["plugin", "instance"]
   readonly property string pluginId: ids[pluginIndex] || ""
   readonly property string scopeName: scopes[scopeIndex]
@@ -50,6 +57,9 @@ ShellRoot {
   function check(ok, message) {
     if (!ok)
       throw new Error(message);
+  }
+  function elapsed() {
+    return Date.now() - phaseStarted;
   }
   function fail(error) {
     console.error("CATALOG_FATAL " + String(error));
@@ -268,7 +278,9 @@ ShellRoot {
     waited = 0;
     row = {
       plugin: pluginId,
-      scope: scopeName
+      scope: scopeName,
+      instanceOpenMs: scopeName === "instance" ? elapsed() : 0,
+      nativeOpenBudgetMs: nativeOpenBudgetMs
     };
     var api = apis[pluginId];
     var placementApi = scopeName === "instance" ? PluginInstances.apiFor(pluginId, {
@@ -296,7 +308,7 @@ ShellRoot {
                                                 index: pluginIndex
                                               });
         if (!selected || !selected.settingsReady) {
-          if (++waited > 100) {
+          if (elapsed() >= nativeOpenBudgetMs) {
             var base = apis[pluginId];
             var mainInfo = Settings.store.info(["bar", "widgets", "left"]);
             var counters = {};
@@ -307,22 +319,23 @@ ShellRoot {
                 workerCovered: info.workerCovered
               };
             }
-            fail("instance api " + pluginId + ": " + (selected ? selected.settingsError : "missing") + ", baseReady=" + base.settingsReady + ", runtime=" + !!selected?.runtime + ", owningLeaf=" + JSON.stringify({
-                                                                                                                                                                                                                     latestInput: mainInfo.latestInput,
-                                                                                                                                                                                                                     workerCovered: mainInfo.workerCovered
-                                                                                                                                                                                                                   }) + ", baseCounters=" + JSON.stringify(counters));
+            fail("instance api " + pluginId + ": " + (selected ? selected.settingsError : "missing") + ", elapsedMs=" + elapsed() + ", budgetMs=" + nativeOpenBudgetMs + ", baseReady=" + base.settingsReady + ", runtime=" + !!selected?.runtime + ", owningLeaf=" + JSON.stringify({
+                                                                                                                                                                                                                                                                                       latestInput: mainInfo.latestInput,
+                                                                                                                                                                                                                                                                                       workerCovered: mainInfo.workerCovered
+                                                                                                                                                                                                                                                                                     }) + ", baseCounters=" + JSON.stringify(counters));
           }
           return;
         }
       }
       open();
     } else if (phase === "page") {
-      if (++waited > 120) {
-        emit("FAIL", "page did not open: " + popup._editor?.error);
+      if (elapsed() >= nativeOpenBudgetMs) {
+        emit("FAIL", "page did not open: " + popup._editor?.error + ", elapsedMs=" + elapsed() + ", budgetMs=" + nativeOpenBudgetMs);
         return;
       }
       if (!popup.opened || !popup.settingsPage)
         return;
+      row.pageOpenMs = elapsed();
       row.constructionIntent = popup.dirty || (popup._editor && popup._editor.dirty);
       row.pageType = String(popup.settingsPage).split("(")[0];
       if (row.constructionIntent) {
@@ -378,11 +391,11 @@ ShellRoot {
       phase = "applied";
     } else if (phase === "applied") {
       if (!receipt || popup.busy) {
-        if (++waited > 300)
+        if (elapsed() >= nativeResultBudgetMs)
           emit("FAIL", "no Apply receipt");
         return;
       }
-      row.applyMs = waited * 60;
+      row.applyMs = elapsed();
       if (receipt.status !== "saved" || receipt.refreshState !== "current") {
         emit("FAIL", "Apply receipt " + JSON.stringify(receipt));
         return;
@@ -416,7 +429,7 @@ ShellRoot {
         return popup._pageApi.field(key).pendingIntent !== "reset";
       });
       if (waiting.length) {
-        if (++waited > 80) {
+        if (elapsed() >= nativeOpenBudgetMs) {
           emit("FAIL", "Reset not staged " + JSON.stringify(waiting));
           return;
         }
@@ -433,11 +446,11 @@ ShellRoot {
       phase = "reset-applied";
     } else if (phase === "reset-applied") {
       if (!receipt || popup.busy) {
-        if (++waited > 300)
+        if (elapsed() >= nativeResultBudgetMs)
           emit("FAIL", "no Reset receipt");
         return;
       }
-      row.resetMs = waited * 60;
+      row.resetMs = elapsed();
       if (receipt.status !== "saved" || receipt.refreshState !== "current") {
         emit("FAIL", "Reset receipt " + JSON.stringify(receipt));
         return;
@@ -482,7 +495,7 @@ ShellRoot {
         }
       });
     } else if (phase === "retiring") {
-      if (++waited > 300)
+      if (elapsed() >= nativeResultBudgetMs)
         fail("instance consumers of " + pluginId + " did not retire");
     }
   }

@@ -104,6 +104,20 @@ signal, native Apply/Reset and independent files; it does not construct Main.
 The focused selected-client and Pomodoro input gates provide their additional
 real-input/runtime-consumer proof. ConfigQml >=0.5.2 is required.
 
+The catalog witness measures native opening with a finite 15000 ms per-operation
+deadline. Native overlay preflight synchronously retains durable evidence: the
+observed 6331 ms retention interval plus a 3289 ms ordinary opening leaves about
+56% headroom at that bound. Page opening includes a native selected-editor open
+and uses the same bound. Apply, Reset publication and consumer retirement retain
+their 18000 ms bound; native Reset staging uses 15000 ms. Polling never renews
+the deadline. Recorded row timings are elapsed milliseconds, not timer counts.
+`plugin-settings-catalog-budget-regression.py --mode ordinary|slow|never-ready`
+checks the real page/native-file gate, a measured 6331 ms evidence fsync delay
+that still completes, and explicit failure for a never-ready observation at the
+opening bound. The last is a rejecting meta-control, not catalog coverage. Its
+test-only interposer always calls the real fsync and is never used for ordinary
+catalog or lock tests. This harness allowance does not optimize ConfigQml I/O.
+
 `plugin-settings-lock-focus-regression.py` is a separate, explicitly authorized
 real-lock proof, not the in-shell preview test. It uses an explicit guest profile
 and the installed bundled locker on the guest's niri session. Candidate and
