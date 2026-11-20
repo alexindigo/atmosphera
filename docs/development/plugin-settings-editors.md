@@ -39,7 +39,21 @@ instance-file IO/partial-publication witness.
 
 ## Popup and page staging
 
-`NPluginSettingsPopup` creates a selected editor and passes an editor-only
+The popup delegates its selected editor lifecycle to `PluginSettingsSession`.
+That service owns opening, page API creation, staging/Apply, actual receipt
+acceptance, dirty Close admission and deferred editor release. The popup keeps
+layout, focus, confirmation presentation and loading/unloading the page. Native
+controls enter through callbacks supplied by the presentation, not service
+queries into a widget's internals.
+
+`plugin-settings-session-regression.py` runs the actual popup and native owners
+in the explicitly profiled VM: dirty Close/Keep/Discard, held and no-op receipts,
+real permission failure/Retry, stale success retention, selected instance
+Apply/Reset, independent files and separate cold consumers. This extraction
+does not itself change page writer capabilities, desktop scope or the catalog;
+those remain the coupled field-intent integration.
+
+`PluginSettingsSession` creates a selected editor and the popup passes its
 `PluginSettingsPageApi` through PluginLoader's existing initial-properties
 boundary. Its `pluginSettings` belongs to that page, not the live runtime API.
 The page's synchronous `saveSettings()` gathers local controls into this value.
