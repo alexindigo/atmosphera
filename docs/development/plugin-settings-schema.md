@@ -87,6 +87,24 @@ not change its stored content. The driver's `red` case characterizes nine old
 consumer defects, not their correction; unimplemented production cases report
 BLOCKED rather than a partial implementation PASS.
 
+`plugin-settings-catalog-metadata-regression.py` verifies the first reviewed
+cohort: the six generic desktop pages, Scratchpad, Simple Notes, saved desktop
+snapshots, Pomodoro, RSS Feed and Tamagotchi. Its independent expected-role
+matrix checks complete declared-key classification and native-schema equality
+with annotations removed, including each cohort member's frozen exact-version
+descriptor. Both authored and frozen descriptors run fresh and separate cold
+native owners: seeded effective values, untouched Apply as `nothing_to_save`
+and every stored byte preserved. No plugin Main or application action is started.
+The emitted manifest inventory records all generic entry URLs and metadata
+readiness, without claiming page adoption or any unrelated consumer fix.
+
+Content remains with its current runtime owner. Scratchpad cursor/scroll,
+Simple Notes counts, RSS read-item history and Tamagotchi game state are
+operational, not instance configuration. Saved desktop snapshots are content;
+their populated-record schema defect remains separate. Git Companion's legacy
+`selectedRepo` alias and user-supplied credentials remain configuration: neither
+an alias issue nor `machineLocal` grants a content/operational classification.
+
 ### Source-only compatibility metadata
 
 `metadata.settingsSourceProjection` format 1 has exactly `version`, `projectionId`

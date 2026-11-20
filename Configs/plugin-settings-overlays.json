@@ -109,27 +109,35 @@
         "version": 1,
         "fields": {
           "aqiScale": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "aqicnToken": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "boldText": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "customLatitude": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "customLongitude": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "dataSource": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "refreshInterval": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "useNoctaliaLocation": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           }
         }
@@ -204,81 +212,107 @@
         "version": 1,
         "fields": {
           "aurCmd": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "aurHomepageCmd": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "boldText": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "boldVer": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "boldVerDesktop": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "boldVerPanel": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "closeButton": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "closeOnSettings": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "customIconPath": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "desktopTip": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "enableColorization": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "flatpak": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "hideOnEmpty": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "hoverTip": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "iconColor": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "iconName": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "noctalia": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "panelContext": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "panelTooltip": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "refreshInterval": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "refreshTimer": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "systemCmd": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "toast": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "tooltip": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "updateCmd": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "useDistroLogo": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           }
         }
@@ -629,9 +663,11 @@
         "version": 1,
         "fields": {
           "hideBackground": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "minimumThreshold": {
+            "editorUsage": "configuration",
             "type": "Real"
           }
         }
@@ -1462,18 +1498,23 @@
         "version": 1,
         "fields": {
           "group": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "platform": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "refreshInterval": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "repo": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "selectedRepo": {
+            "editorUsage": "configuration",
             "type": "String",
             "optional": true,
             "machineLocal": true
@@ -1486,26 +1527,33 @@
         "version": 1,
         "fields": {
           "layout": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "refreshInterval": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "showLabels": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "showTotal": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "token": {
+            "editorUsage": "configuration",
             "type": "String",
             "sensitive": true,
             "machineLocal": true
           },
           "username": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "weeksShown": {
+            "editorUsage": "configuration",
             "type": "Real"
           }
         }
@@ -3535,34 +3583,43 @@
         "version": 1,
         "fields": {
           "scratchpadContent": {
+            "editorUsage": "content",
             "type": "String",
             "machineLocal": true
           },
           "cursorPosition": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "scrollPositionX": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "scrollPositionY": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "filePath": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "fontSize": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "panelHeight": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "panelWidth": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "useMonospace": {
+            "editorUsage": "configuration",
             "type": "Boolean",
             "optional": true
           }
@@ -3842,29 +3899,37 @@
         "version": 1,
         "fields": {
           "autoStartBreaks": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "autoStartWork": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "compactMode": {
+            "editorUsage": "configuration",
             "type": "Boolean",
             "optional": true
           },
           "longBreakDuration": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "playSound": {
+            "editorUsage": "configuration",
             "type": "Boolean",
             "optional": true
           },
           "sessionsBeforeLongBreak": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "shortBreakDuration": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "workDuration": {
+            "editorUsage": "configuration",
             "type": "Real"
           }
         }
@@ -3973,6 +4038,7 @@
         "version": 1,
         "fields": {
           "feeds": {
+            "editorUsage": "configuration",
             "type": "List",
             "element": {
               "type": "Record",
@@ -3987,12 +4053,15 @@
             }
           },
           "markAsReadOnClick": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "maxItemsPerFeed": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "readItems": {
+            "editorUsage": "operational",
             "type": "List",
             "machineLocal": true,
             "element": {
@@ -4000,9 +4069,11 @@
             }
           },
           "showOnlyUnread": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "updateInterval": {
+            "editorUsage": "configuration",
             "type": "Real"
           }
         }
@@ -4053,9 +4124,11 @@
         },
         "fields": {
           "loadWidgets": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "monitorWidgets": {
+            "editorUsage": "content",
             "type": "Map",
             "optional": true,
             "machineLocal": true,
@@ -4067,6 +4140,7 @@
             }
           },
           "saveWidgets": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           }
         }
@@ -4399,11 +4473,13 @@
         "version": 1,
         "fields": {
           "count": {
+            "editorUsage": "operational",
             "type": "Real",
             "optional": true,
             "machineLocal": true
           },
           "notes": {
+            "editorUsage": "content",
             "type": "List",
             "machineLocal": true,
             "element": {
@@ -4429,6 +4505,7 @@
             }
           },
           "showCountInBar": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           }
         }
@@ -4793,31 +4870,39 @@
         "version": 1,
         "fields": {
           "hunger": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "happiness": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "cleanliness": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "energy": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "difficulty": {
+            "editorUsage": "configuration",
             "type": "Real"
           },
           "showDebug": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "showPercentage": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "volume": {
+            "editorUsage": "configuration",
             "type": "Real"
           }
         }
@@ -4872,6 +4957,7 @@
         "version": 1,
         "fields": {
           "todos": {
+            "editorUsage": "content",
             "type": "List",
             "machineLocal": true,
             "element": {
@@ -4909,6 +4995,7 @@
             }
           },
           "pages": {
+            "editorUsage": "content",
             "type": "List",
             "machineLocal": true,
             "element": {
@@ -4924,30 +5011,38 @@
             }
           },
           "current_page_id": {
+            "editorUsage": "content",
             "type": "Real",
             "machineLocal": true
           },
           "count": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "completedCount": {
+            "editorUsage": "operational",
             "type": "Real",
             "machineLocal": true
           },
           "exportEmptySections": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "exportFormat": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "exportPath": {
+            "editorUsage": "configuration",
             "type": "String"
           },
           "isExpanded": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "priorityColors": {
+            "editorUsage": "configuration",
             "type": "Record",
             "fields": {
               "high": {
@@ -4965,12 +5060,15 @@
             }
           },
           "showBackground": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "showCompleted": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           },
           "useCustomColors": {
+            "editorUsage": "configuration",
             "type": "Boolean"
           }
         }
