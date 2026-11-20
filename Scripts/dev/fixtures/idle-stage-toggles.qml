@@ -117,6 +117,28 @@ ShellRoot {
               toggle(entry).toggled(true);
               check(JSON.parse(Settings.data.idle.customCommands)[0].timeout === 75, "custom row restores previous positive timeout");
               toggle(entry).toggled(false);
+              Settings.data.idle.customCommands = '[{"name":"A","timeout":75,"command":"true"},{"name":"B","timeout":120,"command":"true"}]';
+              custom._setEntryEnabled(0, false);
+              custom._setEntryEnabled(1, false);
+              Settings.data.idle.customCommands = '[{"name":"B","timeout":0,"command":"true"}]';
+              custom._setEntryEnabled(0, true);
+              check(JSON.parse(Settings.data.idle.customCommands)[0].timeout === 120, "external removal keeps the surviving command's remembered timeout");
+              custom._setEntryEnabled(0, false);
+              Settings.data.idle.customCommands = '[{"name":"replacement","timeout":0,"command":"false"}]';
+              custom._setEntryEnabled(0, true);
+              check(JSON.parse(Settings.data.idle.customCommands)[0].timeout === 60, "external replacement cannot inherit stale memory");
+              Settings.data.idle.customCommands = '[{"name":"duplicate","timeout":75,"command":"true"},{"name":"duplicate","timeout":120,"command":"true"}]';
+              custom._setEntryEnabled(0, false);
+              custom._setEntryEnabled(1, false);
+              custom._loadToModel();
+              custom._setEntryEnabled(1, true);
+              check(JSON.parse(Settings.data.idle.customCommands)[1].timeout === 120, "unchanged duplicate rows retain their own memory");
+              custom._setEntryEnabled(1, false);
+              Settings.data.idle.customCommands = '[{"name":"duplicate","timeout":0,"command":"true"}]';
+              custom._setEntryEnabled(0, true);
+              check(JSON.parse(Settings.data.idle.customCommands)[0].timeout === 60, "ambiguous surviving duplicate cannot inherit memory");
+              Settings.data.idle.customCommands = '[{"name":"disabled command","timeout":75,"command":"true","resumeCommand":"","opaque":"keep"}]';
+              custom._setEntryEnabled(0, false);
               Settings.saveResult(function (result) {
                 root.guard(function () {
                   root.check(result.status === "saved", "settle owning leaf before opening editor");

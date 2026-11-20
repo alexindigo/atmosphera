@@ -12,33 +12,64 @@ ColumnLayout {
   enabled: Settings.data.idle.enabled
 
   property bool _saving: false
-  // View-session memory only; the stored command shape stays unchanged.
-  property var _rememberedTimeouts: []
 
   ListModel {
     id: entriesModel
   }
 
+  function _entryIdentity(entry) {
+    var identity = Object.assign({}, entry);
+    delete identity.timeout;
+    delete identity.name;
+    delete identity.command;
+    delete identity.resumeCommand;
+    return JSON.stringify([String(entry.name || ""), String(entry.command || ""), String(entry.resumeCommand || ""), identity]);
+  }
+
   function _loadToModel() {
     if (_saving)
       return;
-    entriesModel.clear();
+    // The model owns view-session memory. Reconcile by command identity, not
+    // row position; ambiguous identities must never lend memory to a new row.
+    var previous = {};
+    for (var row = 0; row < entriesModel.count; row++) {
+      var item = entriesModel.get(row);
+      var key = _entryIdentity(JSON.parse(item.entryJson));
+      if (previous[key] === undefined)
+        previous[key] = item.rememberedTimeout;
+      else
+        previous[key] = 0;
+    }
     var entries = [];
     try {
       entries = JSON.parse(Settings.data.idle.customCommands);
     } catch (e) {
       Logger.w("CustomSubTab", "Failed to parse customCommands:", e);
     }
+    var counts = {};
+    for (var entry of entries) {
+      var identity = _entryIdentity(entry);
+      counts[identity] = (counts[identity] || 0) + 1;
+    }
+    var unchanged = entries.length === entriesModel.count;
+    var rememberedRows = [];
+    for (var index = 0; index < entriesModel.count; index++) {
+      var old = entriesModel.get(index);
+      rememberedRows.push(old.rememberedTimeout);
+      if (unchanged && (_entryIdentity(entries[index]) !== _entryIdentity(JSON.parse(old.entryJson)) || entries[index].timeout !== old.timeout))
+        unchanged = false;
+    }
+    entriesModel.clear();
     for (var i = 0; i < entries.length; i++) {
       var timeout = parseInt(entries[i].timeout);
       if (isNaN(timeout) || timeout < 0)
         timeout = 60;
-      if (timeout > 0)
-        _rememberedTimeouts[i] = timeout;
+      var entryKey = _entryIdentity(entries[i]);
+      var remembered = timeout > 0 ? timeout : (unchanged ? rememberedRows[i] : (counts[entryKey] === 1 ? previous[entryKey] : 0));
       entriesModel.append({
                             "name": String(entries[i].name || ""),
                             "timeout": timeout,
-                            "rememberedTimeout": _rememberedTimeouts[i] || 60,
+                            "rememberedTimeout": remembered || 60,
                             "entryJson": JSON.stringify(entries[i]),
                             "command": String(entries[i].command || ""),
                             "resumeCommand": String(entries[i].resumeCommand || "")
@@ -63,17 +94,15 @@ ColumnLayout {
   }
 
   function _removeEntry(index) {
-    _rememberedTimeouts.splice(index, 1);
     entriesModel.remove(index, 1);
     _saveFromModel();
   }
 
   function _setEntryEnabled(index, checked) {
     var item = entriesModel.get(index);
-    if (item.timeout > 0)
-      _rememberedTimeouts[index] = item.timeout;
-    entriesModel.setProperty(index, "rememberedTimeout", _rememberedTimeouts[index] || 60);
-    entriesModel.setProperty(index, "timeout", checked ? (_rememberedTimeouts[index] || 60) : 0);
+    var remembered = item.timeout > 0 ? item.timeout : item.rememberedTimeout;
+    entriesModel.setProperty(index, "rememberedTimeout", remembered);
+    entriesModel.setProperty(index, "timeout", checked ? remembered : 0);
     _saveFromModel();
   }
 
@@ -92,7 +121,6 @@ ColumnLayout {
     parent: Overlay.overlay
     onSaved: {
       var index = editPopup.editIndex < 0 ? entriesModel.count - 1 : editPopup.editIndex;
-      root._rememberedTimeouts[index] = editPopup.rememberedTimeoutValue;
       entriesModel.setProperty(index, "rememberedTimeout", editPopup.rememberedTimeoutValue);
     }
   }
@@ -119,7 +147,7 @@ ColumnLayout {
                                    resumeCommand: ""
                                  } : entries[index];
     return {
-      rememberedTimeout: index >= 0 ? (_rememberedTimeouts[index] || 60) : 60,
+      rememberedTimeout: index >= 0 ? entriesModel.get(index).rememberedTimeout : 60,
       initialValue: {
         name: initial.name || "",
         timeout: initial.timeout === undefined ? 60 : initial.timeout,
