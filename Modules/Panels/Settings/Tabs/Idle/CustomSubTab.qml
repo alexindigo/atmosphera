@@ -12,6 +12,8 @@ ColumnLayout {
   enabled: Settings.data.idle.enabled
 
   property bool _saving: false
+  // View-session memory only; the stored command shape stays unchanged.
+  property var _rememberedTimeouts: []
 
   ListModel {
     id: entriesModel
@@ -28,9 +30,16 @@ ColumnLayout {
       Logger.w("CustomSubTab", "Failed to parse customCommands:", e);
     }
     for (var i = 0; i < entries.length; i++) {
+      var timeout = parseInt(entries[i].timeout);
+      if (isNaN(timeout) || timeout < 0)
+        timeout = 60;
+      if (timeout > 0)
+        _rememberedTimeouts[i] = timeout;
       entriesModel.append({
                             "name": String(entries[i].name || ""),
-                            "timeout": parseInt(entries[i].timeout) || 60,
+                            "timeout": timeout,
+                            "rememberedTimeout": _rememberedTimeouts[i] || 60,
+                            "entryJson": JSON.stringify(entries[i]),
                             "command": String(entries[i].command || ""),
                             "resumeCommand": String(entries[i].resumeCommand || "")
                           });
@@ -42,19 +51,29 @@ ColumnLayout {
     var arr = [];
     for (var i = 0; i < entriesModel.count; i++) {
       var item = entriesModel.get(i);
-      arr.push({
-                 "name": item.name,
-                 "timeout": item.timeout,
-                 "command": item.command,
-                 "resumeCommand": item.resumeCommand
-               });
+      arr.push(Object.assign(JSON.parse(item.entryJson), {
+                               "name": item.name,
+                               "timeout": item.timeout,
+                               "command": item.command,
+                               "resumeCommand": item.resumeCommand
+                             }));
     }
     Settings.data.idle.customCommands = JSON.stringify(arr);
     _saving = false;
   }
 
   function _removeEntry(index) {
+    _rememberedTimeouts.splice(index, 1);
     entriesModel.remove(index, 1);
+    _saveFromModel();
+  }
+
+  function _setEntryEnabled(index, checked) {
+    var item = entriesModel.get(index);
+    if (item.timeout > 0)
+      _rememberedTimeouts[index] = item.timeout;
+    entriesModel.setProperty(index, "rememberedTimeout", _rememberedTimeouts[index] || 60);
+    entriesModel.setProperty(index, "timeout", checked ? (_rememberedTimeouts[index] || 60) : 0);
     _saveFromModel();
   }
 
@@ -71,10 +90,17 @@ ColumnLayout {
   IdleCommandEditPopup {
     id: editPopup
     parent: Overlay.overlay
+    onSaved: {
+      var index = editPopup.editIndex < 0 ? entriesModel.count - 1 : editPopup.editIndex;
+      root._rememberedTimeouts[index] = editPopup.rememberedTimeoutValue;
+      entriesModel.setProperty(index, "rememberedTimeout", editPopup.rememberedTimeoutValue);
+    }
   }
 
   function createEntryEditor(index) {
     var leaf = Settings.createEditor("idle.customCommands");
+    if (!leaf)
+      return null;
     var entries;
     try {
       entries = JSON.parse(leaf.initialValue);
@@ -86,9 +112,20 @@ ColumnLayout {
       leaf.discard();
       return null;
     }
-    var initial = index === -1 ? {name: "", timeout: 60, command: "", resumeCommand: ""} : entries[index];
+    var initial = index === -1 ? {
+                                   name: "",
+                                   timeout: 60,
+                                   command: "",
+                                   resumeCommand: ""
+                                 } : entries[index];
     return {
-      initialValue: {name: initial.name || "", timeout: initial.timeout === undefined ? 60 : initial.timeout, command: initial.command || "", resumeCommand: initial.resumeCommand || ""},
+      rememberedTimeout: index >= 0 ? (_rememberedTimeouts[index] || 60) : 60,
+      initialValue: {
+        name: initial.name || "",
+        timeout: initial.timeout === undefined ? 60 : initial.timeout,
+        command: initial.command || "",
+        resumeCommand: initial.resumeCommand || ""
+      },
       apply: function (value, callback) {
         // Start from the captured owning leaf, never the view's possibly newer
         // index/model. The leaf adapter rejects any intervening list change.
@@ -99,7 +136,9 @@ ColumnLayout {
           changed[index] = Object.assign({}, changed[index], value);
         leaf.apply(JSON.stringify(changed), callback);
       },
-      discard: function () { return leaf.discard(); }
+      discard: function () {
+        return leaf.discard();
+      }
     };
   }
 
@@ -134,6 +173,7 @@ ColumnLayout {
       required property int index
       required property string name
       required property int timeout
+      required property int rememberedTimeout
       required property string command
       required property string resumeCommand
 
@@ -142,9 +182,17 @@ ColumnLayout {
 
       NLabel {
         Layout.fillWidth: true
+        enabled: entryDelegate.timeout > 0
         label: entryDelegate.name || I18n.tr("panels.idle.custom-entry-unnamed")
-        description: I18n.trp("common.second", entryDelegate.timeout)
-        labelColor: (entryDelegate.command || entryDelegate.resumeCommand) ? AtmoColor.mPrimary : AtmoColor.mOnSurface
+        description: I18n.trp("common.second", entryDelegate.timeout > 0 ? entryDelegate.timeout : entryDelegate.rememberedTimeout)
+        labelColor: enabled && (entryDelegate.command || entryDelegate.resumeCommand) ? AtmoColor.mPrimary : AtmoColor.mOnSurface
+      }
+
+      NToggle {
+        Layout.fillWidth: false
+        Accessible.name: entryDelegate.name || I18n.tr("panels.idle.custom-entry-unnamed")
+        checked: entryDelegate.timeout > 0
+        onToggled: checked => root._setEntryEnabled(entryDelegate.index, checked)
       }
 
       AtmoIconButton {

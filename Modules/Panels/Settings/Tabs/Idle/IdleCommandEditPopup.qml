@@ -17,6 +17,7 @@ Popup {
 
   property int editIndex: -1
   property int timeoutValue: 60
+  readonly property int rememberedTimeoutValue: timeoutControl.rememberedValue
   property string commandValue: ""
   property string resumeCommandValue: ""
   property string nameValue: ""
@@ -35,6 +36,7 @@ Popup {
     if (visible || session.busy)
       return false;
     editIndex = index;
+    timeoutControl.rememberedValue = handle.rememberedTimeout || 60;
     setValue(value);
     session.begin(handle, session.value);
     open();
@@ -45,7 +47,7 @@ Popup {
     if (session.busy)
       return;
     nameInput.text = value.name;
-    timeoutSpinBox.value = value.timeout;
+    timeoutValue = value.timeout;
     commandInput.text = value.command;
     resumeCommandInput.text = value.resumeCommand;
   }
@@ -72,7 +74,12 @@ Popup {
   NSettingsEditSession {
     id: session
     inputGuard: inputEdits
-    value: ({name: nameInput.text, timeout: timeoutSpinBox.value, command: commandInput.text, resumeCommand: resumeCommandInput.text})
+    value: ({
+              name: nameInput.text,
+              timeout: root.timeoutValue,
+              command: commandInput.text,
+              resumeCommand: resumeCommandInput.text
+            })
     onAccepted: value => {
       root.saved(value.timeout, value.command, value.resumeCommand, value.name);
       root.close();
@@ -104,7 +111,7 @@ Popup {
     if (showName) {
       nameInput.forceActiveFocus();
     } else {
-      timeoutSpinBox.forceActiveFocus();
+      timeoutControl.forceActiveFocus();
     }
   }
 
@@ -142,14 +149,13 @@ Popup {
         placeholderText: I18n.tr("panels.idle.custom-entry-name-placeholder")
       }
 
-      NSpinBox {
-        id: timeoutSpinBox
+      IdleTimeoutControl {
+        id: timeoutControl
         visible: root.showTimeout
         Layout.fillWidth: true
         label: I18n.tr("panels.idle.custom-entry-timeout")
-        from: 0
-        to: 86400
-        suffix: "s"
+        timeoutValue: root.timeoutValue
+        onTimeoutEdited: value => root.timeoutValue = value
       }
 
       NTextInput {

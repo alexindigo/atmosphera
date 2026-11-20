@@ -1483,7 +1483,7 @@
       "suspend-description": "Seconds of inactivity before the system suspends.",
       "tab-behavior": "Behavior",
       "tab-custom": "Custom",
-      "timeouts-description": "Set to 0 to disable a stage. Timeouts are paused while Keep Awake is active.",
+      "timeouts-description": "Timeouts are paused while Keep Awake is active.",
       "timeouts-label": "Timeouts",
       "title": "Idle",
       "unavailable": "Native idle monitoring is not available on this compositor.",
