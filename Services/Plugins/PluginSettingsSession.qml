@@ -221,9 +221,10 @@ QtObject {
     pageApi.busy = true;
     failed = false;
     var lifetime = _lifetime;
+    var selected = editor;
     try {
       var completed = function (result) {
-        if (lifetime.alive)
+        if (lifetime.alive && selected && root.editor === selected)
           root._finish(result, reset);
       };
       if (reset) {
@@ -304,7 +305,7 @@ QtObject {
   }
   // Called after an admitted close has torn down the page. Real presentation
   // loss uses the editor's existing deferred release, not forced busy discard.
-  function presentationClosed() {
+  function _releaseSelection() {
     if (_cancelOpening) {
       _cancelOpening();
       _cancelOpening = null;
@@ -312,12 +313,15 @@ QtObject {
     if (editor)
       editor.release();
     editor = null;
-    if (pageApi)
-      pageApi.destroy();
-    pageApi = null;
     if (_preview)
       _preview.close();
     _preview = null;
+  }
+  function presentationClosed() {
+    _releaseSelection();
+    if (pageApi)
+      pageApi.destroy();
+    pageApi = null;
     if (fields)
       fields.destroy();
     fields = null;
@@ -330,9 +334,6 @@ QtObject {
   }
   Component.onDestruction: {
     _lifetime.alive = false;
-    if (_cancelOpening)
-      _cancelOpening();
-    if (editor)
-      editor.release();
+    _releaseSelection();
   }
 }

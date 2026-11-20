@@ -62,6 +62,12 @@ discard; busy excludes competing input/actions. A second Open refuses replacemen
 Ordinary Close uses dirty confirmation. Genuine presentation loss uses native
 deferred `release()` and fences late callbacks, not a forced busy discard.
 
+Both presentation settlement and actual session destruction use the same
+selection-resource release. The session closes its provided-editor preview
+before disappearing, and the native editor still retires only after becoming
+idle. Otherwise the runtime owner could retain a dead preview admission and
+refuse the next editor even after native persistence had settled.
+
 Settings hosts inject `registerPresentation` into the generic popup. From native
 editor selection through release, its host registers only a request-Close
 callback with SettingsPanelService. Tab/sidebar/search/subtab, native window
@@ -124,6 +130,22 @@ sparse metadata and staged Reset. Catalog page tests cover both scopes and
 their loaded children, but do not construct every Main or claim unrelated
 runtime defects fixed. Focused selected-client and P169 three-input tests carry
 their own consumer claims. The final integration matrices remain separate gates.
+
+The named-guest `plugin-settings-lifetime-regression.py` adds selected-session
+base-change/equal/ABA, source-content/inode replacement, actual plugin unload,
+held receipt, busy/delayed destruction and released-selection callback cases.
+It observes bound runtime text, readable retained fields, independent files and
+a separate cold engine. The preview-chain case observes shared preview below
+stored overrides below the selected preview across all four placement families.
+Closing either preview reveals current underlying values, never an opening
+snapshot. A replacement preview must acquire the released owner's admission.
+These synthetic session-contract cases do not certify catalog Main/actions.
+
+An equal-byte new-inode shared source is intentionally distinct from a frozen
+overlay source: native drafts fence selected path content and intent; overlays
+also retain source provenance. The suite checks the shared admitted-current
+outcome and the overlay refusal separately, plus changed-content replacement
+refusal for both. No shell inode fence changes the native contract.
 
 Historical old-owner preparations and mutable page examples remain in Git
 history; they are not current extension instructions.
