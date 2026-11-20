@@ -92,7 +92,11 @@ def described(manifest, overlays, namespace='settings', config_defaults=None):
     for key, declaration in sorted(descriptor['fields'].items()):
         if not isinstance(key, str) or not key or not isinstance(declaration, dict):
             raise ValueError('plugin settings fields require nonempty keys and descriptors')
-        node = shared.resolve(declaration, definitions)
+        # This annotation belongs to the shell's Settings page capability, not
+        # ConfigQml's value/type admission. Runtime owners remain loadable even
+        # when an external page has not supplied complete editor metadata yet.
+        native_declaration = {k: v for k, v in declaration.items() if k != 'editorUsage'} if namespace == 'settings' else declaration
+        node = shared.resolve(native_declaration, definitions)
         def groups(field):
             if field['type'] == 'Group' and set(field) - {'type', 'fields', 'sensitive', 'machineLocal'}:
                 raise ValueError('config groups support namespace metadata, not leaf constraints')
@@ -126,6 +130,35 @@ def described(manifest, overlays, namespace='settings', config_defaults=None):
     if set(defaults) - set(fields):
         raise ValueError('plugin defaults contain an undeclared setting')
     return defaults, fields, origin
+
+
+def editor_metadata(manifest, overlays):
+    """Finite page capabilities from authored fields and reviewed exact versions.
+
+    Compatibility supplies only a missing usage annotation on an actually
+    declared key. It never replaces authored types, flags or defaults, and no
+    classification is inferred from machineLocal, current values or filenames.
+    An incomplete page contract is independent of runtime schema readiness.
+    """
+    descriptor, _ = selected(manifest, overlays, 'settingsSchema', 'plugins')
+    _, fields, _ = described(manifest, overlays)
+    compatibility = overlays.get('plugins', {}).get(manifest['id'], {}).get(manifest['version'], {}).get('fields', {})
+
+    def sensitive(node):
+        return (node.get('sensitive', False) or
+                any(sensitive(child) for child in node.get('fields', {}).values()) or
+                ('element' in node and sensitive(node['element'])))
+
+    result = {}
+    for key, node in fields.items():
+        authored = descriptor['fields'][key]
+        usage = authored.get('editorUsage', compatibility.get(key, {}).get('editorUsage'))
+        if usage is None:
+            return dict(ready=False, error='settings-editor-usage-missing', fields={})
+        if usage not in ('configuration', 'content', 'operational'):
+            return dict(ready=False, error='settings-editor-usage-invalid', fields={})
+        result[key] = dict(usage=usage, sensitive=bool(sensitive(node)))
+    return dict(ready=True, error='', fields=result)
 
 
 def compile_schema(manifest, overlays, namespace='settings', config_defaults=None):
@@ -211,6 +244,7 @@ def compile_store(manifest, overlays, plugin_directory, user_file, config_file, 
     text = ('// Generated immutable plugin declarations; no user-file inference.\n'
             'import ConfigQml 1.0\n\nConfigStore {\n  autoSave: false\n'
             '  readonly property var settingsKeys: '+shared.literal(sorted(settings_fields))+'\n'
+            '  readonly property var settingsEditorMetadata: '+shared.literal(editor_metadata(manifest, overlays))+'\n'
             '  readonly property var configPaths: '+shared.literal(leaves(config_fields))+'\n'
             '  evidenceDirectory: '+shared.literal(str(evidence_directory))+'\n'
             '  schema: ConfigSchema {\n'+group_body(settings)+group_body(config)+'  }\n'

@@ -65,6 +65,28 @@ video-wallpaper 2.0.11 arbitrary-root-key runtimes deliberately have no finite
 overlay. An unknown id/version without authored metadata still fails closed.
 Authored current descriptors retain their own flags and optional fields.
 
+### Page usage metadata preparation
+
+Top-level settings descriptors may declare `editorUsage` as `configuration`,
+`content` or `operational`. This shell annotation is stripped before native
+schema compilation. It changes neither the value domain nor runtime writers.
+The generated store exposes separate `settingsEditorMetadata` with readiness,
+a value-free error and each declared field's usage and sensitivity (including
+sensitive descendants of atomic fields).
+
+Authored usage takes precedence. A reviewed exact-version catalog entry may
+supply missing usage only for an already declared key; it cannot replace the
+authored type/default or invent fields. Missing/invalid usage makes this page
+metadata unready without disabling the runtime schema. No current page is
+switched to a new writer by this preparation.
+
+`plugin-settings-page-metadata-test.py` checks this separation. The named-guest
+`plugin-settings-host-assets-regression.py --case metadata` additionally opens
+the generated native Todo owner and confirms that untouched draft Apply does
+not change its stored content. The driver's `red` case characterizes nine old
+consumer defects, not their correction; unimplemented production cases report
+BLOCKED rather than a partial implementation PASS.
+
 ### Source-only compatibility metadata
 
 `metadata.settingsSourceProjection` format 1 has exactly `version`, `projectionId`

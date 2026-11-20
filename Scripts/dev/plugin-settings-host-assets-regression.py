@@ -1,0 +1,432 @@
+#!/usr/bin/env python3
+"""Scoped plugin Settings contract witnesses. Execute only in the named guest.
+
+The registry is deliberately explicit about unimplemented cases. A partial
+characterization can never produce RED_CONTROLS or overall PASS.
+"""
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import time
+
+from guest_profile import ProcessIdentity, activate_profile, profile_argument, protect_owned_process
+
+
+RED_IDS = ('P001', 'P048', 'P054', 'P055', 'P056', 'P143', 'P161', 'P169', 'G81.generic')
+RED_PLUGINS = dict(P048='git-companion', P054='air-quality', P055='arch-updater',
+                   P056='github-contributions', P143='github-contributions', P161='air-quality')
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(value, indent=2) + '\n')
+
+
+def input_fingerprints(args):
+    def selected(root, names):
+        return {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+                for name in names if (root / name).is_file()}
+    fixtures = ['Scripts/dev/' + Path(__file__).name] + [str(path.relative_to(args.source)) for path in
+                sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-host-*')) if path.is_file()]
+    result = dict(harness=selected(args.source, fixtures))
+    result['candidateShell'] = selected(args.source, [
+        'Scripts/python/src/settings/plugin-schema.py', 'Configs/plugin-settings-overlays.json',
+        'Services/Plugins/PluginInstances.qml', 'Services/Plugins/PluginPreferenceEditor.qml',
+        'Services/Plugins/PluginSettingsPageApi.qml', 'Services/Plugins/PluginSettingsSession.qml',
+        'Services/Plugins/PluginLoader.qml', 'Widgets/NPluginSettingsPopup.qml',
+        'Services/UI/DesktopWidgetRegistry.qml',
+        'Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml'])
+    result['candidatePlugins'] = selected(args.plugins, [
+        plugin + '/' + name for plugin in ('todo', 'git-companion', 'air-quality', 'arch-updater', 'github-contributions', 'pomodoro')
+        for name in ('manifest.json', 'Settings.qml', 'Main.qml', 'DesktopWidget.qml', 'Panel.qml')])
+    if args.baseline_source:
+        result['baselineShell'] = selected(args.baseline_source, [
+            'Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml',
+            'Widgets/NPluginSettingsPopup.qml', 'Widgets/NToggle.qml',
+            'Services/Plugins/PluginLoader.qml', 'Services/Plugins/PluginSettingsPageApi.qml',
+            'Services/UI/SettingsPanelService.qml', 'Modules/Panels/Settings/SettingsContent.qml'])
+    if args.baseline_plugins:
+        result['baselinePlugins'] = selected(args.baseline_plugins, [
+            plugin + '/' + name for plugin in ('todo', 'git-companion', 'air-quality', 'arch-updater', 'github-contributions', 'pomodoro')
+            for name in ('manifest.json', 'Settings.qml', 'Main.qml', 'DesktopWidget.qml', 'Panel.qml')])
+    return result
+
+
+def seed_todo(case, plugins):
+    for name in ('config/settings/plugins', 'cache', 'state'):
+        (case / name).mkdir(parents=True)
+    shutil.copytree(plugins / 'todo', case / 'config/plugins/todo')
+    write_json(case / 'config/settings.json', {'settingsVersion': 62})
+    write_json(case / 'config/plugins.json', {'version': 6, 'states': {}, 'sources': []})
+    tasks = [dict(id=i, text='synthetic task ' + str(i), completed=False,
+                  createdAt='2026-11-19', pageId=7, priority='medium', details='',
+                  opaque={'keep': True}) for i in (1, 2)]
+    values = dict(todos=tasks, pages=[dict(id=0, name='General'), dict(id=7, name='Synthetic')],
+                  current_page_id=7, count=2, completedCount=0, isExpanded=True,
+                  opaque={'keep': True})
+    path = case / 'config/settings/plugins/todo.json'
+    write_json(path, values)
+    return path, values
+
+
+def run_fixture(profile, install, case, output, fixture, installed=False, extra_env=None):
+    target = fixture if installed else install / fixture.name
+    if not installed:
+        shutil.copy2(fixture, target)
+    # Existing ProbeFiles contract: the sentinel asks Quickshell to generate its
+    # actual qs module universe. Do not lint against unresolved qs imports.
+    qmlls = install / '.qmlls.ini'
+    if not qmlls.exists():
+        qmlls.touch(exist_ok=False)
+    # The named workspace already uses most of sockaddr_un's 108-byte path.
+    # Qt reserves two trailing/leading bytes even for pathname sockets on Linux
+    # (qlocalserver_unix.cpp). An empty caller prefix retains the existing
+    # private disk runtime while fitting Quickshell's variable-length instance ID.
+    env = dict(os.environ, **profile.child_environment(''))
+    env.update(ATMOSPHERA_CONFIG_DIR=str(case / 'config'),
+               ATMOSPHERA_SETTINGS_FILE=str(case / 'config/settings.json'),
+               ATMOSPHERA_CACHE_DIR=str(case / 'cache'),
+               ATMOSPHERA_STATE_DIR=str(case / 'state'), QML_DISABLE_DISK_CACHE='1')
+    env.update(extra_env or {})
+    with (output / 'runtime.log').open('w') as log:
+        process = subprocess.Popen(['qs', '-p', str(target), '--no-color'], env=env,
+                                   stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        guard = protect_owned_process(process)
+        try:
+            code = process.wait(timeout=60)
+        except subprocess.TimeoutExpired:
+            guard.terminate()
+            code = process.wait(timeout=10)
+            raise RuntimeError('fixture exceeded deadline; owned child joined, exit=' + str(code))
+    (output / 'runtime.exit').write_text(str(code) + '\n')
+    text = (output / 'runtime.log').read_text()
+    if code != 0:
+        raise RuntimeError('actual fixture failed; see runtime.log, exit=' + str(code))
+    if 'Failed to start IPC server' in text:
+        raise RuntimeError('Quickshell IPC socket unavailable; see runtime.log')
+    vfs = list((Path(env['XDG_RUNTIME_DIR']) / 'quickshell/vfs').iterdir())
+    if len(vfs) != 1:
+        raise RuntimeError('actual Quickshell lint universe missing or ambiguous')
+    lint = subprocess.run(['bash', str(install / 'Scripts/dev/qmllint.sh'), str(target)],
+                          env=dict(env, QS_VFS=str(vfs[0])), cwd=install,
+                          capture_output=True, text=True, timeout=120)
+    (output / 'lint.log').write_text(lint.stdout + lint.stderr)
+    if lint.returncode != 0:
+        raise RuntimeError('fixture lint failed in the actual qs/native universe; see lint.log')
+    profile.verify()
+    return text
+
+
+def startup(args, profile):
+    """Run the complete production entry, with only an owned exit observation."""
+    case, out = args.work_root / 'startup', args.output / 'startup'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    for name in ('config/settings', 'cache', 'state'):
+        (case / name).mkdir(parents=True)
+    write_json(case / 'config/settings.json', {'settingsVersion': 62})
+    write_json(case / 'config/plugins.json', {'version': 6, 'states': {}, 'sources': []})
+    entry = install / 'shell.qml'
+    original = entry.read_text()
+    # Disposable diagnostic mini-plan: observe the original bootstrap and full
+    # ShellSession Loader; name that existing loader and append an exit timer;
+    # canonical sources are untouched and the exact original hash is recorded.
+    needle = '  Loader {\n'
+    if original.count(needle) != 1 or not original.endswith('}\n'):
+        raise RuntimeError('production entry changed; review cold observation insertion')
+    observed = original.replace(needle, needle + '    id: coldSession\n', 1)
+    observed = observed[:-2] + '''  Timer {
+    interval: 12000
+    running: true
+    onTriggered: {
+      if (!bootstrap.ready || coldSession.status !== Loader.Ready || !coldSession.item) {
+        console.error("PLUGIN_SETTINGS_FULL_SHELL: FAIL (bootstrap/session)");
+        Qt.exit(2);
+        return;
+      }
+      console.log("PLUGIN_SETTINGS_FULL_SHELL: STARTED");
+      Qt.exit(0);
+    }
+  }
+}
+'''
+    entry.write_text(observed)
+    text = run_fixture(profile, install, case, out, entry, installed=True)
+    if 'PLUGIN_SETTINGS_FULL_SHELL: STARTED' not in text:
+        raise RuntimeError('full shell startup endpoint missing')
+    errors = [line for line in text.splitlines() if any(marker in line for marker in
+              ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'is not installed',
+               'Failed to start IPC server', 'Failed to load configuration'))]
+    result = dict(id='startup', status='PASS' if not errors else 'FAIL',
+                  fullProductionEntry=True, bootstrapReady=True, shellSessionReady=True,
+                  originalEntrySha256=hashlib.sha256(original.encode()).hexdigest(), diagnostics=errors)
+    write_json(out / 'result.json', result)
+    print('CASE startup: ' + result['status'], flush=True)
+    return result
+
+
+def metadata_case(args, profile):
+    case, out = args.work_root / 'metadata', args.output / 'metadata'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    path, _ = seed_todo(case, args.plugins)
+    before = path.read_bytes()
+    text = run_fixture(profile, install, case, out,
+                       args.source / 'Scripts/dev/fixtures/plugin-settings-host-metadata.qml')
+    if 'PLUGIN_SETTINGS_METADATA: NATIVE_READY' not in text or before != path.read_bytes():
+        raise RuntimeError('candidate metadata/native owner endpoint mismatch')
+    result = dict(id='metadata', status='PASS', declaredFields=True, nativeOwnerOpened=True,
+                  nativeUntouchedApply='nothing_to_save', sharedBytesUnchanged=True,
+                  productionPageProtection=False)
+    write_json(out / 'result.json', result)
+    print('CASE metadata: PASS (compiler only; P001 protection pending)', flush=True)
+    return result
+
+
+def red_todo(args, profile):
+    case, out = args.work_root / 'P001', args.output / 'P001'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.baseline_source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    path, before = seed_todo(case, args.baseline_plugins)
+    before_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+    text = run_fixture(profile, install, case, out,
+                       args.source / 'Scripts/dev/fixtures/plugin-settings-host-red-todo.qml')
+    if 'RED_CONTROL P001: REPRODUCED' not in text:
+        raise RuntimeError('P001 consumer marker missing')
+    after = json.loads(path.read_text())
+    if after.get('todos') != [] or after.get('pages') != [dict(id=0, name='General')]:
+        raise RuntimeError('P001 independent persisted readback did not reproduce loss')
+    if after.get('current_page_id') != 0 or after.get('opaque') != before['opaque']:
+        raise RuntimeError('P001 persisted endpoint differs from characterized boundary')
+    cold = out / 'cold'
+    cold.mkdir()
+    text = run_fixture(profile, install, case, cold,
+                       args.source / 'Scripts/dev/fixtures/plugin-settings-host-red-todo.qml',
+                       extra_env={'PHA_RED_COLD': '1'})
+    if 'RED_CONTROL P001: COLD_REPRODUCED' not in text:
+        raise RuntimeError('P001 separate cold consumer did not confirm persisted loss')
+    result = dict(id='P001', status='REPRODUCED', beforeSha256=before_hash,
+                  afterSha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                  beforeTasks=len(before['todos']), afterTasks=len(after['todos']),
+                  nativeSave=True, mainAndDesktopObserved=True, persistedReadback=True,
+                  separateColdConsumers=True)
+    write_json(out / 'result.json', result)
+    print('RED_CONTROL P001: REPRODUCED', flush=True)
+    return result
+
+
+def red_consumer(args, profile, finding):
+    plugin = RED_PLUGINS[finding]
+    case, out = args.work_root / finding, args.output / finding
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.baseline_source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    for name in ('config/settings/plugins', 'cache', 'state', 'bin'):
+        (case / name).mkdir(parents=True)
+    shutil.copytree(args.baseline_plugins / plugin, case / 'config/plugins' / plugin)
+    write_json(case / 'config/settings.json', {'settingsVersion': 62})
+    write_json(case / 'config/plugins.json', {'version': 6, 'states': {}, 'sources': []})
+    endpoint_source = args.source / 'Scripts/dev/fixtures/plugin-settings-host-endpoint.py'
+    for name in ('curl', 'gh', 'glab', 'plugin-settings-endpoint'):
+        endpoint = case / 'bin' / name
+        shutil.copy2(endpoint_source, endpoint)
+        endpoint.chmod(0o700)
+    endpoint = str(case / 'bin/plugin-settings-endpoint')
+    if plugin == 'air-quality':
+        before = dict(useNoctaliaLocation=False, customLatitude='1', customLongitude='2',
+                      aqiScale='us', dataSource='open-meteo', aqicnToken='', refreshInterval=120)
+        changed_key, changed_value = 'customLatitude', '' if finding == 'P161' else '3'
+    elif plugin == 'github-contributions':
+        before = dict(username='synthetic-alpha', token='', weeksShown=12, refreshInterval=360)
+        changed_key, changed_value = 'username', '' if finding == 'P143' else 'synthetic-beta'
+    elif plugin == 'arch-updater':
+        before = dict(systemCmd=endpoint + ' system-old', aurCmd=endpoint + ' aur-empty',
+                      updateCmd=endpoint + ' forbidden-update', flatpak=False, toast=False,
+                      refreshInterval=720)
+        changed_key, changed_value = 'systemCmd', endpoint + ' system-new'
+    else:
+        before = dict(platform='github', repo='synthetic/alpha', group='', refreshInterval=90)
+        changed_key, changed_value = 'repo', 'synthetic/beta'
+    path = case / 'config/settings/plugins' / (plugin + '.json')
+    before['opaque'] = dict(keep=True)
+    write_json(path, before)
+    before_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+    calls_path = out / 'endpoint-calls.jsonl'
+    text = run_fixture(profile, install, case, out,
+                       args.source / 'Scripts/dev/fixtures/plugin-settings-host-red-consumers.qml',
+                       extra_env=dict(PHA_FINDING=finding, PHA_PLUGIN=plugin, PHA_ENDPOINT=endpoint,
+                                      PHA_CALLS=str(calls_path), PATH=str(case / 'bin') + ':' + os.environ['PATH']))
+    if 'RED_CONTROL ' + finding + ': REPRODUCED' not in text:
+        raise RuntimeError(finding + ' real consumer marker missing')
+    after = json.loads(path.read_text())
+    if after.get(changed_key) != changed_value or after.get('opaque') != before['opaque']:
+        raise RuntimeError(finding + ' independent persisted endpoint mismatch')
+    calls = [json.loads(line) for line in calls_path.read_text().splitlines()]
+    if not calls or any(c['endpoint'] not in ('curl', 'gh', 'glab', 'plugin-settings-endpoint') for c in calls):
+        raise RuntimeError(finding + ' inert endpoint evidence missing')
+    result = dict(id=finding, status='REPRODUCED', plugin=plugin,
+                  beforeSha256=before_hash, afterSha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                  nativeSave=True, actualMain=True, desktopConstructed=True,
+                  observedConsumer='panel-result-row' if finding == 'P048' else 'desktop', persistedReadback=True,
+                  endpointCalls=len(calls), realWaylandTyping=finding == 'P048')
+    write_json(out / 'result.json', result)
+    print('RED_CONTROL ' + finding + ': REPRODUCED', flush=True)
+    return result
+
+
+def red_navigation(args, profile):
+    case, out = args.work_root / 'G81.generic', args.output / 'G81.generic'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.baseline_source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    path, before = seed_todo(case, args.baseline_plugins)
+    before_bytes = path.read_bytes()
+    text = run_fixture(profile, install, case, out,
+                       args.source / 'Scripts/dev/fixtures/plugin-settings-host-red-navigation.qml')
+    if 'RED_CONTROL G81.generic: REPRODUCED' not in text:
+        raise RuntimeError('G81.generic actual navigation marker missing')
+    if path.read_bytes() != before_bytes:
+        raise RuntimeError('G81.generic unexpectedly published shared preferences')
+    placed = json.loads((case / 'config/settings/desktopWidgets.json').read_text())
+    if 'instanceSettings' in placed['monitorWidgets'][0]['widgets'][0]:
+        raise RuntimeError('G81.generic unexpectedly published placement preferences')
+    result = dict(id='G81.generic', status='REPRODUCED', actualServiceNavigation=True,
+                  actualPageDestroyed=True, directCloseRefused=True,
+                  sharedBytesUnchanged=True, placementOverridesAbsent=True)
+    write_json(out / 'result.json', result)
+    print('RED_CONTROL G81.generic: REPRODUCED', flush=True)
+    return result
+
+
+def red_input(args, profile):
+    case, out = args.work_root / 'P169', args.output / 'P169'
+    case.mkdir()
+    out.mkdir()
+    install = case / 'install'
+    shutil.copytree(args.baseline_source, install,
+                    ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    for name in ('config/settings/plugins', 'cache', 'state'):
+        (case / name).mkdir(parents=True)
+    shutil.copytree(args.baseline_plugins / 'pomodoro', case / 'config/plugins/pomodoro')
+    write_json(case / 'config/settings.json', {'settingsVersion': 62})
+    write_json(case / 'config/plugins.json', {'version': 6, 'states': {}, 'sources': []})
+    before = dict(autoStartBreaks=False, autoStartWork=False, compactMode=False, playSound=True,
+                  opaque=dict(keep=True))
+    path = case / 'config/settings/plugins/pomodoro.json'
+    write_json(path, before)
+    text = run_fixture(profile, install, case, out,
+                       args.source / 'Scripts/dev/fixtures/plugin-settings-host-red-input.qml',
+                       extra_env=dict(QT_LINUX_ACCESSIBILITY_ALWAYS_ON='1', QT_FORCE_STDERR_LOGGING='1',
+                                      PHA_A11Y_PROBE=str(args.source / 'Scripts/dev/fixtures/plugin-settings-host-a11y.py'),
+                                      PHA_A11Y_RESULT=str(out / 'a11y.json')))
+    if 'RED_CONTROL P169: REPRODUCED' not in text or text.count('P169_KEYBOARD_NO_INTENT:') != 4:
+        raise RuntimeError('P169 actual keyboard/consumer markers missing')
+    accessibility = json.loads((out / 'a11y.json').read_text())
+    if len(accessibility['controls']) != 4 or any(c['actions'] for c in accessibility['controls']):
+        raise RuntimeError('P169 actual accessibility action evidence mismatch')
+    after = json.loads(path.read_text())
+    if any(after.get(key) != value for key, value in before.items()):
+        raise RuntimeError('P169 independent persisted consumer mismatch')
+    result = dict(id='P169', status='REPRODUCED', actualPomodoroPage=True, actualMain=True,
+                  keyboardControls=4, inaccessibleToggleActions=4, liveKeyboardCanary=True,
+                  liveAtspiPressCanary=True, nativeApply=True, persistedReadback=True)
+    write_json(out / 'result.json', result)
+    print('RED_CONTROL P169: REPRODUCED', flush=True)
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    profile_argument(parser)
+    for name in ('source', 'plugins', 'work-root', 'output'):
+        parser.add_argument('--' + name, type=Path, required=True)
+    for name in ('baseline-source', 'baseline-plugins'):
+        parser.add_argument('--' + name, type=Path)
+    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'all'), required=True)
+    parser.add_argument('--finding', choices=RED_IDS, help='one red characterization, never full-suite success')
+    args = parser.parse_args()
+    profile = activate_profile(args.guest_profile)
+    for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
+        if path != path.resolve() or not path.is_relative_to(parent) or path == parent:
+            parser.error('fresh work/output children must belong to the verified profile roots')
+    if args.case == 'red' and (args.baseline_source is None or args.baseline_plugins is None):
+        parser.error('red requires explicit baseline trees')
+    if args.finding and args.case != 'red':
+        parser.error('--finding is only valid for red characterization')
+    profile.prepare_roots()
+    with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        args.work_root.mkdir(exist_ok=False)
+        args.output.mkdir(exist_ok=False)
+        start = time.monotonic()
+        cases = []
+        inputs = input_fingerprints(args)
+        worker = ProcessIdentity.read(os.getpid()).record()
+        worker['cgroup'] = Path('/proc/self/cgroup').read_text().strip()
+
+        def record(status):
+            data = dict(status=status, guest=profile.record(), elapsedSeconds=round(time.monotonic()-start, 3),
+                        pid=os.getpid(), worker=worker, inputs=inputs, cases=cases, expectedRed=list(RED_IDS),
+                        completed=sum(c['status'] == 'REPRODUCED' for c in cases))
+            write_json(args.output / 'status.json', data)
+            (args.output / 'interim-report.md').write_text(
+                '# Plugin Settings characterization\n\n' + status + '\n\n' +
+                '\n'.join(c['id'] + ': ' + c['status'] for c in cases) + '\n')
+            return data
+
+        record('RUNNING')
+        try:
+            if args.case in ('startup', 'metadata'):
+                cases.append(startup(args, profile) if args.case == 'startup' else metadata_case(args, profile))
+                status = cases[-1]['status']
+                write_json(args.output / 'result.json', record(status))
+                return 0 if status == 'PASS' else 2
+            elif args.case == 'red':
+                for finding in (args.finding,) if args.finding else RED_IDS:
+                    if finding == 'P001':
+                        cases.append(red_todo(args, profile))
+                    elif finding in RED_PLUGINS:
+                        cases.append(red_consumer(args, profile, finding))
+                    elif finding == 'G81.generic':
+                        cases.append(red_navigation(args, profile))
+                    elif finding == 'P169':
+                        cases.append(red_input(args, profile))
+                    else:
+                        cases.append(dict(id=finding, status='BLOCKED', reason='witness not implemented yet'))
+                    record('RUNNING')
+                if not args.finding and len(cases) == len(RED_IDS) and all(c['status'] == 'REPRODUCED' for c in cases):
+                    write_json(args.output / 'result.json', record('RED_CONTROLS_PASS'))
+                    print('RED_CONTROLS: PASS (characterization only; production correction pending)', flush=True)
+                    return 0
+            else:
+                cases.append(dict(id=args.case, status='BLOCKED', reason='witness not implemented yet'))
+            result = record('BLOCKED')
+            write_json(args.output / 'result.json', result)
+            print('PLUGIN_SETTINGS_HOST_ASSETS: BLOCKED (incomplete witness registry)', flush=True)
+            return 3
+        except Exception as error:
+            cases.append(dict(id=args.case, status='FAIL', error=str(error)))
+            write_json(args.output / 'result.json', record('FAIL'))
+            print('PLUGIN_SETTINGS_HOST_ASSETS: FAIL (' + str(error) + ')', flush=True)
+            return 2
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
