@@ -118,6 +118,18 @@ opening bound. The last is a rejecting meta-control, not catalog coverage. Its
 test-only interposer always calls the real fsync and is never used for ordinary
 catalog or lock tests. This harness allowance does not optimize ConfigQml I/O.
 
+`plugin-settings-loader-regression.py` runs 36 construction rows with a real
+native session's page capability and both shared/instance runtime APIs. Direct
+`PluginLoader.createObject`, `PluginView` and caller-owned `Loader.setSource`
+paths cover root-declared, inherited and absent context properties. Runtime
+APIs must be rejected before any generic page is constructed; permitted panel
+context is observed both at creation and after a late update. Independent files
+remain unchanged. Disposable admission/direct/view bypass controls must fail at
+the exact runtime-API rejection assertion. These are loader contract tests,
+not catalog Main/action or physical input proof. The named guest profile and
+disk-backed work/output roots are required, unlike the historical standalone
+loader driver, whose foreign-guest defaults must not be reused for this task.
+
 `plugin-settings-lock-focus-regression.py` is a separate, explicitly authorized
 real-lock proof, not the in-shell preview test. It uses an explicit guest profile
 and the installed bundled locker on the guest's niri session. Candidate and
