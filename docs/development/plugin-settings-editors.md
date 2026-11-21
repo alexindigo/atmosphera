@@ -240,6 +240,39 @@ readers, a shared result writer and a wrong rendered child must all reject.
 This is direct-consumer/operational-owner proof, not physical input or broad
 visual/whole-catalog acceptance.
 
+## Shared observations with selected polling
+
+Cloudflare WARP, Monique, IP Monitor and wireless batteries keep one existing
+physical/network observation owner each. Main caches one `PluginSettingsPoller`
+per captured runtime context; every Bar/Panel of that API activates the same
+client. The selected interval drives that client's actual Timer. Main's existing
+background schedule remains plugin-level. No extra physical owner, preference
+store or action writer is created. Client retirement stops its schedule without
+stopping another client's schedule or the common observation process.
+
+The domain factories preserve milliseconds for WARP/Monique, seconds for IP and
+wireless batteries, existing fallback/disable policies, installed and busy guards,
+and startup/manual refresh. Interval changes do not add an immediate refresh.
+The poller first admits the domain's source interval through the same QML `int`
+property as the old Main, then scales seconds to milliseconds. Only IP requires
+a positive interval to run; imposing that policy on the other domains would
+change admitted zero/subsecond values. `plugin-settings-polling-domain-regression.py`
+checks ten actual Main/Timer cases, including fractional inputs and each zero
+policy, against explicit test contexts. It is typed-domain proof, separate from
+the native instance/control proof.
+Observations remain common: one instance's scheduled refresh can update all
+views; physical connection/profile actions affect the whole system. Instance
+Settings explicitly says so while retaining independent polling/display choices.
+
+`plugin-settings-polling-check.py` parses the finite reviewed factory, timer,
+field and manifest-entry mappings for all four members and rejects shared-reader,
+missing-view, interval-unit and retirement controls. It is not a general JS proof.
+`plugin-settings-polling-regression.py` runs the WARP and wireless representatives
+in both scopes with actual pages, native files, real timers, common Main processes
+and final rendered results from inert endpoints. Separate cold readers observe
+edited, Reset and inherited boundaries without publishing. This is controlled
+observation proof, not physical device/VPN actions or broad visual acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
