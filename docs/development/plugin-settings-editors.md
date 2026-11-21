@@ -150,6 +150,26 @@ a real flock barrier, permission refusal, independent intermediate files and
 separate cold Main/Settings readers. It does not restore deletion or redesign
 the separate provider/sort queue.
 
+Battery Threshold keeps one Main-owned configuration client per captured runtime
+context and one observation/write owner per physical battery. Settings, Panel
+and Bar use the selected client; Main/IPC remain explicitly plugin-level. Each
+client restores its saved policy once on activation or accepted Settings Apply,
+not on each rendering or physical observation. Two configurations selecting the
+same battery observe one physical value and can change it in activation/action
+order. The instance UI identifies this shared hardware effect. Only a successful
+explicit physical action may save through its captured runtime API; a retired
+context cannot publish a delayed result. Pages never receive that writer.
+
+`plugin-settings-battery-regression.py` uses the real Main, service, Settings,
+Panel and Bar in both scopes with disk-backed synthetic batteries. Actual chooser
+intent and native Apply, shared IPC, slider actions, permission refusal/Retry,
+staged Reset and held-write retirement have independent complete native-document
+and device-byte checks. Separate cold engines activate differing saved policies
+in sequence, observing each restore and the shared rendered threshold without
+changing configuration files. Exact shared-client and shared-writer mutations
+must reject. These are controlled hardware endpoints, not physical sysfs proof
+or final catalog/UI acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
