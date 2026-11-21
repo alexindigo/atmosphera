@@ -339,7 +339,7 @@ def leg_hook(ctx, name, files_to_stage, expect_rc0, expect_in_output=None,
     if ok and expect_rc0:
         # The clone deliberately carries the infra delta, so global status is
         # never empty. The hook contract is about the staged fixture: after
-        # update-index --again it must show no unstaged delta (formatter
+        # path-limited restaging it must show no unstaged delta (formatter
         # output re-staged) — e.g. exactly "A  <path>".
         rel = files_to_stage[0]
         status = sh(git + ["status", "--porcelain", "--", rel]
@@ -442,6 +442,8 @@ def leg_profile(ctx):
 
 def leg_profile_exec(ctx):
     cfg = profile_config(ctx)
+    target = ctx.repo / '.devcontainer/tests/fixtures/valid.qml'
+    before = target.read_bytes()
     cmd = ["devcontainer", "exec", "--docker-path", ctx.engine,
            "--workspace-folder", str(ctx.repo), "--config", str(cfg),
            ".devcontainer/precommit-check.sh",
@@ -449,8 +451,10 @@ def leg_profile_exec(ctx):
     p = sh(cmd)
     combined = p.stdout.decode() + p.stderr.decode()
     ctx.log_file(f"profile-exec-{ctx.engine}.log", combined)
-    ok = p.returncode == 0 and "qmllint: clean" in combined
-    record("profile_exec", "PASS" if ok else "FAIL", f"rc={p.returncode}")
+    after = target.read_bytes()
+    formatted = before != after and b"  width: 100" in after.splitlines()
+    ok = p.returncode == 0 and formatted
+    record("profile_exec", "PASS" if ok else "FAIL", f"rc={p.returncode} format-delta={formatted}")
     return ok
 
 

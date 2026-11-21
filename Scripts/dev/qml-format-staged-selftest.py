@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Git/index ownership contracts for both staged-format hook entry points."""
 from pathlib import Path
+import importlib.util
 import re
 import subprocess
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -86,6 +89,25 @@ class StagedFormatting(unittest.TestCase):
         subprocess.run(['bash', str(ROOT / 'Scripts/dev/qmlfmt.sh'), str(path)],
                        cwd=self.root, check=True, capture_output=True, timeout=15)
         self.assertIn('width: 1', path.read_text())
+
+    def test_profile_exec_requires_success_and_a_format_delta(self):
+        spec = importlib.util.spec_from_file_location('integration', ROOT / '.devcontainer/tests/integration.py')
+        integration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(integration)
+        target = self.root / '.devcontainer/tests/fixtures/valid.qml'
+        target.parent.mkdir(parents=True)
+        ctx = SimpleNamespace(repo=self.root, engine='podman', log_file=lambda *args: None)
+        for status, formatted, expected in ((0, True, True), (1, True, False), (0, False, False)):
+            with self.subTest(status=status, formatted=formatted):
+                target.write_text(integration.VALID_QML)
+
+                def execute(command):
+                    if formatted:
+                        target.write_text('import QtQuick\nItem {\n  width: 100\n  height: 50\n}\n')
+                    return subprocess.CompletedProcess(command, status, b'Formatting 1 files...\nDone\n', b'')
+
+                with patch.object(integration, 'sh', execute), patch.object(integration, 'record'):
+                    self.assertEqual(integration.leg_profile_exec(ctx), expected)
 
 
 if __name__ == '__main__':
