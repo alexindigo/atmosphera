@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
   settings-contracts:
@@ -14,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build the shared check-tool image
         run: docker build -t atmosphera-settings-check .devcontainer
-      - name: Check schema, detached writes and search freshness
+      - name: Full settings analysis, freshness and regressions
         run: |
           mkdir -p "$RUNNER_TEMP/atmosphera-settings"
           docker run --rm --memory=2g --memory-swap=2g --pids-limit=256 --cpus=2 \

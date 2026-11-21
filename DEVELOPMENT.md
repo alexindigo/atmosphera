@@ -278,15 +278,15 @@ relabelling, host socket binds, or host home mounts.
 ### Running checks by hand
 
 ```
-# format + lint (what the pre-commit hook runs)
-.devcontainer/container-run.sh .devcontainer/precommit-check.sh <files.qml...>
+# format (the staged-QML part of the pre-commit hook)
+.devcontainer/container-run.sh --plain .devcontainer/precommit-check.sh <files.qml...>
 
 # lint only, read-only overlay + VFS wrapper
 .devcontainer/container-run.sh atmo-dev Scripts/dev/qmllint.sh <files.qml...>
 ```
 
-`precommit-check.sh` formats first, directly on the workspace bind mount, and
-only then lets `atmo-dev` mount its tooling overlay for linting. Do not format
+`precommit-check.sh` only formats, directly on the workspace bind mount. Full
+lint runs separately in CI. Do not format
 through `atmo-dev`: a mounted tooling overlay is not a safe write-through
 formatting workspace (mutating a mounted overlay's lower tree is unsupported
 by the kernel).
@@ -377,10 +377,46 @@ devcontainer / Nix / host options as linting above.
 
 ## Pre-commit Hook
 
-A tracked pre-commit hook lives at `.githooks/pre-commit`. It runs qmlformat
-and qmllint on staged QML files inside the dev container (engine selected as
-above), blocking commits with errors, and rebuilds the settings search index
-when its inputs change.
+A tracked pre-commit hook lives at `.githooks/pre-commit`. It is a quick sanity
+check, not the full regression suite. It formats each staged QML file in the
+dev container (engine selected above), then restages it. Invalid QML blocks the
+commit. It does not silently regenerate or stage settings resources.
+
+After formatting, the hook checks the final staged snapshot: schema/defaults
+and overlay validity, generated schema and search-index freshness, and built-in
+plugin settings-store compatibility. These three checks use
+`settings-contract-check.py --quick` and have 10-second per-check deadlines.
+Unrelated unstaged and untracked content is not used. The warm-image path is
+intended to take a few seconds; the first invocation may build the tooling image.
+
+CI runs the complete settings suite, including detached-write analysis and all
+regressions, plus full-tree QML lint with native metadata/singleton/composite
+canaries. These workflows and plugin compatibility run on every pull request,
+regardless of its base branch, and pushes to `main`. The detached-write analyzer
+has a 300-second deadline (measured at 62.5 seconds in a 2-CPU VM container and
+100-130 seconds on GitHub runners); other full settings checks retain 120-second
+deadlines. The settings job has a 15-minute outer timeout and unchanged limits:
+2 GiB memory, no swap, 256 PIDs and 2 CPUs.
+
+Run the full set inside the assigned project test VM, from its source checkout,
+with `TMPDIR` set to a disk-backed directory:
+
+```sh
+# Full checkout settings analysis and regressions (default mode is always full).
+.devcontainer/container-run.sh --plain python3 -B Scripts/dev/settings-contract-check.py
+# Or check the complete final index, without consuming unstaged edits.
+bash Scripts/dev/settings-check-staged.sh
+# Full QML lint and rejection canaries; use a fresh private workspace each run.
+.devcontainer/container-run.sh --plain python3 -B Scripts/dev/qml-lint-ci.py --workspace /home/dev/atmosphera-lint
+# Plugin compatibility against HEAD, then checker regressions and the full audit.
+bash Scripts/dev/plugin-lint-staged.sh
+.devcontainer/container-run.sh --plain python3 -B Scripts/dev/plugin-lint-selftest.py
+.devcontainer/container-run.sh --plain python3 -B Scripts/dev/plugin-lint.py --root builtin/plugins --catalog builtin/plugins/registry.json
+```
+
+The optional historical Lefthook configuration formats only staged QML (not the
+whole repository) and retains its settings-index rebuild/restage duty. Its remote
+trust and signed-commit/tag checks remain unchanged in `pre-push`.
 
 Staged `builtin/plugins/` changes also run the shell-owned plugin compatibility
 checker through the same container launcher. The host performs Git plumbing
@@ -473,8 +509,8 @@ ATMOSPHERA_CONTAINER_ENGINE=docker .devcontainer/container-run.sh --plain \
 ```
 
 The source checkout is not changed. The private workspace disappears with the
-disposable container; standard pre-commit formatting and overlay behavior are
-unchanged.
+disposable container. Pre-commit formatting uses the plain container path and
+does not generate an overlay or run lint.
 
 The first container run builds the image and pinned QML dependencies; later runs
 reuse the cached image until its fingerprint inputs change.
