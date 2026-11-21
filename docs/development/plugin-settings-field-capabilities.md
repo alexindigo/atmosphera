@@ -104,6 +104,26 @@ signal, native Apply/Reset and independent files; it does not construct Main.
 The focused selected-client and Pomodoro input gates provide their additional
 real-input/runtime-consumer proof. ConfigQml >=0.5.2 is required.
 
+`plugin-settings-values-regression.py` adds a reviewed synthetic generic page
+with Boolean false, Integer zero, empty String, absent versus empty optional
+String, atomic List and Record input. Actual control signals feed the native
+selected session in plugin scope and all four placement families. Five cases
+retain 41 intermediate independent JSON boundaries plus 15 separate cold runtime
+consumers. At both the edited and optional-absence Reset boundaries the warm
+engine waits while an independent reader checks all four native runtime Text
+consumers. Configuration file hashes must stay identical across each reader;
+no page opens and no receipt is submitted. Five final cold engines separately
+check the later inherited state. Reset stages without publishing, then removes only the selected
+writable choices. Four placement cases additionally keep explicit overrides
+through a base change, omit each explicitly edited equal value, and observe
+subsequent inherited changes in already-open consumers. An untouched field,
+overridden sibling, legacy content and opaque members remain independent.
+The read oracle honors native recursive-object inheritance inside an atomic
+record. Those records still use one top-level edit address, never member paths.
+Disposable truthiness and inherited-Reset-presentation mutations must reject at
+their exact value assertions. These are native/page-control-signal proofs, not
+physical input, catalog Main/action or final whole-plan acceptance.
+
 The catalog witness measures native opening with a finite 15000 ms per-operation
 deadline. Native overlay preflight synchronously retains durable evidence: the
 observed 6331 ms retention interval plus a 3289 ms ordinary opening leaves about

@@ -1,0 +1,32 @@
+{
+  "id": "values-fixture",
+  "name": "Values fixture",
+  "author": "Atmosphera fixture",
+  "description": "Native typed field intent and Reset contract",
+  "version": "1.0.0",
+  "entryPoints": {"settings": "Page.qml"},
+  "metadata": {
+    "defaultSettings": {
+      "flag": true,
+      "amount": 7,
+      "label": "default",
+      "items": ["default"],
+      "record": {"flag": true, "count": 7, "note": "default"},
+      "untouched": "default-untouched",
+      "legacy": "default-content"
+    },
+    "settingsSchema": {
+      "version": 1,
+      "fields": {
+        "flag": {"type": "Boolean", "editorUsage": "configuration"},
+        "amount": {"type": "Integer", "editorUsage": "configuration"},
+        "label": {"type": "String", "editorUsage": "configuration"},
+        "optionalLabel": {"type": "String", "optional": true, "editorUsage": "configuration"},
+        "items": {"type": "List", "element": {"type": "String"}, "editorUsage": "configuration"},
+        "record": {"type": "Record", "open": true, "fields": {"flag": {"type": "Boolean"}, "count": {"type": "Integer"}, "note": {"type": "String"}}, "editorUsage": "configuration"},
+        "untouched": {"type": "String", "editorUsage": "configuration"},
+        "legacy": {"type": "String", "machineLocal": true, "editorUsage": "content"}
+      }
+    }
+  }
+}
