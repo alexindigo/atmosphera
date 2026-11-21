@@ -445,6 +445,30 @@ cases independently check old-process quiescence and retirement. All compositor
 modification endpoints are inert. These are not physical output/broad visual
 proofs, nor a repair of Monitor Layout's unrelated scale-status `t` reference.
 
+## Selected presentation and shared content/helper effects
+
+Clipper keeps its clipboard, pin, note and Todo content owners. Placed views
+read their selected presentation. Main captures originating paste delay and Todo
+enable policy before selection IO, selector display or delayed paste. A later
+view, setting change or retired context cannot retarget a pending action.
+Content commands remain immediate shared actions, not preference drafts.
+
+Music Search's Panel, Launcher and preview read their injected effective
+presentation. Main captures the originating auto-download choice and scalar
+track for playback; queue, saved-autoplay and batch continuations retain that
+policy. Retired contexts cannot start a download or another playback stage.
+The helper still owns shared playback, queue, library, provider, folder, limit
+and YouTube-client settings. Its legacy native `ytPlayerClient` preference is
+preserved but is not helper authority. Runtime preview-width publication keeps
+its originating API. No content is migrated and deletion is not restored.
+
+The content group checker maps every declared field, caller, effect owner and
+retained stage. Native representatives exercise actual pages, complete documents
+and separate nonpublishing cold readers. Individual held selection, selector,
+paste, playback, queue and batch cases use inert endpoints; actual helper
+folder/limit acknowledgment is checked separately. These are not physical
+clipboard/media, broad visual/translation or whole-catalog acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
