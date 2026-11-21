@@ -52,7 +52,7 @@ def main():
                  'Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml',
                  'Modules/Panels/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml',
                  'Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml',
-                 'Scripts/dev/fixtures/plugin-settings-popup.qml', 'Scripts/dev/fixtures/popup-close-contract.qml']
+                 'Scripts/dev/fixtures/plugin-settings-session.qml', 'Scripts/dev/fixtures/popup-close-contract.qml']
         result = subprocess.run(['bash', args.source / 'Scripts/dev/qmllint.sh', *[args.source / name for name in files]],
                                 cwd=args.source, env=dict(env, QS_VFS=str(vfs[0])), capture_output=True, text=True, timeout=45)
         (args.output / 'lint.log').write_text(result.stdout + result.stderr)

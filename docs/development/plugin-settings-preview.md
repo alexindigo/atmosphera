@@ -27,7 +27,20 @@ edits keep the same binding. The existing old-owner equal/suppressed-ABA limits
 remain. I5 replaces these structural stamps with native normalized owner identity
 and supplies draft values for the active read view, store values otherwise.
 
-`plugin-settings-preview.qml` observes bound text consumers across shared and all
-four placement routes, foreign edits, reorder refusal, held/current/no-op/stale
-receipts, real IO failure, explicit discard, owner destruction and cold restart.
-The callbacks gate also retains the actual popup's legacy-page close witness.
+`settings-retained-preview-regression.py` requires an explicit verified guest
+profile and fresh work/output roots. It runs `plugin-settings-preview.qml`
+against an owned install copy, observing bound text consumers across shared and
+all four placement routes, foreign edits, reorder refusal, held/current/equal/
+no-op/stale receipts, real IO failure, explicit discard, owner destruction and
+a separate cold restart. Independent reads check saved values, the failed
+linked destination's inode/bytes and the quarantined directory's sentinel.
+Its disposable `field-capture` and `preview-revision` negative controls must
+fail at their exact consumer assertions; they are not production coverage.
+
+Busy page preview actions refuse without losing newer local input. Once the
+held receipt completes, that input can update the selected preview. Captured
+preview revisions independently prevent an older acknowledgment from clearing
+newer fields. The native session regression consolidates the historical popup
+fixture's actual native-hide/held-result, directory-quarantine and untracked
+local-buffer Close cases, alongside Apply/Reset, callback ordering and cold
+consumers. No legacy snapshot page API is restored by those tests.

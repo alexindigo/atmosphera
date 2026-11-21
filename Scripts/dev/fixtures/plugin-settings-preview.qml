@@ -77,7 +77,7 @@ ShellRoot {
             throw new Error("I4_PREVIEW_ASSERT: " + phase + " " + label);
         }
         function fail(error) {
-          console.error(String(error));
+          console.error("preview phase=" + phase + " " + String(error) + "\n" + (error.stack || ""));
           if (faultBlocked && !faultProcess.running) {
             exitAfterRepair = true;
             fault("repair", function () {});
@@ -99,6 +99,10 @@ ShellRoot {
             readonly property var values: editor.values
             readonly property var previewValues: editor.previewValues
             readonly property var fields: editor.fields
+            readonly property var fieldCapture: editor.fieldCapture
+            readonly property var handle: editor.handle
+            readonly property bool writable: editor.writable
+            readonly property bool _releasePending: editor._releasePending
             signal rebased(var result)
             property Connections editorRebase: Connections {
               target: wrapper.editor
@@ -111,6 +115,9 @@ ShellRoot {
             }
             function previewScope() {
               return editor.previewScope();
+            }
+            function release() {
+              editor.release();
             }
             function copyValue(value) {
               return editor.copyValue(value);
@@ -143,8 +150,8 @@ ShellRoot {
           };
           Service.loadedPlugins = plugins;
           var factory = api.createSettingsEditor;
-          api.createSettingsEditor = function () {
-            var editor = factory();
+          api.createSettingsEditor = function (fieldIntent) {
+            var editor = factory(fieldIntent);
             return heldEditorFactory.createObject(root, {
                                                     editor: editor,
                                                     initialValue: editor.initialValue
@@ -427,7 +434,15 @@ ShellRoot {
                     widgets: rows
                   }
                 ];
-            nextFamily();
+            phase = "saving-families";
+            Settings.saveSelected([["bar", "widgets", "left"], ["bar", "screenOverrides"], ["controlCenter", "shortcuts", "left"], ["desktopWidgets", "monitorWidgets"]], function (result) {
+              try {
+                check(result.status !== "failed", "placement family setup persisted before capture");
+                nextFamily();
+              } catch (error) {
+                fail(error);
+              }
+            });
           } else if (phase === "family") {
             check(selectedText.text === "selected-family" && selected.pluginSettings.label === "first" && shared.text === "foreign", "placement consumer without shared mutation");
             var rows = familyRows().slice();
@@ -461,8 +476,15 @@ ShellRoot {
             phase = "held";
           } else if (phase === "held" && release) {
             check(held.status === "saved" && popup.busy, "actual held saved receipt");
-            popup.settingsPage.change("newer-local");
+            // The current page contract excludes preview actions while busy,
+            // but newer local input must still survive that receipt boundary.
+            popup.settingsPage.labelText = "newer-local";
+            check(!popup.settingsPage.pluginApi.previewSettings({
+                                                                  label: "must-not-stage-while-busy"
+                                                                }), "busy preview action is refused without publishing");
             deliver();
+            check(popup.settingsPage.labelText === "newer-local" && popup.dirty, "held receipt retains newer local input");
+            popup.settingsPage.change("newer-local");
             phase = "newer";
           } else if (phase === "newer") {
             check(api.pluginSettings.label === "submitted" && shared.text === "newer-local" && popup.dirty && popup.settingsPage.labelText === "newer-local", "acknowledgement preserves newer input and preview");
@@ -529,7 +551,9 @@ ShellRoot {
               phase = "failure-wait";
             });
           } else if (phase === "failure-wait" && !popup.busy) {
-            check(popup.saveFailed && popup.dirty && popup.settingsPage.labelText === "failed-local" && failedText.text === "failed-local", "actual IO failure retains input and preview");
+            check(popup.saveFailed, "actual IO publication fails");
+            check(popup.dirty && popup.settingsPage.labelText === "failed-local", "actual IO failure retains local input");
+            check(failedText.text === "failed-local", "actual IO failure retains bound runtime preview");
             phase = "failure-repairing";
             fault("repair", function () {
               failureApi.pluginSettings.label = "foreign-failed";
@@ -602,6 +626,10 @@ ShellRoot {
           NPluginSettingsPopup {
             id: popup
             parent: Overlay.overlay
+            onSettingsCompleted: result => {
+              if (result?.error?.code === "settings-field-contract")
+                root.fail("I4_PREVIEW_ASSERT: selected page requires field capture");
+            }
           }
         }
         Connections {
@@ -613,7 +641,7 @@ ShellRoot {
         Component.onCompleted: start()
         function fault(mode, callback) {
           afterFault = callback;
-          faultProcess.command = ["python3", "-B", Quickshell.env("I5_DESKTOP_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode, "plugins"];
+          faultProcess.command = ["python3", "-B", Quickshell.env("PHA_PREVIEW_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
           faultProcess.running = true;
         }
         Process {
@@ -621,7 +649,7 @@ ShellRoot {
           onExited: code => {
             try {
               root.check(code === 0, "guarded real IO fault");
-              root.faultBlocked = command[command.length - 2] === "block";
+              root.faultBlocked = command[command.length - 1] === "block";
               if (root.exitAfterRepair) {
                 Qt.exit(2);
                 return;

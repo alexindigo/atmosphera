@@ -52,6 +52,24 @@ ShellRoot {
     faultProcess.command = ["python3", "-B", Quickshell.env("PHA_SESSION_FAULT"), Settings.configDir.replace(/\/$/, ""), mode];
     faultProcess.running = true;
   }
+  function openSessionOwner(callback) {
+    Service._openSettingsOwner("session-quarantine", function (quarantined) {
+      try {
+        check(quarantined !== null, "quarantined source owner remains available for diagnosis");
+        var refused = false;
+        try {
+          quarantined.settingsScope.values.label = "must-not-replace-directory";
+        } catch (error) {
+          refused = String(error).indexOf("source-quarantined") !== -1;
+        }
+        check(refused, "native startup directory quarantine refuses input");
+        console.log("PLUGIN_SETTINGS_SESSION: QUARANTINE_PRESERVED");
+        Service._openSettingsOwner("session-fixture", callback);
+      } catch (error) {
+        fail(error);
+      }
+    });
+  }
   function begin() {
     if (started || !Settings.isLoaded)
       return;
@@ -61,7 +79,7 @@ ShellRoot {
     Registry.installedPlugins = {
       "session-fixture": manifest
     };
-    Service._openSettingsOwner("session-fixture", function (owner) {
+    openSessionOwner(function (owner) {
       try {
         check(owner !== null, "actual native owner");
         api = Service.createPluginAPI("session-fixture", manifest, owner, {}, {}, {});
@@ -191,8 +209,10 @@ ShellRoot {
       popup.applySettings();
       popup.applySettings();
       check(!popup.requestClose() && !popup.confirmDiscard() && popup.busy && applies === 1, "busy excludes competing actions");
+      host.visible = false;
       phase = "held";
     } else if (phase === "held" && held) {
+      check(host.visible && host.popupContentItem === popup && popup.visible, "native hide retains the same held-completion page and host");
       check(popup.busy && receipts === 0 && page.callbacks === 0, "native result held before completion feedback");
       var complete = held;
       held = null;
@@ -262,6 +282,22 @@ ShellRoot {
       check(!popup.saveFailed && !popup.dirty && !popup.resetConfirmation.visible, "current Reset reloads and retires input");
       check(PluginInstances.entryFor(placement).instanceSettings === undefined && Settings.data.bar.widgets.left[0].tag === "keep", "native reset sparse persistence and opaque row retained");
       check(popup.requestClose(), "clean Close accepted");
+      phase = "legacy-open";
+    } else if (phase === "legacy-open" && !popup.visible && !popup.currentPlugin) {
+      manifest = Object.assign({}, manifest, {
+                                 entryPoints: {
+                                   settings: "Legacy.qml"
+                                 }
+                               });
+      show();
+      phase = "legacy-close";
+    } else if (phase === "legacy-close" && popup.opened && page) {
+      check(typeof page.settingsDirty !== "boolean", "legacy page has no tracked dirty predicate");
+      page.setLabel("untracked-local-buffer");
+      check(!popup.requestClose() && popup.discardPending && popup.settingsPage === page, "untracked page Close conservatively confirms without Save");
+      popup.keepEditing();
+      check(popup.settingsPage === page && page.labelText === "untracked-local-buffer", "untracked buffer survives Keep editing");
+      check(popup.confirmDiscard(), "untracked input discarded only explicitly");
       console.log("PLUGIN_SETTINGS_SESSION: PASS");
       Qt.exit(0);
     }

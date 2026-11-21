@@ -45,12 +45,24 @@ def main():
         runner.write_json(case / 'config/plugins.json', dict(version=6, states={}, sources=[]))
         runner.write_json(case / 'config/settings/plugins/session-fixture.json', dict(label='shared', opaque=dict(keep=True)))
         shutil.copy2(args.source / 'Scripts/dev/fixtures/plugin-settings-session-page.qml', case / 'config/plugins/session-fixture/Page.qml')
+        page_source = (args.source / 'Scripts/dev/fixtures/plugin-settings-session-page.qml').read_text()
+        predicate = '  readonly property bool settingsDirty: pluginApi && labelText !== pluginApi.initialSettings.label\n'
+        if page_source.count(predicate) != 1:
+            raise RuntimeError('review the synthetic untracked-buffer page construction')
+        (case / 'config/plugins/session-fixture/Legacy.qml').write_text(page_source.replace(predicate, '', 1))
+        quarantine_plugin = case / 'config/plugins/session-quarantine'
+        quarantine_plugin.mkdir()
+        runner.write_json(quarantine_plugin / 'manifest.json', dict(manifest, id='session-quarantine'))
+        quarantine = case / 'config/settings/plugins/session-quarantine.json'
+        quarantine.mkdir()
+        (quarantine / 'sentinel').write_text('keep directory and contents\n')
+        quarantine_identity = quarantine.stat().st_ino
         fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-session.qml'
         fault = args.source / 'Scripts/dev/fixtures/plugin-settings-session-fault.py'
         env = dict(PHA_SESSION_FAULT=str(fault), PHA_WORK_BASE=str(profile.work_base))
         try:
             text = runner.run_fixture(profile, install, case, out, fixture, extra_env=env)
-            if 'PLUGIN_SETTINGS_SESSION: PASS' not in text:
+            if 'PLUGIN_SETTINGS_SESSION: PASS' not in text or 'PLUGIN_SETTINGS_SESSION: QUARANTINE_PRESERVED' not in text:
                 raise RuntimeError('actual session marker missing')
             bad = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')
             if any(marker in text for marker in bad):
@@ -64,7 +76,7 @@ def main():
             targets = [install / 'Widgets/NPluginSettingsPopup.qml']
             if (install / 'Services/Plugins/PluginSettingsSession.qml').exists():
                 targets.append(install / 'Services/Plugins/PluginSettingsSession.qml')
-            targets.append(case / 'config/plugins/session-fixture/Page.qml')
+            targets.extend(case / 'config/plugins/session-fixture' / name for name in ('Page.qml', 'Legacy.qml'))
             lint = subprocess.run(['bash', str(install / 'Scripts/dev/qmllint.sh'), *map(str, targets)],
                                   cwd=install, env=dict(os.environ, QS_VFS=str(vfs[0])),
                                   text=True, capture_output=True, timeout=180)
@@ -80,13 +92,18 @@ def main():
             text = runner.run_fixture(profile, install, case, cold, fixture, extra_env=dict(env, PHA_SESSION_COLD='1'))
             if 'PLUGIN_SETTINGS_SESSION: COLD_PASS' not in text or any(marker in text for marker in bad):
                 raise RuntimeError('separate cold native consumer mismatch')
+            if not quarantine.is_dir() or quarantine.stat().st_ino != quarantine_identity or sorted(path.name for path in quarantine.iterdir()) != ['sentinel'] or (quarantine / 'sentinel').read_text() != 'keep directory and contents\n':
+                raise RuntimeError('independent startup directory quarantine preservation failed')
             inputs = {str(path.relative_to(install)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (
                 install / 'Widgets/NPluginSettingsPopup.qml', install / 'Services/Plugins/PluginSettingsSession.qml') if path.exists()}
             inputs.update({str(path.relative_to(args.source)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (
                 fixture, fault, args.source / 'Scripts/dev/fixtures/plugin-settings-session-page.qml')})
             runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, nativeApply=True, realIoFailureAndRetry=True,
                 savedButStaleRetention=True, dirtyCloseKeepDiscard=True, busyExclusion=True, signalBeforeCallbacks=True,
-                instanceReset=True, independentPersistedReadback=True, separateColdConsumer=True, fieldOnlyRoleAdoption=True))
+                instanceReset=True, independentPersistedReadback=True, separateColdConsumer=True, fieldOnlyRoleAdoption=True,
+                nativeHideRetainsHeldPage=True, directoryQuarantinePreserved=True, untrackedBufferCloseConfirmation=True,
+                consolidatedFixture='plugin-settings-popup.qml'))
+            runner.remove_completed_installs(case, out)
             print('PLUGIN_SETTINGS_SESSION: PASS (native persistence/receipt/close/cold; field-only page)', flush=True)
         finally:
             (case / 'config/settings/plugins').chmod(0o755)
