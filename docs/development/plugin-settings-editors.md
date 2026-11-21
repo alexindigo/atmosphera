@@ -421,6 +421,30 @@ engine/source/color/backend/automation/delayed-writer lifetimes. Inert endpoints
 prove selected command inputs and native publication, not physical playback,
 general MPV option correctness or broad visual/translation acceptance.
 
+## Selected output parsing and layout actions
+
+Display Settings keeps one Main-owned config query client per captured context.
+Its selected path owns a fresh existing KDL parser. Source replacement or context
+retirement cancels both read/glob processes and queued stages before destroying
+that generation. Panels render that client's actual parsed cards; the live niri/
+wlr providers, modifications and udev monitor remain single physical owners.
+
+Monitor Layout keeps its common live/draft/selection model. Each originating
+fetch, grid edit, apply and config-script request captures its runtime context
+and effective policy. A fetch parses using its admitted backend, not a later
+mutable choice; apply's completion refresh retains its original command/backend.
+Retired requests cannot publish a layout or start follow-up work. Main/IPC stays
+plugin-level. Instance Settings explicitly identifies shared output/layout effects.
+
+The output group checker covers every declared field, caller and physical owner.
+Its native driver joins real page control intent, complete independent documents,
+Discard/Apply/staged Reset/inheritance and separate nonpublishing cold readers to
+actual Panel cards and grid coordinates. Original runtime and omitted-origin
+native controls must reject at those consumers. Held parser, backend and apply
+cases independently check old-process quiescence and retirement. All compositor
+modification endpoints are inert. These are not physical output/broad visual
+proofs, nor a repair of Monitor Layout's unrelated scale-status `t` reference.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
