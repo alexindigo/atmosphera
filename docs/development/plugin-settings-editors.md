@@ -149,3 +149,17 @@ refusal for both. No shell inode fence changes the native contract.
 
 Historical old-owner preparations and mutable page examples remain in Git
 history; they are not current extension instructions.
+
+`plugin-settings-entry-routes-regression.py` constructs actual BarTab,
+MonitorWidgetsConfig and ControlCenterTab owners and invokes their section
+editor's public gear handler. Five cases cover global, monitor-specific and
+monitor-inherited Bar lists plus both shortcut sections. Production signals
+must capture the expected instance before page creation. Discard, Apply,
+field/whole configuration Reset, real IO failure/Retry and same-ID replacement
+have exact independent owning-file checks. Separate cold readers observe the
+edited, whole-Reset, retried and final replacement boundaries without publishing.
+Disposable wrong-list/section controls must fail at the selected-context assertion.
+This is entry-route proof with a reviewed synthetic field page, not additional
+catalog Main/action or physical input coverage. The seed explicitly stores the
+existing Bar margin values, so it does not certify unrelated appearance controls
+as nonpublishing when their choices are absent.
