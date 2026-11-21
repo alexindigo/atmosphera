@@ -199,6 +199,18 @@ a held-process retirement are separate checks. Its original-code red saves a
 four disposable consumer mutations must also reject. This is controlled endpoint
 proof, not external network, clipboard, physical input or final catalog/UI proof.
 
+World Clock is another direct reader: Main has no configuration worker, while
+each Bar consumes its injected runtime API. The source-qualified
+`plugin-settings-world-clock-regression.py` exercises its existing seconds
+SpinBox and format combo in both scopes, Discard/Apply/staged Reset/inheritance,
+actual rotation Timer and city/time Text, independent documents and three cold
+boundaries per scope. Finite date substitutes record the actual timezone/format
+argv; both selected and overridden sibling clocks must really rotate. Timezone
+lists, hidden `showDate` and opaque data remain unchanged. Shared-reader and
+child-time mutations must fail. Known P023/P088/P107/P128 findings remain recorded
+separately: this witness does not claim an unused feature, list-shrink repair,
+shell-execution repair or unknown-timezone UI repair.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
