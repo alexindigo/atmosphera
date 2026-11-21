@@ -53,7 +53,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 33 | `github-contributions` | selected-client | ported |
 | 34 | `github-feed` | query-worker | port |
 | 35 | `habitica` | query-worker | port |
-| 36 | `hassio` | query-worker | port |
+| 36 | `hassio` | query-worker | ported |
 | 37 | `hello-world` | direct | no-port |
 | 38 | `hermes-agent` | shared-domain | port |
 | 39 | `hermes-ssh-chat` | singleton-session | port |
@@ -62,13 +62,13 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 42 | `ip-monitor` | observation | ported |
 | 43 | `kagi-quick-search` | launcher-only | no-instance |
 | 44 | `kde-connect` | shared-domain | port |
-| 45 | `keep-awake-plus` | observation | port |
+| 45 | `keep-awake-plus` | observation | ported |
 | 46 | `keybind-cheatsheet` | query-worker | port |
-| 47 | `kubectl-ctx` | query-worker | port |
-| 48 | `latency-monitor` | query-worker | port |
+| 47 | `kubectl-ctx` | query-worker | ported |
+| 48 | `latency-monitor` | query-worker | ported |
 | 49 | `launcher-pass` | launcher-only | no-instance |
 | 50 | `linux-wallpaperengine-controller` | shared-domain | port |
-| 51 | `lyrics-fetch` | observation | port |
+| 51 | `lyrics-fetch` | observation | ported |
 | 52 | `mawaqit` | query-worker | port |
 | 53 | `mimeapp-gui` | direct | no-port |
 | 54 | `mini-docker` | direct | no-port |
@@ -76,7 +76,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 56 | `monique` | observation | ported |
 | 57 | `monitor-layout` | shared-domain | port |
 | 58 | `mpd` | direct | no-port |
-| 59 | `mpris-lyric` | query-worker | port |
+| 59 | `mpris-lyric` | query-worker | ported |
 | 60 | `mpvpaper` | shared-domain | port |
 | 61 | `mullvad` | observation | port |
 | 62 | `music-search` | shared-domain | port |
@@ -105,7 +105,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 85 | `pomodoro` | stateful-client | port |
 | 86 | `port-monitor` | observation | port |
 | 87 | `privacy-indicator` | observation | port |
-| 88 | `ramadan-iftar` | query-worker | port |
+| 88 | `ramadan-iftar` | query-worker | ported |
 | 89 | `rss-feed` | direct | no-port |
 | 90 | `saved-desktop-widgets` | main-only | no-instance |
 | 91 | `screen-recorder` | shared-domain | port |
@@ -121,16 +121,16 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 101 | `special-workspaces` | direct | no-port |
 | 102 | `spotify-player` | query-worker | port |
 | 103 | `squeekboard-toggle` | direct | no-port |
-| 104 | `ssh-sessions` | query-worker | port |
+| 104 | `ssh-sessions` | query-worker | ported |
 | 105 | `sticky-notes` | shared-domain | port |
-| 106 | `syncthing-status` | query-worker | port |
+| 106 | `syncthing-status` | query-worker | ported |
 | 107 | `tailscale` | observation | port |
 | 108 | `tamagotchi` | stateful-client | port |
 | 109 | `thinkpad-fan` | view-backend | port |
 | 110 | `timer` | direct | no-port |
 | 111 | `todo` | shared-content | port |
 | 112 | `translator` | launcher-only | no-instance |
-| 113 | `update-count` | query-worker | port |
+| 113 | `update-count` | query-worker | ported |
 | 114 | `usb-drive-manager` | shared-domain | port |
 | 115 | `video-wallpaper` | shared-domain | port |
 | 116 | `vscode-provider` | launcher-only | no-instance |
@@ -151,7 +151,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a implemented: four poll-only members; representative runtime polling-selected-2 and parsed polling contract cover those four only. Remaining 34 required. Broad visual/translations/final acceptance pending. |
+| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). Native Latency/Ramadan/SSH representatives, HASS/MPRIS lifetime and Syncthing/Kubernetes originating-action proofs supplement every-member parsed mappings. Remaining 24 required; broad visual/final acceptance pending. |
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
@@ -760,20 +760,22 @@ Runtime-source/manifest fingerprint: `4a68b8a571be24b70c25db0436fa756be325cc631c
 
 ## hassio
 
-Browser pinned entities writes selected API, but Main haUrl/haToken/entities and connection data use shared context. Scope server/query/results/action targets; actual HA entity state is external shared state.
+Main caches selected connection clients with captured socket generations. Browser cache/loading and callbacks retire at source handoff; native pinned-entity writes stay selected. Controlled WebSocket and child Text/action proof; actual HA devices remain shared external effects.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `hassio/BarWidget.qml` | No literal field edge | 17, 27, 29, 31, 34 |
-| 2 | `hassio/BrowserView.qml` | `entities`:25,30,38 | 25, 30, 38, 40, 63 |
+| 2 | `hassio/BrowserView.qml` | `entities`:54,59,67 | 54, 59, 67, 69 |
 | 3 | `hassio/ControlCenterWidget.qml` | No literal field edge | 12, 15, 17, 19, 21 |
-| 4 | `hassio/Main.qml` | `entities`:161; `haToken`:240; `haUrl`:239 | 11, 161, 239, 240 |
-| 5 | `hassio/Panel.qml` | No literal field edge | 17, 99, 103, 116, 122, 135, 141, 166, ... |
+| 4 | `hassio/HassQueryWorker.qml` | `entities`:172 | 8, 21, 172 |
+| 5 | `hassio/HassSettingsClient.qml` | `haToken`:11; `haUrl`:10 | 6, 8, 9, 39 |
+| 6 | `hassio/Main.qml` | No literal field edge | 8, 12, 21 |
+| 7 | `hassio/Panel.qml` | No literal field edge | 17, 99, 103, 116, 122, 135, 141, 166, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `0759c518a7168665ac391d693f6ca28073a35c5ac226a3c706a66671889c5c49`.
+Runtime-source/manifest fingerprint: `3eb216a3b842444882748fd6d6950cf2016be3dbe7b96b484452329ebc49adc2`.
 
 ## hello-world
 
@@ -950,7 +952,7 @@ Runtime-source/manifest fingerprint: `486a5fc27c6577fb5a9d0d78f300df63444c690b8f
 
 ## keep-awake-plus
 
-Bar/Panel read Main-derived duration/defaultScope/extend/display flags. Select configuration projection/action arguments; one current inhibitor/session is shared state, not a dead instance preference.
+Main-owned selected policy/projection clients keep one common inhibitor/status/action owner. Bar/Panel/CC select duration/defaultScope/extend/display inputs; instance UI identifies system-wide effects. Parsed member contract plus shared-observation/action representative; no real inhibition proof.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -958,11 +960,11 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `keep-awake-plus/BarWidget.qml` | No literal field edge | 17, 18, 19, 20, 21, 22, 33, 53, ... |
 | 2 | `keep-awake-plus/ControlCenterWidget.qml` | No literal field edge | 9, 12, 16, 33 |
-| 3 | `keep-awake-plus/Main.qml` | `activateOnLeftClick`:91; `defaultScope`:87; `durations`:88; `includeUnlimited`:89; `quickExtendMinutes`:92; `showRemainingText`:90 | 84, 86 |
+| 3 | `keep-awake-plus/Main.qml` | `activateOnLeftClick`:25,138; `defaultScope`:21,134; `durations`:22,135; `includeUnlimited`:23,136; `quickExtendMinutes`:26,139; `showRemainingText`:24,137 | 17, 19, 20, 45, 49, 131, 133 |
 | 4 | `keep-awake-plus/Panel.qml` | No literal field edge | 13, 15, 23, 24, 28, 30, 31, 39, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `77809ee68618c23b1449bae3bbcaea3ccf67e11681308c2d960b4e7555ecb30e`.
+Runtime-source/manifest fingerprint: `f2638eb7ac76134763257b928b4343c27505105e361188852c6d9a679e0897ea`.
 
 ## keybind-cheatsheet
 
@@ -984,7 +986,7 @@ Runtime-source/manifest fingerprint: `49f8025fae2bdeb4a1c685984e9f3a346ee9f44479
 
 ## kubectl-ctx
 
-Bar/Panel presentation local; Main kubeconfigPath/pollInterval/terminal choose query/action target. Select context clients; active Kubernetes context changes remain explicit external shared effects.
+Main caches selected kubeconfig query/action generations; Bar/Panel select that client and CC opens its originating Panel. Inert captured-target/held-action retirement and native source-write proof. Context/namespace/resource actions affect the referenced kubeconfig or cluster, explained in instance UI.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -994,16 +996,18 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 2 | `kubectl-ctx/ContextRow.qml` | No literal field edge | No namespace/Main reference |
 | 3 | `kubectl-ctx/ControlCenterWidget.qml` | No literal field edge | No namespace/Main reference |
 | 4 | `kubectl-ctx/DeleteConfirm.qml` | No literal field edge | No namespace/Main reference |
-| 5 | `kubectl-ctx/Main.qml` | `kubeconfigPath`:14; `pollInterval`:15; `showErrorBadge`:16; `terminal`:17 | 11, 12 |
-| 6 | `kubectl-ctx/Panel.qml` | `panelHeight`:15; `panelWidth`:14 | 14, 15, 17, 51, 79, 80, 81, 82, ... |
-| 7 | `kubectl-ctx/ResourceRow.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `kubectl-ctx/KubectlQueryWorker.qml` | `pollInterval`:28; `showErrorBadge`:29; `terminal`:30 | 9, 25, 26 |
+| 6 | `kubectl-ctx/KubectlSettingsClient.qml` | `kubeconfigPath`:11; `pollInterval`:12; `showErrorBadge`:13; `terminal`:14 | 6, 8, 9, 10, 43 |
+| 7 | `kubectl-ctx/Main.qml` | No literal field edge | 10, 14, 23 |
+| 8 | `kubectl-ctx/Panel.qml` | `panelHeight`:15; `panelWidth`:14 | 14, 15, 17, 51, 79, 80, 81, 82, ... |
+| 9 | `kubectl-ctx/ResourceRow.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `e768fd1e6421d6cb9519828f893917b246fbaba88f309cfc7d2248920e5b76d6`.
+Runtime-source/manifest fingerprint: `0d90b2da7b21eb2b42f3539f9386e78e01e8eaddb41efd140ff1dc6dbfb9cd25`.
 
 ## latency-monitor
 
-Main hosts/barHost/thresholds/colors/animation/interval drive Host processes and every Bar/Panel. Select workers and projection; no shared-device exception for different hosts.
+Main-owned selected clients own Host collections, typed intervals and threshold/color projections. Source handoff stops old Hosts before deferred replacement. Both-scope native-page/file/actual Bar and Panel/cold proof plus held-ping lifetime; no real network endpoint proof.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1011,11 +1015,12 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `latency-monitor/BarWidget.qml` | No literal field edge | 25, 26, 27, 28, 29, 30, 31, 61, ... |
 | 2 | `latency-monitor/Host.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `latency-monitor/Main.qml` | `animations`:19; `barHost`:15; `colorCritical`:18; `colorGood`:16; `colorWarning`:17; `hosts`:21; `intervalSeconds`:11; `showHostName`:14; `thresholdGood`:12; `thresholdWarning`:13 | 8, 9 |
-| 4 | `latency-monitor/Panel.qml` | No literal field edge | 28, 29, 30, 31, 48, 50, 52, 302, ... |
+| 3 | `latency-monitor/LatencySettingsClient.qml` | `animations`:23; `barHost`:19; `colorCritical`:22; `colorGood`:20; `colorWarning`:21; `hosts`:25; `intervalSeconds`:15; `showHostName`:18; `thresholdGood`:16; `thresholdWarning`:17 | 7, 9, 12, 13 |
+| 4 | `latency-monitor/Main.qml` | No literal field edge | 8, 13, 23 |
+| 5 | `latency-monitor/Panel.qml` | No literal field edge | 28, 29, 30, 31, 48, 50, 52, 302, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `e4239daf45e47dfab32e72c46ca11da2562663fdced09af00b79f209f021ac88`.
+Runtime-source/manifest fingerprint: `dc5da8f2e02406eddd7b458a74faccf5b585282906fbe39748cc60e9fd3c5c84`.
 
 ## launcher-pass
 
@@ -1079,17 +1084,17 @@ Runtime-source/manifest fingerprint: `202336ab98168c1f86f277ba865bf60525bbe0a2d7
 
 ## lyrics-fetch
 
-Bar font/scroll geometry local; Main hideWhenPaused/hideWhenEmpty determines shared currentLyric. Keep song observation shared, select lyric visibility projection per context.
+One existing player/lyric observation owner remains in Main; context clients select paused/empty visibility and Bar selects that projection. Geometry remains local. Parsed member contract and explicit paused-state outcome; instance UI identifies shared observation.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `lyrics-fetch/BarWidget.qml` | `adaptScrollSpeed`:30; `fontFamily`:29; `fontSize`:27; `hideWhenEmpty`:28; `scrollMode`:26; `scrollSpeed`:25; `verticalRotationDirection`:31; `widgetWidth`:24 | 20, 24, 25, 26, 27, 28, 29, 30, ... |
-| 2 | `lyrics-fetch/Main.qml` | `hideWhenEmpty`:29; `hideWhenPaused`:28 | 28, 29 |
+| 2 | `lyrics-fetch/Main.qml` | `hideWhenEmpty`:20,60; `hideWhenPaused`:19,59 | 15, 17, 18, 28, 32, 59, 60 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `ef59be9407d979e399323e598477ed13371dc640b867dd2e8d438b8f58d1898f`.
+Runtime-source/manifest fingerprint: `e9513476cf4ff5086211ddfcb45d4716e1cee62b20660f7f78beb85e67baef4c`.
 
 ## mawaqit
 
@@ -1224,7 +1229,7 @@ Runtime-source/manifest fingerprint: `d6199560fe1e020e6a5f552ce1d6151b4d10be2516
 
 ## mpris-lyric
 
-Bar width/hide local; Main playerName/updateInterval choose lyric/source processes. Select player/worker/client; old-source result must not leak across contexts.
+Main caches selected player/lyric/timer clients; Bar width/hide stays local and actions control the selected shared player. Private-bus actual MPRIS metadata/lyric Text/old-player handoff/missing-player/action/retirement proof. Instance UI identifies shared playback effects.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
@@ -1232,10 +1237,11 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 | --- | --- | --- | --- |
 | 1 | `mpris-lyric/BarWidget.qml` | `hideWhenInactive`:23; `width`:27 | 20, 21, 22, 23, 24, 27, 28, 35, ... |
 | 2 | `mpris-lyric/LyricParser.js` | No literal field edge | No namespace/Main reference |
-| 3 | `mpris-lyric/Main.qml` | `playerName`:28,143; `updateInterval`:30 | 28, 29, 30, 31, 143 |
+| 3 | `mpris-lyric/Main.qml` | `playerName`:44 | 10, 15, 24, 44 |
+| 4 | `mpris-lyric/MprisSettingsClient.qml` | `playerName`:33; `updateInterval`:35 | 11, 13, 14, 34, 36 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `44c4f12863aa5048fa43db29132161e444282fcf42350a59a07dacdae791f480`.
+Runtime-source/manifest fingerprint: `87d7daafc56b8f8d85834121893efcb0c6d02cccdda86b696aeeead9bd3a14a8`.
 
 ## mpvpaper
 
@@ -1718,18 +1724,20 @@ Runtime-source/manifest fingerprint: `934e2e5009c5eaab39d99744f504930bb8d91e099e
 
 ## ramadan-iftar
 
-Bar show/countdown local; Main city/country/method query/calendar feeds Bar/Panel. Select source/result context; no shared-location exemption.
+Main caches selected city/country/method query generations and countdown/results shared across views of one API. Both-scope native city intent/file/actual prayer-time child Text and cold proof; parsed member contract covers selected tuple/retirement and view countdown calls.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `ramadan-iftar/BarWidget.qml` | `showAlways`:31; `showCountdown`:32 | 27, 28, 34, 35, 36, 37, 38, 39, ... |
-| 2 | `ramadan-iftar/Main.qml` | `city`:32; `country`:33; `method`:34 | 29, 30 |
+| 2 | `ramadan-iftar/Main.qml` | No literal field edge | 8, 13, 22 |
 | 3 | `ramadan-iftar/Panel.qml` | No literal field edge | 21, 22, 25, 26, 27, 28, 29, 30, ... |
+| 4 | `ramadan-iftar/PrayerQueryWorker.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `ramadan-iftar/PrayerSettingsClient.qml` | `city`:11; `country`:12; `method`:13 | 6, 8, 9, 10 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `aba90bf6a605ed1d1ac527ab03806edc3976c3ef3b822ae9e108cd3e04f88c7f`.
+Runtime-source/manifest fingerprint: `72464e6bf30acbcf034c7091305065770694b690d6dafe14cd500c681d374622`.
 
 ## rss-feed
 
@@ -2011,7 +2019,7 @@ Runtime-source/manifest fingerprint: `94adecd893c447d373a9c0bbd79c846df5b8693083
 
 ## ssh-sessions
 
-Main pollInterval/showInactiveHosts/terminal command choose common query/actions; Bar/Launcher/Panel read Main. Select per-context projection/action parameters over shared SSH config observations.
+One SSH config/session observer remains in Main; context clients select polling/filter/terminal policy for Bar/Panel/Launcher. Both-scope native control/file/host Text/captured inert terminal/cold proof; fractional seconds preserved before millisecond int admission. No real SSH connection proof.
 
 Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -2019,11 +2027,11 @@ Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `ma
 | --- | --- | --- | --- |
 | 1 | `ssh-sessions/BarWidget.qml` | No literal field edge | 24, 25, 43, 95, 100 |
 | 2 | `ssh-sessions/LauncherProvider.qml` | No literal field edge | 19, 43, 69, 73, 83 |
-| 3 | `ssh-sessions/Main.qml` | `pollInterval`:64; `showInactiveHosts`:291; `terminalCommand`:30 | 12, 13 |
+| 3 | `ssh-sessions/Main.qml` | `pollInterval`:22; `showInactiveHosts`:33,329; `terminalCommand`:30,72 | 13, 14, 21, 41, 45, 55 |
 | 4 | `ssh-sessions/Panel.qml` | No literal field edge | 17, 18, 25, 38, 171, 192, 201, 220 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `debdcee2f49d48d5fe939c4ac9c2c3162d98a10522ed76cb02c1a8f43d5ea2b9`.
+Runtime-source/manifest fingerprint: `5622d8d7b62426694b0097ae8bb892593af9298a1ceae550f3e7585334b64590`.
 
 ## sticky-notes
 
@@ -2051,19 +2059,21 @@ Runtime-source/manifest fingerprint: `1dc3e68c4741c5c72a2313377d363dadde581cf547
 
 ## syncthing-status
 
-Main endpoint/token/configPath/folderIds/TLS/poll/enabled determine shared worker; views/actions use Main. Select query/action context and writer; actual remote folder state remains shared.
+Main caches selected endpoint/token/configPath/folderIds/TLS helper generations; views/completion use captured context. Actual native originating folder writer and foreign-writer refusal reach helper/Panel Text with complete documents. Inert helper proof, not remote synchronization effects.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `syncthing-status/BarWidget.qml` | `enabled`:86 | 19, 85, 86 |
-| 2 | `syncthing-status/Main.qml` | `apiKey`:21; `apiUrl`:20; `configPath`:22; `enabled`:19,331; `folderIds`:26,195,201; `pollIntervalMs`:24; `verifyTls`:23 | 16, 17, 187, 195, 200, 201, 330, 331 |
+| 2 | `syncthing-status/Main.qml` | `enabled`:37 | 10, 14, 23, 36, 37 |
 | 3 | `syncthing-status/Panel.qml` | No literal field edge | 18 |
-| 4 | `syncthing-status/syncthing-status.py` | No literal field edge | No namespace/Main reference |
+| 4 | `syncthing-status/SyncthingQueryWorker.qml` | `enabled`:33; `pollIntervalMs`:34 | 10, 30, 31 |
+| 5 | `syncthing-status/SyncthingSettingsClient.qml` | `apiKey`:12; `apiUrl`:11; `configPath`:13; `enabled`:19; `folderIds`:15,73; `pollIntervalMs`:20; `verifyTls`:14 | 6, 8, 9, 10, 55, 72, 73 |
+| 6 | `syncthing-status/syncthing-status.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `c1c4433794cce9262b126842702c3c04acb44cf1bf29f8bb53cfee85d0b36523`.
+Runtime-source/manifest fingerprint: `e1e3e8a462efc46d92f7348ebdde47aaefe0353b9cea68b9b9e163cf1c497d0d`.
 
 ## tailscale
 
@@ -2183,17 +2193,19 @@ Runtime-source/manifest fingerprint: `dd0248c99379fb68c59924e7f4968ab981f9a4d75d
 
 ## update-count
 
-Bar icon/hide local; Main command/terminal/interval drive result and update actions. Select read-only check client/action parameters; no actual package update in tests.
+Main retains updater detection and one system-update action owner; selected clients own count-command generations/polling and capture update/terminal inputs at dispatch. Bar/completion select context. Parsed contract and actual controlled count result; instance UI identifies system-wide updates. No real package-update proof.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `update-count/BarWidget.qml` | `currentIconName`:28; `hideOnZero`:29 | 28, 29, 30, 76, 88, 103, 104, 117, ... |
-| 2 | `update-count/Main.qml` | `customCmdDoSystemUpdate`:22; `customCmdGetNumUpdates`:21; `updateIntervalMinutes`:14; `updateTerminalCommand`:15 | 14, 15, 21, 22 |
+| 1 | `update-count/BarWidget.qml` | `currentIconName`:28; `hideOnZero`:29 | 28, 29, 30 |
+| 2 | `update-count/Main.qml` | No literal field edge | 17, 21, 30 |
+| 3 | `update-count/UpdateCountQueryWorker.qml` | No literal field edge | No namespace/Main reference |
+| 4 | `update-count/UpdateSettingsClient.qml` | `customCmdDoSystemUpdate`:15; `customCmdGetNumUpdates`:15; `updateIntervalMinutes`:12; `updateTerminalCommand`:13 | 6, 9, 10, 11 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `caf444052433e5cbc95ab5ac3fa1c4bd47a96498578025b5be5f86ebecf730ea`.
+Runtime-source/manifest fingerprint: `f63f89af97df20ec2ccc929733c1a8b6e00829a166d3cb1cc24072d985bcc219`.
 
 ## usb-drive-manager
 

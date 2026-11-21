@@ -273,6 +273,49 @@ and final rendered results from inert endpoints. Separate cold readers observe
 edited, Reset and inherited boundaries without publishing. This is controlled
 observation proof, not physical device/VPN actions or broad visual acceptance.
 
+## Selected query and action inputs
+
+Latency Monitor, Ramadan Iftar, HASS, Syncthing Status and Kubectl Context use
+Main-owned context-keyed query clients. Host/process/socket generations capture
+typed source inputs. Replacement fences the old generation before constructing
+the settled replacement. Latency keeps the existing seconds-to-milliseconds int
+boundary; HASS keeps its 300 ms debounce. HASS Browser owns a request identity
+for its local cache and pending state, invalidates both at source/owner loss,
+and fetches again only after the selected source authenticates. A previous request
+cannot repopulate a replacement browser.
+
+MPRIS Lyric selects an actual shared MPRIS player per context; its lyric cache,
+timer and playback targets follow that selection. SSH Sessions selects polling,
+host filtering and terminal arguments over one SSH config/session observer.
+Lyrics Fetch selects paused/empty projection over one player/lyric observer.
+Keep Awake keeps one inhibitor/status/action owner while selecting menu and
+display policy. Update Count keeps one updater-detection/system-action owner,
+with selected count queries and captured update/terminal arguments. Shared
+effects are explicit in the relevant instance Settings descriptions and their
+existing dictionaries. None of these changes moves content or operational data.
+
+`plugin-settings-query-group-check.py` parses the finite reviewed field/factory/
+entry/lifetime mappings for all ten members and rejects 36 source controls.
+`plugin-settings-query-regression.py` joins real generic controls, native complete
+documents and actual Bar/Panel children for Latency, Ramadan and SSH in both
+scopes. Independent edited/Reset/following cold engines do not publish. Original
+shared-Main reds and selected-client/child-Text/retirement mutations must reject.
+SSH terminal collaborators are inert; no SSH connection is made.
+
+`plugin-settings-query-lifecycle-regression.py` additionally tests held ping
+retirement, a loopback HASS WebSocket, Browser rows/cache/loading, URL/token
+replacement and captured service targets, plus actual MPRIS peers on a private
+disk-backed guest bus. Old-player metadata, replacement/missing players, lyric
+Text and real Bar action dispatch have recorded endpoints. These explicit-context
+cases are source/lifetime proof, not additional native placement acceptance.
+`plugin-settings-query-actions-regression.py` uses native runtime APIs to test
+Syncthing folder publication and foreign-writer refusal, and inert Kubernetes
+captured kubeconfig/context/namespace/terminal targets with a held retired action.
+Complete documents and process identities are checked independently; shared-writer
+and retirement controls must reject. No device, inhibitor, cluster or package
+mutation is used as a witness. Broad visual review and whole-catalog acceptance
+remain separate gates.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
