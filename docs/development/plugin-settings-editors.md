@@ -181,6 +181,24 @@ fail at those actual consumers. No desktop-specific live-field contract is
 changed. The Panel preserves an explicit
 empty message instead of substituting its manifest reference value.
 
+Currency Exchange keeps one Main-owned rates/cache/process/timer client per
+captured runtime context. Panel, Bar and LauncherProvider bind that same client;
+existing Main properties, methods and IPC remain explicitly plugin-level. A
+selected interval updates its actual Timer without forcing a refresh or changing
+the existing five-minute cache and failed-attempt retry policy. Retired contexts
+stop their process and timer and cannot publish a late response.
+
+`plugin-settings-currency-regression.py` drives all four actual Settings combos
+in both scopes, with Discard, native permission failure/same-editor Retry, staged
+Reset and later inheritance. It observes actual conversion Text, Bar Text/display
+mode, Launcher results, client identities and Timer intervals against literal-argv
+curl substitutes, complete independent native documents and separate nonpublishing
+edited/Reset/following cold engines. Real failed/forced/expired-cache requests and
+a held-process retirement are separate checks. Its original-code red saves a
+30-minute instance interval while the actual old shared Timer remains 15 minutes;
+four disposable consumer mutations must also reject. This is controlled endpoint
+proof, not external network, clipboard, physical input or final catalog/UI proof.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
