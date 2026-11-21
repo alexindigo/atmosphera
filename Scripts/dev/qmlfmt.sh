@@ -42,7 +42,7 @@ export -f format_file
 export QMLFORMAT EXTRA_FLAGS
 
 # Find all .qml files
-mapfile -t all_files < <(find "${1:-.}" -name "*.qml" -type f)
+mapfile -d '' -t all_files < <(find "${1:-.}" -name "*.qml" -type f -print0)
 [ ${#all_files[@]} -eq 0 ] && { echo "No QML files found"; exit 0; }
 
 echo "Formatting ${#all_files[@]} files..."

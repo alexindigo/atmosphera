@@ -73,6 +73,20 @@ class StagedFormatting(unittest.TestCase):
         self.format(optional=True)
         self.assertEqual(self.git('diff', '--cached', '--name-only'), '')
 
+    def test_literal_paths_do_not_stage_untracked_matches(self):
+        (self.root / 'View*.qml').write_text('import QtQuick\nItem {}\n')
+        self.git('--literal-pathspecs', 'add', 'View*.qml')
+        (self.root / 'ViewDraft.qml').write_text('import QtQuick\nItem {}\n')
+        self.format()
+        self.assertNotIn('ViewDraft.qml', self.git('diff', '--cached', '--name-only'))
+
+    def test_real_formatter_preserves_newline_paths(self):
+        path = self.root / 'Two\nLines.qml'
+        path.write_text('import QtQuick\nItem{width:1}\n')
+        subprocess.run(['bash', str(ROOT / 'Scripts/dev/qmlfmt.sh'), str(path)],
+                       cwd=self.root, check=True, capture_output=True, timeout=15)
+        self.assertIn('width: 1', path.read_text())
+
 
 if __name__ == '__main__':
     unittest.main()

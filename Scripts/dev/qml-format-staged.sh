@@ -16,4 +16,4 @@ if [ "$hook_ec" -ne 0 ]; then
 fi
 
 # Never refresh unrelated partially staged files from their working-tree copy.
-git add -- "${files[@]}"
+git --literal-pathspecs add -- "${files[@]}"
