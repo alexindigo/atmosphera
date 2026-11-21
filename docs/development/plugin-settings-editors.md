@@ -469,6 +469,32 @@ paste, playback, queue and batch cases use inert endpoints; actual helper
 folder/limit acknowledgment is checked separately. These are not physical
 clipboard/media, broad visual/translation or whole-catalog acceptance.
 
+## Admitted automatic-session policy
+
+2-in-1-tools retains one tablet/sensor/output owner. Applied Settings completion
+and originating Bar/CC actions select a read-only effective context. Pending
+queries, apply/touch continuations and session exit restore retain their admitted
+policy. Automatic startup stays plugin-level until an origin is admitted. Bar/dock
+restore state is operational and remains with its existing shared native writer,
+not a selected page or placement writer. State-file replacement retires the old
+watcher/read generation. Retired contexts cannot start follow-up effects.
+
+OSK retains exactly one physical backend Loader. Main-owned context clients probe
+availability and project the active backend's live state; they never construct a
+keyboard. Applied backend/binary changes wait for retiring processes to quiesce.
+Backends receive injected policy/binary rather than Main's shared API. Delayed
+show and monitor restart handlers respect retirement. Settings Recheck uses only
+the applied runtime context. Both instance pages explain the common physical effect.
+
+The automatic group checker maps every configuration/protected field, caller,
+retained stage and physical owner. Native representatives join actual page intent
+to complete independent documents, Discard/Apply/staged Reset/inheritance and
+separate nonpublishing cold readers. Individual lifetime and writer drivers cover
+sensor/apply/touch, bar/dock restore/native publication, state-file handoff,
+keyboard binary/delayed-show and real private-bus monitor retirement. Compositor,
+keyboard, preemption, gsettings and dconf endpoints are inert. These are not
+physical, broad visual/translation or whole-catalog proofs.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
