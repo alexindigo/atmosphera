@@ -205,3 +205,22 @@ This is entry-route proof with a reviewed synthetic field page, not additional
 catalog Main/action or physical input coverage. The seed explicitly stores the
 existing Bar margin values, so it does not certify unrelated appearance controls
 as nonpublishing when their choices are absent.
+
+`plugin-settings-shared-routes-regression.py` separately activates the actual
+InstalledSubTab Settings gear, the public BarService operation with the real
+PopupMenuWindow, and an external `qs ipc` call to `plugin.openSettings` through
+the real IPCService/CurrentScreenDetector. Same-ID placements must not change
+these explicitly plugin-level routes into instance editors. The actual selected
+page/session exercises Discard, Apply, staged native field Reset, real IO refusal
+and same-editor Retry. Complete seeded documents are independently checked at
+seven boundaries per route; a separate cold engine observes shared/inherited
+Text consumers and unchanged overridden content without publishing. A disposable
+implicit-placement mutation must fail at the exact shared-context assertion.
+
+Failed native publication does not roll back the shared owner's requested
+desired values. The witness records that unconfirmed value separately from the
+unchanged files and inherited placement, and requires a failed/not-refreshed
+receipt with retained input/editor before Retry. No result claims rollback or
+success from that desired value. These are actual route/native-owner witnesses
+using the reviewed synthetic field page, not catalog Main/action or physical
+input coverage.
