@@ -339,6 +339,24 @@ nor repair of Mullvad's unrelated unused-option/confirmation findings.
 
 ## Runtime placement save and retirement Retry
 
+DS4 Colors and NVibrant keep one Main-owned physical action boundary, not one
+hardware owner per placement. DS4 captures RGB and controller paths for its
+serial direct/elevation operation; mutable display state cannot retarget a later
+controller or fallback. Explicit runtime actions retain their originating native
+writer and retirement fences late publication. Settings completion supplies its
+acknowledged color field with the read-only context, without resaving the page
+through Main. Automatic reconnect restoration remains plugin-level. NVibrant's
+Bar passes its runtime API to Main; the selected port/intensity use the original
+QML int admission and enabled writes go to that API. Both instance pages explain
+that physical changes are visible to every instance using the same device.
+
+The G2 action regression adds both-scope actual controls/native documents and
+separate nonpublishing cold readers for these members. Its individual controlled
+hardware cases hold direct writes, mutate later state, traverse two controllers
+and inert elevation, and independently check LED bytes and native writer scope.
+Held retirement and fractional NVibrant values have rejecting controls. These
+are inert endpoints, not physical controller/display proof or broad UI acceptance.
+
 Placement `saveSettings` requests selected publication of its owning atomic key,
 not a whole-store save. Failed receipts retain unconfirmed coverage. Explicit
 Retry publishes the current values of those same keys through native

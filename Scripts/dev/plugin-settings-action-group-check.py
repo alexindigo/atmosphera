@@ -20,6 +20,8 @@ def require(code, anchor, message):
 MEMBERS = {
     'screencast-gif': {'fps', 'maxRecordingSeconds', 'outputDir'},
     'network-manager-vpn': {'displayMode', 'connectedColor', 'disconnectedColor', 'disableToastNotifications'},
+    'ds4-colors': {'color', 'colorIcon', 'hideOnEmpty', 'recentColors'},
+    'nvibrant': {'displayIndex', 'enabled', 'vibranceValue'},
 }
 ANCHORS = {
     'screencast-gif/Main.qml': [
@@ -48,6 +50,75 @@ ANCHORS = {
 }
 
 
+def hardware(name, codes):
+    main = codes[name + '/Main.qml']
+    bar = codes[name + '/BarWidget.qml']
+    calls = {}
+    for path,code in codes.items():
+        for match in re.finditer(r'(?:\?\.|\.)(applyColors|setColor|applyVibrance|toggle)\(([^()]*)\)',code):
+            calls.setdefault(match[1],[]).append((path,match[2]))
+    if name == 'ds4-colors':
+        expected = {'applyColors':[(name+'/Main.qml',''),(name+'/Settings.qml','root.pluginApi.runtimeContext,root.valueColor')],
+                    'setColor':[(name+'/Main.qml','r,g,b'),(name+'/Main.qml','r,g,b'),(name+'/Main.qml','0,0,0')]}
+        anchors = [
+            'function setColor(r, g, b, runtimeApi, context)',
+            'if (!context?.current() || isApplying) return false',
+            'if (runtimeApi && runtimeApi.settingsContext !== context) return false',
+            'context: context, writer: runtimeApi || null',
+            'rgb: [currentR, currentG, currentB]',
+            'targets.push({path: path, red: controller.red, green: controller.green, blue: controller.blue, separator: controller.separator})',
+            'controllers: targets', 'const controller = target',
+            'target.path, target.separator, String(admitted.rgb[0])',
+            'if (success && operation.context.current() && operation.writer)',
+            'operation.writer.pluginSettings.color = "#" + operation.rgb.map(value => value.toString(16).padStart(2, "0")).join("")',
+            'operation.writer.saveSettings()',
+            'if (!operation.context.current()) { finishColor(operation, false); return }',
+            'colorWriter.operation = operation', 'pkexecRunner.operation = admitted',
+            'String(operation.rgb[0]), String(operation.rgb[1]), String(operation.rgb[2])',
+            'String(admitted.rgb[0]), String(admitted.rgb[1]), String(admitted.rgb[2])',
+            'root.applyNextController(admitted)',
+            'function applyColors(context, acceptedColor)', 'const cfg = context.settingsView',
+            'const selectedColor = acceptedColor ?? cfg?.color', 'const color = Qt.color(selectedColor)',
+            'Math.round(color.b * 255), null, context',
+            'root.applyColors()', 'root.setColor(r, g, b)', 'root.setColor(0, 0, 0)',
+        ]
+        require(codes[name+'/Settings.qml'], 'root.pluginApi.mainInstance?.applyColors(root.pluginApi.runtimeContext, root.valueColor)', name+': selected page completion')
+        for anchor in ('cfg.color', 'cfg.colorIcon', 'cfg.hideOnEmpty', 'charged: false'):
+            require(bar, anchor, name+': selected Bar '+anchor)
+        if 'pluginSettings' in main.replace('operation.writer.pluginSettings.color', ''):
+            raise ValueError(name+': unreviewed shared writer')
+        if 'Qt.callLater' in main or 'saveCurrentColor' in main:
+            raise ValueError(name+': mutable deferred color boundary')
+        if main.count('propertyvaroperation:null') != 2:
+            raise ValueError(name+': every process owns its admitted operation')
+    else:
+        expected = {'toggle':[(name+'/Main.qml',''),(name+'/BarWidget.qml','pluginApi'),(name+'/BarWidget.qml',''),(name+'/BarWidget.qml','')]}
+        anchors = [
+            'property int admittedDisplayIndex: 0', 'property int admittedVibranceValue: 0',
+            'function buildCmd(value, display)', 'for (var i = 0; i < display; i++)',
+            'parts.push(value.toString())', 'return parts',
+            'function applyVibrance(value, context)', 'context = context || pluginApi?.settingsContext',
+            'if (!context?.current()) return false',
+            'admittedDisplayIndex = (context.settingsView.displayIndex ?? defaults.displayIndex ?? 1) - 1',
+            'admittedVibranceValue = value',
+            'Quickshell.execDetached(buildCmd(admittedVibranceValue, admittedDisplayIndex))',
+            'function toggle(runtimeApi)', 'runtimeApi = runtimeApi || pluginApi',
+            'const context = runtimeApi?.settingsContext', 'const selected = context.settingsView',
+            'const newEnabled = !(selected.enabled ?? defaults.enabled ?? false)',
+            'const value = selected.vibranceValue ?? defaults.vibranceValue ?? 512',
+            'runtimeApi.pluginSettings.enabled = newEnabled', 'runtimeApi.saveSettings()',
+            'return applyVibrance(newEnabled ? value : 0, context)', 'function toggle() { root.toggle() }',
+        ]
+        require(bar, 'return pluginApi?.mainInstance?.toggle(pluginApi) ?? false', name+': originating runtime writer')
+        if 'execDetached' in bar or 'buildCmd' in bar or 'saveSettings' in bar:
+            raise ValueError(name+': duplicate physical command/writer in view')
+        if 'pluginApi.pluginSettings.' in main:
+            raise ValueError(name+': shared native writer')
+    for anchor in anchors:require(main,anchor,name+': admitted hardware mapping: '+anchor)
+    if {key:sorted(value) for key,value in calls.items()} != {key:sorted(value) for key,value in expected.items()}:
+        raise ValueError(name+': unreviewed originating hardware callers')
+
+
 def check(sources, manifests, dictionaries):
     rows = []
     for name, fields in MEMBERS.items():
@@ -64,10 +135,20 @@ def check(sources, manifests, dictionaries):
         # public command processes. A per-view physical owner fails this bound.
         types = [sources[name + '/Main.qml'].encode()[node.start_byte:node.end_byte].decode() for node in syntax.walk(tree.root_node) if node.type == 'ui_object_definition']
         processes = sum(bool(re.match(r'Process\s*\{', value)) for value in types)
-        expected_processes = 1 if name == 'screencast-gif' else 6
+        expected_processes = {'screencast-gif':1,'network-manager-vpn':6,'ds4-colors':4,'nvibrant':0}[name]
         if processes != expected_processes:
             raise ValueError(name + ': sole reviewed physical process owner changed')
-        if 'pluginSettings' in main:
+        # Count every reviewed plugin component, not only Main. A second
+        # physical owner in a Bar/page/helper cannot hide behind Main's count.
+        for path,code in codes.items():
+            if path==name+'/Main.qml':continue
+            raw=sources[path].encode();parsed=syntax.compact(sources[path])[1]
+            if any(node.type=='ui_object_definition' and re.match(rb'Process\s*\{',raw[node.start_byte:node.end_byte]) for node in syntax.walk(parsed.root_node)) or 'execDetached(' in code:
+                raise ValueError(name+': physical effect outside Main: '+path)
+        expected_detached=1 if name in ('screencast-gif','nvibrant') else 0
+        if main.count('execDetached(')!=expected_detached:
+            raise ValueError(name+': unreviewed detached effect owner')
+        if name in ('screencast-gif','network-manager-vpn') and 'pluginSettings' in main:
             raise ValueError(name + ': shared namespace reader/writer in selected action owner')
         settings = codes[name + '/Settings.qml']
         for anchor in ('visible: root.pluginApi?.scopeKind === "instance"', 'root.pluginApi?.tr("settings.shared-effect")'):
@@ -75,6 +156,10 @@ def check(sources, manifests, dictionaries):
         for locale, dictionary in dictionaries[name].items():
             if not dictionary.get('settings', {}).get('shared-effect', '').strip():
                 raise ValueError(name + ': shared-effect dictionary missing: ' + locale)
+        if name in ('ds4-colors','nvibrant'):
+            hardware(name,codes)
+            rows.append(dict(plugin=name,fields=sorted(fields),processOwners=processes,entries=manifests[name]['entryPoints']))
+            continue
         # Public action callers are a closed finite set, not a fingerprint-only
         # claim. Added/omitted call sites or shared-context injections reject.
         for method in (('trigger',) if name == 'screencast-gif' else ('connectTo', 'disconnectFrom', 'removeConnection')):
@@ -117,7 +202,21 @@ def main():
                    ('network-manager-vpn/Main.qml','_connectProc.actionPolicy = policy','_connectProc.actionPolicy = null','uncaptured-vpn-completion'),
                    ('network-manager-vpn/Main.qml','!context?.current()','!context','retired-vpn-admission'),
                    ('screencast-gif/Main.qml','const cfg = context.settingsView','pluginApi.pluginSettings.fps = 99; const cfg = context.settingsView','shared-capture-writer'),
-                   ('network-manager-vpn/Main.qml','const policy = capturePolicy(context);','pluginApi.pluginSettings.disableToastNotifications = false; const policy = capturePolicy(context);','shared-vpn-writer')]
+                    ('network-manager-vpn/Main.qml','const policy = capturePolicy(context);','pluginApi.pluginSettings.disableToastNotifications = false; const policy = capturePolicy(context);','shared-vpn-writer')]
+        mutations += [
+            ('ds4-colors/Settings.qml','applyColors(root.pluginApi.runtimeContext, root.valueColor)','applyColors()','omitted-ds4-page-context'),
+            ('ds4-colors/Main.qml','String(operation.rgb[0])','String(root.currentR)','mutable-ds4-direct'),
+            ('ds4-colors/Main.qml','String(admitted.rgb[0])','String(root.currentR)','mutable-ds4-elevation'),
+            ('ds4-colors/Main.qml','controllers: targets','controllers: Object.values(controllers)','mutable-ds4-controller-alias'),
+            ('ds4-colors/Main.qml','operation.writer.saveSettings()','pluginApi.saveSettings()','shared-ds4-writer'),
+            ('ds4-colors/Main.qml','success && operation.context.current() && operation.writer','success && operation.writer','retired-ds4-publication'),
+            ('nvibrant/BarWidget.qml','toggle(pluginApi)','toggle()','omitted-nvibrant-writer'),
+            ('nvibrant/Main.qml','context.settingsView.displayIndex','cfg.displayIndex','shared-nvibrant-display'),
+            ('nvibrant/Main.qml','runtimeApi.pluginSettings.enabled','pluginApi.pluginSettings.enabled','shared-nvibrant-writer'),
+            ('nvibrant/Main.qml','property int admittedVibranceValue','property real admittedVibranceValue','untyped-nvibrant-command'),
+            ('ds4-colors/BarWidget.qml','property var pluginApi: null','property var pluginApi: null\n Process { command: ["true"] }','second-physical-view-owner'),
+            ('nvibrant/Main.qml','Quickshell.execDetached(buildCmd(admittedVibranceValue, admittedDisplayIndex));','Quickshell.execDetached(buildCmd(admittedVibranceValue, admittedDisplayIndex)); Quickshell.execDetached(["true"]);','unreviewed-detached-effect'),
+        ]
         for path,old,new,label in mutations:
             # Admission appears in three VPN actions; change the first one for
             # the added shared-writer control, not a suppressing source baseline.
