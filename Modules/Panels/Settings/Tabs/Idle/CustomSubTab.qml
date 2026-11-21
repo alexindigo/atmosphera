@@ -17,20 +17,60 @@ ColumnLayout {
     id: entriesModel
   }
 
+  function _entryIdentity(entry) {
+    var identity = Object.assign({}, entry);
+    delete identity.timeout;
+    delete identity.name;
+    delete identity.command;
+    delete identity.resumeCommand;
+    return JSON.stringify([String(entry.name || ""), String(entry.command || ""), String(entry.resumeCommand || ""), identity]);
+  }
+
   function _loadToModel() {
     if (_saving)
       return;
-    entriesModel.clear();
+    // The model owns view-session memory. Reconcile by command identity, not
+    // row position; ambiguous identities must never lend memory to a new row.
+    var previous = {};
+    for (var row = 0; row < entriesModel.count; row++) {
+      var item = entriesModel.get(row);
+      var key = _entryIdentity(JSON.parse(item.entryJson));
+      if (previous[key] === undefined)
+        previous[key] = item.rememberedTimeout;
+      else
+        previous[key] = 0;
+    }
     var entries = [];
     try {
       entries = JSON.parse(Settings.data.idle.customCommands);
     } catch (e) {
       Logger.w("CustomSubTab", "Failed to parse customCommands:", e);
     }
+    var counts = {};
+    for (var entry of entries) {
+      var identity = _entryIdentity(entry);
+      counts[identity] = (counts[identity] || 0) + 1;
+    }
+    var unchanged = entries.length === entriesModel.count;
+    var rememberedRows = [];
+    for (var index = 0; index < entriesModel.count; index++) {
+      var old = entriesModel.get(index);
+      rememberedRows.push(old.rememberedTimeout);
+      if (unchanged && (_entryIdentity(entries[index]) !== _entryIdentity(JSON.parse(old.entryJson)) || entries[index].timeout !== old.timeout))
+        unchanged = false;
+    }
+    entriesModel.clear();
     for (var i = 0; i < entries.length; i++) {
+      var timeout = parseInt(entries[i].timeout);
+      if (isNaN(timeout) || timeout < 0)
+        timeout = 60;
+      var entryKey = _entryIdentity(entries[i]);
+      var remembered = timeout > 0 ? timeout : (unchanged ? rememberedRows[i] : (counts[entryKey] === 1 ? previous[entryKey] : 0));
       entriesModel.append({
                             "name": String(entries[i].name || ""),
-                            "timeout": parseInt(entries[i].timeout) || 60,
+                            "timeout": timeout,
+                            "rememberedTimeout": remembered || 60,
+                            "entryJson": JSON.stringify(entries[i]),
                             "command": String(entries[i].command || ""),
                             "resumeCommand": String(entries[i].resumeCommand || "")
                           });
@@ -42,12 +82,12 @@ ColumnLayout {
     var arr = [];
     for (var i = 0; i < entriesModel.count; i++) {
       var item = entriesModel.get(i);
-      arr.push({
-                 "name": item.name,
-                 "timeout": item.timeout,
-                 "command": item.command,
-                 "resumeCommand": item.resumeCommand
-               });
+      arr.push(Object.assign(JSON.parse(item.entryJson), {
+                               "name": item.name,
+                               "timeout": item.timeout,
+                               "command": item.command,
+                               "resumeCommand": item.resumeCommand
+                             }));
     }
     Settings.data.idle.customCommands = JSON.stringify(arr);
     _saving = false;
@@ -55,6 +95,14 @@ ColumnLayout {
 
   function _removeEntry(index) {
     entriesModel.remove(index, 1);
+    _saveFromModel();
+  }
+
+  function _setEntryEnabled(index, checked) {
+    var item = entriesModel.get(index);
+    var remembered = item.timeout > 0 ? item.timeout : item.rememberedTimeout;
+    entriesModel.setProperty(index, "rememberedTimeout", remembered);
+    entriesModel.setProperty(index, "timeout", checked ? remembered : 0);
     _saveFromModel();
   }
 
@@ -71,10 +119,16 @@ ColumnLayout {
   IdleCommandEditPopup {
     id: editPopup
     parent: Overlay.overlay
+    onSaved: {
+      var index = editPopup.editIndex < 0 ? entriesModel.count - 1 : editPopup.editIndex;
+      entriesModel.setProperty(index, "rememberedTimeout", editPopup.rememberedTimeoutValue);
+    }
   }
 
   function createEntryEditor(index) {
     var leaf = Settings.createEditor("idle.customCommands");
+    if (!leaf)
+      return null;
     var entries;
     try {
       entries = JSON.parse(leaf.initialValue);
@@ -86,9 +140,20 @@ ColumnLayout {
       leaf.discard();
       return null;
     }
-    var initial = index === -1 ? {name: "", timeout: 60, command: "", resumeCommand: ""} : entries[index];
+    var initial = index === -1 ? {
+                                   name: "",
+                                   timeout: 60,
+                                   command: "",
+                                   resumeCommand: ""
+                                 } : entries[index];
     return {
-      initialValue: {name: initial.name || "", timeout: initial.timeout === undefined ? 60 : initial.timeout, command: initial.command || "", resumeCommand: initial.resumeCommand || ""},
+      rememberedTimeout: index >= 0 ? entriesModel.get(index).rememberedTimeout : 60,
+      initialValue: {
+        name: initial.name || "",
+        timeout: initial.timeout === undefined ? 60 : initial.timeout,
+        command: initial.command || "",
+        resumeCommand: initial.resumeCommand || ""
+      },
       apply: function (value, callback) {
         // Start from the captured owning leaf, never the view's possibly newer
         // index/model. The leaf adapter rejects any intervening list change.
@@ -99,7 +164,9 @@ ColumnLayout {
           changed[index] = Object.assign({}, changed[index], value);
         leaf.apply(JSON.stringify(changed), callback);
       },
-      discard: function () { return leaf.discard(); }
+      discard: function () {
+        return leaf.discard();
+      }
     };
   }
 
@@ -134,6 +201,7 @@ ColumnLayout {
       required property int index
       required property string name
       required property int timeout
+      required property int rememberedTimeout
       required property string command
       required property string resumeCommand
 
@@ -142,9 +210,17 @@ ColumnLayout {
 
       NLabel {
         Layout.fillWidth: true
+        enabled: entryDelegate.timeout > 0
         label: entryDelegate.name || I18n.tr("panels.idle.custom-entry-unnamed")
-        description: I18n.trp("common.second", entryDelegate.timeout)
-        labelColor: (entryDelegate.command || entryDelegate.resumeCommand) ? AtmoColor.mPrimary : AtmoColor.mOnSurface
+        description: I18n.trp("common.second", entryDelegate.timeout > 0 ? entryDelegate.timeout : entryDelegate.rememberedTimeout)
+        labelColor: enabled && (entryDelegate.command || entryDelegate.resumeCommand) ? AtmoColor.mPrimary : AtmoColor.mOnSurface
+      }
+
+      NToggle {
+        Layout.fillWidth: false
+        Accessible.name: entryDelegate.name || I18n.tr("panels.idle.custom-entry-unnamed")
+        checked: entryDelegate.timeout > 0
+        onToggled: checked => root._setEntryEnabled(entryDelegate.index, checked)
       }
 
       AtmoIconButton {
