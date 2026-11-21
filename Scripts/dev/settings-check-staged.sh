@@ -16,4 +16,4 @@ git archive --format=tar "$INDEX_TREE" > "$SNAPSHOT/tree.tar"
 tar -xf "$SNAPSHOT/tree.tar" -C "$SNAPSHOT/index"
 ATMOSPHERA_SETTINGS_SNAPSHOT_DIR="$SNAPSHOT" \
   "$REPO_ROOT/.devcontainer/container-run.sh" \
-  python3 -B /atmosphera-settings-snapshot/index/Scripts/dev/settings-contract-check.py
+  --plain python3 -B /atmosphera-settings-snapshot/index/Scripts/dev/settings-contract-check.py "$@"
