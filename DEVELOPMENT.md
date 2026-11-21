@@ -380,7 +380,10 @@ devcontainer / Nix / host options as linting above.
 A tracked pre-commit hook lives at `.githooks/pre-commit`. It is a quick sanity
 check, not the full regression suite. It formats each staged QML file in the
 dev container (engine selected above), then restages it. Invalid QML blocks the
-commit. It does not silently regenerate or stage settings resources.
+commit. Both hook configurations call `Scripts/dev/qml-format-staged.sh` under
+Bash: it includes renamed QML paths, formats every selected file, and restages
+only those paths. Unrelated partially staged files stay untouched. It does not
+silently regenerate or stage settings resources.
 
 After formatting, the hook checks the final staged snapshot: schema/defaults
 and overlay validity, generated schema and search-index freshness, and built-in

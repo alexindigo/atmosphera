@@ -30,6 +30,7 @@ FULL_CHECKS = [
     ('settings-staged-selftest.py', []),
     ('settings-runner-paths-selftest.py', []),
     ('settings-hook-selftest.py', []),
+    ('qml-format-staged-selftest.py', []),
 ]
 
 

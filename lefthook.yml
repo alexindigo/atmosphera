@@ -1,12 +1,7 @@
 pre-commit:
   jobs:
     - name: format qml
-      run: |
-        cd "$(git rev-parse --show-toplevel)"
-        mapfile -t files < <(git diff --cached --name-only --diff-filter=ACM | grep '\.qml$' || true)
-        if [ "${#files[@]}" -gt 0 ]; then
-          .devcontainer/container-run.sh --plain .devcontainer/precommit-check.sh "${files[@]}" && git update-index --again
-        fi
+      run: cd "$(git rev-parse --show-toplevel)" && bash Scripts/dev/qml-format-staged.sh
     - name: build settings search index
       run: cd "$(git rev-parse --show-toplevel)" && .devcontainer/container-run.sh --plain python3 Scripts/dev/build-settings-search-index.py && git add Assets/settings-search-index.json
 

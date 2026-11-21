@@ -4,22 +4,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-STAGED_QML=$(git diff --cached --name-only --diff-filter=ACM | grep '\.qml$' || true)
-
-if [ -n "$STAGED_QML" ]; then
-  mapfile -t files <<< "$STAGED_QML"
-
-  # Capture output into a variable rather than piping directly to git's
-  # stdout/stderr — a filled pipe buffer from the container's output can
-  # stall git's commit pipeline. Only print the output on failure.
-  hook_output=$("$REPO_ROOT/.devcontainer/container-run.sh" --plain .devcontainer/precommit-check.sh "${files[@]}" 2>&1) && hook_ec=0 || hook_ec=$?
-  if [ $hook_ec -ne 0 ]; then
-    echo "$hook_output" >&2
-    exit 1
-  fi
-
-  git update-index --again
-fi
+bash Scripts/dev/qml-format-staged.sh
 
 # Validate the final staged built-in snapshot, including formatter restaging.
 # Drain the path list so SIGPIPE cannot skip the gate under pipefail.
