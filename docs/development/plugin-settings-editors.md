@@ -227,6 +227,19 @@ observing a signal handler alone is not process quiescence. Shared-client and
 rendered-child mutations must reject. This is controlled source/consumer proof,
 not physical input, broad visual review or full catalog acceptance.
 
+Coin Flip has no Main worker. `plugin-settings-coin-regression.py` checks its
+actual delay slider and native owner in both scopes, with an untouched hidden
+icon-color field, Discard/Apply/staged Reset/inheritance, actual animation Timer
+and Bar foreground, complete documents and separate nonpublishing cold readers.
+It also lets four actual Panels complete their animations sequentially, observing
+the child result Text/Image and each native runtime result write. The existing
+operational `lastResult` stays outside configuration intents; an equal-to-base
+runtime result follows native override omission. Independent documents protect
+the other contexts even when their random results coincide. Wrong Panel/Bar
+readers, a shared result writer and a wrong rendered child must all reject.
+This is direct-consumer/operational-owner proof, not physical input or broad
+visual/whole-catalog acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
