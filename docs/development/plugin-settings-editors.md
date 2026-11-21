@@ -211,6 +211,22 @@ child-time mutations must fail. Known P023/P088/P107/P128 findings remain record
 separately: this witness does not claim an unused feature, list-shrink repair,
 shell-execution repair or unknown-timezone UI repair.
 
+Not Just Text uses the same Main-owned context identity for its file/fortune
+clients. Actual Bar views of one context share one client; a changed source
+replaces its captured worker generation. Main's existing methods/properties stay
+explicitly plugin-level. Wallpaper changes retain their 300 ms per-context
+debounce, and fortune retains its initial request plus ten retries.
+
+`plugin-settings-not-just-text-regression.py` drives all nine real Settings
+controls in both scopes and observes actual child Bar Text from one-line disk
+files and finite literal-argv fortune endpoints. Complete native documents,
+Discard, permission failure/same-editor Retry, staged Reset/inheritance and
+separate nonpublishing cold readers are checked independently. Held endpoint
+PIDs/start identities must disappear on source replacement and retirement;
+observing a signal handler alone is not process quiescence. Shared-client and
+rendered-child mutations must reject. This is controlled source/consumer proof,
+not physical input, broad visual review or full catalog acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
