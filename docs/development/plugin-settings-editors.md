@@ -108,6 +108,18 @@ Main-owned clients use that captured context, not the shared Main configuration
 for every instance. One API shared across views keeps one client. Retired query
 generations cannot publish into replacement accounts, repositories or locations.
 
+`plugin-settings-git-matrix-regression.py` adds seven real Git Settings/Main/Panel
+scenarios: IO failure with same-editor Retry, changed shared base, external source
+replacement, inherited propagation with staged field Reset, held old response,
+GitLab group/platform/interval selection and empty GitLab scope. Each scenario
+compares complete native documents independently and starts a separate cold
+Panel consumer without changing configuration hashes. These controls invoke the
+page's own committed-input/selection signals; the original selected-Git witness
+separately drives genuine keyboard input and Discard. Inert gh/glab endpoints
+record literal query argv, not external account or physical-device behavior.
+This matrix does not certify Git's separate heading alias, every Bar/Desktop
+presentation, the full catalog or final whole-plan acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
