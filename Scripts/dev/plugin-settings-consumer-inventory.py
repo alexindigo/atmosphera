@@ -18,6 +18,9 @@ import tempfile
 SOURCE_SUFFIXES = {'.qml', '.js', '.sh', '.py'}
 SETTING = re.compile(r'pluginSettings|settingsView|defaultSettings|settingsConsumerFor|settingsContext')
 MAIN = re.compile(r'mainInstance|mainComponent|\bmain\.|\bMain\.')
+PLACED_ENTRIES = {'barWidget', 'desktopWidget', 'controlCenterWidget'}
+PLACED_CODE = re.compile(r'\b(?:BarWidgetRegistry|DesktopWidgetRegistry|ControlCenterWidgetRegistry)'
+                         r'\s*\.\s*registerPluginWidget\s*\(|\bPluginInstances\s*\.\s*apiFor\s*\(')
 
 
 def literal_reads(text, fields):
@@ -72,6 +75,10 @@ def scan(plugins):
         root = manifest_path.parent
         fields = manifest.get('metadata', {}).get('settingsSchema', {}).get('fields', {})
         files = []
+        placed = [dict(path=str(manifest_path.relative_to(plugins)),
+                       line=next(number for number, line in enumerate(manifest_path.read_text().splitlines(), 1)
+                                 if '"' + key + '"' in line), entry=key)
+                  for key in sorted(PLACED_ENTRIES & set(entries)) if entries[key]]
         for path in sorted(root.rglob('*')):
             if path.suffix not in SOURCE_SUFFIXES or not path.is_file():
                 continue
@@ -89,10 +96,15 @@ def scan(plugins):
                         field_reads.setdefault(key, []).append(number)
             files.append(dict(path=relative, sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                               evidence=evidence, fields=field_reads, literalEdges=literal_reads(text, fields)))
+            if runtime_file(relative):
+                placed.extend(dict(path=relative, line=number, entry=line.strip())
+                              for number, line in enumerate(text.splitlines(), 1)
+                              if PLACED_CODE.search(line.split('//', 1)[0]))
         rows.append(dict(plugin=root.name, id=manifest['id'], version=manifest['version'],
                          manifest=str(manifest_path.relative_to(plugins)),
                          manifestSha256=hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
-                         entries=entries, fields={key: value.get('editorUsage') for key, value in fields.items()},
+                          entries=entries, placedEntryEvidence=placed,
+                          fields={key: value.get('editorUsage') for key, value in fields.items()},
                          files=files))
     return rows
 
@@ -131,6 +143,10 @@ def review_rows(path, rows):
             raise ValueError('unreviewed disposition: ' + record['plugin'])
         if not record['ownership'].strip() or not record['pattern'].strip():
             raise ValueError('missing ownership/pattern: ' + record['plugin'])
+        row = next(row for row in rows if row['plugin'] == record['plugin'])
+        if record['disposition'] == 'no-instance' and row.get('placedEntryEvidence'):
+            raise ValueError('no-instance gained a placed entry; review ownership: '
+                             + record['plugin'] + ' ' + json.dumps(row['placedEntryEvidence'], sort_keys=True))
     return {row['plugin']: row for row in records}
 
 
@@ -169,8 +185,16 @@ def group_rows(path, reviewed):
         for key in ('id', 'pattern', 'approach', 'representatives', 'staticCheck', 'status'):
             if not group[key].strip():
                 raise ValueError('missing group contract: ' + key)
-        if any(reviewed[name]['disposition'] not in {'port', 'ported'} for name in group['members']):
-            raise ValueError('pass-2 member reclassified without reviewing grouping')
+        reconciled = group.get('reviewedNoInstance', {})
+        if not isinstance(reconciled, dict) or set(reconciled) - set(group['members']):
+            raise ValueError('reviewed no-instance member outside historical group')
+        for name in group['members']:
+            disposition = reviewed[name]['disposition']
+            if name in reconciled:
+                if disposition != 'no-instance' or not isinstance(reconciled[name], str) or not reconciled[name].strip():
+                    raise ValueError('stale/missing reviewed no-instance group reconciliation: ' + name)
+            elif disposition not in {'port', 'ported'}:
+                raise ValueError('pass-2 member reclassified without reviewing grouping: ' + name)
     return groups
 
 
@@ -198,13 +222,15 @@ def inventory(rows, reviewed, manual, groups):
                   'The group file is `Scripts/dev/fixtures/plugin-settings-consumer-groups.json`.',
                   'Every row describes a proof obligation; only its explicit status records completed subgroups.',
                   'A large group may land in independently green subgroups. Unusual consumers',
-                  'retain individual runtime proof. Every unit runs full VM settings contracts.', '',
+                   'retain individual runtime proof. Every unit runs full VM settings contracts.', '',
                   '| # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |',
                   '| --- | --- | --- | --- | --- | --- | --- |'])
     for index, group in enumerate(groups, 1):
         lines.append(f"| {index} | {group['id']}: {group['pattern']} ({len(group['members'])}) | "
                      + ', '.join('`' + name + '`' for name in group['members'])
-                     + f" | {group['approach']} | {group['representatives']} | {group['staticCheck']} | {group['status']} |")
+                      + f" | {group['approach']} | {group['representatives']} | {group['staticCheck']} | {group['status']} |")
+        for name, decision in group.get('reviewedNoInstance', {}).items():
+            lines.extend(['', 'Reviewed historical-group reconciliation for `' + name + '`: ' + decision])
     for row in rows:
         review = reviewed[row['plugin']]
         lines.extend(['', '## ' + row['plugin'], '', review['ownership'], '',
@@ -270,7 +296,31 @@ def selftest():
                 raise AssertionError('unreviewed coverage accepted: ' + name)
         path.write_text(header + valid)
         assert review_rows(path, rows)['a']['disposition'] == 'no-port'
-    print('CONSUMER_INDEX_SELFTEST: 8 checks passed (lexical edges and review coverage)')
+        path.write_text(header + 'dmenu\tipc-session\tno-instance\tmanifest/callers reviewed\n')
+        plugin = Path(work) / 'dmenu'; plugin.mkdir()
+        manifest = dict(id='dmenu', version='1', entryPoints=dict(main='Main.qml', panel='Panel.qml', settings='Settings.qml'))
+        (plugin / 'Main.qml').write_text('Item {}\n')
+        for entry in sorted(PLACED_ENTRIES) + ['code-registration', 'code-instance']:
+            control = json.loads(json.dumps(manifest))
+            code = 'Item {}\n'
+            if entry in PLACED_ENTRIES:
+                control['entryPoints'][entry] = 'Placed.qml'
+            elif entry == 'code-registration':
+                code = 'BarWidgetRegistry.registerPluginWidget("dmenu", component, {});\n'
+            else:
+                code = 'PluginInstances.apiFor("dmenu", placement);\n'
+            (plugin / 'manifest.json').write_text(json.dumps(control, indent=2))
+            (plugin / 'Main.qml').write_text(code)
+            try:
+                review_rows(path, scan(Path(work)))
+            except ValueError as error:
+                assert 'no-instance gained a placed entry' in str(error), str(error)
+            else:
+                raise AssertionError('Dmenu placed entry escaped review: ' + entry)
+        (plugin / 'manifest.json').write_text(json.dumps(manifest, indent=2))
+        (plugin / 'Main.qml').write_text('Item {}\n')
+        assert review_rows(path, scan(Path(work)))['dmenu']['disposition'] == 'no-instance'
+    print('CONSUMER_INDEX_SELFTEST: lexical/review coverage and 5 Dmenu placed-entry controls passed')
 
 
 def main():
@@ -288,16 +338,17 @@ def main():
     if args.selftest:
         selftest()
     rows = scan(args.plugins.resolve())
+    # Classification is validated even when the caller requests only JSON.
+    reviewed = review_rows(args.review, rows)
+    groups = group_rows(args.groups, reviewed)
     args.output.write_text(json.dumps(dict(kind='source-review-index', runtimeProof=False, entries=rows), indent=2) + '\n')
     if args.summary:
         args.summary.write_text(summary(rows))
     if args.inventory:
-        reviewed = review_rows(args.review, rows)
-        groups = group_rows(args.groups, reviewed)
         if args.selftest:
             with tempfile.TemporaryDirectory(prefix='consumer-groups-') as work:
                 path = Path(work) / 'groups.json'
-                for control in ('missing', 'duplicate', 'unknown', 'unclassified'):
+                for control in ('missing', 'duplicate', 'unknown', 'unclassified', 'unreviewed-no-instance', 'stale-reconciliation', 'foreign-reconciliation'):
                     mutated = json.loads(args.groups.read_text())
                     review_control = {name: dict(record) for name, record in reviewed.items()}
                     if control == 'missing':
@@ -306,8 +357,14 @@ def main():
                         mutated['groups'][0]['members'][-1] = mutated['groups'][0]['members'][0]
                     elif control == 'unknown':
                         mutated['groups'][0]['members'][-1] = 'unknown-consumer'
-                    else:
+                    elif control == 'unclassified':
                         review_control[mutated['groups'][0]['members'][0]]['disposition'] = 'no-port'
+                    elif control == 'unreviewed-no-instance':
+                        review_control[mutated['groups'][0]['members'][0]]['disposition'] = 'no-instance'
+                    elif control == 'stale-reconciliation':
+                        review_control['dmenu']['disposition'] = 'port'
+                    else:
+                        mutated['groups'][0]['reviewedNoInstance']['not-a-member'] = 'unreviewed'
                     path.write_text(json.dumps(mutated))
                     try:
                         group_rows(path, review_control)
@@ -315,7 +372,7 @@ def main():
                         pass
                     else:
                         raise AssertionError('invalid group coverage accepted: ' + control)
-            print('CONSUMER_GROUP_SELFTEST: 4 rejecting coverage controls passed')
+            print('CONSUMER_GROUP_SELFTEST: 7 rejecting coverage/reconciliation controls passed')
         rendered = inventory(rows, reviewed, manual_rows(args.manual, rows, args.plugins.resolve()), groups)
         if args.check:
             if args.inventory.read_text() != rendered:

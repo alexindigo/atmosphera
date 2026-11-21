@@ -519,6 +519,24 @@ or external application is invoked. Finite parsed mappings and runtime wrong-cli
 hour-child, range and retirement controls complement that proof. Broad visual and
 final paired acceptance remain separate gates.
 
+## Captured IPC sessions without placed entries
+
+Dmenu is the reviewed no-instance IPC/session case: its manifest supplies only
+Main, Panel and Settings, not a placed opener. Main captures applied menu defaults
+and explicit request policy at IPC admission. API/generation identity fences file
+loaders, delayed screen callbacks and the chain timer. Selection consumes the
+captured prefix/toast/result/callback; later preferences cannot retarget it.
+File-level configuration fills only absent request options. Panel chrome remains
+live plugin-level presentation; Main alone admits close, including closeOnSelect.
+
+The Dmenu regression drives actual IPC, real page controls/native documents and
+actual Panel rows/results, plus a separate nonpublishing cold reader. Held real
+file/screen completions and inert callbacks exercise replacement and retirement.
+Generic page coverage includes both native editor scopes without claiming an
+installed placed route. The finite checker covers all seven leaves; the catalog
+inventory rejects newly added placed entry points for a no-instance review.
+These are controlled endpoints, not physical input or broad visual acceptance.
+
 ## Captured Main windows
 
 Wallcards and Somnus retain one Main-owned window each. Placed Bars capture their
