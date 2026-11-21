@@ -120,6 +120,18 @@ record literal query argv, not external account or physical-device behavior.
 This matrix does not certify Git's separate heading alias, every Bar/Desktop
 presentation, the full catalog or final whole-plan acceptance.
 
+Music Search's folder and limit buttons remain explicit Main/helper actions,
+outside the preference draft. Its Main-owned result records pending, saved,
+failed or rejected admission and the actual applied value. Settings renders
+that result without treating a newer local buffer as applied. Helper errors or
+mismatched result values cannot acknowledge success, including the helper's
+old-output/zero-exit failure case. Busy/failure keeps local input for Retry;
+preference Discard does not roll back an already completed helper action.
+`plugin-settings-music-action-regression.py` uses both scopes, the actual helper,
+a real flock barrier, permission refusal, independent intermediate files and
+separate cold Main/Settings readers. It does not restore deletion or redesign
+the separate provider/sort queue.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
