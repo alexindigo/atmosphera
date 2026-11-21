@@ -1,0 +1,806 @@
+{
+  "version": 1,
+  "entries": {
+    "2-in-1-tools": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "activate-linux": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "agent-session-status": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "air-quality": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "amd-gpu-monitor": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "arch-updater": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "assistant-panel": {
+      "entry": "Settings.qml",
+      "files": [
+        "Constants.js",
+        "Settings.qml"
+      ]
+    },
+    "auto-cpufreq": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "battery-actions": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "battery-and-power-management": {
+      "entry": "SettingsView.qml",
+      "files": [
+        "SettingsView.qml"
+      ]
+    },
+    "battery-monitor-plus": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "battery-threshold": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "battery-wireless-devices": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "caffeinate": {
+      "entry": "Settings.qml?v=2",
+      "files": [
+        "DurationLanguage.js",
+        "LauncherModel.js",
+        "Settings.qml",
+        "SettingsModel.js"
+      ]
+    },
+    "calibre-provider": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "catwalk": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "clamshell": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "claude-code-panel": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "clipboard": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "clipper": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "cloudflare-warp": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "coin-flip": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "color-scheme-creator": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "currency-exchange": {
+      "entry": "Settings.qml",
+      "files": [
+        "CurrencyData.js",
+        "Settings.qml"
+      ]
+    },
+    "custom-commands": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "daily-wallpaper": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "display-settings": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "dmenu": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "ds4-colors": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "file-search": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "giphy-search": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "git-companion": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "github-contributions": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "github-feed": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "habitica": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "hassio": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "hello-world": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "hermes-agent": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "hermes-ssh-chat": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "hyprland-steam-overlay": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "hyprland-visual-editor": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "ip-monitor": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "kagi-quick-search": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "kde-connect": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "keep-awake-plus": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "keybind-cheatsheet": {
+      "entry": "Settings.qml",
+      "files": [
+        "ColorPairRow.qml",
+        "ColorPill.qml",
+        "PreviewBadge.qml",
+        "Settings.qml"
+      ]
+    },
+    "kubectl-ctx": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "latency-monitor": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "launcher-pass": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "linux-wallpaperengine-controller": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml",
+        "helpers/panel/BadgeHelpers.js",
+        "helpers/shared/ColorCacheHelpers.js"
+      ]
+    },
+    "lyrics-fetch": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "mawaqit": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "mimeapp-gui": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "mini-docker": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "model-usage": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "monique": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "monitor-layout": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "mpd": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "mpris-lyric": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "mpvpaper": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml",
+        "common/ToolRow.qml",
+        "settings/AdvancedTab.qml",
+        "settings/AudioTab.qml",
+        "settings/AutomationTab.qml",
+        "settings/PlaybackTab.qml"
+      ]
+    },
+    "mullvad": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "music-search": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "netbird": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "network-indicator": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "network-manager-vpn": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "news": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "niri-animation-picker": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "niri-auto-tile": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "niri-screensaver": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "niri-windows-map": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "noctalia-calculator": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "noctalia-supergfxctl": {
+      "entry": "src/Settings.qml",
+      "files": [
+        "src/Settings.qml"
+      ]
+    },
+    "not-just-text": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "notes-scratchpad": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "ntfy-notifications": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "nvibrant": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "nvidia-optimus": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "nvim-session-provider": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "obs-control": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "obsidian-provider": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "openvpn3": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "osk-toggle": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "parallax-wallpaper": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "plugin-manager": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "pomodoro": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "port-monitor": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "privacy-indicator": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "ramadan-iftar": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "rss-feed": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "saved-desktop-widgets": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "screen-recorder": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "screen-shot-and-record": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "screen-toolkit": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "screencast-gif": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "screenshot": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "shell-profiles": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "show-keys": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "simple-notes": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "slowbongo": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "somnus": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "special-workspaces": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "spotify-player": {
+      "entry": "Settings.qml",
+      "files": [
+        "Auth.js",
+        "Settings.qml"
+      ]
+    },
+    "squeekboard-toggle": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "ssh-sessions": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "sticky-notes": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "syncthing-status": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "tailscale": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "tamagotchi": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "thinkpad-fan": {
+      "entry": "SettingsView.qml",
+      "files": [
+        "SettingsView.qml"
+      ]
+    },
+    "timer": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "todo": {
+      "entry": "Settings.qml",
+      "files": [
+        "Pages.js",
+        "Settings.qml"
+      ]
+    },
+    "translator": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "update-count": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "usb-drive-manager": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "video-wallpaper": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml",
+        "common/MonitorCommands.js",
+        "common/MonitorEdits.qml",
+        "common/MonitorTabBar.qml",
+        "common/ToolRow.qml",
+        "settings/AdvancedTab.qml",
+        "settings/AutomationTab.qml",
+        "settings/GeneralTab.qml",
+        "settings/advanced/Mpvpaper.qml",
+        "settings/advanced/NoBackend.qml",
+        "settings/advanced/VideoWallpaper.qml"
+      ]
+    },
+    "vscode-provider": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "wallcards": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "wallpaper-carousel": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "weather-indicator": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "web-search": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "weekly-calendar": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "world-clock": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "builtin/demo-custom-lockscreen": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "fixture/plugin-loader/plugins/fx-bare": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "fixture/plugin-loader/plugins/fx-declares": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "fixture/plugin-loader/plugins/fx-instance": {
+      "entry": "Settings.qml",
+      "files": [
+        "Settings.qml"
+      ]
+    },
+    "synthetic/plugin-preview-page.qml": {
+      "entry": "plugin-preview-page.qml",
+      "files": [
+        "plugin-preview-page.qml"
+      ]
+    },
+    "synthetic/plugin-settings-session-page.qml": {
+      "entry": "plugin-settings-session-page.qml",
+      "files": [
+        "plugin-settings-session-page.qml"
+      ]
+    },
+    "synthetic/plugin-settings-lifetime-page.qml": {
+      "entry": "plugin-settings-lifetime-page.qml",
+      "files": [
+        "plugin-settings-lifetime-page.qml"
+      ]
+    }
+  }
+}

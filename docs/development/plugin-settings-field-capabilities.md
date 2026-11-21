@@ -130,6 +130,43 @@ not catalog Main/action or physical input proof. The named guest profile and
 disk-backed work/output roots are required, unlike the historical standalone
 loader driver, whose foreign-guest defaults must not be reused for this task.
 
+## Parsed capability boundary
+
+`plugin-settings-boundary-check.py --source SHELL --plugins PLUGINS --selftest
+--report OUTPUT.json` is separate from the existing detached-write checker.
+It follows manifest generic entries, local QML type/import edges and literal
+QML/JS child sources, including shared children whose names do not contain
+Settings. The reviewed entry/dependency inventory is a fixture, not a list of
+suppressed writers. A new entry or child requires review; discovery never
+reports a passing gate or rewrites that inventory automatically.
+
+The checker resolves lexical declarations, actual QML receivers, injected
+callbacks, helper arguments/returns and finite computed keys. Pure getter
+provenance is call-site specific, so a read from a native display copy is not
+confused with another call reading a namespace. Scalar buffers and owned display
+copies are positive controls. Namespace/alias/nested writes, mutator aliases,
+native capability access, undeclared or unresolved field keys, protected-leaf
+configuration intents and constructor-reachable field writes are rejected.
+Preview and finite Reset keys use the same generated authored usage metadata.
+The production descriptor compiler, not a second field table, resolves it.
+
+Shell checks retain the selected native Apply identity and the admission/role
+edges for direct, view and popup construction. Disposable source controls cover
+each boundary; the separate 36-row runtime matrix checks actual construction.
+The synthetic label-page fixture contract explicitly names the test driver's
+input methods; that does not exempt any production page from event ownership.
+This is accidental-capability enforcement, not a sandbox for arbitrary QML,
+a general JavaScript effect system or proof of runtime outcomes.
+
+Reusable MPVpaper and Video Wallpaper ToolRow controls now require injected
+preference actions. Their Settings parent stages fields; the runtime Panel owns
+its existing immediate native command/save. A child has no live-writer fallback.
+Screen Recorder's explicit source-selection event owns its dependent codec
+choice; source Reset, inheritance and metadata reads cannot author that codec.
+The child-writer regression observes the real controls, native files and separate
+cold readers, plus runtime Panel callbacks with an inert action collaborator.
+It does not run a recorder, media backend or external account.
+
 `plugin-settings-lock-focus-regression.py` is a separate, explicitly authorized
 real-lock proof, not the in-shell preview test. It uses an explicit guest profile
 and the installed bundled locker on the guest's niri session. Candidate and

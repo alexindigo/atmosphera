@@ -4,6 +4,7 @@ Item {
   id: root
 
   property var pluginApi: null
+  readonly property bool settingsDirty: false
 
   function fxLog(phase) {
     var names = ["screen", "widgetId", "section", "sectionWidgetIndex", "sectionWidgetsCount", "widgetSettings", "widgetData", "widgetIndex"];
@@ -22,7 +23,12 @@ Item {
       else
         ctx[n] = v;
     }
-    console.log("FX " + JSON.stringify({ "id": "fx-bare", "entry": "settings", "phase": phase, "ctx": ctx }));
+    console.log("FX " + JSON.stringify({
+                                         "id": "fx-bare",
+                                         "entry": "settings",
+                                         "phase": phase,
+                                         "ctx": ctx
+                                       }));
   }
 
   Component.onCompleted: fxLog("completed")
