@@ -473,6 +473,32 @@ path separators. An
 already admitted download retains its captured qualified target until completion;
 its retired worker cannot publish availability or start the next queued item.
 
+## Runtime authorization, not a Settings edit
+
+Spotify Settings stages client ID/secret, callback port and player ID. It shows
+the selected token status and directs the user to Apply first, then authorize in
+the Spotify runtime Panel. It has no listener, browser, token exchange, device
+discovery or page-to-owner action capability. Available token status describes
+stored operational state, not a new server validation.
+
+Main owns one Spotify IO client per captured runtime context. Actual runtime
+actions pass their API and capture its applied credentials, token and player,
+even when a different Settings preview is active. Main alone publishes generated
+operational tokens through that runtime API. Authorization/refresh are distinct
+from preference Apply/Discard; Discard does not undo an already authorized account.
+Source replacement and retirement cancel listener/browser/request/process stages.
+Playback's follow-up shuffle retains the admitted token/player, not later values.
+Same-context views share one client; no independent accounts/devices are invented
+for shared physical Spotify playback.
+
+`plugin-settings-spotify-check.py` checks the finite eight-field contract and
+rejects page-action, draft-input, shared-writer and lifetime controls. The native
+regression joins actual Settings controls/native documents to Panel status,
+runtime authorization, the real local callback listener with an inert browser,
+loopback token/API responses, selected native writes and separate cold readers.
+Its held continuations and wrong-state/writer controls are controlled endpoint
+proof, not a real Spotify account, physical playback or broad visual acceptance.
+
 ## Captured Main windows
 
 Wallcards and Somnus retain one Main-owned window each. Placed Bars capture their

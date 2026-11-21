@@ -625,7 +625,7 @@
     "spotify-player": {
       "entry": "Settings.qml",
       "files": [
-        "Auth.js",
+        "AuthorizationStatus.qml",
         "Settings.qml"
       ]
     },
