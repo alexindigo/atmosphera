@@ -47,7 +47,7 @@ a map or state/cache owner and diagnosed explicitly until then.
 Built-in plugins without an authored descriptor resolve through this catalog
 too, so a built-in version bump needs a matching exact-version entry.
 `Scripts/dev/builtin-plugin-settings-check.py` (part of the settings contract
-gate, run by the pre-commit hook and CI) compiles every shipped built-in's store
+sanity gate, run by the pre-commit hook and the full CI suite) compiles every shipped built-in's store
 with the shell's compiler and fails when one does not resolve.
 
 The inert `Scripts/dev/build-plugin-settings-schema.py` validates metadata and
