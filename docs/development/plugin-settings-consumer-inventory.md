@@ -51,7 +51,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 31 | `giphy-search` | launcher-only | no-instance |
 | 32 | `git-companion` | selected-client | ported |
 | 33 | `github-contributions` | selected-client | ported |
-| 34 | `github-feed` | query-worker | port |
+| 34 | `github-feed` | query-worker | ported |
 | 35 | `habitica` | query-worker | ported |
 | 36 | `hassio` | query-worker | ported |
 | 37 | `hello-world` | direct | no-port |
@@ -69,10 +69,10 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 49 | `launcher-pass` | launcher-only | no-instance |
 | 50 | `linux-wallpaperengine-controller` | shared-domain | port |
 | 51 | `lyrics-fetch` | observation | ported |
-| 52 | `mawaqit` | query-worker | port |
+| 52 | `mawaqit` | query-worker | ported |
 | 53 | `mimeapp-gui` | direct | no-port |
 | 54 | `mini-docker` | direct | no-port |
-| 55 | `model-usage` | query-worker | port |
+| 55 | `model-usage` | query-worker | ported |
 | 56 | `monique` | observation | ported |
 | 57 | `monitor-layout` | shared-domain | port |
 | 58 | `mpd` | direct | no-port |
@@ -151,7 +151,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members. G1c: seven observation-policy members. G1d: three retained-state projections. G1e: news, ntfy-notifications and habitica use selected request/result clients, retaining common read/notification/action/cache owners; native both-scope HTTP representatives, every-member parsed contract and individual producer/auth/chain/cache/action lifetimes. Remaining 11 required; broad visual/final acceptance pending. |
+| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members. G1c: seven observation-policy members. G1d: three retained-state projections. G1e: news, ntfy-notifications and habitica selected request/results with common read/notification/action/cache owners. G1f: github-feed, model-usage and mawaqit use selected request chains, source-qualified provider leases and original cache/effect owners. Other eight G1 ports and broad visual/final acceptance remain required. |
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
@@ -728,15 +728,17 @@ Runtime-source/manifest fingerprint: `4160c7461a812fd6853dcf29c67e08e1cfd53e8565
 
 ## github-feed
 
-Bar/Panel have some selected account/default tab inputs; Main account/token/server/filter/notifications/colorization/Timer results still shared. Scope request/projection and fence old responses.
+Main owns captured-context clients and immutable account/token/origin request chains. Selected Bar/Panel share results; Main retains qualified event/avatar cache and common notifications. Runtime PATCH queues capture their source. openInBrowser remains an existing Settings-only feature gap.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `github-feed/BarWidget.qml` | `username`:28,118 | 19, 20, 21, 22, 23, 24, 25, 26, ... |
-| 2 | `github-feed/Main.qml` | `colorizationBadge`:63; `colorizationBadgeText`:64; `colorizationEnabled`:61; `colorizationIcon`:62; `defaultTab`:65; `enableSystemNotifications`:66; `githubUrl`:29; `maxEvents`:44; `notifyForks`:69; `notifyGitHubNotifications`:67; `notifyMyRepoForks`:73; `notifyMyRepoStars`:72; `notifyPRs`:70; `notifyRepoCreations`:71; `notifyStars`:68; `refreshInterval`:43; `showForks`:55; `showMyRepoForks`:59; `showMyRepoStars`:58; `showNotificationBadge`:60; `showPRs`:56; `showRepoCreations`:57; `showStars`:54; `token`:28; `username`:27,1121 | 27, 28, 29, 43, 44, 54, 55, 56, ... |
-| 3 | `github-feed/Panel.qml` | `defaultTab`:31; `username`:28,29 | 23, 24, 25, 26, 27, 28, 29, 31, ... |
+| 1 | `github-feed/BarWidget.qml` | `username`:29,119 | 19, 20, 21, 22, 23, 24, 25, 26, ... |
+| 2 | `github-feed/GithubFeedSettingsClient.qml` | `colorizationBadge`:26; `colorizationBadgeText`:27; `colorizationEnabled`:24; `colorizationIcon`:25; `defaultTab`:28; `enableSystemNotifications`:29; `githubUrl`:13; `maxEvents`:16; `notifyForks`:32; `notifyGitHubNotifications`:30; `notifyMyRepoForks`:36; `notifyMyRepoStars`:35; `notifyPRs`:33; `notifyRepoCreations`:34; `notifyStars`:31; `refreshInterval`:15; `showForks`:18; `showMyRepoForks`:22; `showMyRepoStars`:21; `showNotificationBadge`:23; `showPRs`:19; `showRepoCreations`:20; `showStars`:17; `token`:12; `username`:11 | 5, 9, 10 |
+| 3 | `github-feed/GithubFeedWorker.qml` | No literal field edge | No namespace/Main reference |
+| 4 | `github-feed/Main.qml` | `username`:136 | 12, 15, 19, 136 |
+| 5 | `github-feed/Panel.qml` | `defaultTab`:32; `username`:29,30 | 23, 24, 25, 26, 27, 28, 29, 30, ... |
 
 Declared leaves without a literal runtime namespace edge: `openInBrowser` (configuration).
 
@@ -745,7 +747,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `openInBrowser` | `github-feed/Settings.qml:28` | Settings-only toggle, no supported runtime read. Existing feature-surface gap. |
-Runtime-source/manifest fingerprint: `f9c70c1548095ebdfdfa6cf3781ba15cb46a157c93343cd1b495e2f343ca6198`.
+Runtime-source/manifest fingerprint: `547248a60cd4ff90cb52c54088c0c787c6856a671d968344b688a72a91f16244`.
 
 ## habitica
 
@@ -1106,7 +1108,7 @@ Runtime-source/manifest fingerprint: `e9513476cf4ff5086211ddfcb45d4716e1cee62b20
 
 ## mawaqit
 
-Bar appearance local; Main location/method/tuning/angles/notifications/Timer/cache and Panel calendar derive from shared configuration. Select query/calendar context and cache writer, retain declared operational data.
+Main owns captured-context prayer clients with all tune integers in source identity, fenced week/fallback/retry and selected countdown/offset. Main retains eight operational cache leaves, month CalendarCache and common audio/notification ownership; instance clients have no shared cache writer.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1114,13 +1116,14 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `mawaqit/BarWidget.qml` | `activeColor`:36; `dynamicIcon`:33; `hidePrayerName`:30; `iconColor`:35; `showCountdown`:28; `showElapsed`:29; `textColor`:34; `widgetIcon`:32 | 25, 26, 40, 41, 42, 43, 44, 45, ... |
 | 2 | `mawaqit/CalendarCache.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `mawaqit/Main.qml` | `_cacheCity`:239,255; `_cacheCountry`:240,256; `_cacheData`:238,253,291; `_cacheFajrAngle`:244,259; `_cacheIshaAngle`:245,260; `_cacheMethod`:241,257; `_cacheSavedAt`:243; `_cacheSchool`:242,258; `azanFile`:82; `city`:67; `country`:68; `fajrAngle`:85; `hijriDayOffset`:83; `ishaAngle`:86; `method`:69; `playAzan`:81; `school`:79; `showElapsed`:84; `showNotifications`:80; `tune`:71; `tuneAsr`:74; `tuneDhuhr`:73; `tuneFajr`:72; `tuneIsha`:76; `tuneMaghrib`:75 | 64, 65, 235, 238, 239, 240, 241, 242, ... |
-| 4 | `mawaqit/Panel.qml` | `weekStartDay`:63; `widgetIcon`:35 | 32, 33, 35, 36, 39, 40, 41, 42, ... |
-| 5 | `mawaqit/calendar-cache.py` | No literal field edge | No namespace/Main reference |
-| 6 | `mawaqit/test_calendar_cache.py` | No literal field edge | No namespace/Main reference |
+| 3 | `mawaqit/Main.qml` | `_cacheCity`:60; `_cacheCountry`:60; `_cacheData`:52,59,68; `_cacheFajrAngle`:63; `_cacheIshaAngle`:63; `_cacheMethod`:61; `_cacheSavedAt`:62; `_cacheSchool`:61 | 10, 13, 17, 48, 52, 58, 68 |
+| 4 | `mawaqit/MawaqitSettingsClient.qml` | `azanFile`:83; `city`:68; `country`:69; `fajrAngle`:86; `hijriDayOffset`:84; `ishaAngle`:87; `method`:70; `playAzan`:82; `school`:80; `showElapsed`:85; `showNotifications`:81; `tune`:72; `tuneAsr`:75; `tuneDhuhr`:74; `tuneFajr`:73; `tuneIsha`:77; `tuneMaghrib`:76 | 8, 12, 65, 66, 200 |
+| 5 | `mawaqit/Panel.qml` | `weekStartDay`:64; `widgetIcon`:35 | 32, 33, 35, 36, 39, 40, 41, 42, ... |
+| 6 | `mawaqit/calendar-cache.py` | No literal field edge | No namespace/Main reference |
+| 7 | `mawaqit/test_calendar_cache.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `1ba75f771d8f8b9979ef0c03e26ed890dd7970a25585526bb96e24b0daed32b8`.
+Runtime-source/manifest fingerprint: `ba752b17fd35699b9794c4fe558c3f5ee4e330d08fbb60a905311f839e74b042`.
 
 ## mimeapp-gui
 
@@ -1161,24 +1164,26 @@ Runtime-source/manifest fingerprint: `7d0ac308a92a8624f0e94601fbf7c3ff8aaec7ef7e
 
 ## model-usage
 
-Main provider configurations/status workers, bar metric/cycle/refresh settings are shared; Bar/Panel consume those properties. Select context worker/projection; no real account testing implied.
+Main owns captured-context provider/metric/cycle clients and source-qualified child-provider leases. Matching sources share observations; disabled and last-retired providers have no IO workers. All six providers retain their domain parsers and environment precedence with fenced XHR/process/file continuations.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `model-usage/BarWidget.qml` | No literal field edge | 18, 19, 27, 48, 58, 98 |
-| 2 | `model-usage/Main.qml` | `barCycleIntervalSec`:71; `barDisplayMode`:70; `barMetric`:72; `providers`:15,21,27,33,39,45,100; `refreshIntervalSec`:73 | 10, 15, 21, 27, 33, 39, 45, 70, ... |
-| 3 | `model-usage/Panel.qml` | No literal field edge | 11, 24, 43, 46, 51, 430, 438, 530, ... |
-| 4 | `model-usage/providers/Claude.qml` | No literal field edge | No namespace/Main reference |
-| 5 | `model-usage/providers/Codex.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `model-usage/providers/Copilot.qml` | No literal field edge | No namespace/Main reference |
-| 7 | `model-usage/providers/Gemini.qml` | No literal field edge | No namespace/Main reference |
-| 8 | `model-usage/providers/OpenRouter.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `model-usage/providers/Zen.qml` | No literal field edge | No namespace/Main reference |
+| 1 | `model-usage/BarWidget.qml` | No literal field edge | 18, 19, 20, 28, 49, 59, 99 |
+| 2 | `model-usage/Main.qml` | No literal field edge | 39, 42, 46 |
+| 3 | `model-usage/ModelUsageSettingsClient.qml` | `barCycleIntervalSec`:36; `barDisplayMode`:35; `barMetric`:37; `providers`:13,25,65; `refreshIntervalSec`:38 | 8, 11, 12, 13, 25, 35, 36, 37, ... |
+| 4 | `model-usage/Panel.qml` | No literal field edge | 11, 12, 25, 44, 47, 52, 431, 439, ... |
+| 5 | `model-usage/providers/Claude.qml` | No literal field edge | No namespace/Main reference |
+| 6 | `model-usage/providers/Codex.qml` | No literal field edge | No namespace/Main reference |
+| 7 | `model-usage/providers/Copilot.qml` | No literal field edge | No namespace/Main reference |
+| 8 | `model-usage/providers/Gemini.qml` | No literal field edge | No namespace/Main reference |
+| 9 | `model-usage/providers/OpenRouter.qml` | No literal field edge | No namespace/Main reference |
+| 10 | `model-usage/providers/ProviderLifetime.qml` | No literal field edge | No namespace/Main reference |
+| 11 | `model-usage/providers/Zen.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `4f703f4d08d42da8c3f7f3039b1b28dd1915bcbcbae66240c7e414785bd1bf24`.
+Runtime-source/manifest fingerprint: `8e65fb019c5885dfc1a2ca1cced5e1c249b473f5b39a160a1ec4b53f1e51e13e`.
 
 ## monique
 

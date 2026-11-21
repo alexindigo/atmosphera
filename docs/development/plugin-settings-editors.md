@@ -433,6 +433,46 @@ notifications, task filtering, literal inert scores/checklists and independent
 complete-document shared-cache publication. These are controlled endpoints, not
 remote account mutation, physical input, broad visual or final paired acceptance.
 
+## Selected provider and request chains
+
+GitHub Feed, Model Usage and Mawaqit resolve Main-owned clients by captured
+runtime context. GitHub retires an immutable account/token/origin worker as a
+whole, including pagination, parallel retries and queued remote read actions.
+Its original Main remains the sole event-cache and avatar owner. Fresh events
+carry nonsecret account/origin identity; legacy unqualified caches and login-only
+avatars are not attributed to a new source. Common notifications are deduplicated.
+An incomplete username/token has no request worker and presents the original
+configuration guidance, rather than silently retaining an old account result.
+
+Model Usage leases each configured provider observation across matching sources.
+Disabled providers have no IO worker, and the last lease retires watches,
+processes and XHRs. Provider options remain one atomic preference record; leases
+are not stores. Claude credential replacement fences prior probes. Codex admits
+the next fallback file after the current FileView callback, with its search
+generation still current. The existing parsers, int timers and environment-key
+precedence remain intact.
+
+Mawaqit includes every tune integer in its prayer request identity. Old week,
+fallback and retry work cannot populate a replacement source. Its Main retains
+the eight original native cache leaves, month-only calendar helper and common
+audio/notification owner. Only the current plugin-scope client writes the prayer
+cache; fresh cache data records the full request tuple. Unqualified legacy bytes
+remain stored but are not assigned a new tune identity. Explicit sound previews
+remain immediate effects, not Apply/Discard operations.
+
+The provider native regression joins actual GitHub controls, full native
+documents, final Bar/Panel consumers and separate cold readers. Individual GitHub,
+six-provider and prayer lifetime drivers use synthetic HOME, inert executables
+and loopback HTTP only. They do not establish remote mutation, physical effects,
+broad visual review or final paired acceptance.
+The GitHub lifetime fixture also checks qualified cached/downloaded avatar paths
+and PNG bytes across origins, including actual NImageRounded image loading, plus
+held-download and retired-queue admission. Main converts its qualified filename
+to a properly escaped file URL; filename percent escapes must not become URL
+path separators. An
+already admitted download retains its captured qualified target until completion;
+its retired worker cannot publish availability or start the next queued item.
+
 ## Captured Main windows
 
 Wallcards and Somnus retain one Main-owned window each. Placed Bars capture their
