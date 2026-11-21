@@ -499,6 +499,26 @@ loopback token/API responses, selected native writes and separate cold readers.
 Its held continuations and wrong-state/writer controls are controlled endpoint
 proof, not a real Spotify account, physical playback or broad visual acceptance.
 
+## Selected calendar projections
+
+Weekly Calendar retains one common CalendarService provider/cache owner. Main
+owns one week/navigation/layout client per captured settingsContext; Bar and
+Panel views of that API share it. Six selected display/range settings reach the
+actual grid, hour labels and attachment behavior. Requested ranges are coalesced
+across current clients instead of letting the last Panel narrow another's range.
+Incoming common events update every active projection. Retirement fences queued
+loads and releases the context client, not the calendar service or its data.
+The instance page identifies common calendar observations. The existing Main-only
+startup initializer remains separately known, not repaired by this projection.
+
+The calendar regression joins real page controls/native Apply to actual Panel/Bar,
+complete independent documents and nonpublishing edited/Reset/following/policy cold
+readers in both scopes. Controlled common events exercise all-day/midnight/overlap
+models, rendered children, navigation and range union; no real calendar provider
+or external application is invoked. Finite parsed mappings and runtime wrong-client,
+hour-child, range and retirement controls complement that proof. Broad visual and
+final paired acceptance remain separate gates.
+
 ## Captured Main windows
 
 Wallcards and Somnus retain one Main-owned window each. Placed Bars capture their
