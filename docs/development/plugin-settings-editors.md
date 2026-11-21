@@ -96,9 +96,11 @@ The native editor captures base and owning-leaf generations. A changed capture,
 same-ID replacement, reorder, base change or owner loss cannot retarget it to a
 new placement. A closed/conflicted editor cannot recapture an index to recover.
 
-ConfigQml >=0.5.2 is required for untouched-overlay preservation and native
-staged draft Reset as well as selected publication. Package, Nix and devcontainer
-pins select the signed release; stock 0.5.1 lacks those first two contracts.
+ConfigQml >=0.5.3 is required for untouched-overlay preservation, native staged
+draft Reset, selected publication and retained QML notification when an optional
+leaf becomes absent. Package, Nix and devcontainer pins select the signed release;
+0.5.2 introduced preservation and staged Reset but lacks the absence-notification
+correction needed by retained selected clients.
 
 ## Selected runtime consumers
 
@@ -393,6 +395,43 @@ runtime switch additionally publishes through its actual Panel/native owner.
 Individual lifetime proofs exercise common notification admission/history bytes,
 inert device discovery/actions and shared calculation/keyboard/percent behavior.
 These controlled endpoints do not establish physical device or broad UI acceptance.
+
+## Selected HTTP request and result ownership
+
+News, ntfy Notifications and Habitica keep one Main-owned request/result client
+per captured runtime context. Every Bar and Panel of that API shares it. Main/IPC
+operations explicitly select the plugin-level client. News' Bars no longer own
+duplicate producers or overwrite a common result array. Source replacement clears
+old results and retires or fences the old XHR/process generation; changing a
+nonempty credential is still a source change. Existing typed Timer boundaries and
+country-to-language selection remain intact.
+
+ntfy keeps its protected read-ID leaf and native writer in Main. Selected read
+actions merge into that same owner without dropping another client's read IDs.
+Selected request cursors and messages are separate; common desktop-notification
+admission coalesces a server/message event across clients. Habitica keeps one
+common score admission, with originating immutable account/auth/target inputs.
+Replacing or retiring a serial request generation stops its next-stage timer and
+process before it can continue, notify or publish a cache.
+
+Habitica's existing plugin-level native cache owner remains singular. Only its
+plugin-level client can save that leaf. Fresh cache results carry their nonsecret
+user ID. Unqualified legacy cache bytes remain on disk but are not attributed to
+a newly selected account; only an accepted fresh shared fetch replaces them.
+Instance clients do not acquire a shared-cache writer or a new persistent store.
+The instance pages describe the shared read-status, notification and remote-account
+effects, rather than promising independent task state.
+
+`plugin-settings-http-check.py` parses all 34 declared leaves, factories, runtime
+entries, request/Timer/chain mappings and the two original operational writers.
+Its finite controls complement the native regression's both-scope real controls,
+complete independent documents, actual Bar/Panel children and unchanged-hash
+edited/Reset/following cold readers. ntfy's actual Panel read action additionally
+publishes through the original native owner. The separate lifetime driver covers
+producer sharing/handoff, held responses, source/auth/empty selection, common
+notifications, task filtering, literal inert scores/checklists and independent
+complete-document shared-cache publication. These are controlled endpoints, not
+remote account mutation, physical input, broad visual or final paired acceptance.
 
 ## Captured Main windows
 
