@@ -108,9 +108,9 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 88 | `ramadan-iftar` | query-worker | ported |
 | 89 | `rss-feed` | direct | no-port |
 | 90 | `saved-desktop-widgets` | main-only | no-instance |
-| 91 | `screen-recorder` | shared-domain | port |
-| 92 | `screen-shot-and-record` | shared-domain | port |
-| 93 | `screen-toolkit` | shared-domain | port |
+| 91 | `screen-recorder` | shared-domain | ported |
+| 92 | `screen-shot-and-record` | shared-domain | ported |
+| 93 | `screen-toolkit` | shared-domain | ported |
 | 94 | `screencast-gif` | shared-domain | ported |
 | 95 | `screenshot` | direct | no-port |
 | 96 | `shell-profiles` | query-worker | port |
@@ -152,7 +152,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). G1c first green subgroup: port-monitor and mullvad; native both-scope representative and originating inert action outcomes supplement parsed field/cache/lifetime/entry checks. Remaining 22 required; broad visual/final acceptance pending. |
-| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | G2a plus G2b: screencast-gif, network-manager-vpn, ds4-colors and nvibrant select originating policy over singular effects; finite parsed mappings, native both-scope gates and individual hardware writer/lifetime controls. Remaining 15 members and broad/final acceptance required. |
+| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | G2a/G2b plus capture shape: screencast-gif, network-manager-vpn, ds4-colors, nvibrant, screen-recorder, screen-shot-and-record and screen-toolkit select originating policy over singular effects. Finite every-member mappings, native representatives and individual unusual lifetimes; remaining 12 members and broad/final acceptance required. |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | planned |
@@ -1770,43 +1770,51 @@ Runtime-source/manifest fingerprint: `3f4df8c3c472d91553f5890ab00009c5b364e59978
 
 ## screen-recorder
 
-Main recorder/replay process reads shared codec/source/directory/frame policy while Bar/CC use Main. Capture originating selected config/action and explain one recorder/replay resource; no physical recording proof implied.
+Bar/CC actions capture selected recording/replay policies before asynchronous preflight; completion clipboard and delayed Toast retain their operation path. Main/IPC remain plugin-level, one physical owner. Instance UI explains shared recorder state; capture native/finite/lifetime gates carry controlled proof only.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `screen-recorder/BarWidget.qml` | `hideInactive`:29; `iconColor`:35 | 27, 29, 30, 33, 34, 38, 57, 59, ... |
+| 1 | `screen-recorder/BarWidget.qml` | `hideInactive`:29; `iconColor`:35; `replayEnabled`:101 | 27, 29, 30, 33, 34, 38, 57, 59, ... |
 | 2 | `screen-recorder/ControlCenterWidget.qml` | No literal field edge | 10, 12, 14, 15, 16, 18, 19 |
-| 3 | `screen-recorder/Main.qml` | `audioCodec`:93; `audioSource`:99; `colorRange`:96; `copyToClipboard`:98; `customFrameRate`:92; `customReplayDuration`:107; `directory`:89; `filenamePattern`:90; `frameRate`:91; `hideInactive`:88; `quality`:95; `replayDuration`:106; `replayEnabled`:105; `replayStorage`:108; `resolution`:101; `restorePortalSession`:102; `showCursor`:97; `videoCodec`:94; `videoSource`:100 | 88, 89, 90, 91, 92, 93, 94, 95, ... |
+| 3 | `screen-recorder/Main.qml` | `audioCodec`:105,304,619; `audioSource`:111,303,618; `colorRange`:108,310,623; `copyToClipboard`:110,403,711; `customFrameRate`:104,306,617; `customReplayDuration`:119,614; `directory`:101,302,612; `filenamePattern`:102,301; `frameRate`:103,305,616; `hideInactive`:100; `quality`:107,308,621; `replayDuration`:118,613; `replayEnabled`:117,578; `replayStorage`:120,615; `resolution`:113,127; `restorePortalSession`:114,311,624; `showCursor`:109,309,622; `videoCodec`:106,128,307,620; `videoSource`:112,281,593 | 32, 34, 100, 101, 102, 103, 104, 105, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `098b1caaea10ff380807ffd534faa83e24fb8b124f863845fc069782d8568ae9`.
+Runtime-source/manifest fingerprint: `8b5d726873c7346046c0af4402001a256a33feb053bc30f0b7cc2b40f796622f`.
 
 ## screen-shot-and-record
 
-Main creates ScreenShot object with shared API; its overlay/helpers read capture path/editor/cross/window policy. Capture selected action context; physical capture/recording state remains explicit shared effect.
+Panel captures selected policy before destruction and recording preflight; actual selector branches/helpers receive that operation. Retired origins cannot start later capture stages. Main/IPC stay plugin-level and physical recording remains shared, explained in instance UI; capture native/finite/lifetime gates are inert endpoints.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `screen-shot-and-record/BarWidget.qml` | No literal field edge | 20 |
-| 2 | `screen-shot-and-record/Main.qml` | `recordingNotifications`:43 | 43, 44, 75 |
-| 3 | `screen-shot-and-record/Panel.qml` | No literal field edge | 22, 32, 152 |
-| 4 | `screen-shot-and-record/ScreenShot.qml` | `enableCross`:27; `recordingNotifications`:50 | 27, 28, 47, 48, 50, 51 |
-| 5 | `screen-shot-and-record/ScreenShotCaptureCommon.qml` | `keepSourceScreenshot`:123; `recordingNotifications`:163; `recordingSavePath`:155; `savePath`:91; `screenshotEditor`:119 | 91, 92, 119, 120, 123, 124, 155, 156, ... |
-| 6 | `screen-shot-and-record/ScreenShotHypr.qml` | `enableWindowsSelection`:8 | 8, 9 |
+| 2 | `screen-shot-and-record/Main.qml` | `recordingNotifications`:56 | 20, 22, 57, 88 |
+| 3 | `screen-shot-and-record/Panel.qml` | No literal field edge | 22, 32, 41, 156 |
+| 4 | `screen-shot-and-record/ScreenShot.qml` | No literal field edge | 29, 49, 50, 53 |
+| 5 | `screen-shot-and-record/ScreenShotCaptureCommon.qml` | No literal field edge | 94, 122, 126, 158, 166, 186, 187 |
+| 6 | `screen-shot-and-record/ScreenShotHypr.qml` | No literal field edge | 9 |
 | 7 | `screen-shot-and-record/ScreenShotOverlayCommon.qml` | No literal field edge | No namespace/Main reference |
-| 8 | `screen-shot-and-record/ScreenShotSway.qml` | `enableWindowsSelection`:7 | 7, 8 |
+| 8 | `screen-shot-and-record/ScreenShotSway.qml` | No literal field edge | 8 |
 | 9 | `screen-shot-and-record/record.sh` | No literal field edge | No namespace/Main reference |
 
-Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `3e4b99ff3d9421217846381aa5e785cd208f4526626de8f17f53dddb7ed5115f`.
+Declared leaves without a literal runtime namespace edge: `enableCross` (configuration), `enableWindowsSelection` (configuration), `keepSourceScreenshot` (configuration), `recordingSavePath` (configuration), `savePath` (configuration), `screenshotEditor` (configuration).
+
+Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
+
+| # | Fields | Source | Classification |
+| --- | --- | --- | --- |
+| 1 | `enableCross` | `screen-shot-and-record/ScreenShot.qml:28` | Selector reads its admitted actionPolicy.settings, injected by the singular Main after Panel/preflight capture; finite capture checker covers the selected policy rather than a native namespace alias. |
+| 2 | `enableWindowsSelection` | `screen-shot-and-record/ScreenShotHypr.qml:8` | Both supported compositor selectors read their admitted actionPolicy.settings; the finite capture checker names both actual child injections and field readers. |
+| 3 | `keepSourceScreenshot,recordingNotifications,recordingSavePath,savePath,screenshotEditor` | `screen-shot-and-record/ScreenShotCaptureCommon.qml:63` | Common helper reads only the originating immutable capture policy, not Main pluginSettings; actual selected argv/native representatives and finite field mappings carry proof. |
+Runtime-source/manifest fingerprint: `b0030b8cd1cde278ff967f2ef4c811542b7dda79da54d848ed138982778873d7`.
 
 ## screen-toolkit
 
-Main-created overlays/tools and Annotate/Measure reach Main pluginApi for paths/sharing/OCR/record policy. Carry selected capture context through overlays; existing results/history are operational, not silently migrated.
+Main captures originating API/context before launch timers; independent retained overlays and per-shot Measure policy reach annotation/share, Mirror and recording/conversion/save endpoints. Shared results/history/capabilities retain original operational writers. Instance UI explains shared resources; finite and individual overlay gates are controlled, not physical proof.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1814,13 +1822,13 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `screen-toolkit/BarWidget.qml` | No literal field edge | 17, 27, 28 |
 | 2 | `screen-toolkit/ControlCenterWidget.qml` | No literal field edge | 13, 24 |
-| 3 | `screen-toolkit/Main.qml` | `colorCacheBust`:114,133; `colorCapturePath`:114,132; `colorHistory`:123,139,168; `detectedRecorder`:326; `filenameFormat`:695,705; `installedLangs`:301; `ocrCapturePath`:115,145; `ocrResult`:115,144; `paletteColors`:117,159; `qrCapturePath`:116,153; `qrResult`:116,152; `recordCopyToClipboard`:175; `recordSkipConfirmation`:174; `resultHex`:112,128; `resultHsl`:113,131; `resultHsv`:113,130; `resultRgb`:112,129; `screenshotPath`:694,704; `selectedOcrLang`:722; `transAvailable`:314; `translateResult`:117 | 52, 111, 123, 128, 129, 130, 131, 132, ... |
+| 3 | `screen-toolkit/Main.qml` | `colorCacheBust`:135,154; `colorCapturePath`:135,153; `colorHistory`:144,160,189; `detectedRecorder`:357; `filenameFormat`:772,782; `installedLangs`:332; `ocrCapturePath`:136,166; `ocrResult`:136,165; `paletteColors`:138,180; `qrCapturePath`:137,174; `qrResult`:137,173; `recordCopyToClipboard`:198; `recordSkipConfirmation`:197; `resultHex`:133,149; `resultHsl`:134,152; `resultHsv`:134,151; `resultRgb`:133,150; `screenshotPath`:771,781; `selectedOcrLang`:799; `transAvailable`:345; `translateResult`:138 | 20, 22, 27, 73, 132, 144, 149, 150, ... |
 | 4 | `screen-toolkit/Panel.qml` | `gifMaxSeconds`:530; `selectedOcrLang`:22,83 | 22, 26, 28, 29, 32, 39, 40, 41, ... |
-| 5 | `screen-toolkit/overlays/Annotate.qml` | `filenameFormat`:1685; `screenshotPath`:58; `shareSkipPopover`:457,1658; `x02ApiKey`:1651; `x02Expiry`:1652 | 13, 58, 82, 389, 392, 401, 404, 416, ... |
-| 6 | `screen-toolkit/overlays/Measure.qml` | `filenameFormat`:115; `screenshotPath`:114 | 13, 67, 113, 117, 426 |
-| 7 | `screen-toolkit/overlays/Mirror.qml` | `filenameFormat`:100,149; `screenshotPath`:99; `videoPath`:148 | 99, 100, 116, 148, 149 |
+| 5 | `screen-toolkit/overlays/Annotate.qml` | No literal field edge | 13, 88, 401, 404, 415, 418, 432, 436, ... |
+| 6 | `screen-toolkit/overlays/Measure.qml` | No literal field edge | 13, 69, 122, 432 |
+| 7 | `screen-toolkit/overlays/Mirror.qml` | No literal field edge | 128 |
 | 8 | `screen-toolkit/overlays/Pin.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `screen-toolkit/overlays/Record.qml` | `filenameFormat`:126; `gifMaxSeconds`:30; `recordCopyToClipboard`:96,106,189; `recordSkipConfirmation`:105; `videoPath`:125 | 30, 58, 96, 105, 106, 125, 126, 189 |
+| 9 | `screen-toolkit/overlays/Record.qml` | No literal field edge | 61 |
 | 10 | `screen-toolkit/overlays/RegionSelector.qml` | No literal field edge | No namespace/Main reference |
 | 11 | `screen-toolkit/scripts/annotate.sh` | No literal field edge | No namespace/Main reference |
 | 12 | `screen-toolkit/scripts/capture.sh` | No literal field edge | 21 |
@@ -1835,11 +1843,11 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 21 | `screen-toolkit/scripts/record.sh` | No literal field edge | No namespace/Main reference |
 | 22 | `screen-toolkit/scripts/share-upload.sh` | No literal field edge | No namespace/Main reference |
 | 23 | `screen-toolkit/scripts/temp-paths.sh` | No literal field edge | No namespace/Main reference |
-| 24 | `screen-toolkit/tools/ColorPicker.qml` | `colorCacheBust`:98; `colorCapturePath`:97; `colorHistory`:99,101; `resultHex`:93; `resultHsl`:96; `resultHsv`:95; `resultRgb`:94 | 92 |
+| 24 | `screen-toolkit/tools/ColorPicker.qml` | `colorCacheBust`:102; `colorCapturePath`:101; `colorHistory`:103,105; `resultHex`:97; `resultHsl`:100; `resultHsv`:99; `resultRgb`:98 | 96 |
 | 25 | `screen-toolkit/tools/Lens.qml` | No literal field edge | No namespace/Main reference |
-| 26 | `screen-toolkit/tools/Ocr.qml` | `ocrCapturePath`:78; `ocrResult`:77; `translateResult`:79 | 77, 78, 79 |
-| 27 | `screen-toolkit/tools/Palette.qml` | `paletteColors`:19,53 | 19, 53 |
-| 28 | `screen-toolkit/tools/Qr.qml` | `qrCapturePath`:45; `qrResult`:44 | 44, 45 |
+| 26 | `screen-toolkit/tools/Ocr.qml` | `ocrCapturePath`:82; `ocrResult`:81; `translateResult`:83 | 81, 82, 83 |
+| 27 | `screen-toolkit/tools/Palette.qml` | `paletteColors`:22,57 | 22, 57 |
+| 28 | `screen-toolkit/tools/Qr.qml` | `qrCapturePath`:49; `qrResult`:48 | 48, 49 |
 | 29 | `screen-toolkit/utils/TempPaths.qml` | No literal field edge | No namespace/Main reference |
 | 30 | `screen-toolkit/utils/ToolProcess.qml` | No literal field edge | No namespace/Main reference |
 | 31 | `screen-toolkit/utils/utils.js` | No literal field edge | No namespace/Main reference |
@@ -1848,8 +1856,15 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 34 | `screen-toolkit/widgets/ResultPalette.qml` | No literal field edge | 11, 14, 23, 24, 25, 58, 90 |
 | 35 | `screen-toolkit/widgets/ResultQr.qml` | No literal field edge | 11, 14, 15, 43, 44, 45 |
 
-Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `db81ab29c77f8fde4ca492de75358a6320988d3228c4f3e8cadd07e234eed41b`.
+Declared leaves without a literal runtime namespace edge: `shareSkipPopover` (configuration), `videoPath` (configuration), `x02ApiKey` (configuration), `x02Expiry` (configuration).
+
+Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
+
+| # | Fields | Source | Classification |
+| --- | --- | --- | --- |
+| 1 | `filenameFormat,screenshotPath,shareSkipPopover,x02ApiKey,x02Expiry` | `screen-toolkit/overlays/Annotate.qml:24` | Retained overlay/process policies select output and upload inputs; Measure and Mirror retain independent shot policies. Finite field mappings plus individual inert endpoint/retirement cases, not namespace aliases or separate settings stores. |
+| 2 | `gifMaxSeconds,recordCopyToClipboard,recordSkipConfirmation,videoPath` | `screen-toolkit/overlays/Record.qml:31` | Retained actionPolicy.settings controls actual recording timer, completion, conversion/save and clipboard policy over the singular recorder owner; finite capture check and individual inert lifecycle proof. |
+Runtime-source/manifest fingerprint: `43ef179cd2653814cec410314554c1f498ba7184954ca6e58069355d24d10cc4`.
 
 ## screencast-gif
 

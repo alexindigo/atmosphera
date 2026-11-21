@@ -366,6 +366,31 @@ intent Retry, not an exact original-value capture or per-row transaction.
 Retirement retains the ready native owner until requested work settles, then
 waits for placement API destruction before releasing that owner.
 
+## Originating capture policy
+
+Screen Recorder, ScreenShot/Record and Screen Toolkit retain one existing
+physical capture owner. A placed action supplies its captured runtime context;
+Main/IPC defaults remain explicitly plugin-level. Admission owns a read-only
+effective-value projection before portal checks, Panel destruction, selector
+creation or launch timers. Recording and replay retain separate policies and
+completed paths, including delayed Toast callbacks. Toolkit's retained overlays
+own their policies independently; a Measure screenshot also owns its timer's
+policy even when another Measure view opens. Existing results, history and
+capability writers keep their shared operational owner, not the selected API.
+Instance Settings explains these shared effects.
+
+`plugin-settings-capture-group-check.py` checks the finite declared-field,
+entry/caller, child-injection, delayed-stage and physical-owner mappings for all
+three members. Its controls are source contracts, not a general JS effect proof.
+The capture-native driver joins actual folder controls, complete native documents
+and originating Bar/Panel actions in both scopes. Separate cold engines observe
+the edited, Reset and inherited boundaries without publication. The focused
+runtime driver covers Recorder replay/completion/Toast lifetimes, supported
+Shot/Record selectors and retirement, and Toolkit annotation/share/save, Mirror,
+Measure and recording/conversion/save boundaries. All physical capture, portal,
+compositor, upload, recorder-signal and clipboard endpoints are inert; no physical
+or broad visual/translation acceptance follows from these tests.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
