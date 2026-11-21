@@ -82,7 +82,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 62 | `music-search` | shared-domain | port |
 | 63 | `netbird` | observation | port |
 | 64 | `network-indicator` | direct | no-port |
-| 65 | `network-manager-vpn` | shared-domain | port |
+| 65 | `network-manager-vpn` | shared-domain | ported |
 | 66 | `news` | view-producer | port |
 | 67 | `niri-animation-picker` | direct | no-port |
 | 68 | `niri-auto-tile` | shared-domain | port |
@@ -111,7 +111,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 91 | `screen-recorder` | shared-domain | port |
 | 92 | `screen-shot-and-record` | shared-domain | port |
 | 93 | `screen-toolkit` | shared-domain | port |
-| 94 | `screencast-gif` | shared-domain | port |
+| 94 | `screencast-gif` | shared-domain | ported |
 | 95 | `screenshot` | direct | no-port |
 | 96 | `shell-profiles` | query-worker | port |
 | 97 | `show-keys` | main-only | no-instance |
@@ -152,7 +152,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). G1c first green subgroup: port-monitor and mullvad; native both-scope representative and originating inert action outcomes supplement parsed field/cache/lifetime/entry checks. Remaining 22 required; broad visual/final acceptance pending. |
-| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
+| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | G2a: screencast-gif and network-manager-vpn selected originating policy over singular effects; finite parsed mappings and native both-scope representative gates. Remaining 17 members and broad/final acceptance required. |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | planned |
@@ -1350,7 +1350,7 @@ Runtime-source/manifest fingerprint: `9c30877dd303ffc6d4dac1542abcd3cc805da2bc40
 
 ## network-manager-vpn
 
-Bar/CC presentation local; Main disableToastNotifications controls shared toast policy for originating actions. Carry selected action notification policy; network connections remain shared machine resources.
+Bar/CC presentation stays selected; every originating Panel/page VPN action captures the selected notification policy at admission. One NetworkManager observation/action owner remains; instance UI explains shared connections. G2 native both-scope and finite parsed contract carry separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1358,12 +1358,12 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `network-manager-vpn/BarWidget.qml` | `connectedColor`:27; `disconnectedColor`:28; `displayMode`:26 | 18, 19, 26, 27, 28, 29, 30, 31, ... |
 | 2 | `network-manager-vpn/ControlCenterWidget.qml` | `connectedColor`:14; `disconnectedColor`:15 | 10, 11, 12, 13, 14, 15 |
-| 3 | `network-manager-vpn/Main.qml` | `disableToastNotifications`:11 | 9, 11 |
-| 4 | `network-manager-vpn/Panel.qml` | No literal field edge | 16, 24, 71, 131, 171, 222 |
+| 3 | `network-manager-vpn/Main.qml` | `disableToastNotifications`:18 | 14, 18 |
+| 4 | `network-manager-vpn/Panel.qml` | No literal field edge | 16, 25, 72, 133, 174, 225 |
 | 5 | `network-manager-vpn/VpnListItem.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `4bcaf8ed02189d2334cb88add9abbe80066f9e9d063328de1a185aaf8ce92a26`.
+Runtime-source/manifest fingerprint: `e2892975295f0d87bd2d2f55a9ba9e89860c2e2b5c36748591e6f99acd69b634`.
 
 ## news
 
@@ -1853,18 +1853,18 @@ Runtime-source/manifest fingerprint: `db81ab29c77f8fde4ca492de75358a6320988d3228
 
 ## screencast-gif
 
-Main fps/outputDir/max duration configure the recording helper called from Bar. Capture originating selected action values; one recording process must be explicit shared runtime state.
+Originating Bar passes captured settings context; Main reads selected fps/outputDir/max duration at action admission, with explicit plugin-level IPC and one helper/status owner. Instance UI explains shared recorder; G2 native both-scope and finite parsed contract carry separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `screencast-gif/BarWidget.qml` | No literal field edge | 17, 35 |
-| 2 | `screencast-gif/Main.qml` | `fps`:21; `maxRecordingSeconds`:22; `outputDir`:23 | 12, 13 |
+| 1 | `screencast-gif/BarWidget.qml` | No literal field edge | 17, 33 |
+| 2 | `screencast-gif/Main.qml` | `fps`:24; `maxRecordingSeconds`:25; `outputDir`:26 | 18, 22, 23, 52 |
 | 3 | `screencast-gif/screencast-gif.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `61980e46a8ad92f5bf3b4a167811df812c6d5eafef75014eeda5b0ad395567a4`.
+Runtime-source/manifest fingerprint: `652874222586674fd282e132940d90b10f39777fc7298725c8109cb0b1edba72`.
 
 ## screenshot
 
