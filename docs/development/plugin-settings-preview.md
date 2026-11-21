@@ -44,3 +44,12 @@ newer fields. The native session regression consolidates the historical popup
 fixture's actual native-hide/held-result, directory-quarantine and untracked
 local-buffer Close cases, alongside Apply/Reset, callback ordering and cold
 consumers. No legacy snapshot page API is restored by those tests.
+
+`popup-close-regression.py` also requires the verified guest profile. Its nine
+generic dirty/busy Close and replacement routes use an actual selected native
+editor and hold real completion delivery. Stale/reentrant adoption and the same
+QObject's later-opening restoration are checked without assigning private popup
+state. Independent final-file and separate cold consumers cover the generic
+publication. Its three distinct live-field dialogs retain controlled submission
+receipts for Close, native hide and failed-input confirmation; those rows do not
+claim native live-field persistence or change their immediate-edit contract.
