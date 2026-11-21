@@ -78,17 +78,6 @@ ShellRoot {
                 api: api
               };
               Service.loadedPlugins = loaded;
-              var nativeSave = api.saveSettings;
-              api.saveSettings = function (callback) {
-                return nativeSave(function (result) {
-                  root.lastReceipt = result;
-                  root.receipts++;
-                  if (root.phase === "mpv-clamp")
-                    root.mpvClampReceipt = result;
-                  if (typeof callback === "function")
-                    callback(result);
-                });
-              };
               if (mode === "cold") {
                 check(record(name).currentWallpaper === "settings-choice" && record("__proto__").volume === 0.625, "cold consumers see saved choices");
                 pass();
@@ -208,7 +197,10 @@ ShellRoot {
                                     });
               items.tools = component("common/ToolRow.qml", {
                                         pluginApi: api,
-                                        screenName: name
+                                        screenName: name,
+                                        settingWriter: function (key, value) {
+                                          items.ipc.saveMonitorProperty(key, value, name);
+                                        }
                                       });
               items.bar = component("BarWidget.qml", {
                                       pluginApi: api,
@@ -500,6 +492,17 @@ ShellRoot {
           target: Settings
           function onSettingsLoaded() {
             root.begin();
+          }
+        }
+        Connections {
+          target: Service
+          function onPluginSettingsCompleted(pluginId, result) {
+            if (pluginId !== "video-wallpaper")
+              return;
+            root.lastReceipt = result;
+            root.receipts++;
+            if (root.phase === "mpv-clamp")
+              root.mpvClampReceipt = result;
           }
         }
         FileView {

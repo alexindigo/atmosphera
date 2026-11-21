@@ -138,6 +138,31 @@ opening bound. The last is a rejecting meta-control, not catalog coverage. Its
 test-only interposer always calls the real fsync and is never used for ordinary
 catalog or lock tests. This harness allowance does not optimize ConfigQml I/O.
 
+## Video monitor and runtime witnesses
+
+`plugin-settings-video-page-regression.py` requires the named guest profile and
+two actual compositor outputs. Ten cases retain monitor/domain navigation,
+equal-valued projected intent, Discard, real IO refusal/Retry and custom-time
+invalid/space/Cancel/Enter flows. Each whole native document is independently
+compared and then read in a separate cold engine without changing its bytes.
+The automation cases additionally observe actual timer actions for the selected
+enabled monitor and its inherited disabled sibling, plus later global mode
+propagation. Other rows are page/native projection proof, not media playback.
+
+`settings-video-runtime-regression.py` also requires the verified guest profile,
+source/plugins and fresh work/output roots. It creates its own isolated install;
+it no longer writes into an arbitrary caller installation. Native-API receipts
+are observed through Service, never by replacing a readonly native method.
+Its actual ToolRow receives the caller-owned runtime action. The runtime matrix
+retains native current/legacy/empty/Reset outcomes, function/IPC/Bar/Panel/Settings
+consumer paths, captured timer targets and failed publication, actual MPV IPC
+volume readback, wallpaper-cache outcomes and real FFmpeg thumbnail generation,
+failure/replacement/Retry. It checks native-universe fixture lint per engine.
+The real MPV socket uses the profile's private disk runtime so the mandated long
+workspace cannot exceed Linux's Unix-socket pathname limit. No guest /tmp or
+product path workaround is used. These focused matrices do not replace final
+whole-plan child-quiescence/restoration and paired acceptance.
+
 `plugin-settings-loader-regression.py` runs 36 construction rows with a real
 native session's page capability and both shared/instance runtime APIs. Direct
 `PluginLoader.createObject`, `PluginView` and caller-owned `Loader.setSource`
