@@ -1,9 +1,9 @@
 pre-commit:
   jobs:
     - name: format qml
-      run: cd "$(git rev-parse --show-toplevel)" && ./Scripts/dev/qmlfmt.sh && git update-index --again
+      run: cd "$(git rev-parse --show-toplevel)" && bash Scripts/dev/qml-format-staged.sh
     - name: build settings search index
-      run: cd "$(git rev-parse --show-toplevel)" && python3 Scripts/dev/build-settings-search-index.py && git add Assets/settings-search-index.json
+      run: cd "$(git rev-parse --show-toplevel)" && .devcontainer/container-run.sh --plain python3 Scripts/dev/build-settings-search-index.py && git add Assets/settings-search-index.json
 
 pre-push:
   jobs:

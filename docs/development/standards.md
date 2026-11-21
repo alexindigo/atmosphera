@@ -26,14 +26,22 @@ Use the Logger singleton:
 
 ### pre-commit (tracked, normal validation)
 
-The tracked hook at `.githooks/pre-commit` is the project's normal validation
-path: it formats and lints staged QML inside the dev container (rootless
-Podman or Docker) and rebuilds the settings search index when its inputs
-change. Enable once per clone with `git config core.hooksPath .githooks`.
-See DEVELOPMENT.md for engine selection and prerequisites.
+The tracked hook at `.githooks/pre-commit` is a quick sanity check. It formats
+and restages staged QML inside the dev container (rootless Podman or Docker),
+checks changed-plugin compatibility, then checks final-index schema/search
+freshness and built-in settings-store compatibility. It rejects invalid inputs
+without silently regenerating settings resources. Enable once per clone with
+`git config core.hooksPath .githooks`.
+
+Full QML lint/canaries, detached-settings-write analysis and settings regressions
+belong in CI. Settings, QML and plugin workflows run on every PR, whatever the
+base branch, and pushes to `main`. No check moved from the hook is omitted.
+See DEVELOPMENT.md, "Pre-commit Hook", for engine prerequisites, deadlines and
+commands to run the full suite inside the assigned test VM.
 
 ### pre-push
-Rejects unsigned commits and tags. Enable signing:
+The optional Lefthook pre-push jobs reject untrusted remotes and unsigned commits
+and tags; these duties are unchanged. Enable signing:
 
 ```sh
 git config commit.gpgSign true
@@ -46,7 +54,10 @@ git config user.signingkey "$(cat ~/.ssh/id_ed25519.pub)"
 
 `lefthook.yml` predates the tracked hook and remains only as optional advice
 for contributors who prefer that tool. It adds pre-commit hooks for QML
-formatting and settings index rebuild. Install [lefthook](https://github.com/evilmartians/lefthook#install) and run `lefthook install` to enable. It is not a substitute for the tracked hook's containerized checks.
+formatting (staged QML only) and settings index rebuild, using the container.
+Install [lefthook](https://github.com/evilmartians/lefthook#install) and run
+`lefthook install` to enable. It is not a substitute for the tracked hook's
+final-index sanity checks or CI's full suite.
 
 ## Making Changes
 

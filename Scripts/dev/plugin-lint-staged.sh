@@ -35,7 +35,7 @@ if BASE_TREE="$(git rev-parse --verify "${PLUGIN_LINT_BASE:-HEAD}^{tree}" 2>/dev
 fi
 
 ATMOSPHERA_PLUGIN_SNAPSHOT_DIR="$SNAPSHOT" \
-  "$REPO_ROOT/.devcontainer/container-run.sh" \
+  "$REPO_ROOT/.devcontainer/container-run.sh" --plain \
   python3 -B Scripts/dev/plugin-lint.py \
   --root /atmosphera-plugin-snapshot/index/builtin/plugins \
   --base-root /atmosphera-plugin-snapshot/base/builtin/plugins \
