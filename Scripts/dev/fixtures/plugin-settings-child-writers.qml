@@ -13,7 +13,7 @@ ShellRoot {
   readonly property string pluginId: Quickshell.env("PHA_CHILD_PLUGIN")
   readonly property string scopeKind: Quickshell.env("PHA_CHILD_SCOPE") || "instance"
   readonly property bool cold: Quickshell.env("PHA_CHILD_COLD") === "1"
-  readonly property string screenName: Quickshell.screens[0].name
+  readonly property string screenName: Quickshell.env("PHA_CHILD_SCREEN")
   property bool started: false
   property var api: null
   property var selected: null
@@ -39,6 +39,21 @@ ShellRoot {
   QtObject {
     id: actionOwner
     property bool thumbCacheReady: false
+    function registerRuntime(runtimeApi) {
+      return runtimeApi.settingsContext.current();
+    }
+    function activatePolicy(context) {
+      return context.current();
+    }
+    function admitRuntime(runtimeApi) {
+      return runtimeApi.settingsContext.current() ? runtimeApi : null;
+    }
+    function setPreference(key, value, runtimeApi) {
+      if (!runtimeApi.settingsContext.current())
+        return false;
+      runtimeApi.pluginSettings[key] = value;
+      return runtimeApi.saveSettings();
+    }
     function random(screen) {
     }
     function clear(screen) {
@@ -102,6 +117,7 @@ ShellRoot {
   function begin() {
     if (started || !Settings.isLoaded)
       return;
+    check(Quickshell.screens.some(screen => screen.name === screenName), "explicit seeded output exists");
     started = true;
     reader.path = Settings.configDir + "plugins/" + pluginId + "/manifest.json";
     reader.waitForJob();

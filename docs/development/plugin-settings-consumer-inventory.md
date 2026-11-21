@@ -67,7 +67,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 47 | `kubectl-ctx` | query-worker | ported |
 | 48 | `latency-monitor` | query-worker | ported |
 | 49 | `launcher-pass` | launcher-only | no-instance |
-| 50 | `linux-wallpaperengine-controller` | shared-domain | port |
+| 50 | `linux-wallpaperengine-controller` | shared-domain | ported |
 | 51 | `lyrics-fetch` | observation | ported |
 | 52 | `mawaqit` | query-worker | port |
 | 53 | `mimeapp-gui` | direct | no-port |
@@ -77,7 +77,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 57 | `monitor-layout` | shared-domain | port |
 | 58 | `mpd` | direct | no-port |
 | 59 | `mpris-lyric` | query-worker | ported |
-| 60 | `mpvpaper` | shared-domain | port |
+| 60 | `mpvpaper` | shared-domain | ported |
 | 61 | `mullvad` | observation | ported |
 | 62 | `music-search` | shared-domain | port |
 | 63 | `netbird` | observation | port |
@@ -132,7 +132,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 112 | `translator` | launcher-only | no-instance |
 | 113 | `update-count` | query-worker | ported |
 | 114 | `usb-drive-manager` | shared-domain | port |
-| 115 | `video-wallpaper` | shared-domain | port |
+| 115 | `video-wallpaper` | shared-domain | ported |
 | 116 | `vscode-provider` | launcher-only | no-instance |
 | 117 | `wallcards` | main-window | port |
 | 118 | `wallpaper-carousel` | main-only | no-instance |
@@ -152,7 +152,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). G1c first green subgroup: port-monitor and mullvad; native both-scope representative and originating inert action outcomes supplement parsed field/cache/lifetime/entry checks. Remaining 22 required; broad visual/final acceptance pending. |
-| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | G2a/G2b plus capture shape: screencast-gif, network-manager-vpn, ds4-colors, nvibrant, screen-recorder, screen-shot-and-record and screen-toolkit select originating policy over singular effects. Finite every-member mappings, native representatives and individual unusual lifetimes; remaining 12 members and broad/final acceptance required. |
+| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | G2a/G2b plus capture and wallpaper shapes: screencast-gif, network-manager-vpn, ds4-colors, nvibrant, screen-recorder, screen-shot-and-record, screen-toolkit, linux-wallpaperengine-controller, mpvpaper and video-wallpaper select originating policy over singular effects. Wallpaper Settings tools stage scoped field intent while runtime actions retain their native origin. Finite every-member mappings, native representatives and individual unusual lifetimes; remaining nine members and broad/final acceptance required. |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | planned |
@@ -1038,49 +1038,50 @@ Runtime-source/manifest fingerprint: `79bb7c297cfd37cf44ac41d23b26d458b9604f53c3
 
 ## linux-wallpaperengine-controller
 
-Panel has local browsing inputs but Main scan/default engine choices/properties and wallpaper process are shared. Select browse/configuration projection and capture output actions; actual monitor wallpaper and existing content maps stay shared explicitly.
+Main keeps context-keyed browse catalogs and one engine driven by captured originating options/layout/property inputs. Recovery and color callbacks retain that admission and fence retirement; screens/snapshots/property content stay shared. Startup remains explicitly plugin-level; instance UI identifies common output effects. Native both-scope, finite every-field and individual engine/source/color lifetime proofs are separate from physical playback or broad acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `linux-wallpaperengine-controller/BarWidget.qml` | `iconColor`:22 | 19, 20, 21, 43, 46, 49, 71, 72, ... |
-| 2 | `linux-wallpaperengine-controller/Main.qml` | `autoApplyOnStartup`:251; `defaultAudioReactiveEffects`:245,471,560; `defaultClamp`:233; `defaultDisableMouse`:247,479,566; `defaultDisableParallax`:248,483,569; `defaultFps`:234; `defaultFullscreenPauseOnlyActive`:250; `defaultMuted`:244,467,557; `defaultNoAutomute`:246,475,563; `defaultNoFullscreenPause`:249; `defaultScaling`:232; `defaultVolume`:237,462,554; `lastKnownGoodScreens`:91,92,165,178; `runtimeRecoveryPending`:99,100,144,148,166,185,216; `screens`:87,88,159,184,301,372,444,445,448,453,456,504,505,508,537,538,541,543,546; `wallpaperColorScreenshots`:103,104,113; `wallpaperProperties`:95,96,354,363; `wallpaperScanCacheMinutes`:254; `wallpapersFolder`:394 | 34, 35, 87, 88, 91, 92, 95, 96, ... |
-| 3 | `linux-wallpaperengine-controller/Panel.qml` | `applyWallpaperColorsOnApply`:50,686; `badgeEnabled`:71; `badgeOrder`:70; `defaultAudioReactiveEffects`:460; `defaultClamp`:457; `defaultDisableMouse`:461; `defaultDisableParallax`:462; `defaultMuted`:459; `defaultNoAutomute`:506; `defaultVolume`:458; `enableExtraPropertiesEditor`:114; `panelLastSelectedPath`:430,444; `panelPageSize`:63; `showSidebarDescription`:73; `wallpapersFolder`:37 | 25, 26, 27, 51, 52, 55, 88, 223, ... |
-| 4 | `linux-wallpaperengine-controller/WallpaperColorManager.qml` | `wallpaperColorScreenshots`:72,77,121 | 72, 77, 121 |
-| 5 | `linux-wallpaperengine-controller/components/panel/PanelDropdowns.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `linux-wallpaperengine-controller/components/panel/PanelHeader.qml` | No literal field edge | 11, 197, 205, 214, 215, 217 |
-| 7 | `linux-wallpaperengine-controller/components/panel/RuntimeErrorBanner.qml` | No literal field edge | 13, 20, 21, 28, 94, 101, 117 |
-| 8 | `linux-wallpaperengine-controller/components/shared/CardGridSection.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `linux-wallpaperengine-controller/components/shared/SidebarPanel.qml` | No literal field edge | No namespace/Main reference |
-| 10 | `linux-wallpaperengine-controller/components/wallpaper/ApplyControls.qml` | No literal field edge | 15, 74, 82, 109, 125, 233 |
-| 11 | `linux-wallpaperengine-controller/components/wallpaper/GridSection.qml` | No literal field edge | 14, 258 |
-| 12 | `linux-wallpaperengine-controller/components/wallpaper/PreviewCard.qml` | No literal field edge | No namespace/Main reference |
-| 13 | `linux-wallpaperengine-controller/components/wallpaper/PropertiesEditor.qml` | No literal field edge | No namespace/Main reference |
-| 14 | `linux-wallpaperengine-controller/components/wallpaper/Sidebar.qml` | No literal field edge | 15, 98 |
-| 15 | `linux-wallpaperengine-controller/components/wallpaper/WallpaperBadge.qml` | No literal field edge | No namespace/Main reference |
-| 16 | `linux-wallpaperengine-controller/helpers/panel/BadgeHelpers.js` | No literal field edge | No namespace/Main reference |
-| 17 | `linux-wallpaperengine-controller/helpers/panel/DescriptionHelpers.js` | No literal field edge | No namespace/Main reference |
-| 18 | `linux-wallpaperengine-controller/helpers/panel/PropertyHelpers.js` | No literal field edge | No namespace/Main reference |
-| 19 | `linux-wallpaperengine-controller/helpers/panel/WallpaperFilterHelpers.js` | No literal field edge | No namespace/Main reference |
-| 20 | `linux-wallpaperengine-controller/helpers/panel/WallpaperMetaHelpers.js` | No literal field edge | No namespace/Main reference |
-| 21 | `linux-wallpaperengine-controller/helpers/panel/WallpaperUiHelpers.js` | No literal field edge | No namespace/Main reference |
-| 22 | `linux-wallpaperengine-controller/helpers/runtime/EngineHelpers.js` | No literal field edge | No namespace/Main reference |
-| 23 | `linux-wallpaperengine-controller/helpers/runtime/WallpaperColorHelpers.js` | No literal field edge | No namespace/Main reference |
-| 24 | `linux-wallpaperengine-controller/helpers/shared/ColorCacheHelpers.js` | No literal field edge | No namespace/Main reference |
-| 25 | `linux-wallpaperengine-controller/scripts/capture-wallpaper-colors.sh` | No literal field edge | No namespace/Main reference |
-| 26 | `linux-wallpaperengine-controller/scripts/check-file-exists.sh` | No literal field edge | No namespace/Main reference |
-| 27 | `linux-wallpaperengine-controller/scripts/clear-color-cache.sh` | No literal field edge | No namespace/Main reference |
-| 28 | `linux-wallpaperengine-controller/scripts/detect-steam-workshop.sh` | No literal field edge | No namespace/Main reference |
-| 29 | `linux-wallpaperengine-controller/scripts/force-stop-engine.sh` | No literal field edge | No namespace/Main reference |
-| 30 | `linux-wallpaperengine-controller/scripts/get-cache-size-bytes.sh` | No literal field edge | No namespace/Main reference |
-| 31 | `linux-wallpaperengine-controller/scripts/scan-properties-compatibility.sh` | No literal field edge | No namespace/Main reference |
-| 32 | `linux-wallpaperengine-controller/scripts/scan-wallpapers.sh` | No literal field edge | No namespace/Main reference |
-| 33 | `linux-wallpaperengine-controller/scripts/scan_wallpapers.py` | No literal field edge | No namespace/Main reference |
-| 34 | `linux-wallpaperengine-controller/scripts/update-noctalia-wallpapers-cache.sh` | No literal field edge | No namespace/Main reference |
+| 2 | `linux-wallpaperengine-controller/Main.qml` | `autoApplyOnStartup`:308; `defaultAudioReactiveEffects`:302,474,565; `defaultClamp`:87,290,348; `defaultDisableMouse`:304,482,571; `defaultDisableParallax`:305,486,574; `defaultFps`:85,291; `defaultFullscreenPauseOnlyActive`:307; `defaultMuted`:301,470,562; `defaultNoAutomute`:303,478,568; `defaultNoFullscreenPause`:306; `defaultScaling`:88,289,347; `defaultVolume`:294,465,559; `lastKnownGoodScreens`:139,140,221,234; `panelLastSelectedPath`:165,168; `runtimeRecoveryPending`:147,148,199,203,222,241,273; `screens`:135,136,240,342,413,447,448,451,456,459,508,509,512,542,543,546,548,551,657,769; `wallpaperColorScreenshots`:151,152,161; `wallpaperProperties`:89,143,144,395,404,658; `wallpaperScanCacheMinutes`:311 | 28, 36, 38, 42, 45, 51, 52, 55, ... |
+| 3 | `linux-wallpaperengine-controller/Panel.qml` | `applyWallpaperColorsOnApply`:51,682; `badgeEnabled`:72; `badgeOrder`:71; `defaultAudioReactiveEffects`:456; `defaultClamp`:453; `defaultDisableMouse`:457; `defaultDisableParallax`:458; `defaultMuted`:455; `defaultNoAutomute`:502; `defaultVolume`:454; `enableExtraPropertiesEditor`:115; `panelPageSize`:64; `showSidebarDescription`:74; `wallpapersFolder`:38 | 25, 26, 27, 28, 52, 224, 225, 329, ... |
+| 4 | `linux-wallpaperengine-controller/WallpaperCatalog.qml` | `wallpaperScanCacheMinutes`:18; `wallpapersFolder`:16 | 11, 13, 14, 15 |
+| 5 | `linux-wallpaperengine-controller/WallpaperColorManager.qml` | `wallpaperColorScreenshots`:74,79,126 | 74, 79, 126 |
+| 6 | `linux-wallpaperengine-controller/components/panel/PanelDropdowns.qml` | No literal field edge | No namespace/Main reference |
+| 7 | `linux-wallpaperengine-controller/components/panel/PanelHeader.qml` | No literal field edge | 11, 197, 205, 214, 215, 217 |
+| 8 | `linux-wallpaperengine-controller/components/panel/RuntimeErrorBanner.qml` | No literal field edge | 13, 20, 21, 28, 94, 101, 117 |
+| 9 | `linux-wallpaperengine-controller/components/shared/CardGridSection.qml` | No literal field edge | No namespace/Main reference |
+| 10 | `linux-wallpaperengine-controller/components/shared/SidebarPanel.qml` | No literal field edge | No namespace/Main reference |
+| 11 | `linux-wallpaperengine-controller/components/wallpaper/ApplyControls.qml` | No literal field edge | 15, 74, 82, 109, 125, 233 |
+| 12 | `linux-wallpaperengine-controller/components/wallpaper/GridSection.qml` | No literal field edge | 14, 258 |
+| 13 | `linux-wallpaperengine-controller/components/wallpaper/PreviewCard.qml` | No literal field edge | No namespace/Main reference |
+| 14 | `linux-wallpaperengine-controller/components/wallpaper/PropertiesEditor.qml` | No literal field edge | No namespace/Main reference |
+| 15 | `linux-wallpaperengine-controller/components/wallpaper/Sidebar.qml` | No literal field edge | 15, 98 |
+| 16 | `linux-wallpaperengine-controller/components/wallpaper/WallpaperBadge.qml` | No literal field edge | No namespace/Main reference |
+| 17 | `linux-wallpaperengine-controller/helpers/panel/BadgeHelpers.js` | No literal field edge | No namespace/Main reference |
+| 18 | `linux-wallpaperengine-controller/helpers/panel/DescriptionHelpers.js` | No literal field edge | No namespace/Main reference |
+| 19 | `linux-wallpaperengine-controller/helpers/panel/PropertyHelpers.js` | No literal field edge | No namespace/Main reference |
+| 20 | `linux-wallpaperengine-controller/helpers/panel/WallpaperFilterHelpers.js` | No literal field edge | No namespace/Main reference |
+| 21 | `linux-wallpaperengine-controller/helpers/panel/WallpaperMetaHelpers.js` | No literal field edge | No namespace/Main reference |
+| 22 | `linux-wallpaperengine-controller/helpers/panel/WallpaperUiHelpers.js` | No literal field edge | No namespace/Main reference |
+| 23 | `linux-wallpaperengine-controller/helpers/runtime/EngineHelpers.js` | No literal field edge | No namespace/Main reference |
+| 24 | `linux-wallpaperengine-controller/helpers/runtime/WallpaperColorHelpers.js` | No literal field edge | No namespace/Main reference |
+| 25 | `linux-wallpaperengine-controller/helpers/shared/ColorCacheHelpers.js` | No literal field edge | No namespace/Main reference |
+| 26 | `linux-wallpaperengine-controller/scripts/capture-wallpaper-colors.sh` | No literal field edge | No namespace/Main reference |
+| 27 | `linux-wallpaperengine-controller/scripts/check-file-exists.sh` | No literal field edge | No namespace/Main reference |
+| 28 | `linux-wallpaperengine-controller/scripts/clear-color-cache.sh` | No literal field edge | No namespace/Main reference |
+| 29 | `linux-wallpaperengine-controller/scripts/detect-steam-workshop.sh` | No literal field edge | No namespace/Main reference |
+| 30 | `linux-wallpaperengine-controller/scripts/force-stop-engine.sh` | No literal field edge | No namespace/Main reference |
+| 31 | `linux-wallpaperengine-controller/scripts/get-cache-size-bytes.sh` | No literal field edge | No namespace/Main reference |
+| 32 | `linux-wallpaperengine-controller/scripts/scan-properties-compatibility.sh` | No literal field edge | No namespace/Main reference |
+| 33 | `linux-wallpaperengine-controller/scripts/scan-wallpapers.sh` | No literal field edge | No namespace/Main reference |
+| 34 | `linux-wallpaperengine-controller/scripts/scan_wallpapers.py` | No literal field edge | No namespace/Main reference |
+| 35 | `linux-wallpaperengine-controller/scripts/update-noctalia-wallpapers-cache.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `202336ab98168c1f86f277ba865bf60525bbe0a2d722e310069fbca67bb1b48d`.
+Runtime-source/manifest fingerprint: `33960c54bdef89e2d6826921082944dc3d48c6cc6b2c182774b895262541a632`.
 
 ## lyrics-fetch
 
@@ -1245,23 +1246,23 @@ Runtime-source/manifest fingerprint: `87d7daafc56b8f8d85834121893efcb0c6d02cccdd
 
 ## mpvpaper
 
-Bar/Panel local saved choices dispatch Main-owned engine/automation/thumbnail objects with shared API. Select configuration/actions while explicitly owning the one wallpaper output/socket and preserving operational thumbnail/history data.
+Main retains one playback/automation owner driven by selected context; runtime actions carry their native API, while accepted page completion supplies only read-only policy. Settings Random/Clear stage scoped fields, runtime tools remain immediate; fresh browse models fence source replacement/retirement. Cache/baseline writers remain shared. Instance UI explains common output effects; native both-scope, finite mappings and individual cache/color/browse proofs do not certify physical playback or general MPV options.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `mpvpaper/BarWidget.qml` | `active`:20,78; `isMuted`:28,90,94; `isPlaying`:24,82,86 | 20, 24, 28, 78, 82, 86, 90, 94 |
-| 2 | `mpvpaper/Main.qml` | `active`:16,238; `automation`:20; `automationMode`:24; `automationTime`:28; `currentWallpaper`:32,120; `fillMode`:62; `hardwareAcceleration`:36,314; `isMuted`:40,276,283,290; `isPlaying`:44,254,261,268; `mpvSocket`:48; `oldWallpapers`:53; `profile`:57; `thumbCacheReady`:68; `volume`:72,298; `wallpapersFolder`:76 | 16, 20, 24, 28, 32, 36, 40, 44, ... |
-| 3 | `mpvpaper/Panel.qml` | `active`:29; `currentWallpaper`:38; `isMuted`:203; `isPlaying`:199; `wallpapersFolder`:33,221 | 26, 29, 33, 34, 38, 94, 160, 172, ... |
-| 4 | `mpvpaper/common/ToolRow.qml` | `isMuted`:18; `isPlaying`:14 | 14, 18, 64, 69, 73, 78 |
+| 1 | `mpvpaper/BarWidget.qml` | `active`:22; `isMuted`:30; `isPlaying`:26 | 13, 14, 22, 26, 30, 80, 83, 86, ... |
+| 2 | `mpvpaper/Main.qml` | `active`:56,317,321; `automation`:60; `automationMode`:64; `automationTime`:68; `currentWallpaper`:72,138,187,310; `fillMode`:102; `hardwareAcceleration`:76,385,389; `isMuted`:80,351,357,363; `isPlaying`:84,188,332,338,344; `mpvSocket`:88; `oldWallpapers`:93; `profile`:97; `thumbCacheReady`:108; `volume`:112,370,374,378; `wallpapersFolder`:116,138,153 | 21, 23, 26, 29, 37, 38, 40, 46, ... |
+| 3 | `mpvpaper/Panel.qml` | `active`:31; `currentWallpaper`:40; `wallpapersFolder`:35 | 19, 20, 28, 31, 35, 36, 40, 96, ... |
+| 4 | `mpvpaper/common/ToolRow.qml` | `isMuted`:18; `isPlaying`:14 | 14, 18 |
 | 5 | `mpvpaper/main/Automation.qml` | No literal field edge | No namespace/Main reference |
 | 6 | `mpvpaper/main/InnerService.qml` | `oldWallpapers`:41 | 41 |
-| 7 | `mpvpaper/main/Mpvpaper.qml` | `isPlaying`:64; `volume`:209 | 64, 209 |
-| 8 | `mpvpaper/main/Thumbnails.qml` | `thumbCacheReady`:30,37,90 | 30, 37, 90 |
+| 7 | `mpvpaper/main/Mpvpaper.qml` | `volume`:230 | 12, 22, 72, 73, 97, 114, 139, 229, ... |
+| 8 | `mpvpaper/main/Thumbnails.qml` | `thumbCacheReady`:31,38,93 | 31, 38, 93 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `8a8281b980b506b41ceaca3fef291d13bf30a6dc87aa06b17edfcfce32be4457`.
+Runtime-source/manifest fingerprint: `f1c60eeab34e055061f8eff585e843cfc2d29d05a443d792ca7bdaad79ac26f8`.
 
 ## mullvad
 
@@ -2243,31 +2244,31 @@ Runtime-source/manifest fingerprint: `7a58ba1f4d700be66e1ad73448ca86505b4492618d
 
 ## video-wallpaper
 
-Main and its per-output automation/MPV/FFmpeg objects read shared API while Bar/Panel save selected monitor/config inputs. Physical output is shared; selected policy/action context and explicit instance UI required. Existing dual-output native proofs do not close this mismatch.
+Main selects one policy for its existing per-output playback/automation/color/baseline owners; explicit runtime actions retain their originating native writer, including delayed baseline saves. Settings Random/Clear stage the selected atomic monitors field; runtime tools stay immediate and browse generations fence source/owner loss. Instance UI explains common physical outputs. Two-real-output backend/automation/writer lifetime, actual scoped tools, finite mappings and historical real MPV/FFmpeg gates retain distinct proof boundaries, not broad or whole-plan acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `video-wallpaper/BarWidget.qml` | `enabled`:35,100,104; `monitorSpecific`:36; `monitors`:13,14,31,32 | 13, 14, 15, 31, 32, 35, 36, 100, ... |
-| 2 | `video-wallpaper/Main.qml` | `activeBackend`:78; `monitors`:24; `wallpapersFolder`:19 | 19, 24, 78, 129 |
-| 3 | `video-wallpaper/Panel.qml` | `activeBackend`:29; `enabled`:30,131; `monitorSpecific`:31,117; `wallpapersFolder`:33,182 | 29, 30, 31, 32, 33, 99, 102, 117, ... |
+| 1 | `video-wallpaper/BarWidget.qml` | `enabled`:37,104,109; `monitorSpecific`:38; `monitors`:15,16,33,34 | 13, 14, 15, 16, 17, 33, 34, 37, ... |
+| 2 | `video-wallpaper/Main.qml` | `activeBackend`:108; `monitors`:50; `wallpapersFolder`:45 | 16, 18, 19, 22, 23, 29, 37, 45, ... |
+| 3 | `video-wallpaper/Panel.qml` | `activeBackend`:31; `enabled`:32,135; `monitorSpecific`:33,120; `wallpapersFolder`:35,187 | 18, 19, 31, 32, 33, 34, 35, 101, ... |
 | 4 | `video-wallpaper/common/FolderModel.qml` | No literal field edge | No namespace/Main reference |
 | 5 | `video-wallpaper/common/MonitorCommands.js` | No literal field edge | No namespace/Main reference |
 | 6 | `video-wallpaper/common/MonitorEdits.qml` | No literal field edge | No namespace/Main reference |
 | 7 | `video-wallpaper/common/MonitorTabBar.qml` | No literal field edge | No namespace/Main reference |
 | 8 | `video-wallpaper/common/MonitorTabView.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `video-wallpaper/common/SaveTimer.qml` | `monitors`:19,20 | 19, 20, 21, 75 |
-| 10 | `video-wallpaper/common/ToolRow.qml` | `monitorSpecific`:35; `monitors`:31,32 | 26, 31, 32, 45, 50, 54, 59 |
-| 11 | `video-wallpaper/main/Automation.qml` | `automation`:18,86; `automationMode`:19,87; `automationTime`:20,88; `monitorSpecific`:21; `monitors`:85 | 17, 21, 85 |
-| 12 | `video-wallpaper/main/ColorGeneration.qml` | `enabled`:15; `monitors`:14 | 14, 15 |
-| 13 | `video-wallpaper/main/Functions.qml` | `monitorSpecific`:23; `monitors`:11,12,63; `wallpapersFolder`:24 | 11, 12, 13, 23, 24, 63 |
-| 14 | `video-wallpaper/main/IPC.qml` | `enabled`:18,99; `monitors`:10,11,57,65 | 10, 11, 12, 18, 57, 65, 99 |
-| 15 | `video-wallpaper/main/InnerService.qml` | `enabled`:28; `monitors`:24,25 | 24, 25, 28 |
-| 16 | `video-wallpaper/main/Mpvpaper.qml` | `enabled`:34; `monitors`:24,25,26,27,28,29,30,31; `mpvSocket`:35 | 24, 25, 26, 27, 28, 29, 30, 31, ... |
-| 17 | `video-wallpaper/main/Thumbnails.qml` | `wallpapersFolder`:22 | 22 |
-| 18 | `video-wallpaper/main/VideoWallpaper.qml` | `enabled`:37; `monitors`:29,30,31,32,33,34 | 29, 30, 31, 32, 33, 34, 37 |
-| 19 | `video-wallpaper/panel/PerScreenPanel.qml` | `monitorSpecific`:31; `monitors`:17,18,30 | 17, 18, 19, 30, 31, 115, 129 |
+| 9 | `video-wallpaper/common/SaveTimer.qml` | `monitors`:19,20,75,76 | 19, 20, 21, 60, 75, 76, 77, 79 |
+| 10 | `video-wallpaper/common/ToolRow.qml` | `monitorSpecific`:37; `monitors`:33,34 | 26, 33, 34 |
+| 11 | `video-wallpaper/main/Automation.qml` | `automation`:21,89; `automationMode`:22,90; `automationTime`:23,91; `monitorSpecific`:24; `monitors`:88 | 12, 13, 14, 20 |
+| 12 | `video-wallpaper/main/ColorGeneration.qml` | `enabled`:18; `monitors`:17 | 10, 11, 12 |
+| 13 | `video-wallpaper/main/Functions.qml` | `monitorSpecific`:27,57,99; `monitors`:60,107,108; `wallpapersFolder`:28,59,69 | 11, 12, 16, 28, 54, 56, 59, 69, ... |
+| 14 | `video-wallpaper/main/IPC.qml` | `enabled`:19,101; `monitors`:11,12,58,66 | 11, 12, 13, 19, 58, 66, 101 |
+| 15 | `video-wallpaper/main/InnerService.qml` | `enabled`:32; `monitors`:28,29 | 12, 14, 15, 61 |
+| 16 | `video-wallpaper/main/Mpvpaper.qml` | `enabled`:37; `monitors`:27,28,29,30,31,32,33,34; `mpvSocket`:38 | 12, 13, 14, 28, 29, 30, 31, 32, ... |
+| 17 | `video-wallpaper/main/Thumbnails.qml` | `wallpapersFolder`:23 | 10, 23 |
+| 18 | `video-wallpaper/main/VideoWallpaper.qml` | `enabled`:40; `monitors`:32,33,34,35,36,37 | 17, 18, 19, 33, 34, 35, 36, 37 |
+| 19 | `video-wallpaper/panel/PerScreenPanel.qml` | `monitorSpecific`:31; `monitors`:17,18,30 | 17, 18, 19, 30, 31, 43, 116, 130, ... |
 
 Declared leaves without a literal runtime namespace edge: `automationCustomTime` (configuration), `currentWallpaper` (configuration), `fillMode` (configuration), `hardwareAcceleration` (configuration), `isMuted` (configuration), `isPlaying` (operational), `orientation` (configuration), `profile` (configuration), `volume` (configuration).
 
@@ -2276,7 +2277,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `automationCustomTime,currentWallpaper,fillMode,hardwareAcceleration,isMuted,isPlaying,orientation,profile,volume` | `video-wallpaper/common/MonitorCommands.js:15` | Finite dynamic monitor-record helpers resolve these field names and native atomic monitors map, consumed by Main per-output workers and runtime controls. Global legacy currentWallpaper and top-level isPlaying are not independent selected output authority. All remain part of required shared-output/context review; no leaf is silently removed. |
-Runtime-source/manifest fingerprint: `a121726b4251bbaa96130bc663d929814e69108ca9222955a59a6c852ec1aa72`.
+Runtime-source/manifest fingerprint: `36782e5ba4de5243b78227279c08216d985e8df375ef4e7cd532dfd4819bf3a5`.
 
 ## vscode-provider
 

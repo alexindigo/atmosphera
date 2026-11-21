@@ -180,7 +180,7 @@ def main():
             try:
                 modes = ('routes', 'cold') if case in ('routes', 'upgrade') else (case, 'reset-cold') if case in ('reset', 'namespace-reset') else (case,)
                 for mode in modes:
-                    env = dict(os.environ, I5_VIDEO_MODE=mode, I5_VIDEO_MANIFEST=manifest,
+                    env = dict(os.environ, I5_VIDEO_MODE=mode, I5_VIDEO_MANIFEST=manifest, I5_VIDEO_SCREEN=names[0],
                                I5_VIDEO_SOCKET=str(mpv_socket), I5_VIDEO_MEDIA=str(media),
                                I5_VIDEO_MEDIA_DIR=str(media_dir), I5_VIDEO_THUMBS=str(thumbs),
                                I5_THUMB_CONTROL=str(control), I5_THUMB_VALID=str(valid_media),

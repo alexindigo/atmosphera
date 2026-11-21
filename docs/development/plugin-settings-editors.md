@@ -391,6 +391,36 @@ Measure and recording/conversion/save boundaries. All physical capture, portal,
 compositor, upload, recorder-signal and clipboard endpoints are inert; no physical
 or broad visual/translation acceptance follows from these tests.
 
+## Selected wallpaper policy and staged tools
+
+LWE, MPVpaper and Video Wallpaper retain one physical playback owner per
+existing output domain. Accepted Settings completion selects a read-only runtime
+context; runtime Bar/Panel actions supply their own existing API. Main/IPC stays
+explicitly plugin-level. No runtime writer or immediate owner dispatcher enters
+the Settings page. Registration of a runtime view does not itself select policy.
+
+Settings Random/Clear are scoped field edits: MPV's `currentWallpaper` or Video's
+atomic `monitors`. They update the draft preview, publish on Apply and revert on
+confirmed Discard/Close. Their shared ToolRow takes injected actions; the runtime
+consumer injects immediate Main actions instead. Random owns a fresh folder model
+per request, pairs it by QObject identity, and rejects replaced source results.
+Runtime browse retains its admitted writer, folder and output targets too.
+
+LWE keeps source-dependent catalogs per captured context and one engine with its
+admitted options/layout/property inputs. Stability/recovery and screenshot/property
+content stay at their original shared owner; retired policies cannot publish.
+Its startup switch remains explicitly plugin-level and disabled in instance
+Settings. MPV cache/baseline writers stay shared; backend construction no longer
+authors `isPlaying`. Video's delayed baseline commands retain their originating
+runtime writer and screen across later selection changes. A read-only page
+completion never manufactures that writer.
+
+The `plugin-settings-wallpaper-*` drivers separate finite mappings, actual scoped
+pages/native documents/cold engines, staged tools, runtime browse and individual
+engine/source/color/backend/automation/delayed-writer lifetimes. Inert endpoints
+prove selected command inputs and native publication, not physical playback,
+general MPV option correctness or broad visual/translation acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
