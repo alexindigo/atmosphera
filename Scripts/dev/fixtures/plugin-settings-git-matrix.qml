@@ -10,6 +10,7 @@ ShellRoot {
   id: root
   readonly property string scenario: Quickshell.env("PHA_GIT_SCENARIO")
   readonly property bool cold: Quickshell.env("PHA_GIT_COLD") === "1"
+  readonly property bool presentationBaseline: Quickshell.env("PHA_GIT_PRESENTATION_BASELINE") === "1"
   readonly property string output: Quickshell.env("PHA_GIT_OUTPUT")
   property bool started: false
   property string phase: "startup"
@@ -26,6 +27,7 @@ ShellRoot {
   property var panel: null
   property var otherPanel: null
   property var inheritedPanel: null
+  property var presentations: []
   property var receipt: null
   property var failedPage: null
   property var failedEditor: null
@@ -40,6 +42,12 @@ ShellRoot {
   FileView {
     id: entered
     path: root.output + "/entered"
+    printErrors: false
+  }
+  FileView {
+    id: dictionaryFile
+    path: Settings.configDir + "plugins/git-companion/i18n/en.json"
+    blockLoading: true
     printErrors: false
   }
   FileView {
@@ -121,9 +129,20 @@ ShellRoot {
     return find(object, item => item.text === "result for " + repo) !== null;
   }
   function create(entry, parent, context) {
-    var component = Qt.createComponent("file://" + api.pluginDir + "/" + api.manifest.entryPoints[entry]);
+    var directory = presentationBaseline && ["barWidget", "desktopWidget"].indexOf(entry) !== -1 ? Quickshell.env("PHA_GIT_CASE") + "/baseline-widgets" : api.pluginDir;
+    var component = Qt.createComponent("file://" + directory + "/" + api.manifest.entryPoints[entry]);
     check(component.status === Component.Ready, component.errorString());
-    var item = PluginLoader.createObject("git-companion", entry, component, parent, context, {});
+    var item = PluginLoader.createObject("git-companion", entry, component, parent, context, {
+                                           screen: Quickshell.screens[0],
+                                           widgetData: {
+                                             id: "plugin:git-companion"
+                                           },
+                                           widgetIndex: 0,
+                                           section: "left",
+                                           sectionWidgetIndex: 0,
+                                           sectionWidgetsCount: 3,
+                                           widgetId: "plugin:git-companion"
+                                         });
     check(item !== null, "actual " + entry);
     return item;
   }
@@ -174,6 +193,55 @@ ShellRoot {
   function invariant() {
     check(other.repo === "synthetic/other" && row(otherPanel, "synthetic/other"), "sibling scope/result unchanged");
     check(client === main.settingsConsumerFor(selected.settingsContext) && client !== other && client !== follower, "one stable selected client per API");
+    check(presentationReady(), "actual Bar/Desktop selected counts and platform reach their consumers");
+    console.log("GIT_PRESENTATIONS " + JSON.stringify({
+                                                        phase: phase,
+                                                        cold: cold,
+                                                        consumers: presentations.map(function (item, index) {
+                                                          return {
+                                                            scope: ["shared", "selected", "sibling", "inherited"][index],
+                                                            platform: item.desktop.platform,
+                                                            repo: item.desktop.main.repo,
+                                                            group: item.desktop.main.group,
+                                                            issues: item.desktop.main.issuesCount,
+                                                            requests: item.desktop.main.prsCount,
+                                                            desktopText: item.desktop.text,
+                                                            barTooltip: item.bar.tooltipText
+                                                          };
+                                                        })
+                                                      }));
+  }
+  function presentationReady() {
+    var counts = {
+      "synthetic/alpha": 1,
+      "synthetic/beta": 2,
+      "synthetic/other": 3,
+      "synthetic/gamma": 4,
+      "synthetic/delta": 5,
+      "synthetic-team": 6
+    };
+    for (var item of presentations) {
+      var worker = main.settingsConsumerFor(item.api.settingsContext);
+      check(item.bar.main === worker && item.desktop.main === worker, "Bar/Desktop must use their exact selected client");
+      if (worker.loading)
+        return false;
+      var scope = worker.platform === "gitlab" && worker.group ? worker.group : worker.repo;
+      var count = worker.hasScope ? counts[scope] : 0;
+      var label = item.api.tr(worker.platform === "gitlab" ? "panel.mr" : "panel.pr");
+      var expected = item.api.tr("desktop.text", {
+                                   issues: count,
+                                   requestCount: count,
+                                   requestLabel: label
+                                 });
+      if (worker.issuesCount !== count || worker.prsCount !== count || item.desktop.text !== expected || item.bar.tooltipText !== item.api.tr("widget.tooltip", {
+                                                                                                                                                issues: count,
+                                                                                                                                                requestCount: count,
+                                                                                                                                                requestLabel: label
+                                                                                                                                              }) || !find(item.bar, value => value.tooltipText === item.bar.tooltipText && value.icon === (worker.platform === "gitlab" ? "brand-gitlab" : "brand-github")))
+        return false;
+      check(find(item.desktop, value => value !== item.desktop && value.font !== undefined && value.text === expected) !== null, "actual desktop Text must render the selected result");
+    }
+    return true;
   }
   function begin() {
     if (started || !Settings.isLoaded)
@@ -187,7 +255,9 @@ ShellRoot {
     Service._openSettingsOwner("git-companion", function (owner) {
       try {
         check(owner !== null, "native plugin owner");
-        api = Service.createPluginAPI("git-companion", manifest, owner, {}, {}, {});
+        dictionaryFile.waitForJob();
+        var dictionary = JSON.parse(dictionaryFile.text());
+        api = Service.createPluginAPI("git-companion", manifest, owner, dictionary, dictionary, {});
         Service.loadedPlugins = {
           "git-companion": {
             api: api
@@ -228,11 +298,26 @@ ShellRoot {
       panel = create("panel", selectedHost, selected);
       otherPanel = create("panel", siblingHost, sibling);
       inheritedPanel = create("panel", inheritedHost, inherited);
-      phase = cold ? "cold" : "initial";
+      presentations = [api, selected, sibling, inherited].map(function (context) {
+        return {
+          api: context,
+          bar: create("barWidget", selectedHost, context),
+          desktop: create("desktopWidget", siblingHost, context)
+        };
+      });
+      phase = presentationBaseline ? "presentation-baseline" : cold ? "cold" : "initial";
+    } else if (phase === "presentation-baseline" && !client.loading && !other.loading && !follower.loading) {
+      // Original widget sources run against the same native/API/context owner.
+      // This engine characterizes inherited diagnostics, not scoped correctness.
+      check(presentations.length === 4, "all original presentation roots instantiated");
+      if (++stable < 12)
+        return;
+      console.log("GIT_MATRIX: PRESENTATION_BASELINE " + scenario);
+      Qt.exit(0);
     } else if (phase === "cold") {
       expectedFile.waitForJob();
       var expected = JSON.parse(expectedFile.text());
-      if (client.loading || follower.loading || other.loading || !row(otherPanel, "synthetic/other"))
+      if (client.loading || follower.loading || other.loading || !row(otherPanel, "synthetic/other") || !presentationReady())
         return;
       check(client.platform === expected.platform && client.repo === expected.repo && client.group === expected.group && client.refreshInterval === expected.interval, "cold selected query configuration");
       check(expected.scope === "" ? client.issuesCount === 0 && !client.hasScope : row(panel, expected.scope), "cold actual selected Panel result");
@@ -240,7 +325,7 @@ ShellRoot {
       invariant();
       console.log("GIT_MATRIX: COLD_PASS " + scenario);
       Qt.exit(0);
-    } else if (phase === "initial" && row(panel, "synthetic/alpha") && row(otherPanel, "synthetic/other") && row(inheritedPanel, "synthetic/alpha")) {
+    } else if (phase === "initial" && row(panel, "synthetic/alpha") && row(otherPanel, "synthetic/other") && row(inheritedPanel, "synthetic/alpha") && presentationReady()) {
       invariant();
       check(popup.openInstanceSettings(api.manifest, selected, "settings"), "actual selected Settings opens");
       phase = "page";
@@ -284,7 +369,7 @@ ShellRoot {
     } else if (phase === "retry") {
       check(popup.settingsPage === failedPage && popup._editor === failedEditor, "Retry retains selected capture");
       apply("selected-applied");
-    } else if (phase === "stale-ready" && client.repo === "synthetic/gamma" && row(panel, "synthetic/gamma")) {
+    } else if (phase === "stale-ready" && client.repo === "synthetic/gamma" && row(panel, "synthetic/gamma") && presentationReady()) {
       check(popup.settingsPage === failedPage && popup._pageApi.field("repo").value === "synthetic/beta", "external source preserves readable local input");
       apply("stale-refused");
     } else if (phase === "stale-refused" && receipt && !popup.busy) {
@@ -308,20 +393,20 @@ ShellRoot {
     } else if (phase === "replacement" && accepted() && row(panel, "synthetic/gamma") && !client.loading) {
       check(!oldWorker || !oldWorker.active, "old query generation retired");
       action(["touch", output + "/release"], "old-released");
-    } else if (phase === "old-released") {
+    } else if (phase === "old-released" && presentationReady()) {
       check(client.repo === "synthetic/gamma" && row(panel, "synthetic/gamma") && !row(panel, "synthetic/beta"), "old held response cannot repopulate replacement");
       if (++stable < 12)
         return;
       invariant();
       probe("replacement", "finish");
-    } else if (phase === "selected-applied" && accepted() && !client.loading && (scenario === "unconfigured" ? client.issuesCount === 0 && !client.hasScope : row(panel, scenario === "platform-group" ? "synthetic-team" : "synthetic/beta"))) {
+    } else if (phase === "selected-applied" && accepted() && !client.loading && presentationReady() && (scenario === "unconfigured" ? client.issuesCount === 0 && !client.hasScope : row(panel, scenario === "platform-group" ? "synthetic-team" : "synthetic/beta"))) {
       invariant();
       check(main.repo === "synthetic/alpha" && row(inheritedPanel, "synthetic/alpha"), "selected publication cannot refresh shared/inherited scopes");
       probe("edited", scenario === "inheritance" ? "base-change" : "finish");
     } else if (phase === "base-change") {
       check(popup.requestClose(), "close accepted editor before base replacement");
       publishBase("synthetic/gamma", "base-changed");
-    } else if (phase === "base-changed" && row(inheritedPanel, "synthetic/gamma") && row(panel, "synthetic/beta")) {
+    } else if (phase === "base-changed" && row(inheritedPanel, "synthetic/gamma") && row(panel, "synthetic/beta") && presentationReady()) {
       invariant();
       probe("base-changed", "reset-open");
     } else if (phase === "reset-open") {
@@ -334,12 +419,12 @@ ShellRoot {
       probe("reset-staged", "reset-apply");
     } else if (phase === "reset-apply") {
       apply("reset-applied");
-    } else if (phase === "reset-applied" && accepted() && row(panel, "synthetic/gamma")) {
+    } else if (phase === "reset-applied" && accepted() && row(panel, "synthetic/gamma") && presentationReady()) {
       probe("reset", "later-base");
     } else if (phase === "later-base") {
       check(popup.requestClose(), "clean Reset Close");
       publishBase("synthetic/delta", "later-inherited");
-    } else if (phase === "later-inherited" && row(panel, "synthetic/delta") && row(inheritedPanel, "synthetic/delta")) {
+    } else if (phase === "later-inherited" && row(panel, "synthetic/delta") && row(inheritedPanel, "synthetic/delta") && presentationReady()) {
       invariant();
       probe("inherited", "finish");
     } else if (phase === "finish") {

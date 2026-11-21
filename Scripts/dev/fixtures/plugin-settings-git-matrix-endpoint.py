@@ -28,8 +28,10 @@ elif (name == 'gh' and args[:2] in (['search', 'issues'], ['search', 'prs'])) or
             if time.monotonic() > deadline:
                 raise RuntimeError('old response barrier timed out')
             time.sleep(0.02)
-    print(json.dumps([dict(number=1, iid=1, title='result for ' + scope,
+    count = {'synthetic/alpha': 1, 'synthetic/beta': 2, 'synthetic/other': 3,
+             'synthetic/gamma': 4, 'synthetic/delta': 5, 'synthetic-team': 6}.get(scope, 1)
+    print(json.dumps([dict(number=index + 1, iid=index + 1, title='result for ' + scope,
                            url='', web_url='', repository=dict(nameWithOwner=scope),
-                           references=dict(full=scope + '#1'))]))
+                           references=dict(full=scope + '#' + str(index + 1))) for index in range(count)]))
 else:
     raise SystemExit(91)

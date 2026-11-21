@@ -117,8 +117,26 @@ Panel consumer without changing configuration hashes. These controls invoke the
 page's own committed-input/selection signals; the original selected-Git witness
 separately drives genuine keyboard input and Discard. Inert gh/glab endpoints
 record literal query argv, not external account or physical-device behavior.
-This matrix does not certify Git's separate heading alias, every Bar/Desktop
-presentation, the full catalog or final whole-plan acceptance.
+The same seven scenarios also instantiate the real Bar and Desktop pieces for
+shared, selected, overridden sibling and inherited APIs. Distinct inert result
+counts reach the desktop's actual Text and the Bar pill's tooltip/icon, both
+warm and cold. Every piece must use the exact Main-owned selected client, not
+merely display an equal count. Separate Bar/Desktop shared-client mutations fail
+at that identity assertion. The fixture injects the actual English dictionary.
+An independent rendered-text mutation also must fail: the Desktop root's data
+property alone is not a rendered Text consumer.
+
+With `--baseline-plugins` pointing to the pinned original catalog, a separate
+nonediting engine characterizes inherited widget diagnostics before each case.
+Only exact diagnostics from those original Bar/desktop-context sources may
+remain; a new page/Main/session error still fails. Results retain both original
+and candidate diagnostics and explicitly mark the runtime unclean. Git's existing
+undeclared Bar orientation binding and the desktop base's late-context null
+reads are not fixed or certified by this scoped-data proof. Initial color-owner
+file creation is recorded separately; every seeded configuration file remains
+unchanged during characterization. The separate `selectedRepo` heading alias
+P066, physical tooltip interaction, full visual presentation, full catalog and
+final whole-plan acceptance remain outside this focused proof.
 
 Music Search's folder and limit buttons remain explicit Main/helper actions,
 outside the preference draft. Its Main-owned result records pending, saved,
