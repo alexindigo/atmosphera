@@ -170,6 +170,17 @@ changing configuration files. Exact shared-client and shared-writer mutations
 must reject. These are controlled hardware endpoints, not physical sysfs proof
 or final catalog/UI acceptance.
 
+`plugin-settings-hello-regression.py` checks the simple direct-consumer case:
+Hello World's Main keeps its explicitly shared IPC, while actual Panel Text and
+Bar foreground consume their injected runtime API. Both generic page scopes
+exercise both declared fields, Discard, native Apply, staged Reset and later
+shared propagation with an overridden sibling. Independent complete documents
+and separate edited/Reset/following cold engines distinguish saved configuration
+from rendered results. Shared-reader, shared-Bar and child-Text mutations must
+fail at those actual consumers. No desktop-specific live-field contract is
+changed. The Panel preserves an explicit
+empty message instead of substituting its manifest reference value.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
