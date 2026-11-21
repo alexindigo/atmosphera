@@ -240,7 +240,7 @@ ColumnLayout {
 
     property string actionName
     property string actionDescription
-    property alias timeoutValue: spinBox.value
+    property int timeoutValue
     property int defaultValue
     property string command
     property string resumeCommand
@@ -251,16 +251,13 @@ ColumnLayout {
     signal actionCommandChanged(string newCmd)
     signal actionResumeCommandChanged(string newCmd)
 
-    NSpinBox {
-      id: spinBox
+    IdleTimeoutControl {
       Layout.fillWidth: true
       label: rowRoot.actionName
       description: rowRoot.actionDescription
-      from: 0
-      to: 86400
-      suffix: "s"
+      timeoutValue: rowRoot.timeoutValue
       defaultValue: rowRoot.defaultValue
-      onValueChanged: rowRoot.actionTimeoutChanged(value)
+      onTimeoutEdited: value => rowRoot.actionTimeoutChanged(value)
     }
 
     AtmoIconButton {
