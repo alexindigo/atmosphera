@@ -44,7 +44,7 @@
       "approach": "Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection.",
       "representatives": "wallcards; somnus individual action-target proof with inert lock/sleep endpoints only.",
       "staticCheck": "Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations.",
-      "status": "planned"
+      "status": "G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending."
     },
     {
       "id": "G6",

@@ -117,7 +117,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 97 | `show-keys` | main-only | no-instance |
 | 98 | `simple-notes` | direct | no-port |
 | 99 | `slowbongo` | observation | port |
-| 100 | `somnus` | main-window | port |
+| 100 | `somnus` | main-window | ported |
 | 101 | `special-workspaces` | direct | no-port |
 | 102 | `spotify-player` | query-worker | port |
 | 103 | `squeekboard-toggle` | direct | no-port |
@@ -134,7 +134,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 114 | `usb-drive-manager` | shared-domain | port |
 | 115 | `video-wallpaper` | shared-domain | port |
 | 116 | `vscode-provider` | launcher-only | no-instance |
-| 117 | `wallcards` | main-window | port |
+| 117 | `wallcards` | main-window | ported |
 | 118 | `wallpaper-carousel` | main-only | no-instance |
 | 119 | `weather-indicator` | direct | no-port |
 | 120 | `web-search` | launcher-only | no-instance |
@@ -155,7 +155,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
-| 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | planned |
+| 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending. |
 | 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | planned |
 | 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | planned |
 | 8 | G8: Selected export/presentation policy over protected shared content (1) | `todo` | Carry originating exportPath/exportFormat/exportEmptySections and remaining selected presentation/action policy into shared Main content operations. Keep task/page/counter bytes and one content owner unchanged; prior P001 protection remains valid. | todo individually: selected export command/output and actual presentation; reuse source-qualified P001 content-protection/runtime proofs when unchanged. | All Main configuration readers traced to selected caller inputs or explicit shared IPC; every export caller carries context, protected content leaves remain excluded from configuration intents/reset, no migration. Reject shared export policy and changed-content controls. | planned |
@@ -1961,18 +1961,18 @@ Runtime-source/manifest fingerprint: `b183837dcfceec7b7e8ae247923429a3c6b41982f8
 
 ## somnus
 
-Bar invokes Main openPanel; Main passes its plugin-level API to SomnusWindow. Every window/action setting must come from captured originating context, IPC remains shared; no lock/suspend execution in classification.
+Main captures the opening Bar API before loading its single window; appearance and pre-Close suspend policy use that owner, IPC explicitly stays plugin-level. Native both-scope window/button geometry, inert compositor action targets and retirement are required; no physical lock/suspend proof.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `somnus/BarWidget.qml` | `iconColor`:17 | 17, 18, 38 |
-| 2 | `somnus/Main.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `somnus/SomnusWindow.qml` | `animationsEnabled`:96; `buttonHeight`:88; `buttonOpacity`:295; `buttonSpacing`:89; `buttonWidth`:87; `hoverColor`:294; `hoverDesaturation`:286; `lockOnSuspend`:51; `overlayBlur`:93; `overlayTint`:94; `panelTint`:95; `useOverlay`:84 | 51, 84, 87, 88, 89, 93, 94, 95, ... |
+| 1 | `somnus/BarWidget.qml` | `iconColor`:17 | 17, 37 |
+| 2 | `somnus/Main.qml` | No literal field edge | 12, 49 |
+| 3 | `somnus/SomnusWindow.qml` | `animationsEnabled`:100; `buttonHeight`:92; `buttonOpacity`:338; `buttonSpacing`:93; `buttonWidth`:91; `hoverColor`:338; `hoverDesaturation`:331; `lockOnSuspend`:43; `overlayBlur`:97; `overlayTint`:98; `panelTint`:99; `useOverlay`:88 | 43, 88, 91, 92, 93, 97, 98, 99, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `6a0b7972d4dc43af053a746db6d8db3bc89e0758f75e37b27240bfde1dc71b58`.
+Runtime-source/manifest fingerprint: `b9076ebe8c5fe07ec18ece3bc605f77d20ca8c9f6205031099d428ed71b89a41`.
 
 ## special-workspaces
 
@@ -2288,15 +2288,15 @@ Runtime-source/manifest fingerprint: `8de2f363c68c88e2c326d49973d8e7c3112ce77354
 
 ## wallcards
 
-Bar invokes Main toggle; Loader injects shared API into Wallcards window, which reads card/layout/filter choices. Pass captured selected context for window; image/video manifest-only filters remain separate feature gaps.
+Main captures the opening Bar API and screen before loading its single window; card/layout/filter presentation and native runtime layout Save retain that owner, IPC explicitly stays plugin-level. Both-scope native/card geometry, complete files and retirement are required. Shared wallpaper effects are explicit; manifest-only filters and unused legacy fields remain known feature gaps.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `wallcards/BarWidget.qml` | `iconColor`:11 | 9, 10, 31 |
-| 2 | `wallcards/Main.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `wallcards/Wallcards.qml` | `animate_window`:19,295; `animation_cards_duration`:17; `animation_window_duration`:18; `background_color`:20; `background_opacity`:21; `card_height`:22,286; `card_spacing`:24,289; `card_strip_width`:25,290; `cards_shown`:26,288; `center_width_ratio`:27,287; `hide_help`:34,294; `hide_top_bar`:35,291; `live_preview`:36,292; `selected_filter`:40,293; `shear_factor`:42; `top_bar_height`:44 | 17, 18, 19, 20, 21, 22, 24, 25, ... |
+| 2 | `wallcards/Main.qml` | No literal field edge | 9, 28 |
+| 3 | `wallcards/Wallcards.qml` | `animate_window`:19,63; `animation_cards_duration`:17; `animation_window_duration`:18; `background_color`:20; `background_opacity`:21; `card_height`:22,54; `card_spacing`:24,57; `card_strip_width`:25,58; `cards_shown`:26,56; `center_width_ratio`:27,55; `hide_help`:34,62; `hide_top_bar`:35,59; `live_preview`:36,60; `selected_filter`:41,61; `shear_factor`:43; `top_bar_height`:45 | 17, 18, 19, 20, 21, 22, 24, 25, ... |
 | 4 | `wallcards/src/Card.qml` | No literal field edge | No namespace/Main reference |
 | 5 | `wallcards/src/CardDeck.qml` | No literal field edge | No namespace/Main reference |
 | 6 | `wallcards/src/LoadingBar.qml` | No literal field edge | No namespace/Main reference |
@@ -2313,7 +2313,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `animation_duration,icon_color,image_filter,video_filter` | `wallcards/Wallcards.qml:30` | image_filter/video_filter read manifest reference values only; animation_duration/icon_color have no effective runtime reader. Existing feature/default gaps, separate from Main-window selected API correction. |
-Runtime-source/manifest fingerprint: `1255cac90f16c75ae0a09ba0295843f422fb0cb6ce8e47b6b013ae768e2b06ec`.
+Runtime-source/manifest fingerprint: `0290e2bad12f20d78a461d4ca568de3474a5d1eb24c1f78d1c43fef12f5a2a43`.
 
 ## wallpaper-carousel
 

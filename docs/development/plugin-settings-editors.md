@@ -365,6 +365,24 @@ same-device/view sharing and originating inert terminal/action outcomes. These
 are finite controlled endpoints, not physical hardware, transfer/login, general
 JavaScript proof or broad visual/final acceptance.
 
+## Captured Main windows
+
+Wallcards and Somnus retain one Main-owned window each. Placed Bars capture their
+API before window loading; another opener closes the existing presentation rather
+than retargeting it. IPC explicitly supplies the plugin-level API. Retirement
+unloads the captured window. Wallcards' runtime layout Save uses its captured
+native writer. Somnus captures lock-on-suspend policy before Close admission.
+Instance Settings identifies shared wallpaper, session and power effects.
+
+`plugin-settings-window-check.py` parses both window/opener/field/writer/lifetime
+mappings and rejects eight controls. `plugin-settings-window-regression.py` joins
+actual controls, complete native documents and child card/button geometry in both
+scopes, Discard/Apply/staged Reset/inheritance, separate cold windows and the actual
+Wallcards runtime Save entry used by its keyboard handler. Somnus dispatches to
+an inert compositor collaborator, never a real lock or power operation. Existing
+Wallcards manifest-only filters, unused legacy leaves and its Qt5Compat dependency
+remain separately identified, not claimed repaired by window ownership.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
