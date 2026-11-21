@@ -78,7 +78,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 58 | `mpd` | direct | no-port |
 | 59 | `mpris-lyric` | query-worker | ported |
 | 60 | `mpvpaper` | shared-domain | port |
-| 61 | `mullvad` | observation | port |
+| 61 | `mullvad` | observation | ported |
 | 62 | `music-search` | shared-domain | port |
 | 63 | `netbird` | observation | port |
 | 64 | `network-indicator` | direct | no-port |
@@ -103,7 +103,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 83 | `parallax-wallpaper` | main-only | no-instance |
 | 84 | `plugin-manager` | direct | no-port |
 | 85 | `pomodoro` | stateful-client | port |
-| 86 | `port-monitor` | observation | port |
+| 86 | `port-monitor` | observation | ported |
 | 87 | `privacy-indicator` | observation | port |
 | 88 | `ramadan-iftar` | query-worker | ported |
 | 89 | `rss-feed` | direct | no-port |
@@ -151,7 +151,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). Native Latency/Ramadan/SSH representatives, HASS/MPRIS lifetime and Syncthing/Kubernetes originating-action proofs supplement every-member parsed mappings. Remaining 24 required; broad visual/final acceptance pending. |
+| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). G1c first green subgroup: port-monitor and mullvad; native both-scope representative and originating inert action outcomes supplement parsed field/cache/lifetime/entry checks. Remaining 22 required; broad visual/final acceptance pending. |
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
@@ -1265,19 +1265,20 @@ Runtime-source/manifest fingerprint: `8a8281b980b506b41ceaca3fef291d13bf30a6dc87
 
 ## mullvad
 
-Main exposes poll/format/confirmation/favorite/expiry/action settings to Bar/Panel. Select projection and action policy; one VPN daemon state remains shared, not independent per-widget connections.
+Main owns captured-context polling/display/favorite/expiry/action policy clients for Bar/Panel over one VPN daemon/action/account owner. Native both-scope controls/files/child Text/cold and originating inert relay/connect/toggle proof; parsed mappings cover all fields. Instance UI explains shared VPN effects; existing unused options and independent confirmation defect are not claimed fixed.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `mullvad/BarWidget.qml` | No literal field edge | 23, 125 |
-| 2 | `mullvad/Main.qml` | `clickAction`:20; `compactMode`:19; `confirmDisconnectInLockdown`:22; `expiryWarningDays`:24; `favoriteCountries`:23; `refreshInterval`:15; `relayClickConnects`:21; `showCityName`:17; `showCountryFlag`:16; `showIp`:18 | 12, 13 |
+| 2 | `mullvad/Main.qml` | `clickAction`:38; `compactMode`:37; `confirmDisconnectInLockdown`:40; `expiryWarningDays`:42; `favoriteCountries`:41; `refreshInterval`:33; `relayClickConnects`:39; `showCityName`:35; `showCountryFlag`:34; `showIp`:36 | 14, 18, 28, 30, 31 |
 | 3 | `mullvad/MullvadIcon.qml` | No literal field edge | No namespace/Main reference |
-| 4 | `mullvad/Panel.qml` | No literal field edge | 14, 48, 49, 50, 172 |
+| 4 | `mullvad/MullvadSettingsClient.qml` | `clickAction`:18; `compactMode`:17; `confirmDisconnectInLockdown`:20; `expiryWarningDays`:22; `favoriteCountries`:21; `refreshInterval`:9; `relayClickConnects`:19; `showCityName`:15; `showCountryFlag`:14; `showIp`:16 | 7 |
+| 5 | `mullvad/Panel.qml` | No literal field edge | 14, 48, 49, 50, 172 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `d5dcf03ea3e89515695b9312fabd1958f88a0df34f84826f3968ea371223603b`.
+Runtime-source/manifest fingerprint: `a46e6007f6918cfb69d806bf9c4ebca827ffc22320a3a71bf49bb368c6e005c5`.
 
 ## music-search
 
@@ -1694,18 +1695,19 @@ Runtime-source/manifest fingerprint: `1a22fd7f3844e8443d2b339ebd75ae7d5980fee218
 
 ## port-monitor
 
-Bar hideWhenEmpty local; Main refreshInterval and hideSystemPorts drive poll/filter result consumed by Panel. Select projection/poll clients over shared OS port observation.
+Main publishes unfiltered common OS ports; captured-context clients select polling and filtering for Bar/Panel. Native both-scope controls/files/child Text/cold and originating inert kill/terminal proof; parsed field/lifetime mappings. Instance UI identifies shared observations and whole-system process effects. hideWhenEmpty remains directly selected.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `port-monitor/BarWidget.qml` | `hideWhenEmpty`:26 | 24, 25, 26, 46, 98, 103 |
-| 2 | `port-monitor/Main.qml` | `hideSystemPorts`:174; `refreshInterval`:61 | 11, 12 |
+| 2 | `port-monitor/Main.qml` | `hideSystemPorts`:34 | 13, 17, 27, 29, 30 |
 | 3 | `port-monitor/Panel.qml` | No literal field edge | 17, 18, 77, 79, 113, 209 |
+| 4 | `port-monitor/PortSettingsClient.qml` | `hideSystemPorts`:12; `refreshInterval`:10 | 8 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `c8424b72f37802a12eddfd80cff2fb69d0c0bed6e4abe1827daeab82dd4b07da`.
+Runtime-source/manifest fingerprint: `163710c66e6b7ca5b399a7a25d2843582e1027b49523a5de4e04c6fd11509666`.
 
 ## privacy-indicator
 

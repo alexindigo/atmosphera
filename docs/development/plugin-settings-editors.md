@@ -316,6 +316,27 @@ and retirement controls must reject. No device, inhibitor, cluster or package
 mutation is used as a witness. Broad visual review and whole-catalog acceptance
 remain separate gates.
 
+## Selected observation and action policy
+
+Port Monitor publishes one unfiltered host observation; Main-owned clients select
+polling and port filtering for each captured runtime context. Mullvad clients
+select polling, display, favorites, expiry and action policy over one daemon and
+account owner. All views of one API share its client. Retired clients stop their
+schedule and cannot dispatch new actions. Main/IPC remain explicitly plugin-level.
+Instance Settings explains that observations and physical process/VPN effects
+are shared; it does not promise independent system connections or processes.
+
+`plugin-settings-observation-group-check.py` parses the finite two-member field,
+entry, factory, lifetime, schedule and action mappings, including Mullvad's
+independent account timer. `plugin-settings-observation-native-regression.py`
+joins real pages/native files to Bar/Panel child Text in both scopes, with
+Discard, Apply, staged Reset, later inheritance and separate nonpublishing cold
+readers. Actual Panel row/confirmation and VPN controls reach inert executable
+endpoints with independently checked literal targets. No kill, terminal shell,
+VPN or remote action is executed. Wrong selected readers, rendered children and
+relay action policy must reject. This is not broad visual or final acceptance,
+nor repair of Mullvad's unrelated unused-option/confirmation findings.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
