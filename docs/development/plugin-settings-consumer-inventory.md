@@ -61,7 +61,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 41 | `hyprland-visual-editor` | direct | no-port |
 | 42 | `ip-monitor` | observation | ported |
 | 43 | `kagi-quick-search` | launcher-only | no-instance |
-| 44 | `kde-connect` | shared-domain | port |
+| 44 | `kde-connect` | shared-domain | ported |
 | 45 | `keep-awake-plus` | observation | ported |
 | 46 | `keybind-cheatsheet` | query-worker | port |
 | 47 | `kubectl-ctx` | query-worker | ported |
@@ -88,7 +88,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 68 | `niri-auto-tile` | shared-domain | port |
 | 69 | `niri-screensaver` | shared-domain | port |
 | 70 | `niri-windows-map` | direct | no-port |
-| 71 | `noctalia-calculator` | observation | port |
+| 71 | `noctalia-calculator` | observation | ported |
 | 72 | `noctalia-supergfxctl` | shared-domain | port |
 | 73 | `not-just-text` | selected-client | ported |
 | 74 | `notes-scratchpad` | direct | no-port |
@@ -104,7 +104,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 84 | `plugin-manager` | direct | no-port |
 | 85 | `pomodoro` | stateful-client | port |
 | 86 | `port-monitor` | observation | ported |
-| 87 | `privacy-indicator` | observation | port |
+| 87 | `privacy-indicator` | observation | ported |
 | 88 | `ramadan-iftar` | query-worker | ported |
 | 89 | `rss-feed` | direct | no-port |
 | 90 | `saved-desktop-widgets` | main-only | no-instance |
@@ -151,7 +151,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members. G1c: port-monitor, mullvad, amd-gpu-monitor, battery-monitor-plus, netbird, openvpn3 and tailscale; native both-scope representatives, every-member parsed fields/cache/entries and unusual device/ping/log/transfer lifetimes. Remaining 17 required; broad visual/final acceptance pending. |
+| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members. G1c: seven observation-policy members. G1d: privacy-indicator, kde-connect and noctalia-calculator share retained observations/state with selected projections/action parameters; native both-scope representatives, every-member parsed contract and individual history/device/calculation lifetimes. Remaining 14 required; broad visual/final acceptance pending. |
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
@@ -932,28 +932,29 @@ Runtime-source/manifest fingerprint: `aa4c7996dec587926f2484190448b48513a2dba203
 
 ## kde-connect
 
-Main sets module Singleton KDEConnect mainDevice from plugin-level mainDeviceId; Bar and Panel use Singleton. Need context-selected device projection/action target, retaining shared DBus observation; Bar hideIfNoDeviceConnected remains local.
+Main caches captured-context device projections over one KDEConnect discovery/action owner. Bar/CC/Panel select device and hide policy; Panel switch writes its originating native API and chooser completion keeps captured device. Original reachability fallback and shared effects remain explicit; G1d native/lifetime and finite parsed contract.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `kde-connect/BarWidget.qml` | No literal field edge | 33 |
-| 2 | `kde-connect/ControlCenterWidget.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `kde-connect/Main.qml` | `mainDeviceId`:11 | 11 |
-| 4 | `kde-connect/Panel.qml` | `mainDeviceId`:752 | 752 |
-| 5 | `kde-connect/PhoneDisplay.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `kde-connect/Services/KDEConnect.qml` | No literal field edge | No namespace/Main reference |
-| 7 | `kde-connect/Services/KDEConnectUtils.qml` | No literal field edge | No namespace/Main reference |
+| 1 | `kde-connect/BarWidget.qml` | No literal field edge | 16 |
+| 2 | `kde-connect/ControlCenterWidget.qml` | No literal field edge | 9 |
+| 3 | `kde-connect/KdeSettingsClient.qml` | `hideIfNoDeviceConnected`:11; `mainDeviceId`:10,32 | 5, 8, 9, 31, 32 |
+| 4 | `kde-connect/Main.qml` | `mainDeviceId`:24 | 12, 16, 24 |
+| 5 | `kde-connect/Panel.qml` | No literal field edge | 17 |
+| 6 | `kde-connect/PhoneDisplay.qml` | No literal field edge | No namespace/Main reference |
+| 7 | `kde-connect/Services/KDEConnect.qml` | No literal field edge | No namespace/Main reference |
+| 8 | `kde-connect/Services/KDEConnectUtils.qml` | No literal field edge | No namespace/Main reference |
 
-Declared leaves without a literal runtime namespace edge: `hideIfNoDeviceConnected` (configuration).
+Declared leaves without a literal runtime namespace edge: None.
 
 Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
 
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `hideIfNoDeviceConnected` | `kde-connect/BarWidget.qml:33` | Bar reads a Main property absent from Main.qml rather than the declared setting. Required selected presentation correction alongside selected-device port, not an unused-field exemption. |
-Runtime-source/manifest fingerprint: `486a5fc27c6577fb5a9d0d78f300df63444c690b8f0a095b5001c49fa6256ce9`.
+Runtime-source/manifest fingerprint: `88d5169b09638cb240a54f90a36e40d07ba9481f1758b7ba8e67e04176013ae4`.
 
 ## keep-awake-plus
 
@@ -1459,7 +1460,7 @@ Runtime-source/manifest fingerprint: `9ece2e70af75aaf8bd0b80aebe30be1625801a3582
 
 ## noctalia-calculator
 
-Main precision/showBarValue and result/history are shared, Bar/Panel read Main. Select formatting/show-value projection without copying or moving runtime history/content.
+Main retains its one in-memory calculation (no persisted history in current source). Context projections select badge/precision; button/keyboard/percent evaluation passes originating precision. No tokens/input/result copy or content migration; G1d native/lifetime and finite parsed contract.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1467,11 +1468,12 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `noctalia-calculator/AdvancedMath.js` | No literal field edge | No namespace/Main reference |
 | 2 | `noctalia-calculator/BarWidget.qml` | No literal field edge | 18 |
-| 3 | `noctalia-calculator/Main.qml` | `precision`:16; `showBarValue`:15 | 12, 13 |
-| 4 | `noctalia-calculator/Panel.qml` | No literal field edge | 19 |
+| 3 | `noctalia-calculator/CalculatorSettingsClient.qml` | `precision`:11; `showBarValue`:10 | 5, 8, 9 |
+| 4 | `noctalia-calculator/Main.qml` | `precision`:28; `showBarValue`:27 | 13, 17, 24, 25 |
+| 5 | `noctalia-calculator/Panel.qml` | No literal field edge | 19 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `6bbb9a1d1de019f5f078ec7dbace806881d2c4e3ac2a3903f85e5df4e5e3939a`.
+Runtime-source/manifest fingerprint: `a604f607166998fedd075946572b0e9c9b274512758fe22ebfef1af1f0f7804e`.
 
 ## noctalia-supergfxctl
 
@@ -1718,18 +1720,20 @@ Runtime-source/manifest fingerprint: `163710c66e6b7ca5b399a7a25d2843582e1027b495
 
 ## privacy-indicator
 
-Bar colors/layout local; Main mic/camera filter regex and toast policy choose active devices. Share physical observation, select filter/result and originating notification policy.
+Main retains one raw PipeWire/camera observation and plugin-level history/color writer. Context projections select mic/camera filters and notification edges; one common admission coalesces simultaneous current requesters. Bar/Panel share captured client and common history; G1d native/history/lifetime and finite parsed contract.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `privacy-indicator/BarWidget.qml` | `activeColor`:45; `enableToast`:42; `hideInactive`:41; `iconSpacing`:44; `inactiveColor`:46; `removeMargins`:43 | 29, 31, 32, 33, 34, 35, 36, 38, ... |
-| 2 | `privacy-indicator/Main.qml` | `activeColor`:32; `camFilterRegex`:34; `enableToast`:31; `micFilterRegex`:33 | 29, 30 |
-| 3 | `privacy-indicator/Panel.qml` | No literal field edge | 18, 60, 82, 157 |
+| 1 | `privacy-indicator/BarWidget.qml` | `activeColor`:46; `enableToast`:43; `hideInactive`:42; `iconSpacing`:45; `inactiveColor`:47; `removeMargins`:44 | 29, 30, 32, 33, 34, 35, 36, 37, ... |
+| 2 | `privacy-indicator/Main.qml` | `activeColor`:36; `camFilterRegex`:38; `enableToast`:35; `micFilterRegex`:37 | 33, 34, 43, 47, 53 |
+| 3 | `privacy-indicator/Panel.qml` | No literal field edge | 18, 19, 61, 83, 158 |
+| 4 | `privacy-indicator/PrivacySettingsClient.qml` | `camFilterRegex`:15; `enableToast`:11; `micFilterRegex`:12 | 6, 9, 10, 22 |
+| 5 | `privacy-indicator/Projection.js` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `934e2e5009c5eaab39d99744f504930bb8d91e099e58a61291a43f16164ceda7`.
+Runtime-source/manifest fingerprint: `c43d2b2cc460e7d5285c55c6493cd16bb1b983688b5a27adb48f158f6a47cb93`.
 
 ## ramadan-iftar
 

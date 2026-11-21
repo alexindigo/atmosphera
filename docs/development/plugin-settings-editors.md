@@ -365,6 +365,35 @@ same-device/view sharing and originating inert terminal/action outcomes. These
 are finite controlled endpoints, not physical hardware, transfer/login, general
 JavaScript proof or broad visual/final acceptance.
 
+## Selected projections over retained shared state
+
+Privacy Indicator retains one raw PipeWire/camera observation and one historical
+document. Captured-context clients apply their own filters and notification
+policy; simultaneous notification requests join one common admission and retired
+requesters cannot emit later. Historical transitions and captured colors still
+follow plugin-level policy. Instance Apply/Reset does not rewrite history.
+
+KDE Connect retains one daemon/discovery/action owner. Main caches selected device
+projections with the existing configured-device/reachability fallback behavior.
+Bar, Control Center and Panel use that captured projection. Device selection uses
+the originating runtime API, while a file chooser keeps the device captured at
+Open rather than borrowing a later selection. Pairing/transfers affect the actual
+shared device, not an independent per-widget daemon.
+
+Calculator retains its one in-memory calculation. Selected clients project badge
+visibility and precision; button, keyboard and percent actions pass the originating
+precision to that shared calculation. They do not copy tokens, input or results.
+Instance Settings explains the common calculation and physical/content effects.
+
+`plugin-settings-projection-check.py` checks every declared field, factory, entry,
+action and retirement mapping for this finite group, with rejecting controls.
+The native regression joins real pages/native files to actual Bar/Panel children
+in both scopes, independent full documents and nonpublishing cold readers. KDE's
+runtime switch additionally publishes through its actual Panel/native owner.
+Individual lifetime proofs exercise common notification admission/history bytes,
+inert device discovery/actions and shared calculation/keyboard/percent behavior.
+These controlled endpoints do not establish physical device or broad UI acceptance.
+
 ## Captured Main windows
 
 Wallcards and Somnus retain one Main-owned window each. Placed Bars capture their
