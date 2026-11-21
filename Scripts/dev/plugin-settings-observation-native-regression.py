@@ -37,12 +37,15 @@ def run(args, profile, plugin, scope):
     dest = case / ('config/plugins/' + plugin)
     shutil.copytree(args.plugins / plugin, dest)
     port = plugin == 'port-monitor'
-    field = 'hideSystemPorts' if port else 'showCityName'
+    netbird = plugin == 'netbird'
+    field = 'hideSystemPorts' if port else 'showIpAddress' if netbird else 'showCityName'
     shared = {field: False, 'refreshInterval': 8000 if not port else 8, 'opaque': dict(keep='shared')}
     bar = dict(widgets=dict(left=[dict(id='plugin:' + plugin, tag='selected', instanceSettings=dict(opaque=dict(keep='selected'))),
                                  dict(id='plugin:' + plugin, tag='sibling', instanceSettings={field: True, 'refreshInterval': 16000 if not port else 16}),
                                   dict(id='plugin:' + plugin, tag='inherited', instanceSettings=dict(opaque=dict(keep='inherited')))]))
-    if not port:
+    if netbird:
+        shared.update(compactMode=False, showPing=False)
+    elif not port:
         shared.update(clickAction='panel', relayClickConnects=True)
         bar['widgets']['left'][0]['instanceSettings'].update(clickAction='toggle', relayClickConnects=False)
     initial = dict(shared=shared, bar=bar)
@@ -58,7 +61,7 @@ def run(args, profile, plugin, scope):
     (case / 'requests.jsonl').write_text('')
     endpoint = (args.source / 'Scripts/dev/fixtures/plugin-settings-observation-endpoint.py').read_text()
     compile(endpoint, '<inert-native-observation-endpoint>', 'exec')
-    for command in ('which', 'ss', 'mullvad', 'kill', 'ghostty'):
+    for command in ('which', 'ss', 'mullvad', 'netbird', 'kill', 'ghostty'):
         path = case / 'bin' / command; path.write_text(endpoint); path.chmod(0o755)
     wanted = 'original shared observation does not render saved selected policy' if args.old_red else None
     if args.negative_control:
@@ -71,7 +74,7 @@ def run(args, profile, plugin, scope):
             old, new = 'settingsConsumerFor(pluginApi.settingsContext)', 'settingsConsumerFor(pluginApi.mainInstance.pluginApi.settingsContext)'
             wanted = 'actual views share exact selected observation policy client'
         else:
-            old, new = ('text: root.portCount.toString()', 'text: "wrong-controlled-child"') if port else ('text: root.main?.currentLocation?.city || ""', 'text: "wrong-controlled-child"')
+            old, new = ('text: root.portCount.toString()', 'text: "wrong-controlled-child"') if port else ('text: mainInstance?.netbirdIp || ""', 'text: "wrong-controlled-child"') if netbird else ('text: root.main?.currentLocation?.city || ""', 'text: "wrong-controlled-child"')
             wanted = 'actual child Bar Text renders selected policy'
         text = path.read_text()
         if text.count(old) != 1: raise RuntimeError('review native observation mutation anchor')
@@ -101,7 +104,7 @@ def run(args, profile, plugin, scope):
     shutil.copy2(case / 'requests.jsonl', out / 'requests.jsonl')
     requests = list(map(json.loads, (case / 'requests.jsonl').read_text().splitlines()))
     actions = [row for row in requests if row['command'] in ('kill', 'ghostty') or row['command'] == 'mullvad' and row['argv'] in (['connect'], ['disconnect'], ['relay', 'set', 'location'], ['lockdown-mode', 'set', 'on'])]
-    expected_actions = [('kill', ['90002']), ('ghostty', ['-e', 'sh', '-c', 'echo \'Killing process on port 9090/udp...\' && sudo fuser -k 9090/udp && echo \'Done.\' || echo \'Failed.\'; read -n 1 -p "Press any key to exit..."'])] if port else [('mullvad', ['relay', 'set', 'location']), ('mullvad', ['relay', 'set', 'location']), ('mullvad', ['connect']), ('mullvad', ['disconnect']), ('mullvad', ['lockdown-mode', 'set', 'on'])]
+    expected_actions = [] if netbird else [('kill', ['90002']), ('ghostty', ['-e', 'sh', '-c', 'echo \'Killing process on port 9090/udp...\' && sudo fuser -k 9090/udp && echo \'Done.\' || echo \'Failed.\'; read -n 1 -p "Press any key to exit..."'])] if port else [('mullvad', ['relay', 'set', 'location']), ('mullvad', ['relay', 'set', 'location']), ('mullvad', ['connect']), ('mullvad', ['disconnect']), ('mullvad', ['lockdown-mode', 'set', 'on'])]
     if sorted((row['command'], row['argv']) for row in actions) != sorted(expected_actions): raise RuntimeError('originating inert action endpoints differ')
     for row in requests:
         path = Path('/proc') / str(row['pid']) / 'stat'
@@ -114,7 +117,7 @@ def run(args, profile, plugin, scope):
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
-    parser.add_argument('--plugin', choices=('port-monitor', 'mullvad'))
+    parser.add_argument('--plugin', choices=('port-monitor', 'mullvad', 'netbird'))
     parser.add_argument('--scope', choices=('shared', 'instance'))
     parser.add_argument('--old-red', action='store_true')
     parser.add_argument('--negative-control', choices=('shared-client', 'child-text', 'relay-policy'))

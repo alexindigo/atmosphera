@@ -30,6 +30,10 @@ elif name == 'ghostty':
     expected = ['-e', 'sh', '-c', 'echo \'Killing process on port 9090/udp...\' && sudo fuser -k 9090/udp && echo \'Done.\' || echo \'Failed.\'; read -n 1 -p "Press any key to exit..."']
     if args != expected:
         raise SystemExit('unreviewed inert terminal arguments')
+elif name == 'netbird':
+    if args != ['status', '--json']:
+        raise SystemExit('unreviewed inert NetBird action ' + repr(args))
+    print(json.dumps(dict(management=dict(connected=True, url='https://detected.invalid'), signal=dict(connected=True), netbirdIp='100.64.0.1/16', fqdn='controlled', peers=dict(total=1, connected=1, details=[dict(status='Connected', netbirdIp='100.64.0.2', fqdn='controlled-peer')]))))
 elif name == 'mullvad':
     if args == ['status', '--json']:
         print(json.dumps(dict(state='connected', details=dict(endpoint=dict(address='192.0.2.10'), location=dict(country='se', city='Controlled City', ipv4='192.0.2.10', hostname='controlled-host')))))

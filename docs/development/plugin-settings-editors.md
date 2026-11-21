@@ -337,6 +337,34 @@ VPN or remote action is executed. Wrong selected readers, rendered children and
 relay action policy must reject. This is not broad visual or final acceptance,
 nor repair of Mullvad's unrelated unused-option/confirmation findings.
 
+AMD GPU and Battery Monitor keep source-qualified observation leases, not one
+observer per view. All views of a captured context share its client; contexts
+selecting the same device share readings/history. Replacing the selected source
+releases its old lease. The last lease destroys its process owner. Battery's
+sysfs helper and UPower fallbacks use the same selected device; an unavailable
+explicit device cannot borrow another battery's readings.
+
+NetBird selects polling, display, management URL and originating terminal policy
+over one daemon/ping observer. Ping demand is aggregated across contexts and the
+last demander retires the held process/queue. OpenVPN selects both polling tiers
+and captures notification policy per admitted physical action. Multiple Panels
+register independent visible/log demand for one shared stream. Tailscale captures
+login-server and enabled/directory/mode before starting the one Taildrop receive
+generation; retirement cancels all three stages and identity-fences completion.
+Main/IPC stay explicitly plugin-level. Instance pages identify shared device,
+daemon, profile, connection, account and file effects rather than promising
+independent hardware or VPN sessions.
+
+`plugin-settings-device-policy-check.py` parses all five members' declared fields,
+factories, entries, lease/schedule/action mappings and shared-effect dictionaries,
+with 20 rejecting controls. The NetBird native representative joins both page
+scopes to actual Bar/Panel child Text, complete documents, staged Reset, Discard,
+inheritance and separate nonpublishing cold readers. Individual observation,
+private-UPower/sysfs and Taildrop drivers exercise unusual held-worker lifetimes,
+same-device/view sharing and originating inert terminal/action outcomes. These
+are finite controlled endpoints, not physical hardware, transfer/login, general
+JavaScript proof or broad visual/final acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,

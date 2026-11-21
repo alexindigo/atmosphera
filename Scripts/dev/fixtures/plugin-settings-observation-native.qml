@@ -13,8 +13,9 @@ ShellRoot {
   readonly property string mode: Quickshell.env("PHA_OBSERVATION_MODE")
   readonly property string boundary: Quickshell.env("PHA_OBSERVATION_BOUNDARY")
   readonly property bool port: plugin === "port-monitor"
+  readonly property bool netbird: plugin === "netbird"
   readonly property bool oldRed: Quickshell.env("PHA_OBSERVATION_OLD_RED") === "1"
-  readonly property string field: port ? "hideSystemPorts" : "showCityName"
+  readonly property string field: port ? "hideSystemPorts" : netbird ? "showIpAddress" : "showCityName"
   property bool started: false
   property string phase: "startup"
   property double phaseStarted: Date.now()
@@ -150,7 +151,7 @@ ShellRoot {
   }
   function ready(name) {
     var expected = values(name);
-    return presentations.every((item, index) => item.api.pluginSettings[field] === expected[index][field]) && (port ? (oldRed ? main.portCount === 3 : main.rawPorts.length === 3) : main.state === "connected");
+    return presentations.every((item, index) => item.api.pluginSettings[field] === expected[index][field]) && (port ? (oldRed ? main.portCount === 3 : main.rawPorts.length === 3) : netbird ? main.netbirdRunning && main.netbirdIp === "100.64.0.1" : main.state === "connected");
   }
   function observe(name) {
     if (oldRed)
@@ -158,7 +159,7 @@ ShellRoot {
     var expected = values(name);
     for (var i = 0; i < presentations.length; i++) {
       var item = presentations[i], client = main.settingsConsumerFor(item.api.settingsContext);
-      check((port ? item.bar.mainInstance : item.bar.main) === client && (port ? item.second.mainInstance : item.second.main) === client && (port ? item.panel.mainInstance : item.panel.main) === client, "actual views share exact selected observation policy client");
+      check((port || netbird ? item.bar.mainInstance : item.bar.main) === client && (port || netbird ? item.second.mainInstance : item.second.main) === client && (port || netbird ? item.panel.mainInstance : item.panel.main) === client, "actual views share exact selected observation policy client");
       check(client.interval === expected[i].refreshInterval * (port ? 1000 : 1) && client.running, "actual selected typed schedule and untouched interval");
       if (port) {
         var count = expected[i][field] ? 2 : 3;
@@ -168,6 +169,11 @@ ShellRoot {
                                                                        pid: "90001"
                                                                      })) === !expected[i][field], "actual Panel child excludes only selected system port");
         check(find(item.bar, child => child.text === String(count)), "actual child Bar Text renders selected policy");
+      } else if (netbird) {
+        check(client.netbirdIp === main.netbirdIp && client.showIpAddress === expected[i][field], "selected display over one actual NetBird observation");
+        var ip = find(item.bar, child => child.text === "100.64.0.1");
+        check(ip && ip.visible === expected[i][field], "actual child Bar Text renders selected policy");
+        check(find(item.panel, child => child.text === "100.64.0.1"), "actual selected Panel IP Text");
       } else {
         check(client.currentLocation === main.currentLocation && client.showCityName === expected[i][field], "selected display over one actual daemon observation");
         var city = find(item.bar, child => child.text === "Controlled City");
@@ -196,13 +202,15 @@ ShellRoot {
     phase = next;
   }
   function edit() {
-    var control = find(popup.settingsPage, item => item.label === api.tr(port ? "settings.hideSystemPorts" : "settings.show-city") && item.toggled !== undefined);
+    var control = find(popup.settingsPage, item => item.label === api.tr(port ? "settings.hideSystemPorts" : netbird ? "settings.show-ip" : "settings.show-city") && item.toggled !== undefined);
     check(control, "actual page toggle");
     control.toggled(true);
     check(popup._pageApi.field(field).value === true, "actual toggle stages selected field");
     for (var key of Object.keys(api.manifest.metadata.settingsSchema.fields))
-      if (key !== field)
+      if (key !== field && !(netbird && key === "compactMode"))
         check(!popup._pageApi.field(key).pendingIntent, "untouched field has no intent: " + key);
+    if (netbird)
+      check(popup._pageApi.field("compactMode").value === false, "existing paired display event stages explicit noncompact intent");
   }
   function apply(next) {
     receipt = null;
@@ -256,7 +264,7 @@ ShellRoot {
       probe("edited", oldRed ? "old-red" : "finish");
     } else if (phase === "old-red") {
       var item = presentations[1];
-      var consumer = port ? item.bar.portCount === 2 : (find(item.bar, child => child.text === "Controlled City")?.visible === true);
+      var consumer = port ? item.bar.portCount === 2 : (find(item.bar, child => child.text === (netbird ? "100.64.0.1" : "Controlled City"))?.visible === true);
       check(consumer, "original shared observation does not render saved selected policy");
       throw new Error("original observation policy defect did not reproduce");
     } else if (phase === "reset-page" && popup.opened && popup.settingsPage && !popup.busy) {
@@ -288,12 +296,17 @@ ShellRoot {
       Service.loadedPlugins = ({});
       phase = "retired";
     } else if (phase === "retired" && !selected.settingsContext.current()) {
-      check(main._settingsConsumers.size === 0 && presentations.every(item => (port ? item.bar.mainInstance : item.bar.main) === null), "selected context retirement releases every client");
+      check(main._settingsConsumers.size === 0 && presentations.every(item => (port || netbird ? item.bar.mainInstance : item.bar.main) === null), "selected context retirement releases every client");
       phase = "finish";
     } else if (phase === "finish")
       finish();
   }
   function actions() {
+    if (netbird) {
+      // Originating terminal/ping actions have their own held-lifetime witness.
+      probe("actions", "retire");
+      return;
+    }
     var selectedView = presentations[1], inheritedView = presentations[3];
     var client = main.settingsConsumerFor(selected.settingsContext);
     actionRequests.reload();

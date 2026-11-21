@@ -22,13 +22,13 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 2 | `activate-linux` | main-only | no-instance |
 | 3 | `agent-session-status` | shared-domain | port |
 | 4 | `air-quality` | selected-client | ported |
-| 5 | `amd-gpu-monitor` | observation | port |
+| 5 | `amd-gpu-monitor` | observation | ported |
 | 6 | `arch-updater` | selected-client | ported |
 | 7 | `assistant-panel` | query-worker | port |
 | 8 | `auto-cpufreq` | view-backend | port |
 | 9 | `battery-actions` | main-only | no-instance |
 | 10 | `battery-and-power-management` | view-backend | port |
-| 11 | `battery-monitor-plus` | observation | port |
+| 11 | `battery-monitor-plus` | observation | ported |
 | 12 | `battery-threshold` | selected-client | ported |
 | 13 | `battery-wireless-devices` | observation | ported |
 | 14 | `caffeinate` | direct | no-port |
@@ -80,7 +80,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 60 | `mpvpaper` | shared-domain | port |
 | 61 | `mullvad` | observation | ported |
 | 62 | `music-search` | shared-domain | port |
-| 63 | `netbird` | observation | port |
+| 63 | `netbird` | observation | ported |
 | 64 | `network-indicator` | direct | no-port |
 | 65 | `network-manager-vpn` | shared-domain | port |
 | 66 | `news` | view-producer | port |
@@ -98,7 +98,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 78 | `nvim-session-provider` | launcher-only | no-instance |
 | 79 | `obs-control` | shared-domain | port |
 | 80 | `obsidian-provider` | launcher-only | no-instance |
-| 81 | `openvpn3` | observation | port |
+| 81 | `openvpn3` | observation | ported |
 | 82 | `osk-toggle` | shared-domain | port |
 | 83 | `parallax-wallpaper` | main-only | no-instance |
 | 84 | `plugin-manager` | direct | no-port |
@@ -124,7 +124,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 104 | `ssh-sessions` | query-worker | ported |
 | 105 | `sticky-notes` | shared-domain | port |
 | 106 | `syncthing-status` | query-worker | ported |
-| 107 | `tailscale` | observation | port |
+| 107 | `tailscale` | observation | ported |
 | 108 | `tamagotchi` | stateful-client | port |
 | 109 | `thinkpad-fan` | view-backend | port |
 | 110 | `timer` | direct | no-port |
@@ -151,7 +151,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 
 | # | Group / pattern | Members | Shared approach | Runtime representatives | Every-member static contract | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). G1c first green subgroup: port-monitor and mullvad; native both-scope representative and originating inert action outcomes supplement parsed field/cache/lifetime/entry checks. Remaining 22 required; broad visual/final acceptance pending. |
+| 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members. G1c: port-monitor, mullvad, amd-gpu-monitor, battery-monitor-plus, netbird, openvpn3 and tailscale; native both-scope representatives, every-member parsed fields/cache/entries and unusual device/ping/log/transfer lifetimes. Remaining 17 required; broad visual/final acceptance pending. |
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
@@ -224,18 +224,21 @@ Runtime-source/manifest fingerprint: `ba4bcb15e4c187829ef94707466471d285a16f1db4
 
 ## amd-gpu-monitor
 
-Bar/Panel presentation reads selected cfg; Main deviceIndex chooses GPU metrics. Share hardware observation only, select device/results per context.
+Main caches captured-context clients and device-qualified observation/history leases shared across views and same-device contexts. Typed device replacement retires the last old observer; actual replacement child Text/history and held-process retirement have individual controlled proof. Every declared field has a parsed selected mapping; instance UI identifies shared device data/history. Broad visual/final acceptance remains.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `amd-gpu-monitor/BarWidget.qml` | `compactMode`:27; `iconColor`:28; `showDcefclk`:176,195,248; `showFanSpeed`:234,325; `showFclk`:166,191,244; `showGpuUse`:214,287; `showMclk`:161,189,242; `showPower`:237,315; `showSclk`:156,187,240; `showSocclk`:171,193,246; `showTempEdge`:82,108,219; `showTempJunction`:80,103,217; `showTempMemory`:84,113,221; `showVram`:129,145,224; `showVramActivity`:134,147,231; `textColor`:29; `useMonospaceFont`:30; `usePadding`:31 | 24, 25 |
-| 2 | `amd-gpu-monitor/Main.qml` | `deviceIndex`:51 | 49 |
-| 3 | `amd-gpu-monitor/Panel.qml` | `iconColor`:27; `showDcefclk`:111,378,411,419; `showFanSpeed`:342; `showFclk`:107,376,397,419; `showGpuUse`:254; `showMclk`:105,375,390,419; `showPower`:359; `showSclk`:103,374,383,419; `showSocclk`:109,377,404,419; `showTempEdge`:85,278,293; `showTempJunction`:83,271,293; `showTempMemory`:87,285,293; `showVram`:135,310,313,320,325,436; `showVramActivity`:140,317,320,325,436 | 17, 18 |
+| 1 | `amd-gpu-monitor/BarWidget.qml` | `compactMode`:29; `iconColor`:30; `showDcefclk`:178,197,250; `showFanSpeed`:236,329; `showFclk`:168,193,246; `showGpuUse`:216,291; `showMclk`:163,191,244; `showPower`:239,319; `showSclk`:158,189,242; `showSocclk`:173,195,248; `showTempEdge`:84,110,221; `showTempJunction`:82,105,219; `showTempMemory`:86,115,223; `showVram`:131,147,226; `showVramActivity`:136,149,233; `textColor`:31; `useMonospaceFont`:32; `usePadding`:33 | 24, 27 |
+| 2 | `amd-gpu-monitor/GpuObservation.qml` | No literal field edge | No namespace/Main reference |
+| 3 | `amd-gpu-monitor/GpuReadings.qml` | No literal field edge | No namespace/Main reference |
+| 4 | `amd-gpu-monitor/GpuSettingsClient.qml` | `deviceIndex`:12 | 6, 10, 11 |
+| 5 | `amd-gpu-monitor/Main.qml` | No literal field edge | 31, 35, 46 |
+| 6 | `amd-gpu-monitor/Panel.qml` | `iconColor`:29; `showDcefclk`:113,382,415,423; `showFanSpeed`:346; `showFclk`:109,380,401,423; `showGpuUse`:258; `showMclk`:107,379,394,423; `showPower`:363; `showSclk`:105,378,387,423; `showSocclk`:111,381,408,423; `showTempEdge`:87,282,297; `showTempJunction`:85,275,297; `showTempMemory`:89,289,297; `showVram`:137,314,317,324,329,440; `showVramActivity`:142,321,324,329,440 | 17, 20 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `176bab0353576cc9f82c5d6e586613dadd414df201f1bb718471a22bbb3ba924`.
+Runtime-source/manifest fingerprint: `da36f8835a46863c2c7be09a985bdd03f5b87f3ffcd61a9df968d9708d17f22e`.
 
 ## arch-updater
 
@@ -334,19 +337,21 @@ Runtime-source/manifest fingerprint: `1c05325af4b6a7aaca6883597ac548fa528b58cff2
 
 ## battery-monitor-plus
 
-Bar/Panel read local display settings, but Main deviceNativePath and refreshIntervalSeconds choose shared metrics/process. Select monitor clients; physical battery/profile observation remains shared.
+Main caches selected device/polling clients and source-qualified read-only observations. Bar/Panel share the selected helper and UPower fallback identity; explicit unavailable devices cannot borrow another battery. Private-UPower/held-source/last-owner proof and 13 actual helper sysfs cases supplement the finite field/lease contract; instance UI identifies shared readings/power-profile actions. Controlled, not physical battery or final acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `battery-monitor-plus/BarWidget.qml` | `deviceNativePath`:46; `displayMode`:34; `hideIfIdle`:38; `hideIfNotDetected`:37; `refreshIntervalSeconds`:43; `showNoctaliaPerformance`:40; `showPowerInBar`:41; `showPowerProfiles`:39; `showTimeInBar`:42 | 25, 26, 27 |
-| 2 | `battery-monitor-plus/Main.qml` | `deviceNativePath`:24; `refreshIntervalSeconds`:23 | 21, 22 |
-| 3 | `battery-monitor-plus/Panel.qml` | `deviceNativePath`:21; `refreshIntervalSeconds`:29; `showNoctaliaPerformance`:25; `showPowerProfiles`:24 | 18, 19, 20 |
-| 4 | `battery-monitor-plus/scripts/read_battery_sysfs.sh` | No literal field edge | No namespace/Main reference |
+| 1 | `battery-monitor-plus/BarWidget.qml` | `deviceNativePath`:47; `displayMode`:35; `hideIfIdle`:39; `hideIfNotDetected`:38; `refreshIntervalSeconds`:44; `showNoctaliaPerformance`:41; `showPowerInBar`:42; `showPowerProfiles`:40; `showTimeInBar`:43 | 25, 26, 27 |
+| 2 | `battery-monitor-plus/BatteryObservation.qml` | No literal field edge | No namespace/Main reference |
+| 3 | `battery-monitor-plus/BatterySettingsClient.qml` | `deviceNativePath`:11; `refreshIntervalSeconds`:10 | 9 |
+| 4 | `battery-monitor-plus/Main.qml` | No literal field edge | 28, 32, 33, 45 |
+| 5 | `battery-monitor-plus/Panel.qml` | `deviceNativePath`:22; `refreshIntervalSeconds`:30; `showNoctaliaPerformance`:26; `showPowerProfiles`:25 | 18, 19, 20 |
+| 6 | `battery-monitor-plus/scripts/read_battery_sysfs.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `390e784c939fd25046afb60786fef4f87d478ddd56e83ac4c4b6fd102da07111`.
+Runtime-source/manifest fingerprint: `a7fa300b3d71ae42a557819568d5f1c92c54aa2e7f83783265e66b0971b92063`.
 
 ## battery-threshold
 
@@ -1320,19 +1325,20 @@ Runtime-source/manifest fingerprint: `1e8e686bafaa278747dce88d3762b4f74fe99d2fc7
 
 ## netbird
 
-Main poll/compact/showIp/showPing and command settings feed Bar/Panel from shared context. Select projection/poll/action parameters; one netbird daemon stays shared.
+Main caches selected polling/display/management-URL clients over one daemon and aggregate ping-demand owner. Panel terminal/peer policy comes from its originating API. Both-scope native controls/files/actual Bar/Panel/cold readers plus selected terminal argv and held last-ping retirement prove the boundary. Instance UI identifies shared observations/system connections; broad visual/final acceptance remains.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `netbird/BarWidget.qml` | No literal field edge | 20, 25, 53, 55, 59, 63, 69, 70, ... |
-| 2 | `netbird/Main.qml` | `compactMode`:46; `managementUrl`:55; `refreshInterval`:43; `showIpAddress`:49; `showPing`:52; `terminalCommand`:167 | 19, 39, 43, 46, 49, 52, 55, 167 |
+| 2 | `netbird/Main.qml` | `compactMode`:83; `managementUrl`:92; `refreshInterval`:80; `showIpAddress`:86; `showPing`:89 | 15, 19, 31, 56, 76, 80, 83, 86, ... |
 | 3 | `netbird/NetBirdIcon.qml` | No literal field edge | No namespace/Main reference |
-| 4 | `netbird/Panel.qml` | `defaultPeerAction`:170; `hideDisconnected`:164; `pingCount`:168; `terminalCommand`:166 | 20, 157, 158, 162, 164, 166, 168, 170, ... |
+| 4 | `netbird/NetbirdSettingsClient.qml` | `compactMode`:14; `managementUrl`:18; `refreshInterval`:8; `showIpAddress`:15; `showPing`:16 | 7, 21 |
+| 5 | `netbird/Panel.qml` | `defaultPeerAction`:170; `hideDisconnected`:164; `pingCount`:168; `terminalCommand`:166 | 20, 157, 158, 162, 164, 166, 168, 170, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `1f1bb144e63ddc5dda0bb806b9e23106d887d72fbf78c9459806886daa5d8eeb`.
+Runtime-source/manifest fingerprint: `d654bf5ea44b63ed7358185e9548c297b6ece2acdf96a7d2d299e047ec99f515`.
 
 ## network-indicator
 
@@ -1610,7 +1616,7 @@ Runtime-source/manifest fingerprint: `d8cf841d032ffac5adf0aadc042fe1367bbe0bfe70
 
 ## openvpn3
 
-Bar/CC formatting and Panel defaultPersistent local; Main pollInterval/showNotifications shared. Select poll/originating-action policy, actual VPN sessions remain shared.
+Main caches selected two-tier polling and originating notification clients over one VPN/session/log owner. Actual Panels register independent visible demand; the exact shared log PID retires at last demand, not earlier. Held admitted actions keep captured notification policy through origin retirement. Every Bar/CC/Panel and field has a finite parsed mapping; instance UI identifies shared system effects. No physical VPN or broad/final acceptance claim.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1618,13 +1624,14 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `openvpn3/BarWidget.qml` | `connectedColor`:27; `disconnectedColor`:28; `displayMode`:29; `hideWhenInactive`:30 | 19, 20, 21, 23, 24, 25, 35 |
 | 2 | `openvpn3/ControlCenterWidget.qml` | `connectedColor`:24; `disconnectedColor`:25 | 15, 16, 17, 18, 19, 20, 23 |
-| 3 | `openvpn3/Main.qml` | `pollInterval`:13; `showNotifications`:12 | 9, 12, 13 |
+| 3 | `openvpn3/Main.qml` | `pollInterval`:13; `showNotifications`:12 | 9, 12, 13, 19, 23, 34 |
 | 4 | `openvpn3/OpenVpnIcon.qml` | No literal field edge | No namespace/Main reference |
-| 5 | `openvpn3/Panel.qml` | `defaultPersistent`:28,193,206 | 16, 17, 18, 32, 33, 38, 97, 108, ... |
-| 6 | `openvpn3/VpnListItem.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `openvpn3/OpenvpnSettingsClient.qml` | `pollInterval`:12; `showNotifications`:10 | 5, 8, 9 |
+| 6 | `openvpn3/Panel.qml` | `defaultPersistent`:46,213,226 | 17, 18, 19, 31, 52, 128, 207, 275, ... |
+| 7 | `openvpn3/VpnListItem.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `89ca1257587e1f1403229f0b66372822595ae3bda5e9e05ab2ff9e9c31be2fcc`.
+Runtime-source/manifest fingerprint: `4b7ac49324878846126f26b4cbb46d3601696daacc7040d48abfcf6edd009807`.
 
 ## osk-toggle
 
@@ -2079,19 +2086,21 @@ Runtime-source/manifest fingerprint: `e1e3e8a462efc46d92f7348ebdde47aaefe0353b9c
 
 ## tailscale
 
-Main poll/compact/IP/count/taildrop/login inputs are shared while Panel has local peer actions. Select presentation/poll/originating transfer policy; daemon and receive-folder effects remain explicitly shared.
+Main caches selected poll/display/login/transfer clients over one daemon and generation-owned Taildrop receive chain. Captured directory/mode/enabled survive replacement; pre/receive/post/handoff and starting retirement fence late completion and preserve replacement bytes/toast. Every field and runtime entry has a finite parsed mapping; instance UI identifies shared connections/accounts/files. Inert producer proof, not real transfer/account or broad/final acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `tailscale/BarWidget.qml` | No literal field edge | 20, 21, 22, 27, 63, 70, 71, 79, ... |
-| 2 | `tailscale/Main.qml` | `compactMode`:37; `loginServer`:718; `refreshInterval`:34; `showIpAddress`:40; `showPeerCount`:43; `taildropDownloadDir`:442; `taildropEnabled`:440; `taildropReceiveMode`:446 | 18, 19, 34, 37, 40, 43, 440, 442, ... |
-| 3 | `tailscale/Panel.qml` | `defaultPeerAction`:302; `hideDisconnected`:272; `hideMullvadExitNodes`:277; `pingCount`:297; `showSearchBar`:282; `sshUsername`:292; `terminalCommand`:287 | 17, 36, 38, 40, 51, 65, 166, 167, ... |
-| 4 | `tailscale/TailscaleIcon.qml` | No literal field edge | No namespace/Main reference |
+| 2 | `tailscale/Main.qml` | `compactMode`:56; `loginServer`:699; `refreshInterval`:53; `showIpAddress`:59; `showPeerCount`:62; `taildropDownloadDir`:460; `taildropEnabled`:458; `taildropReceiveMode`:464 | 14, 18, 29, 37, 38, 53, 56, 59, ... |
+| 3 | `tailscale/Panel.qml` | `defaultPeerAction`:303; `hideDisconnected`:273; `hideMullvadExitNodes`:278; `pingCount`:298; `showSearchBar`:283; `sshUsername`:293; `terminalCommand`:288 | 18, 37, 39, 41, 52, 66, 167, 168, ... |
+| 4 | `tailscale/TaildropReceive.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `tailscale/TailscaleIcon.qml` | No literal field edge | No namespace/Main reference |
+| 6 | `tailscale/TailscaleSettingsClient.qml` | `compactMode`:15; `loginServer`:46; `refreshInterval`:9; `showIpAddress`:16; `showPeerCount`:17; `taildropDownloadDir`:19; `taildropEnabled`:18; `taildropReceiveMode`:20 | 7, 8, 50 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `104411e79d7ed8d3cd4443fb3c3793a2387202125174bd45da1b23e711d7b2b1`.
+Runtime-source/manifest fingerprint: `1ba24ef20ca2f5f39ca06b3a333ae90df4e9f722f7907f44d398e1458adea7ca`.
 
 ## tamagotchi
 
