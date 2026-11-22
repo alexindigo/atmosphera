@@ -8,7 +8,7 @@ import re
 from filechooser_profile import profile_argument
 from filechooser_isolation import enter
 from filechooser_regression import Run
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 
 def main():
@@ -22,7 +22,8 @@ def main():
     enter(resource_subject=True)
     run = Run(args.source, args.label)
     entry = run.shell / "shell.qml"
-    entry.write_text(inject_probe(entry.read_text(),
+    owner = probe_owner_path(run.shell)
+    owner.write_text(inject_probe(owner.read_text(),
         'Timer { interval: 8000; running: true; onTriggered: Qt.quit() }'))
     process = run.launch(["timeout", "90", "qs", "-p", entry], "cold-load.log")
     try:
