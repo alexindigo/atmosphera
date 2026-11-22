@@ -18,7 +18,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -92,6 +92,9 @@ class Run:
             defaults['general'].update(lockScreenBlur=0, lockScreenTint=0, showScreenCorners=False)
         if self.args.case == 'rounded':
             defaults['general']['animationDisabled'] = (extra_env or {}).get('IMAGE_ROUNDED_REDUCED') == '1'
+        if self.args.case == 'desktop-wallpaper':
+            defaults['wallpaper'].update(enabled=True, useSolidColor=False, automationEnabled=False, overviewEnabled=True,
+                                         overviewBlur=0, overviewTint=0, transitionDuration=200, skipStartupTransition=True)
         if self.args.case == 'wallpaper-admission':
             defaults['wallpaper'].update(enabled=True, useSolidColor=False, linkLightAndDarkWallpapers=False,
                                          setWallpaperOnAllMonitors=False, automationEnabled=False)
@@ -167,6 +170,8 @@ class Run:
             lint_paths += [str(shell / 'Services/UI/WallpaperService.qml')]
         if self.args.case == 'wallpaper-gallery':
             lint_paths += [str(shell / 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
+        if self.args.case == 'desktop-wallpaper':
+            lint_paths += [str(shell / p) for p in ('Modules/Background/Background.qml', 'Modules/Background/Overview.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -236,6 +241,56 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def desktop_wallpaper(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work/'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out/'fixture-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+        result, output = self.qt(self.args.baseline_source or self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/desktop-wallpaper.qml',
+                                 inputs, 'desktop-wallpaper', dict(IMAGE_DESKTOP_RED='1' if self.args.baseline_source else '0'))
+        if self.args.baseline_source:
+            self.check('desktop-acknowledged-before-qt-presentation', any(not row['visible'] or row['transitioning']
+                       for row in result['completions']), result, red=True)
+            return result
+        self.check('desktop-wallpaper-actual-fixture-configuration', result['effective'] == dict(overviewBlur=0, overviewTint=0,
+                   transitionDuration=200), result['effective'])
+        for endpoint in ('desktop', 'overview'):
+            for name in ('valid', 'invalid', 'newest'):
+                center = pixel(output/(name+'-'+endpoint+'.png'))
+                self.check('desktop-wallpaper-'+endpoint+'-'+name, center == list(COLORS[0]), center)
+            width, height, rgba = read_png(output/('valid-'+endpoint+'.png'))
+            edge = list(rgba[(height//2*width+width//16)*4:(height//2*width+width//16)*4+4])
+            self.check('desktop-wallpaper-'+endpoint+'-transparent-edge', edge[3] <= 10, edge)
+            for index, name in enumerate(('none','fade','wipe','disc','stripes','pixelate','honeycomb')):
+                center = pixel(output/(name+'-'+endpoint+'.png'))
+                self.check('desktop-wallpaper-'+endpoint+'-'+name, center == list(COLORS[index % 2 + 1]), center)
+            for name in ('solid', 'solid-invalid'):
+                center = pixel(output/(name+'-'+endpoint+'.png'))
+                self.check('desktop-wallpaper-'+endpoint+'-'+name, center == [18,52,86,255], center)
+            self.check('desktop-wallpaper-'+endpoint+'-retained-complete-texture',
+                       read_png(output/('valid-'+endpoint+'.png')) == read_png(output/('invalid-'+endpoint+'.png'))
+                       and read_png(output/('solid-'+endpoint+'.png')) == read_png(output/('solid-invalid-'+endpoint+'.png')),
+                       dict(imageBefore='valid', imageAfter='invalid', solidBefore='solid', solidAfter='solid-invalid'))
+        self.check('desktop-wallpaper-explicit-static-representation', all(row['result'].get('frames') == 1
+                   and row['result'].get('format') == 'png' for row in result['snapshots'] if row['name'] in ('valid','newest')),
+                   [row for row in result['snapshots'] if row['name'] in ('valid','newest')])
+        checks = []
+        for index, row in enumerate(result['completions']):
+            name = Path(row['path']).name
+            expected = ([18,52,86,255] if row['path'].startswith('solid:') else list(COLORS[0]) if name == 'Motion.webp'
+                        else list(COLORS[int(name[6])]) if name.startswith('frame-') else None)
+            capture = output/('ack-'+str(index)+'.png')
+            observed = pixel(capture) if capture.is_file() else None
+            checks.append(dict(event=row, observed=observed, expected=expected))
+        self.check('desktop-wallpaper-acknowledgment-after-presented-ready', len(checks) >= 9
+                   and all(row['observed'] == row['expected'] and not row['event']['transitioning'] for row in checks), checks)
+        self.check('desktop-wallpaper-failure-reason', all(row['reason'] for row in result['snapshots']
+                   if row['name'] in ('invalid','solid-invalid')), result['snapshots'])
+        self.check('desktop-wallpaper-destruction-retires-all-interests', result['interests'] == result['requests'] == 0
+                   and not result['workerRunning'], result)
         return result
 
     def wallpaper_gallery(self):
@@ -754,6 +809,8 @@ def main():
             run.wallpaper_scan()
         elif args.case == 'wallpaper-gallery':
             run.wallpaper_gallery()
+        elif args.case == 'desktop-wallpaper':
+            run.desktop_wallpaper()
         elif args.case == 'chooser':
             run.chooser()
         else:

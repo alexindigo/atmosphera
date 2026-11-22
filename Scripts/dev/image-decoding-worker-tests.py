@@ -250,6 +250,23 @@ def main():
             result = await self.cache.render(dict(self.request(), width=100, height=100, fit='cover'))
             self.assertEqual((result['width'], result['height']), (100, 100))
 
+        async def test_cover_and_circle_preserve_source_alpha(self):
+            for source in ('frame-0.png', 'Still.webp'):
+                for fit in ('cover', 'circle'):
+                    with self.subTest(source=source, fit=fit):
+                        result = await self.cache.render(dict(self.request(source), width=96, height=64, fit=fit))
+                        target = Path(result['url'].removeprefix('file://'))
+                        self.assertEqual(pixel(target, 48, 6)[3], 0)
+                        self.assertEqual(pixel(target), list(COLORS[0]))
+
+        async def test_representation_schema_does_not_reuse_previous_outputs(self):
+            with patch('images.cache.SCHEMA', 1):
+                previous = await self.cache.render(self.request())
+            current = await self.cache.render(self.request())
+            self.assertNotEqual(previous['url'], current['url'])
+            self.assertEqual(current['status'], 'generated')
+            self.assertTrue(Path(previous['url'].removeprefix('file://')).is_file())
+
         async def test_zero_exit_without_output_tries_independent_decoder(self):
             shim = self.folder / 'bin'
             shim.mkdir()

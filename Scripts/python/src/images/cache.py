@@ -16,7 +16,7 @@ from .png import (atomic_write, bucket, cache_name, canonical_uri, empty_png,
 from .process import command, CommandError
 from .sources import prepare, identity, SourceError
 
-SCHEMA = 1
+SCHEMA = 2
 
 
 def iterations(info):
@@ -155,7 +155,7 @@ class Cache:
             return f'scale={width}:{height}:force_original_aspect_ratio=decrease'
         args = ['-auto-orient', '-filter', 'Lanczos', '-resize', f'{width}x{height}' + ('^' if fit in ('cover', 'circle') else '')]
         if fit in ('cover', 'circle'):
-            args += ['-gravity', 'center', '-extent', f'{width}x{height}']
+            args += ['-background', 'none', '-gravity', 'center', '-extent', f'{width}x{height}']
         if fit == 'circle':
             args += ['-alpha', 'set', '(', '+clone', '-channel', 'A', '-evaluate', 'set', '0', '+channel', '-fill', 'white',
                      '-draw', f'circle {width / 2},{height / 2} {width / 2},0', ')', '-compose', 'DstIn', '-composite']
