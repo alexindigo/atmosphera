@@ -92,6 +92,15 @@ Each runtime API also owns a stable read-only `settingsContext`. Its identity
 is the captured API, not an equal configuration value or a renderer. Consumers
 read copied effective values and check `current()` before publishing results.
 Retired APIs cannot become a replacement placement by recapturing an index.
+Placement APIs capture the existing native handle-local `placementToken` exactly
+once at runtime open. Observable removal, insertion, reorder or replacement
+retires readiness even when the same plugin ID still occupies that address.
+`current()` becomes false, context reads become immutable empty projections, and
+new editors/previews and runtime saves refuse (`overlay-identity` for save).
+The cache may open a new API with a distinct context, never revive the old one.
+Ordinary override, other-member and base edits keep their incarnation. This is
+not a read-freshness barrier, a publication-generation freeze or a persistent ID;
+native indistinguishable same-ID raw replacements retain their documented limits.
 Both retained callbacks are fenced by the API's captured JavaScript lifetime,
 which is retired on QObject destruction. After destruction `current()` explicitly
 returns `false` and `settingsView` returns a frozen empty read projection; neither
@@ -103,6 +112,13 @@ scopes, destroys their QObjects and independently calls both retained callbacks.
 It checks explicit refusal, immutable empty reads and independent replacement
 identities without publishing. Original controls distinguish placement callback
 exceptions from the shared callback's missing Boolean refusal result.
+
+`plugin-settings-context-incarnation-regression.py` covers all four placement
+families with actual native override/member/base edits and five observable mapping
+changes. It independently checks complete files, both retained callbacks, explicit
+save refusal, editor/preview admission and independent cache replacement contexts.
+The Profiles raw Apply owner-loss witness separately proves that an already-applied
+profile reports its retired marker outcome instead of writing into a shifted sibling.
 
 `plugin-settings-shared-native-regression.py` exercises the shared adapter and
 runtime context without a generic page: native Set, staged Reset, Discard,

@@ -50,6 +50,10 @@ QtObject {
   property var hasTranslation: base ? base.hasTranslation : null
 
   property var runtime: null
+  // One API belongs to the native mapping observed at open, not a reusable
+  // displayed address. Member/override/base edits keep this handle-local token.
+  property string _placementToken: ""
+  readonly property bool _placementReplaced: runtime !== null && runtime.placementToken !== _placementToken
   property int _pendingSettingsSaves: 0
   property var _lastSettingsSave: null
   property var _settingsSaveWaiters: []
@@ -63,9 +67,9 @@ QtObject {
   property var _previewGeneration: null
   property bool _constructed: false
   readonly property var _sharedPreviewBase: base && base.settingsPreviewOwner ? base.settingsPreviewOwner.baseScope : null
-  readonly property bool settingsReady: runtime !== null && runtime.ready
-  readonly property string settingsError: _openError || (runtime ? runtime.error : "")
-  readonly property var pluginSettings: runtime ? runtime.values : null
+  readonly property bool settingsReady: runtime !== null && runtime.ready && !_placementReplaced
+  readonly property string settingsError: _openError || (_placementReplaced ? "overlay-identity" : (runtime ? runtime.error : ""))
+  readonly property var pluginSettings: runtime && !_placementReplaced ? runtime.values : null
   readonly property var settingsView: settingsPreviewOwner.values
   readonly property var settingsContext: Read.context(_lifetime, function () {
     var owner = root.base ? root.base.settingsOwner : null;
@@ -103,7 +107,7 @@ QtObject {
       _inheritedPreview.detach();
       _inheritedPreview = null;
     }
-    if (!_sharedPreviewBase)
+    if (!_sharedPreviewBase || _placementReplaced)
       return;
     _cancelPreviewOpen = PluginInstances.openPreviewView(base, placement, _sharedPreviewBase, function (result) {
       if (!lifetime.alive || root._previewGeneration !== token) {
@@ -126,9 +130,10 @@ QtObject {
           result.editor.detach();
         return;
       }
-      if (result.status === "opened")
+      if (result.status === "opened") {
+        root._placementToken = result.editor.placementToken;
         root.runtime = result.editor;
-      else
+      } else
         root._openError = result.error?.code || "overlay-open";
     });
     _refreshPreviewView();
@@ -188,6 +193,8 @@ QtObject {
   }
 
   function createSettingsEditor(fieldIntent) {
+    if (_placementReplaced)
+      return null;
     return PluginInstances.createSettingsEditor(pluginId, placement, base, fieldIntent === true);
   }
 

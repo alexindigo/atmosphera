@@ -118,6 +118,11 @@ ShellRoot {
       check(context === target.settingsContext && context.current(), "stable live context");
       check(context.settingsView.minimumThreshold === (scope === "instance" ? 30 : 20), "actual selected native values");
       check(Object.isFrozen(context.settingsView), "live read is immutable");
+      if (scope === "shared" && !original) {
+        // Registration loss retires both callbacks before QObject destruction.
+        Service.loadedPlugins = {};
+        retired();
+      }
       target.destroy();
       phase = "destroyed";
     } else if (phase === "destroyed" && Date.now() - since > 100) {

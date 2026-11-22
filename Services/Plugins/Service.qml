@@ -78,12 +78,13 @@ Singleton {
     while (base && "base" in base)
       base = base.base;
     if (!handle || !api.settingsReady || !base || !base.settingsOwner || base.settingsOwner.closed || base.settingsOwner.status !== "Ready") {
+      var code = "base" in api && api.settingsError === "overlay-identity" ? "overlay-identity" : "plugin-owner";
       Qt.callLater(function () {
         if (typeof callback === "function")
           callback({
                      status: "failed",
                      error: {
-                       code: "plugin-owner"
+                       code: code
                      }
                    });
       });
