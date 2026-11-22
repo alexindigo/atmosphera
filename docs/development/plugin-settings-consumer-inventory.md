@@ -578,7 +578,7 @@ Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `ma
 | 7 | `currency-exchange/Panel.qml` | `sourceCurrency`:20; `targetCurrency`:28 | 14, 18, 24, 26, 27, 40, 113, 259, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `aa4f55fa9b6d17abfe6504e4703e9325ede9a20fe7be4756dadedf460547db68`.
+Runtime-source/manifest fingerprint: `9108fe162049069efd56aa516c7d2d28d1c72bec89f95bd2edd53f069292cedd`.
 
 ## custom-commands
 
