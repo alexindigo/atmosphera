@@ -737,6 +737,28 @@ unused binary/model/tool/MCP/resume/permission options are not implemented or
 certified; common conversation content is not migrated. No real CLI/account,
 physical input, broad visual or final paired acceptance is implied.
 
+## Selected Pomodoro timers
+
+Main owns one transient timer per captured runtime context. All Bar/Panel views
+of one API share it; other contexts do not replace its countdown or phase. IPC
+and the legacy settings.json watcher keep the plugin-level native owner. Duration
+and session policy retain the original QML int conversions. Current selected
+policy governs subsequent phase/reset actions without resetting an already
+admitted countdown. Retirement fences actions and queued auto-start, stops timers
+and releases the alarm; Main destruction owns all child timers.
+
+The Pomodoro native regression joins every actual configuration control, complete
+independent documents and Bar time/Panel policy to edited/Reset/following cold
+readers in both scopes. Individual tests observe phase/session policy, real1000ms
+ticks, real5000ms alarm expiry, auto-start, source changes, native origin loss and
+Main destruction. The existing P169 gate renews all four toggles with actual
+Wayland pointer/keyboard and AT-SPI actions. Its pointer uses the compositor's
+whole output layout and waits for the target's hover before clicking; its
+accessibility probe uses the guest interpreter containing pyatspi. Inert sound
+and notification collaborators prove call policy, not physical audio playback.
+Common path-keyed audio/notice services are not per-instance devices. No timer
+state store/migration or broad visual/final paired acceptance is implied.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
