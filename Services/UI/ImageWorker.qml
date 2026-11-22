@@ -32,6 +32,7 @@ Scope {
       fit: request.fit || "contain",
       animationIntent: request.animationIntent || "still",
       operation: request.operation || "render",
+      destinationDirectory: String(request.destinationDirectory || ""),
       retry: !!request.retry
     };
     var key = JSON.stringify(spec);
@@ -139,6 +140,10 @@ Scope {
     // Output dimensions are distinct from the requested bounding box; inspect
     // reports original dimensions, while normalized output must fit that box.
     var rendered = ["hit", "generated"].includes(reply.status);
+    if (rendered && request.operation === "retain" && (typeof reply.originalPath !== "string" || !reply.originalPath.startsWith("/") || typeof reply.contentSha256 !== "string" || !/^[a-f0-9]{64}$/.test(reply.contentSha256))) {
+      _fail("worker-protocol", "The image worker returned an invalid retained source");
+      return;
+    }
     if (!["hit", "generated", "inspected", "unavailable"].includes(reply.status) || reply.animationIntent !== request.animationIntent || typeof reply.url !== "string" || (reply.status !== "unavailable" && (!Number.isInteger(reply.width) || !Number.isInteger(reply.height) || reply.width < 1 || reply.height < 1 || !Number.isInteger(reply.frames)
                                                                                                                                                                                                               || reply.frames < 1)) || (rendered && (!reply.url.startsWith("file://") || reply.width > request.width || reply.height > request.height)) || (
           reply.status === "inspected" && reply.url !== "") || (reply.status === "unavailable" && (reply.url !== "" || typeof reply.code !== "string" || typeof reply.reason !== "string"))) {

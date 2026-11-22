@@ -5,6 +5,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import sys
@@ -233,6 +234,33 @@ class Cache:
         await command(argv, directory, self.animation_timeout, name='validate-gif', emit=self.emit)
         return result
 
+    def retain_original(self, prepared, request, result):
+        if request.get('operation') != 'retain':
+            return result
+        directory = Path(request['destinationDirectory'])
+        if not directory.is_absolute():
+            raise SourceError('invalid-destination', 'The retained image needs an absolute directory')
+        # Names come from the content, never an untrusted URL suffix or label.
+        extension = prepared['format']
+        extension = extension if re.fullmatch(r'[a-z0-9]+', extension) else 'image'
+        target = directory / ('atmosphera-' + prepared['contentSha256'] + '.' + extension)
+        if not prepared['current']():
+            raise SourceError('source-changed', 'Image source changed before retention')
+        directory.mkdir(parents=True, exist_ok=True)
+        # Unlike the private cache writer, do not chmod a user's destination.
+        fd, temporary = tempfile.mkstemp(prefix='.atmosphera-', dir=directory)
+        try:
+            with os.fdopen(fd, 'wb') as output, prepared['path'].open('rb') as source:
+                shutil.copyfileobj(source, output)
+                output.flush()
+                os.fsync(output.fileno())
+            if not prepared['current']():
+                raise SourceError('source-changed', 'Image source changed before retention')
+            os.replace(temporary, target)
+        finally:
+            Path(temporary).unlink(missing_ok=True)
+        return dict(result, originalPath=str(target), contentSha256=prepared['contentSha256'])
+
     async def render(self, request, inspection_slots=None):
         for field in ('width', 'height'):
             if type(request.get(field)) is not int or request[field] <= 0:
@@ -261,6 +289,7 @@ class Cache:
                         info = await self.inspect(prepared)
             else:
                 info = await self.inspect(prepared)
+            prepared['format'] = info['format']
             if request.get('operation') == 'inspect':
                 if not prepared['current']():
                     raise SourceError('source-changed', 'Image source changed during inspection')
@@ -280,9 +309,11 @@ class Cache:
                         raise ValueError('Stale animation cache')
                     if not prepared['current']():
                         raise SourceError('source-changed', 'Image source changed before publication')
-                    return dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output)
                 except (ValueError, OSError, CommandError):
                     pass
+                else:
+                    return self.retain_original(prepared, request,
+                        dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output))
             if failure.is_file() and not request.get('retry'):
                 try:
                     negative = json.loads(failure.read_text())
@@ -292,11 +323,14 @@ class Cache:
                     pass
             try:
                 output_path, output, decoder = await self.decode(prepared, request, info)
-                if not prepared['current']():
-                    raise SourceError('source-changed', 'Image source changed before publication')
-                atomic_write(target, output_path.read_bytes(), self.root)
-                return dict(url=target.as_uri(), status='generated', origin='fallback', decoder=decoder, sourceInfo=info, **output)
             except SourceError as error:
                 if error.code != 'source-changed':
                     atomic_write(failure, json.dumps(dict(capability=fingerprint, code=error.code, reason=str(error))).encode(), self.root)
                 raise
+            if not prepared['current']():
+                raise SourceError('source-changed', 'Image source changed before publication')
+            atomic_write(target, output_path.read_bytes(), self.root)
+            # Retention/destination failure is not a decoder failure and must
+            # never create a shared negative representation entry.
+            return self.retain_original(prepared, request,
+                dict(url=target.as_uri(), status='generated', origin='fallback', decoder=decoder, sourceInfo=info, **output))

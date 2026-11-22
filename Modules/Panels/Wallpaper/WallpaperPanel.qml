@@ -679,6 +679,7 @@ SmartPanel {
           // Wallhaven wallpapers
           WallhavenView {
             id: wallhavenView
+            targetScreenName: Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : (panelContent.currentScreen ? panelContent.currentScreen.name : undefined)
           }
         }
       }
@@ -1509,6 +1510,7 @@ SmartPanel {
   // Component for Wallhaven wallpapers view
   component WallhavenView: Item {
     id: wallhavenViewRoot
+    property var targetScreenName
     property alias gridView: wallhavenGridView
     property alias pageInput: pageInput
 
@@ -1953,16 +1955,12 @@ SmartPanel {
     // -------------------------------
     function wallhavenDownloadAndApply(wallpaper, targetScreen) {
       if (typeof WallhavenService !== "undefined") {
-        WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
-          if (success) {
-            if (!Settings.data.wallpaper.setWallpaperOnAllMonitors && currentScreenIndex < Quickshell.screens.length) {
-              WallpaperService.selectWallpaper(localPath, Quickshell.screens[currentScreenIndex].name, WallpaperService.wallpaperSelectionAppearance);
-            } else {
-              WallpaperService.selectWallpaper(localPath, undefined, WallpaperService.wallpaperSelectionAppearance);
-            }
-          }
-        });
+        var screenName = targetScreen === undefined ? targetScreenName : targetScreen;
+        // Reserve captured targets/appearance before asynchronous download. New
+        // local, remote or solid intent retires this same owner-held ticket.
+        return WallhavenService.selectWallpaper(wallpaper, screenName, WallpaperService.wallpaperSelectionAppearance);
       }
+      return null;
     }
   }
 }

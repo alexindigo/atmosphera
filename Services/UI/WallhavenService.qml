@@ -197,54 +197,44 @@ Singleton {
   function downloadWallpaper(wallpaper, callback) {
     var url = getWallpaperUrl(wallpaper);
     if (!url) {
-      Logger.e("Wallhaven", "No URL available for wallpaper", wallpaper.id);
       if (callback)
-        callback(false, "");
-      return;
+        callback(false, "", {
+                   code: "empty-source",
+                   reason: "No wallpaper URL is available"
+                 });
+      return null;
     }
-
     var wallpaperId = wallpaper.id;
-
-    // Get the user's wallpaper directory
-    var wallpaperDir = Settings.preprocessPath(Settings.data.wallpaper.directory);
-    if (!wallpaperDir || wallpaperDir === "") {
-      wallpaperDir = Settings.defaultWallpapersDirectory;
-    }
-
-    // Ensure directory ends with /
-    if (!wallpaperDir.endsWith("/")) {
-      wallpaperDir += "/";
-    }
-
-    var localPath = wallpaperDir + "wallhaven_" + wallpaperId + ".jpg";
-
-    Logger.d("Wallhaven", "Downloading wallpaper", wallpaperId, "to", localPath);
-
-    // Use curl or wget to download the file, ensuring directory exists first
-    var downloadProcess = Qt.createQmlObject(`
-                                             import QtQuick
-                                             import Quickshell.Io
-                                             Process {
-                                             id: downloadProcess
-                                             command: ["sh", "-c", "mkdir -p '` + wallpaperDir + `' && (curl -L -s -o '` + localPath + `' '` + url + `' || wget -q -O '` + localPath + `' '` + url + `')"]
-                                             }
-                                             `, root, "DownloadProcess_" + wallpaperId);
-
-    downloadProcess.exited.connect(function (exitCode) {
-      if (exitCode === 0) {
-        Logger.i("Wallhaven", "Wallpaper downloaded:", localPath);
-        wallpaperDownloaded(wallpaperId, localPath);
-        if (callback)
-          callback(true, localPath);
-      } else {
-        Logger.e("Wallhaven", "Failed to download wallpaper, exit code:", exitCode);
-        if (callback)
-          callback(false, "");
-      }
-      downloadProcess.destroy();
+    var size = retentionSize();
+    return ImageCacheService.retainImage(url, wallpaperDirectory(), size.width, size.height, function (path, success, detail) {
+      if (success)
+        wallpaperDownloaded(wallpaperId, path);
+      else
+        Logger.w("Wallhaven", detail.reason || "The wallpaper could not be retained");
+      if (callback)
+        callback(success, path, detail);
     });
+  }
 
-    downloadProcess.running = true;
+  function wallpaperDirectory() {
+    return Settings.preprocessPath(Settings.data.wallpaper.directory) || Settings.defaultWallpapersDirectory;
+  }
+
+  function retentionSize() {
+    var width = 1, height = 1;
+    for (var screen of Quickshell.screens) {
+      width = Math.max(width, screen.width * screen.devicePixelRatio);
+      height = Math.max(height, screen.height * screen.devicePixelRatio);
+    }
+    return Qt.size(width, height);
+  }
+
+  function selectWallpaper(wallpaper, screenName, appearanceSlot) {
+    var wallpaperId = wallpaper.id;
+    return WallpaperService.selectRemoteWallpaper(getWallpaperUrl(wallpaper), wallpaperDirectory(), screenName, appearanceSlot, function (success, names, detail) {
+      if (success)
+        wallpaperDownloaded(wallpaperId, detail.originalPath);
+    });
   }
 
   // -------------------------------------------------

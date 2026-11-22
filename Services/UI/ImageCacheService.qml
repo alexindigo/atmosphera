@@ -134,6 +134,77 @@ Singleton {
                                       });
   }
 
+  // Retention uses the same preparation/decoder/cache owner, and keeps original
+  // bytes separate from the still representation acknowledged by Qt.
+  function retainImage(source, directory, width, height, callback) {
+    return retainedImage.createObject(root, {
+                                        inputSource: String(source),
+                                        destinationDirectory: String(directory),
+                                        sourceSize: Qt.size(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height))),
+                                        completed: callback
+                                      });
+  }
+
+  Component {
+    id: retainedImage
+    NImage {
+      id: retained
+      property string inputSource
+      property string destinationDirectory
+      property var completed
+      property string token: ""
+      property var retainedResult: null
+      property bool settled: false
+      visible: false
+      animationIntent: "still"
+      function cancel() {
+        settled = true;
+        active = false;
+        release();
+        destroy();
+      }
+      function release() {
+        if (token)
+          root.releaseSource(token);
+        token = "";
+      }
+      function finish() {
+        if (settled || !retainedResult)
+          return;
+        var failed = retainedResult.status === "unavailable";
+        if (!failed && status !== Image.Ready && status !== Image.Error)
+          return;
+        settled = true;
+        var success = !failed && status === Image.Ready;
+        var detail = success || failed ? retainedResult : {
+                                           code: errorCode,
+                                           reason: errorReason
+                                         };
+        release();
+        active = false;
+        completed(success ? retainedResult.originalPath : "", success, detail);
+        destroy();
+      }
+      onStatusChanged: Qt.callLater(finish)
+      Component.onCompleted: {
+        token = root.acquireSource({
+                                     source: inputSource,
+                                     width: sourceSize.width,
+                                     height: sourceSize.height,
+                                     animationIntent: "still",
+                                     operation: "retain",
+                                     destinationDirectory: destinationDirectory
+                                   }, function (result) {
+                                     retained.retainedResult = result;
+                                     if (result.status !== "unavailable")
+                                       retained.source = result.url;
+                                     Qt.callLater(retained.finish);
+                                   });
+      }
+      Component.onDestruction: release()
+    }
+  }
+
   Component {
     id: callbackImage
     NImage {

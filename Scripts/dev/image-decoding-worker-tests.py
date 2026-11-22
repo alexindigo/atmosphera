@@ -99,6 +99,37 @@ def main():
                     self.assertLessEqual(max(abs(a - b) for a, b in zip(pixel(target), COLORS[0])), 8)
                     self.assertEqual(list(target.parent.glob(target.stem + '-*.png')), [])
 
+        async def test_retained_original_is_exact_and_distinct_from_representation(self):
+            directory = self.folder / "wallpapers ' [0] : \u6d77\u5cb8"
+            directory.mkdir(mode=0o755)
+            result = await self.cache.render(self.request('Motion.webp', operation='retain', destinationDirectory=str(directory)))
+            original = Path(result['originalPath'])
+            self.assertEqual(original.parent, directory)
+            self.assertEqual(original.suffix, '.webp')
+            self.assertEqual(original.read_bytes(), (fixtures / 'Motion.webp').read_bytes())
+            self.assertNotEqual(original.as_uri(), result['url'])
+            self.assertEqual(result['sourceInfo']['frames'], 3)
+            self.assertEqual(result['frames'], 1)
+            self.assertEqual(directory.stat().st_mode & 0o777, 0o755)
+            original.write_bytes(b'bad retained entry')
+            again = await self.cache.render(self.request('Motion.webp', operation='retain', destinationDirectory=str(directory)))
+            self.assertEqual(again['originalPath'], str(original))
+            self.assertEqual(original.read_bytes(), (fixtures / 'Motion.webp').read_bytes())
+            self.assertEqual(list(directory.glob('.atmosphera-*')), [])
+
+        async def test_failed_retention_does_not_publish_original(self):
+            directory = self.folder / 'wallpapers'
+            with self.assertRaises((SourceError, CommandError, ValueError)):
+                await self.cache.render(self.request('Corrupt.webp', operation='retain', destinationDirectory=str(directory)))
+            self.assertFalse(directory.exists())
+
+        async def test_retention_destination_failure_does_not_poison_decoder_cache(self):
+            with self.assertRaises(SourceError):
+                await self.cache.render(self.request(operation='retain', destinationDirectory='relative'))
+            self.assertEqual(list((self.cache.private / 'fail').glob('*.json')), [])
+            result = await self.cache.render(self.request())
+            self.assertIn(result['status'], ('generated', 'hit'))
+
         async def test_animation_preserves_frames_delays_loop_and_alpha(self):
             result = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
             target = Path(result['url'].removeprefix('file://'))

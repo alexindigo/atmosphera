@@ -18,7 +18,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'remote-red', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -95,6 +95,10 @@ class Run:
         if self.args.case == 'desktop-wallpaper':
             defaults['wallpaper'].update(enabled=True, useSolidColor=False, automationEnabled=False, overviewEnabled=True,
                                          overviewBlur=0, overviewTint=0, transitionDuration=200, skipStartupTransition=True)
+        if self.args.case == 'wallpaper-remote':
+            defaults['wallpaper'].update(enabled=True, useSolidColor=False, automationEnabled=False,
+                                         linkLightAndDarkWallpapers=False, setWallpaperOnAllMonitors=False)
+            defaults['colorSchemes']['darkMode'] = False
         if self.args.case == 'wallpaper-admission':
             defaults['wallpaper'].update(enabled=True, useSolidColor=False, linkLightAndDarkWallpapers=False,
                                          setWallpaperOnAllMonitors=False, automationEnabled=False)
@@ -170,6 +174,9 @@ class Run:
             lint_paths += [str(shell / 'Services/UI/WallpaperService.qml')]
         if self.args.case == 'wallpaper-gallery':
             lint_paths += [str(shell / 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
+        if self.args.case == 'wallpaper-remote':
+            lint_paths += [str(shell / p) for p in ('Services/UI/WallhavenService.qml', 'Services/UI/WallpaperService.qml',
+                'Services/UI/ImageCacheService.qml', 'Services/UI/ImageWorker.qml', 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         if self.args.case == 'desktop-wallpaper':
             lint_paths += [str(shell / p) for p in ('Modules/Background/Background.qml', 'Modules/Background/Overview.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
@@ -691,6 +698,111 @@ os.execv('/usr/bin/find', ['find', *args])
                    and not shared['workerRunning'], shared)
         return result
 
+    def wallpaper_remote(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requests.append(self.path)
+                if self.path == '/missing.jpg':
+                    self.send_error(404)
+                    return
+                if self.path == '/slow.jpg':
+                    time.sleep(1.5)
+                data = (inputs / ('Corrupt.webp' if self.path == '/bad.jpg' else 'Motion.webp')).read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Type', 'image/jpeg')
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                try:
+                    self.wfile.write(data)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+            def log_message(self, *_):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.source,
+                self.args.source / 'Scripts/dev/fixtures/image-decoding/wallpaper-remote.qml', inputs, 'remote',
+                dict(IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}'))
+        finally:
+            server.shutdown()
+            thread.join()
+            server.server_close()
+        self.check('remote-raw-native-package-control', result['raw'] == (1 if installed else 3), result['raw'])
+        rows = {row['name']: row for row in result['snapshots']}
+        accepted = rows['remote']
+        original = Path(accepted['path'])
+        self.check('remote-exact-original-not-renamed-jpeg', original.is_file() and original.suffix == '.webp'
+                   and original.read_bytes() == (inputs/'Motion.webp').read_bytes(), accepted)
+        self.check('remote-captured-directory-and-no-immediate-success', original.parent == Path(result['capturedDirectory'])
+                   and not result['immediatePublication'], result)
+        self.check('remote-captured-target-and-appearance', accepted['dark'] == str(inputs/'frame-2.png')
+                   and accepted['other'] == str(inputs/'frame-2.png'), accepted)
+        self.check('remote-actual-backdrop-static-pixels', accepted['state'] == 'ready'
+                   and pixel(output/'remote.png') == list(COLORS[0]), accepted)
+        self.check('remote-invalid-retains-exact-prior-pixels', rows['invalid']['path'] == str(original)
+                   and read_png(output/'invalid.png') == read_png(output/'remote.png'), rows['invalid'])
+        self.check('remote-local-intent-retires-slow-download', rows['superseded']['path'] == str(inputs/'frame-1.png')
+                   and pixel(output/'superseded.png') == list(COLORS[1])
+                   and all(row['id'] != 'slow' for row in result['downloads']) and '/slow.jpg' in requests, result)
+        independent = rows['independent']
+        self.check('remote-explicit-independent-target-keeps-captured-dark-slot', independent['otherDark']
+                   and Path(independent['otherDark']).read_bytes() == (inputs/'Motion.webp').read_bytes()
+                   and independent['path'] == str(inputs/'frame-1.png')
+                   and independent['other'] == str(inputs/'frame-2.png'), independent)
+        self.check('remote-http-failure-retains-selected-image', rows['http-failed']['path'] == str(inputs/'frame-1.png')
+                   and read_png(output/'http-failed.png') == read_png(output/'superseded.png'), rows['http-failed'])
+        calls = {row['id']: row for row in result['callbacks']}
+        self.check('remote-standalone-download-validates-and-keeps-original', calls['standalone']['success']
+                   and Path(calls['standalone']['path']).read_bytes() == (inputs/'Motion.webp').read_bytes()
+                   and calls['standalone']['detail']['format'] == 'png'
+                   and calls['standalone']['detail']['sourceInfo']['frames'] == 3, calls['standalone'])
+        self.check('remote-invalid-download-honest-reason-and-cancelled-callback-retired', not calls['invalid']['success']
+                   and not calls['invalid']['path'] and calls['invalid']['detail']['reason']
+                   and 'cancelled' not in calls, calls)
+        self.check('remote-failed-input-never-emits-downloaded', sorted(row['id'] for row in result['downloads'])
+                   == ['motion', 'motion', 'standalone'], result['downloads'])
+        errors = [row for row in result['notices'] if row['type'] == 'error']
+        self.check('remote-selection-failures-have-visible-useful-errors', len(errors) == 2 and all(row['reason'] for row in errors), errors)
+        self.check('remote-final-lifetime-quiescence', result['interests'] == result['requests'] == 0
+                   and not result['workerRunning'], result)
+        (self.out/'http-requests.json').write_text(json.dumps(requests, indent=2)+'\n')
+
+    def remote_red(self):
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                data = (inputs / 'Corrupt.webp').read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Type', 'image/jpeg')
+                self.end_headers()
+                self.wfile.write(data)
+            def log_message(self, *_):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.baseline_source or self.args.source,
+                self.args.source / 'Scripts/dev/fixtures/image-decoding/remote-red.qml', inputs, 'remote-red',
+                dict(IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}'))
+        finally:
+            server.shutdown()
+            thread.join()
+            server.server_close()
+        self.check('wallhaven-invalid-bytes-published-as-download-success', result['done'] and result['result']['success']
+                   and Path(result['result']['path']).read_bytes() == (inputs / 'Corrupt.webp').read_bytes()
+                   and result['imageStatus'] == 3, result, red=True)
+
     def owner(self):
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
@@ -793,6 +905,10 @@ def main():
     try:
         if args.case == 'red':
             run.red()
+        elif args.case == 'remote-red':
+            run.remote_red()
+        elif args.case == 'wallpaper-remote':
+            run.wallpaper_remote()
         elif args.case == 'owner':
             run.owner()
         elif args.case == 'legacy':

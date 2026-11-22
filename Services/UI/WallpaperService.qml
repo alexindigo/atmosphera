@@ -601,7 +601,7 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function changeWallpaper(path, screenName, appearanceSlot, onComplete) {
+  function changeWallpaper(path, screenName, appearanceSlot, onComplete, retentionDirectory) {
     if (!path)
       return null;
     var slot = _defaultAppearanceSlotForChange(appearanceSlot);
@@ -652,6 +652,10 @@ Singleton {
       Qt.callLater(root._completeWallpaperChange, ticket, ticket.path, true, {
                      format: "solid"
                    });
+    } else if (retentionDirectory) {
+      ticket.request = ImageCacheService.retainImage(ticket.path, retentionDirectory, width, height, function (output, success, detail) {
+        root._completeWallpaperChange(ticket, output, success, detail);
+      });
     } else {
       ticket.request = ImageCacheService.requestImage(ticket.path, width, height, "contain", function (output, success, detail) {
         root._completeWallpaperChange(ticket, output, success, detail);
@@ -706,6 +710,8 @@ Singleton {
         ticket.completed(false, names, detail);
       return;
     }
+    if (detail && detail.originalPath)
+      ticket.path = detail.originalPath;
     names.forEach(name => root._saveOutgoingFavorites(ticket.path, name, ticket.slot));
     if (Settings.data.wallpaper.useSolidColor)
       Settings.data.wallpaper.useSolidColor = false;
@@ -722,6 +728,16 @@ Singleton {
       if (success)
         names.forEach(name => root.applyFavoriteTheme(path, name, slot));
     });
+  }
+
+  function selectRemoteWallpaper(source, directory, screenName, appearanceSlot, onComplete) {
+    var slot = _defaultAppearanceSlotForChange(appearanceSlot);
+    return changeWallpaper(source, screenName, slot, function (success, names, detail) {
+      if (success)
+        names.forEach(name => root.applyFavoriteTheme(detail.originalPath, name, slot));
+      if (onComplete)
+        onComplete(success, names, detail);
+    }, directory);
   }
 
   // -------------------------------------------------------------------
