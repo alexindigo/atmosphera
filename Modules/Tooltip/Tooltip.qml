@@ -46,7 +46,8 @@ PopupWindow {
 
   // Internal properties
   property Item targetItem: null
-  onTargetItemChanged: if (!targetItem) hideImmediately()
+  onTargetItemChanged: if (!targetItem)
+                         hideImmediately()
   property real anchorX: 0
   property real anchorY: 0
   property bool isPositioned: false
@@ -661,21 +662,24 @@ PopupWindow {
       // Only show content when we have content
       visible: root.text !== "" || root.isGridMode
 
-      // Text content (default mode)
-      NText {
+      // Text content (default mode). Tooltip text can come from plugins and
+      // other outside sources, so its images go through the shared owner.
+      // Images settle after the text: their size reflows the tooltip.
+      NImageText {
         id: tooltipText
         visible: !root.isGridMode
         anchors.centerIn: parent
         anchors.margins: root.padding
         text: root.text
+        format: "rich"
         pointSize: Style.fontSizeS
         family: Settings.data.ui.fontFixed
         color: AtmoColor.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
         width: Math.min(implicitWidth, root.maxWidth - (root.padding * 2))
-        richTextEnabled: true
+        onImplicitWidthChanged: Qt.callLater(root.updateContentDeferred)
+        onImplicitHeightChanged: Qt.callLater(root.updateContentDeferred)
       }
 
       // Grid content (grid mode)

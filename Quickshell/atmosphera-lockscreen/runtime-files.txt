@@ -23,6 +23,7 @@ Commons/Time.qml
 Helpers/BluetoothUtils.js
 Helpers/ColorsConvert.js
 Helpers/ImageBytes.js
+Helpers/ImageTextSources.js
 Helpers/ImageTypes.js
 Helpers/LockerLifecycle.js
 Helpers/LockerSettingsInput.js
@@ -100,5 +101,6 @@ Widgets/NClock.qml
 Widgets/NImage.qml
 Widgets/NImageBackdrop.qml
 Widgets/NImageRounded.qml
+Widgets/NImageText.qml
 Widgets/NText.qml
 builtin/plugins/demo-custom-lockscreen/LockScreenView.qml

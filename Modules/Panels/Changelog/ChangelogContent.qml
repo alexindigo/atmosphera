@@ -111,6 +111,7 @@ ColumnLayout {
         Layout.fillWidth: true
         visible: releaseContent.length > 0
         text: contentRoot.colorizeHeaders(releaseContent)
+        baseUrl: "file://" + Version.changelogPath
         wrapMode: Text.WordWrap
         format: "markdown"
         color: AtmoColor.mOnSurface

@@ -178,6 +178,7 @@ ColumnLayout {
       visible: Settings.data.general.lockScreenPlugin === "external"
 
       Text {
+        textFormat: Text.PlainText
         Layout.fillWidth: true
         text: I18n.tr("panels.idle.lock-external-mode-note")
         color: AtmoColor.mOnSurfaceVariant

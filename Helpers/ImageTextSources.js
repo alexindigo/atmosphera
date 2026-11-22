@@ -484,6 +484,70 @@ function order(html, slotUrl) {
   return found;
 }
 
+// Qt's rich text loads other images by itself too: background attributes,
+// CSS background images (style attributes, <style> blocks, linked style
+// sheets) and any <img> that is not a slot. They cannot be laid over text as
+// owner-backed images, so they are not loaded; the text stays.
+function withoutResourceImages(html, slotUrl) {
+  var prefix = escapeHtml(slotUrl) + "#slot-";
+  var out = "";
+  var i = 0;
+  var dropped = 0;
+  var noUrls = function (css) {
+    return css.replace(/url\s*\([^)]*\)/gi, function () {
+      ++dropped;
+      return "none";
+    });
+  };
+  while (i < html.length) {
+    if (html.startsWith("<!--", i)) {
+      var close = html.indexOf("-->", i + 4);
+      var stop = close < 0 ? html.length : close + 3;
+      out += html.slice(i, stop);
+      i = stop;
+      continue;
+    }
+    var end = html[i] === "<" ? _tagEnd(html, i) : -1;
+    if (end < 0) {
+      out += html[i];
+      ++i;
+      continue;
+    }
+    var tag = html.slice(i, end);
+    var name = (/^<\s*([a-zA-Z][a-zA-Z0-9]*)/.exec(tag) || [])[1];
+    name = name ? name.toLowerCase() : "";
+    if (name === "img") {
+      var src = /\ssrc\s*=\s*"([^"]*)"/i.exec(tag);
+      if (!src || src[1].indexOf(prefix) !== 0) {
+        ++dropped;
+        tag = "";
+      }
+    } else if (name === "link") {
+      ++dropped;
+      tag = "";
+    } else if (name) {
+      tag = tag.replace(/(\s)background\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, function (match, space) {
+        ++dropped;
+        return space;
+      }).replace(/(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi, function (match, head, value) {
+        return head + noUrls(value);
+      });
+    }
+    out += tag;
+    i = end;
+    if (name === "style") {
+      var closing = html.slice(i).search(/<\/style\s*>/i);
+      var body = closing < 0 ? html.slice(i) : html.slice(i, i + closing);
+      out += noUrls(body);
+      i += body.length;
+    }
+  }
+  return {
+    html: out,
+    dropped: dropped
+  };
+}
+
 // The slot <img> tags of Qt's serialized HTML, with the current sizes.
 function sized(html, slotUrl, sizes) {
   var prefix = escapeHtml(slotUrl) + "#slot-";

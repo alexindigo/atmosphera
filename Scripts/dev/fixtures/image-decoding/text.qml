@@ -2,6 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Panels.Changelog
+import qs.Services
 import qs.Services.UI
 import qs.Widgets
 
@@ -48,7 +50,7 @@ ShellRoot {
   FloatingWindow {
     visible: true
     implicitWidth: 820
-    implicitHeight: 620
+    implicitHeight: 1000
     color: "white"
     Column {
       spacing: 10
@@ -102,7 +104,93 @@ ShellRoot {
         color: "black"
         text: "Plain <b>text</b> only, no image work"
       }
+      // Two lines shown: the image on the first line stays, the one on the
+      // third line is cut off with its line. The frame is taller than the
+      // text, so the grab would show anything drawn past the cut.
+      Item {
+        id: cappedFrame
+        width: 300
+        height: 140
+        NImageText {
+          id: capped
+          width: 300
+          color: "black"
+          maximumLineCount: 2
+          text: "first <img src='" + root.inputs + "/frame-1.png' width='24' height='24'> line<br>second line<br>third <img src='" + root.inputs + "/frame-0.png' width='24' height='24'> line"
+        }
+      }
+      // Settings descriptions (plugin text) with and without an image.
+      NLabel {
+        id: label
+        width: 300
+        label: "Label"
+        description: "desc <b>bold</b> <img src='" + root.inputs + "/frame-1.png' width='16' height='16'> end"
+      }
+      NLabel {
+        id: labelPlain
+        width: 300
+        label: "Label"
+        description: "plain <b>description</b>"
+      }
+      Rectangle {
+        id: tipTarget
+        width: 60
+        height: 20
+        color: "gray"
+      }
+      // Qt's rich text would fetch background images (attributes, style
+      // attributes, style blocks) by itself, outside the owner. Not loaded;
+      // the text stays. The runner's server records any fetch.
+      NImageText {
+        id: backgrounds
+        width: 300
+        color: "black"
+        readonly property string http: Quickshell.env("IMAGE_TEXT_HTTP")
+        text: "<link rel='stylesheet' href='" + http + "/sheet.css'><style>p.b { background-image: url('" + http + "/style-block.png') }</style><table background='" + http + "/table-attr.png' width='200' height='40'><tr><td style=\"background-image: url('" + http + "/td-style.png'); height: 30px\">cell text</td><td background='" + root.inputs
+              + "/frame-0.png'>file</td></tr></table><p class='b'>styled paragraph</p>"
+
+      }
     }
+  }
+  // The actual changelog panel content with notes that carry images: an
+  // absolute fixture file and a source relative to the shipped changelog.
+  FloatingWindow {
+    visible: true
+    implicitWidth: 520
+    implicitHeight: 520
+    color: "white"
+    ChangelogContent {
+      id: changelog
+      anchors.fill: parent
+    }
+  }
+  function imageTexts(item) {
+    var found = [];
+    var walk = node => {
+      if (!node)
+        return;
+      if ("imageStates" in node && "parsedContent" in node)
+        found.push(node);
+      for (var i = 0; node.children && i < node.children.length; ++i)
+        walk(node.children[i]);
+    };
+    walk(item);
+    return found;
+  }
+  function tooltipText() {
+    var tip = TooltipService.activeTooltip;
+    return tip ? root.imageTexts(tip.contentItem)[0] || null : null;
+  }
+  function changelogText() {
+    var found = [];
+    var walk = item => {
+      if ("imageStates" in item && "parsedContent" in item)
+        found.push(item);
+      for (var i = 0; item.children && i < item.children.length; ++i)
+        walk(item.children[i]);
+    };
+    walk(changelog);
+    return found.filter(item => item.imageCount > 0)[0] || null;
   }
   Timer {
     interval: 100
@@ -110,6 +198,19 @@ ShellRoot {
     repeat: true
     onTriggered: {
       ++root.tick;
+      if (!root.notesSet && Version.changelogNotesLoaded && Version.versionKnown) {
+        root.notesSet = true;
+        // Release notes as the changelog owner holds them after parsing the
+        // bundled file (set after its load, which would replace them).
+        Version.changelogSections = [
+              {
+                version: "0.0.1",
+                content: "## [0.0.1] - fixture\n\nNotes with art ![still](" + root.inputs + "/Still.webp) and a shipped asset ![talia](Assets/Talia/TaliaParty.png \"Talia\") in the text.\n\n- [a link](https://example.org/notes)\n"
+              }
+            ];
+      }
+      if (root.tick === 5)
+        TooltipService.show(tipTarget, "tip <b>text</b>\n<img src='" + root.inputs + "/Still.webp' width='40' height='24'> after", "bottom", 1);
       if (root.tick === 30) {
         root.grab(replaced, "replaced-before");
         root.interestsBeforePlain = ImageCacheService.sourceInterestSources().length;
@@ -125,6 +226,13 @@ ShellRoot {
         root.grab(rich, "rich");
         root.grab(failing, "failing");
         root.grab(replaced, "replaced-after");
+        root.grab(cappedFrame, "capped");
+        root.grab(backgrounds, "backgrounds");
+        if (root.changelogText())
+          root.grab(root.changelogText(), "changelog");
+        if (root.tooltipText())
+          root.grab(root.tooltipText(), "tooltip");
+        root.grab(root.imageTexts(label)[0], "label");
       }
       if (root.tick >= 70 && !root.pending) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
@@ -138,6 +246,35 @@ ShellRoot {
                                                                                       lightweight: styledLight.lightweight,
                                                                                       truncated: styledLight.truncated
                                                                                     }),
+                                                         capped: Object.assign(root.describe(capped), {
+                                                                                 truncated: capped.truncated,
+                                                                                 lineCount: capped.lineCount,
+                                                                                 contentHeight: capped.contentHeight
+                                                                               }),
+                                                         backgrounds: root.describe(backgrounds),
+                                                         tooltip: root.tooltipText() ? Object.assign(root.describe(root.tooltipText()), {
+                                                                                                       popupWidth: TooltipService.activeTooltip.implicitWidth,
+                                                                                                       popupHeight: TooltipService.activeTooltip.implicitHeight,
+                                                                                                       popupVisible: TooltipService.activeTooltip.visible
+                                                                                                     }) : {
+                                                                                         missing: true
+                                                                                       },
+                                                         label: Object.assign(root.describe(root.imageTexts(label)[0]), {
+                                                                                lightweight: root.imageTexts(label)[0].lightweight
+                                                                              }),
+                                                         labelPlain: Object.assign(root.describe(root.imageTexts(labelPlain)[0]), {
+                                                                                     lightweight: root.imageTexts(labelPlain)[0].lightweight
+                                                                                   }),
+                                                         changelog: root.changelogText() ? Object.assign(root.describe(root.changelogText()), {
+                                                                                                           format: root.changelogText().format,
+                                                                                                           baseUrl: root.changelogText().baseUrl,
+                                                                                                           releaseContent: Version.releaseContent
+                                                                                                         }) : {
+                                                                                             missing: true,
+                                                                                             versionKnown: Version.versionKnown,
+                                                                                             notesLoaded: Version.changelogNotesLoaded,
+                                                                                             releaseContent: Version.releaseContent
+                                                                                           },
                                                          interestSources: ImageCacheService.sourceInterestSources(),
                                                          warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255), 255]
                                                        }));
@@ -146,6 +283,9 @@ ShellRoot {
     }
   }
   property int interestsBeforePlain: 0
+  property bool notesSet: false
+  // As the shell does at startup: detect the installed version.
+  Component.onCompleted: Version.init()
   Timer {
     interval: 20000
     running: true

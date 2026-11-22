@@ -131,7 +131,10 @@ Item {
       source = converter.getFormattedText(0, converter.length);
       converter.text = "";
     }
-    _html = ImageTextSources.sized(source, slotUrl, sizes);
+    const guarded = ImageTextSources.withoutResourceImages(ImageTextSources.sized(source, slotUrl, sizes), slotUrl);
+    if (guarded.dropped)
+      Logger.w("NImageText", "Not loading", guarded.dropped, "background or style-sheet images");
+    _html = guarded.html;
     _order = ImageTextSources.order(_html, slotUrl);
     geometry.restart();
   }

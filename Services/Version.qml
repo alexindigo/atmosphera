@@ -438,6 +438,8 @@ Singleton {
 
   // Changelog properties
   property bool initialized: false
+  // The bundled notes; relative images in them resolve against this file.
+  readonly property string changelogPath: Quickshell.shellPath("CHANGELOG.md")
   property string previousVersion: ""
   property string changelogCurrentVersion: ""
   property var changelogSections: []
@@ -456,7 +458,7 @@ Singleton {
   property bool pendingSave: false
 
   FileView {
-    path: Quickshell.shellPath("CHANGELOG.md")
+    path: root.changelogPath
     printErrors: false
     watchChanges: false
     onLoaded: {

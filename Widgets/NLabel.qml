@@ -57,13 +57,15 @@ ColumnLayout {
     }
   }
 
-  NText {
+  // Descriptions can come from plugins: light markup, images through the
+  // shared owner.
+  NImageText {
     visible: root.description !== ""
     Layout.fillWidth: true
     text: root.description
+    format: "styled"
     pointSize: Style.fontSizeS
     color: root.descriptionColor
     wrapMode: Text.WordWrap
-    textFormat: Text.StyledText
   }
 }

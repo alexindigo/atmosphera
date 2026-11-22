@@ -50,6 +50,7 @@ Item {
 
   Text {
     id: textItem
+    textFormat: Text.PlainText
     anchors.centerIn: parent
     text: root._resolved && root._resolved.char ? root._resolved.char : ""
     font.family: root._resolved && root._resolved.fontFamily ? root._resolved.fontFamily : Icons.fontFamily

@@ -42,3 +42,9 @@ animation work. Images inside links still activate the link. An image that
 cannot be displayed is a labelled placeholder. Code spans, code blocks,
 comments and escaped image syntax stay text. Text without images creates no
 image work.
+
+Qt's rich text would also load background images by itself (`background`
+attributes, CSS `background-image` in style attributes, `<style>` blocks and
+linked style sheets). `NImageText` does not load those; the text stays.
+With `maximumLineCount`, rich text with images is cut after that many lines
+(no ellipsis); styled text without images keeps Qt's elide.

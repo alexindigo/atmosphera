@@ -219,7 +219,12 @@ class Run:
                 'Modules/Panels/Launcher/LauncherGridDelegate.qml', 'Modules/Panels/Launcher/ClipboardPreview.qml')]
         if self.args.case == 'text':
             lint_paths += [str(shell / p) for p in ('Widgets/NImageText.qml', 'Modules/Notification/Notification.qml',
-                'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml', 'Modules/Panels/Changelog/ChangelogContent.qml')]
+                'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml', 'Modules/Panels/Changelog/ChangelogContent.qml',
+                'Modules/Tooltip/Tooltip.qml', 'Modules/Panels/Launcher/LauncherCore.qml', 'Widgets/NLabel.qml', 'Widgets/NHeader.qml',
+                'Modules/Dialog/DialogPanel.qml', 'Modules/Panels/Settings/Tabs/Connections/BluetoothSubTab.qml',
+                'Modules/DesktopWidgets/Widgets/DesktopAppShortcut.qml', 'Modules/Panels/Settings/Tabs/ColorScheme/ColorCustomizer.qml',
+                'Modules/Panels/Settings/Tabs/Idle/BehaviorSubTab.qml', 'Modules/Panels/Settings/Tabs/LockScreen/AppearanceSubTab.qml',
+                'Widgets/AtmoIcon.qml', 'builtin/plugins/demo-custom-lockscreen/LockScreenView.qml', 'Services/Version.qml')]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1519,7 +1524,28 @@ os.execv('/usr/bin/find', ['find', *args])
         if red and self.args.baseline_source is None:
             raise ValueError('Text red requires an explicit immutable baseline source')
         fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding' / (self.args.case + '.qml')
-        result, output = self.qt(self.args.baseline_source if red else self.args.source, fixture, inputs, self.args.case)
+        fetched = []
+        payload = (inputs / 'frame-0.png').read_bytes()
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                fetched.append(self.path)
+                self.send_response(200)
+                self.send_header('Content-Length', str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+            def log_message(self, *_):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.baseline_source if red else self.args.source, fixture, inputs, self.args.case,
+                                     dict(IMAGE_TEXT_HTTP='http://127.0.0.1:' + str(server.server_port)))
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)
+            server.server_close()
+        (self.out / 'http.json').write_text(json.dumps(fetched, indent=2) + '\n')
         def near(actual, expected, tolerance=10):
             return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
         def count(name, color):
@@ -1564,6 +1590,38 @@ os.execv('/usr/bin/find', ['find', *args])
                    and light['truncated'], light)
         self.check('plain-text-acquires-no-image-work', plain['imageCount'] == 0 and plain['plain'] == 'Plain text only, no image work',
                    plain)
+        capped = result['capped']
+        kept, cut = capped['states']
+        self.check('capped-lines-keep-first-image-cut-later-one', capped['truncated'] and capped['lineCount'] >= 3
+                   and capped['height'] < capped['contentHeight'] and kept['state'] == 'ready' and kept['placed']
+                   and near(center('capped', kept), COLORS[1]) and cut['y'] >= capped['height']
+                   and count('capped', COLORS[0]) == 0 and 'second line' in capped['plain'],
+                   dict(consumer=capped, cut=count('capped', COLORS[0])))
+        backgrounds = result['backgrounds']
+        self.check('rich-background-images-not-loaded-text-kept', backgrounds['imageCount'] == 0 and not fetched
+                   and count('backgrounds', COLORS[0]) == 0
+                   and all(w in backgrounds['plain'] for w in ('cell text', 'file', 'styled paragraph')),
+                   dict(consumer=backgrounds, fetched=fetched, painted=count('backgrounds', COLORS[0])))
+        tip = result['tooltip']
+        self.check('tooltip-rich-image-presented-and-sized', not tip.get('missing') and tip['popupVisible']
+                   and tip['imageCount'] == 1 and tip['states'][0]['state'] == 'ready' and tip['states'][0]['placed']
+                   and near(center('tooltip', tip['states'][0]), COLORS[0])
+                   and tip['popupWidth'] >= tip['states'][0]['x'] + 40 and tip['popupHeight'] >= tip['height']
+                   and 'tip text' in tip['plain'] and 'after' in tip['plain'], tip)
+        label, plain_label = result['label'], result['labelPlain']
+        self.check('settings-description-image-presented', not label['lightweight'] and label['imageCount'] == 1
+                   and label['states'][0]['state'] == 'ready' and near(center('label', label['states'][0]), COLORS[1])
+                   and 'desc bold' in label['plain'], label)
+        self.check('settings-description-without-image-lightweight', plain_label['lightweight']
+                   and plain_label['imageCount'] == 0 and plain_label['plain'] == 'plain <b>description</b>', plain_label)
+        notes = result['changelog']
+        self.check('changelog-notes-images-presented', not notes.get('missing') and notes['format'] == 'markdown'
+                   and '0.0.1' in notes['releaseContent'] and notes['imageCount'] == 2
+                   and all(s['state'] == 'ready' and s['placed'] for s in notes['states'])
+                   and near(center('changelog', notes['states'][0]), COLORS[0])
+                   and center('changelog', notes['states'][1])[3] > 0
+                   and notes['states'][1]['naturalWidth'] == 128
+                   and all(w in notes['plain'] for w in ('Notes with art', 'in the text', 'a link')), notes)
         return result
 
     def owner(self):

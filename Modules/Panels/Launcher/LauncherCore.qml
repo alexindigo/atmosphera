@@ -985,16 +985,17 @@ Rectangle {
               horizontalPolicy: ScrollBar.AlwaysOff
               reserveScrollbarSpace: false
 
-              NText {
+              // Provider descriptions (plugins included) are Markdown that
+              // can carry images.
+              NImageText {
                 width: descriptionScrollView.availableWidth
                 text: root.results.length > 0 ? root.results[0].description : ""
+                format: "markdown"
                 pointSize: Style.fontSizeM
-                font.weight: Font.Bold
+                fontWeight: Font.Bold
                 color: AtmoColor.mOnSurface
-                horizontalAlignment: Text.AlignHLeft
-                verticalAlignment: Text.AlignTop
+                horizontalAlignment: Text.AlignLeft
                 wrapMode: Text.Wrap
-                markdownTextEnabled: true
               }
             }
           }

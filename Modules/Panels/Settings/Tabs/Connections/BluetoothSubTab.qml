@@ -175,8 +175,9 @@ Item {
         NText {
           visible: BluetoothService.enabled && isDiscoverable
           Layout.fillWidth: true
+          // Shell-authored rich text; the host name is data, so escaped.
           text: I18n.tr("panels.connections.bluetooth-discoverable", {
-                          hostName: HostService.hostName
+                          hostName: String(HostService.hostName || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
                         })
           color: AtmoColor.mOnSurfaceVariant
           richTextEnabled: true

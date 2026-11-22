@@ -121,6 +121,7 @@ Item {
     }
 
     Text {
+      textFormat: Text.PlainText
       Layout.alignment: Qt.AlignHCenter
       Layout.fillWidth: true
       Layout.topMargin: Style.marginXS
@@ -148,6 +149,7 @@ Item {
     // Date first (small, above the clock), clock below — the macOS
     // lock-screen composition.
     Text {
+      textFormat: Text.PlainText
       Layout.alignment: Qt.AlignHCenter
       font.pointSize: Style.fontSizeL
       color: Qt.rgba(1, 1, 1, 0.7)
@@ -270,6 +272,7 @@ Item {
     }
 
     Text {
+      textFormat: Text.PlainText
       Layout.alignment: Qt.AlignHCenter
       Layout.fillWidth: true
       Layout.topMargin: Style.marginXS
@@ -312,6 +315,7 @@ Item {
       ColumnLayout {
         spacing: 1
         Text {
+          textFormat: Text.PlainText
           text: MediaService.trackTitle ?? "No media"
           color: "white"
           font.pointSize: Style.fontSizeS
@@ -319,6 +323,7 @@ Item {
           Layout.preferredWidth: 140
         }
         Text {
+          textFormat: Text.PlainText
           text: MediaService.trackArtist ?? ""
           color: Qt.rgba(1, 1, 1, 0.6)
           font.pointSize: Style.fontSizeXS
@@ -406,6 +411,7 @@ Item {
     // Error feedback (below password)
     Text {
       id: errorText
+      textFormat: Text.PlainText
       Layout.alignment: Qt.AlignHCenter
       text: ""
       color: "#ff5252"
