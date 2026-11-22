@@ -274,8 +274,9 @@ Singleton {
   }
 
   function invalidateNotification(imageId) {
-    const path = notificationsDir + imageId + ".png";
-    Quickshell.execDetached(["rm", "-f", path]);
+    // Labels are not content identities. Retained originals may still belong
+    // to persisted history or another shell process; never unlink them here.
+    Logger.d("ImageCache", "Notification retention is reference-owned; label invalidation ignored");
   }
 
   function invalidateAvatar(username) {
@@ -307,9 +308,9 @@ Singleton {
   }
 
   function clearNotifications() {
-    Logger.i("ImageCache", "Clearing notifications cache");
-    Quickshell.execDetached(["rm", "-rf", notificationsDir]);
-    Quickshell.execDetached(["mkdir", "-p", notificationsDir]);
+    // Clearing representations must not destroy retained source bytes behind
+    // live popups or cold history. History membership is owned by its service.
+    Logger.i("ImageCache", "Preserving retained notification sources");
   }
 
   function clearContributors() {

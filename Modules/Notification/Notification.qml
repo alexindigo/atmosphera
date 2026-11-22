@@ -638,12 +638,12 @@ Variants {
                   Layout.topMargin: Style.marginM
                   Layout.bottomMargin: Style.marginM
 
-                  NImageRounded {
+                  NNotificationImage {
                     Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
                     Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                     Layout.alignment: Qt.AlignVCenter
                     radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
-                    imagePath: model.originalImage || ""
+                    notification: model
                     borderColor: "transparent"
                     borderWidth: 0
                     fallbackIcon: "bell"
@@ -785,12 +785,12 @@ Variants {
                 anchors.margins: Style.marginM
                 spacing: Style.marginS
 
-                NImageRounded {
+                NNotificationImage {
                   Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)
                   Layout.preferredHeight: Math.round(24 * Style.uiScaleRatio)
                   Layout.alignment: Qt.AlignVCenter
                   radius: Style.radiusXS
-                  imagePath: model.originalImage || ""
+                  notification: model
                   borderColor: "transparent"
                   borderWidth: 0
                   fallbackIcon: "bell"

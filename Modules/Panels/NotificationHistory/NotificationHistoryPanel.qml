@@ -852,12 +852,12 @@ SmartPanel {
                         spacing: Style.marginM
 
                         // Icon
-                        NImageRounded {
+                        NNotificationImage {
                           anchors.verticalCenter: notificationDelegate.isExpanded ? undefined : parent.verticalCenter
                           width: notificationDelegate.iconSize
                           height: notificationDelegate.iconSize
                           radius: Math.min(Style.radiusL, width / 2)
-                          imagePath: model.cachedImage || model.originalImage || ""
+                          notification: model
                           borderColor: "transparent"
                           borderWidth: 0
                           fallbackIcon: "bell"

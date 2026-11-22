@@ -19,7 +19,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'remote-red', 'wizard-red', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'remote-red', 'wizard-red', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -104,6 +104,9 @@ class Run:
         if self.args.case == 'desktop-wallpaper':
             defaults['wallpaper'].update(enabled=True, useSolidColor=False, automationEnabled=False, overviewEnabled=True,
                                          overviewBlur=0, overviewTint=0, transitionDuration=200, skipStartupTransition=True)
+        if self.args.case == 'notification-service':
+            (profile / 'config/notification-rules.json').write_text(json.dumps(dict(rules=[
+                dict(pattern='blocked', action='block'), dict(pattern='hidden', action='hide')])))
         if self.args.case == 'wallpaper-remote':
             defaults['wallpaper'].update(enabled=True, useSolidColor=False, automationEnabled=False,
                                          linkLightAndDarkWallpapers=False, setWallpaperOnAllMonitors=False)
@@ -138,7 +141,7 @@ class Run:
                 # Inspect the actual fresh reader process, not an environment
                 # flag that merely claims a plugin condition.
                 maps = set()
-                deadline = time.monotonic() + 25
+                deadline = time.monotonic() + (90 if self.args.case == 'notification-service' else 25)
                 while proc.poll() is None:
                     try:
                         maps.update(line.split()[-1] for line in Path(f'/proc/{proc.pid}/maps').read_text().splitlines()
@@ -193,6 +196,10 @@ class Run:
             lint_paths += [str(shell / p) for p in ('Modules/Background/Background.qml', 'Modules/Background/Overview.qml')]
         if self.args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageAdmission.qml', 'Services/UI/ImageCacheService.qml')]
+        if self.args.case == 'notification-service':
+            lint_paths += [str(shell / p) for p in ('Services/System/NotificationService.qml', 'Services/UI/ImageCacheService.qml',
+                'Widgets/NImageRounded.qml', 'Widgets/NNotificationImage.qml', 'Modules/Notification/Notification.qml',
+                'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -309,6 +316,203 @@ class Run:
                    and row['detail']['code'] and row['detail']['reason'] for row in result['failures']), result['failures'])
         self.check('adapter-cancel-suppressed', not result['cancelled'], result['cancelled'])
         self.check('adapter-quiescence', result['interests'] == 0 and not result['worker'], result['interests'])
+        return result
+
+    def notification_service(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        shutil.copyfile(inputs / 'Still.webp', inputs / 'service-ephemeral.webp')
+        red = self.args.case == 'notification-service-red'
+        if red and self.args.baseline_source is None:
+            raise ValueError('Actual notification service red requires immutable baseline source')
+        source = self.args.baseline_source if red else self.args.source
+        address = 'unix:path=' + str(self.work / 'service-bus')
+        http_events = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                history = self.path == '/history.jpg'
+                payload = (inputs / 'Still.webp').read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Length', str(len(payload)) if history else '1000')
+                self.end_headers()
+                self.wfile.flush()
+                (inputs / ('http-history-started' if history else 'http-started')).write_text('held\n')
+                if history:
+                    deadline = time.monotonic() + 15
+                    while not (inputs / 'http-history-release').exists() and time.monotonic() < deadline:
+                        time.sleep(.02)
+                    self.wfile.write(payload)
+                    self.wfile.flush()
+                    http_events.append(dict(path=self.path, delivered=True))
+                    return
+                self.connection.settimeout(20)
+                try:
+                    eof = self.connection.recv(1) == b''
+                except TimeoutError:
+                    eof = False
+                http_events.append(dict(path=self.path, eof=eof))
+            def log_message(self, *_args):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        with (self.out / 'bus.log').open('w') as log:
+            bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1', '--address=' + address],
+                                   stdout=subprocess.PIPE, stderr=log, text=True, start_new_session=True)
+            guard = protect_owned_process(bus)
+            try:
+                actual = bus.stdout.readline().strip()
+                assert actual.startswith(address)
+                name = 'notification-service-red' if red else 'notification-service'
+                result, output = self.qt(source, self.args.source / ('Scripts/dev/fixtures/image-decoding/' + name + '.qml'),
+                    inputs, name, extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
+                    ATMOSPHERA_NOTIF_HISTORY_FILE=str(inputs / 'history.json'),
+                    IMAGE_SERVICE_URL='http://127.0.0.1:' + str(server.server_port) + '/held.jpg',
+                    IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-service-producer.py')))
+                if not red:
+                    self.check('notification-service-ready-has-retained-url', all(isinstance(row['cachedImage'], str)
+                        and row['cachedImage'].startswith('file://') for step in result['snapshots'] for row in step['history']
+                        if row['imageState'] == 'ready'), dict(stages=len(result['snapshots'])))
+                    cold, cold_output = self.qt(source, self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-history.qml',
+                        inputs, 'notification-history-cold', extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
+                        ATMOSPHERA_NOTIF_HISTORY_FILE=str(inputs / 'history.json')))
+            finally:
+                guard.terminate()
+                code = bus.wait(timeout=10)
+                (self.out / 'bus-process.json').write_text(json.dumps(dict(identity=guard.identity.record(), exit=code), indent=2) + '\n')
+                server.shutdown()
+                thread.join(timeout=5)
+                server.server_close()
+                (self.out / 'http.json').write_text(json.dumps(http_events, indent=2) + '\n')
+        self.check('actual-service-producer-retired-file', result['producerExit'] == 0 and not result['producerErrors']
+                   and not (inputs / 'service-ephemeral.webp').exists(), result)
+        if not red:
+            self.check('notification-service-superseded-http-retired', len(http_events) == 2
+                       and next(row for row in http_events if row['path'] == '/held.jpg')['eof']
+                       and next(row for row in http_events if row['path'] == '/history.jpg')['delivered'], http_events)
+            return self.notification_service_results(result, output, cold, cold_output, inputs, installed)
+        self.check('actual-service-original-file-loss', result['popup']['status'] == result['history']['status'] == 3
+                   and result['popup']['source'] == result['history']['source'] == result['entry']['originalImage']
+                   and result['entry']['cachedImage'] == result['entry']['originalImage'], result, red=True)
+        return result
+
+    def notification_service_results(self, result, output, cold, cold_output, inputs, installed):
+        snapshots = {row['stage']: row for row in result['snapshots']}
+        required = ['file', 'metadata-only', 'replace-green', 'replace-blue', 'collision', 'compact', 'data', 'no-art', 'missing', 'corrupt', 'hidden',
+                    'dnd', 'transient', 'blocked', 'no-owner', 'pending-clear', 'pending-dismiss', 'pending-remove',
+                    'slow-superseded', 'transient-replacement', 'blocked-replacement', 'shared-one', 'shared-two', 'shared-remove',
+                    'overflow-trigger', 'clear-with-popup', 'cold-provider', 'cold-file', 'closed']
+        self.check('notification-service-complete-schedules', list(snapshots) == required, list(snapshots))
+        self.check('notification-service-actual-native-control', result['raw'] == (1 if installed else 3), result['raw'])
+        first = snapshots['file']['history'][0]
+        green = snapshots['replace-green']['history'][0]
+        blue = snapshots['replace-blue']['history'][0]
+        self.check('notification-service-entry-revision-fence', first['id'] == green['id'] == blue['id']
+                   and len({row['imageRevision'] for row in (first, green, blue)}) == 3
+                   and len({row['cachedImage'] for row in (first, green, blue)}) == 3,
+                   [first, green, blue])
+        metadata = snapshots['metadata-only']['history'][0]
+        self.check('notification-service-metadata-not-recapture', metadata['id'] == first['id']
+                   and metadata['imageRevision'] == first['imageRevision'] and metadata['cachedImage'] == first['cachedImage']
+                   and metadata['summary'] == 'Updated metadata', metadata)
+        self.check('notification-service-original-and-representation', first['imageFormat'] == 'webp'
+                   and first['cachedImage'].endswith('.webp') and first['imageRepresentation'].endswith('.png')
+                   and first['cachedImage'] != first['imageRepresentation'], first)
+        self.check('notification-service-equal-labels-no-alias', len(snapshots['collision']['history']) == 2
+                   and len({row['id'] for row in snapshots['collision']['history']}) == 2
+                   and len({row['cachedImage'] for row in snapshots['collision']['history']}) == 2
+                   and len(snapshots['collision']['popup']) == 1, snapshots['collision'])
+        # All rendered actual roots are checked, not just the owner callbacks.
+        for stage, color in [('file', COLORS[0]), ('replace-green', (20, 210, 70, 255)), ('replace-blue', (30, 60, 230, 255)),
+                             ('compact', COLORS[1]), ('data', COLORS[0])]:
+            target = first['id'] if stage.startswith('replace') or stage == 'file' else next(
+                row['id'] for row in snapshots[stage]['history'] if row['summary'] == stage)
+            rows = [row for row in result['widgets'] if row['stage'] == stage and row['id'] == target]
+            self.check('notification-service-' + stage + '-actual-pixels', {row['cohort'] for row in rows} == {'popup', 'history'}
+                       and all(row['status'] == 1 and pixel(output / row['file']) == list(color) for row in rows), rows)
+        for name in ('missing', 'corrupt'):
+            data = next(row for row in snapshots[name]['history'] if row['summary'] == name)
+            rows = [row for row in result['widgets'] if row['stage'] == name and row['id'] == data['id']]
+            self.check('notification-service-' + name + '-labelled-failure', data['imageState'] == 'unavailable'
+                       and not data['cachedImage'] and data['imageErrorCode'] and data['imageErrorReason']
+                       and {row['cohort'] for row in rows} == {'popup', 'history'}
+                       and all(row['status'] == 3 and row['error'] and row['reason'] for row in rows), rows)
+            warning_pixels = []
+            for row in rows:
+                width, height, rgba = read_png(output / row['file'])
+                warning_pixels.append(sum(rgba[i + 3] > 80 and all(abs(rgba[i + j] - result['warningColor'][j]) <= 3
+                    for j in range(3)) for i in range(0, len(rgba), 4)))
+            self.check('notification-service-' + name + '-visible-warning', all(warning_pixels), warning_pixels)
+        for name in ('hidden', 'dnd'):
+            row = snapshots[name]
+            self.check('notification-service-' + name + '-history-only', any(r['summary'] == name for r in row['history'])
+                       and not any(r['summary'] == name for r in row['popup'])
+                       and next(r for r in row['history'] if r['summary'] == name)['imageState'] == 'ready', row)
+        no_art = next(r for r in snapshots['no-art']['history'] if r['summary'] == 'no-art')
+        self.check('notification-service-no-art-not-failure', no_art['imageState'] == 'idle'
+                   and not no_art['originalImage'] and not no_art['cachedImage'] and not no_art['imageErrorCode'], no_art)
+        self.check('notification-service-transient-popup-only', any(r['summary'] == 'transient' for r in snapshots['transient']['popup'])
+                   and not any(r['summary'] == 'transient' for r in snapshots['transient']['history']), snapshots['transient'])
+        for name in ('blocked', 'no-owner', 'pending-clear', 'pending-dismiss', 'pending-remove'):
+            row = snapshots[name]
+            self.check('notification-service-' + name + '-no-resurrection', not any(r['summary'] == name for r in row['popup'] + row['history'])
+                       and not any(r['summary'] == name for r in row['owners']), row)
+        admissions = {row['summary']: row for row in result['admissions']}
+        self.check('notification-service-synchronous-failure-before-insert', admissions['missing']['state'] == 'unavailable'
+                   and admissions['missing']['revision'], admissions['missing'])
+        self.check('notification-service-no-unowned-admission', all(not admissions[name]['id'] and not admissions[name]['interestDelta']
+                   for name in ('blocked', 'no-owner')), admissions)
+        self.check('notification-service-pending-release', all(not admissions[name]['afterEntry']
+                   and not admissions[name]['afterInterests'] for name in ('pending-clear', 'pending-dismiss', 'pending-remove')), admissions)
+        slow = snapshots['slow-superseded']
+        data = next(row for row in slow['history'] if row['summary'] == 'slow-superseded')
+        rows = [row for row in result['widgets'] if row['stage'] == 'slow-superseded' and row['id'] == data['id']]
+        changes = result['changes']
+        previous_source = admissions['slow-start']['source']
+        expected_revision = int(admissions['slow-start']['revision'].rsplit(':', 1)[1])
+        consistent = bool(changes)
+        for change in changes:
+            if change['entrySource'] != previous_source:
+                expected_revision += 1
+            consistent &= change['entrySource'] == (change['image'] or change['appIcon'])
+            consistent &= change['revision'] == data['id'] + ':' + str(expected_revision)
+            previous_source = change['entrySource']
+        self.check('notification-service-running-supersession', data['id'] == admissions['slow-start']['id']
+                   and consistent and expected_revision > 1 and any(row['signal'] == 'imageChanged' for row in changes)
+                   and data['imageRevision'] == changes[-1]['revision']
+                   and data['originalImage'] == changes[-1]['entrySource'] == changes[-1]['image']
+                   and len(rows) == 2 and all(row['status'] == 1 and pixel(output / row['file']) == [30, 60, 230, 255]
+                   for row in rows), dict(changes=changes, widgets=rows))
+        policy = snapshots['transient-replacement']
+        history_id = admissions['history-held']['id']
+        history = next(row for row in policy['history'] if row['id'] == history_id)
+        popup = next(row for row in policy['popup'] if row['id'] == history_id)
+        rows = [row for row in result['widgets'] if row['stage'] == 'transient-replacement' and row['id'] == history_id]
+        self.check('notification-service-pending-history-revision-survives', history['imageRevision'] != popup['imageRevision']
+                   and history['originalImage'].endswith('/history.jpg') and popup['originalImage'].startswith('image://')
+                   and len(rows) == 2 and all(row['status'] == 1 and pixel(output / row['file']) ==
+                   (list(COLORS[0]) if row['cohort'] == 'history' else [20, 210, 70, 255]) for row in rows), rows)
+        blocked = snapshots['blocked-replacement']
+        preserved = next(row for row in blocked['history'] if row['id'] == history_id)
+        rows = [row for row in result['widgets'] if row['stage'] == 'blocked-replacement' and row['id'] == history_id]
+        self.check('notification-service-blocked-replacement-keeps-history', preserved == history
+                   and not any(row['id'] == history_id for row in blocked['popup']) and len(rows) == 1
+                   and rows[0]['status'] == 1 and pixel(output / rows[0]['file']) == list(COLORS[0]), rows)
+        for stage in ('shared-remove', 'overflow-trigger', 'clear-with-popup'):
+            rows = [row for row in result['widgets'] if row['stage'] == stage and row['summary'] == 'shared-two' and row['cohort'] == 'popup']
+            self.check('notification-service-' + stage + '-shared-bytes-survive', len(rows) == 1 and rows[0]['status'] == 1
+                       and pixel(output / rows[0]['file']) == [230, 30, 50, 255], rows)
+        persisted = json.loads((inputs / 'history.json').read_text())['notifications']
+        self.check('notification-service-cold-records', {r['summary'] for r in persisted} == {'cold-provider', 'cold-file'}
+                   and all(r['imageState'] == 'ready' and r['cachedImage'] != r['originalImage'] for r in persisted), persisted)
+        self.check('notification-service-cold-actual-pixels', len(cold['widgets']) == 2 and all(row['status'] == 1
+                   and pixel(cold_output / row['file']) == ([30, 60, 230, 255] if row['summary'] == 'cold-provider' else list(COLORS[0]))
+                   for row in cold['widgets']), cold)
+        self.check('notification-service-quiescence', result['interests'] == cold['interests'] == 0
+                   and not result['worker'] and not cold['worker'] and not snapshots['closed']['popup'], snapshots['closed'])
         return result
 
     def red(self):
@@ -1149,6 +1353,8 @@ def main():
             run.owner()
         elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
             run.producer_capture()
+        elif args.case in ('notification-service-red', 'notification-service'):
+            run.notification_service()
         elif args.case == 'legacy':
             run.legacy()
         elif args.case == 'backdrops':

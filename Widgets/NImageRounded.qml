@@ -20,14 +20,18 @@ Item {
   property bool normalize: false
   property string sourceRevision: ""
   property string animationIntent: "preserve"
+  // An upstream source owner can fail before a URL exists (for example when
+  // a notification producer cannot be captured). Present that failure too.
+  property string sourceFailureCode: ""
+  property string sourceFailureReason: ""
 
   readonly property bool _isAnimated: !!image.imageResult.animated
   readonly property QtObject imageSource: image
   readonly property bool showFallback: fallbackIcon !== "" && (imagePath === "" || status === Image.Error)
-  readonly property int status: image.status
-  readonly property string imageState: image.imageState
-  readonly property string errorCode: image.errorCode
-  readonly property string errorReason: image.errorReason
+  readonly property int status: sourceFailureCode ? Image.Error : image.status
+  readonly property string imageState: sourceFailureCode ? "unavailable" : image.imageState
+  readonly property string errorCode: sourceFailureCode || image.errorCode
+  readonly property string errorReason: sourceFailureCode ? sourceFailureReason : image.errorReason
   readonly property var imageResult: image.imageResult
   readonly property int currentFrame: image.currentFrame
   readonly property string outputUrl: image.outputUrl

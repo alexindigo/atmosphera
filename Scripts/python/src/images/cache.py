@@ -259,7 +259,7 @@ class Cache:
             os.replace(temporary, target)
         finally:
             Path(temporary).unlink(missing_ok=True)
-        return dict(result, originalPath=str(target), contentSha256=prepared['contentSha256'])
+        return dict(result, originalPath=str(target), originalFormat=prepared['format'], contentSha256=prepared['contentSha256'])
 
     async def render(self, request, inspection_slots=None):
         for field in ('width', 'height'):
