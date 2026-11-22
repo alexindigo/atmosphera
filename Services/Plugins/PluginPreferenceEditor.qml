@@ -15,6 +15,9 @@ QtObject {
   property bool writable: true
   property bool closed: false
   property bool _releasePending: false
+  // A failed Apply stays admitted in the native store for Retry, so its
+  // values are what every reader shows until it is retried or abandoned.
+  property bool _failedApply: false
   property string openError: ""
   property var _initial: ({})
   property var _lifetime: ({
@@ -41,8 +44,9 @@ QtObject {
     Qt.callLater(root._releaseWhenIdle);
   }
   function _releaseWhenIdle() {
+    // Losing the presentation is not an explicit Discard: it never abandons.
     if (_releasePending && !closed && !busy)
-      discard();
+      _detach();
   }
 
   function copyValue(value) {
@@ -93,12 +97,12 @@ QtObject {
       disconnect();
       var available = root.ready && (!root.ownerCurrent || root.ownerCurrent());
       callback(available ? {
-                            status: "opened"
-                          } : {
+                             status: "opened"
+                           } : {
                  status: "failed",
                  refreshState: "not_refreshed",
                  error: {
-                    code: root.error || (root.ready ? "editor-owner" : "editor-closed")
+                   code: root.error || (root.ready ? "editor-owner" : "editor-closed")
                  }
                });
     }
@@ -139,6 +143,7 @@ QtObject {
       if (!lifetime.alive || root.closed)
         return;
       var success = result.status === "saved" || result.status === "nothing_to_save";
+      root._failedApply = result.status === "failed";
       var refresh = result.refreshState;
       if (!refresh) {
         var current = success && root.inputScope && root.fields.every(function (key) {
@@ -181,14 +186,35 @@ QtObject {
   function discard() {
     if (busy)
       return false;
+    var nativeHandle = handle;
+    if (nativeHandle && _failedApply && typeof nativeHandle.abandonApply === "function") {
+      // Discard after a failed Apply returns every reader to the saved values:
+      // abandon exactly that admitted Apply, then drop the staged edits. The
+      // native draft stays alive until its single result.
+      _failedApply = false;
+      _cancelOpening();
+      closed = true;
+      nativeHandle.abandonApply(function (result) {
+        if (result.status !== "abandoned" && result.error?.code !== "apply-not-pending")
+          Logger.w("PluginPreferenceEditor", "Discard could not abandon the failed Apply:", result.error?.code || result.status);
+        nativeHandle.detach();
+      });
+      return true;
+    }
+    _detach();
+    return true;
+  }
+  function _cancelOpening() {
     if (cancelOpen) {
       cancelOpen();
       cancelOpen = null;
     }
+  }
+  function _detach() {
+    _cancelOpening();
     if (handle)
       handle.detach();
     closed = true;
-    return true;
   }
   Component.onDestruction: {
     _lifetime.alive = false;

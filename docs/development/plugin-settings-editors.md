@@ -1280,10 +1280,17 @@ seven boundaries per route; a separate cold engine observes shared/inherited
 Text consumers and unchanged overridden content without publishing. A disposable
 implicit-placement mutation must fail at the exact shared-context assertion.
 
-Failed native publication does not roll back the shared owner's requested
-desired values. The witness records that unconfirmed value separately from the
-unchanged files and inherited placement, and requires a failed/not-refreshed
-receipt with retained input/editor before Retry. No result claims rollback or
-success from that desired value. These are actual route/native-owner witnesses
+A failed shared Apply stays admitted in the native store so Retry can publish
+it. Until then the plugin-level runtime, every inherited placement (unset
+inherits, so it equals the shared value) and the page show the unconfirmed
+value; overridden placements and files stay persisted, and the receipt is
+failed/not-refreshed with the same page/editor retained. Retry publishes and
+all readers agree on the saved value. Discard instead abandons exactly that
+admitted Apply (ConfigQml `draft.abandonApply`, then the draft is dropped): every
+reader returns to the saved value and no file is written. Losing the
+presentation without an explicit Discard never abandons. The witness waits for
+each consistent state and checks it at the plugin runtime, the inherited
+placement, the page and the files, then fails again and Retries. No result
+claims success from an unconfirmed value. These are actual route/native-owner witnesses
 using the reviewed synthetic field page, not catalog Main/action or physical
 input coverage.

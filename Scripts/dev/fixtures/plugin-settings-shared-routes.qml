@@ -23,6 +23,7 @@ ShellRoot {
   property var receipt: null
   property var failedPage: null
   property var failedEditor: null
+  property int failures: 0
   FileView {
     id: manifestFile
     path: Settings.configDir + "plugins/values-fixture/manifest.json"
@@ -192,10 +193,16 @@ ShellRoot {
     check(siblingText.text === "sibling" && sibling.settingsView.legacy === "placement-content", "overridden sibling/content stay independent");
     return sharedText.text === value && inheritedText.text === value;
   }
+  // Inherited means equal to the shared value: the plugin-level runtime and
+  // every inherited placement agree, whether or not the value is saved.
+  function consistent(value) {
+    return current(value) && api.pluginSettings?.label === value && inherited.pluginSettings?.label === value;
+  }
   function drive() {
     if (phase === "ready" && inherited.settingsReady && sibling.settingsReady) {
       if (cold) {
         check(current("shared-retry") && !api.settingsPreviewOwner._token && !inherited.settingsPreviewOwner._token, "cold persisted shared and inherited consumers without preview");
+        phase = "done";
         console.log("SHARED_ROUTES: COLD_PASS " + route);
         Qt.exit(0);
         return;
@@ -243,7 +250,13 @@ ShellRoot {
     } else if (phase === "submit-failure") {
       apply("failed");
     } else if (phase === "failed" && receipt && !popup.busy) {
+      failures++;
+      check(receipt.status === "failed" && popup.saveFailed, "real IO failure is not acknowledged");
+      check(popup.settingsPage === failedPage && popup._editor === failedEditor, "IO failure retains exact input/editor");
+      phase = "failed-converge";
+    } else if (phase === "failed-converge" && consistent("shared-retry")) {
       console.log("SHARED_ROUTE_FAILED_STATE " + JSON.stringify({
+                                                                  attempt: failures,
                                                                   status: receipt.status,
                                                                   refreshState: receipt.refreshState,
                                                                   error: receipt.error,
@@ -254,13 +267,24 @@ ShellRoot {
                                                                   inherited: inheritedText.text,
                                                                   sibling: siblingText.text
                                                                 }));
-      check(receipt.status === "failed" && popup.saveFailed, "real IO failure is not acknowledged");
-      check(popup.settingsPage === failedPage && popup._editor === failedEditor, "IO failure retains exact input/editor");
-      check(inheritedText.text === "default" && siblingText.text === "sibling", "failed shared publication cannot update inherited placement consumers");
+      check(popup.saveFailed && popup.settingsPage === failedPage && popup._editor === failedEditor, "failed state, input and editor retained while consumers converge");
       check(popup.settingsPage.labelField.value === "shared-retry", "failed native desired input remains readable for Retry");
       check(!popup.requestClose() && popup.discardPending, "failed shared Close refuses");
       popup.keepEditing();
-      probe("failed", "restore");
+      probe(failures === 1 ? "failed" : "failed_again", failures === 1 ? "failed-discard" : "restore");
+    } else if (phase === "failed-discard") {
+      check(popup.saveFailed && popup.confirmDiscard(), "explicit Discard after a failed shared Apply");
+      phase = "failed-discarded";
+    } else if (phase === "failed-discarded" && consistent("default")) {
+      probe("failed_discarded", "reopen-failure");
+    } else if (phase === "reopen-failure") {
+      open("refail-page");
+    } else if (phase === "refail-page" && attachPopup()) {
+      check(!popup.saveFailed && !popup.dirty, "reopened page starts from the saved value");
+      edit("shared-retry");
+      failedPage = popup.settingsPage;
+      failedEditor = popup._editor;
+      apply("failed");
     } else if (phase === "restore") {
       actorNext = "retry-apply";
       phase = "actor";
@@ -269,10 +293,12 @@ ShellRoot {
     } else if (phase === "retry-apply") {
       check(popup.settingsPage === failedPage && popup._editor === failedEditor, "Retry retains exact selected shared owner");
       apply("retry");
-    } else if (phase === "retry" && accepted() && current("shared-retry")) {
+    } else if (phase === "retry" && accepted() && consistent("shared-retry")) {
       probe("retry", "finish");
     } else if (phase === "finish") {
       check(popup.requestClose(), "clean shared Close admitted");
+      // Qt.exit is asynchronous: leave every drive branch first.
+      phase = "done";
       console.log("SHARED_ROUTES: PASS " + route);
       Qt.exit(0);
     }

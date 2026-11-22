@@ -40,7 +40,7 @@ def seed(case, source):
     reset = deepcopy(edited); reset['settings/plugins/values-fixture.json'].pop('label')
     retry = deepcopy(reset); retry['settings/plugins/values-fixture.json']['label'] = 'shared-retry'
     expected = dict(initial=initial, discard=deepcopy(initial), edited=edited, reset_staged=deepcopy(edited),
-                    reset=reset, failed=deepcopy(reset), retry=retry)
+                    reset=reset, failed=deepcopy(reset), failed_discarded=deepcopy(reset), failed_again=deepcopy(reset), retry=retry)
     runner.write_json(case / 'expectations.json', expected)
     return expected
 
@@ -96,13 +96,13 @@ def run(args, profile, route):
         raise RuntimeError('separate nonpublishing shared-route consumer failed')
     result = dict(id=route, status='PASS', actualOpeningRoute=True, externalIpc=route == 'ipc',
         scope='plugin', controlSignals=True, physicalInput=False, independentBoundaries=list(expected),
-        realIoFailureAndSameEditorRetry=True, stagedNativeFieldReset=True,
+        realIoFailureAndSameEditorRetry=True, failedApplyDiscardRestoresSaved=True, stagedNativeFieldReset=True,
         inheritedConsumerFollows=True, overriddenSiblingAndContentPreserved=True,
         separateNonpublishingColdConsumer=True, coldConfigurationHashes=before, catalogMainProof=False,
         completePlanAcceptance=False)
     result['failedNativeDesiredState'] = [json.loads(line.split('SHARED_ROUTE_FAILED_STATE ', 1)[1])
         for line in (out / 'runtime.log').read_text().splitlines() if 'SHARED_ROUTE_FAILED_STATE ' in line]
-    if len(result['failedNativeDesiredState']) != 1:
+    if [state.get('attempt') for state in result['failedNativeDesiredState']] != [1, 2]:
         raise RuntimeError('failed native desired-state observation missing')
     runner.write_json(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
