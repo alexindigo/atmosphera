@@ -1498,7 +1498,7 @@ Entries: `barWidget=BarWidget.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 | 8 | `niri-windows-map/terminal-bridge.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `9ece2e70af75aaf8bd0b80aebe30be1625801a3582868ffc5536a60edc87dc7e`.
+Runtime-source/manifest fingerprint: `54e3fa505b82374692d9d31a4211d06118b4af08b7f8496b78b3bd1586b84751`.
 
 ## noctalia-calculator
 
