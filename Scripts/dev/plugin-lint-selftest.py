@@ -74,6 +74,25 @@ class Regression(unittest.TestCase):
         (self.plugin / "Bar.qml").unlink()
         self.assertTrue(any("entry point missing" in e for e in self.errors()))
 
+    def test_removed_shell_type_is_unknown(self):
+        # AtmoFilePicker was removed from the shell (6f5d71402); panels naming
+        # it no longer loaded. A misspelled Qt type is the same failure.
+        for name in ("AtmoFilePicker", "Rectangel"):
+            self.write(f"import QtQuick\nimport qs.Widgets\nItem {{ {name} {{ id: picker }} }}\n")
+            self.assertTrue(any(f"unknown type {name}" in e for e in self.errors()), name)
+
+    def test_resolvable_object_types_pass(self):
+        (self.plugin / "Card.qml").write_text("import QtQuick\nItem {}\n")
+        (self.plugin / "parts").mkdir()
+        (self.plugin / "parts/Chip.qml").write_text("import QtQuick\nItem {}\n")
+        self.write('import QtQuick\nimport QtQuick.Controls as QQC\nimport QtQuick.Layouts\nimport Quickshell\n'
+                   'import qs.Widgets\nimport qs.Portals\nimport "parts"\n'
+                   'RowLayout {\n  enum Mode { A, B }\n  component Pill: Rectangle {}\n  Pill {}\n  Card {}\n  Chip {}\n'
+                   '  QQC.Button {}\n  PanelWindow {}\n  PortalFilePicker {}\n  AtmoIcon {}\n'
+                   '  Behavior on opacity { NumberAnimation {} }\n'
+                   '  function f() { if (x) { return { Key: 1 } } }\n}\n')
+        self.assertEqual([e for e in self.errors() if "unknown type" in e], [])
+
     def test_minimum_shell_version(self):
         self.manifest["minAtmospheraVersion"] = "0.7.0"
         self.write("import QtQuick\nimport qs.Commons\nItem { property color p: AtmoColor.mPrimary }\n")

@@ -299,6 +299,7 @@ def cmd_rename(args):
 
 IMPORT_RE = re.compile(r"^\s*import\s+([A-Za-z_][\w.]*)(?:\s+[\d.]+)?(\s+as\s+\w+)?\s*;?\s*$")
 EXPORT_RE = re.compile(r'"([\w.]+)/(\w+)(?: [\d.]+)?"')
+EXPORTS_BLOCK_RE = re.compile(r"\bexports:\s*\[([^\]]*)\]")
 
 
 def file_imports(src):
@@ -353,6 +354,10 @@ class ForeignModules:
             with open(qmldir, encoding="utf-8", errors="replace") as fh:
                 for line in fh:
                     parts = line.split()
+                    # "optional import" / "default import": the imported module's
+                    # types are what the module provides (style or window module).
+                    if parts[:1] in (["optional"], ["default"]) and parts[1:2] == ["import"]:
+                        parts = parts[1:]
                     if not parts or parts[0] in ("module", "plugin", "classname", "typeinfo", "depends",
                                                  "designersupported", "prefer", "optional", "linktarget",
                                                  "internal", "default", "static", "system"):
@@ -369,11 +374,11 @@ class ForeignModules:
             for entry in sorted(os.listdir(directory)):
                 if entry.endswith(".qmltypes"):
                     with open(os.path.join(directory, entry), encoding="utf-8", errors="replace") as fh:
-                        for line in fh:
-                            if "exports:" in line:
-                                for mod, name in EXPORT_RE.findall(line):
-                                    if mod == module:
-                                        names[name] = module
+                        # An exports list may span several lines.
+                        for block in EXPORTS_BLOCK_RE.findall(fh.read()):
+                            for mod, name in EXPORT_RE.findall(block):
+                                if mod == module:
+                                    names[name] = module
         self.cache[module] = names
         return names
 
