@@ -1906,6 +1906,8 @@ Singleton {
         readonly property var settingsView: settingsPreviewOwner ? settingsPreviewOwner.values : pluginSettings
         property var _settingsContext: null
         readonly property var settingsContext: _settingsContext
+        property var _contextLifetime: ({alive: true})
+        Component.onDestruction: _contextLifetime.alive = false
         property var manifest: ({})
 
         // Shared state: one object per plugin, the same for every instance
@@ -1957,7 +1959,7 @@ Singleton {
     api.currentLanguage = I18n.langCode;
 
     api.settingsOwner = settings;
-    api._settingsContext = SettingsRead.context(function () {
+    api._settingsContext = SettingsRead.context(api._contextLifetime, function () {
       return SettingsRead.values(api.settingsView, settings && !settings.closed && settings.store ? settings.store.settingsKeys : [], function (value) {
         return Settings.store.copyValue(value);
       });

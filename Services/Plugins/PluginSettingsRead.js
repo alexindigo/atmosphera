@@ -19,10 +19,17 @@ function values(source, keys, copyValue) {
     return freeze(result);
 }
 
-function context(readSettings, current) {
+function context(lifetime, readSettings, current) {
     var result = Object.create(null);
-    Object.defineProperty(result, "settingsView", {get: readSettings, enumerable: true});
+    var retiredValues = freeze(Object.create(null));
+    // The JS token outlives its QObject. Never invoke a retained owner callback
+    // after destruction, even to ask that destroyed owner whether it is current.
+    Object.defineProperty(result, "settingsView", {get: function () {
+        return lifetime.alive ? readSettings() : retiredValues;
+    }, enumerable: true});
     // Identity is the captured API, not configuration equality or a row index.
-    Object.defineProperty(result, "current", {value: current});
+    Object.defineProperty(result, "current", {value: function () {
+        return lifetime.alive && current() === true;
+    }});
     return Object.freeze(result);
 }

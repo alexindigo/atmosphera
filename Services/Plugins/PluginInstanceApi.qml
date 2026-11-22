@@ -67,7 +67,7 @@ QtObject {
   readonly property string settingsError: _openError || (runtime ? runtime.error : "")
   readonly property var pluginSettings: runtime ? runtime.values : null
   readonly property var settingsView: settingsPreviewOwner.values
-  readonly property var settingsContext: Read.context(function () {
+  readonly property var settingsContext: Read.context(_lifetime, function () {
     var owner = root.base ? root.base.settingsOwner : null;
     return Read.values(root.settingsView, owner && !owner.closed && owner.store ? owner.store.settingsKeys : [], function (value) {
       return Settings.store.copyValue(value);
