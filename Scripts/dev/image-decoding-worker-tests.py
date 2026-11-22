@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import base64
 from contextlib import contextmanager
+import fcntl
 import hashlib
 import importlib.util
 import json
@@ -784,6 +785,8 @@ def main():
                     entered.append(request['id'])
                     await gate.wait()
                     return dict(status='generated', url='file:///fixture.png')
+                def lease(_self, result):
+                    return None
             worker = Worker(Slow(), emitted.append)
             requests = [dict(id=str(i), source='fixture', generation=i) for i in range(3)]
             worker.replace(requests)
@@ -943,6 +946,157 @@ def main():
 
         async def test_malformed_batch_retires_held_http_without_stale_success(self):
             await self.held_http_retirement(True)
+
+        def private_entries(self):
+            return sorted(str(path.relative_to(self.cache.private)) for name in ('still', 'animated', 'fail')
+                          for path in (self.cache.private / name).glob('*') if not path.name.startswith('.'))
+
+        async def test_owner_clear_keeps_held_and_everything_outside_the_owner(self):
+            emitted = []
+            worker = Worker(self.cache, emitted.append)
+            worker.replace([dict(self.request('Still.webp'), id='held', generation=1)])
+            await asyncio.gather(*worker.tasks.values())
+            held = Path(emitted[-1]['url'].removeprefix('file://'))
+            self.assertEqual(emitted[-1]['status'], 'generated')
+            moving = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
+            self.assertTrue(moving['url'].endswith('.gif'))
+            async def fail(*_args):
+                raise SourceError('decode-unavailable', 'Owned decoder failure')
+            with patch.object(self.cache, 'decode', fail), self.assertRaises(SourceError):
+                await self.cache.render(self.request('Still.jpg'))
+            foreign_source = self.folder / 'foreign.webp'
+            foreign_source.write_bytes((fixtures / 'Still.webp').read_bytes())
+            thumbnail = await self.cache.render(dict(self.thumbnail_request(), source=str(foreign_source)))
+            freedesktop = foreign_target(self.cache.root, foreign_source)
+            retained_dir = self.folder / 'retained'
+            retained = Path((await self.cache.render(self.request('Motion.webp', operation='retain',
+                                                                  destinationDirectory=str(retained_dir))))['originalPath'])
+            writer = self.cache.private / 'still' / '.atmosphera-another-writer'
+            writer.write_bytes(b'partial')
+            (self.cache.staging / 'other-process').mkdir(parents=True)
+            outside = self.folder / 'outside.png'
+            outside.write_bytes(held.read_bytes())
+            planted = self.cache.private / 'animated' / 'planted.gif'
+            planted.symlink_to(outside)
+            legacy = self.folder / 'legacy'
+            (legacy / 'mpvpaper').mkdir(parents=True)
+            (legacy / 'old-key.png').write_bytes(b'legacy')
+            (legacy / 'mpvpaper' / 'plugin.bmp').write_bytes(b'plugin')
+            (legacy / 'notes.txt').write_text('not a shell output')
+            preserved = {path: path.read_bytes() for path in (held, freedesktop, retained, writer, outside,
+                         fixtures / 'Still.webp', foreign_source, legacy / 'mpvpaper' / 'plugin.bmp', legacy / 'notes.txt')}
+            before = self.private_entries()
+            self.assertGreaterEqual(len(before), 4)
+            counts = self.cache.clear([str(legacy)])
+            self.assertEqual(self.private_entries(), sorted(['still/' + held.name, 'animated/planted.gif']))
+            self.assertEqual(counts['removed'], len(before) - 2 + 1)
+            self.assertFalse((legacy / 'old-key.png').exists())
+            self.assertTrue(planted.is_symlink())
+            self.assertTrue((self.cache.staging / 'other-process').is_dir())
+            self.assertEqual({path: path.read_bytes() for path in preserved}, preserved)
+            self.assertEqual(thumbnail['thumbnailOrigin'], 'generated')
+            # Releasing the last interest releases the lease; the next sweep
+            # removes it and the same request regenerates rather than failing.
+            worker.replace([])
+            await worker.close()
+            self.assertEqual(self.cache.clear()['removed'], 1)
+            self.assertFalse(held.exists())
+            self.assertEqual((await self.cache.render(self.request('Still.webp')))['status'], 'generated')
+            self.assertEqual(pixel(held), list(COLORS[0]))
+
+        async def test_owner_clear_refuses_redirected_namespace(self):
+            await self.cache.render(self.request('Still.webp'))
+            outside = self.folder / 'user-directory'
+            (self.cache.private / 'still').rename(outside)
+            (self.cache.private / 'still').symlink_to(outside, target_is_directory=True)
+            names = sorted(path.name for path in outside.iterdir())
+            counts = self.cache.clear()
+            self.assertEqual(counts['refused'], 1)
+            self.assertEqual(sorted(path.name for path in outside.iterdir()), names)
+            self.assertEqual(self.cache.clear([str(outside / names[0]), str(self.cache.private / 'still')])['refused'], 3)
+            self.assertEqual(sorted(path.name for path in outside.iterdir()), names)
+
+        async def test_lease_lost_to_concurrent_clear_regenerates_before_publication(self):
+            render, removed = self.cache.render, []
+            async def cleared_after_publication(request, **kwargs):
+                result = await render(request, **kwargs)
+                if not removed:
+                    removed.append(self.cache.clear())
+                return result
+            emitted = []
+            worker = Worker(self.cache, emitted.append)
+            with patch.object(self.cache, 'render', cleared_after_publication):
+                worker.replace([dict(self.request('Still.webp'), id='raced', generation=1)])
+                await asyncio.gather(*worker.tasks.values())
+            self.assertEqual(removed[0]['removed'], 1)
+            path = Path(emitted[-1]['url'].removeprefix('file://'))
+            self.assertEqual(emitted[-1]['status'], 'generated')
+            self.assertEqual(pixel(path), list(COLORS[0]))
+            self.assertEqual(self.cache.clear()['kept'], 1)
+            self.assertTrue(path.exists())
+            # The settled lease form of the same interest keeps the lease.
+            worker.replace([dict(id='raced', generation=1, lease=emitted[-1]['url'])])
+            self.assertEqual(self.cache.clear()['kept'], 1)
+            await worker.close()
+            self.assertEqual(self.cache.clear()['removed'], 1)
+
+        async def test_clear_respects_another_process_lease_and_lease_only_restart(self):
+            processes = []
+            async def start():
+                process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
+                    stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                    env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'shared')))
+                processes.append(process)
+                self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
+                return process
+            async def send(process, message):
+                process.stdin.write((json.dumps(message) + '\n').encode())
+                await process.stdin.drain()
+                while True:
+                    row = json.loads(await asyncio.wait_for(process.stdout.readline(), 30))
+                    if row.get('status') or row.get('event') in ('cleared', 'clear-failed', 'protocol-error'):
+                        return row
+            async def finish(process):
+                process.stdin.close()
+                await asyncio.wait_for(process.wait(), 10)
+                self.assertEqual(process.returncode, 0, (await process.stderr.read()).decode())
+            try:
+                holder, sweeper = await start(), await start()
+                result = await send(holder, [dict(self.request('Still.webp'), id='1', generation=1)])
+                path = Path(result['url'].removeprefix('file://'))
+                cleared = await send(sweeper, dict(command='clear', id='c1'))
+                self.assertEqual((cleared['event'], cleared['removed'], cleared['kept']), ('cleared', 0, 1))
+                self.assertEqual(pixel(path), list(COLORS[0]))
+                await finish(holder)
+                # A restarted owner re-leases a settled interest without work.
+                restarted = await start()
+                restarted.stdin.write((json.dumps([dict(id='1', generation=1, lease=result['url'])]) + '\n').encode())
+                await restarted.stdin.drain()
+                lease_file = self.folder/'shared/thumbnails/atmosphera-representations-v1/leases'/('still-' + path.name + '.lease')
+                for _ in range(500):
+                    with lease_file.open('rb') as probe:
+                        try:
+                            fcntl.flock(probe, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        except BlockingIOError:
+                            break
+                    await asyncio.sleep(.01)
+                else:
+                    self.fail('Restarted worker never leased its settled interest')
+                cleared = await send(sweeper, dict(command='clear', id='c2'))
+                self.assertEqual((cleared['removed'], cleared['kept']), (0, 1))
+                self.assertTrue(path.exists())
+                await finish(restarted)
+                cleared = await send(sweeper, dict(command='clear', id='c3'))
+                self.assertEqual((cleared['removed'], cleared['kept']), (1, 0))
+                self.assertFalse(path.exists())
+                rejected = await send(sweeper, dict(command='clear', id='c4', legacy=['relative']))
+                self.assertEqual(rejected['event'], 'protocol-error')
+                await finish(sweeper)
+            finally:
+                for process in processes:
+                    if process.returncode is None:
+                        process.kill()
+                        await process.wait()
 
         async def test_independent_workers_publish_same_representation_atomically(self):
             workers, identities, replies = [], [], []

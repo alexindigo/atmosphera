@@ -19,6 +19,7 @@ from .png import (atomic_write, bucket, cache_name, canonical_uri, empty_png,
 from .process import command, CommandError
 from .sources import prepare, identity, SourceError
 from .storage import directory as cache_directory, descriptor_path
+from .storage import clear as clear_namespace, clear_legacy, lease as lease_name
 from .storage import open_file as cache_file, read_bytes as cache_bytes
 
 SCHEMA = 2
@@ -59,6 +60,31 @@ class Cache:
         if version is None:
             version = (Path(__file__).resolve().parents[4] / 'VERSION').read_text().strip()
         self.failure_dir = self.root / 'fail' / ('atmosphera-' + version.replace('/', '_'))
+
+    def lease(self, result):
+        """Lease an owner representation URL for as long as its consumer holds it.
+
+        Returns None for results outside the private namespace (freedesktop
+        stills, retained originals, failures). Raises OSError if a concurrent
+        owner clear retired the name before the lease was admitted.
+        """
+        from urllib.parse import unquote, urlsplit
+        url = result.get('url', '') if result.get('status') in ('hit', 'generated') else ''
+        if not url.startswith('file://'):
+            return None
+        path = Path(unquote(urlsplit(url).path))
+        if not path.is_relative_to(self.private) or path.parent.parent != self.private:
+            return None
+        return lease_name(self.private, path)
+
+    def clear(self, legacy=()):
+        """Owner-scoped clear: unleased positive and negative representations,
+        plus flat outputs of the retired pre-owner shell folders."""
+        counts = clear_namespace(self.private, ('still', 'animated', 'fail'))
+        for folder in legacy:
+            for field, value in clear_legacy(folder).items():
+                counts[field] += value
+        return counts
 
     def valid(self, path, uri, info, capability=None):
         try:

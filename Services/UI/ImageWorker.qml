@@ -14,6 +14,7 @@ Scope {
   property var _entries: ({})
   property var _tokens: ({})
   property var _statistics: ({})
+  property var _clears: []
   property int _sequence: 0
   property bool _ready: false
   property bool _started: false
@@ -81,8 +82,40 @@ Scope {
     flush.restart();
   }
 
+  // Owner-scoped clear. The worker leases every held representation, so a
+  // consumer that still holds an interest (in any shell/lock process) keeps
+  // its file; everything else in the private namespace is removed.
+  function clear(legacy, callback) {
+    _clears = _clears.concat([
+                               {
+                                 id: "clear-" + (++_sequence),
+                                 legacy: legacy,
+                                 callback: callback,
+                                 sent: false
+                               }
+                             ]);
+    flush.restart();
+  }
+
+  function _settleClear(id, result) {
+    var clear = _clears.find(item => item.id === id);
+    if (!clear)
+      return false;
+    _clears = _clears.filter(item => item !== clear);
+    if (typeof clear.callback === "function")
+      clear.callback(result);
+    flush.restart();
+    return true;
+  }
+
   function _fail(code, reason) {
     _ready = false;
+    for (var clear of _clears.slice())
+      _settleClear(clear.id, {
+                     ok: false,
+                     code: code,
+                     reason: reason
+                   });
     for (var entry of Object.values(_entries)) {
       if (entry.result)
         continue;
@@ -117,6 +150,26 @@ Scope {
     }
     if (reply.event === "protocol-error") {
       _fail("worker-protocol", "The image worker rejected its request message");
+      return;
+    }
+    if (reply.event === "cleared" || reply.event === "clear-failed") {
+      var cleared = reply.event === "cleared";
+      if (!(typeof reply.id === "string" && (cleared ? ["removed", "kept", "refused"].every(field => Number.isInteger(reply[field]) && reply[field] >= 0) : typeof reply.reason === "string"))) {
+        _fail("worker-protocol", "The image worker returned an invalid clear result");
+        return;
+      }
+      activity(reply);
+      if (!_settleClear(reply.id, cleared ? {
+                                              ok: true,
+                                              removed: reply.removed,
+                                              kept: reply.kept,
+                                              refused: reply.refused
+                                            } : {
+                          ok: false,
+                          code: reply.code,
+                          reason: reply.reason
+                        }))
+        _fail("worker-protocol", "The image worker returned an unknown clear result");
       return;
     }
     var event = reply.event || reply.status;
@@ -158,9 +211,9 @@ Scope {
 
   function _sync() {
     if (!process.running) {
-      if (!interestCount)
+      if (!interestCount && !_clears.length)
         return;
-      if (!Object.values(_entries).some(entry => !entry.result))
+      if (!_clears.length && !Object.values(_entries).some(entry => !entry.result))
         return;
       _ready = false;
       _started = false;
@@ -170,8 +223,30 @@ Scope {
       process.running = true;
     }
     if (_ready && !_closing) {
-      process.write(JSON.stringify(Object.values(_entries).filter(entry => !entry.result).map(entry => entry.request)) + "\n");
-      if (!interestCount) {
+      // A settled, held representation stays leased by the worker (also after
+      // a worker restart) without re-running its request.
+      var batch = [];
+      for (var entry of Object.values(_entries)) {
+        if (!entry.result)
+          batch.push(entry.request);
+        else if (["hit", "generated"].includes(entry.result.status))
+          batch.push({
+                       id: entry.request.id,
+                       generation: entry.request.generation,
+                       lease: entry.result.url
+                     });
+      }
+      process.write(JSON.stringify(batch) + "\n");
+      // Interest changes first: a release that preceded clear() is honored.
+      for (var clear of _clears.filter(item => !item.sent)) {
+        clear.sent = true;
+        process.write(JSON.stringify({
+                                       command: "clear",
+                                       id: clear.id,
+                                       legacy: clear.legacy
+                                     }) + "\n");
+      }
+      if (!interestCount && !_clears.length) {
         _closing = true;
         process.stdinEnabled = false;
       }

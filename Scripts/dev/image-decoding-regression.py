@@ -19,7 +19,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -116,6 +116,13 @@ class Run:
                                          setWallpaperOnAllMonitors=False, automationEnabled=False)
             defaults['wallpaper']['useOriginalImages'] = (extra_env or {}).get('IMAGE_USE_ORIGINAL') == '1'
         (profile / 'config/settings.json').write_text(json.dumps(defaults))
+        if self.args.case in ('cache-clear-red', 'cache-clear'):
+            # Pre-owner shell output and a plugin-owned thumbnail folder.
+            legacy = profile / 'cache/images/wallpapers'
+            (legacy / 'large').mkdir(parents=True)
+            (legacy / 'thumbnails/mpvpaper').mkdir(parents=True)
+            (legacy / 'large/legacy-key.png').write_bytes((inputs / 'frame-0.png').read_bytes())
+            (legacy / 'thumbnails/mpvpaper/plugin.bmp').write_bytes(b'plugin-owned')
         if self.args.case in ('cache-red', 'cache', 'cache-read-red', 'cache-read'):
             from image_decoding_cache_fixtures import target, thumbnail
             redirected = self.args.case in ('cache-read-red', 'cache-read')
@@ -186,6 +193,9 @@ class Run:
         if self.args.case in ('cache', 'cache-read'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageSource.qml', 'Widgets/NImage.qml',
                 'Services/UI/ImageCacheService.qml', 'Modules/FileChooser/FileEntryArtwork.qml')]
+        if self.args.case in ('cache-clear-red', 'cache-clear'):
+            lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageCacheService.qml',
+                'Modules/Panels/Settings/Tabs/Wallpaper/GeneralSubTab.qml')]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1301,6 +1311,45 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('cache-admission-and-retirement', result['idleInterests'] == result['interests'] == result['requests'] == 0
                    and not result['workerRunning'], result)
 
+    def cache_clear(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        red = self.args.case == 'cache-clear-red'
+        if red and self.args.baseline_source is None:
+            raise ValueError('Cache clear red requires an explicit immutable baseline source')
+        name = self.args.case
+        before = {path.name: path.read_bytes() for path in inputs.iterdir() if path.is_file() and os.access(path, os.R_OK)}
+        result, output = self.qt(self.args.baseline_source if red else self.args.source,
+                                 self.args.source / 'Scripts/dev/fixtures/image-decoding/cache-clear.qml', inputs, name)
+        probes, toasts, released = result['probes'], result['toasts'], result['released']
+        private = self.work / (name + '-profile/cache/thumbnails/atmosphera-representations-v1')
+        self.check('actual-clear-button-clicked', result['clicked'] and len(toasts) == 1, toasts)
+        self.check('released-adapter-output-was-owner-representation', released['success']
+                   and Path(released['path']).is_relative_to(private), released)
+        if red:
+            self.check('actual-clear-button-leaves-owner-representations', toasts[0]['type'] == 'notice'
+                       and probes['releasedAfterButton'] and not result['ownerClear'], dict(probes=probes, toasts=toasts), red=True)
+            return result
+        self.check('clear-toast-reports-completed-owner-clear', toasts[0]['type'] == 'notice' and toasts[0]['phase'] == 2,
+                   toasts)
+        self.check('released-representation-removed', not probes['releasedAfterButton'], probes)
+        self.check('held-representation-kept-and-rendered', probes['heldAfterButton'] and result['held']['statusAfterButton'] == 1
+                   and max(abs(a - b) for a, b in zip(pixel(output / 'held-after-clear.png'), COLORS[0])) <= 8,
+                   dict(held=result['held'], probes=probes))
+        self.check('retired-legacy-output-removed-plugin-folder-kept', not probes['legacyAfterButton']
+                   and probes['pluginAfterButton'], probes)
+        self.check('sources-unchanged', before == {path.name: path.read_bytes() for path in inputs.iterdir() if path.is_file() and os.access(path, os.R_OK)},
+                   sorted(before))
+        self.check('released-last-interest-then-cleared', result['clearResult'] and result['clearResult']['ok']
+                   and result['clearResult']['removed'] >= 1 and not probes['heldAfterRelease'], result['clearResult'])
+        self.check('cleared-representation-regenerates', result['regenerated']['status'] == 1 and probes['regeneratedExists']
+                   and result['regenerated']['path'] == result['held']['path']
+                   and max(abs(a - b) for a, b in zip(pixel(output / 'regenerated.png'), COLORS[0])) <= 8, result['regenerated'])
+        return result
+
     def owner(self):
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
@@ -1409,6 +1458,8 @@ def main():
             run.wallpaper_remote()
         elif args.case in ('wallpaper-wizard', 'wizard-red'):
             run.wallpaper_wizard()
+        elif args.case in ('cache-clear-red', 'cache-clear'):
+            run.cache_clear()
         elif args.case == 'owner':
             run.owner()
         elif args.case in ('cache', 'cache-red', 'cache-read', 'cache-read-red'):

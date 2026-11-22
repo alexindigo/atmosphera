@@ -261,16 +261,29 @@ Singleton {
   // -------------------------------------------------
   // Cache Invalidation
   // -------------------------------------------------
-  function invalidateThumbnail(sourcePath) {
-    Logger.i("ImageCache", "Invalidating thumbnail for:", sourcePath);
-    // Since cache keys include hash, we'd need to track mappings
-    // For simplicity, clear all thumbnails
-    clearThumbnails();
+  // Representations are keyed by source content, stat identity, revision and
+  // geometry, so a changed source never reuses an old entry. Invalidation and
+  // clearing therefore share one owner-scoped operation: it removes unheld
+  // positive and negative representations in this owner's private namespace,
+  // keeps every representation a consumer (in any shell/lock process) still
+  // holds, and never touches sources, retained originals, foreign freedesktop
+  // thumbnails, another writer's staging or plugin-owned folders. Flat PNG
+  // outputs of the retired pre-owner folders are removed too. The callback
+  // receives {ok, removed, kept, refused} or {ok: false, code, reason}.
+  function clearRepresentations(callback) {
+    // Pre-owner shell outputs in these folders have no readers any more; the
+    // plugin-owned subfolders of the thumbnail folder are not shell outputs.
+    sourceWorker.clear([wpThumbDir, wpLargeDir, contributorsDir], callback);
   }
 
-  function invalidateLarge(sourcePath) {
-    Logger.i("ImageCache", "Invalidating large for:", sourcePath);
-    clearLarge();
+  function invalidateThumbnail(sourcePath, callback) {
+    Logger.i("ImageCache", "Invalidating image representations");
+    clearRepresentations(callback);
+  }
+
+  function invalidateLarge(sourcePath, callback) {
+    Logger.i("ImageCache", "Invalidating image representations");
+    clearRepresentations(callback);
   }
 
   function invalidateNotification(imageId) {
@@ -279,32 +292,25 @@ Singleton {
     Logger.d("ImageCache", "Notification retention is reference-owned; label invalidation ignored");
   }
 
-  function invalidateAvatar(username) {
-    const path = contributorsDir + username + "_circular.png";
-    Quickshell.execDetached(["rm", "-f", path]);
+  function invalidateAvatar(username, callback) {
+    // A username is a label, never a cache path component.
+    clearRepresentations(callback);
   }
 
   // -------------------------------------------------
   // Clear Cache Functions
   // -------------------------------------------------
-  function clearAll() {
-    Logger.i("ImageCache", "Clearing all cache");
-    clearThumbnails();
-    clearLarge();
-    clearNotifications();
-    clearContributors();
+  function clearAll(callback) {
+    Logger.i("ImageCache", "Clearing image representations");
+    clearRepresentations(callback);
   }
 
-  function clearThumbnails() {
-    Logger.i("ImageCache", "Clearing thumbnails cache");
-    Quickshell.execDetached(["rm", "-rf", wpThumbDir]);
-    Quickshell.execDetached(["mkdir", "-p", wpThumbDir]);
+  function clearThumbnails(callback) {
+    clearAll(callback);
   }
 
-  function clearLarge() {
-    Logger.i("ImageCache", "Clearing large cache");
-    Quickshell.execDetached(["rm", "-rf", wpLargeDir]);
-    Quickshell.execDetached(["mkdir", "-p", wpLargeDir]);
+  function clearLarge(callback) {
+    clearAll(callback);
   }
 
   function clearNotifications() {
@@ -313,9 +319,7 @@ Singleton {
     Logger.i("ImageCache", "Preserving retained notification sources");
   }
 
-  function clearContributors() {
-    Logger.i("ImageCache", "Clearing contributors cache");
-    Quickshell.execDetached(["rm", "-rf", contributorsDir]);
-    Quickshell.execDetached(["mkdir", "-p", contributorsDir]);
+  function clearContributors(callback) {
+    clearAll(callback);
   }
 }
