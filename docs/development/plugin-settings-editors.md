@@ -695,6 +695,20 @@ in ConfigQml acbb404; the intended released dependency floor is 0.5.4, not a
 claim that it is already released. All compositor/screensaver/reload endpoints
 are inert; these are not physical, broad visual/translation or final proofs.
 
+## Hermes Agent finite CLI ownership prerequisite
+
+The bridge's common command runner owns each oneshot and gateway start/stop CLI
+through a fresh, thread-free same-script parent-death binding and post-binding
+parent check before literal exec. Request timeouts still stop and join that CLI.
+This does not grant ownership of independent gateway services or remote jobs.
+
+`plugin-settings-hermes-child-regression.py` observes all three actual HTTP
+dispatch paths with inert executable identities, normal completion and both
+SIGTERM/SIGKILL parent death. Unbound controls reproduce survivors; timeout,
+binding failure, retired-parent refusal and actual Main destruction have separate
+outcomes. This helper prerequisite is not the full Hermes selected-context port;
+its pre-existing page/runtime lint and unfenced-XHR failures remain explicit.
+
 
 ## Verification boundaries
 
