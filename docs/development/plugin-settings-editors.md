@@ -635,6 +635,27 @@ loopback protocol and inert executable endpoints. The finite parsed checker maps
 every field, caller and physical owner with rejecting controls. These are not
 physical OBS, broad visual/translation or final catalog proofs.
 
+## Admitted Auto-Tile daemon policy
+
+Auto-Tile retains one Main-owned daemon/config writer. Accepted Settings and
+originating runtime actions select typed policy; Bar/Panel presentation and
+native preference writes use their own captured API. Pending starts, serialized
+config writes and USR1 continuations retain owner/generation. Every Python niri
+query, action and stream uses a same-script parent-death-bound exec with a
+post-binding parent check, so abrupt Main destruction cannot orphan that child.
+The standalone omitted only-at-max flag still defaults true; explicit false
+has a negative flag. Its unused legacy language leaf remains preserved.
+
+
+The niri-policy native/lifetime drivers join real page intent, complete
+native documents, separate nonpublishing cold readers and originating
+native writes to actual inert Python argv/column-width consumers. Individual
+typed/hot-reload/restart/retirement and direct-parent SIGKILL/race cases
+supplement the eight-field parsed contract. Qualify this independent member
+with plugin-settings-niri-group-check.py --plugin niri-auto-tile --selftest.
+Screensaver remains parked for native completion qualification, not covered
+by Auto-Tile acceptance. No physical or broad visual/translation claim.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
