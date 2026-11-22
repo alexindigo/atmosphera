@@ -568,6 +568,25 @@ Nix exposes Wayland's library directory through the Qt wrapper's
 observes the v2 probe loading that supplied library path. Dependencies are
 evaluation sentinels; this is not a full Nixpkgs/Qt build.
 
+The automatic Qt hook skips shell scripts, so the recipe explicitly creates
+the dispatcher wrapper after fixup. To verify the actual built child chain in
+the same assigned VM (not on the host):
+
+```sh
+export TMPDIR=/home/tester/Projects/idle-resume/tmp
+package=$(sudo -n env TMPDIR="$TMPDIR" NIX_REMOTE=local \
+  nix --extra-experimental-features 'nix-command flakes' build "path:$PWD" \
+  --no-link --print-out-paths --max-jobs 1 --cores 2 --option build-dir "$TMPDIR")
+python3 -B Scripts/dev/idle-nix-package-proof.py --package "$package" \
+  --work /home/tester/Projects/idle-resume/fresh-nix-proof \
+  --guest-uuid 5416a021-94f6-4d85-aa7c-2e3c7f58b8c2
+```
+
+This starts the installed launcher with a minimal Quickshell fixture. Its real
+Python child runs the installed protocol probe on niri v2; `/proc` observations
+must show packaged Quickshell, Python and Wayland, without an injected library
+path in the test environment. The assembly test alone cannot prove this.
+
 ## Cold-Load Smoke Test
 
 External lock command validation is availability-only. The launcher still owns

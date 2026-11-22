@@ -102,9 +102,6 @@ stdenvNoCC.mkDerivation {
     ln -s ../../../share/atmosphera $out/etc/xdg/quickshell/atmosphera
     bash Scripts/bash/install-locker-configs "$PWD" "$out/etc/xdg/quickshell"
 
-    # atmosphera — unified CLI dispatcher (replaces the old symlink to qs)
-    install -Dm755 Scripts/bash/atmosphera $out/bin/atmosphera
-
     # atmosphera-ipc — raw IPC entry point (stays as a symlink to qs)
     ln -s ${quickshell}/bin/qs $out/bin/atmosphera-ipc
 
@@ -128,6 +125,12 @@ stdenvNoCC.mkDerivation {
       --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
+  '';
+
+  # The automatic hook wraps ELF files only, not our shell dispatcher. Point
+  # at its installed, unchanged basename so multi-call dispatch still works.
+  postFixup = ''
+    makeQtWrapper "$out/share/atmosphera/Scripts/bash/atmosphera" "$out/bin/atmosphera"
   '';
 
   meta = {
