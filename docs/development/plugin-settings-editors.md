@@ -615,6 +615,24 @@ an inert compositor collaborator, never a real lock or power operation. Existing
 Wallcards manifest-only filters, unused legacy leaves and its Qt5Compat dependency
 remain separately identified, not claimed repaired by window ownership.
 
+## Selected Todo presentation and export policy
+
+Todo Panel/Desktop display policy follows the injected runtime API. Main retains
+its existing common task/page owner. A Panel export supplies its captured read-only
+context; Main/IPC without an origin explicitly use plugin scope. One admitted
+request captures path, format, empty-section policy and common content before IO.
+Another export visibly refuses while busy, without replacing that request. Normal
+exit and failed process start settle the same request once. A retired origin cannot
+start another action or receive late feedback; retirement does not roll back an
+already admitted file publication. No content store, migration or deletion is added.
+
+The Todo export regression joins actual generic controls/native documents to
+filtered Panel task Text and actual JSON/Markdown files in both scopes, with
+nonpublishing cold readers. Held requests, busy refusal, failed-start and failed
+publication Retry, originating retirement and rejecting display/action controls
+remain distinct from P001's renewed desktop-route/protected-content gate. These
+controlled endpoints do not establish broad visual or final paired acceptance.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,

@@ -128,7 +128,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 108 | `tamagotchi` | stateful-client | port |
 | 109 | `thinkpad-fan` | view-backend | port |
 | 110 | `timer` | direct | no-port |
-| 111 | `todo` | shared-content | port |
+| 111 | `todo` | shared-content | ported |
 | 112 | `translator` | launcher-only | no-instance |
 | 113 | `update-count` | query-worker | ported |
 | 114 | `usb-drive-manager` | shared-domain | port |
@@ -160,7 +160,7 @@ Reviewed historical-group reconciliation for `dmenu`: Originating orchestrator d
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending. |
 | 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | planned |
 | 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | G7 selected session implementation: Main-owned context cache, originating remembered-target writer, connection-scoped callbacks, selected terminal signals/replay and retirement. Explicit shared IPC/global shortcut. Native both-scope page and individual inert SSH PTY proof; broad visual/final acceptance remains separate. |
-| 8 | G8: Selected export/presentation policy over protected shared content (1) | `todo` | Carry originating exportPath/exportFormat/exportEmptySections and remaining selected presentation/action policy into shared Main content operations. Keep task/page/counter bytes and one content owner unchanged; prior P001 protection remains valid. | todo individually: selected export command/output and actual presentation; reuse source-qualified P001 content-protection/runtime proofs when unchanged. | All Main configuration readers traced to selected caller inputs or explicit shared IPC; every export caller carries context, protected content leaves remain excluded from configuration intents/reset, no migration. Reject shared export policy and changed-content controls. | planned |
+| 8 | G8: Selected export/presentation policy over protected shared content (1) | `todo` | Carry originating exportPath/exportFormat/exportEmptySections and remaining selected presentation/action policy into shared Main content operations. Keep task/page/counter bytes and one content owner unchanged; prior P001 protection remains valid. | todo individually: selected export command/output and actual presentation; reuse source-qualified P001 content-protection/runtime proofs when unchanged. | All Main configuration readers traced to selected caller inputs or explicit shared IPC; every export caller carries context, protected content leaves remain excluded from configuration intents/reset, no migration. Reject shared export policy and changed-content controls. | Selected Panel/Desktop display and Main-captured export policy over the existing common content owner. Native both-scope filtered task Text/output/cold documents, held busy/retirement and failed-start/publication Retry, finite all-field controls and renewed P001 routes. No content migration; broad visual/final paired acceptance remains separate. |
 
 ## 2-in-1-tools
 
@@ -2184,7 +2184,7 @@ Runtime-source/manifest fingerprint: `28411c7decec0b47627e9b7688b7f99e81ab094a84
 
 ## todo
 
-Desktop/Panel rendering is selected and content stays shared, but Main exportPath/exportFormat/exportEmptySections and several color/expansion inputs still use plugin-level API for runtime commands. Carry selected action/presentation policy without moving tasks/pages/counters; prior P001 safety proof remains valid, not complete consumer closure.
+Panel/Desktop read their injected display policy; Main captures originating export path/format/empty policy and its common tasks/pages once per admitted request. Busy refuses visibly, failed-start and exit settle once, and retired origins cannot acknowledge. IPC stays plugin-level; native both-scope filtered child Text/export bytes, held lifetimes and renewed P001 protect existing legacy/shared content without migration. Broad visual/final acceptance remains separate.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `desktopWidget=DesktopWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -2193,12 +2193,12 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 1 | `todo/BarWidget.qml` | `completedCount`:31; `count`:30 | 30, 31 |
 | 2 | `todo/ControlCenterWidget.qml` | `completedCount`:16; `count`:15 | 15, 16 |
 | 3 | `todo/DesktopWidget.qml` | `current_page_id`:71,174,216; `isExpanded`:77,111; `pages`:173,185; `priorityColors`:423; `showBackground`:10; `showCompleted`:65; `todos`:59,138; `useCustomColors`:421 | 10, 32, 33, 59, 65, 71, 77, 111, ... |
-| 4 | `todo/Main.qml` | `completedCount`:55,121,409; `count`:54,120,408; `current_page_id`:48,174,188,402,407,530; `exportEmptySections`:73,74,633; `exportFormat`:69,70,582; `exportPath`:65,66,605; `isExpanded`:59,60; `pages`:17,41,42,88,128,403,405; `priorityColors`:77,78; `todos`:16,52,53,87,119,404,406,408,409; `useCustomColors`:61,62 | 15, 16, 17, 27, 29, 41, 42, 48, ... |
+| 4 | `todo/Main.qml` | `completedCount`:55,121,409; `count`:54,120,408; `current_page_id`:48,174,188,402,407,530; `exportEmptySections`:73,74,601,658; `exportFormat`:69,70,600,602; `exportPath`:65,66,600,625; `isExpanded`:59,60; `pages`:19,41,42,88,128,403,405,660; `priorityColors`:77,78; `todos`:18,52,53,87,119,404,406,408,409,607,659; `useCustomColors`:61,62 | 17, 18, 19, 41, 42, 48, 52, 53, ... |
 | 5 | `todo/Pages.js` | No literal field edge | No namespace/Main reference |
 | 6 | `todo/Panel.qml` | `completedCount`:123; `current_page_id`:49,144,171,1655,1691; `pages`:143,155,1751; `priorityColors`:1731; `showCompleted`:43; `todos`:37; `useCustomColors`:1729 | 25, 26, 37, 43, 49, 116, 117, 123, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `c08e0c67b2994404b6103df06fde3cebb7de7384c4965b60d31bb59f5d056227`.
+Runtime-source/manifest fingerprint: `39926e72d47f827e3fb592b2d15685e5c696e633c24e59d1815cf77fc364488a`.
 
 ## translator
 
