@@ -197,7 +197,14 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(Path(src).stat().st_mode & 0o777, 0o600)
             self.assertEqual(thumb.metadata(Path(src).read_bytes())["Thumb::URI"], self.uri)
             replace(src, dst)
-        with patch.object(thumb.os, "replace", observe):
+        def observe_at(src, dst, **directories):
+            # Preserve every existing same-folder/complete-file/permission
+            # assertion when the writer binds rename to opened directories.
+            if directories:
+                src = Path(os.readlink(f"/proc/self/fd/{directories['src_dir_fd']}")) / src
+                dst = Path(os.readlink(f"/proc/self/fd/{directories['dst_dir_fd']}")) / dst
+            return observe(src, dst)
+        with patch.object(thumb.os, "replace", observe_at):
             await self.cache.get(str(self.file), 128)
         self.assertEqual(len(calls), 1)
         for folder in (self.cache.root, self.target.parent):
