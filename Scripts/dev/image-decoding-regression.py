@@ -18,7 +18,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'remote-red', 'wizard-red', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'remote-red', 'wizard-red', 'producer-capture', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -183,6 +183,8 @@ class Run:
                 'Services/UI/ImageCacheService.qml', 'Services/UI/ImageWorker.qml', 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         if self.args.case == 'desktop-wallpaper':
             lint_paths += [str(shell / p) for p in ('Modules/Background/Background.qml', 'Modules/Background/Overview.qml')]
+        if self.args.case == 'producer-capture':
+            lint_paths += [str(shell / p) for p in ('Services/UI/ImageAdmission.qml', 'Services/UI/ImageCacheService.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -193,6 +195,74 @@ class Run:
         assert len(rows) == 1 and grabs and all(row['saved'] for row in grabs)
         (output / 'consumer.json').write_text(json.dumps(rows[0], indent=2) + '\n')
         return rows[0], output
+
+    def producer_capture(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        expected = [inputs / 'Still.webp', inputs / 'Still.webp', inputs / 'frame-0.png']
+        names = ('ephemeral.webp', "literal '[x]: é.dat", 'ephemeral.png')
+        for source, name in zip(expected, names):
+            shutil.copyfile(source, inputs / name)
+        # The service and producer share a genuinely private bus, never the
+        # guest's real notification endpoint. Keep its socket disk-backed too.
+        address = 'unix:path=' + str(self.work / 'notification-bus')
+        bus_log = (self.out / 'bus.log').open('w')
+        bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1', '--address=' + address],
+                               stdout=subprocess.PIPE, stderr=bus_log, text=True, start_new_session=True)
+        guard = protect_owned_process(bus)
+        bus_record = dict(identity=guard.identity.record())
+        try:
+            actual = bus.stdout.readline().strip()
+            assert actual.startswith(address)
+            result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/producer-capture.qml',
+                                     inputs, 'producer-capture', extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
+                                     IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
+        finally:
+            guard.terminate()
+            bus_record['exit'] = bus.wait(timeout=10)
+            bus_log.close()
+            (self.out / 'bus-process.json').write_text(json.dumps(bus_record, indent=2) + '\n')
+        self.check('capture-native-reader-control', result['raw'] == (1 if installed else 3), result['raw'])
+        self.check('capture-binary-padding-exact', all(base64.b64decode(row['url'].split(',', 1)[1], validate=True)
+                   == bytes(i % 256 for i in range(row['length'])) for row in result['bytes']) and len(result['bytes']) == 7, result['bytes'])
+        captures = result['captured']
+        self.check('capture-provider-revisions-observed', len(captures) == 9 and len({r['original'] for r in captures[1:5]}) == 4
+                   and captures[1]['id'] == captures[2]['id'] == captures[3]['id'] != captures[4]['id'],
+                   [{k: v for k, v in row.items() if k not in ('source', 'snapshot')} for row in captures])
+        self.check('capture-provider-gone-before-retention', len(result['late']) == 4
+                   and all(row['status'] == 3 for row in result['late']) and result['producerExit'] == 0
+                   and not result['producerErrors'], result['late'])
+        self.check('capture-files-gone-before-retention', all(not (inputs / name).exists() for name in names), names)
+        self.check('producer-file-retirement-old-adapter', len(result['legacyFiles']) == 4
+                   and all(row['path'] and not row['success'] and row['statusAfterLoss'] == 3 for row in result['legacyFiles']),
+                   result['legacyFiles'], red=True)
+        self.check('capture-exact-original-bytes', all(base64.b64decode(captures[index]['source'].split(',', 1)[1], validate=True)
+                   == source.read_bytes() for index, source in zip((5, 7, 8), expected)), [5, 7, 8])
+        self.check('capture-same-url-replacement-bytes', captures[5]['original'] == captures[6]['original']
+                   and captures[5]['id'] != captures[6]['id'] and base64.b64decode(captures[6]['source'].split(',', 1)[1], validate=True)
+                   == (inputs / 'frame-1.png').read_bytes(), captures[6]['original'])
+        rows = sorted(result['results'], key=lambda row: row['index'])
+        expected_colors = [list(COLORS[0]), [230, 30, 50, 255], [20, 210, 70, 255], [30, 60, 230, 255],
+                           [230, 30, 50, 255], list(COLORS[0]), list(COLORS[1]), list(COLORS[0]), list(COLORS[0])]
+        observed = [pixel(output / ('retained-' + str(i) + '.png')) for i in range(9)]
+        self.check('capture-retained-consumer-pixels', len(rows) == 9 and all(row['success'] for row in rows)
+                   and observed == expected_colors, observed)
+        self.check('capture-content-not-label-identity', rows[1]['path'] == rows[4]['path']
+                   and len({row['path'] for row in rows[1:4]}) == 3
+                   and all(Path(row['path']).is_file() for row in rows), [row['path'] for row in rows])
+        self.check('capture-retained-format-not-fake-png', Path(rows[5]['path']).suffix == '.webp'
+                   and Path(rows[5]['path']).read_bytes() == expected[0].read_bytes()
+                   and Path(rows[8]['path']).suffix == '.png', [rows[5]['path'], rows[8]['path']])
+        self.check('capture-provider-alpha', all(pixel(Path(row['path']), 0, 0)[3] == 0 for row in rows[1:5]),
+                   [pixel(Path(row['path']), 0, 0) for row in rows[1:5]])
+        self.check('capture-refusal-reasons', all(not result[name]['ok'] and result[name]['code'] and result[name]['reason']
+                   for name in ('missing', 'empty', 'badProvider')), {name: result[name] for name in ('missing', 'empty', 'badProvider')})
+        self.check('capture-cancel-and-quiescence', not result['cancelled'] and not result['worker'] and result['interests'] == 0
+                   and not (output / 'cancelled').exists(), result['cancelled'])
+        return result
 
     def red(self):
         args = self.args
@@ -1030,6 +1100,8 @@ def main():
             run.wallpaper_wizard()
         elif args.case == 'owner':
             run.owner()
+        elif args.case == 'producer-capture':
+            run.producer_capture()
         elif args.case == 'legacy':
             run.legacy()
         elif args.case == 'backdrops':

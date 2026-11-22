@@ -37,6 +37,14 @@ Singleton {
     onActivity: event => root.sourceEvent(event)
   }
 
+  readonly property bool admissionReady: sourceAdmission.ready
+  ImageAdmission {
+    id: sourceAdmission
+  }
+  function captureSource(source) {
+    return sourceAdmission.capture(source);
+  }
+
   // Cache directories
   readonly property string baseDir: Settings.cacheDir + "images/"
   readonly property string wpThumbDir: baseDir + "wallpapers/thumbnails/"
