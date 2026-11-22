@@ -16,7 +16,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -161,6 +161,8 @@ class Run:
                 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         if self.args.case == 'wallpaper-setup':
             lint_paths += [str(shell / p) for p in ('Modules/Panels/SetupWizard/SetupWallpaperStep.qml',)]
+        if self.args.case == 'wallpaper-scan':
+            lint_paths += [str(shell / 'Services/UI/WallpaperService.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -230,6 +232,66 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def wallpaper_scan(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work/'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out/'fixture-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+        names = ['Still.webp', 'Still.avif', 'Still.heic', 'Still.tiff', 'frame-0.png']
+        pool_name = 'pool "quoted" [literal] ü:dir'
+        special_names = [' space .png', 'pipe|name.png', 'line\nbreak.png', '-leading.png']
+        for directory in ('scan-main', 'pool-simple', pool_name, 'scan-next', 'browse-only', 'empty'):
+            (inputs/directory).mkdir()
+        for name in names:
+            shutil.copyfile(inputs/name, inputs/'pool-simple'/name)
+        for name in special_names:
+            shutil.copyfile(inputs/'frame-0.png', inputs/pool_name/name)
+        shutil.copyfile(inputs/'frame-0.png', inputs/'scan-main/main.png')
+        shutil.copyfile(inputs/'frame-1.png', inputs/'scan-next/next.png')
+        shutil.copyfile(inputs/'frame-2.png', inputs/'browse-only/browse.png')
+        (inputs/'pool-simple/trap.png').mkdir()
+        shim = self.work/'scan-scheduling'
+        shim.mkdir()
+        executable = shim/'find'
+        executable.write_text('''#!/usr/bin/python3
+import json, os, pathlib, sys, time
+args = sys.argv[1:]
+with open(os.environ['IMAGE_SCAN_ARGV'], 'a') as stream:
+    stream.write(json.dumps(dict(pid=os.getpid(), argv=args))+'\\n')
+if any(pathlib.Path(arg).name == 'scan-main' for arg in args):
+    time.sleep(.7)
+os.execv('/usr/bin/find', ['find', *args])
+''')
+        executable.chmod(0o755)
+        argv_log = self.out/'scan-argv.jsonl'
+        source = self.args.baseline_source or self.args.source
+        result, output = self.qt(source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-scan.qml',
+                                 inputs, 'wallpaper-scan', dict(PATH=str(shim)+':'+os.environ['PATH'],
+                                 IMAGE_SCAN_ARGV=str(argv_log), IMAGE_SCAN_POOL=pool_name,
+                                 IMAGE_SCAN_BASELINE='1' if self.args.baseline_source else '0'))
+        stages = {row['name']:row for row in result['snapshots']}
+        expected = {str(inputs/'scan-main/main.png'), *(str(inputs/'pool-simple'/name) for name in names)}
+        self.check('wallpaper-scan-publishes-complete-main-pool-union', set(stages['union']['paths']) == expected,
+                   stages['union'])
+        self.check('wallpaper-scan-browse-never-cancels-publication', set(stages['browse']['paths']) == expected
+                   and result['browse'] == [str(inputs/'browse-only/browse.png')], result)
+        special = {str(inputs/pool_name/name) for name in special_names}
+        self.check('wallpaper-scan-literal-argv-preserves-all-path-bytes', set(stages['literal']['paths']) == expected | special,
+                   stages['literal'])
+        self.check('wallpaper-scan-new-refresh-retires-old-union', stages['latest']['paths'] == [str(inputs/'scan-next/next.png')],
+                   stages['latest'])
+        self.check('wallpaper-scan-empty-refresh-settles', not stages['empty']['paths'], stages['empty'])
+        self.check('wallpaper-scan-counts-settle-without-negative-values', all(row['count'] >= 0 for row in result['counts'])
+                   and all(row['count'] == 0 for row in result['snapshots']), result['counts'])
+        self.check('wallpaper-scan-union-publishes-once', all(sum(event['stage'] == stage for event in result['events']) == 1
+                   for stage in (1,2,3,4,5)), result['events'])
+        rows = [json.loads(line) for line in argv_log.read_text().splitlines()]
+        self.check('wallpaper-scan-real-find-literal-arguments', any(str(inputs/pool_name) in row['argv'] for row in rows)
+                   and all('sh' not in row['argv'] and '-c' not in row['argv'] for row in rows), rows)
+        self.check('wallpaper-scan-owned-processes-retired', all(not Path('/proc/'+str(row['pid'])).exists() for row in rows), rows)
         return result
 
     def wallpaper_setup(self):
@@ -626,6 +688,8 @@ def main():
             run.wallpaper_admission()
         elif args.case == 'wallpaper-setup':
             run.wallpaper_setup()
+        elif args.case == 'wallpaper-scan':
+            run.wallpaper_scan()
         elif args.case == 'chooser':
             run.chooser()
         else:
