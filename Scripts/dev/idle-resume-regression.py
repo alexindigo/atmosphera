@@ -146,6 +146,9 @@ def main():
                         assert 'Executing action: suspend' not in epoch_log()
                     if not before:
                         # Releasing policy without input must not replay completed actions.
+                        completed = ('screenOff', 'lock', 'suspend') if case == 'stages-after' else ('screenOff',)
+                        action_counts = {name: epoch_log().count('Executing action: ' + name) for name in completed}
+                        assert all(count == 1 for count in action_counts.values()), action_counts
                         if case.startswith('own-') or case == 'queued-own':
                             run(['qs', 'ipc', '-p', str(probe.probe), 'call', 'idleRegression', 'release'])
                         else:
@@ -154,7 +157,7 @@ def main():
                         if not case.startswith('queued-'):
                             time.sleep(8)
                         assert dpms.read_text().strip() == 'Off'
-                        assert epoch_log().count('Executing action: screenOff') == 1
+                        assert {name: epoch_log().count('Executing action: ' + name) for name in completed} == action_counts
                         assert epoch_lines('custom.txt') == ['idle']
                     input_event('READY_INPUT')
                     wait_for(lambda: dpms.read_text().strip() == 'On', 3)
