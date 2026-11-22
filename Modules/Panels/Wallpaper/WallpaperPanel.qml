@@ -933,8 +933,7 @@ SmartPanel {
         WallpaperService.setBrowsePath(targetScreen.name, path);
       } else {
         var screen = Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : targetScreen.name;
-        WallpaperService.changeWallpaper(path, screen, WallpaperService.wallpaperSelectionAppearance);
-        WallpaperService.applyFavoriteTheme(path, screen, WallpaperService.wallpaperSelectionAppearance);
+        WallpaperService.selectWallpaper(path, screen, WallpaperService.wallpaperSelectionAppearance);
       }
     }
 
@@ -1955,13 +1954,11 @@ SmartPanel {
       if (typeof WallhavenService !== "undefined") {
         WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
           if (success) {
-            var whScreen = Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : Quickshell.screens[currentScreenIndex].name;
             if (!Settings.data.wallpaper.setWallpaperOnAllMonitors && currentScreenIndex < Quickshell.screens.length) {
-              WallpaperService.changeWallpaper(localPath, Quickshell.screens[currentScreenIndex].name, WallpaperService.wallpaperSelectionAppearance);
+              WallpaperService.selectWallpaper(localPath, Quickshell.screens[currentScreenIndex].name, WallpaperService.wallpaperSelectionAppearance);
             } else {
-              WallpaperService.changeWallpaper(localPath, undefined, WallpaperService.wallpaperSelectionAppearance);
+              WallpaperService.selectWallpaper(localPath, undefined, WallpaperService.wallpaperSelectionAppearance);
             }
-            WallpaperService.applyFavoriteTheme(localPath, whScreen, WallpaperService.wallpaperSelectionAppearance);
           }
         });
       }

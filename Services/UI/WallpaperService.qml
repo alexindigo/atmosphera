@@ -3,11 +3,11 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/WallpaperSelection.js" as WallpaperSelection
 import qs.Commons
 import qs.Services.Power
 import qs.Services.Theming
 import qs.Services.UI
-import "../../Helpers/WallpaperSelection.js" as WallpaperSelection
 
 Singleton {
   id: root
@@ -29,6 +29,13 @@ Singleton {
 
   // Cache for current wallpapers - can be updated directly since we use signals for notifications
   property var currentWallpapers: ({})
+
+  // A selection is intent until the shared still renderer acknowledges Ready.
+  // Reservations are per screen and appearance; unrelated selections coexist.
+  property var _wallpaperChanges: ({})
+  property var _wallpaperReservations: ({})
+  property int _wallpaperChangeSerial: 0
+  signal wallpaperChangeFailed(string screenName, string path, string reason)
 
   // Track current alphabetical index for each screen
   property var alphabeticalIndices: ({})
@@ -166,6 +173,7 @@ Singleton {
     }
     function onUseSolidColorChanged() {
       if (Settings.data.wallpaper.useSolidColor) {
+        root._cancelWallpaperChanges();
         var solidPath = root.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
         for (var i = 0; i < Quickshell.screens.length; i++) {
           root.wallpaperChanged(Quickshell.screens[i].name, solidPath);
@@ -179,6 +187,7 @@ Singleton {
     }
     function onSolidColorChanged() {
       if (Settings.data.wallpaper.useSolidColor) {
+        root._cancelWallpaperChanges();
         var solidPath = root.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
         for (var i = 0; i < Quickshell.screens.length; i++) {
           root.wallpaperChanged(Quickshell.screens[i].name, solidPath);
@@ -189,6 +198,7 @@ Singleton {
       root.refreshWallpapersList();
     }
     function onLinkLightAndDarkWallpapersChanged() {
+      root._cancelWallpaperChanges();
       if (Settings.data.wallpaper.linkLightAndDarkWallpapers) {
         root.wallpaperSelectionAppearance = Settings.data.colorSchemes.darkMode ? "dark" : "light";
         root._syncWallpaperSlotsWhenLinking();
@@ -347,6 +357,7 @@ Singleton {
   }
 
   function setSolidColor(colorString) {
+    _cancelWallpaperChanges();
     Settings.data.wallpaper.solidColor = String(colorString);
     Settings.data.wallpaper.useSolidColor = true;
   }
@@ -590,28 +601,127 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function changeWallpaper(path, screenName, appearanceSlot) {
-    // Turn off solid color mode when selecting a wallpaper
-    if (Settings.data.wallpaper.useSolidColor) {
-      Settings.data.wallpaper.useSolidColor = false;
-    }
-
+  function changeWallpaper(path, screenName, appearanceSlot, onComplete) {
+    if (!path)
+      return null;
     var slot = _defaultAppearanceSlotForChange(appearanceSlot);
-
-    // Save current favorite color schemes before switching away.
-    // This must happen before applyFavoriteTheme (called by the UI)
-    // overwrites the settings that _createFavoriteEntry reads.
-    _saveOutgoingFavorites(path, screenName, slot);
-
+    var names = new Set();
     if (screenName !== undefined) {
-      _setWallpaper(screenName, path, slot);
+      names.add(screenName);
     } else {
-      var allScreenNames = new Set(Object.keys(currentWallpapers));
+      Object.keys(currentWallpapers).forEach(name => names.add(name));
       for (var i = 0; i < Quickshell.screens.length; i++) {
-        allScreenNames.add(Quickshell.screens[i].name);
+        names.add(Quickshell.screens[i].name);
       }
-      allScreenNames.forEach(name => _setWallpaper(name, path, slot));
     }
+    if (!names.size)
+      return null;
+    var ticket = {
+      id: String(++_wallpaperChangeSerial),
+      path: String(path),
+      slot: slot,
+      slots: Settings.data.wallpaper.linkLightAndDarkWallpapers ? ["light", "dark"] : [slot],
+      targets: Array.from(names),
+      request: null,
+      completed: onComplete,
+      cancel: function () {
+        root.cancelWallpaperChange(ticket);
+      }
+    };
+    _wallpaperChanges[ticket.id] = ticket;
+    ticket.targets.forEach(function (name) {
+      ticket.slots.forEach(function (appearance) {
+        root._wallpaperReservations[JSON.stringify([name, appearance])] = ticket.id;
+      });
+    });
+    Object.keys(_wallpaperChanges).forEach(function (id) {
+      var previous = root._wallpaperChanges[id];
+      if (!root._wallpaperChangeTargets(previous).length)
+        root.cancelWallpaperChange(previous);
+    });
+    var width = 1;
+    var height = 1;
+    for (var j = 0; j < Quickshell.screens.length; ++j) {
+      var screen = Quickshell.screens[j];
+      if (names.has(screen.name)) {
+        width = Math.max(width, screen.width * screen.devicePixelRatio);
+        height = Math.max(height, screen.height * screen.devicePixelRatio);
+      }
+    }
+    if (isSolidColorPath(ticket.path)) {
+      Qt.callLater(root._completeWallpaperChange, ticket, ticket.path, true, {
+                     format: "solid"
+                   });
+    } else {
+      ticket.request = ImageCacheService.requestImage(ticket.path, width, height, "contain", function (output, success, detail) {
+        root._completeWallpaperChange(ticket, output, success, detail);
+      });
+    }
+    return ticket;
+  }
+
+  function _wallpaperChangeTargets(ticket) {
+    return ticket.targets.filter(function (name) {
+      return ticket.slots.every(function (slot) {
+        return root._wallpaperReservations[JSON.stringify([name, slot])] === ticket.id;
+      });
+    });
+  }
+
+  function cancelWallpaperChange(ticket) {
+    if (!ticket || _wallpaperChanges[ticket.id] !== ticket)
+      return;
+    delete _wallpaperChanges[ticket.id];
+    ticket.targets.forEach(function (name) {
+      ticket.slots.forEach(function (slot) {
+        var key = JSON.stringify([name, slot]);
+        if (root._wallpaperReservations[key] === ticket.id)
+          delete root._wallpaperReservations[key];
+      });
+    });
+    if (ticket.request)
+      ticket.request.cancel();
+    ticket.request = null;
+  }
+
+  function _cancelWallpaperChanges() {
+    Object.keys(_wallpaperChanges).forEach(id => root.cancelWallpaperChange(root._wallpaperChanges[id]));
+  }
+
+  function _completeWallpaperChange(ticket, output, success, detail) {
+    if (_wallpaperChanges[ticket.id] !== ticket)
+      return;
+    var names = _wallpaperChangeTargets(ticket);
+    // The callback renderer has already retired itself. Do not cancel it again.
+    ticket.request = null;
+    cancelWallpaperChange(ticket);
+    if (!names.length)
+      return;
+    if (!success || !output) {
+      var reason = detail && detail.reason ? detail.reason : "The wallpaper could not be displayed";
+      names.forEach(name => root.wallpaperChangeFailed(name, ticket.path, reason));
+      Logger.w("Wallpaper", reason);
+      ToastService.showError(I18n.tr("widgets.file-picker.preview-unavailable"), reason);
+      if (ticket.completed)
+        ticket.completed(false, names, detail);
+      return;
+    }
+    names.forEach(name => root._saveOutgoingFavorites(ticket.path, name, ticket.slot));
+    if (Settings.data.wallpaper.useSolidColor)
+      Settings.data.wallpaper.useSolidColor = false;
+    names.forEach(name => root._setWallpaper(name, ticket.path, ticket.slot));
+    if (ticket.completed)
+      ticket.completed(true, names, detail);
+  }
+
+  // UI selection applies its favorite theme only to an accepted color monitor.
+  // Automation/IPC keep their existing changeWallpaper policy.
+  function selectWallpaper(path, screenName, appearanceSlot) {
+    var slot = _defaultAppearanceSlotForChange(appearanceSlot);
+    return changeWallpaper(path, screenName, slot, function (success, names) {
+      if (success)
+        names.forEach(name => root.applyFavoriteTheme(path, name, slot));
+    });
   }
 
   // -------------------------------------------------------------------
@@ -1460,9 +1570,25 @@ Singleton {
     } else {
       slot = _normalizeAppearanceSlot(root.wallpaperSelectionAppearance);
     }
+    var index = _findAnyFavoriteIndexForPath(path);
+    var entry = index === _favoriteNotFound ? null : Settings.data.wallpaper.favorites[index];
+    var selectsWallpaper = !entry || (Settings.data.wallpaper.linkLightAndDarkWallpapers && _favoriteAppearanceSlot(entry) !== slot);
+    if (!selectsWallpaper) {
+      _toggleFavorite(path, slot, screenName);
+      return null;
+    }
+    var scr = Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : (screenName || (Quickshell.screens.length ? Quickshell.screens[0].name : undefined));
+    return changeWallpaper(path, scr, slot, function (success, names) {
+      if (!success)
+        return;
+      root._toggleFavorite(path, slot, scr);
+      names.forEach(name => root.applyFavoriteTheme(path, name, slot));
+    });
+  }
+
+  function _toggleFavorite(path, slot, screenName) {
     var favorites = Settings.data.wallpaper.favorites.slice();
     var anyIdx = _findAnyFavoriteIndexForPath(path);
-    var applyWallpaperForSlot = false;
 
     if (anyIdx !== _favoriteNotFound) {
       var existingSlot = _favoriteAppearanceSlot(favorites[anyIdx]);
@@ -1481,7 +1607,6 @@ Singleton {
         favorites[anyIdx] = _createFavoriteEntry(path, slot);
         Logger.d("Wallpaper", "Moved favorite to other appearance:", path, slot);
         root.scheduleFavoriteSchemeSnapshot(path, slot);
-        applyWallpaperForSlot = true;
         if (root.pendingFavoriteSchemeRefresh && root.pendingFavoriteSchemeRefresh.path === path) {
           root.pendingFavoriteSchemeRefresh = {
             "path": path,
@@ -1505,26 +1630,10 @@ Singleton {
       favorites.push(_createFavoriteEntry(path, slot));
       Logger.d("Wallpaper", "Added favorite:", path, slot);
       root.scheduleFavoriteSchemeSnapshot(path, slot);
-      applyWallpaperForSlot = true;
     }
 
     Settings.data.wallpaper.favorites = favorites;
     root.favoritesRevision++;
-
-    if (applyWallpaperForSlot) {
-      var scr;
-      if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-        scr = undefined;
-      } else if (screenName !== undefined && screenName !== null && screenName !== "") {
-        scr = screenName;
-      } else if (Quickshell.screens.length > 0) {
-        scr = Quickshell.screens[0].name;
-      } else {
-        scr = undefined;
-      }
-      root.changeWallpaper(path, scr, slot);
-      root.applyFavoriteTheme(path, scr, slot);
-    }
 
     favoritesChanged(path);
   }

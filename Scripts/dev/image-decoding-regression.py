@@ -16,7 +16,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -90,6 +90,10 @@ class Run:
             defaults['general'].update(lockScreenBlur=0, lockScreenTint=0, showScreenCorners=False)
         if self.args.case == 'rounded':
             defaults['general']['animationDisabled'] = (extra_env or {}).get('IMAGE_ROUNDED_REDUCED') == '1'
+        if self.args.case == 'wallpaper-admission':
+            defaults['wallpaper'].update(enabled=True, useSolidColor=False, linkLightAndDarkWallpapers=False,
+                                         setWallpaperOnAllMonitors=False, automationEnabled=False)
+            defaults['wallpaper']['useOriginalImages'] = (extra_env or {}).get('IMAGE_USE_ORIGINAL') == '1'
         (profile / 'config/settings.json').write_text(json.dumps(defaults))
         entry = shell / 'image-decoding-fixture.qml'
         entry.write_text(bootstrap_fixture(fixture.read_text()))
@@ -152,6 +156,9 @@ class Run:
                 'Modules/LockScreen/LockScreenBackground.qml') if (shell / p).is_file()]
         if self.args.case == 'rounded':
             lint_paths += [str(shell / p) for p in ('Widgets/NImageRounded.qml', 'Widgets/NImage.qml')]
+        if self.args.case == 'wallpaper-admission':
+            lint_paths += [str(shell / p) for p in ('Services/UI/WallpaperService.qml',
+                'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -221,6 +228,65 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def wallpaper_admission(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding/wallpaper-admission.qml'
+        result, output = self.qt(self.args.source, fixture, inputs, 'wallpaper-admission')
+        stages = {row['name']: row for row in result['snapshots']}
+        valid = stages['valid']
+        self.check('wallpaper-failed-selection-never-publishes', stages['invalid']['path'] == valid['path']
+                   and not any(row['path'].endswith(('Corrupt.webp', 'Missing.webp')) for row in result['events']), result)
+        self.check('wallpaper-validation-precedes-publication', result['immediatePath'] == ''
+                   and valid['path'] == str(inputs/'Motion.webp') and valid['state'] == 'ready', valid)
+        self.check('wallpaper-static-multiframe-exact-pixels', pixel(output/'valid.png') == list(COLORS[0]), valid)
+        for name in ('invalid', 'invalid-favorite'):
+            row = stages[name]
+            self.check('wallpaper-'+name+'-retains-state-and-pixels', row['path'] == valid['path']
+                       and row['favorites'] == result['beforeFavorites'] and row['theme'] == result['beforeTheme']
+                       and read_png(output/(name+'.png')) == read_png(output/'valid.png'), row)
+        self.check('wallpaper-latest-generation-only', stages['latest']['path'] == str(inputs/'frame-1.png')
+                   and pixel(output/'latest.png') == list(COLORS[1])
+                   and not any(row['tick'] < 80 and row['path'].endswith('frame-2.png') for row in result['events']), result['events'])
+        self.check('wallpaper-cancellation-retires-publication-and-callback', stages['cancelled']['path'] == stages['latest']['path']
+                   and not result['callbacks'] and read_png(output/'cancelled.png') == read_png(output/'latest.png'), result)
+        independent = stages['independent']
+        self.check('wallpaper-independent-screen-and-appearance', independent['other'] == str(inputs/'frame-0.png')
+                   and independent['dark'] == str(inputs/'frame-2.png') and independent['path'] == stages['latest']['path'], independent)
+        favorite = stages['valid-favorite']
+        self.check('wallpaper-favorite-admits-after-validation', favorite['path'] == str(inputs/'Still.webp')
+                   and any(row['path'] == str(inputs/'Still.webp') for row in json.loads(favorite['favorites']))
+                   and pixel(output/'valid-favorite.png') == list(COLORS[0]), favorite)
+        self.check('wallpaper-solid-retires-pending-image', stages['solid']['solid']
+                   and not any(row['tick'] >= 140 and row['path'].endswith('frame-2.png') for row in result['events']), stages['solid'])
+        self.check('wallpaper-admission-quiescence', result['interests'] == result['requests'] == 0
+                   and not result['workerRunning'], result)
+        failure_notices = [row for row in result['notices'] if 20 <= row['tick'] < 60]
+        self.check('wallpaper-failure-is-user-visible-not-success', len(failure_notices) == 2
+                   and all(row['type'] == 'error' and row['title'] and row['reason'] for row in failure_notices), result['notices'])
+        shim = self.work/'empty-decoders'
+        shim.mkdir()
+        for name in ('magick', 'ffmpeg'):
+            executable = shim/name
+            executable.write_text('#!/bin/sh\nexit 0\n')
+            executable.chmod(0o755)
+        rejected, rejected_output = self.qt(self.args.source,
+            self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-rejection.qml', inputs,
+            'wallpaper-no-output', dict(PATH=str(shim)+':'+os.environ['PATH'], IMAGE_USE_ORIGINAL='1'))
+        self.check('wallpaper-zero-exit-no-output-never-publishes-success', not rejected['completions'] and not rejected['events']
+                   and rejected['path'] == str(inputs/'frame-0.png') and not rejected['favorites']
+                   and len(rejected['callbacks']) == 1 and not rejected['callbacks'][0]['success']
+                   and rejected['callbacks'][0]['detail']['reason'], rejected)
+        self.check('wallpaper-zero-exit-keeps-prior-rendered-pixels', pixel(rejected_output/'after.png') == list(COLORS[0])
+                   and read_png(rejected_output/'before.png') == read_png(rejected_output/'after.png'), rejected)
+        self.check('wallpaper-zero-exit-failure-visible-and-quiescent', len(rejected['notices']) == 2
+                   and all(row['type'] == 'error' and row['reason'] for row in rejected['notices'])
+                   and rejected['interests'] == rejected['requests'] == 0 and not rejected['workerRunning'], rejected)
         return result
 
     def rounded(self):
@@ -518,6 +584,8 @@ def main():
             run.backdrops()
         elif args.case == 'rounded':
             run.rounded()
+        elif args.case == 'wallpaper-admission':
+            run.wallpaper_admission()
         elif args.case == 'chooser':
             run.chooser()
         else:
