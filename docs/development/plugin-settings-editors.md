@@ -759,6 +759,36 @@ and notification collaborators prove call policy, not physical audio playback.
 Common path-keyed audio/notice services are not per-instance devices. No timer
 state store/migration or broad visual/final paired acceptance is implied.
 
+## Selected Keybind parser generations
+
+Keybind Cheatsheet Main caches one parser/result client per captured native
+runtime context. Panel views share that client, not the plugin-level result.
+Source replacement fences and destroys the complete nine-stage parser generation.
+Colors, labels and column/split policy remain selected presentation bindings;
+split-only and threshold-only changes rebuild the same category projection
+without starting a new parser. Explicit Settings Refresh uses the applied runtime
+context, not a draft path. IPC and the named BarService Settings route stay
+plugin-level.
+
+Only the plugin-level client publishes the existing state cache. Its exact source
+tuple qualifies reuse; unqualified legacy cache bytes remain stored, not attributed
+to a new source. Runtime description/hide actions use their originating native
+API. That API returns a saveSelected publication receipt, not an editor receipt
+with refreshState=current. A failed publication retains desired intent for Retry;
+retirement refuses rather than adopting the shifted sibling's writer.
+
+The Keybind regressions observe actual page controls, complete independent native
+documents, Panel key/description/color/column children and nonpublishing cold
+readers in both scopes. Separate proofs cover real state-file/cold cache reuse,
+native runtime writers/failure/Retry/retirement, all nine held process stages,
+failed exec/exit, empty/missing/malformed sources and controlled compositor
+grammars. The finite checker covers all44 configuration leaves and both protected
+operational leaves. The hidden keyLabelColor remains a fallback, not an invented
+page control. Existing mode differences stay explicit: custom bind overrides are
+hyprctl-only, and Mango does not gain sequential merging. These are inert parser
+endpoints on the niri guest, not physical Hyprland/Mango or broad visual/final
+paired acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
