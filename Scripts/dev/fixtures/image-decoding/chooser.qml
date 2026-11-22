@@ -117,7 +117,7 @@ ShellRoot {
         var settled = true;
         for (var i = 0; i < entries.count; ++i) {
           var state = entries.itemAt(i).thumbnailState;
-          if (!state.imageReady && !state.unavailable)
+          if ((!state.imageReady || state.reveal < 1) && !state.unavailable)
             settled = false;
         }
         if (settled || root.tick >= 90) {
