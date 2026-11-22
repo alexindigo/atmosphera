@@ -18,7 +18,6 @@ ShellRoot {
   property var captured: []
   property var results: []
   property var late: []
-  property var legacyFiles: []
   property var byteControls: []
   property var missing: null
   property var empty: null
@@ -80,14 +79,6 @@ ShellRoot {
   }
 
   function capture(notification) {
-    if (notification.image.startsWith("file:")) {
-      ImageCacheService.getNotificationIcon(notification.image, notification.appName, notification.summary, function (path, success) {
-        root.legacyFiles.push({
-                                path: path,
-                                success: success
-                              });
-      });
-    }
     const snapshot = ImageCacheService.captureSource(notification.image);
     root.captured.push({
                          source: snapshot.source || "",
@@ -115,13 +106,6 @@ ShellRoot {
       root.producerExit = code;
       root.producerErrors = stderr.text;
       root.producerDone = true;
-      for (const row of root.legacyFiles) {
-        const node = probeFactory.createObject(presentations, {
-                                                 source: row.path
-                                               });
-        row.statusAfterLoss = node.status;
-        node.destroy();
-      }
       // No persistence/decode work starts until the real producer has closed
       // all notifications and unlinked its files.
       for (let i = 0; i < root.captured.length; i++) {
@@ -197,7 +181,6 @@ ShellRoot {
                                                          captured: root.captured,
                                                          results: root.results,
                                                          late: root.late,
-                                                         legacyFiles: root.legacyFiles,
                                                          bytes: root.byteControls,
                                                          missing: root.missing,
                                                          empty: root.empty,

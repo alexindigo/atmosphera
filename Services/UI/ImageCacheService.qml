@@ -2,8 +2,6 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import Quickshell.Wayland
 import "../../Helpers/ImageTypes.js" as ImageTypes
 import "../../Helpers/PortalPaths.js" as PortalPaths
 import "../../Helpers/sha256.js" as Checksum
@@ -16,7 +14,6 @@ Singleton {
   // -------------------------------------------------
   // Public Properties
   // -------------------------------------------------
-  property bool imageMagickAvailable: false
   property bool initialized: false
 
   // Additive source protocol; legacy conversion adapters migrate cohort by
@@ -58,23 +55,6 @@ Singleton {
   readonly property var imageFilters: ImageTypes.filters
 
   // -------------------------------------------------
-  // Internal State
-  // -------------------------------------------------
-  property var pendingRequests: ({})
-  property var fallbackQueue: []
-  property bool fallbackProcessing: false
-
-  // Process queues to prevent "too many open files" errors
-  property var utilityProcessQueue: []
-  property int runningUtilityProcesses: 0
-  readonly property int maxConcurrentUtilityProcesses: 16
-
-  // Separate queue for heavy ImageMagick processing (lower concurrency)
-  property var imageMagickQueue: []
-  property int runningImageMagickProcesses: 0
-  readonly property int maxConcurrentImageMagickProcesses: 4
-
-  // -------------------------------------------------
   // Signals
   // -------------------------------------------------
   signal cacheHit(string cacheKey, string cachedPath)
@@ -89,7 +69,7 @@ Singleton {
     Logger.i("ImageCache", "Service started");
     createDirectories();
     cleanupOldCache();
-    checkMagickProcess.running = true;
+    initialized = true;
   }
 
   function createDirectories() {
@@ -100,7 +80,9 @@ Singleton {
   }
 
   function cleanupOldCache() {
-    const dirs = [wpThumbDir, wpLargeDir, notificationsDir, contributorsDir];
+    // Notification retention has model-owned references and cannot be aged out
+    // behind a still-persisted history entry. Its owner releases it explicitly.
+    const dirs = [wpThumbDir, wpLargeDir, contributorsDir];
     dirs.forEach(function (dir) {
       Quickshell.execDetached(["find", dir, "-type", "f", "-mtime", "+15", "-delete"]);
     });
@@ -255,74 +237,14 @@ Singleton {
   // Public API: Get Notification Icon (64x64)
   // -------------------------------------------------
   function getNotificationIcon(imageUri, appName, summary, callback) {
-    if (!imageUri || imageUri === "") {
-      callback("", false);
-      return;
+    // Capture before returning to the producer. Labels never identify bytes;
+    // retention, validation, cancellation and Qt acceptance share one owner.
+    const captured = captureSource(imageUri);
+    if (!captured.ok) {
+      callback("", false, captured);
+      return null;
     }
-
-    // Resolve bare file path for temp check
-    const filePath = imageUri.startsWith("file://") ? imageUri.substring(7) : imageUri;
-
-    // File paths in persistent locations are used directly, not cached
-    if ((imageUri.startsWith("/") || imageUri.startsWith("file://")) && !isTemporaryPath(filePath)) {
-      callback(imageUri, false);
-      return;
-    }
-
-    const cacheKey = generateNotificationKey(imageUri, appName, summary);
-    const cachedPath = notificationsDir + cacheKey + ".png";
-
-    // Temporary file paths are copied to cache before the source is cleaned up
-    if (imageUri.startsWith("/") || imageUri.startsWith("file://")) {
-      processRequest(cacheKey, cachedPath, imageUri, callback, function () {
-        copyTempFileToCache(filePath, cachedPath, cacheKey);
-      });
-      return;
-    }
-
-    processRequest(cacheKey, cachedPath, imageUri, callback, function () {
-      // Notifications always use Qt fallback (image:// URIs can't be read by ImageMagick)
-      queueFallbackProcessing(imageUri, cachedPath, cacheKey, 64);
-    });
-  }
-
-  // Check if a path is in a temporary directory that may be cleaned up
-  function isTemporaryPath(path) {
-    return path.startsWith("/tmp/");
-  }
-
-  // Copy a temporary file to the cache directory
-  function copyTempFileToCache(sourcePath, destPath, cacheKey) {
-    const srcEsc = sourcePath.replace(/'/g, "'\\''");
-    const dstEsc = destPath.replace(/'/g, "'\\''");
-
-    const processString = `
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["cp", "--", "${srcEsc}", "${dstEsc}"]
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-      }
-    `;
-
-    queueUtilityProcess({
-                          name: "CopyTempFile_" + cacheKey,
-                          processString: processString,
-                          onComplete: function (exitCode) {
-                            if (exitCode === 0) {
-                              Logger.d("ImageCache", "Temp file cached:", destPath);
-                              notifyCallbacks(cacheKey, destPath, true);
-                            } else {
-                              Logger.w("ImageCache", "Failed to cache temp file:", sourcePath);
-                              notifyCallbacks(cacheKey, "", false);
-                            }
-                          },
-                          onError: function () {
-                            Logger.e("ImageCache", "Error caching temp file:", sourcePath);
-                            notifyCallbacks(cacheKey, "", false);
-                          }
-                        });
+    return retainImage(captured.source, notificationsDir + "retained/", 64, 64, callback);
   }
 
   // -------------------------------------------------
@@ -334,277 +256,6 @@ Singleton {
       return null;
     }
     return requestImage(url, 256, 256, "circle", callback);
-  }
-
-  // -------------------------------------------------
-  // Cache Key Generation
-  // -------------------------------------------------
-  function generateNotificationKey(imageUri, appName, summary) {
-    if (imageUri.startsWith("image://qsimage/")) {
-      return Checksum.sha256(appName + "|" + summary);
-    }
-    return Checksum.sha256(imageUri);
-  }
-
-  // -------------------------------------------------
-  // Request Processing (with coalescing)
-  // -------------------------------------------------
-  function processRequest(cacheKey, cachedPath, sourcePath, callback, processFn) {
-    // Check if already processing this request
-    if (pendingRequests[cacheKey]) {
-      pendingRequests[cacheKey].callbacks.push(callback);
-      Logger.d("ImageCache", "Coalescing request for:", cacheKey);
-      return;
-    }
-
-    // Check cache first
-    checkFileExists(cachedPath, function (exists) {
-      if (exists) {
-        Logger.d("ImageCache", "Cache hit:", cachedPath);
-        callback(cachedPath, true);
-        cacheHit(cacheKey, cachedPath);
-        return;
-      }
-
-      // Re-check pendingRequests (race condition fix)
-      if (pendingRequests[cacheKey]) {
-        pendingRequests[cacheKey].callbacks.push(callback);
-        return;
-      }
-
-      // Start new processing
-      Logger.d("ImageCache", "Cache miss, processing:", sourcePath);
-      cacheMiss(cacheKey);
-      pendingRequests[cacheKey] = {
-        callbacks: [callback],
-        sourcePath: sourcePath
-      };
-
-      processFn();
-    });
-  }
-
-  function notifyCallbacks(cacheKey, path, success) {
-    const request = pendingRequests[cacheKey];
-    if (request) {
-      request.callbacks.forEach(function (cb) {
-        cb(path, success);
-      });
-      delete pendingRequests[cacheKey];
-    }
-
-    if (success) {
-      processingComplete(cacheKey, path);
-    } else {
-      processingFailed(cacheKey, "Processing failed");
-    }
-  }
-
-  // -------------------------------------------------
-  // Qt Fallback Renderer
-  // -------------------------------------------------
-  PanelWindow {
-    id: fallbackRenderer
-    implicitWidth: 0
-    implicitHeight: 0
-    WlrLayershell.exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "atmosphera-image-cache-renderer"
-    color: "transparent"
-    mask: Region {}
-
-    Image {
-      id: fallbackImage
-      property string cacheKey: ""
-      property string destPath: ""
-      property int targetSize: 256
-
-      width: targetSize
-      height: targetSize
-      visible: true
-      cache: false
-      asynchronous: true
-      fillMode: Image.PreserveAspectCrop
-      mipmap: true
-      antialiasing: true
-
-      onStatusChanged: {
-        if (!cacheKey)
-          return;
-
-        if (status === Image.Ready) {
-          grabToImage(function (result) {
-            if (result.saveToFile(destPath)) {
-              Logger.d("ImageCache", "Fallback cache created:", destPath);
-              root.notifyCallbacks(cacheKey, destPath, true);
-            } else {
-              Logger.e("ImageCache", "Failed to save fallback cache");
-              root.notifyCallbacks(cacheKey, "", false);
-            }
-            processNextFallback();
-          });
-        } else if (status === Image.Error) {
-          Logger.e("ImageCache", "Fallback image load failed");
-          root.notifyCallbacks(cacheKey, "", false);
-          processNextFallback();
-        }
-      }
-
-      function processNextFallback() {
-        cacheKey = "";
-        destPath = "";
-        source = "";
-
-        if (fallbackQueue.length > 0) {
-          const next = fallbackQueue.shift();
-          cacheKey = next.cacheKey;
-          destPath = next.destPath;
-          targetSize = next.size;
-          source = next.sourcePath;
-        } else {
-          fallbackProcessing = false;
-        }
-      }
-    }
-  }
-
-  function queueFallbackProcessing(sourcePath, destPath, cacheKey, size) {
-    fallbackQueue.push({
-                         sourcePath: sourcePath,
-                         destPath: destPath,
-                         cacheKey: cacheKey,
-                         size: size
-                       });
-
-    if (!fallbackProcessing) {
-      fallbackProcessing = true;
-      const item = fallbackQueue.shift();
-      fallbackImage.cacheKey = item.cacheKey;
-      fallbackImage.destPath = item.destPath;
-      fallbackImage.targetSize = item.size;
-      fallbackImage.source = item.sourcePath;
-    }
-  }
-
-  // -------------------------------------------------
-  // Utility Functions (with process queue to prevent fd exhaustion)
-  // -------------------------------------------------
-
-  // Queue a utility process and run it when a slot is available
-  function queueUtilityProcess(request) {
-    utilityProcessQueue.push(request);
-    processUtilityQueue();
-  }
-
-  // Process queued utility requests up to the concurrency limit
-  function processUtilityQueue() {
-    while (runningUtilityProcesses < maxConcurrentUtilityProcesses && utilityProcessQueue.length > 0) {
-      const request = utilityProcessQueue.shift();
-      runUtilityProcess(request);
-    }
-  }
-
-  // Actually run a utility process
-  function runUtilityProcess(request) {
-    runningUtilityProcesses++;
-
-    try {
-      const processObj = Qt.createQmlObject(request.processString, root, request.name);
-
-      processObj.exited.connect(function (exitCode) {
-        processObj.destroy();
-        runningUtilityProcesses--;
-        request.onComplete(exitCode, processObj);
-        processUtilityQueue();
-      });
-
-      processObj.running = true;
-    } catch (e) {
-      Logger.e("ImageCache", "Failed to create " + request.name + ":", e);
-      runningUtilityProcesses--;
-      request.onError(e);
-      processUtilityQueue();
-    }
-  }
-
-  function getMtime(filePath, callback) {
-    const pathEsc = filePath.replace(/'/g, "'\\''");
-    const processString = `
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["stat", "-c", "%Y", "${pathEsc}"]
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-      }
-    `;
-
-    queueUtilityProcess({
-                          name: "MtimeProcess",
-                          processString: processString,
-                          onComplete: function (exitCode, proc) {
-                            const mtime = exitCode === 0 ? proc.stdout.text.trim() : "";
-                            callback(mtime);
-                          },
-                          onError: function () {
-                            callback("");
-                          }
-                        });
-  }
-
-  function checkFileExists(filePath, callback) {
-    const pathEsc = filePath.replace(/'/g, "'\\''");
-    const processString = `
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["test", "-f", "${pathEsc}"]
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-      }
-    `;
-
-    queueUtilityProcess({
-                          name: "FileExistsProcess",
-                          processString: processString,
-                          onComplete: function (exitCode) {
-                            callback(exitCode === 0);
-                          },
-                          onError: function () {
-                            callback(false);
-                          }
-                        });
-  }
-
-  function getImageDimensions(filePath, callback) {
-    const pathEsc = filePath.replace(/'/g, "'\\''");
-    const processString = `
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["identify", "-ping", "-format", "%w %h", "${pathEsc}[0]"]
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-      }
-    `;
-
-    queueUtilityProcess({
-                          name: "IdentifyProcess",
-                          processString: processString,
-                          onComplete: function (exitCode, proc) {
-                            let width = 0, height = 0;
-                            if (exitCode === 0) {
-                              const parts = proc.stdout.text.trim().split(" ");
-                              if (parts.length >= 2) {
-                                width = parseInt(parts[0], 10) || 0;
-                                height = parseInt(parts[1], 10) || 0;
-                              }
-                            }
-                            callback(width, height);
-                          },
-                          onError: function () {
-                            callback(0, 0);
-                          }
-                        });
   }
 
   // -------------------------------------------------
@@ -665,27 +316,5 @@ Singleton {
     Logger.i("ImageCache", "Clearing contributors cache");
     Quickshell.execDetached(["rm", "-rf", contributorsDir]);
     Quickshell.execDetached(["mkdir", "-p", contributorsDir]);
-  }
-
-  // -------------------------------------------------
-  // ImageMagick Detection
-  // -------------------------------------------------
-  Process {
-    id: checkMagickProcess
-    command: ["sh", "-c", "command -v magick"]
-    running: false
-
-    stdout: StdioCollector {}
-    stderr: StdioCollector {}
-
-    onExited: function (exitCode) {
-      root.imageMagickAvailable = (exitCode === 0);
-      root.initialized = true;
-      if (root.imageMagickAvailable) {
-        Logger.i("ImageCache", "ImageMagick available");
-      } else {
-        Logger.w("ImageCache", "ImageMagick not found, using Qt fallback");
-      }
-    }
   }
 }

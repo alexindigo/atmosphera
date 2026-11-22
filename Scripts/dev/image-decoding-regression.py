@@ -19,7 +19,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'remote-red', 'wizard-red', 'producer-capture', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'remote-red', 'wizard-red', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -191,7 +191,7 @@ class Run:
                 'Services/UI/ImageCacheService.qml', 'Services/UI/ImageWorker.qml', 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         if self.args.case == 'desktop-wallpaper':
             lint_paths += [str(shell / p) for p in ('Modules/Background/Background.qml', 'Modules/Background/Overview.qml')]
-        if self.args.case == 'producer-capture':
+        if self.args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageAdmission.qml', 'Services/UI/ImageCacheService.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
@@ -225,14 +225,29 @@ class Run:
         try:
             actual = bus.stdout.readline().strip()
             assert actual.startswith(address)
-            result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/producer-capture.qml',
-                                     inputs, 'producer-capture', extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
+            red = self.args.case == 'producer-retirement-red'
+            adapter = self.args.case == 'notification-adapter'
+            if red and self.args.baseline_source is None:
+                raise ValueError('Producer retirement red requires an explicit immutable baseline source')
+            source = self.args.baseline_source if red else self.args.source
+            name = 'producer-retirement-red' if red else 'notification-adapter' if adapter else 'producer-capture'
+            result, output = self.qt(source, self.args.source / ('Scripts/dev/fixtures/image-decoding/' + name + '.qml'),
+                                     inputs, name, extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
                                      IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
         finally:
             guard.terminate()
             bus_record['exit'] = bus.wait(timeout=10)
             bus_log.close()
             (self.out / 'bus-process.json').write_text(json.dumps(bus_record, indent=2) + '\n')
+        if red:
+            self.check('producer-file-retirement-old-adapter', len(result['legacyFiles']) == 4
+                       and all(row['path'] and not row['success'] and row['statusAfterLoss'] == 3 for row in result['legacyFiles']),
+                       result['legacyFiles'], red=True)
+            self.check('retirement-red-real-producer', result['producerExit'] == 0 and not result['producerErrors']
+                       and all(not (inputs / name).exists() for name in names), result)
+            return result
+        if adapter:
+            return self.notification_adapter_results(result, output, inputs, expected, installed)
         self.check('capture-native-reader-control', result['raw'] == (1 if installed else 3), result['raw'])
         self.check('capture-binary-padding-exact', all(base64.b64decode(row['url'].split(',', 1)[1], validate=True)
                    == bytes(i % 256 for i in range(row['length'])) for row in result['bytes']) and len(result['bytes']) == 7, result['bytes'])
@@ -244,9 +259,6 @@ class Run:
                    and all(row['status'] == 3 for row in result['late']) and result['producerExit'] == 0
                    and not result['producerErrors'], result['late'])
         self.check('capture-files-gone-before-retention', all(not (inputs / name).exists() for name in names), names)
-        self.check('producer-file-retirement-old-adapter', len(result['legacyFiles']) == 4
-                   and all(row['path'] and not row['success'] and row['statusAfterLoss'] == 3 for row in result['legacyFiles']),
-                   result['legacyFiles'], red=True)
         self.check('capture-exact-original-bytes', all(base64.b64decode(captures[index]['source'].split(',', 1)[1], validate=True)
                    == source.read_bytes() for index, source in zip((5, 7, 8), expected)), [5, 7, 8])
         self.check('capture-same-url-replacement-bytes', captures[5]['original'] == captures[6]['original']
@@ -270,6 +282,33 @@ class Run:
                    for name in ('missing', 'empty', 'badProvider')), {name: result[name] for name in ('missing', 'empty', 'badProvider')})
         self.check('capture-cancel-and-quiescence', not result['cancelled'] and not result['worker'] and result['interests'] == 0
                    and not (output / 'cancelled').exists(), result['cancelled'])
+        return result
+
+    def notification_adapter_results(self, result, output, inputs, expected, installed):
+        self.check('adapter-native-reader-control', result['raw'] == (1 if installed else 3), result['raw'])
+        admitted = result['admitted']
+        rows = sorted(result['results'], key=lambda row: row['index'])
+        self.check('adapter-producer-loss', result['producerExit'] == 0 and not result['producerErrors']
+                   and len(admitted) == 9 and all(not (inputs / name).exists() for name in
+                   ('ephemeral.webp', "literal '[x]: é.dat", 'ephemeral.png')), admitted)
+        colors = [list(COLORS[0]), [230, 30, 50, 255], [20, 210, 70, 255], [30, 60, 230, 255],
+                  [230, 30, 50, 255], list(COLORS[0]), list(COLORS[1]), list(COLORS[0]), list(COLORS[0])]
+        observed = [pixel(output / f'adapter-{i}.png') for i in range(9)]
+        self.check('adapter-retained-consumer-pixels', len(rows) == 9 and all(row['success'] for row in rows)
+                   and observed == colors, observed)
+        self.check('adapter-content-not-label-identity', rows[1]['path'] == rows[4]['path']
+                   and len({row['path'] for row in rows[1:4]}) == 3
+                   and admitted[5]['original'] == admitted[6]['original'] and rows[5]['path'] != rows[6]['path'], rows)
+        self.check('adapter-exact-original-format', all(Path(rows[i]['path']).read_bytes() == source.read_bytes()
+                   for i, source in zip((5, 7, 8), expected)) and Path(rows[5]['path']).suffix == '.webp'
+                   and Path(rows[6]['path']).read_bytes() == (inputs / 'frame-1.png').read_bytes(), rows)
+        self.check('adapter-provider-alpha', all(pixel(Path(row['path']), 0, 0)[3] == 0 for row in rows[1:5]), rows[1:5])
+        self.check('adapter-qt-acknowledged-representation', all(row['success'] and row['detail']['status'] in ('generated', 'hit')
+                   and row['detail']['url'] and Path(row['path']).is_file() for row in rows), rows)
+        self.check('adapter-explicit-failures', len(result['failures']) == 4 and all(not row['path'] and not row['success']
+                   and row['detail']['code'] and row['detail']['reason'] for row in result['failures']), result['failures'])
+        self.check('adapter-cancel-suppressed', not result['cancelled'], result['cancelled'])
+        self.check('adapter-quiescence', result['interests'] == 0 and not result['worker'], result['interests'])
         return result
 
     def red(self):
@@ -1108,7 +1147,7 @@ def main():
             run.wallpaper_wizard()
         elif args.case == 'owner':
             run.owner()
-        elif args.case == 'producer-capture':
+        elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
             run.producer_capture()
         elif args.case == 'legacy':
             run.legacy()
