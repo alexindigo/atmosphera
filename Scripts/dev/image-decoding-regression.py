@@ -15,6 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from guest_profile import activate_profile, profile_argument, protect_owned_process
 from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
 from image_decoding_evidence import source_manifest
+from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
@@ -72,6 +73,13 @@ class Run:
             raise AssertionError(name + ': ' + json.dumps(detail))
 
     def qt(self, source, fixture, inputs, name, extra_env=None, assembled=False):
+        result = self._qt(source, fixture, inputs, name, extra_env, assembled)
+        if not assembled:
+            retire_fixture_copy(source, self.work / name, self.out / (name + '-source.json'),
+                                self.out / (name + '-source-retired.json'), self.work)
+        return result
+
+    def _qt(self, source, fixture, inputs, name, extra_env=None, assembled=False):
         # Actual production imports are copied, never mocked or rewritten. Only
         # the separate test entry and private XDG preferences are synthesized.
         shell = source if assembled else self.work / name
