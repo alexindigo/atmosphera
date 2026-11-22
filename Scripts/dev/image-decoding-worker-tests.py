@@ -101,6 +101,37 @@ def main():
                     self.assertLessEqual(max(abs(a - b) for a, b in zip(pixel(target), COLORS[0])), 8)
                     self.assertEqual(list(target.parent.glob(target.stem + '-*.png')), [])
 
+        async def test_svg_inspection_reads_declaration_without_decoder(self):
+            # Icons inspect every resolved SVG; the declared still size must
+            # not cost an ImageMagick render per icon.
+            variants = {
+                'declared.svg': ('<svg xmlns="http://www.w3.org/2000/svg" width="96px" height="64">'
+                                 '<rect width="96" height="64" fill="#e62337"/></svg>', (96, 64)),
+                'viewbox.svg': ('﻿<?xml version="1.0"?>\n<!-- icon -->\n<svg xmlns="http://www.w3.org/2000/svg" '
+                                'width="100%" viewBox="0 0 24 16.5"><rect width="24" height="16" fill="#e62337"/></svg>', (24, 17)),
+            }
+            for name, (text, size) in variants.items():
+                (self.folder / name).write_text(text)
+                result = await self.cache.render(dict(self.request(), source=str(self.folder / name), operation='inspect'))
+                self.assertEqual((result['status'], result['format'], result['width'], result['height'], result['frames'],
+                                  result['animated']), ('inspected', 'svg', *size, 1, False))
+            self.assertFalse([event for event in self.events if event.get('event') == 'command'])
+            # Unreadable declarations, other roots and compressed SVG still
+            # reach the independent decoder's inspection; never a guessed size.
+            (self.folder / 'relative.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="1em">'
+                                                     '<rect width="20" height="10" fill="#e62337"/></svg>')
+            (self.folder / 'page.svg').write_text('<html><body>not svg</body></html>')
+            for name in ('relative.svg', 'page.svg'):
+                self.events.clear()
+                try:
+                    await self.cache.render(dict(self.request(), source=str(self.folder / name), operation='inspect'))
+                except (SourceError, CommandError, ValueError):
+                    pass
+                self.assertTrue([event for event in self.events if event.get('event') == 'command'], name)
+            result = await self.cache.render(dict(self.request(), source=str(self.folder / 'declared.svg')))
+            self.assertEqual(result['format'], 'png')
+            self.assertLessEqual(max(abs(a - b) for a, b in zip(pixel(Path(result['url'].removeprefix('file://'))), COLORS[0])), 8)
+
         async def test_retained_original_is_exact_and_distinct_from_representation(self):
             directory = self.folder / "wallpapers ' [0] : \u6d77\u5cb8"
             directory.mkdir(mode=0o755)

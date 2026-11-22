@@ -59,13 +59,37 @@ Item {
     horizontalAlignment: Text.AlignHCenter
   }
 
-  // SVG path — colored Rectangle shaped by SVG alpha mask
+  // Icon-set files (including user icon sets) are decoded by the shared image
+  // owner. A set file that cannot be displayed is a labelled failure.
+  readonly property bool failed: mask.item ? mask.item.imageState === "unavailable" : false
+  readonly property string errorReason: failed ? mask.item.errorReason : ""
+  Accessible.description: errorReason
+
+  Loader {
+    id: mask
+    anchors.centerIn: parent
+    width: root.implicitHeight
+    height: root.implicitHeight
+    // Only the mask samples it (hideSource); never presented in its own colors.
+    active: root._resolved?.type === "svg"
+    sourceComponent: NImage {
+      source: root._resolved?.source ?? ""
+      fillMode: Image.PreserveAspectFit
+      smooth: true
+      onImageStateChanged: {
+        if (imageState === "unavailable")
+          Logger.w("AtmoIcon", "Icon file", source, "could not be displayed:", errorReason);
+      }
+    }
+  }
+
+  // SVG path — colored Rectangle shaped by the icon file's alpha mask
   Item {
     id: svgContainer
     anchors.centerIn: parent
     width: root.implicitHeight
     height: root.implicitHeight
-    visible: root._resolved?.type === "svg"
+    visible: root._resolved?.type === "svg" && !root.failed
 
     Rectangle {
       anchors.fill: parent
@@ -79,16 +103,20 @@ Item {
       maskSpreadAtMin: 0.5
       maskSource: ShaderEffectSource {
         hideSource: true
-        sourceItem: Image {
-          width: svgContainer.width
-          height: svgContainer.height
-          source: root._resolved?.source ?? ""
-          fillMode: Image.PreserveAspectFit
-          smooth: true
-          sourceSize.width: svgContainer.width * Screen.devicePixelRatio
-          sourceSize.height: svgContainer.height * Screen.devicePixelRatio
-        }
+        sourceItem: mask.item
       }
     }
+  }
+
+  // Drawn without another icon lookup: the failure must not recurse.
+  Rectangle {
+    anchors.centerIn: parent
+    width: Math.max(2, root.implicitHeight * 0.7)
+    height: width
+    visible: root.failed
+    radius: width / 4
+    color: "transparent"
+    border.width: Math.max(1, width / 8)
+    border.color: AtmoColor.mError
   }
 }

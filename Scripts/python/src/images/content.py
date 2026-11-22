@@ -1,6 +1,9 @@
 """Content-derived frame declarations, never suffix-based decoder claims."""
+import math
 from pathlib import Path
+import re
 import struct
+from xml.etree import ElementTree
 
 from .png import png_chunks
 
@@ -107,6 +110,45 @@ def gif(data):
     raise ValueError('Missing GIF trailer')
 
 
+SVG_LENGTH = re.compile(r'\s*([0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\s*(px)?\s*$')
+
+
+def svg(data):
+    """Intrinsic size from the root element only; SVG is a still document.
+
+    Returns None when the declaration cannot be read cheaply (compressed SVG,
+    relative units, no viewBox) so that the independent decoder inspects it.
+    """
+    head = data.lstrip(b'\xef\xbb\xbf \t\r\n')
+    if not head.startswith((b'<?xml', b'<svg', b'<!--', b'<!DOCTYPE')):
+        return None
+    parser = ElementTree.XMLPullParser(events=('start',))
+    try:
+        for offset in range(0, len(data), 4096):
+            parser.feed(data[offset:offset + 4096])
+            root = next((element for _, element in parser.read_events()), None)
+            if root is not None:
+                break
+        else:
+            return None
+    except ElementTree.ParseError:
+        return None
+    if root.tag not in ('svg', '{http://www.w3.org/2000/svg}svg'):
+        return None
+    lengths = [SVG_LENGTH.match(root.get(name, '')) for name in ('width', 'height')]
+    if all(lengths):
+        width, height = (float(match.group(1)) for match in lengths)
+    else:
+        box = (root.get('viewBox') or '').replace(',', ' ').split()
+        try:
+            width, height = (float(value) for value in box[2:]) if len(box) == 4 else (0, 0)
+        except ValueError:
+            return None
+    if not (0 < width < 1e6 and 0 < height < 1e6):
+        return None
+    return dict(format='svg', width=math.ceil(width), height=math.ceil(height), frames=1, animated=False, delaysMs=[], loop=None)
+
+
 def known(path):
     data = Path(path).read_bytes()
     if data.startswith(b'\x89PNG\r\n\x1a\n'):
@@ -134,4 +176,4 @@ def known(path):
         return gif(data)
     if data[:4] == b'RIFF' and data[8:12] == b'WEBP':
         return webp(data)
-    return None
+    return svg(data)

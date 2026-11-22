@@ -2,6 +2,7 @@
 """Image decoding end-consumer regression controller; explicit owned guest only."""
 import argparse
 import base64
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -19,7 +20,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -123,6 +124,13 @@ class Run:
             (legacy / 'thumbnails/mpvpaper').mkdir(parents=True)
             (legacy / 'large/legacy-key.png').write_bytes((inputs / 'frame-0.png').read_bytes())
             (legacy / 'thumbnails/mpvpaper/plugin.bmp').write_bytes(b'plugin-owned')
+        if self.args.case in ('icons-red', 'icons'):
+            # Real XdgIcon loose-icon lookup in the private XDG data root.
+            themes = profile / 'data/icons'
+            themes.mkdir(parents=True)
+            for icon, source in (('fixture-webp-app.png', 'Still.webp'), ('fixture-png-app.png', 'frame-1.png'),
+                                 ('fixture-svg-app.svg', 'Still.svg'), ('fixture-corrupt-app.png', 'Corrupt.webp')):
+                shutil.copyfile(inputs / source, themes / icon)
         if self.args.case in ('cache-red', 'cache', 'cache-read-red', 'cache-read'):
             from image_decoding_cache_fixtures import target, thumbnail
             redirected = self.args.case in ('cache-read-red', 'cache-read')
@@ -196,6 +204,9 @@ class Run:
         if self.args.case in ('cache-clear-red', 'cache-clear'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageCacheService.qml',
                 'Modules/Panels/Settings/Tabs/Wallpaper/GeneralSubTab.qml')]
+        if self.args.case == 'icons':
+            lint_paths += [str(shell / p) for p in ('Commons/AtmoAppIcon.qml', 'Widgets/AtmoIcon.qml',
+                'Modules/Bar/Widgets/ActiveWindow.qml')]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1350,6 +1361,67 @@ os.execv('/usr/bin/find', ['find', *args])
                    and max(abs(a - b) for a, b in zip(pixel(output / 'regenerated.png'), COLORS[0])) <= 8, result['regenerated'])
         return result
 
+    def icons(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        icon_set = inputs / 'icon-set'
+        icon_set.mkdir()
+        # WebP bytes under an .svg icon-set name: content, not suffix, decides.
+        for name, source in (('glyph-webp.svg', 'Still.webp'), ('glyph-png.png', 'frame-1.png'),
+                             ('glyph-svg.svg', 'Still.svg'), ('glyph-corrupt.svg', 'Corrupt.webp')):
+            shutil.copyfile(inputs / source, icon_set / name)
+        (icon_set / 'icons.json').write_text(json.dumps(dict(name='Image fixtures', icons={
+            'fixture-glyph-' + kind: dict(filename='glyph-' + kind + ('.png' if kind == 'png' else '.svg'))
+            for kind in ('webp', 'png', 'svg', 'corrupt')})))
+        manifest['iconSet'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(icon_set.iterdir())}
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        red = self.args.case == 'icons-red'
+        if red and self.args.baseline_source is None:
+            raise ValueError('Icon red requires an explicit immutable baseline source')
+        result, output = self.qt(self.args.baseline_source if red else self.args.source,
+                                 self.args.source / 'Scripts/dev/fixtures/image-decoding/icons.qml', inputs, self.args.case)
+        apps, glyphs = result['apps'], result['glyphs']
+        icon = (35, 65, 225)
+        def near(actual, expected, tolerance=8):
+            return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
+        def center(name):
+            return pixel(output / (name + '.png'))
+        def glyph_center(name):
+            width, height, _ = read_png(output / (name + '.png'))
+            return pixel(output / (name + '.png'), width // 2, height // 2)
+        def warning(name):
+            width, height, pixels = read_png(output / (name + '.png'))
+            return sum(near(pixels[(y * width + x) * 4:(y * width + x + 1) * 4], result['warningColor'])
+                       for y in range(height) for x in range(width))
+        self.check('icon-set-registered', result['glyphCount'] == 4, result['glyphCount'])
+        if red:
+            self.check('theme-icon-webp-bytes-under-png-name-not-presented', apps['webp']['status'] == 3
+                       and center('app-webp')[3] == 0, dict(consumer=apps['webp'], center=center('app-webp')), red=True)
+            self.check('icon-set-webp-file-mask-not-presented', not near(glyph_center('glyph-webp'), (*icon, 255)),
+                       dict(consumer=glyphs['webp'], center=glyph_center('glyph-webp')), red=True)
+            return result
+        for kind, color in (('webp', COLORS[0]), ('png', COLORS[1]), ('svg', COLORS[0])):
+            self.check('theme-icon-' + kind + '-presented', apps[kind]['status'] == 1 and not apps[kind]['failed']
+                       and near(center('app-' + kind), color) and warning('app-' + kind) == 0,
+                       dict(consumer=apps[kind], center=center('app-' + kind)))
+        self.check('theme-lookup-failure-uses-ordinary-fallback', apps['missing']['status'] == 1 and not apps['missing']['failed']
+                   and apps['missing']['source'].endswith('fixture-png-app.png') and near(center('app-missing'), COLORS[1])
+                   and warning('app-missing') == 0, dict(consumer=apps['missing'], center=center('app-missing')))
+        self.check('theme-decode-failure-is-labelled-fallback', apps['corrupt']['status'] == 1 and apps['corrupt']['failed']
+                   and apps['corrupt']['reason'] and apps['corrupt']['source'].endswith('fixture-svg-app.svg')
+                   and near(center('app-corrupt'), COLORS[0]) and warning('app-corrupt') > 10,
+                   dict(consumer=apps['corrupt'], center=center('app-corrupt'), warning=warning('app-corrupt')))
+        for kind in ('webp', 'png', 'svg'):
+            self.check('icon-set-' + kind + '-mask-presented', not glyphs[kind]['failed']
+                       and near(glyph_center('glyph-' + kind), (*icon, 255)) and warning('glyph-' + kind) == 0,
+                       dict(consumer=glyphs[kind], center=glyph_center('glyph-' + kind)))
+        self.check('icon-set-failure-is-labelled', glyphs['corrupt']['failed'] and glyphs['corrupt']['reason']
+                   and not near(glyph_center('glyph-corrupt'), (*icon, 255)) and warning('glyph-corrupt') > 10,
+                   dict(consumer=glyphs['corrupt'], warning=warning('glyph-corrupt')))
+        return result
+
     def owner(self):
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
@@ -1458,6 +1530,8 @@ def main():
             run.wallpaper_remote()
         elif args.case in ('wallpaper-wizard', 'wizard-red'):
             run.wallpaper_wizard()
+        elif args.case in ('icons-red', 'icons'):
+            run.icons()
         elif args.case in ('cache-clear-red', 'cache-clear'):
             run.cache_clear()
         elif args.case == 'owner':
