@@ -154,8 +154,10 @@ class Run:
         (shell / '.qmlls.ini').touch()
         output = self.out / name
         output.mkdir()
-        env = dict(os.environ, **self.profile.child_environment('image-'),
-                    QML_DISABLE_DISK_CACHE='1', QT_QPA_PLATFORM='wayland', IMAGE_FIXTURES=str(inputs), IMAGE_OUTPUT=str(output),
+        child_environment = self.profile.child_environment('image-')
+        child_environment.setdefault('QT_QPA_PLATFORM', 'wayland')
+        env = dict(os.environ, **child_environment,
+                    QML_DISABLE_DISK_CACHE='1', IMAGE_FIXTURES=str(inputs), IMAGE_OUTPUT=str(output),
                     IMAGE_DATA='data:image/jpeg;base64,' + base64.b64encode((inputs / 'Still.webp').read_bytes()).decode(),
                     ATMOSPHERA_CONFIG_DIR=str(profile / 'config') + '/', ATMOSPHERA_CACHE_DIR=str(profile / 'cache') + '/',
                     IMAGE_ICON_DIR=str(self.args.source / 'builtin/plugins/atmosphera-icons'),

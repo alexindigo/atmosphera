@@ -55,6 +55,27 @@ PipeWire pointed at the real session: systemctl's direct user-manager socket doe
 not honor DBUS_SESSION_BUS_ADDRESS alone. Profile selftests query the actual
 manager through this environment; no replies or activation are simulated.
 
+## Headless Wayland container consumers
+
+Version 1 VM profiles and their identity/session checks are unchanged. The image
+CI runner may instead use an explicit version 2 profile with mode
+`container-headless-wayland`, `name`, `engine` (`podman` or `docker`), `containerId`
+(the exact `/etc/hostname`), and the same `uid`, `home`, `workspace`, `workBase`,
+`journalBase`, `runtimeBase` fields. `sessionRuntime`, `waylandDisplay` and
+`compositor` identify the container's own headless Sway process (PID, start,
+UID, process group and argv). Its actual backend environment and the Wayland
+socket's peer PID/UID are verified. It also verifies the container marker and engine,
+identity, account and disk roots before running. It never falls back from a VM
+profile that failed verification. The workspace remains beneath that account's
+home and TMPDIR stays on disk.
+
+This mode uses real Wayland with software rendering, not a mock image reader.
+The CI image pins packaged Sway 1:1.12-4 with the wlroots headless backend.
+It cannot admit live-console or hardware-input workloads. A headless image
+result is not evidence of physical input or a desktop login session. Local
+qualification containers still run inside the task's authorized VM; this mode
+does not authorize workloads on a physical development host.
+
 ## Capacity and evidence retention
 
 Existing two-extracted-copy, byte/inode/runtime/journal reserves, protected desktop,

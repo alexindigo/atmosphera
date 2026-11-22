@@ -14,6 +14,8 @@ from pathlib import Path
 import re
 import shlex
 import signal
+import socket
+import struct
 import subprocess
 import tempfile
 import uuid
@@ -231,9 +233,135 @@ class GuestProfile:
                           for s in self.qmp_prefix)
 
 
+class HeadlessWaylandProfile(GuestProfile):
+    """Explicit container identity and its own headless Wayland compositor.
+
+    This is a separate profile version, never a fallback for failed VM checks.
+    It cannot admit a live desktop console or hardware input workload.
+    """
+    def __init__(self, path):
+        self.path = Path(path).absolute()
+        if self.path != self.path.resolve() or not self.path.is_file():
+            raise ProfileBlocked("profile must be an explicit regular non-symlink file")
+        raw = self.path.read_bytes()
+        self.sha256 = hashlib.sha256(raw).hexdigest()
+        try:
+            data = json.loads(raw)
+            required = {"version", "mode", "name", "engine", "containerId", "uid", "home", "workspace",
+                        "workBase", "journalBase", "runtimeBase", "sessionRuntime", "waylandDisplay", "compositor"}
+            if not isinstance(data, dict) or set(data) != required or data["version"] != 2 or data["mode"] != "container-headless-wayland":
+                raise ValueError("headless Wayland profile fields/version")
+            self.name, self.engine, self.container_id = data["name"], data["engine"], data["containerId"]
+            if self.engine not in ("podman", "docker") or not all(
+                    isinstance(s, str) and re.fullmatch(r"[a-zA-Z0-9_.-]+", s) for s in (self.name, self.container_id)):
+                raise ValueError("container identity")
+            if type(data["uid"]) is not int or data["uid"] < 1:
+                raise ValueError("UID")
+            self.uid = data["uid"]
+            for field, attr in (("home", "home"), ("workspace", "workspace"), ("workBase", "work_base"),
+                                ("journalBase", "journal_base"), ("runtimeBase", "runtime_base")):
+                value = Path(data[field])
+                if not value.is_absolute() or value != value.resolve():
+                    raise ValueError("noncanonical profile path")
+                setattr(self, attr, value)
+            if not self.workspace.is_relative_to(self.home) or self.workspace == self.home:
+                raise ValueError("workspace outside container home")
+            roots = (self.work_base, self.journal_base, self.runtime_base)
+            if any(not p.is_relative_to(self.workspace) or p == self.workspace for p in roots):
+                raise ValueError("root outside workspace")
+            if any(a.is_relative_to(b) or b.is_relative_to(a) for i, a in enumerate(roots) for b in roots[i + 1:]):
+                raise ValueError("overlapping work/journal/runtime roots")
+            self.session_runtime = Path(data["sessionRuntime"])
+            if self.session_runtime != self.session_runtime.resolve() or not self.session_runtime.is_relative_to(self.runtime_base):
+                raise ValueError("compositor runtime outside private runtime root")
+            self.wayland_display = data["waylandDisplay"]
+            if not isinstance(self.wayland_display, str) or not re.fullmatch(r"wayland-[0-9]+", self.wayland_display):
+                raise ValueError("Wayland display name")
+            compositor = data["compositor"]
+            if not isinstance(compositor, dict) or set(compositor) != {"pid", "start", "uid", "pgid", "argv"}:
+                raise ValueError("compositor identity fields")
+            self.compositor = ProcessIdentity(**dict(compositor, argv=tuple(compositor["argv"])))
+            if self.compositor.uid != self.uid or not self.compositor.argv or Path(self.compositor.argv[0]).name != "sway":
+                raise ValueError("owned Sway compositor required")
+        except (ValueError, TypeError, KeyError, AttributeError) as error:
+            raise ProfileBlocked("invalid headless Wayland profile: " + str(error)) from error
+        self.console_config = "headless-ci-no-console"
+        self.console = None
+
+    def verify(self, require_console=False):
+        if require_console:
+            raise ProfileBlocked("headless containers cannot admit live-console workloads")
+        if os.getuid() != self.uid or Path.home() != self.home:
+            raise ProfileBlocked("container account/home does not match explicit profile")
+        if hashlib.sha256(self.path.read_bytes()).hexdigest() != self.sha256:
+            raise ProfileBlocked("profile changed after capture")
+        marker = Path("/run/.containerenv" if self.engine == "podman" else "/.dockerenv")
+        if not marker.is_file() or _command(["systemd-detect-virt", "--container"]) != self.engine:
+            raise ProfileBlocked("explicit container engine is not the current execution boundary")
+        if Path("/etc/hostname").read_text().strip() != self.container_id:
+            raise ProfileBlocked("container identity does not match explicit profile")
+        if not self.workspace.is_dir() or self.workspace.stat().st_uid != self.uid:
+            raise ProfileBlocked("owned disk workspace is unavailable")
+        temporary = Path(os.environ.get("TMPDIR", "")).absolute()
+        if not os.environ.get("TMPDIR") or not temporary.is_dir() or not temporary.resolve().is_relative_to(self.workspace):
+            raise ProfileBlocked("TMPDIR must be an existing disk-workspace directory")
+        for value in (self.workspace, temporary):
+            if _command(["findmnt", "-n", "-o", "FSTYPE", "-T", value]) in ("tmpfs", "ramfs"):
+                raise ProfileBlocked("container workspace/TMPDIR is RAM-backed")
+        if self.console is not None:
+            self.console.verify()
+        self.session_environment()
+
+    def session_environment(self):
+        try:
+            if ProcessIdentity.read(self.compositor.pid) != self.compositor:
+                raise ProfileBlocked("captured container compositor identity changed")
+            environment = dict(part.split(b"=", 1) for part in
+                               (Path('/proc') / str(self.compositor.pid) / 'environ').read_bytes().split(b'\0') if b'=' in part)
+            if environment.get(b'WLR_BACKENDS') != b'headless' or environment.get(b'XDG_RUNTIME_DIR') != os.fsencode(self.session_runtime):
+                raise ProfileBlocked("compositor is not the container-private headless backend")
+            display = self.session_runtime / self.wayland_display
+            if not display.is_socket() or display.stat().st_uid != self.uid:
+                raise ProfileBlocked("owned private Wayland socket is unavailable")
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as peer:
+                peer.settimeout(5)
+                peer.connect(str(display))
+                pid, uid, _gid = struct.unpack('3i', peer.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))
+            if pid != self.compositor.pid or uid != self.uid:
+                raise ProfileBlocked("Wayland peer is not the captured container compositor")
+        except (OSError, ProcessLookupError) as error:
+            raise ProfileBlocked("container-private compositor is unavailable") from error
+        return {"QT_QPA_PLATFORM": "wayland", "QT_QUICK_BACKEND": "software",
+                "WAYLAND_DISPLAY": str(display)}
+
+    def child_environment(self, prefix):
+        self.prepare_roots()
+        runtime = Path(tempfile.mkdtemp(prefix=prefix, dir=self.runtime_base))
+        os.chmod(runtime, 0o700)
+        return dict(self.session_environment(), XDG_RUNTIME_DIR=str(runtime))
+
+    def record(self):
+        return {"mode": "container-headless-wayland", "name": self.name, "engine": self.engine,
+                "containerId": self.container_id, "profile": str(self.path), "profileSha256": self.sha256,
+                "compositor": self.compositor.record(), "sessionRuntime": str(self.session_runtime),
+                "waylandDisplay": self.wayland_display,
+                "console": [p.record() for p in self.console.records] if self.console else []}
+
+    def qmp_command(self, event):
+        raise ProfileBlocked("headless containers cannot inject hardware input")
+
+
 def activate_profile(path, require_console=False):
-    profile = GuestProfile(path)
-    profile.verify()
+    candidate = Path(path).absolute()
+    if candidate != candidate.resolve() or not candidate.is_file():
+        raise ProfileBlocked("profile must be an explicit regular non-symlink file")
+    try:
+        data = json.loads(candidate.read_bytes())
+    except (ValueError, TypeError) as error:
+        raise ProfileBlocked("invalid guest profile: " + str(error)) from error
+    cls = HeadlessWaylandProfile if isinstance(data, dict) and data.get("mode") == "container-headless-wayland" else GuestProfile
+    profile = cls(path)
+    profile.verify(require_console=require_console)
     profile.console = ConsoleGuard.capture(profile.console_config, profile.uid)
     profile.console.verify(require_console)
     _active.set(profile)  # Only a fully verified profile can replace the active one.
