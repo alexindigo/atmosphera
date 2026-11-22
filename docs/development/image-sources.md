@@ -54,6 +54,40 @@ in rich text or Markdown by itself, so `NText` never shows images.
 This is an orchestrator decision during the image-decoding work; the user
 can override it.
 
+Two more orchestrator decisions (the user can override them):
+
+- Notification bodies and summaries keep their images stripped by
+  `NotificationService` (`<img>` dropped, Markdown images reduced to their
+  alt text). A remote image would be a read receipt and a local path would
+  read arbitrary files into the shell. Their text is kept; attachments
+  (`image-path`, `image-data`, the app icon) go through the owner.
+- `hermes-ssh-chat`'s terminal stays an interactive rich-text `TextEdit`:
+  it is plugin-generated markup in which every character of the remote
+  output is escaped, so image markup in that output stays text.
+
+Plain `Text` and `Label` default to `AutoText`, which also lays out markup
+(and loads its images) when the string looks like HTML. Text that shows data
+sets `textFormat: Text.PlainText`.
+
+## The boundary check
+
+`Scripts/dev/image-decoding-boundary-check.py` parses the production QML/JS
+of the shell and the plugins and lists every place where Qt or a process
+would decode image bytes by itself: `Image`, `AnimatedImage`, `IconImage`
+and their local wrappers, text laid out as markup, `ColorQuantizer`, QML
+built from strings, and `magick`/`ffmpeg` commands. Each must match a
+reviewed entry in `Scripts/dev/fixtures/image-decoding/consumers.json`
+(fixed packaged assets with their hashes, the owner's own renderers,
+reviewed shell-authored markup, ...). A new site, a changed asset or a
+changed exempt source fails the check. Run it in the dev container:
+
+```sh
+python3 -B Scripts/dev/image-decoding-boundary-check.py --source . \
+  --plugins ../atmosphera-plugins \
+  --manifest Scripts/dev/fixtures/image-decoding/consumers.json \
+  --selftest --report "$TMPDIR/image-boundary.json"
+```
+
 `NImageText` keeps Qt's own text, link and style handling. Each image
 (`<img>`, Markdown inline, reference and inline-HTML images; relative
 sources resolve against `baseUrl`) becomes a sized transparent slot in the

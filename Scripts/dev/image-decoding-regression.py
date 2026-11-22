@@ -20,7 +20,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -258,6 +258,9 @@ class Run:
             lint_paths += [str(shell / 'Modules/Background/Overview.qml'), str(self.args.plugins / 'parallax-wallpaper/ParallaxBackground.qml')]
         if self.args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageAdmission.qml', 'Services/UI/ImageCacheService.qml')]
+        if self.args.case == 'notification-body':
+            lint_paths += [str(shell / p) for p in ('Services/System/NotificationService.qml', 'Widgets/NImageText.qml',
+                'Modules/Notification/Notification.qml', 'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml')]
         if self.args.case == 'notification-service':
             lint_paths += [str(shell / p) for p in ('Services/System/NotificationService.qml', 'Services/UI/ImageCacheService.qml',
                 'Widgets/NImageRounded.qml', 'Widgets/NNotificationImage.qml', 'Modules/Notification/Notification.qml',
@@ -378,6 +381,72 @@ class Run:
                    and row['detail']['code'] and row['detail']['reason'] for row in result['failures']), result['failures'])
         self.check('adapter-cancel-suppressed', not result['cancelled'], result['cancelled'])
         self.check('adapter-quiescence', result['interests'] == 0 and not result['worker'], result['interests'])
+        return result
+
+    def notification_body(self):
+        """Body/summary image markup through the actual service, popup and
+        history: stripped by the service (orchestrator decision), text kept,
+        no image interest, no request."""
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requests.append(self.path)
+                payload = (inputs / 'Still.webp').read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Length', str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+            def log_message(self, *_args):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        address = 'unix:path=' + str(self.work / 'body-bus')
+        with (self.out / 'bus.log').open('w') as log:
+            bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1', '--address=' + address],
+                                   stdout=subprocess.PIPE, stderr=log, text=True, start_new_session=True)
+            guard = protect_owned_process(bus)
+            try:
+                actual = bus.stdout.readline().strip()
+                assert actual.startswith(address)
+                result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-body.qml',
+                    inputs, 'notification-body', extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
+                    ATMOSPHERA_NOTIF_HISTORY_FILE=str(inputs / 'history.json'),
+                    IMAGE_HTTP_BASE='http://127.0.0.1:' + str(server.server_port),
+                    IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-body-producer.py')))
+            finally:
+                guard.terminate()
+                code = bus.wait(timeout=10)
+                (self.out / 'bus-process.json').write_text(json.dumps(dict(identity=guard.identity.record(), exit=code), indent=2) + '\n')
+                server.shutdown()
+                thread.join(timeout=5)
+                server.server_close()
+                (self.out / 'http.json').write_text(json.dumps(requests, indent=2) + '\n')
+        base = '127.0.0.1:'
+        self.check('notification-body-producer', result['producerExit'] == 0 and not result['producerErrors'], result)
+        self.check('notification-body-no-request', requests == [], requests)
+        self.check('notification-body-no-image-interest', not any(base in source for source in result['sources']), result['sources'])
+        for cohort in ('popup', 'history'):
+            model = result[cohort + 'Model']
+            shown = result[cohort + 'Texts']
+            fields = [str(row.get(key, '')) for row in model for key in ('summary', 'body')]
+            self.check('notification-body-' + cohort + '-text-kept-without-images',
+                       len(model) == 1 and any('end-marker' in f and 'world' in f for f in fields)
+                       and any('summary-marker' in f for f in fields) and not any('<img' in f or 'background=' in f for f in fields)
+                       and shown and all(t['images'] == 0 for t in shown) and any('end-marker' in t['text'] for t in shown if t['visible'])
+                       and not any('<img' in t['text'] for t in shown), dict(model=model, texts=shown))
+        # Stored history keeps the text (image URLs at most as visible text),
+        # never an image tag, background attribute or Markdown image.
+        stored = json.loads(Path(result['historyFile']).read_text())['notifications'] if result['historyFile'] else []
+        self.check('notification-body-history-file-without-image-markup', len(stored) == 1
+                   and 'end-marker' in stored[0]['body'] and 'md art' in stored[0]['bodyMarkdown']
+                   and not any('<img' in stored[0][k] or 'background=' in stored[0][k] for k in ('body', 'summary'))
+                   and not any('![' in stored[0][k] or '<img' in stored[0][k] for k in ('bodyMarkdown', 'summaryMarkdown')), stored)
         return result
 
     def notification_service(self):
@@ -1673,8 +1742,26 @@ os.execv('/usr/bin/find', ['find', *args])
         changed = self.changed_plugin_qml()
         (self.out / 'changed-plugin-qml.txt').write_text(''.join(str(p) + '\n' for p in changed))
         self.plugin_lint = changed
-        result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/plugins.qml', inputs,
-                                 'plugins', dict(IMAGE_PLUGINS=str(self.args.plugins)))
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requests.append(self.path)
+                self.send_response(404)
+                self.end_headers()
+            def log_message(self, *_args):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/plugins.qml', inputs,
+                                     'plugins', dict(IMAGE_PLUGINS=str(self.args.plugins),
+                                                     IMAGE_HTTP_BASE='http://127.0.0.1:' + str(server.server_port)))
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)
+            server.server_close()
+            (self.out / 'http.json').write_text(json.dumps(requests, indent=2) + '\n')
         def near(actual, expected, tolerance=10):
             return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
         def count(name, color, tolerance=10):
@@ -1711,6 +1798,12 @@ os.execv('/usr/bin/find', ['find', *args])
         chat = images('chat-markdown', 'text')
         self.check('plugin-chat-markdown-image', chat and chat[0]['count'] == 1 and chat[0]['states'][0]['state'] == 'ready'
                    and count('chat-markdown', COLORS[0]) > 20, dict(text=chat, pixels=count('chat-markdown', COLORS[0])))
+        # hermes-ssh-chat's terminal is plugin-generated rich text: every
+        # character of the remote output is escaped, so image markup in it stays
+        # text (each line intact) and nothing is fetched.
+        terminal = [line.replace('\u00a0', ' ').rstrip() for line in re.split('[\n\u2028\u2029]', result['terminal'] or '')]
+        self.check('plugin-hermes-terminal-escapes-external-data', requests == []
+                   and all(line in terminal for line in result['terminalLines']), dict(requests=requests, terminal=terminal))
         videos = result['videos']
         for name in ('mpv-tiles', 'vw-panel'):
             # Panels show the owner's PNG frame of the video (YUV-encoded, so a
@@ -1875,6 +1968,8 @@ def main():
             run.wallpaper_scan()
         elif args.case == 'wallpaper-gallery':
             run.wallpaper_gallery()
+        elif args.case == 'notification-body':
+            run.notification_body()
         elif args.case == 'desktop-wallpaper':
             run.desktop_wallpaper()
         elif args.case == 'parallax-wallpaper':

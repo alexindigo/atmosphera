@@ -13,6 +13,12 @@ ShellRoot {
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
   readonly property string plugins: Quickshell.env("IMAGE_PLUGINS")
+  // Remote terminal output with image markup and every printable ASCII
+  // character; hermes-ssh-chat escapes it all (orchestrator decision).
+  readonly property string httpBase: Quickshell.env("IMAGE_HTTP_BASE")
+  readonly property var terminalLines: [Array.from({
+                                                     length: 95
+                                                   }, (_, i) => String.fromCharCode(32 + i)).join(""), "<img src=\"" + httpBase + "/terminal.png\">", "![art](" + httpBase + "/terminal-md.png)", "<table background=\"" + httpBase + "/terminal-bg.png\"><tr><td>cell</td></tr></table>"]
   property int tick: 0
   property int pending: 0
   property var created: []
@@ -132,6 +138,15 @@ ShellRoot {
       }
     },
     {
+      name: "hermes-terminal",
+      file: "hermes-ssh-chat/TerminalView.qml",
+      props: {
+        width: 900,
+        height: 160,
+        rawText: terminalLines.join("\r\n")
+      }
+    },
+    {
       name: "chat-markdown",
       file: "assistant-panel/MessageBubble.qml",
       props: {
@@ -144,6 +159,19 @@ ShellRoot {
       }
     }
   ]
+  function plainText(item) {
+    if (!item)
+      return null;
+    if ("getText" in item && "textFormat" in item)
+      // Paragraph/line separators become newlines (the report is one log line).
+      return item.getText(0, item.length).replace(/[\u2028\u2029]/g, "\n");
+    for (var i = 0; item.children && i < item.children.length; ++i) {
+      var found = plainText(item.children[i]);
+      if (found !== null)
+        return found;
+    }
+    return null;
+  }
   function imageItems(item) {
     var found = [];
     var walk = node => {
@@ -385,6 +413,8 @@ ShellRoot {
                                                            error: row.error,
                                                            images: row.object ? root.imageItems(row.object) : []
                                                          })),
+                    terminal: root.plainText(root.created.find(row => row.name === "hermes-terminal").object),
+                    terminalLines: root.terminalLines,
                     videos: {
                       mpvReady: mpvSettings.thumbCacheReady,
                       vwSettled: root.vwThumbs ? root.vwThumbs.settled : false,
