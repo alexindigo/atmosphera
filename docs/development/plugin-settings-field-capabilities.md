@@ -92,6 +92,17 @@ Each runtime API also owns a stable read-only `settingsContext`. Its identity
 is the captured API, not an equal configuration value or a renderer. Consumers
 read copied effective values and check `current()` before publishing results.
 Retired APIs cannot become a replacement placement by recapturing an index.
+Both retained callbacks are fenced by the API's captured JavaScript lifetime,
+which is retired on QObject destruction. After destruction `current()` explicitly
+returns `false` and `settingsView` returns a frozen empty read projection; neither
+invokes a callback through the dead QObject or adopts a replacement API. A caller
+must treat that refusal as an unavailable action, not as missing defaults to use.
+
+`plugin-settings-context-lifetime-regression.py` captures both actual native API
+scopes, destroys their QObjects and independently calls both retained callbacks.
+It checks explicit refusal, immutable empty reads and independent replacement
+identities without publishing. Original controls distinguish placement callback
+exceptions from the shared callback's missing Boolean refusal result.
 
 `plugin-settings-shared-native-regression.py` exercises the shared adapter and
 runtime context without a generic page: native Set, staged Reset, Discard,
