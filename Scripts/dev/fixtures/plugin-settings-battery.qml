@@ -308,9 +308,12 @@ ShellRoot {
     else if (phase === "failed" && receipt && !popup.busy) {
       check(receipt.status === "failed" && receipt.refreshState !== "current", "real IO refusal");
       check(popup.settingsPage === failedPage && popup._editor === failedEditor, "failed editor/input retained");
-      // Native shared failure retains the unconfirmed desired API value;
-      // inherited placement views and physical bytes remain persisted.
-      check(ready(scope === "shared" ? ["BAT1", "BAT0", "BAT0", "BAT0"] : ["BAT0", "BAT0", "BAT0", "BAT0"], scope === "shared" ? [60, 80, 80, 80] : [80, 80, 80, 80]), "failed page cannot restore a physical threshold");
+      phase = "failed-converge";
+    } else if (phase === "failed-converge" && ready(scope === "shared" ? ["BAT1", "BAT1", "BAT0", "BAT1"] : ["BAT0", "BAT0", "BAT0", "BAT0"], scope === "shared" ? [60, 60, 80, 60] : [80, 80, 80, 80])) {
+      // A failed shared Apply keeps the unconfirmed shared value, and inherited
+      // placements equal it; the overridden sibling, physical thresholds and
+      // files stay as persisted. A failed instance Apply changes no consumer.
+      check(popup.settingsPage === failedPage && popup._editor === failedEditor && receipt.status === "failed", "failed page cannot restore a physical threshold");
       probe("failed", "unlock");
     } else if (phase === "unlock")
       chmod("700", "retry");

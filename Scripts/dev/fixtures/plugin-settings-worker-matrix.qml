@@ -237,10 +237,10 @@ ShellRoot {
   function consumers(name, unconfirmedShared) {
     for (var i = 0; i < presentations.length; i++) {
       var row = presentations[i], cfg = values(name, i - 1), client = main.settingsConsumerFor(row.api.settingsContext);
-      // Native shared drafts may retain unconfirmed desired values after IO
-      // failure. Persisted/inherited contexts must remain at the old boundary.
-      if (unconfirmedShared && i === 0)
-        cfg[spec.field] = spec.edit;
+      // A failed shared Apply keeps the unconfirmed shared value; inherited
+      // contexts equal it, as a successful save would. Overrides stay.
+      if (unconfirmedShared)
+        cfg[spec.field] = values("edited", i - 1)[spec.field];
       if (!client || !readyClient(client, cfg))
         return false;
       // Wait for the actual view binding before comparing rendered descendants.
@@ -327,8 +327,10 @@ ShellRoot {
       check(receipt.status === "failed" && popup.settingsPage === failedPage && popup._editor === failedEditor, "IO failure retains exact page/editor");
       check(!popup.requestClose(), "failed Close refuses");
       popup.keepEditing();
-      if (consumers("initial", scope === "shared"))
-        probe("initial", "unblock");
+      phase = "failed-converge";
+    } else if (phase === "failed-converge" && consumers("initial", scope === "shared")) {
+      check(popup.saveFailed && popup.settingsPage === failedPage && popup._editor === failedEditor, "failed state retained while consumers converge");
+      probe("initial", "unblock");
     } else if (phase === "unblock")
       permission("700", "retry");
     else if (phase === "retry")
@@ -503,7 +505,7 @@ ShellRoot {
       driveOpening();
       return;
     }
-    if (["open-edit", "edit-page", "blocked", "failed", "unblock", "retry", "applied"].includes(phase)) {
+    if (["open-edit", "edit-page", "blocked", "failed", "failed-converge", "unblock", "retry", "applied"].includes(phase)) {
       driveEdit();
       return;
     }

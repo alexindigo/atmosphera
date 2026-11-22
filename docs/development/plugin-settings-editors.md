@@ -797,8 +797,9 @@ shared location; Contributions' GraphQL/error/public/compact/empty generations;
 and Arch's system/AUR/inert Flatpak results and Flatpak removal. Existing keyboard
 witnesses remain separate evidence. Every source-mode boundary compares complete
 native documents, including native omit-equal removal, and retains other contexts.
-Failed shared native IO can retain unconfirmed desired values at the shared
-owner while files and inherited consumers stay at persisted values; this is
+Failed shared native IO keeps the unconfirmed shared value at the shared owner,
+and inherited contexts equal it (unset inherits); overridden contexts and files
+stay at persisted values. The witness waits for that consistent state; it is
 never a successful receipt. No real network, account or package action is used.
 
 ## Catwalk existing-client matrix
