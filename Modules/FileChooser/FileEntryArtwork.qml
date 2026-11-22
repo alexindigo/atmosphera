@@ -1,7 +1,7 @@
 import QtQuick
-import "../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Services.Files
+import qs.Services.UI
 import qs.Widgets
 
 // One async artwork graph for grid, compact and details; off means no sources.
@@ -15,6 +15,9 @@ Item {
   property var thumbnailProvider: null
   property bool thumbnailActive: false
   property bool compact: false
+  readonly property var videoResult: videoThumbnail.item ? videoThumbnail.item.result : null
+  readonly property bool previewUnavailable: thumbnail.imageState === "unavailable" || (!!videoResult && videoResult.status === "unavailable")
+  readonly property string previewError: thumbnail.errorReason || (videoResult ? videoResult.reason || "" : "")
   opacity: descriptor.hidden ? .5 : 1
   layer.enabled: true
   readonly property var metrics: ({
@@ -28,6 +31,9 @@ Item {
                                            active: thumbnailActive,
                                            ready: videoThumbnail.active && thumbnail.status === Image.Ready,
                                            imageReady: thumbnail.status === Image.Ready,
+                                           unavailable: previewUnavailable,
+                                           errorReason: previewError,
+                                           state: thumbnail.imageState,
                                            source: String(thumbnail.source),
                                            opacity: opacity * thumbnailArtwork.opacity,
                                            reveal: thumbnailArtwork.opacity,
@@ -53,10 +59,13 @@ Item {
         duration: Style.animationFast
       }
     }
-    Image {
+    NImage {
       id: thumbnail
       anchors.fill: parent
-      source: !root.thumbnailActive ? "" : videoThumbnail.item ? videoThumbnail.item.url : (!root.directory && ["image", "animatedImage"].includes(FileTypes.previewKind(root.name)) ? PortalPaths.pathToUri(root.path).uri : "")
+      source: videoThumbnail.item ? videoThumbnail.item.url : (!root.directory && ["image", "animatedImage"].includes(FileTypes.previewKind(root.name)) ? root.path : "")
+      active: root.thumbnailActive
+      sourceRevision: String(root.modified)
+      animationIntent: "still"
       sourceSize.width: Math.ceil(root.width * root.Screen.devicePixelRatio)
       sourceSize.height: Math.ceil(root.height * root.Screen.devicePixelRatio)
       asynchronous: true
@@ -102,5 +111,24 @@ Item {
     opacity: 1 - thumbnailArtwork.opacity
     compact: root.compact
     descriptor: root.descriptor
+  }
+  AtmoIcon {
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    visible: root.previewUnavailable
+    icon: Icon.warning
+    pointSize: Math.min(Style.fontSizeM, root.width / 3)
+    color: AtmoColor.mError
+    Accessible.name: I18n.tr("widgets.file-picker.preview-unavailable")
+    Accessible.description: root.previewError
+  }
+  HoverHandler {
+    id: errorHover
+    onHoveredChanged: {
+      if (hovered && root.previewUnavailable)
+        TooltipService.show(root, I18n.tr("widgets.file-picker.preview-unavailable") + ": " + root.previewError);
+      else
+        TooltipService.hide();
+    }
   }
 }

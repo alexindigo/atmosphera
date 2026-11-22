@@ -22,6 +22,7 @@ Singleton {
   readonly property int sourceInterestCount: sourceWorker.interestCount
   readonly property int sourceRequestCount: sourceWorker.requestCount
   readonly property var sourceStatistics: sourceWorker.statistics
+  signal sourceEvent(var event)
   function acquireSource(request, callback) {
     return sourceWorker.acquire(request, callback);
   }
@@ -30,6 +31,7 @@ Singleton {
   }
   ImageWorker {
     id: sourceWorker
+    onActivity: event => root.sourceEvent(event)
   }
 
   // Cache directories

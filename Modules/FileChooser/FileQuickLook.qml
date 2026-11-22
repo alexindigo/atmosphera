@@ -213,8 +213,8 @@ ChooserFocusScope {
         Layout.preferredHeight: root.audio ? implicitHeight : -1
         active: root.opened
         sourceComponent: root.preview.status === "error" ? information : ({
-                                                                            image: stillImage,
-                                                                            animatedImage: animatedImage,
+                                                                            image: imagePreview,
+                                                                            animatedImage: imagePreview,
                                                                             video: movingImage,
                                                                             audio: sound,
                                                                             text: textPreview,
@@ -255,43 +255,32 @@ ChooserFocusScope {
     }
   }
   Component {
-    id: stillImage
+    id: imagePreview
     Item {
       readonly property string previewState: image.status === Image.Ready ? "ready" : image.status === Image.Error ? "error" : "loading"
       readonly property size decodeSize: image.sourceSize
-      Image {
+      readonly property int frame: image.currentFrame
+      readonly property int frames: image.frameCount
+      readonly property string errorReason: image.errorReason
+      NImage {
         id: image
         anchors.fill: parent
         source: root.sourceUrl
         fillMode: Image.PreserveAspectFit
         asynchronous: true
+        animationIntent: "preserve"
+        sourceRevision: root.item ? String(root.item.modified) : ""
+        playing: root.opened && Style.animationNormal > 0
         sourceSize.width: root.targetSize.width * 2
         sourceSize.height: root.targetSize.height * 2
       }
       NText {
         anchors.centerIn: parent
         visible: image.status === Image.Error
-        text: I18n.tr("widgets.file-picker.preview-unavailable")
-      }
-    }
-  }
-  Component {
-    id: animatedImage
-    Item {
-      readonly property string previewState: animation.status === Image.Ready ? "ready" : animation.status === Image.Error ? "error" : "loading"
-      readonly property int frame: animation.currentFrame
-      readonly property int frames: animation.frameCount
-      AnimatedImage {
-        id: animation
-        anchors.fill: parent
-        source: root.sourceUrl
-        fillMode: Image.PreserveAspectFit
-        playing: root.opened && Style.animationNormal > 0
-      }
-      NText {
-        anchors.centerIn: parent
-        visible: animation.status === Image.Error
-        text: I18n.tr("widgets.file-picker.preview-unavailable")
+        text: I18n.tr("widgets.file-picker.preview-unavailable") + ": " + image.errorReason
+        width: Math.min(implicitWidth, parent.width)
+        elide: Text.ElideRight
+        Accessible.description: image.errorReason
       }
     }
   }

@@ -233,14 +233,34 @@ class Cache:
         await command(argv, directory, self.animation_timeout, name='validate-gif', emit=self.emit)
         return result
 
-    async def render(self, request):
+    async def render(self, request, inspection_slots=None):
         for field in ('width', 'height'):
             if type(request.get(field)) is not int or request[field] <= 0:
                 raise ValueError('Positive physical image dimensions required')
         if request.get('fit', 'contain') not in ('contain', 'cover', 'circle') or request.get('animationIntent', 'still') not in ('still', 'preserve'):
             raise ValueError('Invalid image representation')
+        if request.get('operation') == 'video-thumbnail':
+            # The image owner admits video work into the same two slots. Keep
+            # the proven freedesktop identity and video-only seek policy.
+            result = await self.get(request['source'], request['width'])
+            if result['status'] not in ('hit', 'generated'):
+                return dict(url='', status='unavailable', code='video-preview-unavailable',
+                            reason='The video preview could not be decoded')
+            from urllib.parse import unquote, urlsplit
+            path = Path(unquote(urlsplit(result['url']).path))
+            info = validate_png(path.read_bytes(), maximum=(request['width'], request['height']))
+            return dict(result, origin='fallback', **info)
         async with prepare(request['source'], self.staging, request.get('revision', ''), self.emit) as prepared:
-            info = await self.inspect(prepared)
+            if inspection_slots is not None:
+                # Header/container parsing cannot wait behind decoders: native
+                # consumers need it to settle Ready even while both heavy slots
+                # are busy. Unknown content still shares those decoder slots.
+                info = content.known(prepared['path'])
+                if not info:
+                    async with inspection_slots:
+                        info = await self.inspect(prepared)
+            else:
+                info = await self.inspect(prepared)
             if request.get('operation') == 'inspect':
                 if not prepared['current']():
                     raise SourceError('source-changed', 'Image source changed during inspection')

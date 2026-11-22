@@ -21,8 +21,11 @@ class Worker:
         key = item.get('id', item.get('path'))
         envelope = {field: item[field] for field in ('id', 'generation', 'path', 'stamp', 'pixels', 'width', 'height', 'animationIntent') if field in item}
         try:
-            async with self.slots:
-                result = await (self.cache.render(item) if 'source' in item else self.cache.get(item['path'], item['pixels']))
+            if item.get('operation') == 'inspect' and 'source' in item:
+                result = await self.cache.render(item, inspection_slots=self.slots)
+            else:
+                async with self.slots:
+                    result = await (self.cache.render(item) if 'source' in item else self.cache.get(item['path'], item['pixels']))
             self.emit(dict(envelope, **result))
         except asyncio.CancelledError:
             self.emit(dict(event='cancelled', id=key))

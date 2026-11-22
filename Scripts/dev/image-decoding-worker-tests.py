@@ -331,6 +331,34 @@ def main():
             self.assertNotIn('2', entered)
             self.assertEqual([r['generation'] for r in emitted if r.get('status')], [0, 1])
 
+        async def test_known_metadata_is_not_starved_by_two_decoders(self):
+            gate, entered, emitted = asyncio.Event(), [], []
+            async def held_frame(path, size):
+                entered.append(str(path))
+                await gate.wait()
+                return empty_png()
+            files = [self.folder / ('Held' + str(i) + '.mp4') for i in range(2)]
+            for path in files:
+                path.write_bytes((fixtures / 'frame-0.png').read_bytes())
+            requests = [dict(path=str(path), pixels=128, stamp='held') for path in files]
+            inspect = dict(id='inspect', generation=9, source=str(fixtures / 'frame-0.png'),
+                           width=128, height=128, animationIntent='still', operation='inspect')
+            worker = Worker(self.cache, emitted.append)
+            with patch.object(self.cache, 'frame', held_frame):
+                try:
+                    worker.replace(requests)
+                    for _ in range(100):
+                        if len(entered) == 2:
+                            break
+                        await asyncio.sleep(.01)
+                    self.assertEqual(len(entered), 2)
+                    worker.replace(requests + [inspect])
+                    await asyncio.wait_for(asyncio.shield(worker.tasks['inspect']), 1)
+                    self.assertFalse(gate.is_set())
+                    self.assertTrue(any(row.get('id') == 'inspect' and row.get('status') == 'inspected' for row in emitted))
+                finally:
+                    await worker.close()
+
         async def test_video_adapter_shares_implementation_and_cache(self):
             spec = importlib.util.spec_from_file_location('video_adapter', args.source / 'Scripts/python/src/filechooser/thumbnails.py')
             adapter = importlib.util.module_from_spec(spec)

@@ -11,12 +11,12 @@ import subprocess
 import time
 
 from guest_profile import activate_profile, profile_argument, protect_owned_process
-from image_decoding_fixtures import COLORS, create_fixtures, pixel
+from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
 from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -137,6 +137,10 @@ class Run:
         if self.args.case == 'owner':
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageSource.qml',
                                                     'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml')]
+        if self.args.case == 'chooser':
+            lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
+                'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
+                'Modules/FileChooser/FileEntry.qml', 'Modules/FileChooser/FileQuickLook.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -206,6 +210,47 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def chooser(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/chooser.qml', inputs, 'chooser')
+        self.check('chooser-off-is-idle', result['initialInterests'] == 0, result['initialInterests'])
+        for row in result['tiles']:
+            width, height, pixels = read_png(output / (row['id'] + '.png'))
+            count = sum(max(abs(a - b) for a, b in zip(pixels[i:i + 4], COLORS[0])) <= 8 for i in range(0, len(pixels), 4))
+            self.check(row['id'], row['state']['imageReady'] and count > 50,
+                       dict(consumer=row, observedPixels=count, captureSize=[width, height]))
+        for row in result['failures']:
+            self.check(row['id'], row['state'].get('unavailable') and bool(row['state'].get('errorReason'))
+                       and not row['state']['imageReady'], row)
+        self.check('chooser-recognized-images-reach-preview', all(kind in ('image', 'animatedImage') for kind in result['kinds']), result['kinds'])
+        colors = [pixel(path) for path in output.glob('quicklook-*.png')]
+        self.check('chooser-quicklook-preserves-animation', result['quicklook']['previewState'] == 'ready'
+                   and result['quicklook']['frames'] == 3 and len({r['frame'] for r in result['frames']}) == 3
+                   and {tuple(p) for p in colors} == set(COLORS), dict(consumer=result['quicklook'], colors=colors, frames=result['frames']))
+        self.check('chooser-close-retires-interests', result['finalInterests'] == 0 and not result['workerRunning'], result)
+        video = inputs / 'Shared.mp4'
+        encoded = self.command(['ffmpeg', '-nostdin', '-v', 'error', '-loop', '1', '-i', str(inputs / 'frame-0.png'),
+            '-t', '1', '-c:v', 'libx264', '-threads', '1', '-pix_fmt', 'yuv420p', str(video)])
+        if encoded.returncode:
+            raise AssertionError('Independent video fixture encoding failed')
+        shim = self.work / 'picker-bin'
+        shim.mkdir()
+        probe = shim / 'ffprobe'
+        probe.write_text('#!/usr/bin/python3\nimport os,sys,time\ntime.sleep(1)\nos.execv("/usr/bin/ffprobe",["ffprobe",*sys.argv[1:]])\n')
+        probe.chmod(0o755)
+        shared, shared_output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/picker-sharing.qml',
+            inputs, 'picker-sharing', dict(PATH=str(shim) + ':' + os.environ['PATH']))
+        self.check('two-pickers-use-one-worker-request', shared['shared'] == dict(interests=2, requests=1), shared['shared'])
+        self.check('closing-one-picker-retains-other-image', shared['survivor']['ready'] and not shared['survivor']['firstUrl']
+                   and shared['survivor']['ffmpeg'] == 1 and max(abs(a-b) for a,b in zip(pixel(shared_output/'survivor.png'),COLORS[0])) <= 8, shared)
+        self.check('last-picker-close-shuts-shared-worker', shared['finalInterests'] == shared['finalRequests'] == 0
+                   and not shared['workerRunning'], shared)
         return result
 
     def owner(self):
@@ -312,6 +357,8 @@ def main():
             run.red()
         elif args.case == 'owner':
             run.owner()
+        elif args.case == 'chooser':
+            run.chooser()
         else:
             raise NotImplementedError('Required image cohort not implemented: ' + args.case)
         current = {key: source_manifest(path) for key, path in

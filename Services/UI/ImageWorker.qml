@@ -19,6 +19,7 @@ Scope {
   property bool _started: false
   property bool _armed: false
   property bool _closing: false
+  signal activity(var event)
 
   function acquire(request, callback) {
     // Canonical field order also prevents unrelated caller properties from
@@ -118,6 +119,7 @@ Scope {
       return;
     }
     var event = reply.event || reply.status;
+    activity(reply);
     var stats = Object.assign({}, _statistics);
     stats[event] = (stats[event] || 0) + 1;
     _statistics = stats;
