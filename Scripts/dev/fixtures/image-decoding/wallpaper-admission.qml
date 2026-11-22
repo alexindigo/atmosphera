@@ -23,7 +23,7 @@ ShellRoot {
   property string beforeTheme: ""
   property string immediatePath: ""
 
-  function snapshot(name) {
+  function snapshot(name, afterCapture) {
     snapshots.push({
                      name: name,
                      path: WallpaperService.getWallpaperPathForSlot(monitor, "light"),
@@ -42,6 +42,8 @@ ShellRoot {
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
+      if (afterCapture)
+        afterCapture();
     });
   }
   FloatingWindow {
@@ -52,6 +54,7 @@ ShellRoot {
     AtmoWallpaperBackground {
       id: backdrop
       screen: Quickshell.screens[0]
+      fallbackColor: "#202020"
     }
   }
   Connections {
@@ -94,30 +97,36 @@ ShellRoot {
       }
       ++root.tick;
       if (root.tick === 20) {
-        root.snapshot("valid");
-        root.beforeFavorites = JSON.stringify(Settings.data.wallpaper.favorites);
-        root.beforeTheme = JSON.stringify([Settings.data.colorSchemes.predefinedScheme, Settings.data.colorSchemes.darkMode, Settings.data.colorSchemes.useWallpaperColors, Settings.data.colorSchemes.generationMethod]);
-        WallpaperService.changeWallpaper(root.inputs + "/Corrupt.webp", root.monitor, "light");
+        root.snapshot("valid", function () {
+          root.beforeFavorites = JSON.stringify(Settings.data.wallpaper.favorites);
+          root.beforeTheme = JSON.stringify([Settings.data.colorSchemes.predefinedScheme, Settings.data.colorSchemes.darkMode, Settings.data.colorSchemes.useWallpaperColors, Settings.data.colorSchemes.generationMethod]);
+          WallpaperService.changeWallpaper(root.inputs + "/Corrupt.webp", root.monitor, "light");
+        });
       } else if (root.tick === 40) {
-        root.snapshot("invalid");
-        WallpaperService.toggleFavorite(root.inputs + "/Missing.webp", "light", root.monitor);
+        root.snapshot("invalid", function () {
+          WallpaperService.toggleFavorite(root.inputs + "/Missing.webp", "light", root.monitor);
+        });
       } else if (root.tick === 60) {
-        root.snapshot("invalid-favorite");
-        WallpaperService.changeWallpaper(root.inputs + "/frame-1.png", root.monitor, "light");
-        WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "light");
-        WallpaperService.changeWallpaper(root.inputs + "/frame-1.png", root.monitor, "light");
+        root.snapshot("invalid-favorite", function () {
+          WallpaperService.changeWallpaper(root.inputs + "/frame-1.png", root.monitor, "light");
+          WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "light");
+          WallpaperService.changeWallpaper(root.inputs + "/frame-1.png", root.monitor, "light");
+        });
       } else if (root.tick === 80) {
-        root.snapshot("latest");
-        root.cancelled = WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "light", () => root.callbacks.push("cancelled"));
-        if (root.cancelled && root.cancelled.cancel)
-          root.cancelled.cancel();
+        root.snapshot("latest", function () {
+          root.cancelled = WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "light", () => root.callbacks.push("cancelled"));
+          if (root.cancelled && root.cancelled.cancel)
+            root.cancelled.cancel();
+        });
       } else if (root.tick === 100) {
-        root.snapshot("cancelled");
-        WallpaperService.changeWallpaper(root.inputs + "/frame-0.png", "other-monitor", "light");
-        WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "dark");
+        root.snapshot("cancelled", function () {
+          WallpaperService.changeWallpaper(root.inputs + "/frame-0.png", "other-monitor", "light");
+          WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "dark");
+        });
       } else if (root.tick === 120) {
-        root.snapshot("independent");
-        WallpaperService.toggleFavorite(root.inputs + "/Still.webp", "light", root.monitor);
+        root.snapshot("independent", function () {
+          WallpaperService.toggleFavorite(root.inputs + "/Still.webp", "light", root.monitor);
+        });
       } else if (root.tick === 140) {
         root.snapshot("valid-favorite");
       } else if (root.tick >= 141 && !root.solidRequested && !root.pending) {
@@ -125,8 +134,9 @@ ShellRoot {
         WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "light");
         WallpaperService.setSolidColor("#123456");
       } else if (root.tick === 160) {
-        root.snapshot("solid");
-        backdrop.requestedWallpaperPath = "";
+        root.snapshot("solid", function () {
+          backdrop.requestedWallpaperPath = "";
+        });
       } else if (root.tick >= 161 && !root.solidReasserted && !root.pending) {
         root.solidReasserted = true;
         WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor, "light");
