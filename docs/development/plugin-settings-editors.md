@@ -519,6 +519,25 @@ or external application is invoked. Finite parsed mappings and runtime wrong-cli
 hour-child, range and retirement controls complement that proof. Broad visual and
 final paired acceptance remain separate gates.
 
+## Selected Bongo input and animation policy
+
+SlowBongo retains one Main-owned Spectrum registration and one input observer per
+demanded device string. Main caches one animation client per captured runtime
+context, shared by all its Bars. Input dispatch filters against that client's
+current source demand; geometry, colors, modes and typed idle/waiting timers use
+its selected settings. Last-demand retirement fences input/check/retry work and
+stops both processes. Client retirement stops pending animation timers.
+The original common pause action remains common and is explained in instance
+Settings. The legacy inputDevice leaf remains a Settings-only display fallback;
+the runtime still selects inputDevices, without inventing a legacy consumer.
+
+The Bongo native regression joins actual controls and complete native documents
+to actual Bar child font/color, with nonpublishing cold readers. Its individual
+lifetime proof covers common-source/view sharing, source replacement, real inert
+input dispatch, audio/MPRIS projection, shared pause and pending retry/check
+retirement. Audio, input enumeration and evtest are explicit inert collaborators,
+not real device/player observation or broad visual/final acceptance.
+
 ## Captured IPC sessions without placed entries
 
 Dmenu is the reviewed no-instance IPC/session case: its manifest supplies only
