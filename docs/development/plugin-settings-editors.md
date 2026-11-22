@@ -759,6 +759,24 @@ and notification collaborators prove call policy, not physical audio playback.
 Common path-keyed audio/notice services are not per-instance devices. No timer
 state store/migration or broad visual/final paired acceptance is implied.
 
+## Catwalk existing-client matrix
+
+Catwalk's broader matrix extends its original selected-instance witness. Both
+page scopes exercise both real fields, Discard, native permission failure and
+same-editor Retry, signal-before-callback, staged field Reset, base propagation,
+overridden sibling/inherited placement independence and stale-editor retention.
+Every boundary has complete independent shared/placement documents. Separate
+cold engines preserve configuration hashes; actual native list removal retires
+the exact client and both views without retargeting the shifted sibling.
+
+The matrix observes actual Bar/Desktop Image sources, running/idle policy,
+background choice and CPU Text with one controlled common CPU sample. The
+two-field checker maps every entry and keeps Panel's shared physical statistics
+separate from instance configuration. Wrong Bar/Desktop readers and a wrong
+Image child must reject; parsed controls cover both intents and factory/lifetime
+ownership. This is controlled binding/animation-policy proof, not physical CPU
+sampling, screenshot/pixel fidelity or final paired acceptance.
+
 ## Selected Keybind parser generations
 
 Keybind Cheatsheet Main caches one parser/result client per captured native
