@@ -16,6 +16,7 @@ import sys
 from filechooser_regression import desktop_fixture
 from filechooser_isolation import enter, guest, profile_env
 from filechooser_profile import current_profile, workspace, exact_source, profile_argument
+from qml_probe import bootstrap_fixture
 
 
 def workload_seconds():
@@ -51,7 +52,7 @@ def main():
         (evidence / "native-baseline-FileListing.qml").write_text(text)
     (shell / ".qmlls.ini").touch()
     probe = shell / "filechooser-harness.qml"
-    probe.write_text((source / "Scripts/dev/fixtures/filechooser-harness.qml").read_text().replace('"../../../Helpers/', '"Helpers/'))
+    probe.write_text(bootstrap_fixture((source / "Scripts/dev/fixtures/filechooser-harness.qml").read_text().replace('"../../../Helpers/', '"Helpers/')))
     fixtures = runtime / "Fieldwork"
     fixtures.mkdir()
     for folder in ["Empty", "References", "Screens"]:
