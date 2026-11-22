@@ -18,6 +18,9 @@ ShellRoot {
   property int requestedAt: 0
   property string expectedPath: ""
   readonly property bool redControl: Quickshell.env("IMAGE_DESKTOP_RED") === "1"
+  // A plugin background root with the same per-screen contract (for example
+  // parallax-wallpaper) replaces the shell's own background.
+  readonly property string pluginRoot: Quickshell.env("IMAGE_DESKTOP_ROOT")
   property var snapshots: []
   property var completions: []
   property var afterCapture: null
@@ -111,9 +114,27 @@ ShellRoot {
                                                    }));
     Qt.quit();
   }
+  Component {
+    id: shellBackground
+    Desktop.Background {}
+  }
   Loader {
     id: background
-    sourceComponent: Desktop.Background {}
+    Component.onCompleted: {
+      if (root.pluginRoot)
+        setSource("file://" + root.pluginRoot, {
+                    pluginApi: {
+                      pluginSettings: {},
+                      manifest: {
+                        metadata: {
+                          defaultSettings: {}
+                        }
+                      }
+                    }
+                  });
+      else
+        sourceComponent = shellBackground;
+    }
   }
   Loader {
     id: overviewLoader
