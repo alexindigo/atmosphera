@@ -29,6 +29,9 @@ Singleton {
   function releaseSource(token) {
     sourceWorker.release(token);
   }
+  function sourceInterestSources() {
+    return sourceWorker.interestSources();
+  }
   ImageWorker {
     id: sourceWorker
     onActivity: event => root.sourceEvent(event)

@@ -65,6 +65,11 @@ Scope {
     return token;
   }
 
+  // Observation only: the source of every live interest, in token order.
+  function interestSources() {
+    return Object.values(_tokens).map(key => _entries[key].request.source);
+  }
+
   function release(token) {
     var key = _tokens[token];
     var entry = _entries[key];

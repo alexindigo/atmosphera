@@ -122,6 +122,12 @@ ShellRoot {
     collect(history, items);
     return items.every(item => item.notification.imageState === "ready" ? item.status === Image.Ready : item.notification.imageState === "unavailable" ? item.status === Image.Error : true);
   }
+  // Admission interests only. Icon-set masks shown by the popups are shared
+  // image interests too, but never a notification image admission.
+  function admissionInterests() {
+    const icons = "file://" + Quickshell.env("IMAGE_ICON_DIR") + "/";
+    return ImageCacheService.sourceInterestSources().filter(source => !source.startsWith(icons)).length;
+  }
   function observeAdmission(notification) {
     if (notification.summary === "slow-start") {
       const originalId = notification.id;
@@ -146,8 +152,8 @@ ShellRoot {
       id: id || "",
       count: NotificationService.popupModel.count,
       historyCount: NotificationService.historyModel.count,
-      interests: ImageCacheService.sourceInterestCount,
-      interestDelta: ImageCacheService.sourceInterestCount - root.interestsBeforeNotify,
+      interests: root.admissionInterests(),
+      interestDelta: root.admissionInterests() - root.interestsBeforeNotify,
       state: entry ? entry.data.imageState : "none",
       source: entry ? entry.data.originalImage : "",
       revision: entry ? entry.data.imageRevision : ""
@@ -160,7 +166,7 @@ ShellRoot {
     } else if (notification.summary === "pending-remove") {
       NotificationService.removeFromHistory(id);
     }
-    before.afterInterests = ImageCacheService.sourceInterestCount;
+    before.afterInterests = root.admissionInterests();
     before.afterEntry = !!NotificationService.popupState[id];
     root.admissions.push(before);
   }
@@ -176,7 +182,7 @@ ShellRoot {
           NotificationService.doNotDisturb = ["dnd", "no-owner", "pending-remove"].includes(root.step.name);
           Settings.data.notifications.density = root.step.name === "compact" ? "compact" : "default";
           NotificationService.maxHistory = root.step.name === "overflow-trigger" ? 1 : 30;
-          root.interestsBeforeNotify = ImageCacheService.sourceInterestCount;
+          root.interestsBeforeNotify = root.admissionInterests();
           root.step = null;
           producer.write("next\n");
         } else if (root.step.kind === "control") {
