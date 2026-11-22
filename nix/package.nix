@@ -11,7 +11,6 @@
     wlsunset
     wl-clipboard
     wlr-randr
-    imagemagick
     wget
     glib # gio trash implements the freedesktop Trash specification
     # The real logind delay-inhibitor fd needs both bindings, independently of
@@ -25,6 +24,11 @@
   qt6,
   quickshell,
   configqml,
+  dbusqml,
+  xdgiconqml,
+  pipewirespectrum,
+  niriqml,
+  mangowcqml,
   # runtime deps
   brightnessctl,
   cliphist,
@@ -33,6 +37,9 @@
   wl-clipboard,
   wlr-randr,
   imagemagick,
+  ffmpeg,
+  coreutils,
+  systemd,
   wget,
   python3,
   wayland-scanner,
@@ -68,6 +75,17 @@ let
       ]);
   };
 
+  # The image worker's decoders (ImageMagick with its WebP/HEIF delegates,
+  # FFmpeg, Python). Always on PATH, after runtimeDeps: replacing the
+  # configurable runtimeDeps cannot remove them.
+  imageDeps = [
+    imagemagick
+    ffmpeg
+    python3
+    coreutils # dispatcher path resolution and bounded shell-owner calls
+    systemd # busctl used by shell-owner discovery
+  ];
+
   giTypelibPath = lib.makeSearchPath "lib/girepository-1.0" [
     evolution-data-server
     libical
@@ -87,6 +105,11 @@ stdenvNoCC.mkDerivation {
 
   buildInputs = [
     configqml
+    dbusqml
+    xdgiconqml
+    pipewirespectrum
+    niriqml
+    mangowcqml
     qt6.qtbase
     qt6.qtmultimedia
     qt6.qtimageformats
@@ -118,7 +141,7 @@ stdenvNoCC.mkDerivation {
 
   preFixup = ''
     qtWrapperArgs+=(
-      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
+      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages ++ imageDeps)}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"
       --set-default XDG_CONFIG_DIRS /etc/xdg
@@ -126,6 +149,14 @@ stdenvNoCC.mkDerivation {
       --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
+  '';
+
+  # wrapQtAppsHook discovers ELF/Mach-O programs, not our shell dispatcher.
+  # Target the installed script at its original basename: wrapProgram's hidden
+  # rename would make the multi-call dispatcher treat it as a subcommand.
+  postFixup = ''
+    rm "$out/bin/atmosphera"
+    makeQtWrapper "$out/share/atmosphera/Scripts/bash/atmosphera" "$out/bin/atmosphera"
   '';
 
   meta = {
