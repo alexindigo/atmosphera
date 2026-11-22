@@ -530,6 +530,37 @@ To restore default behavior:
 git config --unset core.hooksPath
 ```
 
+## Idle activity and inhibitors
+
+Only real user input ends an idle activity epoch: it cancels a fade, restores
+screen power and runs resume commands for actions executed in that epoch.
+The input-only heartbeat owns this transition. Policy-aware stage/custom
+monitors only admit actions; their `resumed` notifications are not input.
+Keep Awake and foreign inhibitors prevent the next stage from starting, but
+never undo a stage or fade already started. Completed actions do not repeat
+when an inhibitor is released. Overlay cleanup does not end action lifetime.
+Keep Awake with an external locker is outside this change.
+
+Input-only detection requires ext-idle-notify-v1 version 2. The registry probe
+checks this before enabling automatic stages; version 1 is not silently used
+as an input-only fallback. Other idle toggles, timeouts and fades are unchanged.
+
+Inside VM `atmosphera-idle-resume` on `ark.home`, workspace
+`/home/tester/Projects/idle-resume`, with disk-backed TMPDIR, run:
+
+```sh
+export TMPDIR=/home/tester/Projects/idle-resume/tmp
+python3 -B Scripts/dev/idle-resume-regression.py --source "$PWD" \
+  --work /home/tester/Projects/idle-resume/fresh-run \
+  --guest-uuid 5416a021-94f6-4d85-aa7c-2e3c7f58b8c2
+```
+
+The controller answers each `READY_RESET`/`READY_INPUT` with a QMP `send-key`
+Shift event to that exact guest, then `INJECTED` on stdin. This observes real
+protocol events and DRM DPMS, not fake timers or direct idle-action calls.
+It covers foreign/own inhibition before timeout and after screen-off, inhibition
+during fade, actual input wake and paired custom resume commands.
+
 ## Cold-Load Smoke Test
 
 External lock command validation is availability-only. The launcher still owns
