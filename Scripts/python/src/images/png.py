@@ -109,13 +109,36 @@ def validate(data, maximum=None):
 
 
 def metadata(data):
-    return {content.split(b'\0', 1)[0].decode('latin-1'): content.split(b'\0', 1)[1].decode('latin-1')
-            for kind, content in png_chunks(data) if kind == b'tEXt' and b'\0' in content}
+    values = {}
+    for kind, content in png_chunks(data):
+        if kind not in (b'tEXt', b'zTXt', b'iTXt'):
+            continue
+        key, value = content.split(b'\0', 1)
+        if not 1 <= len(key) <= 79 or key.decode('latin-1') in values:
+            raise ValueError('Invalid or duplicate PNG text keyword')
+        encoding = 'latin-1'
+        if kind == b'zTXt':
+            if value[:1] != b'\0':
+                raise ValueError('Invalid PNG text compression')
+            value = zlib.decompress(value[1:])
+        elif kind == b'iTXt':
+            compressed, method = value[:2]
+            if compressed not in (0, 1) or method:
+                raise ValueError('Invalid PNG international text compression')
+            language, translated, value = value[2:].split(b'\0', 2)
+            language.decode('ascii')
+            translated.decode('utf-8')
+            value = zlib.decompress(value) if compressed else value
+            encoding = 'utf-8'
+        values[key.decode('latin-1')] = value.decode(encoding)
+    return values
 
 
 def with_metadata(data, attributes):
     parts = list(png_chunks(data))
-    return PNG + b''.join(chunk(kind, content) for kind, content in parts[:-1]) + b''.join(
+    # Replace existing attributes rather than author ambiguous duplicate keys.
+    return PNG + b''.join(chunk(kind, content) for kind, content in parts[:-1]
+        if kind not in (b'tEXt', b'zTXt', b'iTXt') or content.split(b'\0', 1)[0].decode('latin-1') not in attributes) + b''.join(
         chunk(b'tEXt', key.encode('latin-1') + b'\0' + value.encode('latin-1'))
         for key, value in attributes.items()) + chunk(b'IEND', b'')
 

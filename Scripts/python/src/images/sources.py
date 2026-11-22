@@ -35,7 +35,7 @@ def local_path(source):
 
 
 @asynccontextmanager
-async def prepare(source, root, revision='', emit=lambda event: None):
+async def prepare(source, root, revision='', emit=lambda event: None, follow_symlinks=True):
     root = Path(root)
     root.mkdir(mode=0o700, parents=True, exist_ok=True)
     # The safe operation-private basename is intentional: brackets, colon and
@@ -48,7 +48,7 @@ async def prepare(source, root, revision='', emit=lambda event: None):
         try:
             path = local_path(source)
             if path is not None:
-                fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+                fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | (0 if follow_symlinks else os.O_NOFOLLOW))
                 with os.fdopen(fd, 'rb') as stream:
                     info = os.fstat(stream.fileno())
                     if not stat.S_ISREG(info.st_mode):

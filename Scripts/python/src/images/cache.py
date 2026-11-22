@@ -8,12 +8,14 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import struct
 import sys
 import tempfile
+import zlib
 
 from . import content
 from .png import (atomic_write, bucket, cache_name, canonical_uri, empty_png,
-                  metadata, validate as validate_png, with_metadata)
+                  metadata, png_chunks, validate as validate_png, with_metadata)
 from .process import command, CommandError
 from .sources import prepare, identity, SourceError
 
@@ -65,7 +67,7 @@ class Cache:
                     and ('Thumb::Size' not in values or values['Thumb::Size'] == str(info.st_size))
                     and ('Atmo::MTimeNS' not in values or values['Atmo::MTimeNS'] == str(info.st_mtime_ns))
                     and ('Atmo::CTimeNS' not in values or values['Atmo::CTimeNS'] == str(info.st_ctime_ns)))
-        except (OSError, ValueError, UnicodeError):
+        except (OSError, ValueError, UnicodeError, zlib.error, struct.error):
             return False
 
     async def command(self, argv):
@@ -261,12 +263,81 @@ class Cache:
             Path(temporary).unlink(missing_ok=True)
         return dict(result, originalPath=str(target), originalFormat=prepared['format'], contentSha256=prepared['contentSha256'])
 
+    async def image_thumbnail(self, request):
+        """Freedesktop stills enter the same preparation/representation owner.
+
+        Foreign PNG bytes are inputs, not trusted normalized outputs. Preserve
+        their file exactly and independently decode them before Qt presentation.
+        """
+        if request.get('animationIntent', 'still') != 'still' or request.get('fit', 'contain') != 'contain':
+            raise ValueError('A freedesktop thumbnail is a contained still image')
+        async with prepare(request['source'], self.staging, request.get('revision', ''), self.emit) as original:
+            path = original['original']
+            if path is None or path.resolve().is_relative_to(self.root.resolve()):
+                # Remote/data inputs and cache files use private representations,
+                # never recursively thumbnail the thumbnail repository.
+                info = await self.inspect(original)
+                original['format'] = info['format']
+                return await self.representation(original, request, info)
+            info = path.stat()
+            uri = canonical_uri(path)
+            pixels, directory = bucket(max(request['width'], request['height']))
+            target = self.root / directory / cache_name(uri)
+            attributes = {'Thumb::URI': uri, 'Thumb::MTime': str(int(info.st_mtime)), 'Thumb::Size': str(info.st_size),
+                          'Atmo::MTimeNS': str(info.st_mtime_ns), 'Atmo::CTimeNS': str(info.st_ctime_ns),
+                          'Software': 'Atmosphera'}
+            try:
+                async with prepare(target.as_uri(), self.staging, original['contentSha256'] + request.get('revision', ''),
+                                   self.emit, follow_symlinks=False) as foreign:
+                    # Inspect the very bytes captured by the opened-file owner,
+                    # not a path read that could race with a concurrent writer.
+                    data = foreign['path'].read_bytes()
+                    parts = list(png_chunks(data))
+                    width, height, *_ = struct.unpack('!IIBBBBB', parts[0][1])
+                    values = metadata(data)
+                    if not (0 < width <= pixels and 0 < height <= pixels
+                            and all(values.get(key) == attributes[key] for key in ('Thumb::URI', 'Thumb::MTime'))
+                            and all(key not in values or values[key] == attributes[key]
+                                    for key in ('Thumb::Size', 'Atmo::MTimeNS', 'Atmo::CTimeNS'))):
+                        raise ValueError('Thumbnail does not match its readable source')
+                    current = foreign['current']
+                    foreign['current'] = lambda: original['current']() and current()
+                    foreign_info = await self.inspect(foreign)
+                    foreign['format'] = foreign_info['format']
+                    result = await self.representation(foreign, request, foreign_info)
+                    if result['status'] != 'unavailable':
+                        return dict(result, thumbnailUri=uri, thumbnailOrigin='foreign')
+            except (SourceError, CommandError, OSError, ValueError, UnicodeError, zlib.error, struct.error):
+                if not original['current']():
+                    raise SourceError('source-changed', 'Image source changed during thumbnail ingestion')
+            original_info = await self.inspect(original)
+            original['format'] = original_info['format']
+            # Standard bucket and requested-size representations share the exact
+            # same decoder, validation, capability and cancellation mechanics.
+            standard = dict(request, width=pixels, height=pixels, operation='image-thumbnail-bucket')
+            generated = await self.representation(original, standard, original_info)
+            if generated['status'] == 'unavailable':
+                return generated
+            from urllib.parse import unquote, urlsplit
+            output = Path(unquote(urlsplit(generated['url']).path))
+            if not original['current']():
+                raise SourceError('source-changed', 'Image source changed before thumbnail publication')
+            atomic_write(target, with_metadata(output.read_bytes(), attributes), self.root)
+            # Use the same prepared original for the exact requested geometry;
+            # do not infer Ready from the freedesktop filename we just wrote.
+            result = await self.representation(original, request, original_info)
+            return dict(result, thumbnailUri=uri, thumbnailOrigin='generated')
+
     async def render(self, request, inspection_slots=None):
         for field in ('width', 'height'):
             if type(request.get(field)) is not int or request[field] <= 0:
                 raise ValueError('Positive physical image dimensions required')
         if request.get('fit', 'contain') not in ('contain', 'cover', 'circle') or request.get('animationIntent', 'still') not in ('still', 'preserve'):
             raise ValueError('Invalid image representation')
+        if request.get('operation', 'render') not in ('render', 'inspect', 'retain', 'image-thumbnail', 'video-thumbnail'):
+            raise ValueError('Unknown image operation')
+        if request.get('operation') == 'image-thumbnail':
+            return await self.image_thumbnail(request)
         if request.get('operation') == 'video-thumbnail':
             # The image owner admits video work into the same two slots. Keep
             # the proven freedesktop identity and video-only seek policy.
@@ -294,43 +365,50 @@ class Cache:
                 if not prepared['current']():
                     raise SourceError('source-changed', 'Image source changed during inspection')
                 return dict(url='', status='inspected', sourceInfo=info, **info)
-            moving = request.get('animationIntent') == 'preserve' and info['animated']
-            key_data = dict(schema=SCHEMA, content=prepared['contentSha256'], stat=prepared['stat'], revision=prepared['revision'],
-                            width=request['width'], height=request['height'], fit=request.get('fit', 'contain'),
-                            representation=request.get('animationIntent', 'still'))
-            key = hashlib.sha256(json.dumps(key_data, sort_keys=True).encode()).hexdigest()
-            target = self.private / ('animated' if moving else 'still') / (key + ('.gif' if moving else '.png'))
-            failure = self.private / 'fail' / (key + '.json')
-            fingerprint = capability_fingerprint()
-            if target.is_file():
-                try:
-                    output = await self.validate_output(target, prepared['directory'], moving, request)
-                    if moving and (output['frames'] != info['frames'] or iterations(output) != iterations(info) or output['delaysMs'] != info['delaysMs']):
-                        raise ValueError('Stale animation cache')
-                    if not prepared['current']():
-                        raise SourceError('source-changed', 'Image source changed before publication')
-                except (ValueError, OSError, CommandError):
-                    pass
-                else:
-                    return self.retain_original(prepared, request,
-                        dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output))
-            if failure.is_file() and not request.get('retry'):
-                try:
-                    negative = json.loads(failure.read_text())
-                    if negative['capability'] == fingerprint:
-                        return dict(url='', status='unavailable', code=negative['code'], reason=negative['reason'])
-                except (OSError, ValueError, KeyError):
-                    pass
+            return await self.representation(prepared, request, info)
+
+    async def representation(self, prepared, request, info):
+        moving = request.get('animationIntent') == 'preserve' and info['animated']
+        key_data = dict(schema=SCHEMA, content=prepared['contentSha256'], stat=prepared['stat'], revision=prepared['revision'],
+                        width=request['width'], height=request['height'], fit=request.get('fit', 'contain'),
+                        representation=request.get('animationIntent', 'still'))
+        if request.get('operation', '').startswith('image-thumbnail'):
+            key_data['purpose'] = request['operation']
+        key = hashlib.sha256(json.dumps(key_data, sort_keys=True).encode()).hexdigest()
+        target = self.private / ('animated' if moving else 'still') / (key + ('.gif' if moving else '.png'))
+        failure = self.private / 'fail' / (key + '.json')
+        fingerprint = capability_fingerprint()
+        if target.is_file():
             try:
-                output_path, output, decoder = await self.decode(prepared, request, info)
-            except SourceError as error:
-                if error.code != 'source-changed':
-                    atomic_write(failure, json.dumps(dict(capability=fingerprint, code=error.code, reason=str(error))).encode(), self.root)
-                raise
+                output = await self.validate_output(target, prepared['directory'], moving, request)
+                if moving and (output['frames'] != info['frames'] or iterations(output) != iterations(info) or output['delaysMs'] != info['delaysMs']):
+                    raise ValueError('Stale animation cache')
+                if not prepared['current']():
+                    raise SourceError('source-changed', 'Image source changed before publication')
+            except (ValueError, OSError, CommandError):
+                pass
+            else:
+                return self.retain_original(prepared, request,
+                    dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output))
+        if failure.is_file() and not request.get('retry'):
+            try:
+                negative = json.loads(failure.read_text())
+                if negative['capability'] == fingerprint:
+                    return dict(url='', status='unavailable', code=negative['code'], reason=negative['reason'])
+            except (OSError, ValueError, KeyError):
+                pass
+        try:
+            output_path, output, decoder = await self.decode(prepared, request, info)
+        except SourceError as error:
             if not prepared['current']():
-                raise SourceError('source-changed', 'Image source changed before publication')
-            atomic_write(target, output_path.read_bytes(), self.root)
-            # Retention/destination failure is not a decoder failure and must
-            # never create a shared negative representation entry.
-            return self.retain_original(prepared, request,
-                dict(url=target.as_uri(), status='generated', origin='fallback', decoder=decoder, sourceInfo=info, **output))
+                raise SourceError('source-changed', 'Image source changed during decoding') from error
+            if error.code != 'source-changed':
+                atomic_write(failure, json.dumps(dict(capability=fingerprint, code=error.code, reason=str(error))).encode(), self.root)
+            raise
+        if not prepared['current']():
+            raise SourceError('source-changed', 'Image source changed before publication')
+        atomic_write(target, output_path.read_bytes(), self.root)
+        # Retention/destination failure is not a decoder failure and must
+        # never create a shared negative representation entry.
+        return self.retain_original(prepared, request,
+            dict(url=target.as_uri(), status='generated', origin='fallback', decoder=decoder, sourceInfo=info, **output))

@@ -24,6 +24,7 @@ import threading
 from guest_profile import activate_profile, profile_argument
 from image_decoding_fixtures import COLORS, DELAYS_MS, create_fixtures, pixel, read_png
 from image_decoding_evidence import source_manifest
+from image_decoding_cache_fixtures import target as foreign_target, thumbnail as foreign_thumbnail, uri as foreign_uri
 
 
 def main():
@@ -175,6 +176,202 @@ def main():
                                + chunk(b'IDAT', zlib.compress(b'\0' + rgba)) + chunk(b'IEND', b''))
             result = await self.cache.render(dict(self.request(), source=str(source)))
             self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+
+        def thumbnail_request(self, **kwargs):
+            return dict(self.request(**kwargs), operation='image-thumbnail')
+
+        async def test_foreign_thumbnail_encodings_are_inputs_not_normalized_outputs(self):
+            source = self.folder / "foreign +!() [0] : 海岸.webp"
+            source.write_bytes((fixtures / 'Still.webp').read_bytes())
+            target = foreign_target(self.cache.root, source)
+            target.parent.mkdir(parents=True)
+            for depth, interlace, text in ((8, 0, 'tEXt'), (16, 0, 'zTXt'), (8, 1, 'iTXt')):
+                with self.subTest(depth=depth, interlace=interlace, text=text):
+                    data = foreign_thumbnail(source, depth=depth, interlace=interlace, text=text, size=False)
+                    target.write_bytes(data)
+                    result = await self.cache.render(dict(self.thumbnail_request(), source=str(source)))
+                    self.assertEqual(result['thumbnailOrigin'], 'foreign')
+                    self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[1]))
+                    self.assertEqual(target.read_bytes(), data)
+                    self.assertEqual(result['thumbnailUri'], foreign_uri(source))
+            normal = await self.cache.render(dict(self.request(), source=str(source)))
+            self.assertEqual(pixel(Path(normal['url'].removeprefix('file://'))), list(COLORS[0]))
+
+        async def test_thumbnail_buckets_hits_corruption_and_metadata_repair(self):
+            from images.png import metadata, png_chunks
+            source = self.folder / 'source.webp'
+            source.write_bytes((fixtures / 'Motion.webp').read_bytes())
+            for size, directory in ((64, 'normal'), (144, 'large'), (300, 'x-large'), (700, 'xx-large')):
+                result = await self.cache.render(dict(self.thumbnail_request(), source=str(source), width=size, height=size))
+                target = foreign_target(self.cache.root, source, directory)
+                self.assertTrue(target.is_file())
+                self.assertEqual(metadata(target.read_bytes())['Thumb::URI'], foreign_uri(source))
+                self.assertEqual(next(data for kind, data in png_chunks(target.read_bytes()) if kind == b'IHDR')[8:], bytes([8, 6, 0, 0, 0]))
+                self.assertEqual(result['frames'], 1)
+                self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+                again = await self.cache.render(dict(self.thumbnail_request(), source=str(source), width=size, height=size))
+                self.assertEqual(again['thumbnailOrigin'], 'foreign')
+            target = foreign_target(self.cache.root, source)
+            for data in (b'broken PNG', foreign_thumbnail(source, changes={'Thumb::URI': 'file:///wrong'}),
+                         foreign_thumbnail(source, changes={'Thumb::Size': '1'})):
+                target.write_bytes(data)
+                result = await self.cache.render(dict(self.thumbnail_request(), source=str(source)))
+                self.assertEqual(result['thumbnailOrigin'], 'generated')
+                self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+            moving = await self.cache.render(dict(self.request(), source=str(source), animationIntent='preserve'))
+            self.assertEqual(moving['frames'], 3)
+            self.assertTrue(moving['url'].endswith('.gif'))
+
+        async def test_thumbnail_source_ns_ctime_backdated_and_open_identity(self):
+            source = self.folder / 'replaced.webp'
+            source.write_bytes((fixtures / 'frame-0.png').read_bytes())
+            request = dict(self.thumbnail_request(), source=str(source))
+            await self.cache.render(request)
+            original_time = source.stat().st_mtime_ns
+            for delta, frame in ((1, 1), (-100000000000, 2), (0, 0)):
+                source.write_bytes((fixtures / f'frame-{frame}.png').read_bytes())
+                os.utime(source, ns=(original_time + delta, original_time + delta))
+                result = await self.cache.render(request)
+                self.assertEqual(result['thumbnailOrigin'], 'generated')
+                self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[frame]))
+            target = foreign_target(self.cache.root, source)
+            target.write_bytes(foreign_thumbnail(source))
+            decode = self.cache.decode
+            async def changing(prepared, spec, info):
+                source.write_bytes((fixtures / 'frame-1.png').read_bytes())
+                return await decode(prepared, spec, info)
+            with patch.object(self.cache, 'decode', changing), self.assertRaises(SourceError) as raised:
+                await self.cache.render(dict(request, width=65, height=65))
+            self.assertEqual(raised.exception.code, 'source-changed')
+
+        async def test_thumbnail_full_pixel_validation_repairs_foreign_hit(self):
+            source = self.folder / 'source.webp'
+            source.write_bytes((fixtures / 'Still.webp').read_bytes())
+            target = foreign_target(self.cache.root, source)
+            target.parent.mkdir(parents=True)
+            data = foreign_thumbnail(source)
+            # Correct PNG chunks/CRCs and metadata, invalid compressed pixels.
+            from images.png import png_chunks
+            target.write_bytes(PNG + b''.join(chunk(kind, b'invalid deflate' if kind == b'IDAT' else value)
+                                             for kind, value in png_chunks(data)))
+            result = await self.cache.render(dict(self.thumbnail_request(), source=str(source)))
+            self.assertEqual(result['thumbnailOrigin'], 'generated')
+            self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+            self.assertEqual(validate(target.read_bytes())['format'], 'png')
+
+        async def test_thumbnail_cancellation_and_unknown_operations_do_not_publish(self):
+            async def held(*_args):
+                await asyncio.sleep(30)
+            with patch.object(self.cache, 'decode', held):
+                task = asyncio.create_task(self.cache.render(self.thumbnail_request()))
+                await asyncio.sleep(.1)
+                task.cancel()
+                with self.assertRaises(asyncio.CancelledError):
+                    await task
+            self.assertEqual(list(self.cache.root.glob('normal/*.png')), [])
+            self.assertEqual(list((self.cache.private / 'fail').glob('*.json')), [])
+            with self.assertRaises(ValueError):
+                await self.cache.render(self.request(operation='accidental-new-operation'))
+
+        async def test_thumbnail_negative_capability_and_explicit_retry(self):
+            request = self.thumbnail_request()
+            async def fail(*_args):
+                raise SourceError('decode-unavailable', 'Controlled unavailable delegate')
+            with patch.object(self.cache, 'decode', fail):
+                with self.assertRaises(SourceError):
+                    await self.cache.render(request)
+            with patch.object(self.cache, 'decode', fail):
+                result = await self.cache.render(request)
+                self.assertEqual(result['status'], 'unavailable')
+            retried = await self.cache.render(dict(request, retry=True))
+            self.assertEqual(retried['thumbnailOrigin'], 'generated')
+            fresh_cache = Cache(self.cache.root, 'tests')
+            restarted = await fresh_cache.render(request)
+            self.assertEqual(restarted['thumbnailOrigin'], 'foreign')
+
+        async def test_thumbnail_unreadable_original_never_uses_or_writes_cache(self):
+            source = self.folder / 'unreadable.webp'
+            source.write_bytes((fixtures / 'Still.webp').read_bytes())
+            target = foreign_target(self.cache.root, source)
+            target.parent.mkdir(parents=True)
+            data = foreign_thumbnail(source)
+            target.write_bytes(data)
+            source.chmod(0)
+            try:
+                with self.assertRaises(SourceError) as raised:
+                    await self.cache.render(dict(self.thumbnail_request(), source=str(source)))
+                self.assertEqual(raised.exception.code, 'unreadable')
+                self.assertEqual(target.read_bytes(), data)
+                self.assertEqual(list((self.cache.private / 'fail').glob('*.json')), [])
+            finally:
+                source.chmod(0o600)
+
+        async def test_thumbnail_foreign_symlink_is_replaced_not_followed(self):
+            source = self.folder / 'source.webp'
+            source.write_bytes((fixtures / 'Still.webp').read_bytes())
+            outside = self.folder / 'untouched.png'
+            data = foreign_thumbnail(source)
+            outside.write_bytes(data)
+            target = foreign_target(self.cache.root, source)
+            target.parent.mkdir(parents=True)
+            target.symlink_to(outside)
+            result = await self.cache.render(dict(self.thumbnail_request(), source=str(source)))
+            self.assertEqual(result['thumbnailOrigin'], 'generated')
+            self.assertEqual(outside.read_bytes(), data)
+            self.assertFalse(target.is_symlink())
+
+        async def test_thumbnail_independent_processes_publish_complete_freedesktop_png(self):
+            workers, identities, replies = [], [], []
+            cache = self.folder / 'shared/thumbnails'
+            source = fixtures / 'Motion.webp'
+            target = foreign_target(cache, source)
+            async def receive(process):
+                while True:
+                    row = json.loads(await asyncio.wait_for(process.stdout.readline(), 8))
+                    replies.append(row)
+                    if row.get('event') == 'command-result':
+                        identities.append({key: row['child'][key] for key in ('pid', 'start', 'uid')})
+                    if row.get('status'):
+                        return row
+            try:
+                for number in range(2):
+                    process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source / 'Scripts/python/image-worker.py'),
+                        stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                        env=dict(os.environ, XDG_CACHE_HOME=str(cache.parent)))
+                    workers.append(process)
+                    identities.append(self.process_identity(process.pid))
+                    self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
+                    process.stdin.write((json.dumps([dict(self.thumbnail_request(), source=str(source),
+                                                          id=str(number), generation=number)]) + '\n').encode())
+                    await process.stdin.drain()
+                pending = [asyncio.create_task(receive(process)) for process in workers]
+                observations = []
+                while not all(task.done() for task in pending):
+                    if target.exists():
+                        data = target.read_bytes()
+                        validate(data)
+                        observations.append(hashlib.sha256(data).hexdigest())
+                    await asyncio.sleep(.001)
+                results = await asyncio.gather(*pending)
+                for result in results:
+                    self.assertIn(result['status'], ('generated', 'hit'))
+                    self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+                self.assertEqual(pixel(target), list(COLORS[0]))
+                observations.append(hashlib.sha256(target.read_bytes()).hexdigest())
+                self.assertEqual(set(observations), {hashlib.sha256(target.read_bytes()).hexdigest()})
+                for process in workers:
+                    process.stdin.close()
+                    await asyncio.wait_for(process.wait(), 5)
+                    self.assertEqual(process.returncode, 0, (await process.stderr.read()).decode())
+                self.assert_processes_retired(identities)
+                self.assertEqual(list(cache.rglob('.atmosphera-*')), [])
+                self.assertEqual(list((cache / 'atmosphera-representations-v1/staging').iterdir()), [])
+                self.events.append(dict(replies=replies, completeObservations=len(observations)))
+            finally:
+                for process in workers:
+                    if process.returncode is None:
+                        process.kill()
+                        await process.wait()
 
         async def test_finite_animation_loop_semantics(self):
             for extension in ('webp', 'gif'):

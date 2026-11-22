@@ -66,6 +66,7 @@ Item {
       active: root.thumbnailActive
       sourceRevision: String(root.modified)
       animationIntent: "still"
+      thumbnail: !videoThumbnail.active
       sourceSize.width: Math.ceil(root.width * root.Screen.devicePixelRatio)
       sourceSize.height: Math.ceil(root.height * root.Screen.devicePixelRatio)
       asynchronous: true

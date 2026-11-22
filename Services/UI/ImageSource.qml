@@ -14,6 +14,7 @@ Scope {
   property string fit: "contain"
   property string animationIntent: "still"
   property bool normalize: false
+  property bool thumbnail: false
   readonly property string state: _state
   readonly property int generation: _generation
   readonly property var candidate: _candidate
@@ -97,7 +98,7 @@ Scope {
     _state = "loading";
     _candidate = null;
     _native = null;
-    _subscribe("render", function (reply) {
+    _subscribe(thumbnail ? "image-thumbnail" : "render", function (reply) {
       if (reply.status === "unavailable") {
         root._unavailable(reply.code, reply.reason);
         return;
@@ -183,7 +184,7 @@ Scope {
       url = normalized.uri;
     }
     _offer(url, "native", false);
-    if (normalize && !source.startsWith("image://")) {
+    if ((normalize || thumbnail) && !source.startsWith("image://")) {
       _fallback();
     } else if (!source.startsWith("image://")) {
       _subscribe("inspect", function (reply) {
@@ -205,6 +206,7 @@ Scope {
   onFitChanged: _schedule()
   onAnimationIntentChanged: _schedule()
   onNormalizeChanged: _schedule()
+  onThumbnailChanged: _schedule()
   Timer {
     id: begin
     interval: 0

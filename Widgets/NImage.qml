@@ -12,6 +12,7 @@ Item {
   property string sourceRevision: ""
   property string animationIntent: "still"
   property bool normalize: false
+  property bool thumbnail: false
   property bool playing: true
   property bool paused: false
   property int fillMode: Image.PreserveAspectFit
@@ -57,6 +58,7 @@ Item {
     fit: root.imageTransform
     animationIntent: root.animationIntent
     normalize: root.normalize
+    thumbnail: root.thumbnail
   }
 
   Loader {
