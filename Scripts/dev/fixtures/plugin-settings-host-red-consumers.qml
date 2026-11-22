@@ -31,6 +31,14 @@ ShellRoot {
   property int ticks: 0
   property bool manualConfirmed: false
 
+  // The persisted plugin document, read only to know the defect's last
+  // per-interaction save has landed before the driver's independent readback.
+  FileView {
+    id: persistedSettings
+    path: Settings.configDir + "settings/plugins/" + root.pluginKey + ".json"
+    blockLoading: true
+    printErrors: false
+  }
   FileView {
     id: manifestFile
     path: Settings.configDir + "plugins/" + root.pluginKey + "/manifest.json"
@@ -86,6 +94,8 @@ ShellRoot {
     }
   }
   function mark() {
+    // Qt.exit is asynchronous: leave every drive branch before it takes effect.
+    phase = "reproduced";
     console.log("RED_CONTROL " + finding + ": REPRODUCED (actual Main/" + (finding === "P048" ? "Panel" : "desktop") + ", native save, controlled endpoints)");
     Qt.exit(0);
   }
@@ -195,6 +205,14 @@ ShellRoot {
       typing.running = true;
       phase = "typed";
     } else if (phase === "typed" && !typing.running && saves > 0 && main.repo === "synthetic/beta" && !main.loading && main.issuesList[0]?.title === "result for synthetic/beta") {
+      persistedSettings.reload();
+      persistedSettings.waitForJob();
+      try {
+        if (JSON.parse(persistedSettings.text()).repo !== "synthetic/beta")
+          return;
+      } catch (error) {
+        return;
+      }
       check(dialog.visible, "per-interaction shared save occurred before Close or Apply");
       check(api.pluginSettings.repo === "synthetic/beta", "shared native owner changed");
       if (!panel)
