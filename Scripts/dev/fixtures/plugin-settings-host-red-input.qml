@@ -116,7 +116,7 @@ ShellRoot {
         typing.running = true;
         ticks = 0;
       } else {
-        accessibility.command = ["python3", "-B", Quickshell.env("PHA_A11Y_PROBE")];
+        accessibility.command = [Quickshell.env("PHA_A11Y_PYTHON"), "-B", Quickshell.env("PHA_A11Y_PROBE")];
         accessibility.running = true;
         phase = "a11y";
       }

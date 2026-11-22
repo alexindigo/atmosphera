@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Scoped plugin Settings contract witnesses. Execute only in the named guest.
 
-The registry is deliberately explicit about unimplemented cases. A partial
-characterization can never produce RED_CONTROLS or overall PASS.
+Focused witnesses run in-process. The plan's registry cases (static, nesting,
+routes, desktop-plugins, catalog, assets, lint and all) run the existing
+qualified drivers in order, each in fresh roots under its own run lock. A
+partial characterization can never produce RED_CONTROLS or overall PASS.
 """
 import argparse
+import contextlib
 import fcntl
 import hashlib
 import json
@@ -469,7 +472,12 @@ def red_navigation(args, profile):
     return result
 
 
+# The guest system interpreter carries pyatspi; the check virtualenv on PATH does not.
+A11Y_PYTHON = '/usr/bin/python3'
+
+
 def red_input(args, profile):
+    subprocess.run([A11Y_PYTHON, '-c', 'import pyatspi'], check=True)
     case, out = args.work_root / 'P169', args.output / 'P169'
     case.mkdir()
     out.mkdir()
@@ -488,6 +496,7 @@ def red_input(args, profile):
     text = run_fixture(profile, install, case, out,
                        args.source / 'Scripts/dev/fixtures/plugin-settings-host-red-input.qml',
                        extra_env=dict(QT_LINUX_ACCESSIBILITY_ALWAYS_ON='1', QT_FORCE_STDERR_LOGGING='1',
+                                      PHA_A11Y_PYTHON=A11Y_PYTHON,
                                       PHA_A11Y_PROBE=str(args.source / 'Scripts/dev/fixtures/plugin-settings-host-a11y.py'),
                                       PHA_A11Y_RESULT=str(out / 'a11y.json')))
     if 'RED_CONTROL P169: REPRODUCED' not in text or text.count('P169_KEYBOARD_NO_INTENT:') != 4:
@@ -506,6 +515,240 @@ def red_input(args, profile):
     return result
 
 
+FINAL_CASES = ('startup', 'static', 'red', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'assets', 'lint')
+CATALOG_COHORT = 16
+# Plan section 6 matrix rows -> the existing qualified drivers that observe them.
+# Each driver runs its own default (complete positive) mode in fresh roots and
+# takes the per-run workspace lock itself; controls stay in their own units.
+CASE_DRIVERS = {
+    'nesting': ('values', 'shared-fields', 'shared-native', 'lifetime', 'session', 'context-incarnation',
+                'context-lifetime', 'loader', 'chrome'),
+    'routes': ('entry-routes', 'shared-routes'),
+    'desktop-plugins': ('p001-safety', 'todo-export', 'selected-git', 'git-matrix', 'selected-air', 'selected-arch',
+                        'selected-contributions', 'selected-catwalk', 'worker-matrix', 'catwalk-matrix'),
+    'catalog': ('catalog-metadata', 'input'),
+    'assets': ('music-action',),
+}
+
+
+def generic_entries(plugins):
+    return sorted(path.parent.name for path in plugins.glob('*/manifest.json')
+                  if json.loads(path.read_text()).get('entryPoints', {}).get('settings'))
+
+
+def final_steps(args, case):
+    """Ordered (name, argv, cwd, timeout) for one registry case."""
+    dev = args.source / 'Scripts/dev'
+    out = args.output / case
+    def driver(name, *extra, timeout=1800):
+        script = dev / ('plugin-settings-' + name.split(':')[0] + '-regression.py')
+        usage = subprocess.run(['python3', '-B', str(script), '--help'], capture_output=True, text=True, cwd=args.source).stdout
+        root = name.replace(':', '-')
+        argv = ['python3', '-B', str(script), '--guest-profile', str(args.guest_profile), '--source', str(args.source)]
+        if '--plugins' in usage:  # some drivers use a reviewed synthetic page only
+            argv += ['--plugins', str(args.plugins)]
+        return (name, argv + ['--work-root', str(args.work_root / case / root), '--output', str(out / root)] + list(extra),
+                args.source, timeout)
+    steps = []
+    if case == 'static':
+        for check in sorted(dev.glob('plugin-settings-*-check.py')):
+            usage = subprocess.run(['python3', '-B', str(check), '--help'], capture_output=True, text=True, cwd=args.source).stdout
+            argv = ['python3', '-B', str(check)]
+            for option, value in (('--source', args.source), ('--plugins', args.plugins), ('--report', out / (check.stem + '.json'))):
+                if option in usage:
+                    argv += [option, str(value)]
+            if '--selftest' in usage:
+                argv.append('--selftest')
+            steps.append((check.stem, argv, args.source, 300))
+        steps.append(('consumer-inventory', ['python3', '-B', str(dev / 'plugin-settings-consumer-inventory.py'), '--plugins', str(args.plugins),
+                                             '--output', str(out / 'consumer-inventory.json'), '--inventory',
+                                             str(args.source / 'docs/development/plugin-settings-consumer-inventory.md'), '--check', '--selftest'], args.source, 300))
+        steps.append(('settings-contracts', ['python3', '-B', str(dev / 'settings-contract-check.py')], args.source, 1200))
+    elif case == 'lint':
+        steps.append(('qmllint-core', ['bash', 'Scripts/dev/qmllint.sh', 'Services/Plugins', 'Widgets/NPluginSettingsPopup.qml',
+                                       'Widgets/NPluginSettingsField.qml', 'Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml'],
+                      args.source, 600))
+        if args.baseline_source and args.baseline_plugins:
+            # The core subset above is not permission to omit other changed QML.
+            steps.append(('changed-qml', ['python3', '-B', str(dev / 'plugin-settings-changed-lint.py'), '--guest-profile', str(args.guest_profile),
+                                          '--source', str(args.source), '--plugins', str(args.plugins),
+                                          '--baseline-source', str(args.baseline_source), '--baseline-plugins', str(args.baseline_plugins),
+                                          '--work-root', str(args.work_root / case / 'changed-qml'), '--output', str(out / 'changed-qml')],
+                          args.source, 3600))
+    elif case == 'nesting':
+        steps += [driver(name) for name in CASE_DRIVERS[case]]
+        if args.baseline_source:
+            steps.append(driver('focus', '--baseline-ntoggle', str(args.baseline_source / 'Widgets/NToggle.qml')))
+    elif case == 'routes' and args.baseline_source:
+        steps += [driver(name) for name in CASE_DRIVERS[case]]
+        red_log = args.output / 'red/G81.generic/runtime.log'
+        for presentation in ('window', 'attached', 'centered'):
+            steps.append(driver('navigation:' + presentation, '--baseline-source', str(args.baseline_source),
+                                '--baseline-log', str(red_log), '--presentation', presentation))
+    elif case == 'catalog':
+        for name in CASE_DRIVERS[case]:
+            # The injector was validated in main(): a task-owned executable under the guest work root.
+            steps.append(driver(name, *(('--injector', os.environ['PHA_INPUT_INJECTOR']) if name == 'input' else ())))
+        steps.append(driver('catalog-budget', '--mode', 'ordinary'))
+        ids = generic_entries(args.plugins)
+        for index in range(0, len(ids), CATALOG_COHORT):
+            cohort = ids[index:index + CATALOG_COHORT]
+            steps.append(driver('catalog-pages:' + str(index // CATALOG_COHORT + 1), '--ids', ','.join(cohort), timeout=60 + 40 * len(cohort)))
+    elif case == 'assets':
+        steps += [driver(name) for name in CASE_DRIVERS[case]]
+        steps.append(('music-search-assets', ['python3', '-B', '-m', 'unittest', '-v', 'tests/music-search/test_download_limit.py'], args.plugins, 900))
+    elif case == 'desktop-plugins':
+        for name in CASE_DRIVERS[case]:
+            # Inherited original-widget diagnostics are characterized against the pinned baseline.
+            extra = ('--baseline-plugins', str(args.baseline_plugins)) if name == 'git-matrix' and args.baseline_plugins else ()
+            steps.append(driver(name, *extra))
+    else:
+        steps += [driver(name) for name in CASE_DRIVERS[case]]
+    return steps
+
+
+def step_leftovers(markers):
+    """Processes of this user, other than this runner, still naming a step root."""
+    found = []
+    for entry in Path('/proc').iterdir():
+        if not entry.name.isdigit() or int(entry.name) == os.getpid():
+            continue
+        try:
+            if entry.stat().st_uid != os.getuid():
+                continue
+            text = (entry / 'cmdline').read_bytes() + b'\0' + (entry / 'environ').read_bytes()
+        except OSError:
+            continue
+        if any(marker.encode() in text for marker in markers):
+            found.append(ProcessIdentity.read(int(entry.name)).record())
+    return found
+
+
+def retire_step_runtime(profile, before, keep):
+    """Preserve a finished step's Quickshell logs, then retire its generated runtime roots.
+
+    Only roots created during the step whose processes have all exited are
+    selected; each launch otherwise leaves ~700 cache entries behind.
+    """
+    created = [path for path in sorted(set(profile.runtime_base.iterdir()) - before)
+               if path.is_dir() and not path.is_symlink() and path.resolve().parent == profile.runtime_base.resolve()]
+    if not created or step_leftovers([str(path) for path in created]):
+        return
+    manifest = {}
+    for path in created:
+        for log in path.glob('quickshell/by-id/*/log.*'):
+            if log.is_file():
+                target = keep / path.name / log.relative_to(path)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(log, target)
+                manifest[str(target.relative_to(keep))] = hashlib.sha256(target.read_bytes()).hexdigest()
+                if hashlib.sha256(log.read_bytes()).hexdigest() != manifest[str(target.relative_to(keep))]:
+                    raise RuntimeError('runtime log preservation mismatch: ' + str(log))
+    for path in created:
+        shutil.rmtree(path)
+    keep.mkdir(parents=True, exist_ok=True)
+    write_json(keep / 'manifest.json', dict(retiredRoots=[str(path) for path in created], preservedLogs=manifest))
+
+
+def run_registry_case(args, profile, case, cases, record):
+    if case == 'startup':
+        cases.append(dict(startup(args, profile), case='startup'))
+        if cases[-1]['status'] == 'PASS':
+            remove_completed_installs(args.work_root / 'startup', args.output / 'startup')
+        record('RUNNING')
+        return cases[-1]['status'] == 'PASS'
+    if case == 'red':
+        sub = argparse.Namespace(**vars(args))
+        sub.work_root, sub.output = args.work_root / 'red', args.output / 'red'
+        sub.work_root.mkdir()
+        sub.output.mkdir()
+        for finding in RED_IDS:
+            handler = red_todo if finding == 'P001' else red_navigation if finding == 'G81.generic' else red_input if finding == 'P169' else None
+            result = handler(sub, profile) if handler else red_consumer(sub, profile, finding)
+            cases.append(dict(result, case='red'))
+            if result['status'] == 'REPRODUCED':
+                # This finding's receipts are complete; keep inode use to one copy.
+                remove_completed_installs(sub.work_root / finding, sub.output / finding)
+            record('RUNNING')
+        return all(c['status'] == 'REPRODUCED' for c in cases if c.get('case') == 'red')
+    (args.work_root / case).mkdir()
+    (args.output / case).mkdir()
+    ok = True
+    for name, argv, cwd, timeout in final_steps(args, case):
+        log_path = args.output / case / (name.replace(':', '-') + '.log')
+        runtime_before = set(profile.runtime_base.iterdir())
+        started = time.monotonic()
+        with log_path.open('w') as log:
+            process = subprocess.Popen(argv, cwd=cwd, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+            guard = protect_owned_process(process)
+            try:
+                code = process.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                guard.terminate()
+                code = 'timeout:' + str(process.wait(timeout=30))
+        leftovers = step_leftovers([str(args.work_root / case / name.replace(':', '-')), str(args.output / case / name.replace(':', '-'))])
+        for item in leftovers:
+            with contextlib.suppress(ProcessLookupError):
+                os.kill(item['pid'], 9)
+        status = 'PASS' if code == 0 and not leftovers else 'FAIL'
+        retire_step_runtime(profile, runtime_before, args.output / case / (name.replace(':', '-') + '-runtime-logs'))
+        if status == 'PASS' and (args.work_root / case / name.replace(':', '-')).is_dir():
+            # The driver and its cold readers have exited; keep receipts, not shell copies.
+            remove_completed_installs(args.work_root / case / name.replace(':', '-'), args.output / case / name.replace(':', '-'))
+        tail = log_path.read_text(errors='replace').strip().splitlines()[-3:]
+        cases.append(dict(id=case + '/' + name, case=case, status=status, exit=code, seconds=round(time.monotonic() - started, 3),
+                          leftovers=leftovers, tail=tail))
+        print('STEP %s/%s: %s (%ss)' % (case, name, status, cases[-1]['seconds']), flush=True)
+        record('RUNNING')
+        ok = ok and status == 'PASS'
+    return ok
+
+
+def final_main(args, profile):
+    """Ordered registry cases. Drivers take the per-run lock; this owns its own."""
+    selected = [case for case in FINAL_CASES if case != 'red' or args.baseline_source] if args.case == 'all' else [args.case]
+    with (profile.work_base / '.plugin-settings-final.lock').open('a+') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        args.work_root.mkdir(exist_ok=False)
+        args.output.mkdir(exist_ok=False)
+        start = time.monotonic()
+        cases, finished = [], {}
+        worker = ProcessIdentity.read(os.getpid()).record()
+        worker['cgroup'] = Path('/proc/self/cgroup').read_text().strip()
+        inputs = input_fingerprints(args)
+
+        def record(status):
+            done = [c for c in cases if c['status'] in ('PASS', 'REPRODUCED')]
+            data = dict(status=status, guest=profile.record(), elapsedSeconds=round(time.monotonic() - start, 3), pid=os.getpid(),
+                        worker=worker, inputs=inputs, selectedCases=selected, finishedCases=finished,
+                        remainingCases=[case for case in selected if case not in finished],
+                        completedSteps=len(done), failedSteps=[c['id'] for c in cases if c not in done], cases=cases)
+            write_json(args.output / 'status.json', data)
+            (args.output / 'interim-report.md').write_text(
+                '# Plugin Settings final runner\n\n' + status + ', elapsed ' + str(data['elapsedSeconds']) + 's, cases ' +
+                str(len(finished)) + '/' + str(len(selected)) + '\n\n' +
+                '\n'.join('- ' + c['id'] + ': ' + c['status'] + (' (' + str(c['seconds']) + 's)' if 'seconds' in c else '') for c in cases) + '\n')
+            return data
+
+        record('RUNNING')
+        for case in selected:
+            try:
+                finished[case] = 'PASS' if run_registry_case(args, profile, case, cases, record) else 'FAIL'
+            except Exception as error:
+                cases.append(dict(id=case, case=case, status='FAIL', error=str(error)))
+                finished[case] = 'FAIL'
+            print('CASE %s: %s' % (case, finished[case]), flush=True)
+            record('RUNNING')
+        status = 'PASS' if all(value == 'PASS' for value in finished.values()) else 'FAIL'
+        result = record(status)
+        write_json(args.output / 'result.json', result)
+        if status == 'PASS':
+            remove_completed_installs(args.work_root, args.output)
+        if args.case == 'all' or status != 'PASS':
+            print('PLUGIN_SETTINGS_HOST_ASSETS: ' + status, flush=True)
+        return 0 if status == 'PASS' else 2
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -513,7 +756,7 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     for name in ('baseline-source', 'baseline-plugins'):
         parser.add_argument('--' + name, type=Path)
-    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'fields', 'todo', 'input', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'all'), required=True)
+    parser.add_argument('--case', choices=('red', 'startup', 'metadata', 'fields', 'todo', 'input', 'static', 'nesting', 'routes', 'desktop-plugins', 'catalog', 'assets', 'lint', 'all'), required=True)
     parser.add_argument('--finding', choices=RED_IDS, help='one red characterization, never full-suite success')
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
@@ -529,6 +772,8 @@ def main():
         if not injector.is_absolute() or not injector.resolve().is_relative_to(profile.work_base) or not injector.is_file() or not os.access(injector, os.X_OK):
             parser.error('PHA_INPUT_INJECTOR must select a task-owned executable under the verified guest work root')
     profile.prepare_roots()
+    if args.case in FINAL_CASES[1:] + ('all',) and args.case != 'red':
+        return final_main(args, profile)
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         args.work_root.mkdir(exist_ok=False)
