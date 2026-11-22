@@ -102,6 +102,7 @@ def main():
                 savedButStaleRetention=True, dirtyCloseKeepDiscard=True, busyExclusion=True, signalBeforeCallbacks=True,
                 instanceReset=True, independentPersistedReadback=True, separateColdConsumer=True, fieldOnlyRoleAdoption=True,
                 nativeHideRetainsHeldPage=True, directoryQuarantinePreserved=True, untrackedBufferCloseConfirmation=True,
+                appliedPreviewLeavesRuntime=True, newerPreviewRetained=True, failedAndStaleWritePreviewsRetained=True,
                 consolidatedFixture='plugin-settings-popup.qml'))
             runner.remove_completed_installs(case, out)
             print('PLUGIN_SETTINGS_SESSION: PASS (native persistence/receipt/close/cold; field-only page)', flush=True)

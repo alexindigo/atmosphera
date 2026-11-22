@@ -31,6 +31,18 @@ QtObject {
   property int _inputFence: 0
   property var _previewFence: null
   property var _cancelOpening: null
+  property var _observation: null
+  property var _observationRetry: null
+  readonly property var _runtimeReadOwner: currentPluginApi ? currentPluginApi.settingsReadOwner : null
+  on_RuntimeReadOwnerChanged: {
+    if (_observation && _runtimeReadOwner !== _observation.reader)
+      _observationFailed(_observation, "settings-runtime-owner");
+  }
+  readonly property bool _runtimeCurrent: !!currentPluginApi && currentPluginApi.settingsContext.current()
+  on_RuntimeCurrentChanged: {
+    if (_observation && !_runtimeCurrent)
+      _observationFailed(_observation, "settings-runtime-owner");
+  }
   property var _lifetime: ({
                              alive: true
                            })
@@ -85,6 +97,16 @@ QtObject {
         return;
       root._cancelOpening = null;
       if (result.status === "opened") {
+        if (!root._runtimeCurrent || !root._runtimeReadOwner) {
+          root._openingRefused(selected, {
+                                 status: "failed",
+                                 refreshState: "not_refreshed",
+                                 error: {
+                                   code: "settings-runtime-owner"
+                                 }
+                               });
+          return;
+        }
         var base = root.isInstance ? root.currentInstanceApi.base : root.currentPluginApi;
         var capture = selected.fieldCapture;
         var metadata = base.settingsOwner.store.settingsEditorMetadata;
@@ -195,6 +217,17 @@ QtObject {
   function applySettings() {
     if (!editor || editor.writable === false || !page || busy)
       return false;
+    // Saving already succeeded. Retry only the missing observation, without
+    // asking the page to restage input or requesting persistence a second time.
+    if (_observationRetry && !editor.dirty) {
+      busy = true;
+      pageApi.busy = true;
+      pageApi.retryObservation();
+      _observe(_observationRetry.write, _observationRetry.reset);
+      return true;
+    }
+    _observationRetry = null;
+    pageApi.beginSubmission();
     commitInputs();
     busy = true;
     try {
@@ -225,7 +258,7 @@ QtObject {
     try {
       var completed = function (result) {
         if (lifetime.alive && selected && root.editor === selected)
-          root._finish(result, reset);
+          root._observe(result, reset);
       };
       if (reset) {
         if (!fields.resetConfiguration(completed))
@@ -248,7 +281,70 @@ QtObject {
               }, reset);
     }
   }
-  function _finish(result, reset) {
+  function _observe(write, reset) {
+    if (!write || ["saved", "nothing_to_save"].indexOf(write.status) === -1 || write.refreshState !== "current") {
+      _finish(write, reset);
+      return;
+    }
+    // Applied preview revisions are no longer temporary input. Leave only this
+    // fully acknowledged preview; the editor/page and newer input stay owned.
+    // Failed/stale writers return above without changing their preview.
+    if (_preview) {
+      _preview.acknowledge(_previewFence);
+      if (!_preview.pending() && _preview.close())
+        _preview = null;
+    }
+    // Select the native reader now backing settingsView. Another session's
+    // inherited preview is not ours to close or silently bypass.
+    var pending = {
+      write: write,
+      reset: reset,
+      reader: _runtimeReadOwner
+    };
+    _observation = pending;
+    if (_preview && _preview.pending()) {
+      _observationFailed(pending, "settings-preview-pending");
+      return;
+    }
+    if (!_runtimeCurrent || !pending.reader) {
+      _observationFailed(pending, "settings-runtime-owner");
+      return;
+    }
+    var lifetime = _lifetime;
+    try {
+      pending.reader.readProjection.synchronize(write.observation, function (read) {
+        if (!lifetime.alive || root._observation !== pending)
+          return;
+        if (!root._runtimeCurrent || root._runtimeReadOwner !== pending.reader || read.status !== "observed") {
+          root._observationFailed(pending, read.error?.code || "settings-runtime-observation");
+          return;
+        }
+        root._observation = null;
+        root._observationRetry = null;
+        // The native capture has installed on this exact reader, including
+        // bindings, before this callback. Never infer that from writer signals.
+        root._finish(write, reset, read);
+      });
+    } catch (error) {
+      _observationFailed(pending, "settings-runtime-observation");
+    }
+  }
+  function _observationFailed(pending, code) {
+    if (_observation !== pending)
+      return;
+    _observation = null;
+    _observationRetry = pending;
+    _finish({
+              status: "failed",
+              refreshState: "not_refreshed",
+              error: {
+                code: code,
+                phase: "observation"
+              },
+              write: pending.write
+            }, pending.reset);
+  }
+  function _finish(result, reset, read) {
     var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";
     failed = !accepted;
     if (accepted && !fields.acknowledge(result)) {
@@ -264,11 +360,15 @@ QtObject {
     }
     if (accepted) {
       _initial = Read.freeze(editor.initialValue);
-      if (_preview)
-        _preview.acknowledge(_previewFence);
     }
     if (accepted && !reset)
       acknowledgeInputs(_inputFence);
+    // Read snapshots are native immutable facts, not field metadata or a new
+    // preference store. Keep them out of copyValue/field receipt serialization.
+    if (accepted)
+      result = Object.assign({}, result, {
+                               runtimeRead: read
+                             });
     // Preserve signal-before-callback and action exclusion through delivery.
     settingsCompleted(result);
     pageApi.complete(result);
@@ -306,6 +406,8 @@ QtObject {
   // Called after an admitted close has torn down the page. Real presentation
   // loss uses the editor's existing deferred release, not forced busy discard.
   function _releaseSelection() {
+    _observation = null;
+    _observationRetry = null;
     if (_cancelOpening) {
       _cancelOpening();
       _cancelOpening = null;

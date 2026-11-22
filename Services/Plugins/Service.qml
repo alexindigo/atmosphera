@@ -1905,6 +1905,7 @@ Singleton {
         readonly property bool settingsReady: settingsOwner !== null && !settingsOwner.closed && settingsOwner.status === "Ready"
         property var settingsPreviewOwner: null
         readonly property var settingsView: settingsPreviewOwner ? settingsPreviewOwner.values : pluginSettings
+        readonly property var settingsReadOwner: settingsPreviewOwner ? settingsPreviewOwner.readOwner : settingsHandle
         property var _settingsContext: null
         readonly property var settingsContext: _settingsContext
         property var _contextLifetime: ({alive: true})
@@ -1998,6 +1999,9 @@ Singleton {
       return root.createPluginSettingsEditor(pluginId, api, fieldIntent === true);
     };
     api.settingsPreviewOwner = settingsPreviewFactory.createObject(api, {
+                                                                     sourceReadOwner: Qt.binding(function () {
+                                                                       return api.settingsHandle;
+                                                                     }),
                                                                      sourceValue: Qt.binding(function () {
                                                                        return api.pluginSettings;
                                                                      }),

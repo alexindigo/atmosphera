@@ -71,6 +71,7 @@ QtObject {
   readonly property string settingsError: _openError || (_placementReplaced ? "overlay-identity" : (runtime ? runtime.error : ""))
   readonly property var pluginSettings: runtime && !_placementReplaced ? runtime.values : null
   readonly property var settingsView: settingsPreviewOwner.values
+  readonly property var settingsReadOwner: settingsPreviewOwner.readOwner
   readonly property var settingsContext: Read.context(_lifetime, function () {
     var owner = root.base ? root.base.settingsOwner : null;
     return Read.values(root.settingsView, owner && !owner.closed && owner.store ? owner.store.settingsKeys : [], function (value) {
@@ -84,6 +85,7 @@ QtObject {
       return root.createSettingsEditor();
     }
     sourceValue: root._inheritedPreview && root._inheritedPreview.ready ? root._inheritedPreview.values : root.pluginSettings
+    sourceReadOwner: root._inheritedPreview && root._inheritedPreview.ready ? root._inheritedPreview : root.runtime
     currentOwner: function () {
       return root.settingsReady ? root.runtime.placementToken : null;
     }

@@ -10,6 +10,30 @@ precede callbacks. Failed/stale results retain page input and preview for Retry
 or confirmed discard. Busy excludes competing actions. See
 [editor ownership](plugin-settings-editors.md) for scope and lifetime.
 
+Writer success is not acknowledgment by a separate runtime reader. The session
+waits for ConfigQml's `readProjection.synchronize(write.observation, callback)` on
+the selected API's actual native reader before either completion signal or any
+registered save callback. Successful results include the native immutable
+`runtimeRead.snapshot`; observation does not certify external daemon activation.
+The session stays busy across both acknowledgments. Saved-but-unobserved failure
+keeps `write` and an observation-phase error for observation-only Retry, including
+the original callbacks, without another Apply or page staging. Owner/reader loss
+refuses completion instead of retargeting a replacement API.
+
+Only a fully acknowledged selected preview is left after successful Apply; newer
+pending revisions and failed/stale-write previews are retained. See
+[preview lifetime](plugin-settings-preview.md). All generic page completions use
+this common boundary, including feedback-only observers. The parsed
+`plugin-settings-completion-check.py` inventories every manifest Settings entry
+and loaded child, records each signal/callback with file and line, and rejects
+host bypass/tokenless-refresh/lifetime/preview/Retry controls. That transport
+inventory does not claim acceptance of every plugin's domain behavior.
+
+The observation contract requires ConfigQml's generic-primitives implementation,
+intended for 0.5.4. Until that release is published, qualification records the
+exact signed native candidate and loaded prefix; no unreleased tag or checksum
+is implied by the version floor.
+
 ## Historical pre-cutover save transport
 
 Until I5 replaces the plugin settings owner with configqml, `saveSettings(callback)`
