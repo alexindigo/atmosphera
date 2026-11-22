@@ -45,9 +45,11 @@ def main():
     profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--a11y-python', type=Path, default=Path('/usr/bin/python3'))
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
     profile.prepare_roots()
+    subprocess.run([str(args.a11y_python), '-c', 'import pyatspi'], check=True)
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent):
             parser.error('fresh roots must belong to the verified profile')
@@ -69,6 +71,19 @@ def main():
         shared = case / 'config/settings/plugins/pomodoro.json'
         runner.write_json(shared, BEFORE)
         pointer = build_pointer(args.source, case / 'pointer-build')
+        sockets = list(profile.session_runtime.glob('niri.' + profile.wayland_display + '.*.sock'))
+        assert len(sockets) == 1, sockets
+        outputs = json.loads(subprocess.run(['niri', 'msg', '--json', 'outputs'],
+                            env=dict(os.environ, NIRI_SOCKET=str(sockets[0])), check=True,
+                            capture_output=True, text=True).stdout)
+        active = {key: value['logical'] for key, value in outputs.items() if value['logical'] is not None}
+        screen = sorted(active)[0]
+        geometry = active[screen]
+        assert min(v['x'] for v in active.values()) == 0 and min(v['y'] for v in active.values()) == 0
+        layout = dict(x=geometry['x'], y=geometry['y'],
+                      width=max(v['x'] + v['width'] for v in active.values()),
+                      height=max(v['y'] + v['height'] for v in active.values()))
+        runner.write_json(out / 'pointer-layout.json', dict(outputs=outputs, screen=screen, layout=layout))
         fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-pomodoro-input.qml'
         inputs = {}
         for label, path in (
@@ -87,6 +102,7 @@ def main():
         ):
             inputs[label] = hashlib.sha256(path.read_bytes()).hexdigest()
         env = dict(QT_LINUX_ACCESSIBILITY_ALWAYS_ON='1', QT_FORCE_STDERR_LOGGING='1', PHA_POINTER=str(pointer),
+                   PHA_P169_SCREEN=screen, PHA_P169_LAYOUT=json.dumps(layout), PHA_A11Y_PYTHON=str(args.a11y_python),
                    PHA_A11Y_PROBE=str(args.source / 'Scripts/dev/fixtures/plugin-settings-pomodoro-a11y.py'),
                    PHA_A11Y_RESULT=str(out / 'a11y.json'))
         lint = [case / 'config/plugins/pomodoro/Settings.qml', install / 'Widgets/NToggle.qml']

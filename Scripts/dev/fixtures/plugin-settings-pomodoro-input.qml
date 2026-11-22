@@ -137,7 +137,7 @@ ShellRoot {
       check(popup._pageApi.field(keys[i]).pendingIntent === "", passes[pass] + " no pending intent before input " + keys[i]);
     }
     if (passes[pass] === "accessibility") {
-      accessibility.command = ["python3", "-B", Quickshell.env("PHA_A11Y_PROBE"), String(pass)];
+      accessibility.command = [Quickshell.env("PHA_A11Y_PYTHON"), "-B", Quickshell.env("PHA_A11Y_PROBE"), String(pass)];
       accessibility.running = true;
       phase = "a11y";
     } else {
@@ -163,8 +163,22 @@ ShellRoot {
         return;
       }
       var center = area.mapToItem(null, area.width / 2, area.height / 2);
+      var layout = JSON.parse(Quickshell.env("PHA_P169_LAYOUT"));
       console.log("P169_POINTER_TARGET: " + keys[current] + " " + Math.round(center.x) + "," + Math.round(center.y));
-      pointer.send(["move " + Math.round(center.x) + " " + Math.round(center.y) + " " + host.width + " " + host.height, "button 272 1", "button 272 0"]);
+      pointer.send(["move " + Math.round(layout.x + center.x) + " " + Math.round(layout.y + center.y) + " " + layout.width + " " + layout.height]);
+      phase = "point-hover";
+      ticks = 0;
+    } else if (phase === "point-hover" && !pointer.busy) {
+      var target = switchArea(toggles[current]);
+      check(target !== null, "hover target remains the actual toggle switch");
+      if (!target.containsMouse) {
+        check(++ticks < 60, "pointer reaches the mapped toggle switch " + keys[current]);
+        var mapped = target.mapToItem(null, target.width / 2, target.height / 2);
+        var outputs = JSON.parse(Quickshell.env("PHA_P169_LAYOUT"));
+        pointer.send(["move " + Math.round(outputs.x + mapped.x) + " " + Math.round(outputs.y + mapped.y) + " " + outputs.width + " " + outputs.height]);
+        return;
+      }
+      pointer.send(["button 272 1", "button 272 0"]);
       phase = "point-wait";
       ticks = 0;
     } else if (phase === "point-wait" && !pointer.busy) {
@@ -290,7 +304,7 @@ ShellRoot {
   }
   PopupMenuWindow {
     id: host
-    shellScreen: Quickshell.screens[0]
+    shellScreen: Quickshell.screens.find(item => item.name === Quickshell.env("PHA_P169_SCREEN"))
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
     NPluginSettingsPopup {
       id: popup
