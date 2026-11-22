@@ -561,6 +561,13 @@ protocol events and DRM DPMS, not fake timers or direct idle-action calls.
 It covers foreign/own inhibition before timeout and after screen-off, inhibition
 during fade, actual input wake and paired custom resume commands.
 
+Nix exposes Wayland's library directory through the Qt wrapper's
+`LD_LIBRARY_PATH`, including child Python probes. The guest-only
+`Scripts/dev/idle-nix-assembly-proof.py --source "$PWD" --work NEW_DIRECTORY
+--guest-uuid GUEST_UUID` evaluates the real package recipe, assembles it and
+observes the v2 probe loading that supplied library path. Dependencies are
+evaluation sentinels; this is not a full Nixpkgs/Qt build.
+
 ## Cold-Load Smoke Test
 
 External lock command validation is availability-only. The launcher still owns

@@ -35,6 +35,7 @@
   imagemagick,
   wget,
   python3,
+  wayland,
   wayland-scanner,
   # calendar support
   calendarSupport ? false,
@@ -119,6 +120,7 @@ stdenvNoCC.mkDerivation {
   preFixup = ''
     qtWrapperArgs+=(
       --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ wayland ]}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"
       --set-default XDG_CONFIG_DIRS /etc/xdg

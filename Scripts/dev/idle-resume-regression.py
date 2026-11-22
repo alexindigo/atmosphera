@@ -55,6 +55,11 @@ def main():
     def input_event(kind):
         print(kind, flush=True)
         assert sys.stdin.readline().strip() == 'INJECTED'
+    def lines(path):
+        try:
+            return path.read_text().splitlines()
+        except FileNotFoundError:
+            return []
     dpms = next(Path('/sys/class/drm').glob('card*-Virtual-1/dpms'))
     probe = ProbeFiles(args.source, args.source / 'Scripts/dev/fixtures/idle-resume-probe.qml')
     try:
@@ -64,7 +69,7 @@ def main():
             config.mkdir(parents=True)
             custom = [dict(timeout=2, command='echo idle >> ' + str(root / 'custom.txt'),
                 resumeCommand='echo resume >> ' + str(root / 'custom.txt'))]
-            idle = dict(enabled=True, screenOffTimeout=5, lockTimeout=0, suspendTimeout=0,
+            idle = dict(enabled=False, screenOffTimeout=5, lockTimeout=0, suspendTimeout=0,
                         fadeDuration=2, customCommands=json.dumps(custom),
                         resumeScreenOffCommand='echo resume >> ' + str(root / 'screen-resume.txt'))
             if case == 'stages-after':
@@ -83,31 +88,46 @@ def main():
             start(unit, probe.probe, dict(ATMOSPHERA_CONFIG_DIR=str(config),
                 ATMOSPHERA_STATE_DIR=str(root / 'state'), ATMOSPHERA_CACHE_DIR=str(root / 'cache')))
             try:
-                wait_for(lambda: 'screenOff monitor created' in journal(unit))
-                input_event('READY_RESET')
+                wait_for(lambda: 'Heartbeat monitor created' in journal(unit))
+                # Actions remain disabled until the reset event is observed,
+                # even when the external controller responds slowly.
                 wait_for(lambda: 'INPUT_ONLY_IDLE true' in journal(unit), 5)
+                resets = journal(unit).count('INPUT_ONLY_IDLE false')
+                idles = journal(unit).count('INPUT_ONLY_IDLE true')
+                input_event('READY_RESET')
+                wait_for(lambda: journal(unit).count('INPUT_ONLY_IDLE false') > resets, 5)
+                log_baseline = journal(unit)
+                run(['qs', 'ipc', '-p', str(probe.probe), 'call', 'idleRegression', 'arm'])
+                wait_for(lambda: 'screenOff monitor created' in journal(unit))
+                wait_for(lambda: journal(unit).count('INPUT_ONLY_IDLE true') > idles, 5)
+                def epoch_log():
+                    return journal(unit)[len(log_baseline):]
+                def epoch_lines(name):
+                    return lines(root / name)
                 before = 'before' in case
                 if not before:
                     if case.startswith('queued-'):
-                        wait_for(lambda: 'Queued idle stage while fade is active: lock' in journal(unit), 12)
+                        wait_for(lambda: 'Queued idle stage while fade is active: lock' in epoch_log(), 12)
                     elif case in ('foreign-fade', 'input-fade'):
-                        wait_for(lambda: 'Idle fired: screenOff' in journal(unit), 12)
+                        wait_for(lambda: 'Idle fired: screenOff' in epoch_log(), 12)
                     else:
                         wait_for(lambda: dpms.read_text().strip() == 'Off', 12)
                 raw_before = journal(unit).count('INPUT_ONLY_IDLE false')
                 if case == 'input-fade':
                     input_event('READY_INPUT')
+                    wait_for(lambda: journal(unit).count('INPUT_ONLY_IDLE false') > raw_before, 3)
+                    wait_for(lambda: 'Fade cancelled for: screenOff' in epoch_log(), 3)
                     time.sleep(3)
                     assert dpms.read_text().strip() == 'On'
-                    assert not (root / 'screen-resume.txt').exists()
-                    assert 'Executing action: screenOff' not in journal(unit)
+                    assert not epoch_lines('screen-resume.txt')
+                    assert 'Executing action: screenOff' not in epoch_log()
                     print('IDLE_RESUME: PASS ' + case, flush=True)
                     (root / 'result.json').write_text(json.dumps(dict(case=case, passed=True)))
                     continue
                 if case == 'real-input':
                     input_event('READY_INPUT')
                     wait_for(lambda: dpms.read_text().strip() == 'On', 3)
-                    wait_for(lambda: (root / 'screen-resume.txt').exists(), 3)
+                    wait_for(lambda: epoch_lines('screen-resume.txt') == ['resume'], 3)
                 else:
                     if case.startswith('own-') or case == 'queued-own':
                         run(['qs', 'ipc', '-p', str(probe.probe), 'call', 'idleRegression', 'inhibit'])
@@ -119,12 +139,11 @@ def main():
                     time.sleep(8 if before else 4)
                     assert dpms.read_text().strip() == ('On' if before else 'Off'), case
                     assert journal(unit).count('INPUT_ONLY_IDLE false') == raw_before, case
-                    assert not (root / 'screen-resume.txt').exists(), case
-                    if (root / 'custom.txt').exists():
-                        assert 'resume' not in (root / 'custom.txt').read_text()
+                    assert not epoch_lines('screen-resume.txt'), case
+                    assert 'resume' not in epoch_lines('custom.txt')
                     if case.startswith('queued-'):
-                        assert 'Executing action: lock' not in journal(unit)
-                        assert 'Executing action: suspend' not in journal(unit)
+                        assert 'Executing action: lock' not in epoch_log()
+                        assert 'Executing action: suspend' not in epoch_log()
                     if not before:
                         # Releasing policy without input must not replay completed actions.
                         if case.startswith('own-') or case == 'queued-own':
@@ -135,26 +154,24 @@ def main():
                         if not case.startswith('queued-'):
                             time.sleep(8)
                         assert dpms.read_text().strip() == 'Off'
-                        assert journal(unit).count('Executing action: screenOff') == 1
-                        assert (root / 'custom.txt').read_text().splitlines() == ['idle']
+                        assert epoch_log().count('Executing action: screenOff') == 1
+                        assert epoch_lines('custom.txt') == ['idle']
                     input_event('READY_INPUT')
                     wait_for(lambda: dpms.read_text().strip() == 'On', 3)
                 if not before:
-                    wait_for(lambda: (root / 'screen-resume.txt').exists(), 3)
-                    assert (root / 'screen-resume.txt').read_text().splitlines() == ['resume']
-                    wait_for(lambda: (root / 'custom.txt').read_text().splitlines() == ['idle', 'resume'], 3)
+                    wait_for(lambda: epoch_lines('screen-resume.txt') == ['resume'], 3)
+                    wait_for(lambda: epoch_lines('custom.txt') == ['idle', 'resume'], 3)
                     if case == 'stages-after':
                         for name in ('lock', 'suspend'):
-                            wait_for(lambda: (root / (name + '-resume.txt')).exists(), 3)
-                            assert (root / (name + '-resume.txt')).read_text().splitlines() == ['resume']
+                            wait_for(lambda: epoch_lines(name + '-resume.txt') == ['resume'], 3)
                     if case == 'real-input':
                         wait_for(lambda: dpms.read_text().strip() == 'Off', 12)
                         input_event('READY_INPUT')
                         wait_for(lambda: dpms.read_text().strip() == 'On', 3)
-                        wait_for(lambda: (root / 'screen-resume.txt').read_text().splitlines() == ['resume', 'resume'], 3)
-                        assert (root / 'custom.txt').read_text().splitlines() == ['idle', 'resume', 'idle', 'resume']
+                        wait_for(lambda: epoch_lines('screen-resume.txt') == ['resume', 'resume'], 3)
+                        wait_for(lambda: epoch_lines('custom.txt') == ['idle', 'resume', 'idle', 'resume'], 3)
                 else:
-                    assert not (root / 'custom.txt').exists(), 'suppressed command must not resume'
+                    assert not epoch_lines('custom.txt'), 'suppressed command must not resume'
                 print('IDLE_RESUME: PASS ' + case, flush=True)
                 (root / 'result.json').write_text(json.dumps(dict(case=case, passed=True)))
             finally:

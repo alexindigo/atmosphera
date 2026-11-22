@@ -26,6 +26,9 @@ ShellRoot {
   }
   IpcHandler {
     target: "idleRegression"
+    function arm() {
+      Settings.data.idle.enabled = true;
+    }
     function inhibit() {
       IdleInhibitorService.addInhibitor("regression", "Regression");
     }
