@@ -690,6 +690,31 @@ PID/start identities are checked before engine exit, not merely afterward. These
 are inert curl collaborators and synthetic credentials, not external account,
 network, physical input, broad visual or final paired acceptance.
 
+## Selected profile folders over one shared effect owner
+
+Profiles Main caches one listing/action client per captured runtime context.
+Panel and rows use that same client; Bar icon/color remain selected direct reads.
+Replacing a folder retires its old listing generation. Main retains one serial
+raw-effect owner and captures directory, backup count, wallpaper choice, feedback
+and originating native writer before IO. IPC stays explicitly plugin-level.
+Instance Settings identifies the shared shell/colors/registry/wallpaper effects;
+configuration Discard cannot roll back a profile action.
+
+The active-profile indicator is acknowledged operation state, initialized from
+the selected runtime owner and advanced only after accepted marker publication.
+A failed native save retains its desired intent without falsely advancing that
+indicator. Origin retirement refuses marker writeback and late feedback rather
+than borrowing a replacement/shared writer; already-published raw files stay
+applied. The raw helper format and existing rollback/publication policy stay intact.
+
+Profiles regressions join actual controls/native complete documents to Panel row
+Text/Bar icon and separate nonpublishing cold readers in both scopes. Actual raw
+save/apply/rename/delete, held policy/common busy, native removal, failed start,
+Main destruction and rejecting reader/child/writer/lifetime controls complement
+the existing raw filesystem and full runtime failure/cold cases. These use
+disposable files and inert effect collaborators, not the user's shell or physical
+wallpapers, broad visual or final paired acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
