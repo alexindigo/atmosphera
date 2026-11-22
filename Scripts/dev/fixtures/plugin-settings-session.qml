@@ -21,6 +21,7 @@ ShellRoot {
   property int receipts: 0
   property string phase: "opening"
   property var manifest: null
+  property var retainedPreview: null
   readonly property var placement: ({
                                       kind: "bar",
                                       list: "global",
@@ -104,6 +105,11 @@ ShellRoot {
           return;
         }
         var factory = api.createSettingsEditor;
+        var previewFactory = api.createSettingsPreview;
+        api.createSettingsPreview = function (editor) {
+          root.retainedPreview = previewFactory(editor);
+          return root.retainedPreview;
+        };
         api.createSettingsEditor = function (fieldIntent) {
           var editor = factory(fieldIntent);
           return {
@@ -205,6 +211,9 @@ ShellRoot {
       phase = "apply";
     } else if (phase === "apply" && popup.opened && page) {
       page.setLabel("saved");
+      check(page.pluginApi.previewSettings({
+                                             label: "saved"
+                                           }), "selected preview before Apply");
       hold = true;
       popup.applySettings();
       popup.applySettings();
@@ -218,21 +227,54 @@ ShellRoot {
       held = null;
       hold = false;
       complete();
+      phase = "held-settled";
+    } else if (phase === "held-settled" && !popup.busy) {
       check(!popup.busy && !popup.saveFailed && !popup.dirty && page.callbacks === 2 && page.completionOrder === "signal,callback,callback", "current receipt and signal-before-callback ordering");
+      check(!page.pluginApi.previewDirty, "fully acknowledged preview left before runtime completion");
       page.submitInput = false;
       popup.applySettings();
       phase = "noop";
     } else if (phase === "noop" && !popup.busy) {
       check(!popup.saveFailed && page.lastStatus === "nothing_to_save" && page.callbacks === 4, "actual no-op receipt acknowledged");
       page.submitInput = true;
+      page.setLabel("before-newer-preview");
+      check(page.pluginApi.previewSettings({
+                                             label: "before-newer-preview"
+                                           }), "preview before held write");
+      hold = true;
+      popup.applySettings();
+      phase = "newer-preview-held";
+    } else if (phase === "newer-preview-held" && held) {
+      // Simulate an already-retained input continuation arriving after native
+      // writer settlement but before the host receives its held acknowledgment.
+      check(retainedPreview.update({
+                                     label: "newer-preview"
+                                   }), "newer preview revision admitted by retained capability");
+      var newerComplete = held;
+      held = null;
+      hold = false;
+      newerComplete();
+      phase = "newer-preview-retained";
+    } else if (phase === "newer-preview-retained" && !popup.busy) {
+      check(popup.saveFailed && page.pluginApi.previewDirty && page.pluginApi.field("label").value === "newer-preview", "newer pending preview and field input never discarded");
+      check(page.labelText === "before-newer-preview", "unacknowledged page buffer retained");
+      page.setLabel("newer-preview");
+      popup.applySettings();
+      phase = "newer-preview-retry";
+    } else if (phase === "newer-preview-retry" && !popup.busy) {
+      check(!popup.saveFailed && !page.pluginApi.previewDirty && api.pluginSettings.label === "newer-preview", "later Apply commits retained newer input and leaves only its preview");
       fault("block", function () {
         popup.settingsPage.setLabel("failed-local");
+        check(popup.settingsPage.pluginApi.previewSettings({
+                                                             label: "failed-local"
+                                                           }), "failed-write preview staged");
         popup.applySettings();
         phase = "failure";
       });
       phase = "fault";
     } else if (phase === "failure" && !popup.busy) {
       check(popup.saveFailed && popup.visible && page.labelText === "failed-local" && page.lastStatus === "failed", "real IO failure retains input");
+      check(page.pluginApi.previewDirty, "failed-write preview untouched");
       check(!popup.requestClose() && popup.discardPending, "failed close requires discard");
       popup.keepEditing();
       fault("repair", function () {
@@ -244,10 +286,14 @@ ShellRoot {
       check(!popup.saveFailed && page.lastStatus !== "failed", "same editor retry succeeds after repair");
       stale = true;
       page.setLabel("stale-local");
+      check(page.pluginApi.previewSettings({
+                                             label: "stale-local"
+                                           }), "stale-write preview staged");
       popup.applySettings();
       phase = "stale";
     } else if (phase === "stale" && !popup.busy) {
       check(popup.saveFailed && page.labelText === "stale-local" && api.pluginSettings.label === "newer", "saved-but-stale retains local input and newer owner");
+      check(page.pluginApi.previewDirty, "stale-write preview untouched");
       popup.requestClose();
       popup.confirmDiscard();
       stale = false;

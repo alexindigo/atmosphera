@@ -14,6 +14,7 @@ QtObject {
   property bool staged: false
   property bool busy: false
   property var _callbacks: []
+  property var _observationCallbacks: []
   signal settingsCompleted(var result)
 
   readonly property string pluginId: capability.pluginId
@@ -74,9 +75,20 @@ QtObject {
       _callbacks.push(callback);
     return true;
   }
+  function beginSubmission() {
+    _observationCallbacks = [];
+  }
+  function retryObservation() {
+    _callbacks = _observationCallbacks.concat(_callbacks);
+    _observationCallbacks = [];
+  }
   function complete(result) {
     var callbacks = _callbacks;
     _callbacks = [];
+    // Observation-only Retry does not rerun the page's staging function. Its
+    // original observers must still see the retried terminal result.
+    if (result?.error?.phase === "observation")
+      _observationCallbacks = callbacks;
     if (result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current")
       staged = previewDirty;
     settingsCompleted(result);

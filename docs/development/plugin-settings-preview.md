@@ -12,11 +12,20 @@ its own preview patch, in that order. A placement preview never changes shared
 or sibling settings.
 
 The popup captures preview revisions at Apply. Current success acknowledges only
-those field revisions; newer preview input remains pending. Failed/stale results
+those field revisions; newer preview input remains pending. Failed/stale writer results
 retain the preview and local work. Discard/destruction releases only that session,
 revealing current underlying values without restoring an opening snapshot. An old
 session cannot clear a replacement session; callbacks after owner destruction are
 inert.
+
+After saved/current native Apply, the selected session leaves its preview when
+all captured revisions have been acknowledged. Those values are now committed,
+not unsaved input. It keeps the same editor/page/input and waits for ConfigQml's
+causal observation on the actual runtime reader before delivering completion.
+Newer pending preview revisions and every failed/stale-write preview remain
+untouched; no unsaved input is discarded. A saved-but-unobserved failure retains
+the write receipt for observation-only Retry, without another Apply or page
+staging. Another session's inherited preview is not closed by this handoff.
 
 ## Historical pre-cutover owner
 
