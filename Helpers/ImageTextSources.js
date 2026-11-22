@@ -435,9 +435,36 @@ function _markdownInline(text, definitions, baseUrl, add) {
   return out;
 }
 
+// Qt's StyledText keeps line breaks; its rich-text form needs <br>.
+function styledToRich(text) {
+  var out = "";
+  var i = 0;
+  while (i < text.length) {
+    if (text[i] === "<") {
+      var end = text.startsWith("<!--", i) ? text.indexOf("-->", i) + 3 : _tagEnd(text, i);
+      if (end > i) {
+        out += text.slice(i, end);
+        i = end;
+        continue;
+      }
+    }
+    out += text[i] === "\n" ? "<br>" : text[i];
+    ++i;
+  }
+  return out;
+}
+
+// Whether Qt's StyledText could load an image from this text. Conservative:
+// any <img tag counts, even inside a comment.
+function styledMayLoadImages(text) {
+  return /<img(?=[\s\/>])/i.test(String(text || ""));
+}
+
 function parse(text, format, baseUrl, slotUrl) {
   text = String(text || "");
-  return format === "markdown" ? _parseMarkdown(text, baseUrl || "", slotUrl) : _parseRich(text, baseUrl || "", slotUrl);
+  if (format === "markdown")
+    return _parseMarkdown(text, baseUrl || "", slotUrl);
+  return _parseRich(format === "styled" ? styledToRich(text) : text, baseUrl || "", slotUrl);
 }
 
 function hasImages(text, format) {

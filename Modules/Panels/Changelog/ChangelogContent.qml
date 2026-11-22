@@ -107,13 +107,12 @@ ColumnLayout {
       width: releaseScrollView.availableWidth
       spacing: Style.marginM
 
-      NText {
+      NImageText {
         Layout.fillWidth: true
         visible: releaseContent.length > 0
         text: contentRoot.colorizeHeaders(releaseContent)
         wrapMode: Text.WordWrap
-        elide: Text.ElideNone
-        textFormat: Text.MarkdownText
+        format: "markdown"
         color: AtmoColor.mOnSurface
       }
 

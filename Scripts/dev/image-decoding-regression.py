@@ -218,7 +218,8 @@ class Run:
             lint_paths += [str(shell / p) for p in ('Modules/Panels/Launcher/LauncherListDelegate.qml',
                 'Modules/Panels/Launcher/LauncherGridDelegate.qml', 'Modules/Panels/Launcher/ClipboardPreview.qml')]
         if self.args.case == 'text':
-            lint_paths += [str(shell / p) for p in ('Widgets/NImageText.qml',)]
+            lint_paths += [str(shell / p) for p in ('Widgets/NImageText.qml', 'Modules/Notification/Notification.qml',
+                'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml', 'Modules/Panels/Changelog/ChangelogContent.qml')]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1556,6 +1557,11 @@ os.execv('/usr/bin/find', ['find', *args])
                    dict(state=state, warning=count('failing', result['warningColor'])))
         self.check('replaced-source-presents-new-image', near(center('replaced-before', replaced['states'][0]), COLORS[0])
                    and near(center('replaced-after', replaced['states'][0]), COLORS[1]), replaced)
+        styled, light = result['styled'], result['styledLight']
+        self.check('styled-text-keeps-line-breaks-and-images', styled['imageCount'] == 1 and styled['states'][0]['state'] == 'ready'
+                   and 'line one\nline two' in styled['plain'], styled)
+        self.check('styled-text-without-images-is-lightweight', light['lightweight'] and light['imageCount'] == 0
+                   and light['truncated'], light)
         self.check('plain-text-acquires-no-image-work', plain['imageCount'] == 0 and plain['plain'] == 'Plain text only, no image work',
                    plain)
         return result

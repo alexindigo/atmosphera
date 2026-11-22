@@ -16,8 +16,11 @@ Item {
   id: root
 
   property string text: ""
-  // "rich" (Qt's HTML subset) or "markdown".
+  // "rich" (Qt's HTML subset), "markdown", or "styled" (Qt's StyledText:
+  // light markup, line breaks kept). Styled text without images is shown by
+  // a plain Text, with elide; with images it takes the rich-text path.
   property string format: "rich"
+  property int elide: Text.ElideNone
   // Base for relative image sources (for example a README's location).
   property string baseUrl: ""
   property color color: AtmoColor.mOnSurface
@@ -32,11 +35,13 @@ Item {
   property bool animationsPlaying: true
 
   readonly property font font: edit.font
-  readonly property string hoveredLink: edit.hoveredLink
-  readonly property real contentWidth: edit.contentWidth
-  readonly property real contentHeight: edit.contentHeight
-  readonly property int lineCount: edit.lineCount
-  readonly property bool truncated: _clipHeight >= 0 && _clipHeight < edit.contentHeight
+  // Styled text that cannot load an image: no text document, no image work.
+  readonly property bool lightweight: format === "styled" && !ImageTextSources.styledMayLoadImages(text)
+  readonly property string hoveredLink: lightweight ? light.hoveredLink : edit.hoveredLink
+  readonly property real contentWidth: lightweight ? light.contentWidth : edit.contentWidth
+  readonly property real contentHeight: lightweight ? light.contentHeight : edit.contentHeight
+  readonly property int lineCount: lightweight ? light.lineCount : edit.lineCount
+  readonly property bool truncated: lightweight ? light.truncated : _clipHeight >= 0 && _clipHeight < edit.contentHeight
   readonly property int imageCount: parsedContent.images.length
   // Per image: { state, code, reason, x, y, width, height } for observers.
   readonly property var imageStates: _states
@@ -45,15 +50,18 @@ Item {
   signal linkHovered(string link)
 
   function linkAt(x, y) {
-    return edit.linkAt(x, y);
+    return lightweight ? light.linkAt(x, y) : edit.linkAt(x, y);
   }
   // Laid-out text; each image is U+FFFC.
   function plainText() {
-    return edit.getText(0, edit.length);
+    return lightweight ? light.text : edit.getText(0, edit.length);
   }
 
   readonly property string slotUrl: "file://" + Quickshell.shellDir + "/Assets/image-text-slot.png"
-  readonly property var parsedContent: ImageTextSources.parse(text, format, baseUrl, slotUrl)
+  readonly property var parsedContent: lightweight ? ({
+                                                        text: "",
+                                                        images: []
+                                                      }) : ImageTextSources.parse(text, format, baseUrl, slotUrl)
   property string _html: ""
   property var _order: []
   property var _sizes: []
@@ -61,9 +69,9 @@ Item {
   property var _geometry: []
   property real _clipHeight: -1
 
-  implicitWidth: edit.implicitWidth
-  implicitHeight: _clipHeight >= 0 ? Math.min(_clipHeight, edit.implicitHeight) : edit.implicitHeight
-  clip: _clipHeight >= 0
+  implicitWidth: lightweight ? light.implicitWidth : edit.implicitWidth
+  implicitHeight: lightweight ? light.implicitHeight : _clipHeight >= 0 ? Math.min(_clipHeight, edit.implicitHeight) : edit.implicitHeight
+  clip: !lightweight && _clipHeight >= 0
 
   readonly property real _fontScale: {
     const scale = root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale : Settings.data.ui.fontFixedScale;
@@ -103,6 +111,12 @@ Item {
   }
 
   function _relayout() {
+    if (lightweight) {
+      _html = "";
+      _order = [];
+      _sizes = [];
+      return;
+    }
     var sizes = [];
     for (var i = 0; i < parsedContent.images.length; ++i)
       sizes.push(_size(i));
@@ -211,6 +225,7 @@ Item {
   }
   onImageMaximumWidthChanged: relayout.restart()
   onFormatChanged: relayout.restart()
+  onLightweightChanged: relayout.restart()
   onMaximumLineCountChanged: geometry.restart()
   Component.onCompleted: _relayout()
 
@@ -233,8 +248,25 @@ Item {
     readOnly: true
   }
 
+  Text {
+    id: light
+    visible: root.lightweight
+    width: root.width
+    text: root.lightweight ? root.text : ""
+    textFormat: Text.StyledText
+    color: root.color
+    wrapMode: root.wrapMode
+    elide: root.elide
+    maximumLineCount: root.maximumLineCount > 0 ? root.maximumLineCount : 2147483647
+    horizontalAlignment: root.horizontalAlignment
+    font: edit.font
+    onLinkActivated: link => root.linkActivated(link)
+    onLinkHovered: link => root.linkHovered(link)
+  }
+
   TextEdit {
     id: edit
+    visible: !root.lightweight
     width: root.width
     readOnly: true
     selectByMouse: false

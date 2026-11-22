@@ -81,6 +81,22 @@ ShellRoot {
         text: "swap <img src='" + root.inputs + (second ? "/frame-1.png" : "/Still.svg") + "' width='40' height='30'>"
       }
       NImageText {
+        id: styled
+        width: 400
+        color: "black"
+        format: "styled"
+        text: "line one\nline two <img src='" + root.inputs + "/Misleading.png' width='20' height='20'>"
+      }
+      NImageText {
+        id: styledLight
+        width: 120
+        color: "black"
+        format: "styled"
+        elide: Text.ElideRight
+        maximumLineCount: 1
+        text: "<b>light</b> styled text that is long enough to be elided"
+      }
+      NImageText {
         id: plain
         width: 400
         color: "black"
@@ -117,6 +133,11 @@ ShellRoot {
                                                          failing: root.describe(failing),
                                                          replaced: root.describe(replaced),
                                                          plain: root.describe(plain),
+                                                         styled: root.describe(styled),
+                                                         styledLight: Object.assign(root.describe(styledLight), {
+                                                                                      lightweight: styledLight.lightweight,
+                                                                                      truncated: styledLight.truncated
+                                                                                    }),
                                                          interestSources: ImageCacheService.sourceInterestSources(),
                                                          warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255), 255]
                                                        }));
