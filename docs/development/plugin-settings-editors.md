@@ -589,6 +589,29 @@ every entry/physical owner, rejecting last-renderer/shared-popup/owner/lifetime
 controls. Individual inert action/source/typed/zero cases verify retirement and
 endpoint quiescence. These are not physical or broad visual/translation proofs.
 
+## Selected clipboard projections
+
+Clipboard keeps one full cliphist observation, shared pins, timestamps and image
+cache in Main. API-keyed HistoryClient objects limit only their selected history
+projection through literal `head -n` argv, preserving the existing Real domain,
+including zero, negative and fractional inputs. Source/limit replacement and
+retirement cancel the old projection; old results cannot publish into a new one.
+Panel rows/counts, density and image presentation use the injected context.
+
+The actual delegate passes its originating context to the shared decode queue.
+Coalesced requests retain their admitted owners: one current requester can keep
+the operation alive, while all-owner retirement cancels it and prevents queued
+work or cache publication. Initial and recycled delegates use the same admission.
+Content actions remain immediate and common, explicitly described in instance
+Settings; no clipboard content or stored preferences move.
+
+The clipboard drivers join actual SpinBox intent, complete native documents and
+nonpublishing cold Panel Text/row consumers in both scopes. The finite checker
+maps all three fields, callers and eight common process owners. Individual
+typed projection, held replacement, coalesced decode and retirement cases use
+inert clipboard/shell endpoints, intercepted before original temporary-file shell
+redirections. These are not physical clipboard or broad visual/translation proofs.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
