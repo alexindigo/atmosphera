@@ -851,7 +851,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `showBarText` | `hermes-ssh-chat/BarWidget.qml:25` | Cross-file dynamic helper Local.HermesSession.setting(key) reads singleton API at HermesSession.qml:52-55; part of required session-context port. |
-Runtime-source/manifest fingerprint: `5c797791745ec52a0e5ff1cdbcc0bde5af31d264ad1e3e6e8c193882b1183ab0`.
+Runtime-source/manifest fingerprint: `409f5360c5399b31236b950e1481876bba715f786373237870a69cd98459f50d`.
 
 ## hyprland-steam-overlay
 

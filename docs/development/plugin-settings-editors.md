@@ -538,6 +538,18 @@ input dispatch, audio/MPRIS projection, shared pause and pending retry/check
 retirement. Audio, input enumeration and evtest are explicit inert collaborators,
 not real device/player observation or broad visual/final acceptance.
 
+## SSH helper lifetime, separate from selected session ownership
+
+Hermes SSH's helper lifetime is independently owned: a thread-free same-script
+child entry installs Linux PR_SET_PDEATHSIG before exec of the unchanged SSH argv,
+then checks the expected parent to close the binding race. The helper handles
+SIGTERM and controller-stdin EOF through its normal process-group stop/join path.
+Abrupt helper death still terminates its direct SSH child. The helper regression
+uses an inert SSH PTY child to prove original SIGTERM/SIGKILL reds, corrected
+signal/EOF/disconnect outcomes, race refusal and three rejecting controls. This
+does not complete Hermes's separate context-session/remembered-writer migration,
+promise to stop remote jobs, or establish a real SSH/account outcome.
+
 ## Captured IPC sessions without placed entries
 
 Dmenu is the reviewed no-instance IPC/session case: its manifest supplies only
