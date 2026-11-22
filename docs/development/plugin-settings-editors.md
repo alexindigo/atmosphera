@@ -653,8 +653,8 @@ native writes to actual inert Python argv/column-width consumers. Individual
 typed/hot-reload/restart/retirement and direct-parent SIGKILL/race cases
 supplement the eight-field parsed contract. Qualify this independent member
 with plugin-settings-niri-group-check.py --plugin niri-auto-tile --selftest.
-Screensaver remains parked for native completion qualification, not covered
-by Auto-Tile acceptance. No physical or broad visual/translation claim.
+Screensaver has its separate policy qualification below, not covered by
+Auto-Tile acceptance. No physical or broad visual/translation claim.
 
 ## Shared Sticky Notes synchronization
 
@@ -676,6 +676,25 @@ readers, field/whole configuration Reset and retained-request/source/destruction
 cases supplement the finite four-field/caller/owner contract. Original ineffective
 instance controls and late credential-replacement requests have independent reds.
 All endpoints are inert, not GitHub-account, broad visual or final catalog proof.
+
+## Selected Screensaver policy
+
+Niri Screensaver retains one external config, idle entry and hook owner. Apply
+selects the applied context; Bar/Settings launch and stop use originating applied
+commands. Smart-toggle captures them before its status probe and refuses a
+retired continuation. Config writes serialize and final policy wins. Hook
+replacement/cleanup touches only the owner's exact command, never user-authored
+hooks. Instance pages identify shared physical/session effects.
+
+The niri-policy drivers separate finite every-field/caller/owner contracts, real
+pages/native documents/nonpublishing cold readers, actual originating native
+writes and individual config/probe/retirement lifetimes. Original shared-reader
+and omitted-origin controls reject the wrong idle policy. Canonical runtime
+Quit/Toggle and concurrent hook saves require the native completion correction
+in ConfigQml acbb404; the intended released dependency floor is 0.5.4, not a
+claim that it is already released. All compositor/screensaver/reload endpoints
+are inert; these are not physical, broad visual/translation or final proofs.
+
 
 ## Verification boundaries
 
