@@ -20,7 +20,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -124,7 +124,7 @@ class Run:
             (legacy / 'thumbnails/mpvpaper').mkdir(parents=True)
             (legacy / 'large/legacy-key.png').write_bytes((inputs / 'frame-0.png').read_bytes())
             (legacy / 'thumbnails/mpvpaper/plugin.bmp').write_bytes(b'plugin-owned')
-        if self.args.case in ('icons-red', 'icons'):
+        if self.args.case in ('icons-red', 'icons', 'artwork-red', 'artwork'):
             # Real XdgIcon loose-icon lookup in the private XDG data root.
             themes = profile / 'data/icons'
             themes.mkdir(parents=True)
@@ -207,6 +207,13 @@ class Run:
         if self.args.case == 'icons':
             lint_paths += [str(shell / p) for p in ('Commons/AtmoAppIcon.qml', 'Widgets/AtmoIcon.qml',
                 'Modules/Bar/Widgets/ActiveWindow.qml')]
+        if self.args.case == 'artwork':
+            lint_paths += [str(shell / p) for p in ('Widgets/NImageIcon.qml', 'Commons/AtmoAppIcon.qml',
+                'Modules/Bar/Extras/TrayMenu.qml', 'Modules/Bar/Widgets/ControlCenter.qml', 'Modules/Bar/Widgets/Launcher.qml',
+                'Modules/Bar/Widgets/Tray.qml', 'Modules/Panels/Tray/TrayDrawerPanel.qml', 'Modules/Dock/DockContent.qml',
+                'Modules/FileChooser/FileAppOptions.qml', 'Modules/Cards/MediaCard.qml', 'Modules/Panels/Media/MediaPlayerPanel.qml',
+                'Modules/Panels/Settings/DesktopWidgets/WidgetSettings/AppShortcutSettings.qml',
+                'Modules/Panels/Settings/Tabs/Dock/AppearanceSubTab.qml', 'builtin/plugins/demo-custom-lockscreen/LockScreenView.qml')]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1422,6 +1429,48 @@ os.execv('/usr/bin/find', ['find', *args])
                    dict(consumer=glyphs['corrupt'], warning=warning('glyph-corrupt')))
         return result
 
+    def artwork(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        red = self.args.case == 'artwork-red'
+        if red and self.args.baseline_source is None:
+            raise ValueError('Artwork red requires an explicit immutable baseline source')
+        fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding' / (self.args.case + '.qml')
+        result, output = self.qt(self.args.baseline_source if red else self.args.source, fixture, inputs, self.args.case)
+        def near(actual, expected, tolerance=8):
+            return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
+        def count(name, color):
+            width, height, pixels = read_png(output / (name + '.png'))
+            return sum(near(pixels[i * 4:i * 4 + 4], color) for i in range(width * height))
+        control = dict(consumer=result['controlCenter'], center=pixel(output / 'control-center.png'),
+                       art=count('control-center', COLORS[0]))
+        options = dict(consumer=result['appOptions'], art=count('app-options', COLORS[0]))
+        if red:
+            self.check('bar-custom-icon-webp-not-presented', control['art'] == 0, control, red=True)
+            self.check('app-options-theme-icon-webp-not-presented', options['art'] == 0, options, red=True)
+            return result
+        icons = result['icons']
+        for kind in ('webp', 'svg'):
+            self.check('image-icon-' + kind + '-presented', icons[kind]['status'] == 1 and not icons[kind]['failed']
+                       and near(pixel(output / ('icon-' + kind + '.png')), COLORS[0])
+                       and count('icon-' + kind, result['warningColor']) == 0,
+                       dict(consumer=icons[kind], center=pixel(output / ('icon-' + kind + '.png'))))
+        # Quickshell's icon provider answers a missing name with its own
+        # placeholder: a provider result presented in process, not a failure.
+        self.check('image-icon-provider-presented-in-process', icons['provider']['status'] == 1 and not icons['provider']['failed'],
+                   icons['provider'])
+        for kind in ('corrupt', 'unprovided'):
+            self.check('image-icon-' + kind + '-failure-labelled', icons[kind]['status'] == 3 and icons[kind]['failed']
+                       and icons[kind]['reason'] and count('icon-' + kind, result['warningColor']) > 10,
+                       dict(consumer=icons[kind], warning=count('icon-' + kind, result['warningColor'])))
+        self.check('image-icon-provider-never-reaches-cli', icons['unprovided']['code'] == 'provider-failed', icons['unprovided'])
+        self.check('bar-custom-icon-webp-presented', near(control['center'], COLORS[0]) and control['art'] > 40, control)
+        self.check('app-options-theme-icon-webp-presented', options['art'] > 15, options)
+        return result
+
     def owner(self):
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
@@ -1532,6 +1581,8 @@ def main():
             run.wallpaper_wizard()
         elif args.case in ('icons-red', 'icons'):
             run.icons()
+        elif args.case in ('artwork-red', 'artwork'):
+            run.artwork()
         elif args.case in ('cache-clear-red', 'cache-clear'):
             run.cache_clear()
         elif args.case == 'owner':

@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services.System
@@ -92,7 +91,7 @@ AtmoIconButton {
     PanelService.showContextMenu(contextMenu, root, screen);
   }
 
-  IconImage {
+  NImageIcon {
     id: customOrDistroLogo
     anchors.centerIn: parent
     width: root.buttonSize * 0.8
@@ -106,7 +105,6 @@ AtmoIconButton {
     }
     visible: source !== ""
     smooth: true
-    asynchronous: true
     layer.enabled: (enableColorization) && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
       property color targetColor: !hovering ? iconColor : AtmoColor.mOnHover

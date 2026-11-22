@@ -4,7 +4,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Widgets
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.System
@@ -286,14 +285,13 @@ Item {
                 visible: !launcherButton.launcherUseDistroLogo
               }
 
-              IconImage {
+              NImageIcon {
                 anchors.centerIn: parent
                 width: dockRoot.iconSize * 0.8
                 height: width
                 source: launcherButton.launcherUseDistroLogo ? HostService.osLogo : ""
                 visible: source !== ""
                 smooth: true
-                asynchronous: true
                 layer.enabled: visible
                 layer.effect: ShaderEffect {
                   property color targetColor: AtmoColor.resolveColorKey(launcherButton.launcherIconColorKey)

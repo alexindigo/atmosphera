@@ -28,9 +28,9 @@ Item {
   readonly property string source: image.source
   // A found theme icon whose bytes could not be decoded, even when the
   // fallback icon is presented in its place.
-  readonly property bool failed: _primaryRejected || image.imageState === "unavailable"
-  readonly property string errorCode: image.imageState === "unavailable" ? image.errorCode : _primaryRejected ? _failure.code : ""
-  readonly property string errorReason: image.imageState === "unavailable" ? image.errorReason : _primaryRejected ? _failure.reason : ""
+  readonly property bool failed: image.failed
+  readonly property string errorCode: image.errorCode
+  readonly property string errorReason: image.errorReason
 
   readonly property string _primaryPath: primary.path.toString()
   property var _failure: ({})
@@ -53,12 +53,13 @@ Item {
     size: root.pixelSize
   }
 
-  NImage {
+  NImageIcon {
     id: image
     anchors.fill: parent
     source: root._primaryPath && !root._primaryRejected ? root._primaryPath : fallback.path.toString()
+    replacementCode: root._primaryRejected ? root._failure.code : ""
+    replacementReason: root._primaryRejected ? root._failure.reason : ""
     sourceSize: Qt.size(root.pixelSize, root.pixelSize)
-    fillMode: Image.PreserveAspectFit
     smooth: root.smooth
     onImageStateChanged: {
       if (imageState !== "unavailable" || source !== root._primaryPath || !source)
@@ -77,17 +78,5 @@ Item {
         };
       });
     }
-  }
-
-  AtmoIcon {
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    visible: root.failed
-    icon: Icon.warning
-    pointSize: Math.max(1, Math.min(Style.fontSizeM, root.width / 3))
-    applyUiScale: false
-    color: AtmoColor.mError
-    Accessible.name: I18n.tr("widgets.file-picker.preview-unavailable")
-    Accessible.description: root.errorReason
   }
 }

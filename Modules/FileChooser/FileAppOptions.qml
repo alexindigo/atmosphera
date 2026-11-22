@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import qs.Commons
 import qs.Widgets
 
@@ -58,11 +57,13 @@ Rectangle {
     RowLayout {
       height: root.rowHeight
       spacing: Style.marginM
-      IconImage {
+      AtmoAppIcon {
         visible: root.request.appIcon !== ""
-        implicitWidth: Style.fontSizeL * Style.uiScaleRatio
-        implicitHeight: implicitWidth
-        source: root.request.appIcon ? Quickshell.iconPath(root.request.appIcon) : ""
+        Layout.preferredWidth: Math.round(Style.fontSizeL * Style.uiScaleRatio)
+        Layout.preferredHeight: Layout.preferredWidth
+        size: Layout.preferredWidth
+        name: root.request.appIcon
+        fallbackName: ""
       }
       NText {
         text: root.request.appOptionsLabel

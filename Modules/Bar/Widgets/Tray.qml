@@ -4,7 +4,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
-import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Services.UI
@@ -457,14 +456,12 @@ Item {
           y: Style.pixelAlignCenter(parent.height, height)
         }
 
-        IconImage {
+        NImageIcon {
           id: trayIcon
           width: iconSize
           height: iconSize
           x: Style.pixelAlignCenter(parent.width, width)
           y: Style.pixelAlignCenter(parent.height, height)
-          asynchronous: true
-          backer.fillMode: Image.PreserveAspectFit
 
           source: {
             let icon = modelData?.icon || "";

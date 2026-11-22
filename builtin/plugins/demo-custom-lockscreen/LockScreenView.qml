@@ -300,19 +300,13 @@ Item {
       visible: _mediaVisible
       spacing: Style.marginM
 
-      Rectangle {
+      NImageRounded {
         width: 40
         height: 40
         radius: 8
-        clip: true
-        color: "transparent"
-        Image {
-          anchors.fill: parent
-          source: MediaService.trackArtUrl
-          visible: MediaService.trackArtUrl !== ""
-          asynchronous: true
-          fillMode: Image.PreserveAspectCrop
-        }
+        imagePath: MediaService.trackArtUrl
+        visible: MediaService.trackArtUrl !== ""
+        imageFillMode: Image.PreserveAspectCrop
       }
 
       ColumnLayout {
