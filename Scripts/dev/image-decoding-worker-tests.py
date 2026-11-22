@@ -429,6 +429,161 @@ def main():
             self.assertEqual(second['url'], first['url'])
             self.assertEqual(len(self.events), 1)
 
+        def process_identity(self, pid):
+            proc = Path('/proc') / str(pid)
+            fields = (proc/'stat').read_text().rsplit(') ', 1)[1].split()
+            return dict(pid=pid, start=fields[19], uid=proc.stat().st_uid)
+
+        def process_descendants(self, pid):
+            rows = [self.process_identity(pid)]
+            for child in (Path(f'/proc/{pid}/task/{pid}/children').read_text().split()):
+                rows.extend(self.process_descendants(int(child)))
+            return rows
+
+        def assert_processes_retired(self, identities):
+            remaining = []
+            for row in identities:
+                try:
+                    if self.process_identity(row['pid']) == row:
+                        remaining.append(row)
+                except FileNotFoundError:
+                    pass
+            self.assertEqual(remaining, [])
+            self.events.append(dict(retired=identities))
+
+        async def held_http_retirement(self, malformed):
+            entered, release, returned = threading.Event(), threading.Event(), threading.Event()
+            class Handler(BaseHTTPRequestHandler):
+                def do_GET(self):
+                    self.send_response(200)
+                    self.send_header('Content-Length', '131072')
+                    self.end_headers()
+                    entered.set()
+                    try:
+                        release.wait(10)
+                        self.wfile.write(b'incomplete image bytes')
+                    except (BrokenPipeError, ConnectionResetError):
+                        pass
+                    finally:
+                        returned.set()
+                def log_message(self, *_args):
+                    pass
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
+                stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'cache')))
+            identities, replies = [], []
+            try:
+                self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
+                request = dict(self.request(), id='held-http', generation=1, source=f'http://127.0.0.1:{server.server_port}/held')
+                process.stdin.write((json.dumps([request])+'\n').encode())
+                await process.stdin.drain()
+                for _ in range(300):
+                    if entered.is_set():
+                        break
+                    await asyncio.sleep(.01)
+                self.assertTrue(entered.is_set())
+                identities = self.process_descendants(process.pid)
+                self.assertGreaterEqual(len(identities), 3)  # worker, supervisor, real HTTP downloader
+                if malformed:
+                    process.stdin.write(b'[false]\n')
+                    await process.stdin.drain()
+                    while True:
+                        row = json.loads(await asyncio.wait_for(process.stdout.readline(), 5))
+                        replies.append(row)
+                        if row.get('event') == 'protocol-error':
+                            break
+                process.stdin.close()
+                await asyncio.wait_for(process.wait(), 5)
+                replies += [json.loads(line) for line in (await process.stdout.read()).splitlines()]
+                self.assertEqual(process.returncode, 0, (await process.stderr.read()).decode())
+                self.assertFalse(any(row.get('status') for row in replies), replies)
+                self.assertEqual(sum(row.get('event') == 'protocol-error' for row in replies), int(malformed))
+                self.assert_processes_retired(identities)
+                cache = self.folder/'cache/thumbnails/atmosphera-representations-v1'
+                self.assertEqual(list((cache/'staging').iterdir()), [])
+                self.assertEqual(list((cache/'fail').glob('*')), [])
+                self.assertEqual(list((cache/'still').glob('*')), [])
+                self.events.append(dict(replies=replies, malformed=malformed, heldHttp=True))
+            finally:
+                if process.returncode is None:
+                    process.kill()
+                    await process.wait()
+                release.set()
+                server.shutdown()
+                server.server_close()
+                thread.join()
+                if entered.is_set():
+                    self.assertTrue(returned.wait(3))
+
+        async def test_eof_retires_held_http_and_every_owned_process(self):
+            await self.held_http_retirement(False)
+
+        async def test_malformed_batch_retires_held_http_without_stale_success(self):
+            await self.held_http_retirement(True)
+
+        async def test_independent_workers_publish_same_representation_atomically(self):
+            workers, identities, replies = [], [], []
+            async def receive(process):
+                while True:
+                    row = json.loads(await asyncio.wait_for(process.stdout.readline(), 8))
+                    replies.append(row)
+                    if row.get('event') == 'command':
+                        try:
+                            identities.extend(self.process_descendants(row['watcher']))
+                        except FileNotFoundError:
+                            pass  # Already retired before this observation.
+                    if row.get('event') == 'command-result':
+                        identities.append({key: row['child'][key] for key in ('pid', 'start', 'uid')})
+                    if row.get('status'):
+                        return row
+            try:
+                for number in range(2):
+                    process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
+                        stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                        env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'shared')))
+                    workers.append(process)
+                    identities.append(self.process_identity(process.pid))
+                    self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
+                for number, process in enumerate(workers):
+                    process.stdin.write((json.dumps([dict(self.request('Motion.webp'), id=str(number), generation=number)])+'\n').encode())
+                    await process.stdin.drain()
+                pending = [asyncio.create_task(receive(process)) for process in workers]
+                observed = []
+                directory = self.folder/'shared/thumbnails/atmosphera-representations-v1/still'
+                while not all(task.done() for task in pending):
+                    for path in directory.glob('*.png'):
+                        data = path.read_bytes()
+                        validate(data)
+                        observed.append(hashlib.sha256(data).hexdigest())
+                    await asyncio.sleep(.001)
+                first, second = await asyncio.gather(*pending)
+                self.assertEqual(first['url'], second['url'])
+                self.assertIn(first['status'], ('generated', 'hit'))
+                self.assertIn(second['status'], ('generated', 'hit'))
+                target = Path(first['url'].removeprefix('file://'))
+                self.assertEqual(pixel(target), list(COLORS[0]))
+                validate(target.read_bytes())
+                observed.append(hashlib.sha256(target.read_bytes()).hexdigest())
+                self.assertEqual(set(observed), {hashlib.sha256(target.read_bytes()).hexdigest()})
+                for process in workers:
+                    process.stdin.close()
+                    await asyncio.wait_for(process.wait(), 5)
+                    self.assertEqual(process.returncode, 0, (await process.stderr.read()).decode())
+                    replies += [json.loads(line) for line in (await process.stdout.read()).splitlines()]
+                self.assert_processes_retired(identities)
+                root = self.folder/'shared/thumbnails/atmosphera-representations-v1'
+                self.assertEqual(list((root/'staging').iterdir()), [])
+                self.assertEqual(list(root.rglob('.atmosphera-*')), [])
+                self.events.append(dict(replies=replies, completeObservations=len(observed)))
+            finally:
+                for process in workers:
+                    if process.returncode is None:
+                        process.kill()
+                        await process.wait()
+
         async def test_timeout_reaps_session_creating_delegate(self):
             marker = self.folder / 'delegate.json'
             body = ('import subprocess,sys,json,os,time; from pathlib import Path; '
