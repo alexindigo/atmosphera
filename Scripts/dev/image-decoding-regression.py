@@ -16,7 +16,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -134,7 +134,7 @@ class Run:
         if not vfs.is_relative_to(self.profile.runtime_base) or not (vfs / 'qs/Commons/qmldir').is_file():
             raise AssertionError('Consumer did not generate authoritative QML tooling')
         lint_paths = [str(entry)]
-        if self.args.case == 'owner':
+        if self.args.case in ('owner', 'legacy'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageSource.qml',
                                                     'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml')]
         if self.args.case == 'chooser':
@@ -210,6 +210,65 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def legacy(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/legacy.qml', inputs, 'legacy')
+        for reader in result['readers']:
+            name = reader['name']
+            row = result['results'][name]
+            path = Path(row['path'])
+            self.check('legacy-' + name + '-exact-output', row['success'] and path.is_file()
+                       and path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
+                       and not list(path.parent.glob(path.stem + '-*.png')), row)
+            self.check('legacy-' + name + '-presented-pixels', reader['status'] == 1
+                       and max(abs(a-b) for a,b in zip(pixel(output / (name + '.png')), COLORS[0])) <= 8, reader)
+        avatar = Path(result['results']['avatar']['path'])
+        self.check('legacy-circular-avatar-alpha', pixel(avatar, 0, 0)[3] == 0 and pixel(avatar)[3] == 255,
+                   dict(corner=pixel(avatar, 0, 0), center=pixel(avatar)))
+        for name in ('corrupt', 'missing'):
+            row = result['results'][name]
+            self.check('legacy-' + name + '-honest-failure', not row['success'] and not row['path']
+                       and bool(row['detail'].get('reason')), row)
+        self.check('legacy-signals-are-validated-only', len(result['completions']) == 5 and len(result['failures']) == 2, result)
+        self.check('legacy-completion-retires-interests', result['interests'] == result['requests'] == 0 and not result['workerRunning'], result)
+        self.check('legacy-cancelled-callback-is-retired', not result['cancelledCallback'], result['cancelledCallback'])
+        # Actual adapter requests with fixture-private executables that return
+        # zero without their promised output. No production failure switches.
+        for mode in ('magick-empty', 'all-empty'):
+            shim = self.work / mode
+            shim.mkdir()
+            for name in (('magick',) if mode == 'magick-empty' else ('magick', 'ffmpeg')):
+                executable = shim / name
+                executable.write_text('#!/bin/sh\nexit 0\n')
+                executable.chmod(0o755)
+            failed, failed_output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/legacy.qml',
+                inputs, 'legacy-' + mode, dict(PATH=str(shim) + ':' + os.environ['PATH']))
+            if mode == 'magick-empty':
+                for reader in failed['readers']:
+                    name = reader['name']
+                    row = failed['results'][name]
+                    self.check('legacy-independent-decoder-' + name, row['success'] and row['detail']['decoder'] == 'ffmpeg'
+                               and reader['status'] == 1 and max(abs(a-b) for a,b in zip(pixel(failed_output/(name+'.png')),COLORS[0])) <= 8, row)
+                self.check('legacy-independent-circle-alpha', pixel(Path(failed['results']['avatar']['path']),0,0)[3] == 0, failed['results']['avatar'])
+            else:
+                self.check('legacy-no-output-is-never-success', all(not row['path'] and not row['success']
+                           and row['detail'].get('reason') for row in failed['results'].values())
+                           and not failed['completions'] and len(failed['failures']) == 7, failed)
+            self.check('legacy-' + mode + '-quiescence', failed['interests'] == failed['requests'] == 0
+                       and not failed['workerRunning'] and not failed['cancelledCallback'], failed)
+        original, original_output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/legacy.qml',
+            inputs, 'legacy-original', dict(IMAGE_USE_ORIGINAL='1'))
+        large = original['results']['large']
+        self.check('legacy-original-option-still-proves-presentation', large['success'] and Path(large['path']).is_file()
+                   and large['detail']['origin'] == ('native' if installed else 'fallback')
+                   and pixel(original_output/'large.png') == list(COLORS[0])
+                   and original['interests'] == original['requests'] == 0 and not original['workerRunning'], large)
         return result
 
     def chooser(self):
@@ -357,6 +416,8 @@ def main():
             run.red()
         elif args.case == 'owner':
             run.owner()
+        elif args.case == 'legacy':
+            run.legacy()
         elif args.case == 'chooser':
             run.chooser()
         else:

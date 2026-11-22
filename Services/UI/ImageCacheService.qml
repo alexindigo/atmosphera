@@ -4,8 +4,11 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import "../../Helpers/ImageTypes.js" as ImageTypes
+import "../../Helpers/PortalPaths.js" as PortalPaths
 import "../../Helpers/sha256.js" as Checksum
 import qs.Commons
+import qs.Widgets
 
 Singleton {
   id: root
@@ -41,16 +44,10 @@ Singleton {
   readonly property string notificationsDir: baseDir + "notifications/"
   readonly property string contributorsDir: baseDir + "contributors/"
 
-  // Supported image formats - extended list when ImageMagick is available
-  readonly property var basicImageFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp"]
-  readonly property var extendedImageFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.webp", "*.avif", "*.heic", "*.heif", "*.tiff", "*.tif", "*.pnm", "*.pgm", "*.ppm", "*.pbm", "*.svg", "*.svgz", "*.ico", "*.icns", "*.jxl", "*.jp2", "*.j2k", "*.exr", "*.hdr", "*.dds", "*.tga"]
-  readonly property var imageFilters: imageMagickAvailable ? extendedImageFilters : basicImageFilters
-
-  // Check if a file format needs conversion (not natively supported by Qt)
-  function needsConversion(filePath) {
-    const ext = "*." + filePath.toLowerCase().split('.').pop();
-    return !basicImageFilters.includes(ext);
-  }
+  // Compatibility names describe recognition, never a guessed native reader.
+  readonly property var basicImageFilters: ImageTypes.filters
+  readonly property var extendedImageFilters: ImageTypes.filters
+  readonly property var imageFilters: ImageTypes.filters
 
   // -------------------------------------------------
   // Internal State
@@ -106,72 +103,73 @@ Singleton {
   // Public API: Get Thumbnail (384x384)
   // -------------------------------------------------
   function getThumbnail(sourcePath, callback) {
-    if (!sourcePath || sourcePath === "") {
-      callback("", false);
-      return;
-    }
-
-    getMtime(sourcePath, function (mtime) {
-      const cacheKey = generateThumbnailKey(sourcePath, mtime);
-      const cachedPath = wpThumbDir + cacheKey + ".png";
-
-      processRequest(cacheKey, cachedPath, sourcePath, callback, function () {
-        if (imageMagickAvailable) {
-          startThumbnailProcessing(sourcePath, cachedPath, cacheKey);
-        } else {
-          queueFallbackProcessing(sourcePath, cachedPath, cacheKey, 384);
-        }
-      });
-    });
+    return requestImage(sourcePath, 384, 384, "cover", callback);
   }
 
   // -------------------------------------------------
   // Public API: Get Large Image (scaled to specified dimensions)
   // -------------------------------------------------
   function getLarge(sourcePath, width, height, callback) {
-    if (!sourcePath || sourcePath === "") {
-      callback("", false);
-      return;
+    return requestImage(sourcePath, width, height, "contain", callback, !Settings.data.wallpaper.useOriginalImages);
+  }
+
+  // Legacy callers receive a plain local path only after the shared renderer
+  // acknowledges the validated representation. The returned interest can be
+  // cancelled by a caller with a shorter lifetime than this singleton.
+  function requestImage(sourcePath, width, height, transform, callback, normalize = true) {
+    if (!sourcePath) {
+      callback("", false, {
+                 code: "empty-source",
+                 reason: "No image was requested"
+               });
+      return null;
     }
+    return callbackImage.createObject(root, {
+                                        source: String(sourcePath),
+                                        sourceSize: Qt.size(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height))),
+                                        imageTransform: transform,
+                                        normalize: normalize,
+                                        completed: callback,
+                                        requestKey: Checksum.sha256(JSON.stringify([String(sourcePath), width, height, transform]))
+                                      });
+  }
 
-    if (Settings.data.wallpaper.useOriginalImages && !needsConversion(sourcePath)) {
-      callback(sourcePath, false);
-      return;
-    }
-
-    if (!imageMagickAvailable) {
-      Logger.d("ImageCache", "ImageMagick not available, using original:", sourcePath);
-      callback(sourcePath, false);
-      return;
-    }
-
-    // Fast dimension check - skip processing if image fits screen AND format is Qt-native
-    getImageDimensions(sourcePath, function (imgWidth, imgHeight) {
-      const fitsScreen = imgWidth > 0 && imgHeight > 0 && imgWidth <= width && imgHeight <= height;
-
-      if (fitsScreen) {
-        // Only skip if format is natively supported by Qt
-        if (!needsConversion(sourcePath)) {
-          Logger.d("ImageCache", `Image ${imgWidth}x${imgHeight} fits screen ${width}x${height}, using original`);
-          callback(sourcePath, false);
-          return;
-        }
-        Logger.d("ImageCache", `Image needs conversion despite fitting screen`);
+  Component {
+    id: callbackImage
+    NImage {
+      id: request
+      property var completed
+      property string requestKey
+      property bool settled: false
+      normalize: true
+      animationIntent: "still"
+      visible: false
+      function cancel() {
+        settled = true;
+        active = false;
+        destroy();
       }
-
-      // Use actual image dimensions if it fits (convert without upscaling), otherwise use screen dimensions
-      const targetWidth = fitsScreen ? imgWidth : width;
-      const targetHeight = fitsScreen ? imgHeight : height;
-
-      getMtime(sourcePath, function (mtime) {
-        const cacheKey = generateLargeKey(sourcePath, width, height, mtime);
-        const cachedPath = wpLargeDir + cacheKey + ".png";
-
-        processRequest(cacheKey, cachedPath, sourcePath, callback, function () {
-          startLargeProcessing(sourcePath, cachedPath, targetWidth, targetHeight, cacheKey);
-        });
-      });
-    });
+      onStatusChanged: Qt.callLater(finish)
+      function finish() {
+        if (settled || (status !== Image.Ready && status !== Image.Error))
+          return;
+        settled = true;
+        const success = status === Image.Ready;
+        const uri = success ? PortalPaths.uriToPath(outputUrl) : null;
+        const path = uri && uri.ok ? uri.path : "";
+        const detail = success ? imageResult : {
+                                   code: errorCode,
+                                   reason: errorReason
+                                 };
+        active = false;
+        if (success && path)
+          root.processingComplete(requestKey, path);
+        else
+          root.processingFailed(requestKey, detail.reason || "The decoded image is unavailable");
+        completed(path, success && !!path, detail);
+        destroy();
+      }
+    }
   }
 
   // -------------------------------------------------
@@ -254,36 +252,14 @@ Singleton {
   function getCircularAvatar(url, username, callback) {
     if (!url || !username) {
       callback("", false);
-      return;
+      return null;
     }
-
-    const cacheKey = username;
-    const cachedPath = contributorsDir + username + "_circular.png";
-
-    processRequest(cacheKey, cachedPath, url, callback, function () {
-      if (imageMagickAvailable) {
-        downloadAndProcessAvatar(url, username, cachedPath, cacheKey);
-      } else {
-        // No fallback for circular avatars without ImageMagick
-        Logger.w("ImageCache", "Circular avatars require ImageMagick");
-        notifyCallbacks(cacheKey, "", false);
-      }
-    });
+    return requestImage(url, 256, 256, "circle", callback);
   }
 
   // -------------------------------------------------
   // Cache Key Generation
   // -------------------------------------------------
-  function generateThumbnailKey(sourcePath, mtime) {
-    const keyString = sourcePath + "@384x384@" + (mtime || "unknown");
-    return Checksum.sha256(keyString);
-  }
-
-  function generateLargeKey(sourcePath, width, height, mtime) {
-    const keyString = sourcePath + "@" + width + "x" + height + "@" + (mtime || "unknown");
-    return Checksum.sha256(keyString);
-  }
-
   function generateNotificationKey(imageUri, appName, summary) {
     if (imageUri.startsWith("image://qsimage/")) {
       return Checksum.sha256(appName + "|" + summary);
@@ -343,172 +319,6 @@ Singleton {
     } else {
       processingFailed(cacheKey, "Processing failed");
     }
-  }
-
-  // -------------------------------------------------
-  // ImageMagick Processing: Thumbnail
-  // -------------------------------------------------
-  function startThumbnailProcessing(sourcePath, outputPath, cacheKey) {
-    const srcEsc = sourcePath.replace(/'/g, "'\\''");
-    const dstEsc = outputPath.replace(/'/g, "'\\''");
-
-    // Use Lanczos filter for high-quality downscaling, subtle unsharp mask, and PNG for lossless output
-    const command = `magick '${srcEsc}' -auto-orient -filter Lanczos -resize '384x384^' -gravity center -extent 384x384 -unsharp 0x0.5 '${dstEsc}'`;
-
-    runProcess(command, cacheKey, outputPath, sourcePath);
-  }
-
-  // -------------------------------------------------
-  // ImageMagick Processing: Large
-  // -------------------------------------------------
-  function startLargeProcessing(sourcePath, outputPath, width, height, cacheKey) {
-    const srcEsc = sourcePath.replace(/'/g, "'\\''");
-    const dstEsc = outputPath.replace(/'/g, "'\\''");
-
-    // Use Lanczos filter for high-quality downscaling and PNG for lossless output
-    const command = `magick '${srcEsc}' -auto-orient -filter Lanczos -resize '${width}x${height}^' '${dstEsc}'`;
-
-    runProcess(command, cacheKey, outputPath, sourcePath);
-  }
-
-  // -------------------------------------------------
-  // ImageMagick Processing: Circular Avatar
-  // -------------------------------------------------
-  function downloadAndProcessAvatar(url, username, outputPath, cacheKey) {
-    const tempPath = contributorsDir + username + "_temp.png";
-    const tempEsc = tempPath.replace(/'/g, "'\\''");
-    const urlEsc = url.replace(/'/g, "'\\''");
-
-    // Download first (uses utility queue since curl/wget are lightweight)
-    const downloadCmd = `curl -L -s -o '${tempEsc}' '${urlEsc}' || wget -q -O '${tempEsc}' '${urlEsc}'`;
-
-    const processString = `
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", "${downloadCmd.replace(/"/g, '\\"')}"]
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-      }
-    `;
-
-    queueUtilityProcess({
-                          name: "DownloadProcess_" + cacheKey,
-                          processString: processString,
-                          onComplete: function (exitCode) {
-                            if (exitCode !== 0) {
-                              Logger.e("ImageCache", "Failed to download avatar for", username);
-                              notifyCallbacks(cacheKey, "", false);
-                              return;
-                            }
-                            // Now process with ImageMagick
-                            processCircularAvatar(tempPath, outputPath, cacheKey);
-                          },
-                          onError: function () {
-                            notifyCallbacks(cacheKey, "", false);
-                          }
-                        });
-  }
-
-  function processCircularAvatar(inputPath, outputPath, cacheKey) {
-    const srcEsc = inputPath.replace(/'/g, "'\\''");
-    const dstEsc = outputPath.replace(/'/g, "'\\''");
-
-    // ImageMagick command for circular crop with alpha
-    const command = `magick '${srcEsc}' -resize 256x256^ -gravity center -extent 256x256 -alpha set \\( +clone -channel A -evaluate set 0 +channel -fill white -draw 'circle 128,128 128,0' \\) -compose DstIn -composite '${dstEsc}'`;
-
-    queueImageMagickProcess({
-                              command: command,
-                              cacheKey: cacheKey,
-                              onComplete: function (exitCode) {
-                                // Clean up temp file
-                                Quickshell.execDetached(["rm", "-f", inputPath]);
-
-                                if (exitCode !== 0) {
-                                  Logger.e("ImageCache", "Failed to create circular avatar");
-                                  notifyCallbacks(cacheKey, "", false);
-                                } else {
-                                  Logger.d("ImageCache", "Circular avatar created:", outputPath);
-                                  notifyCallbacks(cacheKey, outputPath, true);
-                                }
-                              },
-                              onError: function () {
-                                Quickshell.execDetached(["rm", "-f", inputPath]);
-                                notifyCallbacks(cacheKey, "", false);
-                              }
-                            });
-  }
-
-  // -------------------------------------------------
-  // Generic Process Runner (with queue for ImageMagick)
-  // -------------------------------------------------
-
-  // Queue an ImageMagick process and run it when a slot is available
-  function queueImageMagickProcess(request) {
-    imageMagickQueue.push(request);
-    processImageMagickQueue();
-  }
-
-  // Process queued ImageMagick requests up to the concurrency limit
-  function processImageMagickQueue() {
-    while (runningImageMagickProcesses < maxConcurrentImageMagickProcesses && imageMagickQueue.length > 0) {
-      const request = imageMagickQueue.shift();
-      runImageMagickProcess(request);
-    }
-  }
-
-  // Actually run an ImageMagick process
-  function runImageMagickProcess(request) {
-    runningImageMagickProcesses++;
-
-    const processString = `
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", ""]
-        stdout: StdioCollector {}
-        stderr: StdioCollector {}
-      }
-    `;
-
-    try {
-      const processObj = Qt.createQmlObject(processString, root, "ImageProcess_" + request.cacheKey);
-      processObj.command = ["sh", "-c", request.command];
-
-      processObj.exited.connect(function (exitCode) {
-        processObj.destroy();
-        runningImageMagickProcesses--;
-        request.onComplete(exitCode, processObj);
-        processImageMagickQueue();
-      });
-
-      processObj.running = true;
-    } catch (e) {
-      Logger.e("ImageCache", "Failed to create process:", e);
-      runningImageMagickProcesses--;
-      request.onError(e);
-      processImageMagickQueue();
-    }
-  }
-
-  function runProcess(command, cacheKey, outputPath, sourcePath) {
-    queueImageMagickProcess({
-                              command: command,
-                              cacheKey: cacheKey,
-                              onComplete: function (exitCode, proc) {
-                                if (exitCode !== 0) {
-                                  const stderrText = proc.stderr.text || "";
-                                  Logger.e("ImageCache", "Processing failed:", stderrText);
-                                  notifyCallbacks(cacheKey, sourcePath, false);
-                                } else {
-                                  Logger.d("ImageCache", "Processing complete:", outputPath);
-                                  notifyCallbacks(cacheKey, outputPath, true);
-                                }
-                              },
-                              onError: function () {
-                                notifyCallbacks(cacheKey, sourcePath, false);
-                              }
-                            });
   }
 
   // -------------------------------------------------

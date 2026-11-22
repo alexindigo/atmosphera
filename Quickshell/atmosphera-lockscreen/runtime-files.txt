@@ -22,6 +22,7 @@ Commons/Style.qml
 Commons/Time.qml
 Helpers/BluetoothUtils.js
 Helpers/ColorsConvert.js
+Helpers/ImageTypes.js
 Helpers/LockerLifecycle.js
 Helpers/LockerSettingsInput.js
 Helpers/NiriEdgeNavigation.js

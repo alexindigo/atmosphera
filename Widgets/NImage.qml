@@ -15,6 +15,7 @@ Item {
   property bool playing: true
   property bool paused: false
   property int fillMode: Image.PreserveAspectFit
+  property string imageTransform: fillMode === Image.PreserveAspectCrop ? "cover" : "contain"
   property bool asynchronous: true
   property bool cache: true
   property bool mipmap: true
@@ -53,7 +54,7 @@ Item {
     active: root.active
     revision: root.sourceRevision
     requestedSize: root.sourceSize
-    fit: root.fillMode === Image.PreserveAspectCrop ? "cover" : "contain"
+    fit: root.imageTransform
     animationIntent: root.animationIntent
     normalize: root.normalize
   }
