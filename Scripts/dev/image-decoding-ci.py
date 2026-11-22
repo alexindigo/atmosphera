@@ -13,13 +13,43 @@ import time
 from guest_profile import ProcessIdentity, ProfileBlocked, activate_profile
 
 
+class CompositorOwnership:
+    """Kernel launch ownership is stable across exec; argv is readiness data."""
+    def __init__(self, process):
+        self.process = process
+        self.launch = ProcessIdentity.read(process.pid)
+        if self.launch.uid != os.getuid() or self.launch.pgid != process.pid or self.launch.pgid == os.getpgrp():
+            raise ProfileBlocked('owned compositor must be a private account/session leader')
+
+    @staticmethod
+    def kernel_identity(identity):
+        return identity.pid, identity.start, identity.uid, identity.pgid
+
+    def verify(self):
+        observed = ProcessIdentity.read(self.process.pid)
+        if self.kernel_identity(observed) != self.kernel_identity(self.launch):
+            raise ProfileBlocked('owned compositor kernel identity changed')
+        return observed
+
+    def ready(self, argv):
+        observed = self.verify()
+        if observed.argv != tuple(argv):
+            raise ProfileBlocked('socket-ready compositor does not match expected Sway command')
+        return observed
+
+    def terminate(self):
+        if self.process.poll() is None:
+            self.verify()
+            os.killpg(self.launch.pgid, signal.SIGTERM)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--engine', choices=('podman', 'docker'), required=True)
     parser.add_argument('--qt-webp', choices=('present', 'absent'), required=True)
     parser.add_argument('--label', required=True)
-    parser.add_argument('--cohort', choices=('all', 'profile', 'owner', 'chooser', 'boundary', 'worker'), default='all')
+    parser.add_argument('--cohort', choices=('all', 'ownership', 'profile', 'owner', 'chooser', 'boundary', 'worker'), default='all')
     args = parser.parse_args()
     workspace = args.workspace
     marker = Path('/run/.containerenv' if args.engine == 'podman' else '/.dockerenv')
@@ -44,10 +74,12 @@ def main():
                        WLR_LIBINPUT_NO_DEVICES='1')
     for key in ('WAYLAND_DISPLAY', 'DISPLAY', 'SWAYSOCK', 'NIRI_SOCKET'):
         environment.pop(key, None)
+    argv = ['/usr/bin/sway', '--config', str(config)]
     with (artifacts / ('compositor-' + args.label + '.log')).open('x') as log:
-        compositor = subprocess.Popen(['/usr/bin/sway', '--config', str(config)], env=environment,
+        compositor = subprocess.Popen(argv, env=environment,
                                       stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-        captured = ProcessIdentity.read(compositor.pid)
+        owned = CompositorOwnership(compositor)
+        captured = None
         try:
             deadline = time.monotonic() + 20
             displays = []
@@ -58,6 +90,7 @@ def main():
                 time.sleep(.05)
             if compositor.poll() is not None or len(displays) != 1:
                 raise ProfileBlocked('private headless Sway did not establish its Wayland socket')
+            captured = owned.ready(argv)
             profile_path = workspace / ('ci-profile-' + args.label + '.json')
             profile = dict(version=2, mode='container-headless-wayland', name='image-decoding-ci', engine=args.engine,
                            containerId=Path('/etc/hostname').read_text().strip(), uid=os.getuid(), home=str(Path.home()), workspace=str(workspace),
@@ -71,12 +104,11 @@ def main():
         finally:
             unexpected = compositor.poll() is not None
             if not unexpected:
-                if ProcessIdentity.read(compositor.pid) != captured:
-                    raise ProfileBlocked('owned compositor identity changed before termination')
-                os.killpg(compositor.pid, signal.SIGTERM)
+                owned.terminate()
             code = compositor.wait(timeout=15)
             (artifacts / ('compositor-' + args.label + '.json')).write_text(json.dumps(
-                dict(identity=captured.record(), exit=code, unexpected=unexpected), indent=2) + '\n')
+                dict(launchIdentity=owned.launch.record(), identity=captured.record() if captured else None,
+                     exit=code, unexpected=unexpected), indent=2) + '\n')
             if unexpected:
                 raise ProfileBlocked('private compositor exited before its consumers finished')
 
@@ -85,6 +117,8 @@ def run(args, workspace, admitted):
     profile_path = admitted.path
     source, plugins = workspace / 'shell', workspace / 'plugins'
     commands = {
+        'ownership': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-ci-selftest.py'),
+                      '--guest-profile', str(profile_path), '--output', str(admitted.journal_base / ('ownership-' + args.label))],
         'profile': [sys.executable, '-B', str(source / 'Scripts/dev/guest-profile-modes-selftest.py'),
                     '--guest-profile', str(profile_path), '--output', str(admitted.journal_base / ('profile-' + args.label))],
         'boundary': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-boundary-check.py'),
@@ -103,7 +137,7 @@ def run(args, workspace, admitted):
                           '--work-root', str(admitted.work_base / (case + '-' + args.label)),
                           '--output', str(admitted.journal_base / (case + '-' + args.label))]
     rows = []
-    for name in ('profile', 'owner', 'chooser', 'boundary', 'worker') if args.cohort == 'all' else (args.cohort,):
+    for name in ('ownership', 'profile', 'owner', 'chooser', 'boundary', 'worker') if args.cohort == 'all' else (args.cohort,):
         with (admitted.journal_base / (name + '-' + args.label + '.log')).open('x') as log:
             result = subprocess.run(['timeout', '1800', *commands[name]], stdout=log, stderr=subprocess.STDOUT, timeout=1830)
         rows.append(dict(cohort=name, exit=result.returncode, argv=commands[name]))
