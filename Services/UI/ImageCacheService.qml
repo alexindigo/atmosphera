@@ -51,6 +51,17 @@ Singleton {
   readonly property string wpLargeDir: baseDir + "wallpapers/large/"
   readonly property string notificationsDir: baseDir + "notifications/"
   readonly property string contributorsDir: baseDir + "contributors/"
+  // The worker's still/video thumbnails and private representations live in
+  // the freedesktop thumbnail folder (same environment as the worker).
+  readonly property string thumbnailDir: (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env("HOME") + "/.cache") + "/thumbnails/"
+
+  // True for a path this owner (or its pre-owner folders) generated: a
+  // thumbnail or representation, never a user's original. Consumers that put
+  // a thumbnail in place of a user's wallpaper use this to keep the two apart.
+  function isGeneratedImage(path) {
+    var local = String(path || "").replace(/^file:\/\//, "");
+    return local !== "" && local.indexOf("/../") === -1 && [thumbnailDir, wpThumbDir, wpLargeDir].some(dir => local.indexOf(dir) === 0);
+  }
 
   // Compatibility names describe recognition, never a guessed native reader.
   readonly property var basicImageFilters: ImageTypes.filters

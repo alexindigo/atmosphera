@@ -1656,6 +1656,15 @@ os.execv('/usr/bin/find', ['find', *args])
         wallcards.mkdir()
         for name in ('Still.webp', 'frame-1.png', 'Corrupt.webp'):
             shutil.copyfile(inputs / name, wallcards / name)
+        # Video wallpaper plugins: one real video in the first fixture color and
+        # one broken file, through the owner's video thumbnails.
+        videos = inputs / 'videos'
+        videos.mkdir()
+        made = self.command(['ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=0x%02X%02X%02X:s=160x90:r=8:d=2' % COLORS[0][:3],
+                             '-c:v', 'mpeg4', '-q:v', '1', videos / 'Red.mp4'])
+        if made.returncode:
+            raise RuntimeError('Cannot create the fixture video: ' + made.stderr[-400:])
+        (videos / 'Broken.mp4').write_bytes(b'not a video')
         (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
         changed = self.changed_plugin_qml()
         (self.out / 'changed-plugin-qml.txt').write_text(''.join(str(p) + '\n' for p in changed))
@@ -1664,9 +1673,9 @@ os.execv('/usr/bin/find', ['find', *args])
                                  'plugins', dict(IMAGE_PLUGINS=str(self.args.plugins)))
         def near(actual, expected, tolerance=10):
             return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
-        def count(name, color):
+        def count(name, color, tolerance=10):
             width, height, pixels = read_png(output / (name + '.png'))
-            return sum(near(pixels[i * 4:i * 4 + 4], color) for i in range(width * height))
+            return sum(near(pixels[i * 4:i * 4 + 4], color, tolerance) for i in range(width * height))
         entries = {row['name']: row for row in result['entries']}
         self.check('plugin-roots-created', all(not row['error'] for row in entries.values()),
                    {name: row['error'] for name, row in entries.items() if row['error']})
@@ -1698,6 +1707,21 @@ os.execv('/usr/bin/find', ['find', *args])
         chat = images('chat-markdown', 'text')
         self.check('plugin-chat-markdown-image', chat and chat[0]['count'] == 1 and chat[0]['states'][0]['state'] == 'ready'
                    and count('chat-markdown', COLORS[0]) > 20, dict(text=chat, pixels=count('chat-markdown', COLORS[0])))
+        videos = result['videos']
+        for name in ('mpv-tiles', 'vw-panel'):
+            # Panels show the owner's PNG frame of the video (YUV-encoded, so a
+            # wider tolerance) and a labelled failure for the broken file.
+            tiles = images(name, 'rounded')
+            shown = [row for row in tiles if row['state'] == 'ready']
+            failed = [row for row in tiles if row['state'] == 'unavailable']
+            self.check('plugin-' + name + '-video-thumbnails', len(tiles) == 2 and len(shown) == 1 and len(failed) == 1
+                       and '/thumbnails/' in shown[0]['source']
+                       and not shown[0]['source'].endswith('.mp4') and failed[0]['code'] and failed[0]['source'] == ''
+                       and count(name, COLORS[0], 24) > 50 and count(name, result['warningColor']) > 5,
+                       dict(tiles=tiles, videos=videos, pixels=count(name, COLORS[0], 24)))
+        # One interest per producer and video; the broken video stays failed.
+        self.check('plugin-video-producers-settle-honestly', videos['mpvReady'] and videos['vwSettled'] and not videos['vwReady']
+                   and videos['vwFailed'] and sorted(videos['interests']) == sorted([str(inputs / 'videos/Red.mp4'), str(inputs / 'videos/Broken.mp4')] * 2), videos)
         cards = result['wallcards']
         files = {row['fileName']: row for row in (cards or {}).get('files', [])}
         self.check('plugin-wallcards-owner-thumbnails-and-colors', cards and cards['ready'] and not cards['loading'] and len(files) == 3

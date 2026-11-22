@@ -883,6 +883,28 @@ def main():
             self.assertEqual(second['url'], first['url'])
             self.assertEqual(len(self.events), 1)
 
+        async def test_video_thumbnail_failure_honors_explicit_retry(self):
+            video = self.folder / 'Broken.mp4'
+            video.write_bytes(b'not a video')
+            request = dict(source=str(video), width=256, height=256, fit='contain', animationIntent='still', operation='video-thumbnail')
+            decodes = []
+            original = self.cache.frame
+            async def frame(*arguments):
+                decodes.append(arguments)
+                return await original(*arguments)
+            with patch.object(self.cache, 'frame', frame):
+                failed = await self.cache.render(request)
+                self.assertEqual((failed['status'], failed['url']), ('unavailable', ''))
+                self.assertEqual(len(decodes), 1)
+                # A stored failure answers later ordinary requests without decoding.
+                again = await self.cache.render(request)
+                self.assertEqual(again['status'], 'unavailable')
+                self.assertEqual(len(decodes), 1)
+                # An explicit retry decodes again, and still reports the failure.
+                retried = await self.cache.render(dict(request, retry=True))
+                self.assertEqual(retried['status'], 'unavailable')
+                self.assertEqual(len(decodes), 2)
+
         def process_identity(self, pid):
             proc = Path('/proc') / str(pid)
             fields = (proc/'stat').read_text().rsplit(') ', 1)[1].split()

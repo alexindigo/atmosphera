@@ -19,6 +19,26 @@ never replaced by an ordinary icon that looks like success.
 | `AtmoIcon` | Icon-set glyphs; SVG/image entries render their mask through `NImage`. |
 | `NImageText` | Rich text (`format: "rich"`) or Markdown (`format: "markdown"`) that can contain images. |
 
+## Thumbnails held by plugins
+
+A plugin that needs a thumbnail file rather than a rendered item (a video
+wallpaper that hands its frame to color generation, a card sorted by color)
+asks the owner directly and holds the interest while it uses the file:
+
+```qml
+token = ImageCacheService.acquireSource({ source: path, width: 1024, height: 1024,
+  fit: "contain", animationIntent: "still", operation: "video-thumbnail" }, reply => { ... })
+ImageCacheService.releaseSource(token)
+```
+
+The reply has `status` (`hit`, `generated` or `unavailable`), the validated
+PNG's `url`, and `code`/`reason` on failure. `retry: true` asks again even
+after a stored failure (for a Refresh button). Plugins do not run their own
+converters or keep their own thumbnail folders.
+`ImageCacheService.isGeneratedImage(path)` tells a thumbnail or
+representation apart from a user's own image, for example so that a
+thumbnail is never saved as the wallpaper to restore.
+
 ## Text with images: NImageText, not NText
 
 `NText` is a plain QML `Text`. Qt's text layout loads and decodes every image

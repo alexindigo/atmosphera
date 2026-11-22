@@ -114,8 +114,10 @@ class Cache:
         self.emit(dict(event='ffmpeg', path=str(path), argv=argv))
         return await self.command(argv)
 
-    async def get(self, name, pixels):
-        """Compatible freedesktop video entry point; no second decoder pool."""
+    async def get(self, name, pixels, retry=False):
+        """Compatible freedesktop video entry point; no second decoder pool.
+
+        An explicit retry ignores a stored failure (it is rewritten or replaced)."""
         path = Path(os.fsdecode(os.path.abspath(name)))
         if path.resolve().is_relative_to(self.root.resolve()):
             return dict(url='', status='excluded')
@@ -129,7 +131,7 @@ class Cache:
         fingerprint = capability_fingerprint()
         if self.valid(target, uri, info):
             return dict(url=target.as_uri(), status='hit')
-        if self.valid(failure, uri, info, capability=fingerprint):
+        if not retry and self.valid(failure, uri, info, capability=fingerprint):
             return dict(url='', status='failure-hit')
         attributes = {'Thumb::URI': uri, 'Thumb::MTime': str(int(info.st_mtime)), 'Thumb::Size': str(info.st_size),
                       'Atmo::MTimeNS': str(info.st_mtime_ns), 'Atmo::CTimeNS': str(info.st_ctime_ns),
@@ -369,7 +371,7 @@ class Cache:
         if request.get('operation') == 'video-thumbnail':
             # The image owner admits video work into the same two slots. Keep
             # the proven freedesktop identity and video-only seek policy.
-            result = await self.get(request['source'], request['width'])
+            result = await self.get(request['source'], request['width'], retry=bool(request.get('retry')))
             if result['status'] not in ('hit', 'generated'):
                 return dict(url='', status='unavailable', code='video-preview-unavailable',
                             reason='The video preview could not be decoded')
