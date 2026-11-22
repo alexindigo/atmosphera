@@ -8,7 +8,9 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import threading
 import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from guest_profile import activate_profile, profile_argument, protect_owned_process
 from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
@@ -16,7 +18,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -163,6 +165,8 @@ class Run:
             lint_paths += [str(shell / p) for p in ('Modules/Panels/SetupWizard/SetupWallpaperStep.qml',)]
         if self.args.case == 'wallpaper-scan':
             lint_paths += [str(shell / 'Services/UI/WallpaperService.qml')]
+        if self.args.case == 'wallpaper-gallery':
+            lint_paths += [str(shell / 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -232,6 +236,64 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def wallpaper_gallery(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work/'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out/'fixture-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requests.append(self.path)
+                mapping = {'/motion.jpg':'Motion.webp', '/bad.jpg':'Corrupt.webp', '/heic.jpg':'Still.heic'}
+                name = mapping.get(self.path)
+                if not name:
+                    self.send_error(404)
+                    return
+                data = (inputs/name).read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Type', 'image/jpeg')
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+            def log_message(self, *args):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.baseline_source or self.args.source,
+                self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-gallery.qml', inputs, 'wallpaper-gallery',
+                dict(IMAGE_GALLERY_URL='http://127.0.0.1:'+str(server.server_port)))
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join()
+        (self.out/'http-requests.json').write_text(json.dumps(requests,indent=2)+'\n')
+        for cohort in ('local','remote'):
+            motion = [row for row in result['snapshots'] if row['cohort'] == cohort and row['index'] == 0]
+            centers = [pixel(path) for path in output.glob(cohort+'-image-0-*.png')]
+            self.check('wallpaper-gallery-'+cohort+'-static-frame-zero',len(motion) == 11
+                       and all(row['status'] == 1 and row['result']['frames'] == 1 for row in motion)
+                       and centers == [list(COLORS[0])]*11, dict(rows=motion,centers=centers))
+            heic = [row for row in result['snapshots'] if row['cohort'] == cohort and row['index'] == 2]
+            heic_pixels = [pixel(path) for path in output.glob(cohort+'-image-2-*.png')]
+            self.check('wallpaper-gallery-'+cohort+'-heic-pixels',len(heic) == 1 and heic[0]['status'] == 1
+                       and len(heic_pixels) == 1 and max(abs(a-b) for a,b in zip(heic_pixels[0],COLORS[0])) <= 8,heic)
+            failed = [row for row in result['snapshots'] if row['cohort'] == cohort and row['index'] == 1]
+            self.check('wallpaper-gallery-'+cohort+'-honest-failure',len(failed) == 1 and failed[0]['status'] == 3
+                       and failed[0]['reason'],failed)
+            width,height,pixels = read_png(output/(cohort+'-failure-tile.png'))
+            warning_pixels = sum(max(abs(a-b) for a,b in zip(pixels[i:i+4],result['warningColor'])) < 8
+                                 for i in range(0,len(pixels),4))
+            self.check('wallpaper-gallery-'+cohort+'-unobscured-warning',warning_pixels > 10,
+                       dict(pixels=warning_pixels,color=result['warningColor'],width=width,height=height))
+        self.check('wallpaper-gallery-real-http-misleading-types',set(requests) == {'/motion.jpg','/bad.jpg','/heic.jpg'},requests)
+        self.check('wallpaper-gallery-close-retires-all-interests',result['interests'] == result['requests'] == 0
+                   and not result['workerRunning'],result)
         return result
 
     def wallpaper_scan(self):
@@ -690,6 +752,8 @@ def main():
             run.wallpaper_setup()
         elif args.case == 'wallpaper-scan':
             run.wallpaper_scan()
+        elif args.case == 'wallpaper-gallery':
+            run.wallpaper_gallery()
         elif args.case == 'chooser':
             run.chooser()
         else:
