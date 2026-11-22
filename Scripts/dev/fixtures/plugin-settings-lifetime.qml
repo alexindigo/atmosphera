@@ -16,6 +16,7 @@ ShellRoot {
   property var api: null
   property var selected: null
   property var sibling: null
+  property bool reresolved: false
   property var session: null
   property var page: null
   property var nativeEditor: null
@@ -434,12 +435,17 @@ function drive() {
       var complete = held;
       held = null;
       complete();
-      check(acknowledgments === 1 && receipts === 1 && session.dirty && page.labelText === "newer-input", "held current receipt preserves newer buffered input");
-      check(!session.requestClose(), "newer local input still requires Discard");
-      check(session.confirmDiscard(), "newer buffer discarded explicitly");
-      session.presentationClosed();
-      phase = "discarded";
+      // A saved/current write completes only after the runtime reader has
+      // observed it; the terminal receipt arrives on a later turn.
+      phase = "held-observing";
+      deadline = Date.now() + 15000;
     }
+  } else if (phase === "held-observing" && !session.busy) {
+    check(acknowledgments === 1 && receipts === 1 && session.dirty && page.labelText === "newer-input", "held current receipt preserves newer buffered input");
+    check(!session.requestClose(), "newer local input still requires Discard");
+    check(session.confirmDiscard(), "newer buffer discarded explicitly");
+    session.presentationClosed();
+    phase = "discarded";
   } else if (phase === "deliver-destroyed") {
     var callback = held;
     held = null;
@@ -462,6 +468,23 @@ function drive() {
         return;
       check(Service.getPluginAPI("lifetime-fixture") === null, "actual unload fully retired after explicit release");
     } else {
+      if (scenario === "reorder" && !reresolved) {
+        // A foreign reorder changes the captured placement incarnation (an
+        // equal-identity replace does not): the old API refuses, and a fresh
+        // lookup serves the new occupant. The lookup destroys the refused API,
+        // so check it first.
+        if (selected.settingsError !== "overlay-identity")
+          return;
+        check(!selected.settingsReady, "old placement incarnation retires its runtime context");
+        check(selected.settingsPreviewOwner._token === null, "no session preview or admission leaks after release");
+        var refused = selected;
+        selected = PluginInstances.apiFor("lifetime-fixture", placement);
+        sibling = PluginInstances.apiFor("lifetime-fixture", Object.assign({}, placement, {
+                                                                             index: 1
+                                                                           }));
+        check(selected !== null && selected !== refused, "fresh API for the new placement incarnation");
+        reresolved = true;
+      }
       var expected = scenario === "base-change" ? "foreign" : scenario === "source-change" ? "foreign-source" : scenario === "reorder" ? "sibling" : scenario === "replace" ? "replacement" : (["held", "destroy-delayed", "destroy-busy", "release-delayed"].indexOf(scenario) !== -1 || (scenario === "source-replace" && family === "shared")) ? "local" : "base";
       if (selectedText.text !== expected)
         return;
