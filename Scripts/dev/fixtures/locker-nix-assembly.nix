@@ -1,6 +1,6 @@
 # Evaluate the real package recipe without fetching/building Nixpkgs or Qt.
 # Dependency values are sentinels; this proves assembly, not a Nix runtime build.
-{ calendarSupport ? false }:
+{ calendarSupport ? false, waylandPrefix ? "/usr" }:
 let
   package = import ../../../nix/package.nix;
   prefix = "/usr";
@@ -16,6 +16,7 @@ let
     };
     makeSearchPath = directory: packages: builtins.concatStringsSep ":" (map (p: "${p}/${directory}") packages);
     makeBinPath = makeSearchPath "bin";
+    makeLibraryPath = makeSearchPath "lib";
     licenses.gpl3Only = "GPL-3.0-only";
   };
   qt = { outPath = prefix; qtQmlPrefix = "lib/qt6/qml"; __toString = self: self.outPath; };
@@ -28,6 +29,7 @@ let
     brightnessctl = prefix; cliphist = prefix; ddcutil = prefix; wlsunset = prefix;
     wl-clipboard = prefix; wlr-randr = prefix; imagemagick = prefix; wget = prefix;
     wayland-scanner = prefix;
+    wayland = waylandPrefix;
     python3.withPackages = select: "/dependencies/python-" + builtins.concatStringsSep "-" (select {
       pygobject3 = "pygobject3"; dbus-python = "dbus-python";
     });

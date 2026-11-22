@@ -35,6 +35,7 @@
   imagemagick,
   wget,
   python3,
+  wayland,
   wayland-scanner,
   # calendar support
   calendarSupport ? false,
@@ -101,9 +102,6 @@ stdenvNoCC.mkDerivation {
     ln -s ../../../share/atmosphera $out/etc/xdg/quickshell/atmosphera
     bash Scripts/bash/install-locker-configs "$PWD" "$out/etc/xdg/quickshell"
 
-    # atmosphera — unified CLI dispatcher (replaces the old symlink to qs)
-    install -Dm755 Scripts/bash/atmosphera $out/bin/atmosphera
-
     # atmosphera-ipc — raw IPC entry point (stays as a symlink to qs)
     ln -s ${quickshell}/bin/qs $out/bin/atmosphera-ipc
 
@@ -119,6 +117,7 @@ stdenvNoCC.mkDerivation {
   preFixup = ''
     qtWrapperArgs+=(
       --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ wayland ]}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"
       --set-default XDG_CONFIG_DIRS /etc/xdg
@@ -126,6 +125,12 @@ stdenvNoCC.mkDerivation {
       --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
+  '';
+
+  # The automatic hook wraps ELF files only, not our shell dispatcher. Point
+  # at its installed, unchanged basename so multi-call dispatch still works.
+  postFixup = ''
+    makeQtWrapper "$out/share/atmosphera/Scripts/bash/atmosphera" "$out/bin/atmosphera"
   '';
 
   meta = {
