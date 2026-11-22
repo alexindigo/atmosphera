@@ -22,16 +22,29 @@ ShellRoot {
         property bool started: false
         property bool automationSeen: false
         property bool mpvVolumeObserved: false
+        property bool mpvAdmissionLogged: false
         property var mpvClampReceipt: null
         property int oldWallpaperSignals: 0
         property double startupDeadline: 0
         property var thumbnailControl: ({
                                           calls: 0
                                         })
-        readonly property string name: Quickshell.screens[0].name
+        readonly property string name: Quickshell.env("I5_VIDEO_SCREEN")
         readonly property string mode: Quickshell.env("I5_VIDEO_MODE")
         readonly property string directory: Settings.configDir + "plugins/video-wallpaper"
         readonly property var manifest: JSON.parse(Quickshell.env("I5_VIDEO_MANIFEST"))
+        QtObject {
+          id: runtimeActions
+          function registerRuntime(runtimeApi) {
+            return runtimeApi.settingsContext.current();
+          }
+          function activatePolicy(context) {
+            return context.current();
+          }
+          function admitRuntime(runtimeApi) {
+            return runtimeApi.settingsContext.current() ? runtimeApi : null;
+          }
+        }
         Component {
           id: pageApiFactory
           PluginSettingsSession {
@@ -73,6 +86,7 @@ ShellRoot {
             try {
               check(owner !== null, "native video owner opens");
               api = Service.createPluginAPI("video-wallpaper", manifest, owner, {}, {}, {});
+              api.mainInstance = runtimeActions;
               var loaded = Object.assign({}, Service.loadedPlugins);
               loaded["video-wallpaper"] = {
                 api: api
@@ -191,6 +205,9 @@ ShellRoot {
                                           });
               items.ipc = component("main/IPC.qml", {
                                       pluginApi: api,
+                                      admitRuntime: function (runtimeApi) {
+                                        return runtimeApi.settingsContext.current() ? runtimeApi : null;
+                                      },
                                       random: function () {},
                                       clear: function () {},
                                       setWallpaper: items.functions.setWallpaper
@@ -198,6 +215,12 @@ ShellRoot {
               items.tools = component("common/ToolRow.qml", {
                                         pluginApi: api,
                                         screenName: name,
+                                        randomAction: function () {
+                                          items.functions.random(name, api);
+                                        },
+                                        clearAction: function () {
+                                          items.functions.clear(name, api);
+                                        },
                                         settingWriter: function (key, value) {
                                           items.ipc.saveMonitorProperty(key, value, name);
                                         }
@@ -367,6 +390,18 @@ ShellRoot {
             return;
           }
           if (phase === "mpv-await") {
+            if (!mpvAdmissionLogged) {
+              mpvAdmissionLogged = true;
+              console.log("I5_VIDEO_MPV_ADMISSION " + JSON.stringify({
+                                                                       name: name,
+                                                                       enabled: items.mpv.wallpaperEnabled,
+                                                                       current: api.settingsContext.current(),
+                                                                       selected: items.mpv.currentWallpaper,
+                                                                       socket: items.mpv.mpvSocketScreen,
+                                                                       available: items.mpv.mpvpaperExists,
+                                                                       command: items.mpv.buildMpvCommand()
+                                                                     }));
+            }
             if (!mpvObserve.connected) {
               mpvObserve.connected = true;
               return;

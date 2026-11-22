@@ -18,35 +18,35 @@ Shared actions must identify their effect; selected request/presentation policy 
 
 | # | Plugin | Pattern | Disposition |
 | --- | --- | --- | --- |
-| 1 | `2-in-1-tools` | shared-domain | port |
+| 1 | `2-in-1-tools` | shared-domain | ported |
 | 2 | `activate-linux` | main-only | no-instance |
-| 3 | `agent-session-status` | shared-domain | port |
+| 3 | `agent-session-status` | shared-domain | ported |
 | 4 | `air-quality` | selected-client | ported |
 | 5 | `amd-gpu-monitor` | observation | ported |
 | 6 | `arch-updater` | selected-client | ported |
 | 7 | `assistant-panel` | query-worker | ported |
-| 8 | `auto-cpufreq` | view-backend | port |
+| 8 | `auto-cpufreq` | view-backend | ported |
 | 9 | `battery-actions` | main-only | no-instance |
-| 10 | `battery-and-power-management` | view-backend | port |
+| 10 | `battery-and-power-management` | view-backend | ported |
 | 11 | `battery-monitor-plus` | observation | ported |
 | 12 | `battery-threshold` | selected-client | ported |
 | 13 | `battery-wireless-devices` | observation | ported |
 | 14 | `caffeinate` | direct | no-port |
 | 15 | `calibre-provider` | launcher-only | no-instance |
 | 16 | `catwalk` | selected-client | ported |
-| 17 | `clamshell` | shared-domain | port |
+| 17 | `clamshell` | shared-domain | ported |
 | 18 | `claude-code-panel` | query-worker | ported |
-| 19 | `clipboard` | shared-domain | port |
-| 20 | `clipper` | shared-domain | port |
+| 19 | `clipboard` | shared-domain | ported |
+| 20 | `clipper` | shared-domain | ported |
 | 21 | `cloudflare-warp` | observation | ported |
 | 22 | `coin-flip` | direct | no-port |
 | 23 | `color-scheme-creator` | direct | no-port |
 | 24 | `currency-exchange` | selected-client | ported |
 | 25 | `custom-commands` | launcher-only | no-instance |
 | 26 | `daily-wallpaper` | main-only | no-instance |
-| 27 | `display-settings` | shared-domain | port |
+| 27 | `display-settings` | shared-domain | ported |
 | 28 | `dmenu` | ipc-session | no-instance |
-| 29 | `ds4-colors` | shared-domain | port |
+| 29 | `ds4-colors` | shared-domain | ported |
 | 30 | `file-search` | launcher-only | no-instance |
 | 31 | `giphy-search` | launcher-only | no-instance |
 | 32 | `git-companion` | selected-client | ported |
@@ -55,9 +55,9 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 35 | `habitica` | query-worker | ported |
 | 36 | `hassio` | query-worker | ported |
 | 37 | `hello-world` | direct | no-port |
-| 38 | `hermes-agent` | shared-domain | port |
+| 38 | `hermes-agent` | shared-domain | ported |
 | 39 | `hermes-ssh-chat` | singleton-session | ported |
-| 40 | `hyprland-steam-overlay` | shared-domain | port |
+| 40 | `hyprland-steam-overlay` | shared-domain | ported |
 | 41 | `hyprland-visual-editor` | direct | no-port |
 | 42 | `ip-monitor` | observation | ported |
 | 43 | `kagi-quick-search` | launcher-only | no-instance |
@@ -67,39 +67,39 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 47 | `kubectl-ctx` | query-worker | ported |
 | 48 | `latency-monitor` | query-worker | ported |
 | 49 | `launcher-pass` | launcher-only | no-instance |
-| 50 | `linux-wallpaperengine-controller` | shared-domain | port |
+| 50 | `linux-wallpaperengine-controller` | shared-domain | ported |
 | 51 | `lyrics-fetch` | observation | ported |
 | 52 | `mawaqit` | query-worker | ported |
 | 53 | `mimeapp-gui` | direct | no-port |
 | 54 | `mini-docker` | direct | no-port |
 | 55 | `model-usage` | query-worker | ported |
 | 56 | `monique` | observation | ported |
-| 57 | `monitor-layout` | shared-domain | port |
+| 57 | `monitor-layout` | shared-domain | ported |
 | 58 | `mpd` | direct | no-port |
 | 59 | `mpris-lyric` | query-worker | ported |
-| 60 | `mpvpaper` | shared-domain | port |
+| 60 | `mpvpaper` | shared-domain | ported |
 | 61 | `mullvad` | observation | ported |
-| 62 | `music-search` | shared-domain | port |
+| 62 | `music-search` | shared-domain | ported |
 | 63 | `netbird` | observation | ported |
 | 64 | `network-indicator` | direct | no-port |
-| 65 | `network-manager-vpn` | shared-domain | port |
+| 65 | `network-manager-vpn` | shared-domain | ported |
 | 66 | `news` | view-producer | ported |
 | 67 | `niri-animation-picker` | direct | no-port |
-| 68 | `niri-auto-tile` | shared-domain | port |
-| 69 | `niri-screensaver` | shared-domain | port |
+| 68 | `niri-auto-tile` | shared-domain | ported |
+| 69 | `niri-screensaver` | shared-domain | ported |
 | 70 | `niri-windows-map` | direct | no-port |
 | 71 | `noctalia-calculator` | observation | ported |
-| 72 | `noctalia-supergfxctl` | shared-domain | port |
+| 72 | `noctalia-supergfxctl` | shared-domain | ported |
 | 73 | `not-just-text` | selected-client | ported |
 | 74 | `notes-scratchpad` | direct | no-port |
 | 75 | `ntfy-notifications` | query-worker | ported |
-| 76 | `nvibrant` | shared-domain | port |
+| 76 | `nvibrant` | shared-domain | ported |
 | 77 | `nvidia-optimus` | empty-config | no-port |
 | 78 | `nvim-session-provider` | launcher-only | no-instance |
-| 79 | `obs-control` | shared-domain | port |
+| 79 | `obs-control` | shared-domain | ported |
 | 80 | `obsidian-provider` | launcher-only | no-instance |
 | 81 | `openvpn3` | observation | ported |
-| 82 | `osk-toggle` | shared-domain | port |
+| 82 | `osk-toggle` | shared-domain | ported |
 | 83 | `parallax-wallpaper` | main-only | no-instance |
 | 84 | `plugin-manager` | direct | no-port |
 | 85 | `pomodoro` | stateful-client | ported |
@@ -108,10 +108,10 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 88 | `ramadan-iftar` | query-worker | ported |
 | 89 | `rss-feed` | direct | no-port |
 | 90 | `saved-desktop-widgets` | main-only | no-instance |
-| 91 | `screen-recorder` | shared-domain | port |
-| 92 | `screen-shot-and-record` | shared-domain | port |
-| 93 | `screen-toolkit` | shared-domain | port |
-| 94 | `screencast-gif` | shared-domain | port |
+| 91 | `screen-recorder` | shared-domain | ported |
+| 92 | `screen-shot-and-record` | shared-domain | ported |
+| 93 | `screen-toolkit` | shared-domain | ported |
+| 94 | `screencast-gif` | shared-domain | ported |
 | 95 | `screenshot` | direct | no-port |
 | 96 | `shell-profiles` | query-worker | ported |
 | 97 | `show-keys` | main-only | no-instance |
@@ -122,17 +122,17 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 102 | `spotify-player` | query-worker | ported |
 | 103 | `squeekboard-toggle` | direct | no-port |
 | 104 | `ssh-sessions` | query-worker | ported |
-| 105 | `sticky-notes` | shared-domain | port |
+| 105 | `sticky-notes` | shared-domain | ported |
 | 106 | `syncthing-status` | query-worker | ported |
 | 107 | `tailscale` | observation | ported |
 | 108 | `tamagotchi` | stateful-client | ported |
-| 109 | `thinkpad-fan` | view-backend | port |
+| 109 | `thinkpad-fan` | view-backend | ported |
 | 110 | `timer` | direct | no-port |
 | 111 | `todo` | shared-content | ported |
 | 112 | `translator` | launcher-only | no-instance |
 | 113 | `update-count` | query-worker | ported |
-| 114 | `usb-drive-manager` | shared-domain | port |
-| 115 | `video-wallpaper` | shared-domain | port |
+| 114 | `usb-drive-manager` | shared-domain | ported |
+| 115 | `video-wallpaper` | shared-domain | ported |
 | 116 | `vscode-provider` | launcher-only | no-instance |
 | 117 | `wallcards` | main-window | ported |
 | 118 | `wallpaper-carousel` | main-only | no-instance |
@@ -154,9 +154,9 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 | 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a-G1m retain their qualified polling/query/observation/projection/request/provider/OAuth/calendar/IPC/input/profile/conversation units. G1o: Keybind Main owns context-keyed parser clients and complete nine-stage source generations, source-qualified common state cache and originating native bind writers. Both-scope native/cold files and actual Panel children, every stage replacement/retirement/destruction, real cache reuse, writer failure/Retry and finite field/entry/source controls cover the member. Dmenu remains reviewed no-instance with its individual IPC/session and page/native proof, not an invented placed route. Physical effects, broad compositor behavior and final paired acceptance are not implied. |
 
 Reviewed historical-group reconciliation for `dmenu`: Originating orchestrator decision 2026-11-21: no supplied placed opener, Main/Panel/Settings plus plugin-level IPC only. Preserve this historical member and its full individual IPC/session-policy and page/native obligations; do not add an opener. Manifest/registration mutations reject no-instance review. Decision recorded outside the repository in orchestrator-decision-dmenu-no-instance.md.
-| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | planned |
-| 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
-| 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
+| 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | All 19 G2 implementations select originating policy over singular effects. Steam retains one admitted typed geometry/dispatch policy through query, movement, show/focus and continuing-window stages. USB retains admitted automatic/action/completion policy over one observer; GPU retains typed context schedules and captured query/mode policy over one CLI/state/NotificationServer owner. Broad/final acceptance remains required; implementation counts are not runtime acceptance receipts. |
+| 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | G3a implements selected managed-service/inhibitor admission for agent-session-status and clamshell. G3c adds selected Clipboard history projections and originating coalesced decode admission over one content owner. G3d adds selected OBS presentation/polling and captured action policy over one transport/status/managed-state owner. G3b Auto-Tile adds typed selected daemon/config policy with parent-death-bound Python descendants. Sticky Notes makes its one notes/Gist sync owner explicit in instance UI and retains credential/target/lifetime-fenced shared operations. Screensaver selects applied config/idle/hook/action policy over one session resource owner with captured probe and serialized writer lifetimes. Hermes Agent selects context-keyed presentation/polling and an applied connection generation over one shared chat/bridge/gateway, with pending restart until explicit session replacement. Runtime acceptance is recorded separately; broad/final acceptance remains required. |
+| 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | All three backend-owner implementations have real Main entries, context-keyed clients and selected popup/Bar identities independent of renderer lifetime. CPU/fan observations and effects stay common; BatterySource is device-keyed and retires old subscriptions. Finite every-field/entry/owner checks supplement actual native representative and individual lifetime outcomes. Implementation status is not runtime or broad/final acceptance. |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending. |
 | 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | G6 complete: Tamagotchi Main-owned context-keyed games retain original operational writers/int/random/30-second cadence and individual drag/drop/particles/physics/Debug/Bed proofs. Pomodoro Main-owned context-keyed timers retain int duration/session policy, phase/auto-start,1000ms tick/5000ms alarm, plugin-level IPC/legacy source and native retirement. Both members have native both-scope pages/files/cold readers and rejecting controls; Pomodoro renews all four P169 toggles by pointer/keyboard/AT-SPI. Broad visual/final acceptance remains separate. |
 | 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | G7 selected session implementation: Main-owned context cache, originating remembered-target writer, connection-scoped callbacks, selected terminal signals/replay and retirement. Explicit shared IPC/global shortcut. Native both-scope page and individual inert SSH PTY proof; broad visual/final acceptance remains separate. |
@@ -164,18 +164,18 @@ Reviewed historical-group reconciliation for `dmenu`: Originating orchestrator d
 
 ## 2-in-1-tools
 
-Bar reads iconName/showTransformInTooltip locally; Main owns tablet sensor, rotation, bar/dock policy and writes operational restore leaves. Capture originating policy/actions; one physical display/bar/dock remains shared and must be explained.
+Main retains one physical tablet/sensor/output domain with admitted selected policy and captured apply/touch/exit restoration. Bar/CC pass originating contexts; operational restore leaves keep the shared native writer and bar/dock remain singular shell state. Instance Settings explains the shared effect; controlled native/lifetime proof is separate from physical or broad UI acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `2-in-1-tools/BarWidget.qml` | `iconName`:22; `showTransformInTooltip`:23 | 16, 17, 20 |
-| 2 | `2-in-1-tools/ControlCenterWidget.qml` | No literal field edge | 10 |
-| 3 | `2-in-1-tools/Main.qml` | `autoRotateInTabletMode`:25; `autoRotateOutsideTabletMode`:26; `autoTabletBarDensity`:23; `buttonBehavior`:29; `exclusiveDockInTabletMode`:24; `flipVerticalSensorOrientation`:28; `lastNonTabletBarDensity`:32,155,173,213,218; `lastNonTabletDockEnabled`:34,182,203; `lastNonTabletDockType`:33,181,202,225; `showSuccessToast`:22; `syncHyprTouchTransform`:27; `tabletBarDensity`:30; `tabletModeStateFile`:31 | 20, 21, 144 |
+| 1 | `2-in-1-tools/BarWidget.qml` | `iconName`:22; `showTransformInTooltip`:23 | 16, 17, 20, 25, 26, 27, 28, 32, ... |
+| 2 | `2-in-1-tools/ControlCenterWidget.qml` | No literal field edge | 10, 13, 14, 15, 16, 18, 20, 21 |
+| 3 | `2-in-1-tools/Main.qml` | `autoRotateInTabletMode`:41,82; `autoRotateOutsideTabletMode`:42,83; `autoTabletBarDensity`:39; `buttonBehavior`:45,81; `exclusiveDockInTabletMode`:40; `flipVerticalSensorOrientation`:44,84; `lastNonTabletBarDensity`:48,196,214,255,260; `lastNonTabletDockEnabled`:50,223,244; `lastNonTabletDockType`:49,222,243,267; `showSuccessToast`:38,80; `syncHyprTouchTransform`:43,85; `tabletBarDensity`:46; `tabletModeStateFile`:47,79 | 13, 35, 36, 37, 75, 77, 89, 185 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `0a166cb3b1d9fa859121f18f539cad2d3ee76d2ac84da05028094f6a0bf938a7`.
+Runtime-source/manifest fingerprint: `948cd361be0bd6e34f5966465a2526eb67e1ffcb759267b682c8c517200907c8`.
 
 ## activate-linux
 
@@ -192,23 +192,23 @@ Runtime-source/manifest fingerprint: `f3fb728f84aa973d8c9c699676cb220a9df36f3c31
 
 ## agent-session-status
 
-Bar hideWhenEmpty is local; Main reads server bindAddress/port/token and pollIntervalSec. One server process and common session store are shared; instance UI must identify server-wide controls instead of accepting dead overrides; selected poll/presentation still needs a consumer.
+Main admits selected address/int port/token for one server; retained restart and HTTP generations fence replacement/retirement. Main-owned context pollers preserve int seconds/minimum-one; Bar hideWhenEmpty is direct. Instance UI explains common sessions and restart/prune effects; no store migration. Finite resource checker and native/lifetime witnesses are separate acceptance gates.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `agent-session-status/BarWidget.qml` | `hideWhenEmpty`:25 | 23, 24, 25, 45, 47, 97 |
-| 2 | `agent-session-status/Main.qml` | `bindAddress`:15; `pollIntervalSec`:18; `port`:16; `token`:17 | 12, 13 |
-| 3 | `agent-session-status/Panel.qml` | No literal field edge | 14, 74, 75, 86, 92, 100, 118, 199, ... |
+| 1 | `agent-session-status/BarWidget.qml` | `hideWhenEmpty`:26 | 23, 24, 25, 26, 46, 48, 98 |
+| 2 | `agent-session-status/Main.qml` | `bindAddress`:33; `pollIntervalSec`:42; `port`:32; `token`:34 | 13, 29, 31, 37, 41, 42, 51, 223 |
+| 3 | `agent-session-status/Panel.qml` | No literal field edge | 14, 15, 75, 76, 87, 93, 101, 119, ... |
 | 4 | `agent-session-status/server.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `eb71a234869bd32be268d5e68cedea3c8631eed7d11b56ed6bbf327a13d941e1`.
+Runtime-source/manifest fingerprint: `dc2173ba179f8166cbe99bfcfe992050e88a0901d388f27345b559d401c0daa4`.
 
 ## air-quality
 
-Selected query worker and Bar/Desktop/Panel clients already use captured context; shared location observation stays shared. Retain broader matrix requirement.
+Selected query workers and Bar/Desktop/Panel use captured contexts over shared location observation. Both-scope native documents/cold readers, IO Retry/Reset/stale retention, held replacement/native retirement and actual AQI Text are qualified. Individual EU/AQICN/station/invalid-token/missing-token/disabled-location outcomes complement the finite every-field contract; controlled endpoints, not physical or final paired acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `desktopWidget=DesktopWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -244,7 +244,7 @@ Runtime-source/manifest fingerprint: `da36f8835a46863c2c7be09a985bdd03f5b87f3ffc
 
 ## arch-updater
 
-Main-owned selected check clients feed all runtime pieces; package actions remain explicit shared machine effects. Retain broader matrix requirement.
+Main-owned selected check clients feed all runtime pieces; package actions remain explicit shared machine effects. Both-scope native documents/cold/Retry/Reset/stale/held-retirement and actual package Text are qualified. Individual system/AUR/inert Flatpak replacement/removal plus finite every-field/entry contracts preserve existing legacy/P006 gaps; no real package mutation or final paired claim.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `desktopWidget=DesktopWidget.qml`; `launcherProvider=LauncherProvider.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -292,15 +292,16 @@ Runtime-source/manifest fingerprint: `99e3845d129cfaea524c6b959ae7801a4e4b124249
 
 ## auto-cpufreq
 
-Bar reads compactMode/refreshInterval and publishes itself as mainInstance; Panel reads that registered Bar. Correct per-context backend routing, not last-renderer ownership; daemon observation/actions shared. showGovernor/showTurbo have no runtime read.
+Main owns common CPU/daemon observation and actions; settingsConsumerFor caches selected typed polling by context. Bars and popup select their own client, never register a renderer as Main. compactMode remains a direct selected Bar read; showGovernor/showTurbo retain their separate feature gaps. Parsed every-field/entry/owner checks and native/held action/zero-domain lifetimes supplement renderer retirement proof.
 
-Entries: `barWidget=BarWidget.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
+Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `auto-cpufreq/BarWidget.qml` | `compactMode`:30; `refreshInterval`:217 | 20, 21, 62 |
-| 2 | `auto-cpufreq/Panel.qml` | No literal field edge | 13, 125 |
-| 3 | `auto-cpufreq/setup_polkit.sh` | No literal field edge | No namespace/Main reference |
+| 1 | `auto-cpufreq/BarWidget.qml` | `compactMode`:30 | 20, 21, 33 |
+| 2 | `auto-cpufreq/Main.qml` | `refreshInterval`:27 | 8, 24, 26, 27, 38, 39, 40, 53, ... |
+| 3 | `auto-cpufreq/Panel.qml` | No literal field edge | 13 |
+| 4 | `auto-cpufreq/setup_polkit.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: `showGovernor` (configuration), `showTurbo` (configuration).
 
@@ -309,7 +310,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `showGovernor,showTurbo` | `auto-cpufreq/Settings.qml:10` | Settings-only leaves; runtime Bar does not read them. Existing feature-surface gaps. |
-Runtime-source/manifest fingerprint: `ea419132b310fe15549ac905893e5b1b09cacf33ec033993fd30f07aefe7feb6`.
+Runtime-source/manifest fingerprint: `12253a28224d58c78b853d9f2295f535cf3cc8a9fa4714cae570b6e334340a98`.
 
 ## battery-actions
 
@@ -326,18 +327,21 @@ Runtime-source/manifest fingerprint: `22a9cad946c4c4fd3499119e97fd0d64f7bff3859c
 
 ## battery-and-power-management
 
-Bar reads selected batteryDevice and presentation, then registers itself as mainInstance. BatteryPopup reads registered Bar colors/device/actions; capture selected context independently of last Bar. Physical battery/profile remain shared.
+Main owns common power-profile state/actions and context-keyed BatteryClient; device-keyed BatterySource shares physical observations/threshold actions and retires old subscriptions on source replacement. Every Bar/popup selects its own captured context independently of renderers. Presentation remains directly selected; held threshold/source/retirement, native documents/cold readers and parsed every-field/entry/owner proof supplement this classification.
 
-Entries: `barWidget=BarWidget.qml`; `panel=BatteryPopup.qml`; `settings=SettingsView.qml`.
+Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=BatteryPopup.qml`; `settings=SettingsView.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `battery-and-power-management/BarWidget.qml` | `batteryDevice`:179,218,232; `colorPerformance`:78; `colorPowerSaver`:73; `colorizeByProfile`:68; `showBalancedIcon`:88; `showProfile`:83 | 68, 69, 73, 74, 78, 79, 83, 84, ... |
-| 2 | `battery-and-power-management/BatteryPopup.qml` | No literal field edge | 12 |
-| 3 | `battery-and-power-management/setup_rules.sh` | No literal field edge | No namespace/Main reference |
+| 1 | `battery-and-power-management/BarWidget.qml` | `colorPerformance`:76; `colorPowerSaver`:71; `colorizeByProfile`:66; `showBalancedIcon`:86; `showProfile`:81 | 54, 66, 67, 71, 72, 76, 77, 81, ... |
+| 2 | `battery-and-power-management/BatteryClient.qml` | `batteryDevice`:9 | 6, 8, 9, 25, 26 |
+| 3 | `battery-and-power-management/BatteryPopup.qml` | No literal field edge | 12 |
+| 4 | `battery-and-power-management/BatterySource.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `battery-and-power-management/Main.qml` | No literal field edge | 10, 13, 17, 40 |
+| 6 | `battery-and-power-management/setup_rules.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `1c05325af4b6a7aaca6883597ac548fa528b58cff264be76b6ffd819bb704980`.
+Runtime-source/manifest fingerprint: `3fdc8491ac7b0e0b2f87d6639fe991af475176ae3fdec55a0eba1382ffae8cd0`.
 
 ## battery-monitor-plus
 
@@ -425,7 +429,7 @@ Runtime-source/manifest fingerprint: `8695be98b459d95ccbcc01aaf14cd0dea07050c461
 
 ## catwalk
 
-Main shares CPU samples and exposes selected threshold/background clients to Bar/Desktop/Panel. Retain broader matrix requirement.
+Main shares CPU samples and exposes selected threshold/background clients to Bar/Desktop; Panel is common physical statistics. Both-scope native documents/cold/Discard/IO Retry/Reset/inheritance/stale/native retirement and actual Bar/Desktop Image sources/background/Text qualify the broader two-field matrix. Controlled CPU/binding proof, not physical sampling/pixels or final paired acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `desktopWidget=DesktopWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -441,7 +445,7 @@ Runtime-source/manifest fingerprint: `5dc8fa584545d9ac8d607df2ec04b09e0404ccd062
 
 ## clamshell
 
-Bar local visibility differs from Main enabled/connector regex/notify/inhibitor owner. Lid inhibition is one machine resource; preserve selected policy or explicitly plugin-wide policy UI, never dead enabled override.
+Main selects one admitted enabled/regex/who/notify policy over a common niri output observer and sole inhibitor. Settings supplies read-only context; Bar/CC toggles retain originating native writer. Replacement waits for exit and retirement stops effects without retargeting. Bar visibility is direct; instance UI explains common lid-switch effects. Resource checker/native/lifetime witnesses remain separate gates.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
@@ -449,10 +453,10 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `clamshell/BarWidget.qml` | `alwaysShowBarWidget`:19,20 | 17, 18, 23, 24, 25, 26, 27, 29, ... |
 | 2 | `clamshell/ControlCenterWidget.qml` | No literal field edge | 12, 13, 14, 15, 16, 17, 24 |
-| 3 | `clamshell/Main.qml` | `enabled`:43,44,121,122,131,132; `inhibitorWho`:36; `internalConnectorRegex`:30; `notify`:33,34 | 1, 10, 25, 26, 27, 40, 68, 130, ... |
+| 3 | `clamshell/Main.qml` | `enabled`:47,48,146; `inhibitorWho`:40; `internalConnectorRegex`:34; `notify`:37,38 | 1, 10, 27, 29, 30, 31, 44, 72, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `cd156da25f73f979e2c0d83166eaa6e6389cdaccf2bb1e604d0e1d6510269319`.
+Runtime-source/manifest fingerprint: `4f4145c07353b2f5745cdc19b21f5393a38a36b0d20c9e1bcd3d6b1d031d7251`.
 
 ## claude-code-panel
 
@@ -474,7 +478,7 @@ Runtime-source/manifest fingerprint: `6db80d39c51ce309a5155c34323c7a805ff3b497a5
 
 ## clipboard
 
-Panel density/image visibility local, Main maxHistorySize and image permission still plugin-level. Cliphist/pinned history stays one shared content owner; per-view result limit/preview admission must not use a dead override or migrate history.
+Main owns full cliphist content, pins, timestamps and decode cache; API-keyed HistoryClient uses literal head argv over full content with selected Real limit. Panel rows and image admission use their originating context. Projection replacement/retirement and coalesced decoder owners are fenced; no content moves. Native both-scope documents/cold Panels, typed/held decode lifetimes and finite three-field/caller/owner controls are separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -482,33 +486,34 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `clipboard/BarWidget.qml` | No literal field edge | No namespace/Main reference |
 | 2 | `clipboard/ClipboardItem.qml` | `showImagePreviews`:89 | 29, 39, 46, 51, 57, 89, 100, 102, ... |
-| 3 | `clipboard/Main.qml` | `maxHistorySize`:638; `showImagePreviews`:1119 | 13, 27, 321, 631, 638, 884, 905, 966, ... |
-| 4 | `clipboard/Panel.qml` | `density`:95; `showImagePreviews`:93 | 61, 93, 95, 114, 127, 274, 304, 309, ... |
+| 3 | `clipboard/HistoryClient.qml` | `maxHistorySize`:12 | 8, 11, 12 |
+| 4 | `clipboard/Main.qml` | `showImagePreviews`:68 | 13, 39, 43, 68, 71, 646, 898, 928, ... |
+| 5 | `clipboard/Panel.qml` | `density`:96; `showImagePreviews`:94 | 36, 94, 96, 115, 128, 275, 305, 310, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `c700345dcc19b6eef9a4a8b52e6965365a62a86fd4327f40f4a58434b9299778`.
+Runtime-source/manifest fingerprint: `91c29e5863ab298ce32514a252e7011ae750afcf482b1e7858a10106f331b80f`.
 
 ## clipper
 
-Panel/cards read selected settingsView; Main showCloseButton, Todo integration admission and autoPasteDelay use shared API. Explicit action parameters must carry selected policy; clipboard/notecard/Todo content stays shared.
+Panel/cards read selected settingsView; Main captures originating delay/Todo enable policy before timers, selection reads and selector continuations. Retired contexts cannot paste or write Todo. Existing clipboard/pin/note/Todo owners remain shared and instance Settings explains immediate content effects. Native both-scope, held lifetimes and finite caller/owner mapping are separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `clipper/BarWidget.qml` | No literal field edge | No namespace/Main reference |
-| 2 | `clipper/ClipboardCard.qml` | `cardColors`:103; `customColors`:104; `pincardsEnabled`:295 | 103, 104, 140, 148, 185, 295, 403, 405, ... |
+| 2 | `clipper/ClipboardCard.qml` | `cardColors`:104; `customColors`:105; `pincardsEnabled`:301 | 104, 105, 143, 151, 188, 279, 301, 409, ... |
 | 3 | `clipper/ControlCenterWidget.qml` | No literal field edge | No namespace/Main reference |
-| 4 | `clipper/Main.qml` | `autoPasteDelay`:1284,1310; `enableTodoIntegration`:972,1029; `showCloseButton`:12 | 12, 870, 883, 884, 972, 1029, 1098, 1099, ... |
+| 4 | `clipper/Main.qml` | `autoPasteDelay`:51,1308; `enableTodoIntegration`:51,1046; `showCloseButton`:13 | 13, 48, 50, 884, 897, 898, 1046, 1122, ... |
 | 5 | `clipper/NoteCard.qml` | No literal field edge | 127, 128, 133, 134, 204, 205, 232, 233, ... |
 | 6 | `clipper/NoteCardSelector.qml` | No literal field edge | No namespace/Main reference |
 | 7 | `clipper/NoteCardsPanel.qml` | `showCloseButton`:30 | 30, 42, 79, 80, 97, 98, 105, 116, ... |
-| 8 | `clipper/Panel.qml` | `autoPaste`:1196,1206,1321,1330; `autoPasteDelay`:1199,1212,1324,1336; `autoPasteOnRightClick`:1197,1207,1322,1331; `enableTodoIntegration`:1183; `fullscreenMode`:44,48; `hidePanelBackground`:54,152; `notecardsEnabled`:1389; `panelHeight`:49; `panelWidth`:46; `pincardsEnabled`:1257; `showCloseButton`:160 | 28, 29, 35, 44, 46, 48, 49, 54, ... |
+| 8 | `clipper/Panel.qml` | `autoPaste`:1195,1206,1320,1330; `autoPasteDelay`:1198,1211,1323,1335; `autoPasteOnRightClick`:1196,1207,1321,1331; `enableTodoIntegration`:1183; `fullscreenMode`:44,48; `hidePanelBackground`:54,152; `notecardsEnabled`:1389; `panelHeight`:49; `panelWidth`:46; `pincardsEnabled`:1257; `showCloseButton`:160 | 28, 29, 35, 44, 46, 48, 49, 54, ... |
 | 9 | `clipper/SelectionContextMenu.qml` | No literal field edge | No namespace/Main reference |
 | 10 | `clipper/TodoPageSelector.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `cc68af5523e65103e94cfbb79d28e76b2df3f64e2ea3704c3a7fa02a0c209eca`.
+Runtime-source/manifest fingerprint: `5b2d1887e463b1951be8626bd211ca449cfffbbf87c8b9e4cd13022e568f650b`.
 
 ## cloudflare-warp
 
@@ -606,29 +611,30 @@ Runtime-source/manifest fingerprint: `0ab929d430d15dca534fcf2fcf65cd171fb72b591e
 
 ## display-settings
 
-Bar iconColor local; Panel uses Main parser whose niriConfigPath is plugin-level. Selected file/parser context must follow the instance; actual compositor output writes remain explicit shared actions.
+Main caches one read-only config parser client per captured context; Panel and accepted Settings completion select it. Each path generation owns its parser and cancels all queued cat/glob stages on source/owner replacement. Live output providers, modification and udev remain singular; instance UI explains shared physical observations/actions. Native both-scope actual cards/cold readers, finite every-field mapping and individual held parser lifetime are distinct from physical display or broad acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `display-settings/BarWidget.qml` | `iconColor`:20 | 17, 18 |
-| 2 | `display-settings/Main.qml` | `niriConfigPath`:30 | 30 |
-| 3 | `display-settings/ModeDropdown.qml` | No literal field edge | No namespace/Main reference |
-| 4 | `display-settings/NiriConfigCard.qml` | No literal field edge | No namespace/Main reference |
-| 5 | `display-settings/NiriConfigParser.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `display-settings/NiriLiveCard.qml` | No literal field edge | No namespace/Main reference |
-| 7 | `display-settings/NiriOutputProvider.qml` | No literal field edge | No namespace/Main reference |
-| 8 | `display-settings/OutputCard.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `display-settings/OutputProperty.qml` | No literal field edge | No namespace/Main reference |
-| 10 | `display-settings/Panel.qml` | No literal field edge | 19 |
-| 11 | `display-settings/PillButton.qml` | No literal field edge | No namespace/Main reference |
-| 12 | `display-settings/UdevMonitor.qml` | No literal field edge | No namespace/Main reference |
-| 13 | `display-settings/WlrCard.qml` | No literal field edge | No namespace/Main reference |
-| 14 | `display-settings/WlrOutputProvider.qml` | No literal field edge | No namespace/Main reference |
+| 2 | `display-settings/DisplayConfigClient.qml` | `niriConfigPath`:11 | 7, 9, 10 |
+| 3 | `display-settings/Main.qml` | No literal field edge | 11, 13, 14, 17, 45 |
+| 4 | `display-settings/ModeDropdown.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `display-settings/NiriConfigCard.qml` | No literal field edge | No namespace/Main reference |
+| 6 | `display-settings/NiriConfigParser.qml` | No literal field edge | No namespace/Main reference |
+| 7 | `display-settings/NiriLiveCard.qml` | No literal field edge | No namespace/Main reference |
+| 8 | `display-settings/NiriOutputProvider.qml` | No literal field edge | No namespace/Main reference |
+| 9 | `display-settings/OutputCard.qml` | No literal field edge | No namespace/Main reference |
+| 10 | `display-settings/OutputProperty.qml` | No literal field edge | No namespace/Main reference |
+| 11 | `display-settings/Panel.qml` | No literal field edge | 19, 20, 39, 77 |
+| 12 | `display-settings/PillButton.qml` | No literal field edge | No namespace/Main reference |
+| 13 | `display-settings/UdevMonitor.qml` | No literal field edge | No namespace/Main reference |
+| 14 | `display-settings/WlrCard.qml` | No literal field edge | No namespace/Main reference |
+| 15 | `display-settings/WlrOutputProvider.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `6766a67308fa1ceb17f5300deb2bfbe0e4157da0ddac9cf6ce481a2c95670f8f`.
+Runtime-source/manifest fingerprint: `424b0e0089dae2f05b8997613fc19672169ced27363e470213c83923994da32c`.
 
 ## dmenu
 
@@ -647,14 +653,14 @@ Runtime-source/manifest fingerprint: `32d2b69fb5ed50f6a00df05a685cb5104dc98fc5e0
 
 ## ds4-colors
 
-Bar icon/color visibility local; Main reads/writes saved color and drives physical controller LEDs. Carry selected saved choice/action writer and label the one physical device effect; recentColors has no runtime consumer.
+One Main scanner/serial LED action owner captures selected color, controllers and optional originating runtime writer. Accepted page action passes its acknowledged color/context without resaving through Main; late retired results cannot publish. Bar choices stay local; instance UI explains shared LEDs/plugin-level reconnect. recentColors remains saved choice history, not a new runtime feature.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `ds4-colors/BarWidget.qml` | `color`:34; `colorIcon`:35; `hideOnEmpty`:36 | 25, 26, 28, 29, 30, 32, 119, 138 |
-| 2 | `ds4-colors/Main.qml` | `color`:246,255,257 | 246, 254 |
+| 1 | `ds4-colors/BarWidget.qml` | `color`:34; `colorIcon`:35; `hideOnEmpty`:36 | 25, 26, 28, 29, 30, 32, 121, 123, ... |
+| 2 | `ds4-colors/Main.qml` | `color`:204,294 | 154, 164, 204, 290, 293 |
 | 3 | `ds4-colors/scripts/scan_battery.sh` | No literal field edge | No namespace/Main reference |
 | 4 | `ds4-colors/scripts/scan_controllers.sh` | No literal field edge | No namespace/Main reference |
 | 5 | `ds4-colors/scripts/set_ds4_color.sh` | No literal field edge | No namespace/Main reference |
@@ -668,7 +674,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `recentColors` | `ds4-colors/manifest.json:1` | Declared saved choices have no runtime reader; preserve, do not invent behavior here. |
-Runtime-source/manifest fingerprint: `ff3dc926cdff71bae18134b6145e96122cb7cc43e6057f8e49e7cbe4e824d31f`.
+Runtime-source/manifest fingerprint: `c297b2bfc5693353da142c52cb0497e012eb5d967885c8dd7d432f240274e1f4`.
 
 ## file-search
 
@@ -718,7 +724,7 @@ Runtime-source/manifest fingerprint: `67dbe966f94e2eebe955cc95ea09eb501351612aee
 
 ## github-contributions
 
-Selected account/token query clients plus local layout/weeks/labels/total feed Desktop; retain broader matrix requirement.
+Selected account/token query clients plus local layout/weeks/labels/total feed Desktop. Both-scope native documents/cold/Retry/Reset/stale/held-retirement and actual account Text/graph qualify the broader matrix. Individual GraphQL/error/public/four-week/compact/cleared-account outcomes and finite every-field/entry contracts remain controlled, not real-account or final paired acceptance.
 
 Entries: `desktopWidget=DesktopWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
@@ -811,27 +817,29 @@ Runtime-source/manifest fingerprint: `78f4621d434d4fedaa57ead8caab0c5430d33c8cf8
 
 ## hermes-agent
 
-Bar/Panel display fields local; Main bridge/CLI/home/state/poll/provider/model settings and bridge session are shared. Capture selected client configuration; one managed bridge/gateway lifecycle and shared chat content must remain explicit.
+Context-keyed presentation/polling and originating model/native pin actions; one applied process/readers/token/HTTP generation keeps the shared chat through Apply and prompt completion, with explicit session replacement adopting pending connection inputs. Local plugin initialization retains its native detection writer; draft probes are separate. Full member acceptance is recorded outside this source inventory.
 
 Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `hermes-agent/BarWidget.qml` | `clientOnlyMode`:28; `hideWhenIdle`:37 | 19, 20, 26, 27, 99, 100, 234, 237, ... |
-| 2 | `hermes-agent/LauncherProvider.qml` | `launcherPrefix`:16 | 13, 14, 15, 40, 41, 63, 97, 110, ... |
-| 3 | `hermes-agent/Main.qml` | `autoStartBridge`:24; `autoStartGateway`:25; `bridgeHost`:19; `bridgePort`:20; `bridgeTokenManual`:36,59; `clientOnlyMode`:27; `configured`:186,195; `defaultModel`:193; `defaultProvider`:194; `hermesCommand`:23,192; `hermesHome`:22,191; `panelPinned`:81,82,267,473; `stateFile`:21; `statusPollIntervalSec`:26 | 12, 13, 190 |
-| 4 | `hermes-agent/Panel.qml` | `defaultModel`:37; `defaultProvider`:36; `panelPinned`:29,94; `showToolActivity`:30 | 14, 15, 16, 17, 86, 87, 89, 94, ... |
-| 5 | `hermes-agent/PinnedPanelWindow.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `hermes-agent/components/ApprovalCard.qml` | No literal field edge | No namespace/Main reference |
-| 7 | `hermes-agent/components/HermesAvatar.qml` | No literal field edge | No namespace/Main reference |
-| 8 | `hermes-agent/components/MessageBubble.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `hermes-agent/components/SessionPopup.qml` | No literal field edge | 16 |
-| 10 | `hermes-agent/components/SummaryPopup.qml` | No literal field edge | No namespace/Main reference |
-| 11 | `hermes-agent/scripts/hermes-bridge-serve.sh` | No literal field edge | No namespace/Main reference |
-| 12 | `hermes-agent/scripts/hermes_bridge.py` | No literal field edge | No namespace/Main reference |
+| 1 | `hermes-agent/BarWidget.qml` | `clientOnlyMode`:29 | 19, 20, 21, 27, 28, 100, 101, 235, ... |
+| 2 | `hermes-agent/HermesClient.qml` | `bridgePort`:14; `clientOnlyMode`:13; `hideWhenIdle`:15; `launcherPrefix`:18; `panelPinned`:16; `showToolActivity`:17; `statusPollIntervalSec`:12 | 3, 6, 10, 11 |
+| 3 | `hermes-agent/HermesConnection.qml` | No literal field edge | No namespace/Main reference |
+| 4 | `hermes-agent/LauncherProvider.qml` | No literal field edge | 13, 14, 17, 18, 43, 44, 56, 70, ... |
+| 5 | `hermes-agent/Main.qml` | `autoStartBridge`:67; `autoStartGateway`:68; `bridgeHost`:62; `bridgeTokenManual`:66; `configured`:156,165; `defaultModel`:69,163; `defaultProvider`:69,164; `hermesCommand`:65,162; `hermesHome`:64,161; `panelPinned`:235,239,279; `stateFile`:63 | 8, 38, 43, 50, 56, 58, 59, 143, ... |
+| 6 | `hermes-agent/Panel.qml` | `defaultModel`:40; `defaultProvider`:39; `panelPinned`:95 | 14, 15, 18, 19, 20, 88, 93, 95, ... |
+| 7 | `hermes-agent/PinnedPanelWindow.qml` | No literal field edge | No namespace/Main reference |
+| 8 | `hermes-agent/components/ApprovalCard.qml` | No literal field edge | No namespace/Main reference |
+| 9 | `hermes-agent/components/HermesAvatar.qml` | No literal field edge | No namespace/Main reference |
+| 10 | `hermes-agent/components/MessageBubble.qml` | No literal field edge | No namespace/Main reference |
+| 11 | `hermes-agent/components/SessionPopup.qml` | No literal field edge | 16 |
+| 12 | `hermes-agent/components/SummaryPopup.qml` | No literal field edge | No namespace/Main reference |
+| 13 | `hermes-agent/scripts/hermes-bridge-serve.sh` | No literal field edge | No namespace/Main reference |
+| 14 | `hermes-agent/scripts/hermes_bridge.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `f36f177a310a2c8ac7ff219f93ef5fcabfad0629e30d7217884febc7e6efe9eb`.
+Runtime-source/manifest fingerprint: `fa1f80c614b82d0cc0f65c9f0a93859cb3e5a57bfce50d278a4eba6c2b6b306c`.
 
 ## hermes-ssh-chat
 
@@ -860,24 +868,26 @@ Runtime-source/manifest fingerprint: `ce825759c0d5315f09cab90638e07080de992eb41c
 
 ## hyprland-steam-overlay
 
-Panel reads local widths but Main layout/geometry configuration is shared. Capture originating layout policy; one Steam window set/compositor geometry remains shared and must be labeled. autoLaunchSteam has no runtime read.
+Both Bar toggle entries supply their captured context. Main owns one admitted typed layout/syntax policy through actual query completion, move/show/focus and continuing new-window stages; retirement stops its continuations. The optional Panel guide remains a direct injected pixel-width reader. One physical overlay stays shared and is explained in instance Settings. autoLaunchSteam and enableChatNotifications remain stored independent feature gaps. Native both-scope documents/cold consumers, individual inert lifetimes and finite parsed mapping are separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `hyprland-steam-overlay/BarWidget.qml` | No literal field edge | 58, 59, 95, 97 |
-| 2 | `hyprland-steam-overlay/Main.qml` | `chatWidthPercent`:27; `friendsWidthPercent`:25; `gapSize`:22; `mainWidthPercent`:26; `topMarginPercent`:23; `useCustomLayout`:32; `windowHeightPercent`:24 | 18, 19 |
-| 3 | `hyprland-steam-overlay/Panel.qml` | `chatWidth`:159; `friendsWidth`:157; `mainWidth`:158 | 157, 158, 159 |
+| 2 | `hyprland-steam-overlay/Main.qml` | No literal field edge | 25, 27, 61, 536 |
+| 3 | `hyprland-steam-overlay/OverlayPolicy.qml` | No literal field edge | No namespace/Main reference |
+| 4 | `hyprland-steam-overlay/Panel.qml` | `chatWidth`:159; `friendsWidth`:157; `mainWidth`:158 | 157, 158, 159 |
 
-Declared leaves without a literal runtime namespace edge: `autoLaunchSteam` (configuration), `enableChatNotifications` (configuration).
+Declared leaves without a literal runtime namespace edge: `autoLaunchSteam` (configuration), `chatWidthPercent` (configuration), `enableChatNotifications` (configuration), `friendsWidthPercent` (configuration), `gapSize` (configuration), `mainWidthPercent` (configuration), `topMarginPercent` (configuration), `useCustomLayout` (configuration), `windowHeightPercent` (configuration).
 
 Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
 
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `autoLaunchSteam,enableChatNotifications` | `hyprland-steam-overlay/Settings.qml:9` | Settings-only leaves; no runtime behavior reader in this catalog version. |
-Runtime-source/manifest fingerprint: `95cb85facc3b552664fca358939c9bb22e9ac776a4c0f081574df7ef6f6955b0`.
+| 2 | `gapSize,topMarginPercent,windowHeightPercent,friendsWidthPercent,mainWidthPercent,chatWidthPercent,useCustomLayout` | `hyprland-steam-overlay/OverlayPolicy.qml:12` | Captured effective values cross the original QML int/real/bool boundary once per admitted overlay session; Main retains this policy through query, move/show/focus and continuing-window dispatch. |
+Runtime-source/manifest fingerprint: `0a217fea0b795beaf8ea750f6f89ebd81185cdb352adeb7f20a57df1a6bc5881`.
 
 ## hyprland-visual-editor
 
@@ -1065,49 +1075,50 @@ Runtime-source/manifest fingerprint: `79bb7c297cfd37cf44ac41d23b26d458b9604f53c3
 
 ## linux-wallpaperengine-controller
 
-Panel has local browsing inputs but Main scan/default engine choices/properties and wallpaper process are shared. Select browse/configuration projection and capture output actions; actual monitor wallpaper and existing content maps stay shared explicitly.
+Main keeps context-keyed browse catalogs and one engine driven by captured originating options/layout/property inputs. Recovery and color callbacks retain that admission and fence retirement; screens/snapshots/property content stay shared. Startup remains explicitly plugin-level; instance UI identifies common output effects. Native both-scope, finite every-field and individual engine/source/color lifetime proofs are separate from physical playback or broad acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `linux-wallpaperengine-controller/BarWidget.qml` | `iconColor`:22 | 19, 20, 21, 43, 46, 49, 71, 72, ... |
-| 2 | `linux-wallpaperengine-controller/Main.qml` | `autoApplyOnStartup`:251; `defaultAudioReactiveEffects`:245,471,560; `defaultClamp`:233; `defaultDisableMouse`:247,479,566; `defaultDisableParallax`:248,483,569; `defaultFps`:234; `defaultFullscreenPauseOnlyActive`:250; `defaultMuted`:244,467,557; `defaultNoAutomute`:246,475,563; `defaultNoFullscreenPause`:249; `defaultScaling`:232; `defaultVolume`:237,462,554; `lastKnownGoodScreens`:91,92,165,178; `runtimeRecoveryPending`:99,100,144,148,166,185,216; `screens`:87,88,159,184,301,372,444,445,448,453,456,504,505,508,537,538,541,543,546; `wallpaperColorScreenshots`:103,104,113; `wallpaperProperties`:95,96,354,363; `wallpaperScanCacheMinutes`:254; `wallpapersFolder`:394 | 34, 35, 87, 88, 91, 92, 95, 96, ... |
-| 3 | `linux-wallpaperengine-controller/Panel.qml` | `applyWallpaperColorsOnApply`:50,686; `badgeEnabled`:71; `badgeOrder`:70; `defaultAudioReactiveEffects`:460; `defaultClamp`:457; `defaultDisableMouse`:461; `defaultDisableParallax`:462; `defaultMuted`:459; `defaultNoAutomute`:506; `defaultVolume`:458; `enableExtraPropertiesEditor`:114; `panelLastSelectedPath`:430,444; `panelPageSize`:63; `showSidebarDescription`:73; `wallpapersFolder`:37 | 25, 26, 27, 51, 52, 55, 88, 223, ... |
-| 4 | `linux-wallpaperengine-controller/WallpaperColorManager.qml` | `wallpaperColorScreenshots`:72,77,121 | 72, 77, 121 |
-| 5 | `linux-wallpaperengine-controller/components/panel/PanelDropdowns.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `linux-wallpaperengine-controller/components/panel/PanelHeader.qml` | No literal field edge | 11, 197, 205, 214, 215, 217 |
-| 7 | `linux-wallpaperengine-controller/components/panel/RuntimeErrorBanner.qml` | No literal field edge | 13, 20, 21, 28, 94, 101, 117 |
-| 8 | `linux-wallpaperengine-controller/components/shared/CardGridSection.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `linux-wallpaperengine-controller/components/shared/SidebarPanel.qml` | No literal field edge | No namespace/Main reference |
-| 10 | `linux-wallpaperengine-controller/components/wallpaper/ApplyControls.qml` | No literal field edge | 15, 74, 82, 109, 125, 233 |
-| 11 | `linux-wallpaperengine-controller/components/wallpaper/GridSection.qml` | No literal field edge | 14, 258 |
-| 12 | `linux-wallpaperengine-controller/components/wallpaper/PreviewCard.qml` | No literal field edge | No namespace/Main reference |
-| 13 | `linux-wallpaperengine-controller/components/wallpaper/PropertiesEditor.qml` | No literal field edge | No namespace/Main reference |
-| 14 | `linux-wallpaperengine-controller/components/wallpaper/Sidebar.qml` | No literal field edge | 15, 98 |
-| 15 | `linux-wallpaperengine-controller/components/wallpaper/WallpaperBadge.qml` | No literal field edge | No namespace/Main reference |
-| 16 | `linux-wallpaperengine-controller/helpers/panel/BadgeHelpers.js` | No literal field edge | No namespace/Main reference |
-| 17 | `linux-wallpaperengine-controller/helpers/panel/DescriptionHelpers.js` | No literal field edge | No namespace/Main reference |
-| 18 | `linux-wallpaperengine-controller/helpers/panel/PropertyHelpers.js` | No literal field edge | No namespace/Main reference |
-| 19 | `linux-wallpaperengine-controller/helpers/panel/WallpaperFilterHelpers.js` | No literal field edge | No namespace/Main reference |
-| 20 | `linux-wallpaperengine-controller/helpers/panel/WallpaperMetaHelpers.js` | No literal field edge | No namespace/Main reference |
-| 21 | `linux-wallpaperengine-controller/helpers/panel/WallpaperUiHelpers.js` | No literal field edge | No namespace/Main reference |
-| 22 | `linux-wallpaperengine-controller/helpers/runtime/EngineHelpers.js` | No literal field edge | No namespace/Main reference |
-| 23 | `linux-wallpaperengine-controller/helpers/runtime/WallpaperColorHelpers.js` | No literal field edge | No namespace/Main reference |
-| 24 | `linux-wallpaperengine-controller/helpers/shared/ColorCacheHelpers.js` | No literal field edge | No namespace/Main reference |
-| 25 | `linux-wallpaperengine-controller/scripts/capture-wallpaper-colors.sh` | No literal field edge | No namespace/Main reference |
-| 26 | `linux-wallpaperengine-controller/scripts/check-file-exists.sh` | No literal field edge | No namespace/Main reference |
-| 27 | `linux-wallpaperengine-controller/scripts/clear-color-cache.sh` | No literal field edge | No namespace/Main reference |
-| 28 | `linux-wallpaperengine-controller/scripts/detect-steam-workshop.sh` | No literal field edge | No namespace/Main reference |
-| 29 | `linux-wallpaperengine-controller/scripts/force-stop-engine.sh` | No literal field edge | No namespace/Main reference |
-| 30 | `linux-wallpaperengine-controller/scripts/get-cache-size-bytes.sh` | No literal field edge | No namespace/Main reference |
-| 31 | `linux-wallpaperengine-controller/scripts/scan-properties-compatibility.sh` | No literal field edge | No namespace/Main reference |
-| 32 | `linux-wallpaperengine-controller/scripts/scan-wallpapers.sh` | No literal field edge | No namespace/Main reference |
-| 33 | `linux-wallpaperengine-controller/scripts/scan_wallpapers.py` | No literal field edge | No namespace/Main reference |
-| 34 | `linux-wallpaperengine-controller/scripts/update-noctalia-wallpapers-cache.sh` | No literal field edge | No namespace/Main reference |
+| 2 | `linux-wallpaperengine-controller/Main.qml` | `autoApplyOnStartup`:308; `defaultAudioReactiveEffects`:302,474,565; `defaultClamp`:87,290,348; `defaultDisableMouse`:304,482,571; `defaultDisableParallax`:305,486,574; `defaultFps`:85,291; `defaultFullscreenPauseOnlyActive`:307; `defaultMuted`:301,470,562; `defaultNoAutomute`:303,478,568; `defaultNoFullscreenPause`:306; `defaultScaling`:88,289,347; `defaultVolume`:294,465,559; `lastKnownGoodScreens`:139,140,221,234; `panelLastSelectedPath`:165,168; `runtimeRecoveryPending`:147,148,199,203,222,241,273; `screens`:135,136,240,342,413,447,448,451,456,459,508,509,512,542,543,546,548,551,657,769; `wallpaperColorScreenshots`:151,152,161; `wallpaperProperties`:89,143,144,395,404,658; `wallpaperScanCacheMinutes`:311 | 28, 36, 38, 42, 45, 51, 52, 55, ... |
+| 3 | `linux-wallpaperengine-controller/Panel.qml` | `applyWallpaperColorsOnApply`:51,682; `badgeEnabled`:72; `badgeOrder`:71; `defaultAudioReactiveEffects`:456; `defaultClamp`:453; `defaultDisableMouse`:457; `defaultDisableParallax`:458; `defaultMuted`:455; `defaultNoAutomute`:502; `defaultVolume`:454; `enableExtraPropertiesEditor`:115; `panelPageSize`:64; `showSidebarDescription`:74; `wallpapersFolder`:38 | 25, 26, 27, 28, 52, 224, 225, 329, ... |
+| 4 | `linux-wallpaperengine-controller/WallpaperCatalog.qml` | `wallpaperScanCacheMinutes`:18; `wallpapersFolder`:16 | 11, 13, 14, 15 |
+| 5 | `linux-wallpaperengine-controller/WallpaperColorManager.qml` | `wallpaperColorScreenshots`:74,79,126 | 74, 79, 126 |
+| 6 | `linux-wallpaperengine-controller/components/panel/PanelDropdowns.qml` | No literal field edge | No namespace/Main reference |
+| 7 | `linux-wallpaperengine-controller/components/panel/PanelHeader.qml` | No literal field edge | 11, 197, 205, 214, 215, 217 |
+| 8 | `linux-wallpaperengine-controller/components/panel/RuntimeErrorBanner.qml` | No literal field edge | 13, 20, 21, 28, 94, 101, 117 |
+| 9 | `linux-wallpaperengine-controller/components/shared/CardGridSection.qml` | No literal field edge | No namespace/Main reference |
+| 10 | `linux-wallpaperengine-controller/components/shared/SidebarPanel.qml` | No literal field edge | No namespace/Main reference |
+| 11 | `linux-wallpaperengine-controller/components/wallpaper/ApplyControls.qml` | No literal field edge | 15, 74, 82, 109, 125, 233 |
+| 12 | `linux-wallpaperengine-controller/components/wallpaper/GridSection.qml` | No literal field edge | 14, 258 |
+| 13 | `linux-wallpaperengine-controller/components/wallpaper/PreviewCard.qml` | No literal field edge | No namespace/Main reference |
+| 14 | `linux-wallpaperengine-controller/components/wallpaper/PropertiesEditor.qml` | No literal field edge | No namespace/Main reference |
+| 15 | `linux-wallpaperengine-controller/components/wallpaper/Sidebar.qml` | No literal field edge | 15, 98 |
+| 16 | `linux-wallpaperengine-controller/components/wallpaper/WallpaperBadge.qml` | No literal field edge | No namespace/Main reference |
+| 17 | `linux-wallpaperengine-controller/helpers/panel/BadgeHelpers.js` | No literal field edge | No namespace/Main reference |
+| 18 | `linux-wallpaperengine-controller/helpers/panel/DescriptionHelpers.js` | No literal field edge | No namespace/Main reference |
+| 19 | `linux-wallpaperengine-controller/helpers/panel/PropertyHelpers.js` | No literal field edge | No namespace/Main reference |
+| 20 | `linux-wallpaperengine-controller/helpers/panel/WallpaperFilterHelpers.js` | No literal field edge | No namespace/Main reference |
+| 21 | `linux-wallpaperengine-controller/helpers/panel/WallpaperMetaHelpers.js` | No literal field edge | No namespace/Main reference |
+| 22 | `linux-wallpaperengine-controller/helpers/panel/WallpaperUiHelpers.js` | No literal field edge | No namespace/Main reference |
+| 23 | `linux-wallpaperengine-controller/helpers/runtime/EngineHelpers.js` | No literal field edge | No namespace/Main reference |
+| 24 | `linux-wallpaperengine-controller/helpers/runtime/WallpaperColorHelpers.js` | No literal field edge | No namespace/Main reference |
+| 25 | `linux-wallpaperengine-controller/helpers/shared/ColorCacheHelpers.js` | No literal field edge | No namespace/Main reference |
+| 26 | `linux-wallpaperengine-controller/scripts/capture-wallpaper-colors.sh` | No literal field edge | No namespace/Main reference |
+| 27 | `linux-wallpaperengine-controller/scripts/check-file-exists.sh` | No literal field edge | No namespace/Main reference |
+| 28 | `linux-wallpaperengine-controller/scripts/clear-color-cache.sh` | No literal field edge | No namespace/Main reference |
+| 29 | `linux-wallpaperengine-controller/scripts/detect-steam-workshop.sh` | No literal field edge | No namespace/Main reference |
+| 30 | `linux-wallpaperengine-controller/scripts/force-stop-engine.sh` | No literal field edge | No namespace/Main reference |
+| 31 | `linux-wallpaperengine-controller/scripts/get-cache-size-bytes.sh` | No literal field edge | No namespace/Main reference |
+| 32 | `linux-wallpaperengine-controller/scripts/scan-properties-compatibility.sh` | No literal field edge | No namespace/Main reference |
+| 33 | `linux-wallpaperengine-controller/scripts/scan-wallpapers.sh` | No literal field edge | No namespace/Main reference |
+| 34 | `linux-wallpaperengine-controller/scripts/scan_wallpapers.py` | No literal field edge | No namespace/Main reference |
+| 35 | `linux-wallpaperengine-controller/scripts/update-noctalia-wallpapers-cache.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `202336ab98168c1f86f277ba865bf60525bbe0a2d722e310069fbca67bb1b48d`.
+Runtime-source/manifest fingerprint: `33960c54bdef89e2d6826921082944dc3d48c6cc6b2c182774b895262541a632`.
 
 ## lyrics-fetch
 
@@ -1219,7 +1230,7 @@ Runtime-source/manifest fingerprint: `81e218e39c0c3c8c9ca20c5d9222ac59a833b550ce
 
 ## monitor-layout
 
-Bar iconColor local, Main backend/grid/snap and command backends choose shared layout model. Select context parser/projection/actions; actual compositor outputs shared and explicitly described.
+Main keeps one common live/draft/selected layout while actions capture originating context, effective command/grid/snap policy and backend. Fetch completion uses its admitted parser; apply follow-up retains its policy and retirement fences publication/follow-up. Every Panel editing/apply/script caller supplies its context; Main/IPC remain plugin-level. Native grid/actual Panel/cold proof, finite mappings and held backend/apply/retirement cases do not certify physical output changes or the unrelated existing scale-status t reference.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1227,7 +1238,7 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `monitor-layout/BarWidget.qml` | `iconColor`:20 | 17, 18 |
 | 2 | `monitor-layout/ControlCenterWidget.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `monitor-layout/Main.qml` | `backend`:107; `gridSize`:186; `snapToGrid`:183 | 14, 15 |
+| 3 | `monitor-layout/Main.qml` | `backend`:129; `gridSize`:208; `snapToGrid`:205,261 | 15, 16, 17, 24, 30, 32 |
 | 4 | `monitor-layout/Panel.qml` | No literal field edge | 18, 19, 20, 21, 140, 146, 157, 162, ... |
 | 5 | `monitor-layout/backends/HyprlandBackend.js` | `hyprctlCommand`:23,29 | No namespace/Main reference |
 | 6 | `monitor-layout/backends/SwayBackend.js` | `swayCommand`:23,29 | No namespace/Main reference |
@@ -1240,7 +1251,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | --- | --- | --- | --- |
 | 1 | `hyprctlCommand` | `monitor-layout/backends/HyprlandBackend.js:23` | JS extractSettings(cfg, defaults) is fed by Main; selected backend command must follow originating context. |
 | 2 | `swayCommand` | `monitor-layout/backends/SwayBackend.js:23` | JS extractSettings(cfg, defaults) is fed by Main; selected backend command must follow originating context. |
-Runtime-source/manifest fingerprint: `bbff49df1358f0609984753f30b0c5383270d43e1ef38b0e718c4e7101ace68b`.
+Runtime-source/manifest fingerprint: `4e8a7f4aa7f30bf248a5839cf732b745b12667ee1d760a75c08dcf63312c2a5e`.
 
 ## mpd
 
@@ -1275,23 +1286,23 @@ Runtime-source/manifest fingerprint: `87d7daafc56b8f8d85834121893efcb0c6d02cccdd
 
 ## mpvpaper
 
-Bar/Panel local saved choices dispatch Main-owned engine/automation/thumbnail objects with shared API. Select configuration/actions while explicitly owning the one wallpaper output/socket and preserving operational thumbnail/history data.
+Main retains one playback/automation owner driven by selected context; runtime actions carry their native API, while accepted page completion supplies only read-only policy. Settings Random/Clear stage scoped fields, runtime tools remain immediate; fresh browse models fence source replacement/retirement. Cache/baseline writers remain shared. Instance UI explains common output effects; native both-scope, finite mappings and individual cache/color/browse proofs do not certify physical playback or general MPV options.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `mpvpaper/BarWidget.qml` | `active`:20,78; `isMuted`:28,90,94; `isPlaying`:24,82,86 | 20, 24, 28, 78, 82, 86, 90, 94 |
-| 2 | `mpvpaper/Main.qml` | `active`:16,238; `automation`:20; `automationMode`:24; `automationTime`:28; `currentWallpaper`:32,120; `fillMode`:62; `hardwareAcceleration`:36,314; `isMuted`:40,276,283,290; `isPlaying`:44,254,261,268; `mpvSocket`:48; `oldWallpapers`:53; `profile`:57; `thumbCacheReady`:68; `volume`:72,298; `wallpapersFolder`:76 | 16, 20, 24, 28, 32, 36, 40, 44, ... |
-| 3 | `mpvpaper/Panel.qml` | `active`:29; `currentWallpaper`:38; `isMuted`:203; `isPlaying`:199; `wallpapersFolder`:33,221 | 26, 29, 33, 34, 38, 94, 160, 172, ... |
-| 4 | `mpvpaper/common/ToolRow.qml` | `isMuted`:18; `isPlaying`:14 | 14, 18, 64, 69, 73, 78 |
+| 1 | `mpvpaper/BarWidget.qml` | `active`:22; `isMuted`:30; `isPlaying`:26 | 13, 14, 22, 26, 30, 80, 83, 86, ... |
+| 2 | `mpvpaper/Main.qml` | `active`:56,317,321; `automation`:60; `automationMode`:64; `automationTime`:68; `currentWallpaper`:72,138,187,310; `fillMode`:102; `hardwareAcceleration`:76,385,389; `isMuted`:80,351,357,363; `isPlaying`:84,188,332,338,344; `mpvSocket`:88; `oldWallpapers`:93; `profile`:97; `thumbCacheReady`:108; `volume`:112,370,374,378; `wallpapersFolder`:116,138,153 | 21, 23, 26, 29, 37, 38, 40, 46, ... |
+| 3 | `mpvpaper/Panel.qml` | `active`:31; `currentWallpaper`:40; `wallpapersFolder`:35 | 19, 20, 28, 31, 35, 36, 40, 96, ... |
+| 4 | `mpvpaper/common/ToolRow.qml` | `isMuted`:18; `isPlaying`:14 | 14, 18 |
 | 5 | `mpvpaper/main/Automation.qml` | No literal field edge | No namespace/Main reference |
 | 6 | `mpvpaper/main/InnerService.qml` | `oldWallpapers`:41 | 41 |
-| 7 | `mpvpaper/main/Mpvpaper.qml` | `isPlaying`:64; `volume`:209 | 64, 209 |
-| 8 | `mpvpaper/main/Thumbnails.qml` | `thumbCacheReady`:30,37,90 | 30, 37, 90 |
+| 7 | `mpvpaper/main/Mpvpaper.qml` | `volume`:230 | 12, 22, 72, 73, 97, 114, 139, 229, ... |
+| 8 | `mpvpaper/main/Thumbnails.qml` | `thumbCacheReady`:31,38,93 | 31, 38, 93 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `8a8281b980b506b41ceaca3fef291d13bf30a6dc87aa06b17edfcfce32be4457`.
+Runtime-source/manifest fingerprint: `f1c60eeab34e055061f8eff585e843cfc2d29d05a443d792ca7bdaad79ac26f8`.
 
 ## mullvad
 
@@ -1312,16 +1323,16 @@ Runtime-source/manifest fingerprint: `a46e6007f6918cfb69d806bf9c4ebca827ffc22320
 
 ## music-search
 
-Panel chrome local, but Main metadata/home/auto-save preferences shadow instance in Launcher/MusicPreview. Move presentation policy to selected context; helper player/library/folder/limit/yt-client lifecycle remains explicit shared action owner, never restore deletion.
+Panel/Launcher/MusicPreview consume selected presentation. Main captures caller auto-download policy and scalar track across playback, queue, saved-autoplay and batch continuations; retired contexts cannot admit follow-up. Helper player/library/folder/limit/yt-client state stays shared, explicitly described in instance Settings; legacy native ytPlayerClient bytes are preserved, not helper authority. No deletion restoration. Native both-scope, held lifetimes, actual helper and finite all-field mapping carry separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `music-search/BarWidget.qml` | `showBarHoverTrackTitle`:24 | 18, 21, 22, 24, 25, 39 |
-| 2 | `music-search/LauncherProvider.qml` | `previewMetadataMode`:1258 | 21, 22, 94, 179, 204, 254, 257, 261, ... |
-| 3 | `music-search/Main.qml` | `autoSaveMp3AfterPlayback`:51; `previewMetadataMode`:36; `previewThumbnailSize`:45; `showAlbumMetadata`:38; `showDurationMetadata`:39; `showHomeArtists`:49; `showHomePlaylists`:50; `showHomeRecent`:46; `showHomeTags`:48; `showHomeTop`:47; `showPlayStatsMetadata`:42; `showPreviewChips`:44; `showRatingMetadata`:40; `showStatusMetadata`:43; `showTagMetadata`:41; `showUploaderMetadata`:37 | 10, 36, 37, 38, 39, 40, 41, 42, ... |
-| 4 | `music-search/MusicPreview.qml` | `previewMetadataMode`:27; `previewThumbnailSize`:28 | 27, 28, 39, 40, 41, 42, 43, 44, ... |
+| 2 | `music-search/LauncherProvider.qml` | `previewMetadataMode`:1259; `showAlbumMetadata`:258; `showDurationMetadata`:262; `showHomeArtists`:1132; `showHomePlaylists`:1139; `showHomeRecent`:1100; `showHomeTags`:1125; `showHomeTop`:1113; `showPlayStatsMetadata`:1105,1117,1205,1211; `showRatingMetadata`:266; `showTagMetadata`:270; `showUploaderMetadata`:255 | 21, 22, 23, 95, 180, 205, 293, 294, ... |
+| 3 | `music-search/Main.qml` | `autoSaveMp3AfterPlayback`:51,772; `previewMetadataMode`:36; `previewThumbnailSize`:45; `showAlbumMetadata`:38; `showDurationMetadata`:39; `showHomeArtists`:49; `showHomePlaylists`:50; `showHomeRecent`:46; `showHomeTags`:48; `showHomeTop`:47; `showPlayStatsMetadata`:42; `showPreviewChips`:44; `showRatingMetadata`:40; `showStatusMetadata`:43; `showTagMetadata`:41; `showUploaderMetadata`:37 | 10, 36, 37, 38, 39, 40, 41, 42, ... |
+| 4 | `music-search/MusicPreview.qml` | `previewMetadataMode`:28; `previewThumbnailSize`:29; `showAlbumMetadata`:41; `showDurationMetadata`:42; `showPlayStatsMetadata`:43; `showPreviewChips`:442; `showStatusMetadata`:44; `showUploaderMetadata`:40 | 27, 45, 97, 98, 103, 108, 117, 118, ... |
 | 5 | `music-search/MusicUtils.js` | No literal field edge | No namespace/Main reference |
 | 6 | `music-search/Panel.qml` | `defaultPanelLibrarySection`:42; `defaultPanelTab`:32; `panelDensity`:52; `previewPaneWidth`:1036,1045; `showPanelHeader`:61; `showPanelNowPlaying`:91; `showPanelPlaybackProgress`:94; `showPanelPreview`:106; `showPanelProviderChips`:97; `showPanelQueueControls`:115; `showPanelRecentTracks`:100; `showPanelSearchHelper`:103; `showPanelSpeedControls`:112; `showPanelStatusBanner`:118; `showPanelUrlActions`:109 | 16, 17, 19, 21, 32, 42, 52, 61, ... |
 | 7 | `music-search/lib/config.sh` | No literal field edge | No namespace/Main reference |
@@ -1346,7 +1357,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `ytPlayerClient` | `music-search/lib/config.sh:107` | Explicit helper settings owner reads jq key from shared SETTINGS_FILE; Settings exposes Main helper action, not generic field intent. Explain shared helper state; preserve any legacy preference bytes without treating them as helper authority. |
-Runtime-source/manifest fingerprint: `3736089916b6fd442cfabf8f89b21512926484e9a03232f6e13b2c3260cf89ab`.
+Runtime-source/manifest fingerprint: `1216b36fee836e491c4b7474cde497238c2233ba54daf3d937ac5804601bfd35`.
 
 ## netbird
 
@@ -1381,7 +1392,7 @@ Runtime-source/manifest fingerprint: `9c30877dd303ffc6d4dac1542abcd3cc805da2bc40
 
 ## network-manager-vpn
 
-Bar/CC presentation local; Main disableToastNotifications controls shared toast policy for originating actions. Carry selected action notification policy; network connections remain shared machine resources.
+Bar/CC presentation stays selected; every originating Panel/page VPN action captures the selected notification policy at admission. One NetworkManager observation/action owner remains; instance UI explains shared connections. G2 native both-scope and finite parsed contract carry separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1389,12 +1400,12 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `network-manager-vpn/BarWidget.qml` | `connectedColor`:27; `disconnectedColor`:28; `displayMode`:26 | 18, 19, 26, 27, 28, 29, 30, 31, ... |
 | 2 | `network-manager-vpn/ControlCenterWidget.qml` | `connectedColor`:14; `disconnectedColor`:15 | 10, 11, 12, 13, 14, 15 |
-| 3 | `network-manager-vpn/Main.qml` | `disableToastNotifications`:11 | 9, 11 |
-| 4 | `network-manager-vpn/Panel.qml` | No literal field edge | 16, 24, 71, 131, 171, 222 |
+| 3 | `network-manager-vpn/Main.qml` | `disableToastNotifications`:18 | 14, 18 |
+| 4 | `network-manager-vpn/Panel.qml` | No literal field edge | 16, 25, 72, 133, 174, 225 |
 | 5 | `network-manager-vpn/VpnListItem.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `4bcaf8ed02189d2334cb88add9abbe80066f9e9d063328de1a185aaf8ce92a26`.
+Runtime-source/manifest fingerprint: `e2892975295f0d87bd2d2f55a9ba9e89860c2e2b5c36748591e6f99acd69b634`.
 
 ## news
 
@@ -1429,15 +1440,15 @@ Runtime-source/manifest fingerprint: `919e335344c9820f508b19bdbf67a59521bac4dc0b
 
 ## niri-auto-tile
 
-Main starts one auto-tile subprocess from shared enabled/workspace/debounce/rate policy; Bar/Panel read Main despite own writes. Explicit daemon-wide policy UI needed or selected policy admission without competing workers; no dead instance enabled override.
+Main retains one daemon/config writer with selected typed policy, queued generation/owner fences and parent-death-bound Python descendants. Bar/Panel presentation and native writes retain their originating API. Instance UI explains common compositor effects; standalone language remains the recorded unused legacy leaf, not a new feature. Native/lifetime/static gates remain separate acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `niri-auto-tile/BarWidget.qml` | `enabled`:112 | 20, 21, 22, 23, 108, 109, 111, 112 |
-| 2 | `niri-auto-tile/Main.qml` | `debounceMs`:18; `enabled`:13,217; `maxEventsPerSecond`:19; `maxVisible`:14,94; `onlyAtMax`:16,119; `perWorkspace`:15,113; `workspaceMaxVisible`:17,101,106 | 13, 14, 15, 16, 17, 18, 19, 93, ... |
-| 3 | `niri-auto-tile/Panel.qml` | `enabled`:111 | 18, 19, 20, 21, 22, 27, 28, 58, ... |
+| 1 | `niri-auto-tile/BarWidget.qml` | `enabled`:22; `maxVisible`:23 | 20, 21, 22, 23, 108, 109, 110 |
+| 2 | `niri-auto-tile/Main.qml` | `debounceMs`:19,55; `enabled`:14,128,173; `maxEventsPerSecond`:20,56; `maxVisible`:15,54,131,148; `onlyAtMax`:17,58,142; `perWorkspace`:16,57,141,148; `workspaceMaxVisible`:18,59,137,139,147 | 11, 13, 42, 49, 53, 118, 119, 121, ... |
+| 3 | `niri-auto-tile/Panel.qml` | `enabled`:20; `maxVisible`:22; `perWorkspace`:21 | 18, 19, 20, 21, 22, 27, 28, 58, ... |
 | 4 | `niri-auto-tile/auto-tile.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: `language` (configuration).
@@ -1447,21 +1458,27 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `language` | `niri-auto-tile/manifest.json:1` | Declared legacy language choice has no runtime reader in this catalog version; preserve it, no feature implementation implied. |
-Runtime-source/manifest fingerprint: `284e3c909b9e7be272beb5fb188ccc71b6fa0f7442cd967ac400b1f6d82d51cc`.
+Runtime-source/manifest fingerprint: `c50d4f775c23af9653dce76a6836e8bd78c154482f3313f78fc7c8393ce02f21`.
 
 ## niri-screensaver
 
-Main owns one idle watcher/screensaver process with all selected-input candidates currently plugin-level; Bar writes selected enabled but consumes shared process. Capture active policy/action owner and explain shared session effect, not separate per-widget screen savers.
+Main selects one applied context for its common external config, idle entry and non-clobber hooks. Actual Bar/Settings actions resolve applied originating commands; held smart-toggle captures before probing and fences retirement. Instance UI explains shared effects; hidden fields and opaque native data remain in place. Native/lifetime/static gates remain separate acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `niri-screensaver/BarWidget.qml` | `enabled`:120,137,172,173 | 35, 36, 85, 91, 109, 120, 137, 172, ... |
-| 2 | `niri-screensaver/Main.qml` | `batteryMinPercent`:111; `clockDuration`:118; `clockFont`:120; `clockFormat`:119; `cursorHide`:124; `cursorWarp`:125; `dismissOnKey`:126; `enabled`:184,214,262,263; `excludeEffects`:114; `fadeInEffect`:115; `fadeOutEffect`:116; `frameRate`:112; `idleSeconds`:187; `includeEffects`:113; `killCommand`:92,189,203; `launcherCommand`:85,188; `logoDir`:128; `logoPath`:123; `multiMonitorMode`:129; `nowPlayingDuration`:122; `randomLogo`:127; `showClock`:117; `showNowPlaying`:121 | 1, 28, 85, 92, 107, 184, 187, 188, ... |
+| 1 | `niri-screensaver/BarWidget.qml` | `enabled`:125,143,179,180 | 35, 36, 85, 90, 111, 112, 113, 114, ... |
+| 2 | `niri-screensaver/Main.qml` | `enabled`:303,304; `killCommand`:122,243; `launcherCommand`:113 | 1, 30, 32, 46, 57, 110, 113, 119, ... |
 
-Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `330a5a0792d8180d7577f84b5394fda5a744f3afa07e87528f67deb3baedbb3c`.
+Declared leaves without a literal runtime namespace edge: `batteryMinPercent` (configuration), `clockDuration` (configuration), `clockFont` (configuration), `clockFormat` (configuration), `cursorHide` (configuration), `cursorWarp` (configuration), `dismissOnKey` (configuration), `excludeEffects` (configuration), `fadeInEffect` (configuration), `fadeOutEffect` (configuration), `frameRate` (configuration), `idleSeconds` (configuration), `includeEffects` (configuration), `logoDir` (configuration), `logoPath` (configuration), `multiMonitorMode` (configuration), `nowPlayingDuration` (configuration), `randomLogo` (configuration), `showClock` (configuration), `showNowPlaying` (configuration).
+
+Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
+
+| # | Fields | Source | Classification |
+| --- | --- | --- | --- |
+| 1 | `batteryMinPercent,clockDuration,clockFont,clockFormat,cursorHide,cursorWarp,dismissOnKey,excludeEffects,fadeInEffect,fadeOutEffect,frameRate,idleSeconds,includeEffects,logoDir,logoPath,multiMonitorMode,nowPlayingDuration,randomLogo,showClock,showNowPlaying` | `niri-screensaver/Main.qml:136` | Main captures the selected policy.values at 95, passes them to _renderShellConfig(s) at 196 and _syncIdleEntry(s) at 97/208; these injected-parameter readers consume all named leaves. The finite 23-field contract and individual native/config/lifetime gates cover these non-namespace edges. |
+Runtime-source/manifest fingerprint: `6a88fe7d8795e154278d2fc1cfed72a9d6a015db3925391547bee6287285a196`.
 
 ## niri-windows-map
 
@@ -1502,19 +1519,20 @@ Runtime-source/manifest fingerprint: `a604f607166998fedd075946572b0e9c9b27451275
 
 ## noctalia-supergfxctl
 
-Main wraps plugin-level debug/rogcc/supergfxctl maps and exports DBus/process controls to all views. Selected UI/action policy must reach consumer; one physical GPU mode/daemon state remains explicitly shared.
+Main retains one CLI/state/mode/NotificationServer owner with context-keyed typed polling clients. Panel/Bar refresh and Panel mode commands carry originating context; parsing and completion retain admitted policy and fence retirement. Manual commands are distinct from observed pending state. Disabled rogcc notification configuration remains stored but unimplemented; instance Settings explains shared physical effects. Controlled native/private-bus/lifetime proof is not physical or broad UI acceptance.
 
 Entries: `barWidget=src/Bar.qml`; `controlCenterWidget=src/ControlCenter.qml`; `main=src/Main.qml`; `panel=src/Panel.qml`; `settings=src/Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `noctalia-supergfxctl/src/Bar.qml` | No literal field edge | 30 |
-| 2 | `noctalia-supergfxctl/src/ControlCenter.qml` | No literal field edge | 30 |
-| 3 | `noctalia-supergfxctl/src/Main.qml` | `debug`:42,166,172,178; `rogcc`:47; `supergfxctl`:54,200,202,234,363,450 | 38, 39, 40, 46, 47, 53, 54, 68, ... |
-| 4 | `noctalia-supergfxctl/src/Panel.qml` | No literal field edge | 23, 56, 271, 274, 277, 285, 288 |
+| 1 | `noctalia-supergfxctl/src/Bar.qml` | No literal field edge | 30, 31 |
+| 2 | `noctalia-supergfxctl/src/ControlCenter.qml` | No literal field edge | 30, 31 |
+| 3 | `noctalia-supergfxctl/src/GpuSettingsClient.qml` | `debug`:15; `supergfxctl`:14 | 6, 12, 13 |
+| 4 | `noctalia-supergfxctl/src/Main.qml` | `debug`:50,232,238,244; `rogcc`:55; `supergfxctl`:62 | 40, 46, 47, 48, 54, 55, 61, 62, ... |
+| 5 | `noctalia-supergfxctl/src/Panel.qml` | No literal field edge | 23, 24, 57, 176, 272, 275, 278, 286, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `87349321f40ba63ece73f513766d6a216580a73a58f97a291d878804fbfbc93f`.
+Runtime-source/manifest fingerprint: `972ceb80db0af211b509761be3d47942462b8a7d22f0bb7a55d44fa241830755`.
 
 ## not-just-text
 
@@ -1566,17 +1584,17 @@ Runtime-source/manifest fingerprint: `149c7e768f7b85be68f639235e65c3bb145acf693a
 
 ## nvibrant
 
-Bar saves selected enabled/vibrance/displayIndex but Main process reads plugin-level choices. Capture selected display/action policy, explain shared physical display state and prevent old context writeback.
+Bar delegates to the one Main command builder with its originating runtime API. Effective display/intensity retain QML int admission; enabled writes stay with that API. Retired actions refuse; Main/IPC remain plugin-level. Instance UI explains the common physical display effect.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `nvibrant/BarWidget.qml` | `displayIndex`:23; `enabled`:21,46; `vibranceValue`:22 | 18, 19, 46 |
-| 2 | `nvibrant/Main.qml` | `displayIndex`:16; `enabled`:13,33; `vibranceValue`:14 | 10, 11, 33 |
+| 1 | `nvibrant/BarWidget.qml` | `displayIndex`:23; `enabled`:21; `vibranceValue`:22 | 18, 19, 32 |
+| 2 | `nvibrant/Main.qml` | `displayIndex`:16,34; `enabled`:13,46,48; `vibranceValue`:14,47 | 10, 11, 31, 34, 42, 45, 48 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `06ae73482c9e34f2271ae21b633a0fffb54d278aae3912899777029e04e69373`.
+Runtime-source/manifest fingerprint: `9fd5539d29800a9daffd299a404d98bddeaf49b76ade05bd9e5b089a458c8d61`.
 
 ## nvidia-optimus
 
@@ -1610,7 +1628,7 @@ Runtime-source/manifest fingerprint: `9f3113f55663cc8ecc449da3e0374c611fc8d507fd
 
 ## obs-control
 
-Main owns OBS managed process/poll/UI visibility/button/open-path policy; Bar/CC/Panel read Main. Select presentation/action policy and keep one OBS state/managed lifecycle explicit, not independent per-widget recording.
+Main owns one OBS transport/status/managed-state domain. Context-keyed clients select all17 presentation/poll/action fields; Bar/CC/child/Panel use their captured API. Main captures launch/video policy before pidof and fences WebSocket/auto-close/termination/confirmation/Toast continuations. Native both-scope and controlled lifetime/static proof are separate from physical or broad acceptance; instance UI explains common OBS effects.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1618,15 +1636,16 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `obs-control/BarWidget.qml` | No literal field edge | 21 |
 | 2 | `obs-control/ControlCenterWidget.qml` | No literal field edge | 10 |
-| 3 | `obs-control/Main.qml` | `autoCloseManagedObs`:53; `barLabelMode`:43; `launchBehavior`:42; `leftClickAction`:41; `openVideosAfterStop`:54; `pollIntervalMs`:40; `showBarWhenReady`:48; `showBarWhenRecording`:44; `showBarWhenReplay`:45; `showBarWhenStreaming`:46; `showControlCenterWhenReady`:52; `showControlCenterWhenRecording`:49; `showControlCenterWhenReplay`:50; `showControlCenterWhenStreaming`:51; `showElapsedInBar`:55; `videosOpener`:23; `videosPath`:22 | 16, 17 |
-| 4 | `obs-control/Panel.qml` | No literal field edge | 13 |
-| 5 | `obs-control/components/ObsButton.qml` | No literal field edge | 13 |
-| 6 | `obs-control/lib/Hash.js` | No literal field edge | No namespace/Main reference |
-| 7 | `obs-control/lib/ObsWebSocketTransport.qml` | No literal field edge | No namespace/Main reference |
-| 8 | `obs-control/lib/Ui.js` | No literal field edge | No namespace/Main reference |
+| 3 | `obs-control/Main.qml` | No literal field edge | 16, 21, 24, 30, 147, 148, 491, 727, ... |
+| 4 | `obs-control/ObsClient.qml` | `autoCloseManagedObs`:24; `barLabelMode`:15; `launchBehavior`:14; `leftClickAction`:13; `openVideosAfterStop`:25; `pollIntervalMs`:12; `showBarWhenReady`:19; `showBarWhenRecording`:16; `showBarWhenReplay`:17; `showBarWhenStreaming`:18; `showControlCenterWhenReady`:23; `showControlCenterWhenRecording`:20; `showControlCenterWhenReplay`:21; `showControlCenterWhenStreaming`:22; `showElapsedInBar`:26; `videosOpener`:28; `videosPath`:27 | 7, 9, 10, 56, 57, 58, 59, 60, ... |
+| 5 | `obs-control/Panel.qml` | No literal field edge | 13 |
+| 6 | `obs-control/components/ObsButton.qml` | No literal field edge | 13 |
+| 7 | `obs-control/lib/Hash.js` | No literal field edge | No namespace/Main reference |
+| 8 | `obs-control/lib/ObsWebSocketTransport.qml` | No literal field edge | No namespace/Main reference |
+| 9 | `obs-control/lib/Ui.js` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `29d673539d6b40e149719c438f70f98758c9affc56f85c731f9d583f2940ed1b`.
+Runtime-source/manifest fingerprint: `03bee8d32621547c6566a921cdd523e2e0a2233dc0ee5e12d673410dfd0d97c5`.
 
 ## obsidian-provider
 
@@ -1663,19 +1682,20 @@ Runtime-source/manifest fingerprint: `4b7ac49324878846126f26b4cbb46d3601696daacc
 
 ## osk-toggle
 
-Bar visibility/hover local; Main backend and WvkbdBackend binary read shared settings. Select backend/action inputs with one actual keyboard lifecycle explicitly shared.
+Main owns one retiring physical keyboard backend selected by admitted applied context/backend/binary. Context-keyed availability clients are shared by all views of that API and never construct keyboards; actual Bar actions and applied Settings Recheck carry their origin. Private bus and inert keyboard lifetimes supplement native page/document/cold proof, not physical or broad UI acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `osk-toggle/BarWidget.qml` | `disableHoverIcon`:22; `hideWhenUnavailable`:21 | 16, 17, 18, 20, 21, 22, 37, 48 |
-| 2 | `osk-toggle/Main.qml` | `backend`:13 | 13 |
-| 3 | `osk-toggle/SqueekboardBackend.qml` | No literal field edge | No namespace/Main reference |
-| 4 | `osk-toggle/WvkbdBackend.qml` | `wvkbdBin`:17 | 17 |
+| 1 | `osk-toggle/BarWidget.qml` | `disableHoverIcon`:23; `hideWhenUnavailable`:22 | 16, 17, 18, 21, 22, 23 |
+| 2 | `osk-toggle/Main.qml` | `backend`:14; `wvkbdBin`:15 | 11, 13, 38, 42, 83, 96, 129, 135 |
+| 3 | `osk-toggle/OskSettingsClient.qml` | `backend`:17; `wvkbdBin`:18 | 7, 15, 16 |
+| 4 | `osk-toggle/SqueekboardBackend.qml` | No literal field edge | 8, 13 |
+| 5 | `osk-toggle/WvkbdBackend.qml` | No literal field edge | 8, 13 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `a213b1186a6b90c146391d032251caa696b8a34bd5382ee28326dc0903553cd3`.
+Runtime-source/manifest fingerprint: `9fc18f9e84b6b7bea04a99e31f144ba28bace69238cb3c05c1df20064f08638a`.
 
 ## parallax-wallpaper
 
@@ -1808,43 +1828,51 @@ Runtime-source/manifest fingerprint: `3f4df8c3c472d91553f5890ab00009c5b364e59978
 
 ## screen-recorder
 
-Main recorder/replay process reads shared codec/source/directory/frame policy while Bar/CC use Main. Capture originating selected config/action and explain one recorder/replay resource; no physical recording proof implied.
+Bar/CC actions capture selected recording/replay policies before asynchronous preflight; completion clipboard and delayed Toast retain their operation path. Main/IPC remain plugin-level, one physical owner. Instance UI explains shared recorder state; capture native/finite/lifetime gates carry controlled proof only.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `screen-recorder/BarWidget.qml` | `hideInactive`:29; `iconColor`:35 | 27, 29, 30, 33, 34, 38, 57, 59, ... |
+| 1 | `screen-recorder/BarWidget.qml` | `hideInactive`:29; `iconColor`:35; `replayEnabled`:101 | 27, 29, 30, 33, 34, 38, 57, 59, ... |
 | 2 | `screen-recorder/ControlCenterWidget.qml` | No literal field edge | 10, 12, 14, 15, 16, 18, 19 |
-| 3 | `screen-recorder/Main.qml` | `audioCodec`:93; `audioSource`:99; `colorRange`:96; `copyToClipboard`:98; `customFrameRate`:92; `customReplayDuration`:107; `directory`:89; `filenamePattern`:90; `frameRate`:91; `hideInactive`:88; `quality`:95; `replayDuration`:106; `replayEnabled`:105; `replayStorage`:108; `resolution`:101; `restorePortalSession`:102; `showCursor`:97; `videoCodec`:94; `videoSource`:100 | 88, 89, 90, 91, 92, 93, 94, 95, ... |
+| 3 | `screen-recorder/Main.qml` | `audioCodec`:105,304,619; `audioSource`:111,303,618; `colorRange`:108,310,623; `copyToClipboard`:110,403,711; `customFrameRate`:104,306,617; `customReplayDuration`:119,614; `directory`:101,302,612; `filenamePattern`:102,301; `frameRate`:103,305,616; `hideInactive`:100; `quality`:107,308,621; `replayDuration`:118,613; `replayEnabled`:117,578; `replayStorage`:120,615; `resolution`:113,127; `restorePortalSession`:114,311,624; `showCursor`:109,309,622; `videoCodec`:106,128,307,620; `videoSource`:112,281,593 | 32, 34, 100, 101, 102, 103, 104, 105, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `098b1caaea10ff380807ffd534faa83e24fb8b124f863845fc069782d8568ae9`.
+Runtime-source/manifest fingerprint: `8b5d726873c7346046c0af4402001a256a33feb053bc30f0b7cc2b40f796622f`.
 
 ## screen-shot-and-record
 
-Main creates ScreenShot object with shared API; its overlay/helpers read capture path/editor/cross/window policy. Capture selected action context; physical capture/recording state remains explicit shared effect.
+Panel captures selected policy before destruction and recording preflight; actual selector branches/helpers receive that operation. Retired origins cannot start later capture stages. Main/IPC stay plugin-level and physical recording remains shared, explained in instance UI; capture native/finite/lifetime gates are inert endpoints.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `screen-shot-and-record/BarWidget.qml` | No literal field edge | 20 |
-| 2 | `screen-shot-and-record/Main.qml` | `recordingNotifications`:43 | 43, 44, 75 |
-| 3 | `screen-shot-and-record/Panel.qml` | No literal field edge | 22, 32, 152 |
-| 4 | `screen-shot-and-record/ScreenShot.qml` | `enableCross`:27; `recordingNotifications`:50 | 27, 28, 47, 48, 50, 51 |
-| 5 | `screen-shot-and-record/ScreenShotCaptureCommon.qml` | `keepSourceScreenshot`:123; `recordingNotifications`:163; `recordingSavePath`:155; `savePath`:91; `screenshotEditor`:119 | 91, 92, 119, 120, 123, 124, 155, 156, ... |
-| 6 | `screen-shot-and-record/ScreenShotHypr.qml` | `enableWindowsSelection`:8 | 8, 9 |
+| 2 | `screen-shot-and-record/Main.qml` | `recordingNotifications`:56 | 20, 22, 57, 88 |
+| 3 | `screen-shot-and-record/Panel.qml` | No literal field edge | 22, 32, 41, 156 |
+| 4 | `screen-shot-and-record/ScreenShot.qml` | No literal field edge | 29, 49, 50, 53 |
+| 5 | `screen-shot-and-record/ScreenShotCaptureCommon.qml` | No literal field edge | 94, 122, 126, 158, 166, 186, 187 |
+| 6 | `screen-shot-and-record/ScreenShotHypr.qml` | No literal field edge | 9 |
 | 7 | `screen-shot-and-record/ScreenShotOverlayCommon.qml` | No literal field edge | No namespace/Main reference |
-| 8 | `screen-shot-and-record/ScreenShotSway.qml` | `enableWindowsSelection`:7 | 7, 8 |
+| 8 | `screen-shot-and-record/ScreenShotSway.qml` | No literal field edge | 8 |
 | 9 | `screen-shot-and-record/record.sh` | No literal field edge | No namespace/Main reference |
 
-Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `3e4b99ff3d9421217846381aa5e785cd208f4526626de8f17f53dddb7ed5115f`.
+Declared leaves without a literal runtime namespace edge: `enableCross` (configuration), `enableWindowsSelection` (configuration), `keepSourceScreenshot` (configuration), `recordingSavePath` (configuration), `savePath` (configuration), `screenshotEditor` (configuration).
+
+Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
+
+| # | Fields | Source | Classification |
+| --- | --- | --- | --- |
+| 1 | `enableCross` | `screen-shot-and-record/ScreenShot.qml:28` | Selector reads its admitted actionPolicy.settings, injected by the singular Main after Panel/preflight capture; finite capture checker covers the selected policy rather than a native namespace alias. |
+| 2 | `enableWindowsSelection` | `screen-shot-and-record/ScreenShotHypr.qml:8` | Both supported compositor selectors read their admitted actionPolicy.settings; the finite capture checker names both actual child injections and field readers. |
+| 3 | `keepSourceScreenshot,recordingNotifications,recordingSavePath,savePath,screenshotEditor` | `screen-shot-and-record/ScreenShotCaptureCommon.qml:63` | Common helper reads only the originating immutable capture policy, not Main pluginSettings; actual selected argv/native representatives and finite field mappings carry proof. |
+Runtime-source/manifest fingerprint: `b0030b8cd1cde278ff967f2ef4c811542b7dda79da54d848ed138982778873d7`.
 
 ## screen-toolkit
 
-Main-created overlays/tools and Annotate/Measure reach Main pluginApi for paths/sharing/OCR/record policy. Carry selected capture context through overlays; existing results/history are operational, not silently migrated.
+Main captures originating API/context before launch timers; independent retained overlays and per-shot Measure policy reach annotation/share, Mirror and recording/conversion/save endpoints. Shared results/history/capabilities retain original operational writers. Instance UI explains shared resources; finite and individual overlay gates are controlled, not physical proof.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -1852,13 +1880,13 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | --- | --- | --- | --- |
 | 1 | `screen-toolkit/BarWidget.qml` | No literal field edge | 17, 27, 28 |
 | 2 | `screen-toolkit/ControlCenterWidget.qml` | No literal field edge | 13, 24 |
-| 3 | `screen-toolkit/Main.qml` | `colorCacheBust`:114,133; `colorCapturePath`:114,132; `colorHistory`:123,139,168; `detectedRecorder`:326; `filenameFormat`:695,705; `installedLangs`:301; `ocrCapturePath`:115,145; `ocrResult`:115,144; `paletteColors`:117,159; `qrCapturePath`:116,153; `qrResult`:116,152; `recordCopyToClipboard`:175; `recordSkipConfirmation`:174; `resultHex`:112,128; `resultHsl`:113,131; `resultHsv`:113,130; `resultRgb`:112,129; `screenshotPath`:694,704; `selectedOcrLang`:722; `transAvailable`:314; `translateResult`:117 | 52, 111, 123, 128, 129, 130, 131, 132, ... |
+| 3 | `screen-toolkit/Main.qml` | `colorCacheBust`:135,154; `colorCapturePath`:135,153; `colorHistory`:144,160,189; `detectedRecorder`:357; `filenameFormat`:772,782; `installedLangs`:332; `ocrCapturePath`:136,166; `ocrResult`:136,165; `paletteColors`:138,180; `qrCapturePath`:137,174; `qrResult`:137,173; `recordCopyToClipboard`:198; `recordSkipConfirmation`:197; `resultHex`:133,149; `resultHsl`:134,152; `resultHsv`:134,151; `resultRgb`:133,150; `screenshotPath`:771,781; `selectedOcrLang`:799; `transAvailable`:345; `translateResult`:138 | 20, 22, 27, 73, 132, 144, 149, 150, ... |
 | 4 | `screen-toolkit/Panel.qml` | `gifMaxSeconds`:530; `selectedOcrLang`:22,83 | 22, 26, 28, 29, 32, 39, 40, 41, ... |
-| 5 | `screen-toolkit/overlays/Annotate.qml` | `filenameFormat`:1685; `screenshotPath`:58; `shareSkipPopover`:457,1658; `x02ApiKey`:1651; `x02Expiry`:1652 | 13, 58, 82, 389, 392, 401, 404, 416, ... |
-| 6 | `screen-toolkit/overlays/Measure.qml` | `filenameFormat`:115; `screenshotPath`:114 | 13, 67, 113, 117, 426 |
-| 7 | `screen-toolkit/overlays/Mirror.qml` | `filenameFormat`:100,149; `screenshotPath`:99; `videoPath`:148 | 99, 100, 116, 148, 149 |
+| 5 | `screen-toolkit/overlays/Annotate.qml` | No literal field edge | 13, 88, 401, 404, 415, 418, 432, 436, ... |
+| 6 | `screen-toolkit/overlays/Measure.qml` | No literal field edge | 13, 69, 122, 432 |
+| 7 | `screen-toolkit/overlays/Mirror.qml` | No literal field edge | 128 |
 | 8 | `screen-toolkit/overlays/Pin.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `screen-toolkit/overlays/Record.qml` | `filenameFormat`:126; `gifMaxSeconds`:30; `recordCopyToClipboard`:96,106,189; `recordSkipConfirmation`:105; `videoPath`:125 | 30, 58, 96, 105, 106, 125, 126, 189 |
+| 9 | `screen-toolkit/overlays/Record.qml` | No literal field edge | 61 |
 | 10 | `screen-toolkit/overlays/RegionSelector.qml` | No literal field edge | No namespace/Main reference |
 | 11 | `screen-toolkit/scripts/annotate.sh` | No literal field edge | No namespace/Main reference |
 | 12 | `screen-toolkit/scripts/capture.sh` | No literal field edge | 21 |
@@ -1873,11 +1901,11 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 21 | `screen-toolkit/scripts/record.sh` | No literal field edge | No namespace/Main reference |
 | 22 | `screen-toolkit/scripts/share-upload.sh` | No literal field edge | No namespace/Main reference |
 | 23 | `screen-toolkit/scripts/temp-paths.sh` | No literal field edge | No namespace/Main reference |
-| 24 | `screen-toolkit/tools/ColorPicker.qml` | `colorCacheBust`:98; `colorCapturePath`:97; `colorHistory`:99,101; `resultHex`:93; `resultHsl`:96; `resultHsv`:95; `resultRgb`:94 | 92 |
+| 24 | `screen-toolkit/tools/ColorPicker.qml` | `colorCacheBust`:102; `colorCapturePath`:101; `colorHistory`:103,105; `resultHex`:97; `resultHsl`:100; `resultHsv`:99; `resultRgb`:98 | 96 |
 | 25 | `screen-toolkit/tools/Lens.qml` | No literal field edge | No namespace/Main reference |
-| 26 | `screen-toolkit/tools/Ocr.qml` | `ocrCapturePath`:78; `ocrResult`:77; `translateResult`:79 | 77, 78, 79 |
-| 27 | `screen-toolkit/tools/Palette.qml` | `paletteColors`:19,53 | 19, 53 |
-| 28 | `screen-toolkit/tools/Qr.qml` | `qrCapturePath`:45; `qrResult`:44 | 44, 45 |
+| 26 | `screen-toolkit/tools/Ocr.qml` | `ocrCapturePath`:82; `ocrResult`:81; `translateResult`:83 | 81, 82, 83 |
+| 27 | `screen-toolkit/tools/Palette.qml` | `paletteColors`:22,57 | 22, 57 |
+| 28 | `screen-toolkit/tools/Qr.qml` | `qrCapturePath`:49; `qrResult`:48 | 48, 49 |
 | 29 | `screen-toolkit/utils/TempPaths.qml` | No literal field edge | No namespace/Main reference |
 | 30 | `screen-toolkit/utils/ToolProcess.qml` | No literal field edge | No namespace/Main reference |
 | 31 | `screen-toolkit/utils/utils.js` | No literal field edge | No namespace/Main reference |
@@ -1886,23 +1914,30 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 34 | `screen-toolkit/widgets/ResultPalette.qml` | No literal field edge | 11, 14, 23, 24, 25, 58, 90 |
 | 35 | `screen-toolkit/widgets/ResultQr.qml` | No literal field edge | 11, 14, 15, 43, 44, 45 |
 
-Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `db81ab29c77f8fde4ca492de75358a6320988d3228c4f3e8cadd07e234eed41b`.
+Declared leaves without a literal runtime namespace edge: `shareSkipPopover` (configuration), `videoPath` (configuration), `x02ApiKey` (configuration), `x02Expiry` (configuration).
+
+Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`):
+
+| # | Fields | Source | Classification |
+| --- | --- | --- | --- |
+| 1 | `filenameFormat,screenshotPath,shareSkipPopover,x02ApiKey,x02Expiry` | `screen-toolkit/overlays/Annotate.qml:24` | Retained overlay/process policies select output and upload inputs; Measure and Mirror retain independent shot policies. Finite field mappings plus individual inert endpoint/retirement cases, not namespace aliases or separate settings stores. |
+| 2 | `gifMaxSeconds,recordCopyToClipboard,recordSkipConfirmation,videoPath` | `screen-toolkit/overlays/Record.qml:31` | Retained actionPolicy.settings controls actual recording timer, completion, conversion/save and clipboard policy over the singular recorder owner; finite capture check and individual inert lifecycle proof. |
+Runtime-source/manifest fingerprint: `43ef179cd2653814cec410314554c1f498ba7184954ca6e58069355d24d10cc4`.
 
 ## screencast-gif
 
-Main fps/outputDir/max duration configure the recording helper called from Bar. Capture originating selected action values; one recording process must be explicit shared runtime state.
+Originating Bar passes captured settings context; Main reads selected fps/outputDir/max duration at action admission, with explicit plugin-level IPC and one helper/status owner. Instance UI explains shared recorder; G2 native both-scope and finite parsed contract carry separate proof boundaries.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `screencast-gif/BarWidget.qml` | No literal field edge | 17, 35 |
-| 2 | `screencast-gif/Main.qml` | `fps`:21; `maxRecordingSeconds`:22; `outputDir`:23 | 12, 13 |
+| 1 | `screencast-gif/BarWidget.qml` | No literal field edge | 17, 33 |
+| 2 | `screencast-gif/Main.qml` | `fps`:24; `maxRecordingSeconds`:25; `outputDir`:26 | 18, 22, 23, 52 |
 | 3 | `screencast-gif/screencast-gif.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `61980e46a8ad92f5bf3b4a167811df812c6d5eafef75014eeda5b0ad395567a4`.
+Runtime-source/manifest fingerprint: `652874222586674fd282e132940d90b10f39777fc7298725c8109cb0b1edba72`.
 
 ## screenshot
 
@@ -2080,7 +2115,7 @@ Runtime-source/manifest fingerprint: `5622d8d7b62426694b0097ae8bb892593af9298a1c
 
 ## sticky-notes
 
-Main and gistSync use plugin-level syncEnabled/githubToken for one shared notes content set/Gist ID. Content synchronization is genuinely shared; instance UI must not offer independent sync settings that cannot apply. Preserve notes/Gist bytes, no content migration.
+Main retains one shared notes/Gist/native writer; instance sync controls are disabled with explicit shared-effect copy. Applied Sync Now uses that shared owner. Captured notes/token/target and current-context lifetime fence every HTTP continuation and Gist-ID publication; old credentials/target/owner abort. Notes/Gist/opaque instance bytes stay in place.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -2088,19 +2123,19 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `sticky-notes/BarWidget.qml` | No literal field edge | No namespace/Main reference |
 | 2 | `sticky-notes/ExpandedPanelWindow.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `sticky-notes/Main.qml` | `githubToken`:157; `notes`:50,68; `syncEnabled`:169 | 50, 68, 153, 157, 169 |
+| 3 | `sticky-notes/Main.qml` | `githubGistId`:208,215,221; `githubToken`:170,207,214; `notes`:63,81; `syncEnabled`:182 | 63, 81, 166, 170, 182, 202, 207, 208, ... |
 | 4 | `sticky-notes/Panel.qml` | No literal field edge | 90, 92, 97, 110, 111, 117, 118, 146, ... |
 | 5 | `sticky-notes/components/EmptyState.qml` | No literal field edge | No namespace/Main reference |
 | 6 | `sticky-notes/components/ExpandedNoteWindow.qml` | No literal field edge | No namespace/Main reference |
 | 7 | `sticky-notes/components/NewNoteCard.qml` | No literal field edge | No namespace/Main reference |
 | 8 | `sticky-notes/components/NoteCard.qml` | No literal field edge | No namespace/Main reference |
 | 9 | `sticky-notes/components/NoteList.qml` | No literal field edge | No namespace/Main reference |
-| 10 | `sticky-notes/utils/gistSync.js` | `githubGistId`:14,152,155; `githubToken`:8 | 8, 14, 152, 155 |
+| 10 | `sticky-notes/utils/gistSync.js` | No literal field edge | No namespace/Main reference |
 | 11 | `sticky-notes/utils/markdown.js` | No literal field edge | No namespace/Main reference |
 | 12 | `sticky-notes/utils/storage.js` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `1dc3e68c4741c5c72a2313377d363dadde581cf547ab11a094ce66c538d3a4b0`.
+Runtime-source/manifest fingerprint: `3ae456d3eab3d4a2d521c46891083e8764790e5b500d3f981b9ea66fd4c86524`.
 
 ## syncthing-status
 
@@ -2164,18 +2199,19 @@ Runtime-source/manifest fingerprint: `02b39d9ed582065c38b4722b6365ed2a4220982157
 
 ## thinkpad-fan
 
-Bar reads selected colors/allowPopupOpening then registers itself as mainInstance; FanPopup reads registered Bar colors/actions. Bind popup to selected context, not last renderer; physical fan remains shared.
+Main owns common fan/temperature/action processes and one selected palette/popup-policy client per context; Bar/popup never choose a last renderer. Origin guards the held action and delayed refresh. All five fields retain selected reads, shared physical effect is explicit; parsed every-field/entry/owner checks and individual popup/action/retirement proof supplement renderer retirement.
 
-Entries: `barWidget=BarWidget.qml`; `panel=FanPopup.qml`; `settings=SettingsView.qml`.
+Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=FanPopup.qml`; `settings=SettingsView.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `thinkpad-fan/BarWidget.qml` | `allowPopupOpening`:47; `colorActive`:58; `colorAuto`:62; `colorLevel0`:54; `colorizeByStatus`:42 | 42, 43, 47, 48, 54, 55, 58, 59, ... |
+| 1 | `thinkpad-fan/BarWidget.qml` | `allowPopupOpening`:46; `colorActive`:57; `colorAuto`:61; `colorLevel0`:53; `colorizeByStatus`:41 | 35, 41, 42, 46, 47, 53, 54, 57, ... |
 | 2 | `thinkpad-fan/FanPopup.qml` | No literal field edge | 12 |
-| 3 | `thinkpad-fan/setup_permissions.sh` | No literal field edge | No namespace/Main reference |
+| 3 | `thinkpad-fan/Main.qml` | `allowPopupOpening`:28; `colorActive`:30; `colorAuto`:31; `colorLevel0`:29; `colorizeByStatus`:27 | 9, 22, 24, 25, 26, 44, 50, 54, ... |
+| 4 | `thinkpad-fan/setup_permissions.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `f320493df41b0e2b585bcf677ac9dc1862ed40b9b72e2c1d318eb4a0204b5604`.
+Runtime-source/manifest fingerprint: `e69575e435794d974a8a1278b9e4fd6308dd4643c43ba7a580b31ed5ca8c8b35`.
 
 ## timer
 
@@ -2257,7 +2293,7 @@ Runtime-source/manifest fingerprint: `f63f89af97df20ec2ccc929733c1a8b6e00829a166
 
 ## usb-drive-manager
 
-Bar icon/badge/hide local; Main autoMount/browser/terminal/toast policy drives common hardware owner. Selected explicit action inputs must reach consumer; automatic mount and actual devices are shared, UI must say so.
+Main retains one udev/lsblk/df observation and mount/unmount/eject owner. Panel/card and Bar/CC actions carry originating browser/terminal/notification policy through completion/debounce. Accepted Settings completion admits selected automatic policy; view construction cannot choose it. Retired policy cannot mount while pure observation continues. Instance Settings explains shared device effects; native/held/automatic inert consumers are not physical or broad UI acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
@@ -2266,39 +2302,39 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 1 | `usb-drive-manager/BarWidget.qml` | `hideWhenEmpty`:31; `iconColor`:40; `showBadge`:26 | 19, 20, 21, 26, 27, 31, 32, 38, ... |
 | 2 | `usb-drive-manager/ControlCenterWidget.qml` | No literal field edge | 13, 16, 19, 20, 67, 70, 72, 74 |
 | 3 | `usb-drive-manager/DeviceCard.qml` | No literal field edge | 13 |
-| 4 | `usb-drive-manager/Main.qml` | `autoMount`:24; `fileBrowser`:25; `hideWhenEmpty`:28; `showNotifications`:27; `terminalCommand`:26 | 24, 25, 26, 27, 28 |
-| 5 | `usb-drive-manager/Panel.qml` | No literal field edge | 17, 18, 19, 22, 79, 82, 145, 147, ... |
+| 4 | `usb-drive-manager/Main.qml` | `autoMount`:22,49; `fileBrowser`:23,50; `hideWhenEmpty`:53; `showNotifications`:24,52; `terminalCommand`:23,51 | 15, 19, 21, 49, 50, 51, 52, 53 |
+| 5 | `usb-drive-manager/Panel.qml` | No literal field edge | 18, 19, 20, 23, 80, 83, 146, 148, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `7a58ba1f4d700be66e1ad73448ca86505b4492618d4ed549f73584a9dd8011b1`.
+Runtime-source/manifest fingerprint: `e340d4493ebaf3e6471b8880eb6c8e8499e6cf8a21285a88cbb6f79c102fc9e4`.
 
 ## video-wallpaper
 
-Main and its per-output automation/MPV/FFmpeg objects read shared API while Bar/Panel save selected monitor/config inputs. Physical output is shared; selected policy/action context and explicit instance UI required. Existing dual-output native proofs do not close this mismatch.
+Main selects one policy for its existing per-output playback/automation/color/baseline owners; explicit runtime actions retain their originating native writer, including delayed baseline saves. Settings Random/Clear stage the selected atomic monitors field; runtime tools stay immediate and browse generations fence source/owner loss. Instance UI explains common physical outputs. Two-real-output backend/automation/writer lifetime, actual scoped tools, finite mappings and historical real MPV/FFmpeg gates retain distinct proof boundaries, not broad or whole-plan acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `video-wallpaper/BarWidget.qml` | `enabled`:35,100,104; `monitorSpecific`:36; `monitors`:13,14,31,32 | 13, 14, 15, 31, 32, 35, 36, 100, ... |
-| 2 | `video-wallpaper/Main.qml` | `activeBackend`:78; `monitors`:24; `wallpapersFolder`:19 | 19, 24, 78, 129 |
-| 3 | `video-wallpaper/Panel.qml` | `activeBackend`:29; `enabled`:30,131; `monitorSpecific`:31,117; `wallpapersFolder`:33,182 | 29, 30, 31, 32, 33, 99, 102, 117, ... |
+| 1 | `video-wallpaper/BarWidget.qml` | `enabled`:37,104,109; `monitorSpecific`:38; `monitors`:15,16,33,34 | 13, 14, 15, 16, 17, 33, 34, 37, ... |
+| 2 | `video-wallpaper/Main.qml` | `activeBackend`:108; `monitors`:50; `wallpapersFolder`:45 | 16, 18, 19, 22, 23, 29, 37, 45, ... |
+| 3 | `video-wallpaper/Panel.qml` | `activeBackend`:31; `enabled`:32,135; `monitorSpecific`:33,120; `wallpapersFolder`:35,187 | 18, 19, 31, 32, 33, 34, 35, 101, ... |
 | 4 | `video-wallpaper/common/FolderModel.qml` | No literal field edge | No namespace/Main reference |
 | 5 | `video-wallpaper/common/MonitorCommands.js` | No literal field edge | No namespace/Main reference |
 | 6 | `video-wallpaper/common/MonitorEdits.qml` | No literal field edge | No namespace/Main reference |
 | 7 | `video-wallpaper/common/MonitorTabBar.qml` | No literal field edge | No namespace/Main reference |
 | 8 | `video-wallpaper/common/MonitorTabView.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `video-wallpaper/common/SaveTimer.qml` | `monitors`:19,20 | 19, 20, 21, 75 |
-| 10 | `video-wallpaper/common/ToolRow.qml` | `monitorSpecific`:35; `monitors`:31,32 | 26, 31, 32, 45, 50, 54, 59 |
-| 11 | `video-wallpaper/main/Automation.qml` | `automation`:18,86; `automationMode`:19,87; `automationTime`:20,88; `monitorSpecific`:21; `monitors`:85 | 17, 21, 85 |
-| 12 | `video-wallpaper/main/ColorGeneration.qml` | `enabled`:15; `monitors`:14 | 14, 15 |
-| 13 | `video-wallpaper/main/Functions.qml` | `monitorSpecific`:23; `monitors`:11,12,63; `wallpapersFolder`:24 | 11, 12, 13, 23, 24, 63 |
-| 14 | `video-wallpaper/main/IPC.qml` | `enabled`:18,99; `monitors`:10,11,57,65 | 10, 11, 12, 18, 57, 65, 99 |
-| 15 | `video-wallpaper/main/InnerService.qml` | `enabled`:28; `monitors`:24,25 | 24, 25, 28 |
-| 16 | `video-wallpaper/main/Mpvpaper.qml` | `enabled`:34; `monitors`:24,25,26,27,28,29,30,31; `mpvSocket`:35 | 24, 25, 26, 27, 28, 29, 30, 31, ... |
-| 17 | `video-wallpaper/main/Thumbnails.qml` | `wallpapersFolder`:22 | 22 |
-| 18 | `video-wallpaper/main/VideoWallpaper.qml` | `enabled`:37; `monitors`:29,30,31,32,33,34 | 29, 30, 31, 32, 33, 34, 37 |
-| 19 | `video-wallpaper/panel/PerScreenPanel.qml` | `monitorSpecific`:31; `monitors`:17,18,30 | 17, 18, 19, 30, 31, 115, 129 |
+| 9 | `video-wallpaper/common/SaveTimer.qml` | `monitors`:19,20,75,76 | 19, 20, 21, 60, 75, 76, 77, 79 |
+| 10 | `video-wallpaper/common/ToolRow.qml` | `monitorSpecific`:37; `monitors`:33,34 | 26, 33, 34 |
+| 11 | `video-wallpaper/main/Automation.qml` | `automation`:21,89; `automationMode`:22,90; `automationTime`:23,91; `monitorSpecific`:24; `monitors`:88 | 12, 13, 14, 20 |
+| 12 | `video-wallpaper/main/ColorGeneration.qml` | `enabled`:18; `monitors`:17 | 10, 11, 12 |
+| 13 | `video-wallpaper/main/Functions.qml` | `monitorSpecific`:27,57,99; `monitors`:60,107,108; `wallpapersFolder`:28,59,69 | 11, 12, 16, 28, 54, 56, 59, 69, ... |
+| 14 | `video-wallpaper/main/IPC.qml` | `enabled`:19,101; `monitors`:11,12,58,66 | 11, 12, 13, 19, 58, 66, 101 |
+| 15 | `video-wallpaper/main/InnerService.qml` | `enabled`:32; `monitors`:28,29 | 12, 14, 15, 61 |
+| 16 | `video-wallpaper/main/Mpvpaper.qml` | `enabled`:37; `monitors`:27,28,29,30,31,32,33,34; `mpvSocket`:38 | 12, 13, 14, 28, 29, 30, 31, 32, ... |
+| 17 | `video-wallpaper/main/Thumbnails.qml` | `wallpapersFolder`:23 | 10, 23 |
+| 18 | `video-wallpaper/main/VideoWallpaper.qml` | `enabled`:40; `monitors`:32,33,34,35,36,37 | 17, 18, 19, 33, 34, 35, 36, 37 |
+| 19 | `video-wallpaper/panel/PerScreenPanel.qml` | `monitorSpecific`:31; `monitors`:17,18,30 | 17, 18, 19, 30, 31, 43, 116, 130, ... |
 
 Declared leaves without a literal runtime namespace edge: `automationCustomTime` (configuration), `currentWallpaper` (configuration), `fillMode` (configuration), `hardwareAcceleration` (configuration), `isMuted` (configuration), `isPlaying` (operational), `orientation` (configuration), `profile` (configuration), `volume` (configuration).
 
@@ -2307,7 +2343,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `automationCustomTime,currentWallpaper,fillMode,hardwareAcceleration,isMuted,isPlaying,orientation,profile,volume` | `video-wallpaper/common/MonitorCommands.js:15` | Finite dynamic monitor-record helpers resolve these field names and native atomic monitors map, consumed by Main per-output workers and runtime controls. Global legacy currentWallpaper and top-level isPlaying are not independent selected output authority. All remain part of required shared-output/context review; no leaf is silently removed. |
-Runtime-source/manifest fingerprint: `a121726b4251bbaa96130bc663d929814e69108ca9222955a59a6c852ec1aa72`.
+Runtime-source/manifest fingerprint: `36782e5ba4de5243b78227279c08216d985e8df375ef4e7cd532dfd4819bf3a5`.
 
 ## vscode-provider
 

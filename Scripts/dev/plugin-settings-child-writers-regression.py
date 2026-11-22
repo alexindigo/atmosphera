@@ -44,7 +44,8 @@ def main():
         runner.write_json(case / 'config/plugins.json', dict(version=6, states={}, sources=[]))
         screen = json.loads(subprocess.run(['niri', 'msg', '-j', 'outputs'],
                            env=dict(os.environ, **profile.session_environment()), capture_output=True, text=True, check=True).stdout)
-        screen = next(iter(screen))
+        screens = sorted(screen)
+        screen = screens[0]
         shared = dict(opaque=dict(keep=True))
         row = dict(id='plugin:' + args.plugin)
         if args.plugin == 'screen-recorder':
@@ -54,12 +55,12 @@ def main():
         elif args.plugin == 'mpvpaper':
             shared.update(active=True, isPlaying=True, isMuted=True)
         else:
-            shared.update(enabled=True, monitorSpecific=False, monitors={screen: dict(isPlaying=True, isMuted=True, opaque=dict(keep=True))})
+            shared.update(enabled=True, monitorSpecific=False, monitors={name: dict(isPlaying=True, isMuted=True, opaque=dict(keep=True)) for name in screens})
         shared_path = case / 'config/settings/plugins' / (args.plugin + '.json')
         runner.write_json(shared_path, shared)
         runner.write_json(case / 'config/settings/bar.json', dict(widgets=dict(left=[row])))
         fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-child-writers.qml'
-        env = dict(PHA_CHILD_PLUGIN=args.plugin, PHA_CHILD_SCOPE=args.scope)
+        env = dict(PHA_CHILD_PLUGIN=args.plugin, PHA_CHILD_SCOPE=args.scope, PHA_CHILD_SCREEN=screen)
         error = None
         try:
             text = runner.run_fixture(profile, install, case, out, fixture, extra_env=env, timeout=150,

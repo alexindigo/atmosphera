@@ -654,6 +654,24 @@ Broad visual and final paired acceptance remain separate.
 
 ## Runtime placement save and retirement Retry
 
+DS4 Colors and NVibrant keep one Main-owned physical action boundary, not one
+hardware owner per placement. DS4 captures RGB and controller paths for its
+serial direct/elevation operation; mutable display state cannot retarget a later
+controller or fallback. Explicit runtime actions retain their originating native
+writer and retirement fences late publication. Settings completion supplies its
+acknowledged color field with the read-only context, without resaving the page
+through Main. Automatic reconnect restoration remains plugin-level. NVibrant's
+Bar passes its runtime API to Main; the selected port/intensity use the original
+QML int admission and enabled writes go to that API. Both instance pages explain
+that physical changes are visible to every instance using the same device.
+
+The G2 action regression adds both-scope actual controls/native documents and
+separate nonpublishing cold readers for these members. Its individual controlled
+hardware cases hold direct writes, mutate later state, traverse two controllers
+and inert elevation, and independently check LED bytes and native writer scope.
+Held retirement and fractional NVibrant values have rejecting controls. These
+are inert endpoints, not physical controller/display proof or broad UI acceptance.
+
 Placement `saveSettings` requests selected publication of its owning atomic key,
 not a whole-store save. Failed receipts retain unconfirmed coverage. Explicit
 Retry publishes the current values of those same keys through native
@@ -830,8 +848,382 @@ page control. Existing mode differences stay explicit: custom bind overrides are
 hyprctl-only, and Mango does not gain sequential merging. These are inert parser
 endpoints on the niri guest, not physical Hyprland/Mango or broad visual/final
 paired acceptance.
+## Originating capture policy
+
+Screen Recorder, ScreenShot/Record and Screen Toolkit retain one existing
+physical capture owner. A placed action supplies its captured runtime context;
+Main/IPC defaults remain explicitly plugin-level. Admission owns a read-only
+effective-value projection before portal checks, Panel destruction, selector
+creation or launch timers. Recording and replay retain separate policies and
+completed paths, including delayed Toast callbacks. Toolkit's retained overlays
+own their policies independently; a Measure screenshot also owns its timer's
+policy even when another Measure view opens. Existing results, history and
+capability writers keep their shared operational owner, not the selected API.
+Instance Settings explains these shared effects.
+
+`plugin-settings-capture-group-check.py` checks the finite declared-field,
+entry/caller, child-injection, delayed-stage and physical-owner mappings for all
+three members. Its controls are source contracts, not a general JS effect proof.
+The capture-native driver joins actual folder controls, complete native documents
+and originating Bar/Panel actions in both scopes. Separate cold engines observe
+the edited, Reset and inherited boundaries without publication. The focused
+runtime driver covers Recorder replay/completion/Toast lifetimes, supported
+Shot/Record selectors and retirement, and Toolkit annotation/share/save, Mirror,
+Measure and recording/conversion/save boundaries. All physical capture, portal,
+compositor, upload, recorder-signal and clipboard endpoints are inert; no physical
+or broad visual/translation acceptance follows from these tests.
+
+## Selected wallpaper policy and staged tools
+
+LWE, MPVpaper and Video Wallpaper retain one physical playback owner per
+existing output domain. Accepted Settings completion selects a read-only runtime
+context; runtime Bar/Panel actions supply their own existing API. Main/IPC stays
+explicitly plugin-level. No runtime writer or immediate owner dispatcher enters
+the Settings page. Registration of a runtime view does not itself select policy.
+
+Settings Random/Clear are scoped field edits: MPV's `currentWallpaper` or Video's
+atomic `monitors`. They update the draft preview, publish on Apply and revert on
+confirmed Discard/Close. Their shared ToolRow takes injected actions; the runtime
+consumer injects immediate Main actions instead. Random owns a fresh folder model
+per request, pairs it by QObject identity, and rejects replaced source results.
+Runtime browse retains its admitted writer, folder and output targets too.
+
+LWE keeps source-dependent catalogs per captured context and one engine with its
+admitted options/layout/property inputs. Stability/recovery and screenshot/property
+content stay at their original shared owner; retired policies cannot publish.
+Its startup switch remains explicitly plugin-level and disabled in instance
+Settings. MPV cache/baseline writers stay shared; backend construction no longer
+authors `isPlaying`. Video's delayed baseline commands retain their originating
+runtime writer and screen across later selection changes. A read-only page
+completion never manufactures that writer.
+
+The `plugin-settings-wallpaper-*` drivers separate finite mappings, actual scoped
+pages/native documents/cold engines, staged tools, runtime browse and individual
+engine/source/color/backend/automation/delayed-writer lifetimes. Inert endpoints
+prove selected command inputs and native publication, not physical playback,
+general MPV option correctness or broad visual/translation acceptance.
+
+## Selected output parsing and layout actions
+
+Display Settings keeps one Main-owned config query client per captured context.
+Its selected path owns a fresh existing KDL parser. Source replacement or context
+retirement cancels both read/glob processes and queued stages before destroying
+that generation. Panels render that client's actual parsed cards; the live niri/
+wlr providers, modifications and udev monitor remain single physical owners.
+
+Monitor Layout keeps its common live/draft/selection model. Each originating
+fetch, grid edit, apply and config-script request captures its runtime context
+and effective policy. A fetch parses using its admitted backend, not a later
+mutable choice; apply's completion refresh retains its original command/backend.
+Retired requests cannot publish a layout or start follow-up work. Main/IPC stays
+plugin-level. Instance Settings explicitly identifies shared output/layout effects.
+
+The output group checker covers every declared field, caller and physical owner.
+Its native driver joins real page control intent, complete independent documents,
+Discard/Apply/staged Reset/inheritance and separate nonpublishing cold readers to
+actual Panel cards and grid coordinates. Original runtime and omitted-origin
+native controls must reject at those consumers. Held parser, backend and apply
+cases independently check old-process quiescence and retirement. All compositor
+modification endpoints are inert. These are not physical output/broad visual
+proofs, nor a repair of Monitor Layout's unrelated scale-status `t` reference.
+
+## Selected presentation and shared content/helper effects
+
+Clipper keeps its clipboard, pin, note and Todo content owners. Placed views
+read their selected presentation. Main captures originating paste delay and Todo
+enable policy before selection IO, selector display or delayed paste. A later
+view, setting change or retired context cannot retarget a pending action.
+Content commands remain immediate shared actions, not preference drafts.
+
+Music Search's Panel, Launcher and preview read their injected effective
+presentation. Main captures the originating auto-download choice and scalar
+track for playback; queue, saved-autoplay and batch continuations retain that
+policy. Retired contexts cannot start a download or another playback stage.
+The helper still owns shared playback, queue, library, provider, folder, limit
+and YouTube-client settings. Its legacy native `ytPlayerClient` preference is
+preserved but is not helper authority. Runtime preview-width publication keeps
+its originating API. No content is migrated and deletion is not restored.
+
+The content group checker maps every declared field, caller, effect owner and
+retained stage. Native representatives exercise actual pages, complete documents
+and separate nonpublishing cold readers. Individual held selection, selector,
+paste, playback, queue and batch cases use inert endpoints; actual helper
+folder/limit acknowledgment is checked separately. These are not physical
+clipboard/media, broad visual/translation or whole-catalog acceptance.
+
+## Admitted automatic-session policy
+
+2-in-1-tools retains one tablet/sensor/output owner. Applied Settings completion
+and originating Bar/CC actions select a read-only effective context. Pending
+queries, apply/touch continuations and session exit restore retain their admitted
+policy. Automatic startup stays plugin-level until an origin is admitted. Bar/dock
+restore state is operational and remains with its existing shared native writer,
+not a selected page or placement writer. State-file replacement retires the old
+watcher/read generation. Retired contexts cannot start follow-up effects.
+
+OSK retains exactly one physical backend Loader. Main-owned context clients probe
+availability and project the active backend's live state; they never construct a
+keyboard. Applied backend/binary changes wait for retiring processes to quiesce.
+Backends receive injected policy/binary rather than Main's shared API. Delayed
+show and monitor restart handlers respect retirement. Settings Recheck uses only
+the applied runtime context. Both instance pages explain the common physical effect.
+
+The automatic group checker maps every configuration/protected field, caller,
+retained stage and physical owner. Native representatives join actual page intent
+to complete independent documents, Discard/Apply/staged Reset/inheritance and
+separate nonpublishing cold readers. Individual lifetime and writer drivers cover
+sensor/apply/touch, bar/dock restore/native publication, state-file handoff,
+keyboard binary/delayed-show and real private-bus monitor retirement. Compositor,
+keyboard, preemption, gsettings and dconf endpoints are inert. These are not
+physical, broad visual/translation or whole-catalog proofs.
+
+## Selected device request and completion policy
+
+USB Drive Manager keeps one udev/lsblk/df observation and mount/unmount/eject
+owner. Panel/card, Bar and Control Center actions carry their originating browser,
+terminal and notification policy. Completion and debounce retain that admission,
+not a later caller's preferences. Accepted Settings completion selects automatic
+policy; merely constructing a view does not. Automatic startup stays plugin-level.
+Retiring automatic policy fences mounts without stopping pure device observation.
+The existing pre-enumeration auto-mount timing is unchanged.
+
+Supergfxctl keeps one CLI/state/mode owner and one NotificationServer. Context-keyed
+clients select polling through the original QML bool/int boundary. Queries and
+mode commands capture patch/debug policy for parsing, completion and follow-up;
+retired contexts cannot publish responses or start later requests. An ephemeral
+manual-request record is distinct from daemon-reported pending state. The disabled
+rogcc notification preference remains stored and disabled, not implemented here.
+Both instance pages explain that physical effects and observations are shared.
+
+The device drivers separate finite every-field/caller/owner mappings, actual
+Settings/native documents and nonpublishing cold readers, omitted-origin controls,
+held action/parser/mode stages, typed schedules and real private-bus notifications.
+udev, devices, mounts, terminals, browsers and GPU CLI endpoints are inert. These
+are selected consumer/lifetime proofs, not physical, broad visual/translation or
+whole-catalog acceptance.
+
+## Admitted Steam overlay geometry
+
+Steam Overlay's two Bar actions supply their captured runtime context. Main owns
+one physical overlay and one admitted operation's typed geometry, output size and
+classic/Lua dispatch syntax. Actual query completion, movement, show/focus and
+continuing new-window stages retain that policy. Later configuration cannot
+retarget a running operation; retirement stops its processes and queued stages.
+Requests admitted before startup probes settle retain their configuration while
+waiting. Shared dimensions and syntax settle once before the first query/effect;
+retirement during that wait cannot dispatch a continuation.
+Main/IPC remains explicitly plugin-level. The optional Panel guide already reads
+its injected pixel-width preferences separately from the percentage geometry.
+Instance Settings explains the shared effect. Stored auto-launch and chat-
+notification fields retain their independent feature gaps; deprecated compositor
+support is not restored by this settings correction.
+
+The Steam drivers join actual gap-control intent, complete independent native
+documents, Discard/Apply/staged Reset/inheritance and separate nonpublishing cold
+engines to originating Bar compositor argv. Individual held-stage cases verify
+classic/Lua/custom geometry, continuing-window policy and retirement. All Steam,
+pidof and hyprctl endpoints are inert. Finite parsed field/caller/owner controls
+supplement, not replace, those consumer observations. No physical, broad visual/
+translation or whole-catalog acceptance follows.
+
+## Admitted managed-resource policy
+
+Agent Session Status keeps one server and in-memory session store. Applied
+Settings or an originating Restart admits address, typed port and token before
+the restart delay, waits for the old process and fences old HTTP responses.
+Per-context pollers retain the original int-seconds/minimum-one policy; all views
+observe the active service's common snapshot. Prune uses its admitted credentials.
+Restart still clears sessions and is explicitly described as a shared effect.
+
+Clamshell keeps one niri output observer and inhibitor. Applied Settings or
+originating runtime toggles select enabled, connector, who and notification
+policy; toggles retain their native API writer. A page completion never resaves
+through Main. Replacement waits for old-inhibitor exit. Retirement stops the
+admitted effect without retiring common observation or retargeting another API.
+Both instance pages explain the common machine/resource effects; no content or
+stored configuration is migrated.
+
+The resource drivers separate finite every-field/caller/owner mappings, actual
+scoped pages/native documents/nonpublishing cold engines and individual retained
+restart/HTTP/inhibitor lifetimes. Controlled service and inhibitor endpoints are
+not the host MCP, a real logind inhibitor or physical/broad visual acceptance.
+
+## Backend ownership independent of renderers
+
+Auto-cpufreq, Battery & Power Management and ThinkPad Fan have real Main entries.
+Bars and popups resolve Main-owned clients by their own captured settings context;
+a renderer never assigns itself as Main. Destroying or replacing one Bar cannot
+remove another renderer's or an independently opened popup's backend.
+
+CPU/fan observations and physical effects stay common. Auto-cpufreq clients retain
+the original int Timer domain, including zero/fractional input, with initial
+refresh. Its separate showGovernor/showTurbo feature gaps remain. Battery clients
+select device-keyed physical observation/threshold owners; equal device paths
+share one source and replacement retires the old subscription/processes. Power
+profiles stay system-wide. Fan clients select palette/popup policy while actions
+and delayed refresh retain their originating current context. No configuration
+or content moves. Instance pages identify these shared effects.
+
+The backend drivers join real page intent, complete native documents, Discard,
+Apply, staged Reset/inheritance and separate nonpublishing cold readers to actual
+Bar policy and popup child Text. The finite checker maps all fifteen fields and
+every entry/physical owner, rejecting last-renderer/shared-popup/owner/lifetime
+controls. Individual inert action/source/typed/zero cases verify retirement and
+endpoint quiescence. These are not physical or broad visual/translation proofs.
+
+## Selected clipboard projections
+
+Clipboard keeps one full cliphist observation, shared pins, timestamps and image
+cache in Main. API-keyed HistoryClient objects limit only their selected history
+projection through literal `head -n` argv, preserving the existing Real domain,
+including zero, negative and fractional inputs. Source/limit replacement and
+retirement cancel the old projection; old results cannot publish into a new one.
+Panel rows/counts, density and image presentation use the injected context.
+
+The actual delegate passes its originating context to the shared decode queue.
+Coalesced requests retain their admitted owners: one current requester can keep
+the operation alive, while all-owner retirement cancels it and prevents queued
+work or cache publication. Initial and recycled delegates use the same admission.
+Content actions remain immediate and common, explicitly described in instance
+Settings; no clipboard content or stored preferences move.
+
+The clipboard drivers join actual SpinBox intent, complete native documents and
+nonpublishing cold Panel Text/row consumers in both scopes. The finite checker
+maps all three fields, callers and eight common process owners. Individual
+typed projection, held replacement, coalesced decode and retirement cases use
+inert clipboard/shell endpoints, intercepted before original temporary-file shell
+redirections. These are not physical clipboard or broad visual/translation proofs.
+
+## Selected OBS policy over shared output state
+
+OBS Control keeps one Main-owned connection, credential reader, managed-launch
+state and physical process/status domain. Main-owned context clients select its
+seventeen presentation, polling and action fields. Bar, Control Center, its child
+button and Panel resolve the same API-keyed client; opening a Panel carries the
+originating runtime API. Main/IPC and the explicitly plugin-level Settings gear
+remain shared. A client's retirement does not stop common status observation.
+
+Action entry captures launch and resolved video/opener policy before probing.
+The same operation identity/current-context fence covers WebSocket status/action,
+four-output auto-close, termination, delayed confirmation and later Toast action.
+Configuration replacement cannot retarget those stages. Managed-launch state
+records the start's admitted choice, not a later view's preference. No new OBS
+owner, preference store, credentials or content migration is introduced.
+
+The OBS drivers join actual combo intent, complete native documents and separate
+nonpublishing cold engines to actual Bar Text/CC visibility and child identities
+in both scopes. Individual typed/poll/action/held-stage/Toast lifetimes use one
+loopback protocol and inert executable endpoints. The finite parsed checker maps
+every field, caller and physical owner with rejecting controls. These are not
+physical OBS, broad visual/translation or final catalog proofs.
+
+## Admitted Auto-Tile daemon policy
+
+Auto-Tile retains one Main-owned daemon/config writer. Accepted Settings and
+originating runtime actions select typed policy; Bar/Panel presentation and
+native preference writes use their own captured API. Pending starts, serialized
+config writes and USR1 continuations retain owner/generation. Every Python niri
+query, action and stream uses a same-script parent-death-bound exec with a
+post-binding parent check, so abrupt Main destruction cannot orphan that child.
+The standalone omitted only-at-max flag still defaults true; explicit false
+has a negative flag. Its unused legacy language leaf remains preserved.
+
+
+The niri-policy native/lifetime drivers join real page intent, complete
+native documents, separate nonpublishing cold readers and originating
+native writes to actual inert Python argv/column-width consumers. Individual
+typed/hot-reload/restart/retirement and direct-parent SIGKILL/race cases
+supplement the eight-field parsed contract. Qualify this independent member
+with plugin-settings-niri-group-check.py --plugin niri-auto-tile --selftest.
+Screensaver has its separate policy qualification below, not covered by
+Auto-Tile acceptance. No physical or broad visual/translation claim.
+
+## Shared Sticky Notes synchronization
+
+Sticky Notes keeps one Main-owned notes set, cache, expanded window, Gist ID and
+sync status. Instance Settings identifies the shared effect and disables its
+otherwise ineffective sync/token controls. Configure those in Settings > Plugins;
+legacy overrides and content stay untouched. Sync now retains its accepted-Apply
+completion gate and explicitly updates the same shared notes/Gist owner.
+
+Each operation captures notes, token and target, retaining Main's native runtime
+context. Credential, Gist or owner replacement cancels pending requests and fences
+every HTTP continuation and native Gist-ID publication. The utility has no live
+native writer; Main retains that responsibility. Automatic and explicit sync keep
+their existing enabled/missing-token/busy policies. No notes/content migration.
+
+The sticky native driver joins both actual page scopes and native configuration
+files to real rendered common notes and loopback Gist requests. Separate cold
+readers, field/whole configuration Reset and retained-request/source/destruction
+cases supplement the finite four-field/caller/owner contract. Original ineffective
+instance controls and late credential-replacement requests have independent reds.
+All endpoints are inert, not GitHub-account, broad visual or final catalog proof.
+
+## Selected Screensaver policy
+
+Niri Screensaver retains one external config, idle entry and hook owner. Apply
+selects the applied context; Bar/Settings launch and stop use originating applied
+commands. Smart-toggle captures them before its status probe and refuses a
+retired continuation. Config writes serialize and final policy wins. Hook
+replacement/cleanup touches only the owner's exact command, never user-authored
+hooks. Instance pages identify shared physical/session effects.
+
+The niri-policy drivers separate finite every-field/caller/owner contracts, real
+pages/native documents/nonpublishing cold readers, actual originating native
+writes and individual config/probe/retirement lifetimes. Original shared-reader
+and omitted-origin controls reject the wrong idle policy. Canonical runtime
+Quit/Toggle and concurrent hook saves require the native completion correction
+in ConfigQml acbb404; the intended released dependency floor is 0.5.4, not a
+claim that it is already released. All compositor/screensaver/reload endpoints
+are inert; these are not physical, broad visual/translation or final proofs.
+
+## Hermes Agent finite CLI ownership prerequisite
+
+The bridge's common command runner owns each oneshot and gateway start/stop CLI
+through a fresh, thread-free same-script parent-death binding and post-binding
+parent check before literal exec. Request timeouts still stop and join that CLI.
+This does not grant ownership of independent gateway services or remote jobs.
+
+`plugin-settings-hermes-child-regression.py` observes all three actual HTTP
+dispatch paths with inert executable identities, normal completion and both
+SIGTERM/SIGKILL parent death. Unbound controls reproduce survivors; timeout,
+binding failure, retired-parent refusal and actual Main destruction have separate
+outcomes. This helper prerequisite alone is not the full Hermes selected-context
+proof; the original page/runtime lint and unfenced-XHR failures stay characterized
+separately rather than being attributed to that helper correction.
+
+Hermes Agent retains one applied connection/process/readers/token generation and
+common chat. Context-keyed clients select presentation, polling and originating
+model/pin actions. Apply keeps the active connection and chat; explicit session
+replacement adopts pending connection inputs. Draft Test Connection is separately
+input/lifetime-fenced. Local detection retains its plugin-level native writer;
+retired callers cannot publish model or pin results. The native and lifetime
+drivers observe real page intent, complete documents, nonpublishing cold readers,
+rendered model/chat and inert HTTP/process boundaries. SSH and Agent native test
+fixtures have distinct filenames; neither suite substitutes for the other.
+
 
 ## Verification boundaries
+
+Hermes Agent retains one Main-owned chat/gateway and one applied connection
+generation. That generation owns the local Process, state/token readers, retry
+and HTTP requests. Connection changes stay pending through prompt completion;
+only explicit New Session/session replacement adopts the originating current
+context. Old readers and replies cannot publish into a replacement source.
+Unauthenticated health/detection readiness is independent of local token loading;
+credential changes fence authenticated requests. Local mode still uses localhost
+and the manifest port, not the configured remote target.
+
+Main-owned clients project selected polling/presentation; renderer construction
+does not select a bridge or pinned owner. Runtime pin publication uses its
+captured native API and raw saveSelected publication receipt, not an editor-only
+refreshState field. Detection remains plugin-level local initialization and
+cannot copy a remote/instance detection into shared preferences. Test Connection
+remains a separate, generation-fenced draft probe. The Hermes native/lifetime
+drivers separate complete native documents, cold model consumers, original and
+omitted-origin controls, local file/token handoff and retained callbacks from
+finite parsed field/caller contracts. Controlled endpoints are not actual Hermes
+account, broad visual/translation or final catalog acceptance.
 
 The P001 safety regression command now runs field-only real desktop routes,
 keyboard input, permission failure/Retry, protected configuration Reset,
