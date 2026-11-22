@@ -663,6 +663,33 @@ intent Retry, not an exact original-value capture or per-row transaction.
 Retirement retains the ready native owner until requested work settles, then
 waits for placement API destruction before releasing that owner.
 
+## Selected Assistant requests over common conversation content
+
+Assistant Main retains one conversation, draft input, translation result and cache.
+Main owns one read-only policy client per captured runtime context. Runtime views
+display that context's model and send/edit/regenerate/translate with its origin.
+IPC stays explicitly plugin-level. Instance Settings identifies shared content and
+the common clear/stop effects, without promising independent conversations.
+
+Each admitted chat/translation owns one Process generation and immutable provider,
+backend, endpoint, credentials, model, prompt, temperature and language inputs.
+Parser choice follows that request, never a later view's settings. Source changes,
+retirement and Main destruction stop/fence the owned worker. Failed process start
+settles once. Content-save debounce retains its originating history limit without
+truncating the live common conversation. Existing cache paths/format stay unchanged.
+The legacy ai.model and ai.maxHistoryLength members retain their existing Settings
+role; model resolution uses models[provider], and cache policy uses the top-level
+maxHistoryLength. No new consumer or content migration is inferred for legacy keys.
+
+The Assistant regressions join actual page intent/native complete documents to
+actual model/response children and nonpublishing cold readers in both scopes.
+Individual tests observe both providers, both translation parsers, environment-key
+precedence, zero temperature, common admission, edit/regenerate/clear/stop, captured
+cache policy, failed start and held source/native-origin/Main retirement. Endpoint
+PID/start identities are checked before engine exit, not merely afterward. These
+are inert curl collaborators and synthetic credentials, not external account,
+network, physical input, broad visual or final paired acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
