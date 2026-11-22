@@ -96,6 +96,7 @@ Widgets/AudioSpectrum/NWaveSpectrum.qml
 Widgets/NButton.qml
 Widgets/NClock.qml
 Widgets/NImage.qml
+Widgets/NImageBackdrop.qml
 Widgets/NImageRounded.qml
 Widgets/NText.qml
 builtin/plugins/demo-custom-lockscreen/LockScreenView.qml

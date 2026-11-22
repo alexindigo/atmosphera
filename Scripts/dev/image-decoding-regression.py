@@ -16,7 +16,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -85,6 +85,9 @@ class Run:
         defaults = json.loads((source / 'Configs/defaults.json').read_text())
         defaults['general']['showChangelogOnStartup'] = False
         defaults['wallpaper']['directory'] = str(inputs)
+        if self.args.case == 'backdrops':
+            defaults['wallpaper'].update(enabled=True, useSolidColor=False)
+            defaults['general'].update(lockScreenBlur=0, lockScreenTint=0, showScreenCorners=False)
         (profile / 'config/settings.json').write_text(json.dumps(defaults))
         entry = shell / 'image-decoding-fixture.qml'
         entry.write_text(bootstrap_fixture(fixture.read_text()))
@@ -140,7 +143,10 @@ class Run:
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
-                'Modules/FileChooser/FileEntry.qml', 'Modules/FileChooser/FileQuickLook.qml')]
+                 'Modules/FileChooser/FileEntry.qml', 'Modules/FileChooser/FileQuickLook.qml')]
+        if self.args.case == 'backdrops':
+            lint_paths += [str(shell / p) for p in ('Widgets/NImageBackdrop.qml', 'Widgets/AtmoWallpaperBackground.qml',
+                'Modules/LockScreen/LockScreenBackground.qml') if (shell / p).is_file()]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -210,6 +216,48 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def backdrops(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding/backdrops.qml'
+        result, output = self.qt(self.args.source, fixture, inputs, 'backdrops')
+        def review(observed, captures, prefix):
+            for name in ('backdrop', 'lock'):
+                before, failed, replacement = [stage[name] for stage in observed['stages']]
+                center = pixel(captures / ('before-' + name + '.png'))
+                self.check(prefix + name + '-initial-pixels', before['resolved'] and center[0] > 100
+                           and center[0] > 3*center[1] and center[0] > 2*center[2], dict(consumer=before, center=center))
+                self.check(prefix + name + '-failure-retains-presented-image', failed['resolved'] == before['resolved']
+                           and read_png(captures/('before-'+name+'.png')) == read_png(captures/('failed-'+name+'.png')), failed)
+                self.check(prefix + name + '-explicit-error', failed['state'] == 'unavailable' and failed['reason'], failed)
+                next_center = pixel(captures/('replacement-'+name+'.png'))
+                self.check(prefix + name + '-latest-generation-pixels', replacement['state'] == 'ready'
+                           and next_center[1] > 80 and next_center[1] > 3*next_center[0] and next_center[1] > 2*next_center[2],
+                           dict(consumer=replacement, center=next_center))
+            self.check(prefix + 'hide-retires-interests', observed['interests'] == observed['requests'] == 0 and not observed['workerRunning'], observed)
+        review(result, output, 'backdrops-')
+        initial, initial_output = self.qt(self.args.source, fixture, inputs, 'backdrops-initial-error', dict(IMAGE_INITIAL_BAD='1'))
+        for name in ('backdrop', 'lock'):
+            before = initial['stages'][0][name]
+            self.check('backdrops-' + name + '-startup-error-is-explicit', not before['resolved'] and before['state'] == 'unavailable'
+                       and before['reason'], before)
+        self.check('backdrops-lock-startup-error-safe-solid', pixel(initial_output/'before-lock.png')[:3] == [0,0,0],
+                   pixel(initial_output/'before-lock.png'))
+        self.check('backdrops-error-does-not-take-input-focus', initial['inputFocused'] and initial['inputText'] == 'unlock-input-control', initial)
+        stage = self.work / 'locker-stage'
+        packaged = self.command(['bash', '-eu', '-c', 'source "$1/packaging/aur/package.sh"; package', 'stage', self.args.source],
+            env=dict(os.environ, srcdir=str(self.args.source.parent), _gitname=self.args.source.name,
+                     pkgdir=str(stage), pkgver=(self.args.source / 'VERSION').read_text().strip()))
+        self.check('backdrops-locker-package-assembly', packaged.returncode == 0, dict(exit=packaged.returncode,stderr=packaged.stderr))
+        lock = stage / 'etc/xdg/quickshell/atmosphera-lockscreen'
+        self.check('backdrops-locker-minimal-graph', not (lock/'Services/Plugins').exists() and not (lock/'Portals').exists(),str(lock))
+        locked, locked_output = self.qt(lock, fixture, inputs, 'backdrops-locker', assembled=True)
+        review(locked, locked_output, 'backdrops-installed-')
         return result
 
     def legacy(self):
@@ -418,6 +466,8 @@ def main():
             run.owner()
         elif args.case == 'legacy':
             run.legacy()
+        elif args.case == 'backdrops':
+            run.backdrops()
         elif args.case == 'chooser':
             run.chooser()
         else:
