@@ -18,6 +18,7 @@ ShellRoot {
 
   QtObject {
     id: api
+    readonly property var settingsContext: context
     property var pluginSettings: ({
                                     stateFile: root.base + "/state/state.json",
                                     hermesHome: root.base + "/hermes-home",
@@ -44,6 +45,14 @@ ShellRoot {
     }
     function saveSettings() {
       throw new Error("child lifetime must not publish preferences");
+    }
+  }
+
+  QtObject {
+    id: context
+    readonly property var settingsView: api.pluginSettings
+    function current() {
+      return true;
     }
   }
 

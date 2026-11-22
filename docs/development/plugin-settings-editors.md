@@ -712,6 +712,26 @@ its pre-existing page/runtime lint and unfenced-XHR failures remain explicit.
 
 ## Verification boundaries
 
+Hermes Agent retains one Main-owned chat/gateway and one applied connection
+generation. That generation owns the local Process, state/token readers, retry
+and HTTP requests. Connection changes stay pending through prompt completion;
+only explicit New Session/session replacement adopts the originating current
+context. Old readers and replies cannot publish into a replacement source.
+Unauthenticated health/detection readiness is independent of local token loading;
+credential changes fence authenticated requests. Local mode still uses localhost
+and the manifest port, not the configured remote target.
+
+Main-owned clients project selected polling/presentation; renderer construction
+does not select a bridge or pinned owner. Runtime pin publication uses its
+captured native API and raw saveSelected publication receipt, not an editor-only
+refreshState field. Detection remains plugin-level local initialization and
+cannot copy a remote/instance detection into shared preferences. Test Connection
+remains a separate, generation-fenced draft probe. The Hermes native/lifetime
+drivers separate complete native documents, cold model consumers, original and
+omitted-origin controls, local file/token handoff and retained callbacks from
+finite parsed field/caller contracts. Controlled endpoints are not actual Hermes
+account, broad visual/translation or final catalog acceptance.
+
 The P001 safety regression command now runs field-only real desktop routes,
 keyboard input, permission failure/Retry, protected configuration Reset,
 independent files, explicit shared content commands and separate cold consumers.
