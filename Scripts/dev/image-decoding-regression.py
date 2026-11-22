@@ -16,7 +16,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -88,6 +88,8 @@ class Run:
         if self.args.case == 'backdrops':
             defaults['wallpaper'].update(enabled=True, useSolidColor=False)
             defaults['general'].update(lockScreenBlur=0, lockScreenTint=0, showScreenCorners=False)
+        if self.args.case == 'rounded':
+            defaults['general']['animationDisabled'] = (extra_env or {}).get('IMAGE_ROUNDED_REDUCED') == '1'
         (profile / 'config/settings.json').write_text(json.dumps(defaults))
         entry = shell / 'image-decoding-fixture.qml'
         entry.write_text(bootstrap_fixture(fixture.read_text()))
@@ -100,7 +102,8 @@ class Run:
         env = dict(os.environ, **self.profile.child_environment('image-'),
                     QML_DISABLE_DISK_CACHE='1', QT_QPA_PLATFORM='wayland', IMAGE_FIXTURES=str(inputs), IMAGE_OUTPUT=str(output),
                     IMAGE_DATA='data:image/jpeg;base64,' + base64.b64encode((inputs / 'Still.webp').read_bytes()).decode(),
-                   ATMOSPHERA_CONFIG_DIR=str(profile / 'config') + '/', ATMOSPHERA_CACHE_DIR=str(profile / 'cache') + '/',
+                    ATMOSPHERA_CONFIG_DIR=str(profile / 'config') + '/', ATMOSPHERA_CACHE_DIR=str(profile / 'cache') + '/',
+                    IMAGE_ICON_DIR=str(self.args.source / 'builtin/plugins/atmosphera-icons'),
                    ATMOSPHERA_STATE_DIR=str(profile / 'state') + '/', ATMOSPHERA_SETTINGS_FILE=str(profile / 'config/settings.json'),
                    XDG_CONFIG_HOME=str(profile / 'config'), XDG_CACHE_HOME=str(profile / 'cache'),
                     XDG_STATE_HOME=str(profile / 'state'), XDG_DATA_HOME=str(profile / 'data'), TMPDIR=str(profile / 'tmp'))
@@ -147,6 +150,8 @@ class Run:
         if self.args.case == 'backdrops':
             lint_paths += [str(shell / p) for p in ('Widgets/NImageBackdrop.qml', 'Widgets/AtmoWallpaperBackground.qml',
                 'Modules/LockScreen/LockScreenBackground.qml') if (shell / p).is_file()]
+        if self.args.case == 'rounded':
+            lint_paths += [str(shell / p) for p in ('Widgets/NImageRounded.qml', 'Widgets/NImage.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -216,6 +221,49 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def rounded(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding/rounded.qml'
+        result, output = self.qt(self.args.source, fixture, inputs, 'rounded')
+        for name in ('still','data'):
+            self.check('rounded-'+name+'-shader-pixels', result[name]['status'] == 1 and pixel(output/(name+'.png')) == list(COLORS[0]), result[name])
+            self.check('rounded-'+name+'-alpha-geometry', pixel(output/(name+'.png'),0,0)[3] == 0, pixel(output/(name+'.png'),0,0))
+        centers = [pixel(path) for path in output.glob('motion-*.png')]
+        self.check('rounded-animated-webp-presents-all-frames', result['motion']['status'] == 1
+                   and {tuple(p) for p in centers} == set(COLORS), dict(consumer=result['motion'],centers=centers))
+        self.check('rounded-failure-is-labelled-not-ordinary-icon', result['failure']['status'] == 3 and result['failure']['reason'], result['failure'])
+        width,height,pixels = read_png(output/'failure.png')
+        warning_pixels = sum(max(abs(a-b) for a,b in zip(pixels[(y*width+x)*4:(y*width+x+1)*4],result['warningColor'])) < 8
+                             for y in range(height//2,height) for x in range(width//2,width))
+        self.check('rounded-error-warning-is-actually-presented',warning_pixels > 10,dict(pixels=warning_pixels,color=result['warningColor']))
+        for name in ('fit','crop','stretch'):
+            path = output/(name+'.png')
+            centers = [pixel(path,x,64) for x in (16,64,112)]
+            self.check('rounded-'+name+'-single-transform-geometry', centers == ([list(COLORS[1])]*3 if name == 'crop' else [list(c) for c in COLORS])
+                       and pixel(path,0,0)[3] == 0 and pixel(path,64,16)[3] == (0 if name == 'fit' else 255),
+                       dict(centers=centers,corner=pixel(path,0,0),top=pixel(path,64,16)))
+        reduced, reduced_output = self.qt(self.args.source, fixture, inputs, 'rounded-reduced',dict(IMAGE_ROUNDED_REDUCED='1'))
+        centers = [pixel(path) for path in reduced_output.glob('motion-*.png')]
+        self.check('rounded-reduced-motion-retains-animation-data', reduced['motion']['status'] == 1
+                   and reduced['motion']['result']['frames'] == 3 and len({tuple(p) for p in centers}) == 1, reduced['motion'])
+        stage = self.work/'locker-stage'
+        packaged = self.command(['bash', '-eu', '-c', 'source "$1/packaging/aur/package.sh"; package', 'stage', self.args.source],
+            env=dict(os.environ,srcdir=str(self.args.source.parent),_gitname=self.args.source.name,
+                     pkgdir=str(stage),pkgver=(self.args.source/'VERSION').read_text().strip()))
+        self.check('rounded-locker-package-assembly',packaged.returncode == 0,dict(exit=packaged.returncode,stderr=packaged.stderr))
+        lock = stage/'etc/xdg/quickshell/atmosphera-lockscreen'
+        locked, locked_output = self.qt(lock,fixture,inputs,'rounded-locker',assembled=True)
+        centers = [pixel(path) for path in locked_output.glob('motion-*.png')]
+        self.check('rounded-installed-locker-shader-motion', locked['motion']['status'] == 1
+                   and {tuple(p) for p in centers} == set(COLORS)
+                   and pixel(locked_output/'data.png') == list(COLORS[0])
+                   and locked['failure']['status'] == 3 and locked['failure']['reason'], locked)
         return result
 
     def backdrops(self):
@@ -468,6 +516,8 @@ def main():
             run.legacy()
         elif args.case == 'backdrops':
             run.backdrops()
+        elif args.case == 'rounded':
+            run.rounded()
         elif args.case == 'chooser':
             run.chooser()
         else:

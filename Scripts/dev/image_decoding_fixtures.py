@@ -155,6 +155,12 @@ def create_fixtures(root, commands):
 
     for i, color in enumerate(COLORS):
         (root / f'frame-{i}.png').write_bytes(colored_png(color))
+    # Fully opaque 2:1 bands distinguish fit, crop and stretch independently
+    # of source alpha or the rounded renderer's own output.
+    bands = b''.join(bytes(COLORS[0 if x < 30 else 1 if x < 90 else 2]) for x in range(120))
+    geometry = (b'\x89PNG\r\n\x1a\n' + _chunk(b'IHDR', struct.pack('!IIBBBBB', 120, 60, 8, 6, 0, 0, 0))
+                + _chunk(b'IDAT', zlib.compress((b'\0' + bands) * 60)) + _chunk(b'IEND', b''))
+    (root / 'geometry.png').write_bytes(geometry)
     png = str(root / 'frame-0.png')
     # Lossless encodings; expected RGBA remains the independently authored PNG.
     encode(['ffmpeg', '-nostdin', '-v', 'error', '-i', png, '-frames:v', '1', '-threads', '1', '-c:v', 'libwebp', '-lossless', '1', str(root / 'Still.webp')])
