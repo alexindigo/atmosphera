@@ -520,6 +520,30 @@ udev, devices, mounts, terminals, browsers and GPU CLI endpoints are inert. Thes
 are selected consumer/lifetime proofs, not physical, broad visual/translation or
 whole-catalog acceptance.
 
+## Admitted Steam overlay geometry
+
+Steam Overlay's two Bar actions supply their captured runtime context. Main owns
+one physical overlay and one admitted operation's typed geometry, output size and
+classic/Lua dispatch syntax. Actual query completion, movement, show/focus and
+continuing new-window stages retain that policy. Later configuration cannot
+retarget a running operation; retirement stops its processes and queued stages.
+Requests admitted before startup probes settle retain their configuration while
+waiting. Shared dimensions and syntax settle once before the first query/effect;
+retirement during that wait cannot dispatch a continuation.
+Main/IPC remains explicitly plugin-level. The optional Panel guide already reads
+its injected pixel-width preferences separately from the percentage geometry.
+Instance Settings explains the shared effect. Stored auto-launch and chat-
+notification fields retain their independent feature gaps; deprecated compositor
+support is not restored by this settings correction.
+
+The Steam drivers join actual gap-control intent, complete independent native
+documents, Discard/Apply/staged Reset/inheritance and separate nonpublishing cold
+engines to originating Bar compositor argv. Individual held-stage cases verify
+classic/Lua/custom geometry, continuing-window policy and retirement. All Steam,
+pidof and hyprctl endpoints are inert. Finite parsed field/caller/owner controls
+supplement, not replace, those consumer observations. No physical, broad visual/
+translation or whole-catalog acceptance follows.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
