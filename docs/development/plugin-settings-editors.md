@@ -759,6 +759,30 @@ and notification collaborators prove call policy, not physical audio playback.
 Common path-keyed audio/notice services are not per-instance devices. No timer
 state store/migration or broad visual/final paired acceptance is implied.
 
+## Existing worker-client matrices
+
+Air Quality, Contributions and Arch Updater use the common worker matrix with
+plugin-specific final Desktop children. Both scopes cover sparse publication,
+Discard, failed IO/same-editor Retry, signal-before-callback, staged Reset,
+base propagation, sibling independence and stale-editor retention. A separate
+cold engine checks unchanged configuration hashes. Held old responses cross an
+originating native runtime publication before release; an empty location/account
+must remain empty, and a replacement update command must retain its new rows.
+Actual native placement removal retires the exact client, not the shifted row.
+
+The finite parsed contract covers all 41 declarations and every runtime entry.
+Arch's `boldVer`/`desktopTip` are existing unused legacy declarations, and
+`refreshTimer` currently controls page visibility, not worker timer policy (P006).
+These are preserved, not newly claimed functional effects. Dedicated source-mode
+legs also observe Air's EU scale, AQICN station, invalid/missing tokens and disabled
+shared location; Contributions' GraphQL/error/public/compact/empty generations;
+and Arch's system/AUR/inert Flatpak results and Flatpak removal. Existing keyboard
+witnesses remain separate evidence. Every source-mode boundary compares complete
+native documents, including native omit-equal removal, and retains other contexts.
+Failed shared native IO can retain unconfirmed desired values at the shared
+owner while files and inherited consumers stay at persisted values; this is
+never a successful receipt. No real network, account or package action is used.
+
 ## Catwalk existing-client matrix
 
 Catwalk's broader matrix extends its original selected-instance witness. Both
