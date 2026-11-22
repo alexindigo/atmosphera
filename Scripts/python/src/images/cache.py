@@ -19,6 +19,7 @@ from .png import (atomic_write, bucket, cache_name, canonical_uri, empty_png,
 from .process import command, CommandError
 from .sources import prepare, identity, SourceError
 from .storage import directory as cache_directory, descriptor_path
+from .storage import open_file as cache_file, read_bytes as cache_bytes
 
 SCHEMA = 2
 
@@ -59,15 +60,16 @@ class Cache:
             version = (Path(__file__).resolve().parents[4] / 'VERSION').read_text().strip()
         self.failure_dir = self.root / 'fail' / ('atmosphera-' + version.replace('/', '_'))
 
-    def valid(self, path, uri, info):
+    def valid(self, path, uri, info, capability=None):
         try:
-            data = path.read_bytes()
+            data = cache_bytes(path)
             validate_png(data)
             values = metadata(data)
             return (values.get('Thumb::URI') == uri and values.get('Thumb::MTime') == str(int(info.st_mtime))
                     and ('Thumb::Size' not in values or values['Thumb::Size'] == str(info.st_size))
                     and ('Atmo::MTimeNS' not in values or values['Atmo::MTimeNS'] == str(info.st_mtime_ns))
-                    and ('Atmo::CTimeNS' not in values or values['Atmo::CTimeNS'] == str(info.st_ctime_ns)))
+                    and ('Atmo::CTimeNS' not in values or values['Atmo::CTimeNS'] == str(info.st_ctime_ns))
+                    and (capability is None or values.get('Atmo::Capability') == capability))
         except (OSError, ValueError, UnicodeError, zlib.error, struct.error):
             return False
 
@@ -101,7 +103,7 @@ class Cache:
         fingerprint = capability_fingerprint()
         if self.valid(target, uri, info):
             return dict(url=target.as_uri(), status='hit')
-        if self.valid(failure, uri, info) and metadata(failure.read_bytes()).get('Atmo::Capability') == fingerprint:
+        if self.valid(failure, uri, info, capability=fingerprint):
             return dict(url='', status='failure-hit')
         attributes = {'Thumb::URI': uri, 'Thumb::MTime': str(int(info.st_mtime)), 'Thumb::Size': str(info.st_size),
                       'Atmo::MTimeNS': str(info.st_mtime_ns), 'Atmo::CTimeNS': str(info.st_ctime_ns),
@@ -288,7 +290,7 @@ class Cache:
                           'Software': 'Atmosphera'}
             try:
                 async with prepare(target.as_uri(), self.staging, original['contentSha256'] + request.get('revision', ''),
-                                   self.emit, follow_symlinks=False) as foreign:
+                                   self.emit, cache=True) as foreign:
                     # Inspect the very bytes captured by the opened-file owner,
                     # not a path read that could race with a concurrent writer.
                     data = foreign['path'].read_bytes()
@@ -322,7 +324,7 @@ class Cache:
             output = Path(unquote(urlsplit(generated['url']).path))
             if not original['current']():
                 raise SourceError('source-changed', 'Image source changed before thumbnail publication')
-            atomic_write(target, with_metadata(output.read_bytes(), attributes), self.root)
+            atomic_write(target, with_metadata(cache_bytes(output), attributes), self.root)
             # Use the same prepared original for the exact requested geometry;
             # do not infer Ready from the freedesktop filename we just wrote.
             result = await self.representation(original, request, original_info)
@@ -347,7 +349,7 @@ class Cache:
                             reason='The video preview could not be decoded')
             from urllib.parse import unquote, urlsplit
             path = Path(unquote(urlsplit(result['url']).path))
-            info = validate_png(path.read_bytes(), maximum=(request['width'], request['height']))
+            info = validate_png(cache_bytes(path), maximum=(request['width'], request['height']))
             return dict(result, origin='fallback', **info)
         async with prepare(request['source'], self.staging, request.get('revision', ''), self.emit) as prepared:
             if inspection_slots is not None:
@@ -378,21 +380,27 @@ class Cache:
         target = self.private / ('animated' if moving else 'still') / (key + ('.gif' if moving else '.png'))
         failure = self.private / 'fail' / (key + '.json')
         fingerprint = capability_fingerprint()
-        if target.is_file():
-            try:
-                output = await self.validate_output(target, prepared['directory'], moving, request)
+        try:
+            with cache_file(target) as (stream, current), tempfile.TemporaryDirectory(prefix='.cache-hit-', dir=prepared['directory']) as folder:
+                snapshot = Path(folder) / target.name
+                snapshot.write_bytes(stream.read())
+                if not current():
+                    raise OSError('Image cache entry changed during capture')
+                output = await self.validate_output(snapshot, prepared['directory'], moving, request)
                 if moving and (output['frames'] != info['frames'] or iterations(output) != iterations(info) or output['delaysMs'] != info['delaysMs']):
                     raise ValueError('Stale animation cache')
                 if not prepared['current']():
                     raise SourceError('source-changed', 'Image source changed before publication')
-            except (ValueError, OSError, CommandError):
-                pass
-            else:
-                return self.retain_original(prepared, request,
-                    dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output))
-        if failure.is_file() and not request.get('retry'):
+                if not current():
+                    raise OSError('Image cache entry changed during validation')
+        except (ValueError, OSError, CommandError):
+            pass
+        else:
+            return self.retain_original(prepared, request,
+                dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output))
+        if not request.get('retry'):
             try:
-                negative = json.loads(failure.read_text())
+                negative = json.loads(cache_bytes(failure))
                 if negative['capability'] == fingerprint:
                     return dict(url='', status='unavailable', code=negative['code'], reason=negative['reason'])
             except (OSError, ValueError, KeyError):

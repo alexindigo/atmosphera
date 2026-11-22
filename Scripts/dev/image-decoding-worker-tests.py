@@ -379,6 +379,170 @@ def main():
             self.assertEqual(foreign.read_bytes(), b'another writer owns these bytes')
             self.assertFalse((parent / 'result.png').exists())
 
+        async def test_cache_positive_leaf_symlink_is_replaced_not_borrowed(self):
+            result = await self.cache.render(self.request())
+            target = Path(result['url'].removeprefix('file://'))
+            outside = self.folder / 'user-image.png'
+            green = await self.cache.render(self.request('frame-1.png'))
+            outside.write_bytes(Path(green['url'].removeprefix('file://')).read_bytes())
+            before = outside.read_bytes()
+            target.unlink()
+            target.symlink_to(outside)
+            again = await self.cache.render(self.request())
+            self.assertEqual(again['status'], 'generated')
+            self.assertFalse(target.is_symlink())
+            self.assertEqual(pixel(target), list(COLORS[0]))
+            self.assertEqual(outside.read_bytes(), before)
+
+        async def test_cache_positive_parent_symlink_never_borrows_pixels(self):
+            result = await self.cache.render(self.request())
+            target = Path(result['url'].removeprefix('file://'))
+            outside = self.folder / 'user-originals'
+            outside.mkdir(mode=0o755)
+            green = await self.cache.render(self.request('frame-1.png'))
+            sentinel = outside / target.name
+            sentinel.write_bytes(Path(green['url'].removeprefix('file://')).read_bytes())
+            before = sentinel.read_bytes()
+            target.parent.rename(self.folder / 'held-cache')
+            target.parent.symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(OSError):
+                await self.cache.render(self.request())
+            self.assertEqual(sentinel.read_bytes(), before)
+            self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+            self.assertEqual(list(outside.iterdir()), [sentinel])
+
+        async def test_cache_negative_leaf_symlink_never_borrows_reason(self):
+            async def fail(*_args):
+                raise SourceError('decode-unavailable', 'Owned decoder failure')
+            with patch.object(self.cache, 'decode', fail), self.assertRaises(SourceError):
+                await self.cache.render(self.request())
+            target, = (self.cache.private / 'fail').glob('*.json')
+            outside = self.folder / 'user-negative.json'
+            negative = json.loads(target.read_text())
+            negative['reason'] = 'Unrelated private source reason'
+            outside.write_text(json.dumps(negative))
+            target.unlink()
+            target.symlink_to(outside)
+            again = await self.cache.render(self.request())
+            self.assertEqual(again['status'], 'generated')
+            self.assertEqual(pixel(Path(again['url'].removeprefix('file://'))), list(COLORS[0]))
+            self.assertEqual(json.loads(outside.read_text()), negative)
+
+        async def test_cache_negative_parent_symlink_never_borrows_reason(self):
+            async def fail(*_args):
+                raise SourceError('decode-unavailable', 'Owned decoder failure')
+            with patch.object(self.cache, 'decode', fail), self.assertRaises(SourceError):
+                await self.cache.render(self.request())
+            target, = (self.cache.private / 'fail').glob('*.json')
+            outside = self.folder / 'user-originals'
+            outside.mkdir(mode=0o755)
+            sentinel = outside / target.name
+            negative = json.loads(target.read_text())
+            negative['reason'] = 'Unrelated directory reason'
+            sentinel.write_text(json.dumps(negative))
+            target.parent.rename(self.folder / 'held-failures')
+            target.parent.symlink_to(outside, target_is_directory=True)
+            result = await self.cache.render(self.request())
+            self.assertEqual(result['status'], 'generated')
+            self.assertEqual(json.loads(sentinel.read_text()), negative)
+            self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+
+        async def test_foreign_cache_parent_symlink_never_borrows_thumbnail(self):
+            source = fixtures / 'Still.webp'
+            target = foreign_target(self.cache.root, source)
+            outside = self.folder / 'user-originals'
+            outside.mkdir(mode=0o755)
+            sentinel = outside / target.name
+            data = foreign_thumbnail(source)
+            sentinel.write_bytes(data)
+            self.cache.root.mkdir()
+            target.parent.symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(OSError):
+                await self.cache.render(self.thumbnail_request())
+            self.assertEqual(sentinel.read_bytes(), data)
+            self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+            self.assertEqual(list(outside.iterdir()), [sentinel])
+
+        async def test_video_cache_parent_symlink_never_publishes_hit(self):
+            source = fixtures / 'Still.webp'
+            target = foreign_target(self.cache.root, source)
+            outside = self.folder / 'user-originals'
+            outside.mkdir(mode=0o755)
+            sentinel = outside / target.name
+            sentinel.write_bytes(foreign_thumbnail(source))
+            self.cache.root.mkdir()
+            target.parent.symlink_to(outside, target_is_directory=True)
+            # A controlled valid video frame avoids coupling this cache-boundary
+            # assertion to ffmpeg's ability to treat a still as a video input.
+            async def frame(*_args):
+                return empty_png()
+            with patch.object(self.cache, 'frame', frame), self.assertRaises(OSError):
+                await self.cache.get(str(source), 64)
+            self.assertEqual(sentinel.read_bytes(), foreign_thumbnail(source))
+            self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+
+        async def test_cache_async_validation_parent_swap_refuses_old_hit(self):
+            result = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
+            target = Path(result['url'].removeprefix('file://'))
+            validate_output = self.cache.validate_output
+            replaced = False
+            async def swap(path, directory, moving, request):
+                nonlocal replaced
+                output = await validate_output(path, directory, moving, request)
+                if not replaced:
+                    replaced = True
+                    target.parent.rename(self.folder / 'held-cache')
+                    target.parent.mkdir()
+                    target.write_bytes(b'replacement must not become a hit')
+                return output
+            with patch.object(self.cache, 'validate_output', swap):
+                again = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
+            self.assertEqual(again['status'], 'generated')
+            self.assertEqual(gif(target.read_bytes())['frames'], 3)
+            self.assertTrue(replaced)
+
+        async def test_cache_gif_validation_reads_bound_snapshot_not_replaced_path(self):
+            request = dict(self.request('Motion.webp'), animationIntent='preserve')
+            result = await self.cache.render(request)
+            target = Path(result['url'].removeprefix('file://'))
+            original = target.read_bytes()
+            validate_output = self.cache.validate_output
+            observed = []
+            async def replace_leaf(path, directory, moving, spec):
+                if not observed:
+                    replacement = target.with_suffix('.replacement')
+                    replacement.write_bytes(b'not an animation')
+                    os.replace(replacement, target)
+                    observed.append(dict(path=str(path), sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+                    self.assertEqual(path.read_bytes(), original)
+                    self.assertNotEqual(path, target)
+                return await validate_output(path, directory, moving, spec)
+            with patch.object(self.cache, 'validate_output', replace_leaf):
+                again = await self.cache.render(request)
+            self.assertEqual(again['status'], 'generated')
+            self.assertEqual(gif(target.read_bytes())['frames'], 3)
+            self.assertEqual(len(observed), 1)
+            self.events.append(dict(cacheValidation=observed))
+
+        async def test_cache_reader_rejects_fifo_without_blocking_or_chmod(self):
+            from images.storage import open_file
+            parent = self.folder / 'cache-reader'
+            parent.mkdir(mode=0o755)
+            target = parent / 'fifo.png'
+            os.mkfifo(target, 0o600)
+            with self.assertRaises(ValueError):
+                with open_file(target):
+                    self.fail('A FIFO is not a cache image')
+            self.assertEqual(parent.stat().st_mode & 0o777, 0o755)
+            self.assertTrue(target.stat().st_mode & 0o170000 == 0o010000)
+
+        async def test_user_source_symlink_remains_a_supported_source(self):
+            source = self.folder / 'ordinary-user-symlink.webp'
+            source.symlink_to(fixtures / 'Still.webp')
+            result = await self.cache.render(dict(self.request(), source=str(source)))
+            self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+            self.assertTrue(source.is_symlink())
+
         async def test_thumbnail_independent_processes_publish_complete_freedesktop_png(self):
             workers, identities, replies = [], [], []
             cache = self.folder / 'shared/thumbnails'

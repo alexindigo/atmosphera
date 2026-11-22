@@ -19,7 +19,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -116,12 +116,20 @@ class Run:
                                          setWallpaperOnAllMonitors=False, automationEnabled=False)
             defaults['wallpaper']['useOriginalImages'] = (extra_env or {}).get('IMAGE_USE_ORIGINAL') == '1'
         (profile / 'config/settings.json').write_text(json.dumps(defaults))
-        if self.args.case in ('cache-red', 'cache'):
+        if self.args.case in ('cache-red', 'cache', 'cache-read-red', 'cache-read'):
             from image_decoding_cache_fixtures import target, thumbnail
+            redirected = self.args.case in ('cache-read-red', 'cache-read')
+            if redirected:
+                outside = profile / 'user-originals'
+                outside.mkdir(mode=0o755)
+                bucket = profile / 'cache/thumbnails/normal'
+                bucket.parent.mkdir(parents=True)
+                bucket.symlink_to(outside, target_is_directory=True)
             for filename, depth, interlace, text in (('Still.webp', 8, 0, 'tEXt'), ('Foreign16.webp', 16, 0, 'zTXt'),
                                                   ('ForeignInterlaced.webp', 8, 1, 'iTXt')):
                 cached = target(profile / 'cache/thumbnails', inputs / filename)
-                cached.parent.mkdir(parents=True, exist_ok=True)
+                if not redirected:
+                    cached.parent.mkdir(parents=True, exist_ok=True)
                 cached.write_bytes(thumbnail(inputs / filename, depth=depth, interlace=interlace, text=text))
         entry = shell / 'image-decoding-fixture.qml'
         entry.write_text(bootstrap_fixture(fixture.read_text()))
@@ -175,7 +183,7 @@ class Run:
         if self.args.case in ('owner', 'legacy'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageSource.qml',
                                                     'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml')]
-        if self.args.case == 'cache':
+        if self.args.case in ('cache', 'cache-read'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageSource.qml', 'Widgets/NImage.qml',
                 'Services/UI/ImageCacheService.qml', 'Modules/FileChooser/FileEntryArtwork.qml')]
         if self.args.case == 'chooser':
@@ -1260,16 +1268,24 @@ os.execv('/usr/bin/find', ['find', *args])
         for name in ('Foreign16.webp', 'ForeignInterlaced.webp'):
             (inputs / name).write_bytes((inputs / 'Still.webp').read_bytes())
         (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
-        red = self.args.case == 'cache-red'
+        redirected = self.args.case in ('cache-read-red', 'cache-read')
+        red = self.args.case in ('cache-red', 'cache-read-red')
         if red and self.args.baseline_source is None:
             raise ValueError('Cache red requires an explicit immutable baseline source')
-        name = 'cache-red' if red else 'cache'
+        name = self.args.case
         result, output = self.qt(self.args.baseline_source if red else self.args.source,
             self.args.source / 'Scripts/dev/fixtures/image-decoding/cache.qml', inputs, name)
         colors = [pixel(output / f'thumbnail-{i}.png') for i in range(3)]
-        self.check('actual-chooser-foreign-still-cache-' + ('ignored' if red else 'adopted'),
-                   all(row['state']['imageReady'] for row in result['rows'])
-                   and colors == [list(COLORS[0] if red else COLORS[1])] * 3, dict(rows=result['rows'], colors=colors), red=red)
+        if redirected:
+            self.check('actual-chooser-symlinked-cache-' + ('borrowed' if red else 'refused'),
+                (all(row['state']['imageReady'] for row in result['rows']) and colors == [list(COLORS[1])] * 3) if red else
+                (all(not row['state']['imageReady'] and row['state']['unavailable'] and row['state']['errorReason']
+                     for row in result['rows']) and all(color != list(COLORS[1]) for color in colors)),
+                dict(rows=result['rows'], colors=colors), red=red)
+        else:
+            self.check('actual-chooser-foreign-still-cache-' + ('ignored' if red else 'adopted'),
+                       all(row['state']['imageReady'] for row in result['rows'])
+                       and colors == [list(COLORS[0] if red else COLORS[1])] * 3, dict(rows=result['rows'], colors=colors), red=red)
         self.check('thumbnail-purpose-does-not-alias-ordinary-render', pixel(output / 'ordinary.png') == list(COLORS[0]), result['ordinary'])
         cache = self.work / (name + '-profile/cache/thumbnails')
         unchanged = []
@@ -1278,6 +1294,10 @@ os.execv('/usr/bin/find', ['find', *args])
             path = target(cache, inputs / filename)
             unchanged.append(path.read_bytes() == thumbnail(inputs / filename, depth=depth, interlace=interlace, text=text))
         self.check('foreign-cache-inputs-not-rewritten', all(unchanged), unchanged)
+        if redirected:
+            outside = cache.parent.parent / 'user-originals'
+            self.check('redirected-source-directory-not-modified', outside.stat().st_mode & 0o777 == 0o755
+                and len(list(outside.iterdir())) == 3 and (cache / 'normal').is_symlink(), str(outside))
         self.check('cache-admission-and-retirement', result['idleInterests'] == result['interests'] == result['requests'] == 0
                    and not result['workerRunning'], result)
 
@@ -1391,7 +1411,7 @@ def main():
             run.wallpaper_wizard()
         elif args.case == 'owner':
             run.owner()
-        elif args.case in ('cache', 'cache-red'):
+        elif args.case in ('cache', 'cache-red', 'cache-read', 'cache-read-red'):
             run.cache_contract()
         elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
             run.producer_capture()

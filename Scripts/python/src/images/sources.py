@@ -1,7 +1,7 @@
 """Literal source staging and opened-file identity for independent decoders."""
 import asyncio
 import base64
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 import hashlib
 import os
 from pathlib import Path
@@ -11,17 +11,13 @@ import tempfile
 from urllib.parse import unquote, unquote_to_bytes, urlsplit
 
 from .process import command, CommandError
-from .storage import directory as cache_directory, descriptor_path
+from .storage import directory as cache_directory, descriptor_path, identity, open_file as cache_file
 
 
 class SourceError(Exception):
     def __init__(self, code, reason):
         super().__init__(reason)
         self.code = code
-
-
-def identity(info):
-    return tuple(getattr(info, key) for key in ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'))
 
 
 def local_path(source):
@@ -35,8 +31,21 @@ def local_path(source):
     return Path(os.fsdecode(source)).absolute()
 
 
+@contextmanager
+def source_file(path, follow_symlinks):
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | (0 if follow_symlinks else os.O_NOFOLLOW))
+    with os.fdopen(fd, 'rb') as stream:
+        before = identity(os.fstat(stream.fileno()))
+        def current():
+            try:
+                return before == identity(os.fstat(stream.fileno())) == identity(path.stat())
+            except OSError:
+                return False
+        yield stream, current
+
+
 @asynccontextmanager
-async def prepare(source, root, revision='', emit=lambda event: None, follow_symlinks=True):
+async def prepare(source, root, revision='', emit=lambda event: None, follow_symlinks=True, cache=False):
     root = Path(root)
     # The safe operation-private basename is intentional: brackets, colon and
     # leading '-' in the user's filename never reach ImageMagick's parser.
@@ -48,8 +57,7 @@ async def prepare(source, root, revision='', emit=lambda event: None, follow_sym
         try:
             path = local_path(source)
             if path is not None:
-                fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | (0 if follow_symlinks else os.O_NOFOLLOW))
-                with os.fdopen(fd, 'rb') as stream:
+                with (cache_file(path) if cache else source_file(path, follow_symlinks)) as (stream, opened_current):
                     info = os.fstat(stream.fileno())
                     if not stat.S_ISREG(info.st_mode):
                         raise SourceError('unreadable', 'Image source is not a readable regular file')
@@ -59,8 +67,11 @@ async def prepare(source, root, revision='', emit=lambda event: None, follow_sym
                             output.write(block)
                             source_hash.update(block)
                             await asyncio.sleep(0)
-                    if before != identity(os.fstat(stream.fileno())) or before != identity(path.stat()):
+                    if not opened_current():
                         raise SourceError('source-changed', 'Image source changed while being read')
+                    # The stream closes after capture. Cache inputs retain a
+                    # parent/leaf no-follow recheck rather than path.stat().
+                    captured_current = opened_current if cache else lambda: before == identity(path.stat())
             elif source.startswith('data:'):
                 header, value = source.split(',', 1)
                 value = unquote_to_bytes(value)
@@ -93,7 +104,7 @@ async def prepare(source, root, revision='', emit=lambda event: None, follow_sym
             if path is None:
                 return True
             try:
-                return before == identity(path.stat())
+                return captured_current()
             except OSError:
                 return False
         yield dict(path=target, directory=directory, original=path, stat=before,

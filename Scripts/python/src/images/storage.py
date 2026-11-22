@@ -1,9 +1,10 @@
-"""Directory-bound private cache writes; source paths are never cache parents."""
+"""Directory-bound cache I/O; source paths are never cache parents."""
 from contextlib import contextmanager
 import errno
 import os
 from pathlib import Path
 import secrets
+import stat
 
 
 FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
@@ -44,6 +45,51 @@ def descriptor_path(fd):
     # own close-on-exec descriptor table. The parent holds it until every child
     # is joined and the operation-private directory has been retired.
     return Path(f'/proc/{os.getpid()}/fd/{fd}')
+
+
+def identity(info):
+    return tuple(getattr(info, field) for field in ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'))
+
+
+@contextmanager
+def open_file(path):
+    """Read an existing regular cache leaf, holding its parent and identity.
+
+    Readers never create/chmod directories. The current predicate also checks
+    the literal parent path after asynchronous snapshot validation, so a renamed
+    directory or leaf cannot turn a validated snapshot into an unrelated hit URL.
+    Ordinary user source paths deliberately do not use this cache boundary.
+    """
+    path = Path(path)
+    with directory(path.parent, create=False, private=False) as parent:
+        parent_info = os.fstat(parent)
+        fd = os.open(path.name, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=parent)
+        with os.fdopen(fd, 'rb') as stream:
+            owned(stream.fileno())
+            before = os.fstat(stream.fileno())
+            if not stat.S_ISREG(before.st_mode):
+                raise ValueError('Image cache entry is not a regular file')
+
+            def current():
+                try:
+                    if not stream.closed and identity(before) != identity(os.fstat(stream.fileno())):
+                        return False
+                    with directory(path.parent, create=False, private=False) as now:
+                        info = os.fstat(now)
+                        return ((parent_info.st_dev, parent_info.st_ino) == (info.st_dev, info.st_ino)
+                                and identity(before) == identity(os.stat(path.name, dir_fd=now, follow_symlinks=False)))
+                except OSError:
+                    return False
+
+            yield stream, current
+
+
+def read_bytes(path):
+    with open_file(path) as (stream, current):
+        data = stream.read()
+        if not current():
+            raise OSError(errno.ESTALE, 'Image cache entry changed during capture')
+        return data
 
 
 def atomic_write(path, data, root):
