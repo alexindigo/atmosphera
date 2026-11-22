@@ -1,0 +1,420 @@
+#!/usr/bin/env python3
+"""Independent source/cache/decoder lifetime tests; execute in an owned VM."""
+import argparse
+import asyncio
+import base64
+from contextlib import contextmanager
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import shutil
+import signal
+import struct
+import subprocess
+import sys
+import time
+import unittest
+from unittest.mock import patch
+import zlib
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import threading
+
+from guest_profile import activate_profile, profile_argument
+from image_decoding_fixtures import COLORS, DELAYS_MS, create_fixtures, pixel, read_png
+from image_decoding_evidence import source_manifest
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    profile_argument(parser)
+    for name in ('source', 'work-root', 'output'):
+        parser.add_argument('--' + name, required=True, type=Path)
+    args = parser.parse_args()
+    profile = activate_profile(args.guest_profile)
+    for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
+        if path != path.resolve() or not path.is_relative_to(parent) or path.exists():
+            raise ValueError('Fresh canonical guest work/output required')
+    if args.source != args.source.resolve() or not args.source.is_relative_to(profile.workspace):
+        raise ValueError('Source must be inside the named guest workspace')
+    args.work_root.mkdir(mode=0o700)
+    args.output.mkdir(mode=0o700)
+    inputs = source_manifest(args.source)
+    (args.output / 'inputs.json').write_text(json.dumps(inputs, indent=2) + '\n')
+    sys.path.insert(0, str(args.source / 'Scripts/python/src'))
+    from images.cache import Cache, iterations
+    from images.content import gif
+    from images.png import validate, empty_png, PNG, chunk
+    from images.process import command, CommandError
+    from images.sources import prepare, SourceError
+    from images.worker import Worker
+    commands = []
+    fixtures = args.work_root / 'fixtures'
+    create_fixtures(fixtures, commands)
+    events = []
+
+    @contextmanager
+    def environment(**values):
+        previous = os.environ.copy()
+        os.environ.update(values)
+        try:
+            yield
+        finally:
+            os.environ.clear()
+            os.environ.update(previous)
+
+    class Tests(unittest.IsolatedAsyncioTestCase):
+        async def asyncSetUp(self):
+            self.folder = args.work_root / self._testMethodName
+            self.folder.mkdir()
+            self.events = []
+            self.cache = Cache(self.folder / 'cache', 'tests', emit=self.events.append)
+
+        async def asyncTearDown(self):
+            events.append(dict(case=self._testMethodName, events=self.events))
+
+        def request(self, source='Still.webp', **kwargs):
+            return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
+
+        async def test_literal_sources_data_and_file_urls(self):
+            for name in ('Still.webp', 'Misleading.png', 'bracket[0]: image.webp', '-leading.webp', 'image:literal.webp', 'Space \u6d77\u5cb8.webp'):
+                result = await self.cache.render(self.request(name))
+                self.assertEqual(result['status'], 'generated')
+                self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+            result = await self.cache.render(dict(self.request(), source=(fixtures / 'bracket[0]: image.webp').as_uri()))
+            self.assertEqual(result['status'], 'hit')
+            encoded = 'data:image/jpeg;base64,' + base64.b64encode((fixtures / 'Still.webp').read_bytes()).decode()
+            result = await self.cache.render(dict(self.request(), source=encoded))
+            self.assertEqual(result['format'], 'png')
+
+        async def test_formats_and_frame_zero(self):
+            for name in ('Still.webp', 'Motion.webp', 'Motion.gif', 'Still.jpg', 'Still.bmp', 'Still.svg', 'Still.tiff', 'Multipage.tiff', 'Still.avif', 'Still.heic'):
+                with self.subTest(name=name):
+                    result = await self.cache.render(self.request(name))
+                    target = Path(result['url'].removeprefix('file://'))
+                    self.assertTrue(target.is_file())
+                    self.assertEqual(result['frames'], 1)
+                    self.assertEqual(result['format'], 'png')
+                    self.assertLessEqual(max(abs(a - b) for a, b in zip(pixel(target), COLORS[0])), 8)
+                    self.assertEqual(list(target.parent.glob(target.stem + '-*.png')), [])
+
+        async def test_animation_preserves_frames_delays_loop_and_alpha(self):
+            result = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
+            target = Path(result['url'].removeprefix('file://'))
+            self.assertEqual(result['format'], 'gif')
+            self.assertEqual(result['frames'], 3)
+            self.assertEqual(result['delaysMs'], DELAYS_MS)
+            self.assertEqual(iterations(result), 0)
+            self.assertEqual(gif(target.read_bytes())['frames'], 3)
+            # Independent FFmpeg decoding reconstructs full GIF frames. Compare
+            # disposal-sensitive transparent margins, not just colored centers.
+            decoded = self.folder / 'frame-%d.png'
+            proc = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-i', str(target), '-fps_mode', 'passthrough',
+                                   '-threads', '1', '-pix_fmt', 'rgba', str(decoded)], capture_output=True, timeout=30)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            images = sorted(self.folder.glob('frame-*.png'))
+            self.assertEqual(len(images), 3)
+            for index, path in enumerate(images):
+                self.assertEqual(pixel(path), list(COLORS[index]))
+                for x, y in ((4, 4), (124, 4), (4, 80)):
+                    # Output aspect-preserving geometry is 128x85 from 96x64;
+                    # derive source coordinates, not repeated magic offsets.
+                    width, height, _ = read_png(path)
+                    sx, sy = round(x / width * 96), round(y / height * 64)
+                    actual = pixel(path, x, y)
+                    expected = pixel(fixtures / f'frame-{index}.png', sx, sy)
+                    self.assertEqual(actual[3], expected[3], (index, x, y, actual, expected))
+            repeated = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
+            self.assertEqual(repeated['status'], 'hit')
+
+        async def test_still_and_motion_do_not_alias(self):
+            still = await self.cache.render(self.request('Motion.webp'))
+            moving = await self.cache.render(dict(self.request('Motion.webp'), animationIntent='preserve'))
+            self.assertNotEqual(still['url'], moving['url'])
+            self.assertTrue(still['url'].endswith('.png') and moving['url'].endswith('.gif'))
+            still_source = await self.cache.render(self.request('Still.webp'))
+            preserve_source = await self.cache.render(dict(self.request('Still.webp'), animationIntent='preserve'))
+            self.assertNotEqual(still_source['url'], preserve_source['url'])
+
+        async def test_sixteen_bit_png_source_is_not_restricted_to_output_encoding(self):
+            source = self.folder / 'sixteen-bit.png'
+            rgba = struct.pack('!HHHH', *[channel * 257 for channel in COLORS[0]])
+            source.write_bytes(PNG + chunk(b'IHDR', struct.pack('!IIBBBBB', 1, 1, 16, 6, 0, 0, 0))
+                               + chunk(b'IDAT', zlib.compress(b'\0' + rgba)) + chunk(b'IEND', b''))
+            result = await self.cache.render(dict(self.request(), source=str(source)))
+            self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+
+        async def test_finite_animation_loop_semantics(self):
+            for extension in ('webp', 'gif'):
+                source = self.folder / ('finite.' + extension)
+                made = subprocess.run(['magick', '-delay', '12', str(fixtures / 'frame-0.png'), '-delay', '23',
+                                       str(fixtures / 'frame-1.png'), '-delay', '35', str(fixtures / 'frame-2.png'),
+                                       '-loop', '3', str(source)], capture_output=True, timeout=30)
+                self.assertEqual(made.returncode, 0, made.stderr)
+                result = await self.cache.render(dict(self.request(), source=str(source), animationIntent='preserve'))
+                self.assertEqual(iterations(result['sourceInfo']), 3)
+                self.assertEqual(iterations(result), 3)
+                self.assertEqual(result['delaysMs'], DELAYS_MS)
+
+        async def test_http_without_suffix_and_redirect_uses_actual_bytes(self):
+            data = (fixtures / 'Still.webp').read_bytes()
+            class Handler(BaseHTTPRequestHandler):
+                def do_GET(self):
+                    if self.path == '/redirect':
+                        self.send_response(302)
+                        self.send_header('Location', '/misleading.jpg')
+                        self.end_headers()
+                    elif self.path == '/missing':
+                        self.send_error(404)
+                    else:
+                        self.send_response(200)
+                        self.send_header('Content-Type', 'image/jpeg')
+                        self.send_header('Content-Length', str(len(data)))
+                        self.end_headers()
+                        self.wfile.write(data)
+                def log_message(self, *_args):
+                    pass
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                for endpoint in ('/no-suffix', '/redirect'):
+                    result = await self.cache.render(dict(self.request(), source=f'http://127.0.0.1:{server.server_port}' + endpoint))
+                    self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+                with self.assertRaises(SourceError) as caught:
+                    await self.cache.render(dict(self.request(), source=f'http://127.0.0.1:{server.server_port}/missing'))
+                self.assertEqual(caught.exception.code, 'download-failed')
+                self.assertFalse(any('http://' in str(row.get('argv', '')) for row in self.events))
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join()
+
+        async def test_source_replacement_cannot_publish_old_pixels(self):
+            source = self.folder / 'replace.webp'
+            source.write_bytes((fixtures / 'Still.webp').read_bytes())
+            decode = self.cache.decode
+            async def replace_then_decode(prepared, request, info):
+                source.write_bytes((fixtures / 'frame-1.png').read_bytes())
+                return await decode(prepared, request, info)
+            with patch.object(self.cache, 'decode', replace_then_decode):
+                with self.assertRaises(SourceError) as caught:
+                    await self.cache.render(dict(self.request(), source=str(source)))
+                self.assertEqual(caught.exception.code, 'source-changed')
+            self.assertEqual(list(self.cache.private.glob('still/*')), [])
+            self.assertEqual(list(self.cache.private.glob('fail/*')), [])
+
+        async def test_cancelled_render_leaves_no_positive_or_failure_entry(self):
+            gate = asyncio.Event()
+            entered = asyncio.Event()
+            async def held(*_args):
+                entered.set()
+                await gate.wait()
+            with patch.object(self.cache, 'decode', held):
+                task = asyncio.create_task(self.cache.render(self.request()))
+                await asyncio.wait_for(entered.wait(), 3)
+                task.cancel()
+                with self.assertRaises(asyncio.CancelledError):
+                    await task
+            self.assertEqual(list(self.cache.private.glob('still/*')), [])
+            self.assertEqual(list(self.cache.private.glob('fail/*')), [])
+            self.assertEqual(list(self.cache.staging.iterdir()), [])
+
+        async def test_positive_cache_revalidates_pixels(self):
+            request = self.request()
+            first = await self.cache.render(request)
+            target = Path(first['url'].removeprefix('file://'))
+            self.assertEqual((await self.cache.render(request))['status'], 'hit')
+            target.write_bytes(target.read_bytes()[:50])
+            self.assertEqual((await self.cache.render(request))['status'], 'generated')
+            self.assertEqual(pixel(target), list(COLORS[0]))
+
+        async def test_changed_source_and_revision_separate_cache(self):
+            source = self.folder / 'same-name.webp'
+            source.write_bytes((fixtures / 'frame-0.png').read_bytes())
+            request = dict(self.request(), source=str(source))
+            first = await self.cache.render(request)
+            before = source.stat()
+            source.write_bytes((fixtures / 'frame-1.png').read_bytes())
+            os.utime(source, ns=(before.st_atime_ns, before.st_mtime_ns))
+            second = await self.cache.render(request)
+            self.assertNotEqual(first['url'], second['url'])
+            self.assertEqual(pixel(Path(second['url'].removeprefix('file://'))), list(COLORS[1]))
+            third = await self.cache.render(dict(request, revision='producer-2'))
+            self.assertNotEqual(second['url'], third['url'])
+
+        async def test_orientation_and_cover(self):
+            result = await self.cache.render(dict(self.request('Oriented.jpg'), width=96, height=96))
+            self.assertEqual((result['width'], result['height']), (64, 96))
+            result = await self.cache.render(dict(self.request(), width=100, height=100, fit='cover'))
+            self.assertEqual((result['width'], result['height']), (100, 100))
+
+        async def test_zero_exit_without_output_tries_independent_decoder(self):
+            shim = self.folder / 'bin'
+            shim.mkdir()
+            executable = shim / 'magick'
+            executable.write_text('#!/bin/sh\nexit 0\n')
+            executable.chmod(0o755)
+            with environment(PATH=str(shim) + ':' + os.environ['PATH']):
+                result = await self.cache.render(self.request())
+            self.assertEqual(result['decoder'], 'ffmpeg')
+            self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
+            self.assertFalse(any('-ss' in row.get('argv', []) for row in self.events))
+
+        async def test_valid_png_with_wrong_dimensions_is_not_success(self):
+            shim = self.folder / 'bin'
+            shim.mkdir()
+            wrong = self.folder / 'wrong.png'
+            wrong.write_bytes(empty_png())
+            executable = shim / 'magick'
+            executable.write_text('#!/usr/bin/python3\nfrom pathlib import Path\nimport sys\n'
+                                  f'Path(sys.argv[-1].removeprefix("PNG32:")).write_bytes(Path({str(wrong)!r}).read_bytes())\n')
+            executable.chmod(0o755)
+            with environment(PATH=str(shim) + ':' + os.environ['PATH']):
+                result = await self.cache.render(self.request())
+            self.assertEqual(result['decoder'], 'ffmpeg')
+            self.assertEqual(result['width'], 128)
+
+        async def test_failure_cache_changes_with_decoder_capability(self):
+            shim = self.folder / 'bin'
+            shim.mkdir()
+            for name in ('magick', 'ffmpeg'):
+                path = shim / name
+                path.write_text('#!/bin/sh\nexit 0\n')
+                path.chmod(0o755)
+            with environment(PATH=str(shim) + ':' + os.environ['PATH']):
+                with self.assertRaises(SourceError):
+                    await self.cache.render(self.request())
+                negative = await self.cache.render(self.request())
+                self.assertEqual(negative['status'], 'unavailable')
+                self.assertEqual(negative['url'], '')
+            # The exact same source, representation and cache retries as soon
+            # as the executable capability changes. No release bump or wipe.
+            result = await self.cache.render(self.request())
+            self.assertEqual(result['status'], 'generated')
+
+        async def test_unreadable_missing_and_provider_never_become_cli_sources(self):
+            for source, expected in ((str(fixtures / 'Unreadable.webp'), 'unreadable'),
+                                     (str(fixtures / 'Missing.webp'), 'missing'), ('image://qsimage/123', 'provider-required')):
+                with self.subTest(source=source):
+                    with self.assertRaises(SourceError) as caught:
+                        await self.cache.render(dict(self.request(), source=source))
+                    self.assertEqual(caught.exception.code, expected)
+            self.assertFalse(any('image://' in str(row.get('argv', '')) for row in self.events))
+
+        async def test_png_structure_without_pixels_is_rejected(self):
+            data = PNG + chunk(b'IHDR', struct.pack('!IIBBBBB', 1, 1, 8, 6, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(b'not pixels')) + chunk(b'IEND', b'')
+            with self.assertRaises(ValueError):
+                validate(data)
+            self.assertEqual(validate(empty_png())['width'], 1)
+
+        async def test_two_slots_and_replacement_cancellation(self):
+            gate, entered, emitted = asyncio.Event(), [], []
+            class Slow:
+                async def render(_self, request):
+                    entered.append(request['id'])
+                    await gate.wait()
+                    return dict(status='generated', url='file:///fixture.png')
+            worker = Worker(Slow(), emitted.append)
+            requests = [dict(id=str(i), source='fixture', generation=i) for i in range(3)]
+            worker.replace(requests)
+            for _ in range(100):
+                if len(entered) == 2:
+                    break
+                await asyncio.sleep(.01)
+            self.assertEqual(entered, ['0', '1'])
+            worker.replace(requests[:2])
+            gate.set()
+            await asyncio.gather(*worker.tasks.values())
+            await worker.close()
+            self.assertNotIn('2', entered)
+            self.assertEqual([r['generation'] for r in emitted if r.get('status')], [0, 1])
+
+        async def test_video_adapter_shares_implementation_and_cache(self):
+            spec = importlib.util.spec_from_file_location('video_adapter', args.source / 'Scripts/python/src/filechooser/thumbnails.py')
+            adapter = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(adapter)
+            self.assertIs(adapter.Cache, Cache)
+            self.assertIs(adapter.Worker, Worker)
+            video = self.folder / 'Video.mp4'
+            made = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i',
+                                   'testsrc2=size=160x90:rate=8:duration=2', '-c:v', 'libx264', '-threads', '1', str(video)],
+                                  capture_output=True, timeout=30)
+            self.assertEqual(made.returncode, 0, made.stderr)
+            first = await self.cache.get(str(video), 128)
+            self.assertEqual(first['status'], 'generated')
+            self.assertEqual(len(self.events), 1)
+            self.assertEqual(self.events[0]['event'], 'ffmpeg')
+            argv = self.events[0]['argv']
+            self.assertAlmostEqual(float(argv[argv.index('-ss') + 1]), .2)
+            second = await self.cache.get(str(video), 128)
+            self.assertEqual(second['status'], 'hit')
+            self.assertEqual(second['url'], first['url'])
+            self.assertEqual(len(self.events), 1)
+
+        async def test_timeout_reaps_session_creating_delegate(self):
+            marker = self.folder / 'delegate.json'
+            body = ('import subprocess,sys,json,os,time; from pathlib import Path; '
+                    'p=subprocess.Popen([sys.executable,"-c","import time; time.sleep(30)"],start_new_session=True); '
+                    'pids=[os.getpid(),p.pid]; '
+                    'Path(sys.argv[1]).write_text(json.dumps([{ "pid":pid,"start":Path(f"/proc/{pid}/stat").read_text().rsplit(")",1)[1].split()[19]} for pid in pids])); time.sleep(30)')
+            with self.assertRaises(CommandError) as caught:
+                await command([sys.executable, '-c', body, str(marker)], self.folder, .5, emit=self.events.append)
+            self.assertEqual(caught.exception.code, 'timeout')
+            identities = json.loads(marker.read_text())
+            self.assertTrue(all(not Path(f'/proc/{row["pid"]}').exists() for row in identities), identities)
+            self.events.append(dict(retired=identities))
+
+        async def test_worker_death_reaps_decoder_and_delegate(self):
+            shim = self.folder / 'bin'
+            shim.mkdir()
+            marker = self.folder / 'delegate.json'
+            executable = shim / 'magick'
+            executable.write_text('#!/usr/bin/python3\nimport os,subprocess,sys,time,json\nfrom pathlib import Path\n'
+                                  'p=subprocess.Popen([sys.executable,"-c","import time; time.sleep(30)"],start_new_session=True)\n'
+                                  f'Path({str(marker)!r}).write_text(json.dumps([os.getpid(),p.pid]))\ntime.sleep(30)\n')
+            executable.chmod(0o755)
+            process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source / 'Scripts/python/image-worker.py'),
+                            stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                            env=dict(os.environ, PATH=str(shim) + ':' + os.environ['PATH'], XDG_CACHE_HOME=str(self.folder / 'cache')))
+            try:
+                self.assertEqual(json.loads(await process.stdout.readline())['event'], 'ready')
+                process.stdin.write((json.dumps([dict(self.request(), id='death', generation=1)]) + '\n').encode())
+                await process.stdin.drain()
+                for _ in range(300):
+                    if marker.exists():
+                        break
+                    await asyncio.sleep(.01)
+                self.assertTrue(marker.exists())
+                pids = json.loads(marker.read_text())
+                identities = {pid: Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()[19] for pid in pids}
+                process.kill()
+                await process.wait()
+                for _ in range(300):
+                    if all(not Path(f'/proc/{pid}').exists() for pid in pids):
+                        break
+                    await asyncio.sleep(.01)
+                self.assertTrue(all(not Path(f'/proc/{pid}').exists() for pid in pids), identities)
+                self.events.append(dict(workerExit=process.returncode, retired=identities))
+            finally:
+                if process.returncode is None:
+                    process.kill()
+                    await process.wait()
+
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(Tests)
+    with (args.output / 'tests.log').open('w') as log:
+        result = unittest.TextTestRunner(stream=log, verbosity=2).run(suite)
+    unchanged = source_manifest(args.source) == inputs
+    receipt = dict(passed=result.wasSuccessful() and unchanged, cases=result.testsRun, inputsSha256=inputs['sha256'],
+                   sourceUnchanged=unchanged,
+                   failures=[(str(test), reason) for test, reason in result.failures + result.errors], guest=profile.record())
+    (args.output / 'result.json').write_text(json.dumps(receipt, indent=2) + '\n')
+    (args.output / 'commands.json').write_text(json.dumps(commands, indent=2) + '\n')
+    (args.output / 'decoder-events.json').write_text(json.dumps(events, indent=2) + '\n')
+    print(json.dumps(receipt, indent=2))
+    return 0 if receipt['passed'] else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
