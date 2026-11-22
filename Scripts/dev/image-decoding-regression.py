@@ -20,7 +20,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -217,6 +217,8 @@ class Run:
         if self.args.case == 'launcher':
             lint_paths += [str(shell / p) for p in ('Modules/Panels/Launcher/LauncherListDelegate.qml',
                 'Modules/Panels/Launcher/LauncherGridDelegate.qml', 'Modules/Panels/Launcher/ClipboardPreview.qml')]
+        if self.args.case == 'text':
+            lint_paths += [str(shell / p) for p in ('Widgets/NImageText.qml',)]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1506,6 +1508,58 @@ os.execv('/usr/bin/find', ['find', *args])
             self.check(view + '-no-art-ordinary-icon', noart['icon'] > 50 and noart['warning'] == 0, noart)
         return result
 
+    def text(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        red = self.args.case == 'text-red'
+        if red and self.args.baseline_source is None:
+            raise ValueError('Text red requires an explicit immutable baseline source')
+        fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding' / (self.args.case + '.qml')
+        result, output = self.qt(self.args.baseline_source if red else self.args.source, fixture, inputs, self.args.case)
+        def near(actual, expected, tolerance=10):
+            return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
+        def count(name, color):
+            width, height, pixels = read_png(output / (name + '.png'))
+            return sum(near(pixels[i * 4:i * 4 + 4], color) for i in range(width * height))
+        if red:
+            if self.args.qt_webp == 'absent':
+                self.check('rich-text-webp-image-not-presented', count('rich', COLORS[0]) == 0, count('rich', COLORS[0]), red=True)
+            self.check('markdown-inline-html-image-dropped', count('markdown', COLORS[0]) == 0, count('markdown', COLORS[0]), red=True)
+            return result
+        def center(name, state):
+            return pixel(output / (name + '.png'), int(state['x'] + state['width'] / 2), int(state['y'] + state['height'] / 2))
+        rich, markdown, failing, replaced, plain = (result[k] for k in ('rich', 'markdown', 'failing', 'replaced', 'plain'))
+        slot = '\ufffc'
+        self.check('rich-images-found-comment-ignored', rich['imageCount'] == 3 and rich['plain'].count(slot) == 3
+                   and all(s['state'] == 'ready' and s['placed'] for s in rich['states']), rich)
+        self.check('rich-text-and-link-kept', all(w in rich['plain'] for w in ('A bold link', 'tail', 'again'))
+                   and rich['states'][0]['link'] == 'https://example.org/x' and not rich['states'][2]['link'], rich)
+        self.check('rich-images-presented-at-slots', all(near(center('rich', s), COLORS[0]) for s in rich['states'])
+                   and [s['width'] for s in rich['states']] == [32, 24, 32], [center('rich', s) for s in rich['states']])
+        self.check('markdown-images-found-code-and-escapes-kept', markdown['imageCount'] == 3 and markdown['plain'].count(slot) == 3
+                   and all(w in markdown['plain'] for w in ('Title', 'Text em', '![code](nope.png)', 'escaped', '![indented](nope.png)')),
+                   markdown)
+        self.check('markdown-inline-html-image-kept', markdown['states'][1]['state'] == 'ready'
+                   and markdown['states'][1]['width'] == 20 and markdown['states'][1]['height'] == 20, markdown['states'][1])
+        moving = markdown['states'][2]
+        frames = [center(p.stem, moving) for p in sorted(output.glob('markdown-*.png'))]
+        self.check('markdown-reference-image-animates', moving['state'] == 'ready' and moving['frames'] == 3
+                   and len({tuple(f) for f in frames if f[3] == 255}) >= 2, dict(state=moving, frames=frames))
+        self.check('markdown-still-presented', near(center(sorted(output.glob('markdown-*.png'))[-1].stem, markdown['states'][0]), COLORS[0]),
+                   markdown['states'][0])
+        state = failing['states'][0]
+        self.check('failed-image-labelled-placeholder', state['state'] == 'unavailable' and state['reason']
+                   and count('failing', result['warningColor']) > 10 and 'before' in failing['plain'] and 'after' in failing['plain'],
+                   dict(state=state, warning=count('failing', result['warningColor'])))
+        self.check('replaced-source-presents-new-image', near(center('replaced-before', replaced['states'][0]), COLORS[0])
+                   and near(center('replaced-after', replaced['states'][0]), COLORS[1]), replaced)
+        self.check('plain-text-acquires-no-image-work', plain['imageCount'] == 0 and plain['plain'] == 'Plain text only, no image work',
+                   plain)
+        return result
+
     def owner(self):
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
@@ -1620,6 +1674,8 @@ def main():
             run.artwork()
         elif args.case in ('launcher-red', 'launcher'):
             run.launcher()
+        elif args.case in ('text-red', 'text'):
+            run.text()
         elif args.case in ('cache-clear-red', 'cache-clear'):
             run.cache_clear()
         elif args.case == 'owner':
