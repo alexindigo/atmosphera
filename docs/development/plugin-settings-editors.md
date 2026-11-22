@@ -566,6 +566,29 @@ scoped pages/native documents/nonpublishing cold engines and individual retained
 restart/HTTP/inhibitor lifetimes. Controlled service and inhibitor endpoints are
 not the host MCP, a real logind inhibitor or physical/broad visual acceptance.
 
+## Backend ownership independent of renderers
+
+Auto-cpufreq, Battery & Power Management and ThinkPad Fan have real Main entries.
+Bars and popups resolve Main-owned clients by their own captured settings context;
+a renderer never assigns itself as Main. Destroying or replacing one Bar cannot
+remove another renderer's or an independently opened popup's backend.
+
+CPU/fan observations and physical effects stay common. Auto-cpufreq clients retain
+the original int Timer domain, including zero/fractional input, with initial
+refresh. Its separate showGovernor/showTurbo feature gaps remain. Battery clients
+select device-keyed physical observation/threshold owners; equal device paths
+share one source and replacement retires the old subscription/processes. Power
+profiles stay system-wide. Fan clients select palette/popup policy while actions
+and delayed refresh retain their originating current context. No configuration
+or content moves. Instance pages identify these shared effects.
+
+The backend drivers join real page intent, complete native documents, Discard,
+Apply, staged Reset/inheritance and separate nonpublishing cold readers to actual
+Bar policy and popup child Text. The finite checker maps all fifteen fields and
+every entry/physical owner, rejecting last-renderer/shared-popup/owner/lifetime
+controls. Individual inert action/source/typed/zero cases verify retirement and
+endpoint quiescence. These are not physical or broad visual/translation proofs.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,

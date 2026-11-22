@@ -25,9 +25,9 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 5 | `amd-gpu-monitor` | observation | port |
 | 6 | `arch-updater` | selected-client | ported |
 | 7 | `assistant-panel` | query-worker | port |
-| 8 | `auto-cpufreq` | view-backend | port |
+| 8 | `auto-cpufreq` | view-backend | ported |
 | 9 | `battery-actions` | main-only | no-instance |
-| 10 | `battery-and-power-management` | view-backend | port |
+| 10 | `battery-and-power-management` | view-backend | ported |
 | 11 | `battery-monitor-plus` | observation | port |
 | 12 | `battery-threshold` | selected-client | ported |
 | 13 | `battery-wireless-devices` | observation | ported |
@@ -126,7 +126,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 106 | `syncthing-status` | query-worker | ported |
 | 107 | `tailscale` | observation | port |
 | 108 | `tamagotchi` | stateful-client | port |
-| 109 | `thinkpad-fan` | view-backend | port |
+| 109 | `thinkpad-fan` | view-backend | ported |
 | 110 | `timer` | direct | no-port |
 | 111 | `todo` | shared-content | port |
 | 112 | `translator` | launcher-only | no-instance |
@@ -154,7 +154,7 @@ retain individual runtime proof. Every unit runs full VM settings contracts.
 | 1 | G1: Main-owned selected request, polling and result/projection clients (38) | `assistant-panel`, `claude-code-panel`, `dmenu`, `github-feed`, `habitica`, `hassio`, `keybind-cheatsheet`, `kubectl-ctx`, `latency-monitor`, `mawaqit`, `model-usage`, `mpris-lyric`, `ntfy-notifications`, `ramadan-iftar`, `shell-profiles`, `spotify-player`, `ssh-sessions`, `syncthing-status`, `update-count`, `weekly-calendar`, `amd-gpu-monitor`, `battery-monitor-plus`, `battery-wireless-devices`, `cloudflare-warp`, `ip-monitor`, `keep-awake-plus`, `lyrics-fetch`, `monique`, `mullvad`, `netbird`, `noctalia-calculator`, `openvpn3`, `port-monitor`, `privacy-indicator`, `slowbongo`, `tailscale`, `news`, `kde-connect` | One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below. | G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime. | For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract. | G1a: four poll-only members. G1b: ten query/projection members (latency-monitor, ramadan-iftar, ssh-sessions, mpris-lyric, syncthing-status, hassio, kubectl-ctx, update-count, keep-awake-plus, lyrics-fetch). G1c first green subgroup: port-monitor and mullvad; native both-scope representative and originating inert action outcomes supplement parsed field/cache/lifetime/entry checks. Remaining 22 required; broad visual/final acceptance pending. |
 | 2 | G2: Originating selected action policy over one shared physical/application effect (19) | `2-in-1-tools`, `clipper`, `display-settings`, `ds4-colors`, `hyprland-steam-overlay`, `linux-wallpaperengine-controller`, `monitor-layout`, `mpvpaper`, `music-search`, `network-manager-vpn`, `noctalia-supergfxctl`, `nvibrant`, `osk-toggle`, `screen-recorder`, `screen-shot-and-record`, `screen-toolkit`, `screencast-gif`, `usb-drive-manager`, `video-wallpaper` | Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences. | Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle. | Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations. | All 19 G2 implementations select originating policy over singular effects. Steam retains one admitted typed geometry/dispatch policy through query, movement, show/focus and continuing-window stages. USB retains admitted automatic/action/completion policy over one observer; GPU retains typed context schedules and captured query/mode policy over one CLI/state/NotificationServer owner. Broad/final acceptance remains required; implementation counts are not runtime acceptance receipts. |
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | G3a implements selected managed-service/inhibitor admission for agent-session-status and clamshell, with Main-owned polling and originating native writers. Six G3 members remain required. Runtime acceptance is recorded separately; broad/final acceptance remains required. |
-| 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
+| 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | All three backend-owner implementations have real Main entries, context-keyed clients and selected popup/Bar identities independent of renderer lifetime. CPU/fan observations and effects stay common; BatterySource is device-keyed and retires old subscriptions. Finite every-field/entry/owner checks supplement actual native representative and individual lifetime outcomes. Implementation status is not runtime or broad/final acceptance. |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | planned |
 | 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | planned |
 | 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | planned |
@@ -285,15 +285,16 @@ Runtime-source/manifest fingerprint: `f1de3ebedfd887e5731d3b62175e0668d7870a9109
 
 ## auto-cpufreq
 
-Bar reads compactMode/refreshInterval and publishes itself as mainInstance; Panel reads that registered Bar. Correct per-context backend routing, not last-renderer ownership; daemon observation/actions shared. showGovernor/showTurbo have no runtime read.
+Main owns common CPU/daemon observation and actions; settingsConsumerFor caches selected typed polling by context. Bars and popup select their own client, never register a renderer as Main. compactMode remains a direct selected Bar read; showGovernor/showTurbo retain their separate feature gaps. Parsed every-field/entry/owner checks and native/held action/zero-domain lifetimes supplement renderer retirement proof.
 
-Entries: `barWidget=BarWidget.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
+Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `auto-cpufreq/BarWidget.qml` | `compactMode`:30; `refreshInterval`:217 | 20, 21, 62 |
-| 2 | `auto-cpufreq/Panel.qml` | No literal field edge | 13, 125 |
-| 3 | `auto-cpufreq/setup_polkit.sh` | No literal field edge | No namespace/Main reference |
+| 1 | `auto-cpufreq/BarWidget.qml` | `compactMode`:30 | 20, 21, 33 |
+| 2 | `auto-cpufreq/Main.qml` | `refreshInterval`:27 | 8, 24, 26, 27, 38, 39, 40, 53, ... |
+| 3 | `auto-cpufreq/Panel.qml` | No literal field edge | 13 |
+| 4 | `auto-cpufreq/setup_polkit.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: `showGovernor` (configuration), `showTurbo` (configuration).
 
@@ -302,7 +303,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `showGovernor,showTurbo` | `auto-cpufreq/Settings.qml:10` | Settings-only leaves; runtime Bar does not read them. Existing feature-surface gaps. |
-Runtime-source/manifest fingerprint: `ea419132b310fe15549ac905893e5b1b09cacf33ec033993fd30f07aefe7feb6`.
+Runtime-source/manifest fingerprint: `12253a28224d58c78b853d9f2295f535cf3cc8a9fa4714cae570b6e334340a98`.
 
 ## battery-actions
 
@@ -319,18 +320,21 @@ Runtime-source/manifest fingerprint: `22a9cad946c4c4fd3499119e97fd0d64f7bff3859c
 
 ## battery-and-power-management
 
-Bar reads selected batteryDevice and presentation, then registers itself as mainInstance. BatteryPopup reads registered Bar colors/device/actions; capture selected context independently of last Bar. Physical battery/profile remain shared.
+Main owns common power-profile state/actions and context-keyed BatteryClient; device-keyed BatterySource shares physical observations/threshold actions and retires old subscriptions on source replacement. Every Bar/popup selects its own captured context independently of renderers. Presentation remains directly selected; held threshold/source/retirement, native documents/cold readers and parsed every-field/entry/owner proof supplement this classification.
 
-Entries: `barWidget=BarWidget.qml`; `panel=BatteryPopup.qml`; `settings=SettingsView.qml`.
+Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=BatteryPopup.qml`; `settings=SettingsView.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `battery-and-power-management/BarWidget.qml` | `batteryDevice`:179,218,232; `colorPerformance`:78; `colorPowerSaver`:73; `colorizeByProfile`:68; `showBalancedIcon`:88; `showProfile`:83 | 68, 69, 73, 74, 78, 79, 83, 84, ... |
-| 2 | `battery-and-power-management/BatteryPopup.qml` | No literal field edge | 12 |
-| 3 | `battery-and-power-management/setup_rules.sh` | No literal field edge | No namespace/Main reference |
+| 1 | `battery-and-power-management/BarWidget.qml` | `colorPerformance`:76; `colorPowerSaver`:71; `colorizeByProfile`:66; `showBalancedIcon`:86; `showProfile`:81 | 54, 66, 67, 71, 72, 76, 77, 81, ... |
+| 2 | `battery-and-power-management/BatteryClient.qml` | `batteryDevice`:9 | 6, 8, 9, 25, 26 |
+| 3 | `battery-and-power-management/BatteryPopup.qml` | No literal field edge | 12 |
+| 4 | `battery-and-power-management/BatterySource.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `battery-and-power-management/Main.qml` | No literal field edge | 10, 13, 17, 40 |
+| 6 | `battery-and-power-management/setup_rules.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `1c05325af4b6a7aaca6883597ac548fa528b58cff264be76b6ffd819bb704980`.
+Runtime-source/manifest fingerprint: `3fdc8491ac7b0e0b2f87d6639fe991af475176ae3fdec55a0eba1382ffae8cd0`.
 
 ## battery-monitor-plus
 
@@ -2139,18 +2143,19 @@ Runtime-source/manifest fingerprint: `94d8692a8090d1ace4b4e5a689116aed5a5aacf320
 
 ## thinkpad-fan
 
-Bar reads selected colors/allowPopupOpening then registers itself as mainInstance; FanPopup reads registered Bar colors/actions. Bind popup to selected context, not last renderer; physical fan remains shared.
+Main owns common fan/temperature/action processes and one selected palette/popup-policy client per context; Bar/popup never choose a last renderer. Origin guards the held action and delayed refresh. All five fields retain selected reads, shared physical effect is explicit; parsed every-field/entry/owner checks and individual popup/action/retirement proof supplement renderer retirement.
 
-Entries: `barWidget=BarWidget.qml`; `panel=FanPopup.qml`; `settings=SettingsView.qml`.
+Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=FanPopup.qml`; `settings=SettingsView.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `thinkpad-fan/BarWidget.qml` | `allowPopupOpening`:47; `colorActive`:58; `colorAuto`:62; `colorLevel0`:54; `colorizeByStatus`:42 | 42, 43, 47, 48, 54, 55, 58, 59, ... |
+| 1 | `thinkpad-fan/BarWidget.qml` | `allowPopupOpening`:46; `colorActive`:57; `colorAuto`:61; `colorLevel0`:53; `colorizeByStatus`:41 | 35, 41, 42, 46, 47, 53, 54, 57, ... |
 | 2 | `thinkpad-fan/FanPopup.qml` | No literal field edge | 12 |
-| 3 | `thinkpad-fan/setup_permissions.sh` | No literal field edge | No namespace/Main reference |
+| 3 | `thinkpad-fan/Main.qml` | `allowPopupOpening`:28; `colorActive`:30; `colorAuto`:31; `colorLevel0`:29; `colorizeByStatus`:27 | 9, 22, 24, 25, 26, 44, 50, 54, ... |
+| 4 | `thinkpad-fan/setup_permissions.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `f320493df41b0e2b585bcf677ac9dc1862ed40b9b72e2c1d318eb4a0204b5604`.
+Runtime-source/manifest fingerprint: `e69575e435794d974a8a1278b9e4fd6308dd4643c43ba7a580b31ed5ca8c8b35`.
 
 ## timer
 

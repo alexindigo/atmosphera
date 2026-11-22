@@ -35,7 +35,7 @@
       "approach": "Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit.",
       "representatives": "auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives.",
       "staticCheck": "Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations.",
-      "status": "planned"
+      "status": "All three backend-owner implementations have real Main entries, context-keyed clients and selected popup/Bar identities independent of renderer lifetime. CPU/fan observations and effects stay common; BatterySource is device-keyed and retires old subscriptions. Finite every-field/entry/owner checks supplement actual native representative and individual lifetime outcomes. Implementation status is not runtime or broad/final acceptance."
     },
     {
       "id": "G5",
