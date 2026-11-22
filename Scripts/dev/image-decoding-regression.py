@@ -16,7 +16,7 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready')
 
@@ -159,6 +159,8 @@ class Run:
         if self.args.case == 'wallpaper-admission':
             lint_paths += [str(shell / p) for p in ('Services/UI/WallpaperService.qml',
                 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
+        if self.args.case == 'wallpaper-setup':
+            lint_paths += [str(shell / p) for p in ('Modules/Panels/SetupWizard/SetupWallpaperStep.qml',)]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
@@ -228,6 +230,42 @@ class Run:
             center = pixel(normalized) if decoded.returncode == 0 and normalized.exists() else None
             self.check('fixture-delegate-' + extension, center is not None and
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
+        return result
+
+    def wallpaper_setup(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work/'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out/'fixture-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+        result, output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-setup.qml',
+                                 inputs, 'wallpaper-setup')
+        stages = {row['name']:row for row in result['snapshots']}
+        self.check('setup-failed-source-never-retries-original', stages['failed']['cached'] == stages['before']['cached']
+                   and read_png(output/'before.png') == read_png(output/'failed.png'), stages['failed'])
+        self.check('setup-static-preview-is-exact-single-output', Path(stages['before']['cached']).is_file()
+                   and not list(Path(stages['before']['cached']).parent.glob(Path(stages['before']['cached']).stem+'-*.png'))
+                   and pixel(output/'before.png') == list(COLORS[0]), stages['before'])
+        self.check('setup-failure-is-explicit', stages['failed']['state'] == 'unavailable' and stages['failed']['reason'], stages['failed'])
+        warning = stages['failed']['warning']
+        width,height,pixels = read_png(output/'failed-screen.png')
+        count = sum(max(abs(a-b) for a,b in zip(pixels[(y*width+x)*4:(y*width+x+1)*4],result['warningColor'])) < 8
+                    for y in range(max(0,int(warning['y'])),min(height,int(warning['y']+warning['height'])+1))
+                    for x in range(max(0,int(warning['x'])),min(width,int(warning['x']+warning['width'])+1))) if warning else 0
+        self.check('setup-warning-is-presented-next-to-retained-preview', warning and warning['visible'] and count > 10,
+                   dict(warning=warning,pixels=count))
+        self.check('setup-replacement-fences-stale-completion', stages['latest']['state'] == 'ready'
+                   and pixel(output/'latest.png') == list(COLORS[1]), stages['latest'])
+        self.check('setup-invalid-user-intent-retains-selection-and-preview', stages['invalid-intent']['selected'] == stages['latest']['selected']
+                   and stages['invalid-intent']['state'] == 'unavailable' and stages['invalid-intent']['reason']
+                   and read_png(output/'invalid-intent.png') == read_png(output/'latest.png'), stages['invalid-intent'])
+        self.check('setup-emits-only-validated-user-selection', result['selections'] == [str(inputs/'Still.webp')]
+                   and stages['valid-intent']['selected'] == str(inputs/'Still.webp')
+                   and pixel(output/'valid-intent.png') == list(COLORS[0]), result['selections'])
+        self.check('setup-gallery-is-static-frame-zero', len(result['galleryFrames']) == 11
+                   and all(row['status'] == 1 and row['result']['frames'] == 1 for row in result['galleryFrames'])
+                   and all(pixel(path) == list(COLORS[0]) for path in output.glob('gallery-*.png')), result['galleryFrames'])
+        self.check('setup-destruction-retires-all-interests', result['interests'] == result['requests'] == 0 and not result['workerRunning'], result)
         return result
 
     def wallpaper_admission(self):
@@ -586,6 +624,8 @@ def main():
             run.rounded()
         elif args.case == 'wallpaper-admission':
             run.wallpaper_admission()
+        elif args.case == 'wallpaper-setup':
+            run.wallpaper_setup()
         elif args.case == 'chooser':
             run.chooser()
         else:
