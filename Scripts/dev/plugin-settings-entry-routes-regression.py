@@ -117,7 +117,8 @@ def run(args, profile, route):
             originalSha256=hashlib.sha256(original.encode()).hexdigest(), sha256=hashlib.sha256(target.read_bytes()).hexdigest()))
     outputs = subprocess.run(['niri', 'msg', '--json', 'outputs'], env=profile.session_environment(),
                              capture_output=True, text=True, check=True, timeout=10)
-    screen = next(iter(json.loads(outputs.stdout)))
+    # The seeded monitor list and the fixture's screen must be the same output.
+    screen = sorted(json.loads(outputs.stdout))[0]
     expected = seed(case, args.source, route, screen)
     shared = case / 'config/settings/plugins/values-fixture.json'
     before = shared.read_bytes()
@@ -127,7 +128,7 @@ def run(args, profile, route):
     env = dict(PHA_ROUTE=route, PHA_ROUTE_EXPECTATIONS=str(case / 'expectations.json'), PHA_ROUTE_OUTPUT=str(observations),
                PHA_ROUTE_PROBE=str(args.source / 'Scripts/dev/fixtures/plugin-settings-entry-routes-disk.py'),
                PHA_ROUTE_PROFILE=str(args.guest_profile), PHA_ROUTE_CASE=str(case), PHA_ROUTE_INSTALL=str(install),
-               PHA_ROUTE_COLD_OUTPUT=str(cold_boundaries))
+               PHA_ROUTE_COLD_OUTPUT=str(cold_boundaries), PHA_ROUTE_SCREEN=screen)
     fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-entry-routes.qml'
     try:
         text = runner.run_fixture(profile, install, case, out, fixture,

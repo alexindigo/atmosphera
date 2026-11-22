@@ -22,9 +22,17 @@ ShellRoot {
                                                     index: 0
                                                   } : {
   kind: "bar",
-  list: route === "monitor-bar" ? Quickshell.screens[0].name : "global",
+  list: route === "monitor-bar" ? Quickshell.env("PHA_ROUTE_SCREEN") : "global",
   section: "left",
   index: 0
+}
+// The output the driver seeded; screen order is not stable with several outputs.
+readonly property var routeScreen: {
+  var name = Quickshell.env("PHA_ROUTE_SCREEN");
+  for (var i = 0; i < Quickshell.screens.length; i++)
+  if (Quickshell.screens[i].name === name)
+  return Quickshell.screens[i];
+  return null;
 }
 property bool started: false
 property string phase: "initial"
@@ -67,7 +75,7 @@ Component {
 Component {
   id: monitorTab
   BarSettings.MonitorWidgetsConfig {
-    screen: Quickshell.screens[0]
+    screen: root.routeScreen
   }
 }
 Text {
@@ -108,6 +116,7 @@ function begin() {
   if (started || !Settings.isLoaded)
     return;
   started = true;
+  check(routeScreen !== null, "seeded route screen is an actual output");
   manifestFile.waitForJob();
   manifest = JSON.parse(manifestFile.text());
   Registry.installedPlugins = {
