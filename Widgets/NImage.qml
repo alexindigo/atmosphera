@@ -22,7 +22,15 @@ Item {
   property bool mipmap: true
   property bool autoTransform: true
   property bool mirror: false
+  property bool mirrorVertically: false
+  property int horizontalAlignment: Image.AlignHCenter
+  property int verticalAlignment: Image.AlignVCenter
   property size sourceSize: Qt.size(Math.max(1, Math.ceil(width * Screen.devicePixelRatio)), Math.max(1, Math.ceil(height * Screen.devicePixelRatio)))
+  // Opt-in natural sizing (like a plain Image without width/height): the
+  // implicit size is the decoded size. Set sourceSize as the upper bound.
+  property bool sizeToImage: false
+  implicitWidth: sizeToImage ? decodedSize.width : 0
+  implicitHeight: sizeToImage ? decodedSize.height : 0
   readonly property string imageState: handle.state
   state: imageState
   readonly property int status: ({
@@ -99,6 +107,9 @@ Item {
       smooth: root.smooth
       autoTransform: root.autoTransform
       mirror: root.mirror
+      mirrorVertically: root.mirrorVertically
+      horizontalAlignment: root.horizontalAlignment
+      verticalAlignment: root.verticalAlignment
       onStatusChanged: handle.report(ticket, status, implicitWidth, implicitHeight, frameCount)
       Component.onCompleted: {
         ticket = renderer.ticket;
@@ -119,6 +130,9 @@ Item {
       smooth: root.smooth
       autoTransform: root.autoTransform
       mirror: root.mirror
+      mirrorVertically: root.mirrorVertically
+      horizontalAlignment: root.horizontalAlignment
+      verticalAlignment: root.verticalAlignment
       playing: root.playing
       paused: root.paused
       onStatusChanged: handle.report(ticket, status, implicitWidth, implicitHeight, frameCount)

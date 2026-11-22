@@ -171,7 +171,7 @@ class Run:
                 # Inspect the actual fresh reader process, not an environment
                 # flag that merely claims a plugin condition.
                 maps = set()
-                deadline = time.monotonic() + (90 if self.args.case == 'notification-service' else 25)
+                deadline = time.monotonic() + (90 if self.args.case in ('notification-service', 'plugins') else 25)
                 while proc.poll() is None:
                     try:
                         maps.update(line.split()[-1] for line in Path(f'/proc/{proc.pid}/maps').read_text().splitlines()
@@ -225,6 +225,9 @@ class Run:
                 'Modules/DesktopWidgets/Widgets/DesktopAppShortcut.qml', 'Modules/Panels/Settings/Tabs/ColorScheme/ColorCustomizer.qml',
                 'Modules/Panels/Settings/Tabs/Idle/BehaviorSubTab.qml', 'Modules/Panels/Settings/Tabs/LockScreen/AppearanceSubTab.qml',
                 'Widgets/AtmoIcon.qml', 'builtin/plugins/demo-custom-lockscreen/LockScreenView.qml', 'Services/Version.qml')]
+        if self.args.case == 'plugins':
+            lint_paths += [str(shell / p) for p in ('Widgets/NImage.qml', 'Widgets/NImageIcon.qml', 'Widgets/NImageText.qml')]
+            lint_paths += [str(p) for p in getattr(self, 'plugin_lint', [])]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1614,6 +1617,12 @@ os.execv('/usr/bin/find', ['find', *args])
                    and 'desc bold' in label['plain'], label)
         self.check('settings-description-without-image-lightweight', plain_label['lightweight']
                    and plain_label['imageCount'] == 0 and plain_label['plain'] == 'plain <b>description</b>', plain_label)
+        green = (0, 255, 0, 255)
+        self.check('link-color-rich-and-markdown', count('linked', green) > 20 and count('linked-markdown', green) > 20
+                   and result['linked']['plain'] == 'LINKLINKLINK', dict(rich=count('linked', green), markdown=count('linked-markdown', green)))
+        plain_format = result['plainFormat']
+        self.check('plain-format-shows-markup-as-text', plain_format['imageCount'] == 0 and '<img src=' in plain_format['plain']
+                   and count('plain-format', COLORS[0]) == 0, plain_format)
         notes = result['changelog']
         self.check('changelog-notes-images-presented', not notes.get('missing') and notes['format'] == 'markdown'
                    and '0.0.1' in notes['releaseContent'] and notes['imageCount'] == 2
@@ -1622,6 +1631,80 @@ os.execv('/usr/bin/find', ['find', *args])
                    and center('changelog', notes['states'][1])[3] > 0
                    and notes['states'][1]['naturalWidth'] == 128
                    and all(w in notes['plain'] for w in ('Notes with art', 'in the text', 'a link')), notes)
+        return result
+
+    def changed_plugin_qml(self):
+        """Plugin QML that differs from the baseline plugins tree (new files included)."""
+        if self.args.baseline_plugins is None:
+            raise ValueError('The plugins case needs --baseline-plugins to find changed plugin QML')
+        changed = []
+        for path in sorted(self.args.plugins.rglob('*.qml')):
+            relative = path.relative_to(self.args.plugins)
+            if any(part.startswith('.') for part in relative.parts):
+                continue
+            base = self.args.baseline_plugins / relative
+            if not base.is_file() or base.read_bytes() != path.read_bytes():
+                changed.append(path)
+        return changed
+
+    def plugins(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        wallcards = inputs / 'wallcards'
+        wallcards.mkdir()
+        for name in ('Still.webp', 'frame-1.png', 'Corrupt.webp'):
+            shutil.copyfile(inputs / name, wallcards / name)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        changed = self.changed_plugin_qml()
+        (self.out / 'changed-plugin-qml.txt').write_text(''.join(str(p) + '\n' for p in changed))
+        self.plugin_lint = changed
+        result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/plugins.qml', inputs,
+                                 'plugins', dict(IMAGE_PLUGINS=str(self.args.plugins)))
+        def near(actual, expected, tolerance=10):
+            return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
+        def count(name, color):
+            width, height, pixels = read_png(output / (name + '.png'))
+            return sum(near(pixels[i * 4:i * 4 + 4], color) for i in range(width * height))
+        entries = {row['name']: row for row in result['entries']}
+        self.check('plugin-roots-created', all(not row['error'] for row in entries.values()),
+                   {name: row['error'] for name, row in entries.items() if row['error']})
+        def images(name, kind='image'):
+            return [row for row in entries[name]['images'] if row['kind'] == kind]
+        for name, color in (('kde-phone', COLORS[0]), ('valent-phone', COLORS[0]), ('clipboard-image', COLORS[0]),
+                            ('hermes-avatar', COLORS[0])):
+            shown = images(name)
+            self.check('plugin-' + name + '-presented', shown and all(row['state'] == 'ready' for row in shown if row['visible'])
+                       and any(row['state'] == 'ready' for row in shown) and count(name, color) > 50,
+                       dict(images=shown, pixels=count(name, color)))
+        failed = images('hermes-avatar-failed')
+        self.check('plugin-avatar-failure-labelled', any(row['state'] == 'unavailable' and row['code'] for row in failed)
+                   and count('hermes-avatar-failed', result['warningColor']) > 5, dict(images=failed))
+        sticker = images('sticker')
+        frames = {tuple(pixel(path)) for path in output.glob('sticker-*.png')}
+        self.check('plugin-sticker-keeps-animation', len(sticker) == 1 and sticker[0]['state'] == 'ready' and sticker[0]['animated']
+                   and sticker[0]['frames'] == 3 and len(frames & {tuple(c) for c in COLORS}) >= 2,
+                   dict(images=sticker, centers=sorted(frames)))
+        preview = images('lwe-preview')
+        text = images('lwe-preview', 'text')
+        # Descriptions are escaped by the plugin (BBCode images become links):
+        # NImageText at the site, no image work, preview through the owner.
+        self.check('plugin-workshop-preview-and-description', any(row['state'] == 'ready' for row in preview)
+                   and count('lwe-preview', COLORS[0]) > 50 and len(text) == 2 and all(t['count'] == 0 for t in text)
+                   and count('lwe-preview', COLORS[1]) == 0, dict(images=preview, text=text))
+        motion = [row for row in images('lwe-motion') if row['state'] == 'ready']
+        self.check('plugin-workshop-motion-preview-animates', motion and motion[0]['animated'] and motion[0]['frames'] == 3, images('lwe-motion'))
+        chat = images('chat-markdown', 'text')
+        self.check('plugin-chat-markdown-image', chat and chat[0]['count'] == 1 and chat[0]['states'][0]['state'] == 'ready'
+                   and count('chat-markdown', COLORS[0]) > 20, dict(text=chat, pixels=count('chat-markdown', COLORS[0])))
+        cards = result['wallcards']
+        files = {row['fileName']: row for row in (cards or {}).get('files', [])}
+        self.check('plugin-wallcards-owner-thumbnails-and-colors', cards and cards['ready'] and not cards['loading'] and len(files) == 3
+                   and files['Still.webp']['filterColor'] == 'Red' and files['frame-1.png']['filterColor'] == 'Green'
+                   and all(files[n]['thumbnail'].startswith('file://') and files[n]['thumbnail'] != files[n]['filePath'] for n in ('Still.webp', 'frame-1.png'))
+                   and files['Corrupt.webp']['thumbnail'] == files['Corrupt.webp']['filePath'] and files['Corrupt.webp']['filterColor'] == 'Monochrome'
+                   and not (output / 'unused-wallcards-cache').exists(), cards)
         return result
 
     def owner(self):
@@ -1768,6 +1851,8 @@ def main():
             run.desktop_wallpaper()
         elif args.case == 'chooser':
             run.chooser()
+        elif args.case == 'plugins':
+            run.plugins()
         else:
             raise NotImplementedError('Required image cohort not implemented: ' + args.case)
         current = {key: source_manifest(path) for key, path in

@@ -1,15 +1,22 @@
 import QtQuick
 import qs.Commons
 
-// Small image presentation (icons, logos, tray and menu textures) through the
-// shared image owner, with the labelled failure badge. Name lookup stays with
-// the caller; this component only presents a resolved source.
+// Image presentation with the labelled failure badge (icons, logos, tray and
+// menu textures, plugin previews) through the shared image owner. Name lookup
+// stays with the caller; this component only presents a resolved source.
 Item {
   id: root
 
   property string source: ""
+  property string sourceRevision: ""
   property bool active: true
   property int fillMode: Image.PreserveAspectFit
+  property int horizontalAlignment: Image.AlignHCenter
+  property int verticalAlignment: Image.AlignVCenter
+  property string animationIntent: "still"
+  property bool mirror: false
+  property bool mirrorVertically: false
+  property bool paused: false
   property size sourceSize: Qt.size(Math.max(1, Math.ceil(width * Screen.devicePixelRatio)), Math.max(1, Math.ceil(height * Screen.devicePixelRatio)))
   // Set when this image replaces a preferred one that could not be
   // displayed: the replacement renders, but the outcome is still a failure.
@@ -21,6 +28,9 @@ Item {
   readonly property bool failed: replacementCode !== "" || image.imageState === "unavailable"
   readonly property string errorCode: image.imageState === "unavailable" ? image.errorCode : replacementCode
   readonly property string errorReason: image.imageState === "unavailable" ? image.errorReason : replacementReason
+  readonly property real paintedWidth: image.paintedWidth
+  readonly property real paintedHeight: image.paintedHeight
+  readonly property var imageResult: image.imageResult
 
   Accessible.role: Accessible.Graphic
   Accessible.description: failed ? errorReason : ""
@@ -30,8 +40,15 @@ Item {
     anchors.fill: parent
     active: root.active && !!root.source
     source: root.source
+    sourceRevision: root.sourceRevision
     sourceSize: root.sourceSize
     fillMode: root.fillMode
+    horizontalAlignment: root.horizontalAlignment
+    verticalAlignment: root.verticalAlignment
+    animationIntent: root.animationIntent
+    mirror: root.mirror
+    mirrorVertically: root.mirrorVertically
+    paused: root.paused
     smooth: root.smooth
     onImageStateChanged: {
       if (imageState === "unavailable")

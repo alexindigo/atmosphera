@@ -119,6 +119,33 @@ ShellRoot {
           text: "first <img src='" + root.inputs + "/frame-1.png' width='24' height='24'> line<br>second line<br>third <img src='" + root.inputs + "/frame-0.png' width='24' height='24'> line"
         }
       }
+      // Link color (rich and Markdown) and plain text that only looks like
+      // an image.
+      NImageText {
+        id: linked
+        width: 300
+        color: "black"
+        linkColor: "#00ff00"
+        pointSize: 20
+        text: "<a href='https://example.org/l'>LINKLINKLINK</a>"
+      }
+      NImageText {
+        id: linkedMarkdown
+        width: 300
+        color: "black"
+        format: "markdown"
+        linkColor: "#00ff00"
+        pointSize: 20
+        text: "[LINKLINKLINK](https://example.org/m)"
+      }
+      NImageText {
+        id: plainFormat
+        width: 300
+        color: "black"
+        format: "plain"
+        selectByMouse: true
+        text: "plain <img src='" + root.inputs + "/frame-0.png'> text"
+      }
       // Settings descriptions (plugin text) with and without an image.
       NLabel {
         id: label
@@ -233,6 +260,9 @@ ShellRoot {
         if (root.tooltipText())
           root.grab(root.tooltipText(), "tooltip");
         root.grab(root.imageTexts(label)[0], "label");
+        root.grab(linked, "linked");
+        root.grab(linkedMarkdown, "linked-markdown");
+        root.grab(plainFormat, "plain-format");
       }
       if (root.tick >= 70 && !root.pending) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
@@ -252,6 +282,8 @@ ShellRoot {
                                                                                  contentHeight: capped.contentHeight
                                                                                }),
                                                          backgrounds: root.describe(backgrounds),
+                                                         linked: root.describe(linked),
+                                                         plainFormat: root.describe(plainFormat),
                                                          tooltip: root.tooltipText() ? Object.assign(root.describe(root.tooltipText()), {
                                                                                                        popupWidth: TooltipService.activeTooltip.implicitWidth,
                                                                                                        popupHeight: TooltipService.activeTooltip.implicitHeight,

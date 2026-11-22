@@ -16,14 +16,18 @@ Item {
   id: root
 
   property string text: ""
-  // "rich" (Qt's HTML subset), "markdown", or "styled" (Qt's StyledText:
-  // light markup, line breaks kept). Styled text without images is shown by
-  // a plain Text, with elide; with images it takes the rich-text path.
+  // "rich" (Qt's HTML subset), "markdown", "styled" (Qt's StyledText: light
+  // markup, line breaks kept) or "plain". Styled text without images is
+  // shown by a plain Text, with elide; with images it takes the rich-text
+  // path. Plain text is never parsed and loads no images.
   property string format: "rich"
   property int elide: Text.ElideNone
   // Base for relative image sources (for example a README's location).
   property string baseUrl: ""
   property color color: AtmoColor.mOnSurface
+  // Link color; transparent keeps Qt's palette link color.
+  property color linkColor: "transparent"
+  readonly property string _linkHex: Qt.rgba(linkColor.r, linkColor.g, linkColor.b, 1).toString()
   property string family: Settings.data.ui.fontDefault
   property real pointSize: Style.fontSizeM
   property bool applyUiScale: true
@@ -33,10 +37,15 @@ Item {
   // 0: unlimited. Otherwise the text is cut after this many laid-out lines.
   property int maximumLineCount: 0
   property bool animationsPlaying: true
+  // Selectable text (chat and log views); images count as one character.
+  property bool selectByMouse: false
+  property bool persistentSelection: false
+  property color selectionColor: Qt.alpha(AtmoColor.mPrimary, 0.45)
 
   readonly property font font: edit.font
   // Styled text that cannot load an image: no text document, no image work.
   readonly property bool lightweight: format === "styled" && !ImageTextSources.styledMayLoadImages(text)
+  readonly property bool plain: format === "plain"
   readonly property string hoveredLink: lightweight ? light.hoveredLink : edit.hoveredLink
   readonly property real contentWidth: lightweight ? light.contentWidth : edit.contentWidth
   readonly property real contentHeight: lightweight ? light.contentHeight : edit.contentHeight
@@ -58,10 +67,10 @@ Item {
   }
 
   readonly property string slotUrl: "file://" + Quickshell.shellDir + "/Assets/image-text-slot.png"
-  readonly property var parsedContent: lightweight ? ({
-                                                        text: "",
-                                                        images: []
-                                                      }) : ImageTextSources.parse(text, format, baseUrl, slotUrl)
+  readonly property var parsedContent: lightweight || plain ? ({
+                                                                 text: "",
+                                                                 images: []
+                                                               }) : ImageTextSources.parse(text, format, baseUrl, slotUrl)
   property string _html: ""
   property var _order: []
   property var _sizes: []
@@ -73,7 +82,7 @@ Item {
   implicitHeight: lightweight ? light.implicitHeight : _clipHeight >= 0 ? Math.min(_clipHeight, edit.implicitHeight) : edit.implicitHeight
   clip: !lightweight && _clipHeight >= 0
 
-  readonly property real _fontScale: {
+  property real fontScale: {
     const scale = root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale : Settings.data.ui.fontFixedScale;
     return applyUiScale ? scale * Style.uiScaleRatio : scale;
   }
@@ -111,7 +120,7 @@ Item {
   }
 
   function _relayout() {
-    if (lightweight) {
+    if (lightweight || plain) {
       _html = "";
       _order = [];
       _sizes = [];
@@ -130,20 +139,24 @@ Item {
       converter.textFormat = TextEdit.RichText;
       source = converter.getFormattedText(0, converter.length);
       converter.text = "";
+      // Qt writes the palette link color on each Markdown link's span.
+      if (linkColor.a > 0)
+        source = source.replace(/(<a\b[^>]*>\s*<span\b[^>]*\bstyle="[^"]*?)color:#[0-9a-fA-F]{6}/gi, "$1color:" + _linkHex);
     }
     const guarded = ImageTextSources.withoutResourceImages(ImageTextSources.sized(source, slotUrl, sizes), slotUrl);
     if (guarded.dropped)
       Logger.w("NImageText", "Not loading", guarded.dropped, "background or style-sheet images");
-    _html = guarded.html;
+    _html = (linkColor.a > 0 ? "<style>a { color: " + _linkHex + "; }</style>" : "") + guarded.html;
     _order = ImageTextSources.order(_html, slotUrl);
     geometry.restart();
   }
 
   function _measure() {
-    var plain = edit.getText(0, edit.length);
+    // Plain text has no image slots (U+FFFC typed in it is just text).
+    var laidOut = root.plain ? "" : edit.getText(0, edit.length);
     var slots = [];
-    for (var i = 0; i < plain.length; ++i) {
-      if (plain.charCodeAt(i) === 0xFFFC)
+    for (var i = 0; i < laidOut.length; ++i) {
+      if (laidOut.charCodeAt(i) === 0xFFFC)
         slots.push(i);
     }
     // The k-th object character is the k-th slot of the laid-out HTML.
@@ -228,6 +241,7 @@ Item {
   }
   onImageMaximumWidthChanged: relayout.restart()
   onFormatChanged: relayout.restart()
+  onLinkColorChanged: relayout.restart()
   onLightweightChanged: relayout.restart()
   onMaximumLineCountChanged: geometry.restart()
   Component.onCompleted: _relayout()
@@ -272,15 +286,17 @@ Item {
     visible: !root.lightweight
     width: root.width
     readOnly: true
-    selectByMouse: false
-    activeFocusOnPress: false
-    textFormat: TextEdit.RichText
-    text: root._html
+    selectByMouse: root.selectByMouse
+    persistentSelection: root.persistentSelection
+    selectionColor: root.selectionColor
+    activeFocusOnPress: root.selectByMouse
+    textFormat: root.plain ? TextEdit.PlainText : TextEdit.RichText
+    text: root.plain ? root.text : root._html
     color: root.color
     wrapMode: root.wrapMode
     horizontalAlignment: root.horizontalAlignment
     font.family: root.family
-    font.pointSize: Math.max(1, root.pointSize * root._fontScale)
+    font.pointSize: Math.max(1, root.pointSize * root.fontScale)
     font.weight: root.fontWeight
     onLinkActivated: link => root.linkActivated(link)
     onLinkHovered: link => root.linkHovered(link)
@@ -314,7 +330,10 @@ Item {
         animationIntent: "preserve"
         fillMode: Image.Stretch
         imageTransform: "contain"
-        sourceSize: Qt.size(Math.ceil(root.imageMaximumWidth * Screen.devicePixelRatio), Math.ceil(root.imageMaximumWidth * Screen.devicePixelRatio))
+        // Independent of the text's width: a layout that depends on the
+        // image's size must not re-request it. Declared size, else a fixed
+        // bound (raster images are not enlarged).
+        sourceSize: slot.image.width > 0 && slot.image.height > 0 ? Qt.size(Math.ceil(slot.image.width * Screen.devicePixelRatio), Math.ceil(slot.image.height * Screen.devicePixelRatio)) : Qt.size(2048, 2048)
         paused: !root.animationsPlaying || !root.visible || Settings.data.general.animationDisabled
         // Read the settled result after the state notification (the failure
         // reason is published after the state).
