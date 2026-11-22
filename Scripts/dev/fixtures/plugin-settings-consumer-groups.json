@@ -54,7 +54,7 @@
       "approach": "Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular.",
       "representatives": "Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof.",
       "staticCheck": "Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations.",
-      "status": "planned"
+      "status": "Tamagotchi: Main-owned context-keyed games, original native operational fields, integer/random/decay policy and 30-second cadence. Both-scope pages/native display/cold readers plus individual real drag/drop, particles, physics, Debug, Bed, native writer, timer and retirement controls. Pomodoro's distinct timer/auto-start/sound contract and broad visual/final acceptance remain required."
     },
     {
       "id": "G7",

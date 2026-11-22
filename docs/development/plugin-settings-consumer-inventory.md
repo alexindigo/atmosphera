@@ -125,7 +125,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 105 | `sticky-notes` | shared-domain | port |
 | 106 | `syncthing-status` | query-worker | ported |
 | 107 | `tailscale` | observation | ported |
-| 108 | `tamagotchi` | stateful-client | port |
+| 108 | `tamagotchi` | stateful-client | ported |
 | 109 | `thinkpad-fan` | view-backend | port |
 | 110 | `timer` | direct | no-port |
 | 111 | `todo` | shared-content | ported |
@@ -158,7 +158,7 @@ Reviewed historical-group reconciliation for `dmenu`: Originating orchestrator d
 | 3 | G3: One daemon, automatic session policy or synchronized content resource (8) | `agent-session-status`, `clamshell`, `clipboard`, `hermes-agent`, `niri-auto-tile`, `niri-screensaver`, `obs-control`, `sticky-notes` | Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content. | agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof. | Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually. | planned |
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending. |
-| 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | planned |
+| 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | Tamagotchi: Main-owned context-keyed games, original native operational fields, integer/random/decay policy and 30-second cadence. Both-scope pages/native display/cold readers plus individual real drag/drop, particles, physics, Debug, Bed, native writer, timer and retirement controls. Pomodoro's distinct timer/auto-start/sound contract and broad visual/final acceptance remain required. |
 | 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | G7 selected session implementation: Main-owned context cache, originating remembered-target writer, connection-scoped callbacks, selected terminal signals/replay and retirement. Explicit shared IPC/global shortcut. Native both-scope page and individual inert SSH PTY proof; broad visual/final acceptance remains separate. |
 | 8 | G8: Selected export/presentation policy over protected shared content (1) | `todo` | Carry originating exportPath/exportFormat/exportEmptySections and remaining selected presentation/action policy into shared Main content operations. Keep task/page/counter bytes and one content owner unchanged; prior P001 protection remains valid. | todo individually: selected export command/output and actual presentation; reuse source-qualified P001 content-protection/runtime proofs when unchanged. | All Main configuration readers traced to selected caller inputs or explicit shared IPC; every export caller carries context, protected content leaves remain excluded from configuration intents/reset, no migration. Reject shared export policy and changed-content controls. | Selected Panel/Desktop display and Main-captured export policy over the existing common content owner. Native both-scope filtered task Text/output/cold documents, held busy/retirement and failed-start/publication Retry, finite all-field controls and renewed P001 routes. No content migration; broad visual/final paired acceptance remains separate. |
 
@@ -2124,26 +2124,27 @@ Runtime-source/manifest fingerprint: `1ba24ef20ca2f5f39ca06b3a333ae90df4e9f722f7
 
 ## tamagotchi
 
-Main difficulty drives one shared game state, while Pet/Debug/Stats have local volume/display settings. Capture configured game client or truthful shared difficulty UI without moving protected game leaves; individual lifetime proof needed.
+Main caches one GameClient per captured native runtime context; all Bar/Panel/Pet/Bed/Food/Ball/Debug/Stats/animation paths share that selected game. Original integer stats, random/decay formulas, 30-second cadence and native operational writers remain, without migration. Both-scope native difficulty/display/cold documents and individual real drag/drop/particles/physics/debug/sleep/timer/writer/retirement outcomes are controlled proofs, not physical or broad visual acceptance.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `tamagotchi/Ball.qml` | No literal field edge | 33, 63, 64 |
-| 2 | `tamagotchi/BarWidget.qml` | No literal field edge | 22, 25, 36 |
-| 3 | `tamagotchi/Bed.qml` | No literal field edge | 44 |
-| 4 | `tamagotchi/Food.qml` | No literal field edge | 58, 59, 62, 68, 69 |
-| 5 | `tamagotchi/Main.qml` | `cleanliness`:11,52; `difficulty`:14; `energy`:12,53; `happiness`:10,51; `hunger`:9,50 | 7, 14, 50, 51, 52, 53 |
-| 6 | `tamagotchi/Panel.qml` | No literal field edge | No namespace/Main reference |
-| 7 | `tamagotchi/Pet.qml` | `volume`:158 | 158, 172, 174, 229 |
-| 8 | `tamagotchi/Soap.qml` | No literal field edge | No namespace/Main reference |
-| 9 | `tamagotchi/components/AnimationController.qml` | No literal field edge | 27, 36, 59 |
-| 10 | `tamagotchi/components/DebugButtons.qml` | `showDebug`:10 | 10, 95, 96, 104, 105, 113, 114, 119, ... |
-| 11 | `tamagotchi/components/StatBars.qml` | `showPercentage`:93 | 11, 12, 13, 14, 93 |
+| 1 | `tamagotchi/Ball.qml` | No literal field edge | No namespace/Main reference |
+| 2 | `tamagotchi/BarWidget.qml` | No literal field edge | 11 |
+| 3 | `tamagotchi/Bed.qml` | No literal field edge | No namespace/Main reference |
+| 4 | `tamagotchi/Food.qml` | No literal field edge | No namespace/Main reference |
+| 5 | `tamagotchi/GameClient.qml` | `cleanliness`:14,37; `difficulty`:16; `energy`:15,38; `happiness`:13,36; `hunger`:12,35 | 6, 9, 10, 35, 36, 37, 38 |
+| 6 | `tamagotchi/Main.qml` | No literal field edge | 12, 13, 17 |
+| 7 | `tamagotchi/Panel.qml` | No literal field edge | 11 |
+| 8 | `tamagotchi/Pet.qml` | `volume`:171 | 171 |
+| 9 | `tamagotchi/Soap.qml` | No literal field edge | No namespace/Main reference |
+| 10 | `tamagotchi/components/AnimationController.qml` | No literal field edge | No namespace/Main reference |
+| 11 | `tamagotchi/components/DebugButtons.qml` | `showDebug`:11 | 11 |
+| 12 | `tamagotchi/components/StatBars.qml` | `showPercentage`:94 | 94 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `94d8692a8090d1ace4b4e5a689116aed5a5aacf3208568faba53a814ba7eb61a`.
+Runtime-source/manifest fingerprint: `02b39d9ed582065c38b4722b6365ed2a4220982157874629140ba31c4611ce80`.
 
 ## thinkpad-fan
 

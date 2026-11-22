@@ -633,6 +633,25 @@ publication Retry, originating retirement and rejecting display/action controls
 remain distinct from P001's renewed desktop-route/protected-content gate. These
 controlled endpoints do not establish broad visual or final paired acceptance.
 
+## Selected Tamagotchi games
+
+Main owns one game per captured native runtime context. All renderers and their
+Pet, Bed, Food, Ball, Debug, Stats and animation children use that same game.
+The plugin-level background game remains active without a view. Retirement
+stops the selected game and its timers; queued child actions cannot publish
+through a retired origin. Game saves use the existing originating native API.
+No content or operational field is migrated or reset by configuration editing.
+
+The game regressions join actual controls, native documents and Bar/Panel Text
+in both scopes, including separate nonpublishing cold readers. Individual
+tests exercise real guest Wayland drag/drop, Food/Soap particles, Ball physics,
+Debug/Bed actions, the original integer/random decay outcomes and an actual
+30-second timer. Complete documents and wrong-game/child/writer/retirement
+controls distinguish those outcomes from receipt or startup-only claims.
+Audio checks observe selected volume, not physical playback. Existing integer
+quantization is preserved, not certified as an ideal difficulty progression.
+Broad visual and final paired acceptance remain separate.
+
 ## Runtime placement save and retirement Retry
 
 Placement `saveSettings` requests selected publication of its owning atomic key,
