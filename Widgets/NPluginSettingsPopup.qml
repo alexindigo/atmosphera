@@ -45,7 +45,9 @@ Popup {
     target: settingsSession
     function onEditorChanged() {
       if (settingsSession.editor && !root._releasePresentation && root.registerPresentation) {
-        root._releasePresentation = root.registerPresentation(function () { return root.requestClose(); });
+        root._releasePresentation = root.registerPresentation(function () {
+          return root.requestClose();
+        });
       } else if (!settingsSession.editor) {
         root._unregisterPresentation();
       }
@@ -168,40 +170,6 @@ Popup {
         Layout.fillWidth: true
       }
 
-      ColumnLayout {
-        visible: root.undisplayedOverrideFields.length > 0
-        Layout.fillWidth: true
-        NText {
-          text: I18n.tr("panels.plugins.additional-overrides")
-          wrapMode: Text.WordWrap
-          Layout.fillWidth: true
-        }
-        Repeater {
-          // QML list models project enumerable data and cannot transport a
-          // capability's non-enumerable methods. Model identities, inject the
-          // stable handle from its owning field adapter at the delegate.
-          model: root.undisplayedOverrideFields.map(function (field) {
-            return field.key;
-          })
-          RowLayout {
-            required property var modelData
-            readonly property var field: settingsSession.fields.field(modelData)
-            Layout.fillWidth: true
-            NText {
-              Layout.fillWidth: true
-              // Keys identify the declared field; values, including secrets,
-              // are never rendered by this host-owned summary.
-              text: field.key
-            }
-            NButton {
-              text: I18n.tr("common.reset")
-              enabled: !root.busy && field.pendingIntent !== "reset"
-              onClicked: field.reset()
-            }
-          }
-        }
-      }
-
       // Separator
       Rectangle {
         Layout.fillWidth: true
@@ -217,11 +185,50 @@ Popup {
         Layout.minimumHeight: 100
         horizontalPolicy: ScrollBar.AlwaysOff
         gradientColor: AtmoColor.mSurface
+        clip: true
 
-        Loader {
-          id: settingsLoader
-          enabled: !root.busy
+        // Both host-owned override rows and plugin content share the bounded
+        // scrolling region. Header, failure feedback and actions remain outside.
+        ColumnLayout {
           width: settingsScrollView.availableWidth
+          spacing: Style.marginM
+
+          ColumnLayout {
+            visible: root.undisplayedOverrideFields.length > 0
+            Layout.fillWidth: true
+            NText {
+              text: I18n.tr("panels.plugins.additional-overrides")
+              Layout.fillWidth: true
+            }
+            Repeater {
+              // List models carry keys, not capability methods. Inject each
+              // stable field handle from its existing owner at the delegate.
+              model: root.undisplayedOverrideFields.map(function (field) {
+                return field.key;
+              })
+              RowLayout {
+                required property var modelData
+                readonly property var field: settingsSession.fields.field(modelData)
+                Layout.fillWidth: true
+                NText {
+                  Layout.fillWidth: true
+                  // Never render values, including secrets, in the summary.
+                  text: field.key
+                }
+                NButton {
+                  text: I18n.tr("common.reset")
+                  enabled: !root.busy && field.pendingIntent !== "reset"
+                  onClicked: field.reset()
+                }
+              }
+            }
+          }
+
+          Loader {
+            id: settingsLoader
+            enabled: !root.busy
+            Layout.fillWidth: true
+          }
         }
       }
 
@@ -388,8 +395,8 @@ Popup {
     return settingsLoader.item;
   }
 
-  // Drops the instance overrides, then reloads the page: the page keeps its own
-  // copy of the values it was opened with and must read the plugin settings again.
+  // Remove declared configuration overrides through the selected session. The
+  // accepted receipt reloads field presentation; content and opaque data remain.
   function resetInstanceSettings() {
     return settingsSession.resetInstanceSettings();
   }

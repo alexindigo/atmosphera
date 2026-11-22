@@ -1334,7 +1334,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `ytPlayerClient` | `music-search/lib/config.sh:107` | Explicit helper settings owner reads jq key from shared SETTINGS_FILE; Settings exposes Main helper action, not generic field intent. Explain shared helper state; preserve any legacy preference bytes without treating them as helper authority. |
-Runtime-source/manifest fingerprint: `1e8e686bafaa278747dce88d3762b4f74fe99d2fc70c5895b8924ea3def86e55`.
+Runtime-source/manifest fingerprint: `3736089916b6fd442cfabf8f89b21512926484e9a03232f6e13b2c3260cf89ab`.
 
 ## netbird
 

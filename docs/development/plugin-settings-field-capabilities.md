@@ -22,6 +22,14 @@ host-owned summary covers declared configuration overrides not presented by
 the page, without exposing their values or secrets. Compound fields stay atomic;
 copy a display value before constructing an explicit replacement in a user event.
 
+The host summary and page share one bounded scrolling region. The title and
+Apply/Close actions remain outside it, so any number of declared hidden overrides
+cannot push those actions off-screen. `plugin-settings-chrome-regression.py`
+checks actual popup/control geometry, scrolling to the last hidden field, its
+native staged Reset and exact nonpublishing file preservation in English/French
+states. Captures support separate visual review; fallback copy is not translation
+acceptance and this synthetic page is not catalog consumer acceptance.
+
 `saveSettings(callback)` only registers completion/staging compatibility. It
 does not accept a snapshot or publish. A page's optional synchronous
 `saveSettings()` commits its still-buffered field intents; `settingsDirty`
