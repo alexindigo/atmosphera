@@ -547,8 +547,37 @@ SIGTERM and controller-stdin EOF through its normal process-group stop/join path
 Abrupt helper death still terminates its direct SSH child. The helper regression
 uses an inert SSH PTY child to prove original SIGTERM/SIGKILL reds, corrected
 signal/EOF/disconnect outcomes, race refusal and three rejecting controls. This
-does not complete Hermes's separate context-session/remembered-writer migration,
-promise to stop remote jobs, or establish a real SSH/account outcome.
+does not by itself prove selected session/remembered-writer ownership, promise to
+stop remote jobs, or establish a real SSH/account outcome.
+
+## Selected SSH sessions
+
+Hermes SSH Main owns one session per captured settingsContext. Bars and Panels
+activate that context, and reopening a Panel retains its connection and terminal
+buffer. Different contexts do not replace each other's target, status or output.
+Connect validates the supplied originating runtime API before saving remembered
+host/port/user; the generic Settings page never receives that writer. Passwords
+remain transient. IPC and the single global shortcut remain plugin-level; instance
+Settings explains this and does not offer a nonfunctional independent shortcut.
+Stored shortcut overrides are retained, not reclassified or deleted.
+
+Each connection owns a captured request and child Process generation. Replacement
+fences its callbacks before stopping it. Context retirement and actual Main
+destruction stop owned connections; helper-child lifetime uses the existing
+qualified Linux binding. Auto-connect still waits for runtime-view activation,
+captures target/size, and refuses after source/owner or manual-attempt replacement.
+It does not silently retarget active connections. TerminalView receives its stream
+source explicitly and replays the selected buffer on reopen/source handoff.
+
+The Hermes native regression observes actual Settings intent, complete independent
+documents, Bar/Panel consumers and nonpublishing cold readers in both scopes. Its
+individual lifetime proof uses the real bridge with inert SSH/PTY output/input,
+actual terminal TextEdit, originating native target writes, same-context reopen,
+stream-source handoff, replacement and queued automatic attempts. Independent
+PID/start identities are checked at replacement, native retirement and actual Main
+destruction, not merely after test-engine exit. Finite parsed and runtime controls
+complement this controlled proof; no real SSH account, network, physical shortcut,
+broad visual or final paired acceptance is implied.
 
 ## Captured IPC sessions without placed entries
 

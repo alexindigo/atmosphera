@@ -56,7 +56,7 @@ Shared actions must identify their effect; selected request/presentation policy 
 | 36 | `hassio` | query-worker | ported |
 | 37 | `hello-world` | direct | no-port |
 | 38 | `hermes-agent` | shared-domain | port |
-| 39 | `hermes-ssh-chat` | singleton-session | port |
+| 39 | `hermes-ssh-chat` | singleton-session | ported |
 | 40 | `hyprland-steam-overlay` | shared-domain | port |
 | 41 | `hyprland-visual-editor` | direct | no-port |
 | 42 | `ip-monitor` | observation | ported |
@@ -159,7 +159,7 @@ Reviewed historical-group reconciliation for `dmenu`: Originating orchestrator d
 | 4 | G4: View registered as Main, causing last-renderer backend selection (3) | `auto-cpufreq`, `battery-and-power-management`, `thinkpad-fan` | Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit. | auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives. | Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations. | planned |
 | 5 | G5: Main-created window receives originating context (2) | `somnus`, `wallcards` | Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection. | wallcards; somnus individual action-target proof with inert lock/sleep endpoints only. | Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations. | G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending. |
 | 6 | G6: Configured stateful timer/game client (2) | `pomodoro`, `tamagotchi` | Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular. | Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof. | Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations. | planned |
-| 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | planned |
+| 7 | G7: Module singleton session replaced by last Panel (1) | `hermes-ssh-chat` | Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts. | hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement. | No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations. | G7 selected session implementation: Main-owned context cache, originating remembered-target writer, connection-scoped callbacks, selected terminal signals/replay and retirement. Explicit shared IPC/global shortcut. Native both-scope page and individual inert SSH PTY proof; broad visual/final acceptance remains separate. |
 | 8 | G8: Selected export/presentation policy over protected shared content (1) | `todo` | Carry originating exportPath/exportFormat/exportEmptySections and remaining selected presentation/action policy into shared Main content operations. Keep task/page/counter bytes and one content owner unchanged; prior P001 protection remains valid. | todo individually: selected export command/output and actual presentation; reuse source-qualified P001 content-protection/runtime proofs when unchanged. | All Main configuration readers traced to selected caller inputs or explicit shared IPC; every export caller carries context, protected content leaves remain excluded from configuration intents/reset, no migration. Reject shared export policy and changed-content controls. | planned |
 
 ## 2-in-1-tools
@@ -831,18 +831,19 @@ Runtime-source/manifest fingerprint: `f36f177a310a2c8ac7ff219f93ef5fcabfad0629e3
 
 ## hermes-ssh-chat
 
-Panel passes its API into module Singleton HermesSession; later Panel replaces prior session selection. Needs context-keyed session/target writer, plus explicit shared IPC shortcut owner. Preserve terminal content and credentials.
+Main caches one session per captured context; Bars/Panel reopens share its buffer and connection, while immutable child generations fence replacement and retirement. Connect validates its originating runtime API before remembering target. Terminal signals/replay follow that session; IPC/global shortcut remain plugin-level and instance Settings explains the shared shortcut without changing stored leaves. Inert SSH PTY only; broad visual/final acceptance remains separate.
 
 Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `hermes-ssh-chat/BarWidget.qml` | No literal field edge | No namespace/Main reference |
-| 2 | `hermes-ssh-chat/HermesSession.qml` | `autoConnectOnStartup`:64; `host`:44,93; `port`:45,94; `rememberLastTarget`:92; `terminalCols`:74,110,130; `terminalRows`:74,109,129; `user`:46,95 | 44, 45, 46, 53, 54, 93, 94, 95 |
-| 3 | `hermes-ssh-chat/Main.qml` | `toggleShortcutName`:12 | 10, 11 |
-| 4 | `hermes-ssh-chat/Panel.qml` | `host`:20,47; `panelHeight`:16; `panelWidth`:15; `port`:21,48; `terminalCols`:24,50; `terminalFontSize`:26,52; `terminalRows`:25,51; `user`:22,49 | 18, 19, 44, 46 |
-| 5 | `hermes-ssh-chat/TerminalView.qml` | No literal field edge | No namespace/Main reference |
-| 6 | `hermes-ssh-chat/helpers/hermes_ssh_bridge.py` | No literal field edge | No namespace/Main reference |
+| 1 | `hermes-ssh-chat/BarWidget.qml` | No literal field edge | 14, 15 |
+| 2 | `hermes-ssh-chat/HermesConnection.qml` | No literal field edge | No namespace/Main reference |
+| 3 | `hermes-ssh-chat/HermesSession.qml` | `autoConnectOnStartup`:10,50; `host`:10,44,52,55,77; `port`:10,44,55,77; `rememberLastTarget`:76; `terminalCols`:10,55,85,96; `terminalRows`:10,55,85,96; `user`:10,44,52,55,77 | 6, 8, 9, 38, 77 |
+| 4 | `hermes-ssh-chat/Main.qml` | `toggleShortcutName`:25 | 12, 16, 23, 24 |
+| 5 | `hermes-ssh-chat/Panel.qml` | `host`:21,50; `panelHeight`:17; `panelWidth`:16; `port`:22,51; `terminalCols`:25,53; `terminalFontSize`:27,55; `terminalRows`:26,54; `user`:23,52 | 12, 13, 19, 20, 47, 49 |
+| 6 | `hermes-ssh-chat/TerminalView.qml` | No literal field edge | No namespace/Main reference |
+| 7 | `hermes-ssh-chat/helpers/hermes_ssh_bridge.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: `showBarText` (configuration).
 
@@ -851,7 +852,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `showBarText` | `hermes-ssh-chat/BarWidget.qml:25` | Cross-file dynamic helper Local.HermesSession.setting(key) reads singleton API at HermesSession.qml:52-55; part of required session-context port. |
-Runtime-source/manifest fingerprint: `409f5360c5399b31236b950e1481876bba715f786373237870a69cd98459f50d`.
+Runtime-source/manifest fingerprint: `ce825759c0d5315f09cab90638e07080de992eb41ca66903e93e53430b7f59e0`.
 
 ## hyprland-steam-overlay
 

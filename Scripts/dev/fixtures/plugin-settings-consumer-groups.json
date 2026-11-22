@@ -63,7 +63,7 @@
       "approach": "Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts.",
       "representatives": "hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement.",
       "staticCheck": "No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations.",
-      "status": "planned"
+      "status": "G7 selected session implementation: Main-owned context cache, originating remembered-target writer, connection-scoped callbacks, selected terminal signals/replay and retirement. Explicit shared IPC/global shortcut. Native both-scope page and individual inert SSH PTY proof; broad visual/final acceptance remains separate."
     },
     {
       "id": "G8",
