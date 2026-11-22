@@ -601,9 +601,11 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function changeWallpaper(path, screenName, appearanceSlot, onComplete, retentionDirectory) {
-    if (!path)
+  function changeWallpaper(path, screenName, appearanceSlot, onComplete, retentionDirectory, onSettled) {
+    if (!path) {
+      _rejectWallpaperChange(onSettled, "empty-source");
       return null;
+    }
     var slot = _defaultAppearanceSlotForChange(appearanceSlot);
     var names = new Set();
     if (screenName !== undefined) {
@@ -614,8 +616,10 @@ Singleton {
         names.add(Quickshell.screens[i].name);
       }
     }
-    if (!names.size)
+    if (!names.size) {
+      _rejectWallpaperChange(onSettled, "no-target");
       return null;
+    }
     var ticket = {
       id: String(++_wallpaperChangeSerial),
       path: String(path),
@@ -624,6 +628,7 @@ Singleton {
       targets: Array.from(names),
       request: null,
       completed: onComplete,
+      settled: onSettled,
       cancel: function () {
         root.cancelWallpaperChange(ticket);
       }
@@ -637,8 +642,12 @@ Singleton {
     Object.keys(_wallpaperChanges).forEach(function (id) {
       var previous = root._wallpaperChanges[id];
       if (!root._wallpaperChangeTargets(previous).length)
-        root.cancelWallpaperChange(previous);
+        root.cancelWallpaperChange(previous, "superseded");
     });
+    // A settlement observer can admit newer intent while this sweep is running.
+    // A retired ticket must never start a new, now-unowned decoder interest.
+    if (_wallpaperChanges[ticket.id] !== ticket)
+      return ticket;
     var width = 1;
     var height = 1;
     for (var j = 0; j < Quickshell.screens.length; ++j) {
@@ -665,6 +674,8 @@ Singleton {
   }
 
   function _wallpaperChangeTargets(ticket) {
+    if (!ticket || _wallpaperChanges[ticket.id] !== ticket)
+      return [];
     return ticket.targets.filter(function (name) {
       return ticket.slots.every(function (slot) {
         return root._wallpaperReservations[JSON.stringify([name, slot])] === ticket.id;
@@ -672,9 +683,38 @@ Singleton {
     });
   }
 
-  function cancelWallpaperChange(ticket) {
+  function _rejectWallpaperChange(callback, code) {
+    if (typeof callback === "function")
+      Qt.callLater(callback, {
+                     state: "unavailable",
+                     names: [],
+                     targets: [],
+                     detail: {
+                       code: code
+                     }
+                   });
+  }
+
+  function _settleWallpaperChange(ticket, state, names, detail) {
+    var callback = ticket.settled;
+    ticket.settled = null;
+    if (typeof callback === "function") {
+      try {
+        callback({
+                   state: state,
+                   names: names.slice(),
+                   targets: ticket.targets.slice(),
+                   detail: detail || {}
+                 });
+      } catch (error) {
+        Logger.e("Wallpaper", "Wallpaper settlement callback failed");
+      }
+    }
+  }
+
+  function _releaseWallpaperChange(ticket) {
     if (!ticket || _wallpaperChanges[ticket.id] !== ticket)
-      return;
+      return false;
     delete _wallpaperChanges[ticket.id];
     ticket.targets.forEach(function (name) {
       ticket.slots.forEach(function (slot) {
@@ -686,10 +726,18 @@ Singleton {
     if (ticket.request)
       ticket.request.cancel();
     ticket.request = null;
+    return true;
+  }
+
+  function cancelWallpaperChange(ticket, reason) {
+    if (_releaseWallpaperChange(ticket))
+      _settleWallpaperChange(ticket, "cancelled", [], {
+                               code: reason || "cancelled"
+                             });
   }
 
   function _cancelWallpaperChanges() {
-    Object.keys(_wallpaperChanges).forEach(id => root.cancelWallpaperChange(root._wallpaperChanges[id]));
+    Object.keys(_wallpaperChanges).forEach(id => root.cancelWallpaperChange(root._wallpaperChanges[id], "superseded"));
   }
 
   function _completeWallpaperChange(ticket, output, success, detail) {
@@ -698,16 +746,24 @@ Singleton {
     var names = _wallpaperChangeTargets(ticket);
     // The callback renderer has already retired itself. Do not cancel it again.
     ticket.request = null;
-    cancelWallpaperChange(ticket);
-    if (!names.length)
+    _releaseWallpaperChange(ticket);
+    if (!names.length) {
+      _settleWallpaperChange(ticket, "cancelled", [], {
+                               code: "superseded"
+                             });
       return;
+    }
     if (!success || !output) {
       var reason = detail && detail.reason ? detail.reason : "The wallpaper could not be displayed";
       names.forEach(name => root.wallpaperChangeFailed(name, ticket.path, reason));
       Logger.w("Wallpaper", reason);
       ToastService.showError(I18n.tr("widgets.file-picker.preview-unavailable"), reason);
-      if (ticket.completed)
-        ticket.completed(false, names, detail);
+      try {
+        if (ticket.completed)
+          ticket.completed(false, names, detail);
+      } finally {
+        _settleWallpaperChange(ticket, "unavailable", names, detail);
+      }
       return;
     }
     if (detail && detail.originalPath)
@@ -716,8 +772,12 @@ Singleton {
     if (Settings.data.wallpaper.useSolidColor)
       Settings.data.wallpaper.useSolidColor = false;
     names.forEach(name => root._setWallpaper(name, ticket.path, ticket.slot));
-    if (ticket.completed)
-      ticket.completed(true, names, detail);
+    try {
+      if (ticket.completed)
+        ticket.completed(true, names, detail);
+    } finally {
+      _settleWallpaperChange(ticket, "ready", names, detail);
+    }
   }
 
   // UI selection applies its favorite theme only to an accepted color monitor.

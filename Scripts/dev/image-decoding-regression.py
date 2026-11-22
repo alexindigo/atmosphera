@@ -18,9 +18,10 @@ from image_decoding_evidence import source_manifest
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'remote-red', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'remote-red', 'wizard-red', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
-                    r'Failed to load configuration|is not installed|Component is not ready')
+                    r'Failed to load configuration|is not installed|Component is not ready|'
+                    r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
 
 
 class Run:
@@ -170,6 +171,9 @@ class Run:
                 'Modules/Panels/Wallpaper/WallpaperPanel.qml')]
         if self.args.case == 'wallpaper-setup':
             lint_paths += [str(shell / p) for p in ('Modules/Panels/SetupWizard/SetupWallpaperStep.qml',)]
+        if self.args.case in ('wallpaper-wizard', 'wizard-red'):
+            lint_paths += [str(shell / p) for p in ('Modules/Panels/SetupWizard/SetupWizard.qml',
+                'Services/UI/WallpaperService.qml', 'Services/UI/SetupService.qml') if (shell / p).is_file()]
         if self.args.case == 'wallpaper-scan':
             lint_paths += [str(shell / 'Services/UI/WallpaperService.qml')]
         if self.args.case == 'wallpaper-gallery':
@@ -416,6 +420,119 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('wallpaper-scan-real-find-literal-arguments', any(str(inputs/pool_name) in row['argv'] for row in rows)
                    and all('sh' not in row['argv'] and '-c' not in row['argv'] for row in rows), rows)
         self.check('wallpaper-scan-owned-processes-retired', all(not Path('/proc/'+str(row['pid'])).exists() for row in rows), rows)
+        return result
+
+    def wallpaper_wizard(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        # The real none deployment must be inapplicable, not able to modify a
+        # guest-global keyd layer or stop an existing xremap service.
+        self.check('wizard-neutral-deployment-prerequisites', not Path('/etc/keyd/atmosphera').exists()
+                   and not Path('/etc/keyd/atmosphera').is_symlink()
+                   and self.command(['systemctl', '--user', 'show', 'xremap-atmosphera.service',
+                                     '-p', 'LoadState', '--value']).stdout.strip() == 'not-found', {})
+        inputs = self.work/'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out/'fixture-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+        data = (inputs/'Still.webp').read_bytes()
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requests.append(self.path)
+                time.sleep(1)
+                self.send_response(200)
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Content-Type', 'image/jpeg')
+                self.end_headers()
+                try:
+                    self.wfile.write(data)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+            def log_message(self, *_):
+                pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml',
+                inputs, 'wallpaper-wizard', dict(IMAGE_WIZARD_RED='1' if self.args.case == 'wizard-red' else '0',
+                IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}', NIRI_SOCKET=''))
+            if self.args.case != 'wizard-red':
+                extra, extra_output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml',
+                    inputs, 'wallpaper-wizard-extra', dict(IMAGE_WIZARD_EXTRA='1',
+                    IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}', NIRI_SOCKET=''))
+        finally:
+            server.shutdown()
+            thread.join()
+            server.server_close()
+        (self.out/'http-requests.json').write_text(json.dumps(requests, indent=2)+'\n')
+        stages = {row['name']: row for row in result['snapshots']}
+        if self.args.case == 'wizard-red':
+            self.check('old-wizard-saves-corrupt-unaccepted-wallpaper', stages['red']['request']['status'] == 'Succeeded'
+                       and stages['red']['path'] == str(inputs/'frame-1.png') and stages['red']['scale'] == 1.15,
+                       result, red=True)
+            return result
+        self.check('wizard-submission-is-captured-before-admission', result['immediate']['status']['status'] == 'Running'
+                   and result['immediate']['path'] == str(inputs/'frame-1.png')
+                   and result['captured']['scaleRatio'] == 1.15 and result['captured']['wallpaper'] == str(inputs/'Motion.webp'), result['immediate'])
+        valid = stages['valid']
+        self.check('wizard-save-follows-accepted-source-and-keeps-captured-values', valid['request']['status'] == 'Succeeded'
+                   and valid['path'] == str(inputs/'Motion.webp') and valid['scale'] == 1.15
+                   and valid['bar'] == 'bottom' and pixel(output/'valid.png') == list(COLORS[0]), valid)
+        self.check('wizard-failed-image-retains-head-with-no-setup-save', stages['failed']['request']['status'] == 'Stopped'
+                   and stages['failed']['request']['error'] == 'setup-wallpaper-unavailable'
+                   and stages['failed']['scale'] == 1.15
+                   and not any(row['stage'] == 3 and row['result']['status'] in ('saved', 'nothing_to_save') for row in result['saves']), stages['failed'])
+        retry = stages['retry']
+        self.check('wizard-retry-reuses-captured-work-after-source-repair', retry['request']['attemptId'] == 2
+                   and retry['request']['status'] == 'Succeeded' and retry['scale'] == 1.25
+                   and retry['path'] == str(inputs/'Retry.webp') and pixel(output/'retry.png') == list(COLORS[0]), retry)
+        failed_id = stages['failed']['request']['id']
+        ordered = [row for row in result['terminals'] if row['id'] != 'bindings-1']
+        self.check('wizard-failed-head-blocks-later-fifo-request', len(ordered) >= 4
+                   and [row['success'] for row in ordered[:4]] == [True, False, True, True]
+                   and ordered[1]['id'] == ordered[2]['id'] == failed_id, ordered)
+        superseded = stages['superseded']
+        self.check('wizard-superseded-admission-settles-without-saving', superseded['request']['error'] == 'setup-wallpaper-superseded'
+                   and superseded['scale'] == 1.25, superseded)
+        self.check('wizard-reopen-restores-retained-capture-and-service-owned-retry', result['restored']['id'] == superseded['request']['id']
+                   and result['restored']['scale'] == 1.35 and result['restored']['wallpaper'].endswith('/slow.jpg')
+                   and stages['reopened']['request']['status'] == 'Succeeded' and stages['reopened']['scale'] == 1.35
+                   and pixel(output/'reopened.png') == list(COLORS[0]), result['restored'])
+        self.check('wizard-destruction-does-not-abandon-captured-preparation', stages['detached']['request']['id'] == result['detached']
+                   and stages['detached']['request']['status'] == 'Succeeded' and stages['detached']['scale'] == 1.45
+                   and pixel(output/'detached.png') == list(COLORS[0]), stages['detached'])
+        extra_stages = {row['name']: row for row in extra['snapshots']}
+        self.check('wizard-partial-target-admission-is-not-captured-success', extra_stages['partial']['request']['status'] == 'Stopped'
+                   and extra_stages['partial']['request']['error'] == 'setup-wallpaper-superseded'
+                   and extra_stages['partial']['scale'] == 1 and extra_stages['partial']['other'].endswith('/partial.jpg')
+                   and extra_stages['all-targets']['request']['attemptId'] == 2 and extra_stages['all-targets']['scale'] == 1.55
+                   and pixel(extra_output/'all-targets.png') == list(COLORS[0]), extra_stages['partial'])
+        self.check('wizard-no-wallpaper-selection-still-saves-captured-setup', extra_stages['no-selection']['request']['status'] == 'Succeeded'
+                   and extra_stages['no-selection']['request']['work']['wallpaper'] == '' and extra_stages['no-selection']['scale'] == 1.65
+                   and extra_stages['no-selection']['path'] == extra_stages['all-targets']['path']
+                   and read_png(extra_output/'no-selection.png') == read_png(extra_output/'all-targets.png'), extra_stages['no-selection'])
+        self.check('wallpaper-retirement-settles-once-with-legacy-callback-suppressed', not result['legacy']
+                   and len(result['settlements']) == 2 and result['settlements'][0]['state'] == 'cancelled'
+                   and result['settlements'][1]['detail']['code'] == 'empty-source', result['settlements'])
+        for label, observed in (('main', result), ('partial', extra)):
+            rows = observed['reentrantSettlements']
+            self.check('wallpaper-reentrant-retirement-'+label, len(rows) == 4
+                       and {row['name'] for row in rows} == {'first', 'other', 'superseding', 'latest'}
+                       and all(row['outcome']['state'] == 'cancelled' for row in rows), rows)
+        tuples = [(row['id'], row['attempt']) for row in result['terminals']]
+        self.check('wizard-attempts-settle-exactly-once', len(tuples) == len(set(tuples)), tuples)
+        config = self.work/'wallpaper-wizard-extra-profile/config/settings'
+        native = {name: json.loads((config/(name+'.json')).read_text()) for name in ('general', 'bar', 'wallpaper', 'bindings')}
+        (self.out/'native-settings.json').write_text(json.dumps(native, indent=2)+'\n')
+        self.check('wizard-native-settings-readback-matches-final-captured-work', native['general']['scaleRatio'] == 1.65
+                   and native['bar']['position'] == 'bottom' and native['wallpaper']['directory'] == str(inputs)
+                   and native['bindings']['environment'] == 'none', native)
+        self.check('wizard-source-native-package-control', result['raw'] == (1 if installed else 3), result['raw'])
+        self.check('wizard-final-quiescence', result['interests'] == result['requests'] == result['queue'] == 0
+                   and result['state'] == 'Idle' and not result['workerRunning']
+                   and extra['interests'] == extra['requests'] == extra['queue'] == 0
+                   and extra['state'] == 'Idle' and not extra['workerRunning'], dict(main=result, extra=extra))
         return result
 
     def wallpaper_setup(self):
@@ -909,6 +1026,8 @@ def main():
             run.remote_red()
         elif args.case == 'wallpaper-remote':
             run.wallpaper_remote()
+        elif args.case in ('wallpaper-wizard', 'wizard-red'):
+            run.wallpaper_wizard()
         elif args.case == 'owner':
             run.owner()
         elif args.case == 'legacy':

@@ -73,29 +73,14 @@ SmartPanel {
   }
 
   function prepareCapturedSetup(work, complete, requestId) {
-    try {
-      if (work.wallpaperDirectory !== Settings.data.wallpaper.directory) {
-        Settings.data.wallpaper.directory = work.wallpaperDirectory;
-        if (typeof WallpaperService !== "undefined") WallpaperService.refreshWallpapersList();
-      }
-      if (work.wallpaper !== "" && typeof WallpaperService !== "undefined")
-        WallpaperService.changeWallpaper(work.wallpaper, undefined);
-      Settings.saveSetupWork(work, function (result) {
-        if (result.status === "saved" || result.status === "nothing_to_save") Version.markChangelogSeen(Version.currentVersion);
-        complete(result);
-      }, requestId);
-    } catch (error) {
-      complete({status: "failed", error: {code: "setup-save"}});
-    }
+    SetupService.prepareCapturedSetup(work, complete, requestId);
   }
 
   function retryRetainedHead() {
     if (BindingsService.state !== "Stopped")
       return;
-    if (BindingsService.headRequestId === root._submittedId)
-      BindingsService.retryHead(root.consumeResult);
-    else
-      BindingsService.retryHead(); // another caller's completion cannot close us
+    // requestFinished is lifetime-bound and filters this wizard's request.
+    BindingsService.retryHead();
   }
 
   function completeSetup() {
@@ -104,24 +89,34 @@ SmartPanel {
       return;
     }
     root._seenAttempt = 0;
-    root._submittedWork = { "scaleRatio": root.selectedScaleRatio, "barPosition": root.selectedBarPosition,
-      "wallpaperDirectory": root.selectedWallpaperDirectory, "wallpaper": root.selectedWallpaper };
-    root._submittedId = BindingsService.requestEnvironment(root.selectedBindingEnvironment, root.consumeResult,
-      { "context": root.submissionContext, "work": root._submittedWork, "prepare": root.prepareCapturedSetup });
+    root._submittedWork = {
+      "scaleRatio": root.selectedScaleRatio,
+      "barPosition": root.selectedBarPosition,
+      "wallpaperDirectory": root.selectedWallpaperDirectory,
+      "wallpaper": root.selectedWallpaper
+    };
+    root._submittedId = BindingsService.requestEnvironment(root.selectedBindingEnvironment, null, {
+                                                             "context": root.submissionContext,
+                                                             "work": root._submittedWork,
+                                                             "prepare": SetupService.prepareCapturedSetup
+                                                           });
   }
 
   function applyWallpaperSettings() {
-    if (root.workOutstanding) return;
+    if (root.workOutstanding)
+      return;
     if (root.selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
       Settings.data.wallpaper.directory = root.selectedWallpaperDirectory;
-      if (typeof WallpaperService !== "undefined") WallpaperService.refreshWallpapersList();
+      if (typeof WallpaperService !== "undefined")
+        WallpaperService.refreshWallpapersList();
     }
     if (root.selectedWallpaper !== "" && typeof WallpaperService !== "undefined")
       WallpaperService.changeWallpaper(root.selectedWallpaper, undefined);
   }
 
   function applyUISettings() {
-    if (root.workOutstanding) return;
+    if (root.workOutstanding)
+      return;
     Settings.data.general.scaleRatio = root.selectedScaleRatio;
     Settings.data.bar.position = root.selectedBarPosition;
   }
@@ -131,7 +126,8 @@ SmartPanel {
   Connections {
     target: BindingsService
     function onRequestFinished(requestId, attemptId, environment, success, error) {
-      if (requestId === root._submittedId) root.consumeResult(success, error, requestId, attemptId);
+      if (requestId === root._submittedId)
+        root.consumeResult(success, error, requestId, attemptId);
     }
   }
 
@@ -182,7 +178,10 @@ SmartPanel {
             "label": I18n.tr("setup.bindings.title"),
             "description": I18n.tr("setup.bindings.subtitle"),
             "resetKey": "bindings",
-            "reset": function () { if (!root.workOutstanding) root.selectedBindingEnvironment = "none"; },
+            "reset": function () {
+              if (!root.workOutstanding)
+                root.selectedBindingEnvironment = "none";
+            },
             "content": bindingsContent
           },
           {
@@ -252,7 +251,10 @@ SmartPanel {
       SetupBindingsStep {
         selection: root.selectedBindingEnvironment
         selectionEnabled: !root.workOutstanding
-        select: function (choice) { if (!root.workOutstanding) root.selectedBindingEnvironment = choice; }
+        select: function (choice) {
+          if (!root.workOutstanding)
+            root.selectedBindingEnvironment = choice;
+        }
       }
     }
 
