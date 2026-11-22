@@ -142,7 +142,7 @@ Item {
             return `${meta.fmt} • ${meta.w}×${meta.h} • ${meta.size}`;
           // Fallback to basic info
           const format = (currentItem?.mime || "image").split("/")[1]?.toUpperCase() || "Image";
-          return `${format} • ${previewImage.implicitWidth}×${previewImage.implicitHeight}`;
+          return `${format} • ${previewImage.imageResult.width || 0}×${previewImage.imageResult.height || 0}`;
         }
         pointSize: Style.fontSizeS
         color: AtmoColor.mOnSurfaceVariant

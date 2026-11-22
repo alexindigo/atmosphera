@@ -20,7 +20,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -124,7 +124,7 @@ class Run:
             (legacy / 'thumbnails/mpvpaper').mkdir(parents=True)
             (legacy / 'large/legacy-key.png').write_bytes((inputs / 'frame-0.png').read_bytes())
             (legacy / 'thumbnails/mpvpaper/plugin.bmp').write_bytes(b'plugin-owned')
-        if self.args.case in ('icons-red', 'icons', 'artwork-red', 'artwork'):
+        if self.args.case in ('icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher'):
             # Real XdgIcon loose-icon lookup in the private XDG data root.
             themes = profile / 'data/icons'
             themes.mkdir(parents=True)
@@ -214,6 +214,9 @@ class Run:
                 'Modules/FileChooser/FileAppOptions.qml', 'Modules/Cards/MediaCard.qml', 'Modules/Panels/Media/MediaPlayerPanel.qml',
                 'Modules/Panels/Settings/DesktopWidgets/WidgetSettings/AppShortcutSettings.qml',
                 'Modules/Panels/Settings/Tabs/Dock/AppearanceSubTab.qml', 'builtin/plugins/demo-custom-lockscreen/LockScreenView.qml')]
+        if self.args.case == 'launcher':
+            lint_paths += [str(shell / p) for p in ('Modules/Panels/Launcher/LauncherListDelegate.qml',
+                'Modules/Panels/Launcher/LauncherGridDelegate.qml', 'Modules/Panels/Launcher/ClipboardPreview.qml')]
         if self.args.case == 'chooser':
             lint_paths += [str(shell / p) for p in ('Services/Files/FileTypes.qml', 'Services/Files/FileThumbnails.qml',
                 'Services/Files/FileThumbnail.qml', 'Services/UI/ImageWorker.qml', 'Modules/FileChooser/FileEntryArtwork.qml',
@@ -1471,6 +1474,38 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('app-options-theme-icon-webp-presented', options['art'] > 15, options)
         return result
 
+    def launcher(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        red = self.args.case == 'launcher-red'
+        if red and self.args.baseline_source is None:
+            raise ValueError('Launcher red requires an explicit immutable baseline source')
+        result, output = self.qt(self.args.baseline_source if red else self.args.source,
+                                 self.args.source / 'Scripts/dev/fixtures/image-decoding/launcher.qml', inputs, self.args.case)
+        def near(actual, expected, tolerance=8):
+            return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
+        def counts(name):
+            width, height, pixels = read_png(output / (name + '.png'))
+            rows = [pixels[i * 4:i * 4 + 4] for i in range(width * height)]
+            return dict(art=sum(near(p, COLORS[0]) for p in rows), icon=sum(near(p, COLORS[1]) for p in rows),
+                        warning=sum(near(p, result['warningColor']) for p in rows))
+        self.check('launcher-rows-instantiated', result['listCount'] == result['gridCount'] == 3, result)
+        for view in ('list', 'grid'):
+            failed = counts(view + '-failed')
+            if red:
+                self.check(view + '-failed-art-shows-ordinary-icon', failed['icon'] > 50 and failed['warning'] == 0,
+                           failed, red=True)
+                continue
+            art, noart = counts(view + '-art'), counts(view + '-noart')
+            self.check(view + '-art-presented', art['art'] > 50 and art['warning'] == 0 and art['icon'] == 0, art)
+            self.check(view + '-failed-art-distinct-labelled', failed['warning'] > 10 and failed['icon'] == 0
+                       and failed['art'] == 0, failed)
+            self.check(view + '-no-art-ordinary-icon', noart['icon'] > 50 and noart['warning'] == 0, noart)
+        return result
+
     def owner(self):
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
@@ -1583,6 +1618,8 @@ def main():
             run.icons()
         elif args.case in ('artwork-red', 'artwork'):
             run.artwork()
+        elif args.case in ('launcher-red', 'launcher'):
+            run.launcher()
         elif args.case in ('cache-clear-red', 'cache-clear'):
             run.cache_clear()
         elif args.case == 'owner':
