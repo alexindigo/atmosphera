@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Image decoding end-consumer regression controller; explicit owned guest only."""
 import argparse
+import base64
 import json
 import os
 from pathlib import Path
@@ -67,12 +68,13 @@ class Run:
         if not condition:
             raise AssertionError(name + ': ' + json.dumps(detail))
 
-    def qt(self, source, fixture, inputs, name):
+    def qt(self, source, fixture, inputs, name, extra_env=None, assembled=False):
         # Actual production imports are copied, never mocked or rewritten. Only
         # the separate test entry and private XDG preferences are synthesized.
-        shell = self.work / name
+        shell = source if assembled else self.work / name
         before = source_manifest(source)
-        shutil.copytree(source, shell, symlinks=True, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+        if not assembled:
+            shutil.copytree(source, shell, symlinks=True, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
         after = source_manifest(shell)
         if before != after:
             raise AssertionError('Copied consumer tree differs')
@@ -93,11 +95,13 @@ class Run:
         output = self.out / name
         output.mkdir()
         env = dict(os.environ, **self.profile.child_environment('image-'),
-                   QML_DISABLE_DISK_CACHE='1', QT_QPA_PLATFORM='wayland', IMAGE_FIXTURES=str(inputs), IMAGE_OUTPUT=str(output),
+                    QML_DISABLE_DISK_CACHE='1', QT_QPA_PLATFORM='wayland', IMAGE_FIXTURES=str(inputs), IMAGE_OUTPUT=str(output),
+                    IMAGE_DATA='data:image/jpeg;base64,' + base64.b64encode((inputs / 'Still.webp').read_bytes()).decode(),
                    ATMOSPHERA_CONFIG_DIR=str(profile / 'config') + '/', ATMOSPHERA_CACHE_DIR=str(profile / 'cache') + '/',
                    ATMOSPHERA_STATE_DIR=str(profile / 'state') + '/', ATMOSPHERA_SETTINGS_FILE=str(profile / 'config/settings.json'),
                    XDG_CONFIG_HOME=str(profile / 'config'), XDG_CACHE_HOME=str(profile / 'cache'),
-                   XDG_STATE_HOME=str(profile / 'state'), XDG_DATA_HOME=str(profile / 'data'), TMPDIR=str(profile / 'tmp'))
+                    XDG_STATE_HOME=str(profile / 'state'), XDG_DATA_HOME=str(profile / 'data'), TMPDIR=str(profile / 'tmp'))
+        env.update(extra_env or {})
         argv = ['qs', '-p', str(entry)]
         with (output / 'qt.log').open('w') as log:
             proc = subprocess.Popen(argv, env=env, cwd=shell, start_new_session=True, stdout=log, stderr=subprocess.STDOUT)
@@ -129,7 +133,11 @@ class Run:
         vfs = (shell / '.qmlls.ini').resolve(strict=True).parent
         if not vfs.is_relative_to(self.profile.runtime_base) or not (vfs / 'qs/Commons/qmldir').is_file():
             raise AssertionError('Consumer did not generate authoritative QML tooling')
-        lint = self.command(['bash', str(shell / 'Scripts/dev/qmllint.sh'), str(entry)], timeout=900,
+        lint_paths = [str(entry)]
+        if self.args.case == 'owner':
+            lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageSource.qml',
+                                                    'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml')]
+        lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
                             cwd=shell, env=dict(env, QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
         if lint.returncode or 'Failed to import qs.' in lint.stderr:
@@ -200,6 +208,91 @@ class Run:
                        max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8, dict(center=center, expected=COLORS[0]))
         return result
 
+    def owner(self):
+        installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
+        self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
+        inputs = self.work / 'fixtures'
+        manifest = create_fixtures(inputs, self.commands)
+        (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/owner.qml', inputs, 'owner')
+        self.check('raw-webp-package-control', result['raw'] == (1 if installed else 3), result['raw'])
+        for i, row in enumerate(result['formats']):
+            consumer, center = row['consumer'], pixel(output / f'format-{i}.png')
+            self.check('owner-format-' + row['name'], consumer['state'] == 'ready' and consumer['status'] == 1
+                       and consumer['result']['generation'] == consumer['generation']
+                       and max(abs(a - b) for a, b in zip(center, COLORS[0])) <= 8,
+                       dict(consumer=consumer, center=center))
+        webp = result['formats'][0]['consumer']
+        self.check('native-first-or-independent-fallback', webp['result']['origin'] == ('native' if installed else 'fallback')
+                   and (installed or webp['result']['format'] == 'png'), webp)
+        self.check('opaque-provider-failure-is-explicit', result['provider']['state'] == 'unavailable'
+                   and result['provider']['errorCode'] == 'provider-failed' and not result['provider']['url'], result['provider'])
+        for name in ('corrupt', 'missing'):
+            row = result[name]
+            self.check('owner-' + name + '-failure', row['state'] == 'unavailable' and bool(row['errorReason']) and not row['url'], row)
+        self.check('disabled-is-idle-not-failure', result['disabled']['state'] == result['sharedA']['state'] == 'idle', result['disabled'])
+        self.check('source-replacement-pixels', result['replacing']['state'] == 'ready'
+                   and pixel(output / 'replacing.png') == list(COLORS[1]), result['replacing'])
+        self.check('retired-generation-rejected', result['staleRejected'], result['staleRejected'])
+        self.check('last-interest-retains-result', result['sharedB']['state'] == 'ready'
+                   and pixel(output / 'shared-survivor.png') == list(COLORS[0]), result['sharedB'])
+        self.check('data-source-ignores-mime-hint', result['data']['state'] == 'ready'
+                   and pixel(output / 'data.png') == list(COLORS[0]), result['data'])
+        self.check('still-representation-is-frame-zero', result['firstFrame']['result']['frames'] == 1
+                   and pixel(output / 'first-frame.png') == list(COLORS[0]), result['firstFrame'])
+        motion = result['motion']
+        self.check('owner-motion-pause-retains-representation', result['pausePreserved'], result['pausePreserved'])
+        events = result['events']
+        centers = [pixel(path) for path in output.glob('motion-*.png')]
+        self.check('owner-preserved-animation', motion['state'] == 'ready' and motion['frameCount'] == 3
+                   and motion['result']['frames'] == 3 and motion['result']['delaysMs'] == manifest['delaysMs']
+                   and len(events) >= 6 and all(b['frame'] == (a['frame'] + 1) % 3 for a, b in zip(events, events[1:]))
+                   and {tuple(p) for p in centers} == set(COLORS)
+                   and (installed or motion['result']['format'] == 'gif'), dict(consumer=motion, events=events, centers=centers))
+        self.check('owner-retirement-shuts-worker', result['finalInterests'] == result['finalRequests'] == 0
+                   and not result['workerRunning'], result)
+        for mode, code in (('malformed', 'worker-protocol'), ('shape', 'worker-protocol'), ('death', 'worker-exit')):
+            shim = self.work / ('fault-' + mode)
+            shim.mkdir()
+            executable = shim / 'python3'
+            # Replace only this fixture's first worker process. Qt's genuine
+            # codec condition is unchanged; a later explicit request invokes
+            # the actual production worker through the unchanged Python CLI.
+            executable.write_text('#!/usr/bin/python3\nimport json,os,sys\nfrom pathlib import Path\n'
+                f'marker=Path({str(shim / "started")!r})\n'
+                'if sys.argv[-1].endswith("/image-worker.py") and not marker.exists():\n'
+                ' marker.touch()\n print(json.dumps({"event":"ready"}),flush=True)\n sys.stdin.readline()\n'
+                + (' print(' + repr('not-json' if mode == 'malformed' else '{}') + ',flush=True)\n sys.stdin.read()\n sys.exit(0)\n'
+                   if mode in ('malformed', 'shape') else ' os._exit(13)\n')
+                + 'os.execv("/usr/bin/python3",["python3",*sys.argv[1:]])\n')
+            executable.chmod(0o755)
+            failure, failure_output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/owner-fault.qml',
+                inputs, 'owner-' + mode, dict(PATH=str(shim) + ':' + os.environ['PATH']))
+            self.check('owner-' + mode + '-settles-without-loop', failure['first']['status'] == 'unavailable'
+                       and failure['first']['code'] == code and failure['deliveries'] == 1, failure)
+            self.check('owner-' + mode + '-explicit-retry', failure['retry']['state'] == 'ready'
+                       and pixel(failure_output / 'retry.png') == list(COLORS[0])
+                       and failure['finalInterests'] == failure['finalRequests'] == 0 and not failure['workerRunning'], failure)
+        # The independent locker installs a reviewed subset, not a link to all
+        # shell services. Exercise the same source API in that assembled graph
+        # without starting a session lock or authentication operation.
+        stage = self.work / 'locker-stage'
+        packaged = self.command(['bash', '-eu', '-c', 'source "$1/packaging/aur/package.sh"; package', 'stage', self.args.source],
+            timeout=90, env=dict(os.environ, srcdir=str(self.args.source.parent), _gitname=self.args.source.name,
+                                pkgdir=str(stage), pkgver=(self.args.source / 'VERSION').read_text().strip()))
+        self.check('owner-locker-package-assembly', packaged.returncode == 0, dict(exit=packaged.returncode, stderr=packaged.stderr))
+        lock = stage / 'etc/xdg/quickshell/atmosphera-lockscreen'
+        self.check('owner-locker-minimal-graph', not (lock / 'Services/Plugins').exists()
+                   and not (lock / 'Portals').exists(), dict(root=str(lock)))
+        locked, lock_output = self.qt(lock, self.args.source / 'Scripts/dev/fixtures/image-decoding/owner.qml',
+                                     inputs, 'owner-locker', assembled=True)
+        centers = [pixel(path) for path in lock_output.glob('motion-*.png')]
+        self.check('owner-locker-standalone-consumer', locked['motion']['state'] == 'ready'
+                   and locked['motion']['frameCount'] == 3 and {tuple(p) for p in centers} == set(COLORS)
+                   and all(row['consumer']['state'] == 'ready' for row in locked['formats'])
+                   and locked['finalInterests'] == locked['finalRequests'] == 0 and not locked['workerRunning'], locked)
+        return result
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -217,6 +310,8 @@ def main():
     try:
         if args.case == 'red':
             run.red()
+        elif args.case == 'owner':
+            run.owner()
         else:
             raise NotImplementedError('Required image cohort not implemented: ' + args.case)
         current = {key: source_manifest(path) for key, path in

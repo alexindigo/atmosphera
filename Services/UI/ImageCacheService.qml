@@ -16,6 +16,22 @@ Singleton {
   property bool imageMagickAvailable: false
   property bool initialized: false
 
+  // Additive source protocol; legacy conversion adapters migrate cohort by
+  // cohort, without switching existing consumers before their endpoint proof.
+  readonly property bool sourceWorkerRunning: sourceWorker.running
+  readonly property int sourceInterestCount: sourceWorker.interestCount
+  readonly property int sourceRequestCount: sourceWorker.requestCount
+  readonly property var sourceStatistics: sourceWorker.statistics
+  function acquireSource(request, callback) {
+    return sourceWorker.acquire(request, callback);
+  }
+  function releaseSource(token) {
+    sourceWorker.release(token);
+  }
+  ImageWorker {
+    id: sourceWorker
+  }
+
   // Cache directories
   readonly property string baseDir: Settings.cacheDir + "images/"
   readonly property string wpThumbDir: baseDir + "wallpapers/thumbnails/"
@@ -522,7 +538,7 @@ Singleton {
 
       onStatusChanged: {
         if (!cacheKey)
-        return;
+          return;
 
         if (status === Image.Ready) {
           grabToImage(function (result) {

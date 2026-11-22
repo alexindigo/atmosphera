@@ -27,6 +27,7 @@ Helpers/LockerSettingsInput.js
 Helpers/NiriEdgeNavigation.js
 Helpers/OwnedProcess.js
 Helpers/OwnedProcessChild.qml
+Helpers/PortalPaths.js
 Helpers/QtObj2JS.js
 Helpers/SettingsDefaults.js
 Helpers/SettingsDraftEditor.js
@@ -77,6 +78,8 @@ Services/Theming/TemplateProcessor.qml
 Services/Theming/TemplateRegistry.qml
 Services/UI/IconRegistry.qml
 Services/UI/ImageCacheService.qml
+Services/UI/ImageSource.qml
+Services/UI/ImageWorker.qml
 Services/UI/PanelService.qml
 Services/UI/ToastService.qml
 Services/UI/TooltipService.qml
@@ -91,6 +94,7 @@ Widgets/AudioSpectrum/NMirroredSpectrum.qml
 Widgets/AudioSpectrum/NWaveSpectrum.qml
 Widgets/NButton.qml
 Widgets/NClock.qml
+Widgets/NImage.qml
 Widgets/NImageRounded.qml
 Widgets/NText.qml
 builtin/plugins/demo-custom-lockscreen/LockScreenView.qml
