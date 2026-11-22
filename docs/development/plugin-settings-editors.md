@@ -544,6 +544,28 @@ pidof and hyprctl endpoints are inert. Finite parsed field/caller/owner controls
 supplement, not replace, those consumer observations. No physical, broad visual/
 translation or whole-catalog acceptance follows.
 
+## Admitted managed-resource policy
+
+Agent Session Status keeps one server and in-memory session store. Applied
+Settings or an originating Restart admits address, typed port and token before
+the restart delay, waits for the old process and fences old HTTP responses.
+Per-context pollers retain the original int-seconds/minimum-one policy; all views
+observe the active service's common snapshot. Prune uses its admitted credentials.
+Restart still clears sessions and is explicitly described as a shared effect.
+
+Clamshell keeps one niri output observer and inhibitor. Applied Settings or
+originating runtime toggles select enabled, connector, who and notification
+policy; toggles retain their native API writer. A page completion never resaves
+through Main. Replacement waits for old-inhibitor exit. Retirement stops the
+admitted effect without retiring common observation or retargeting another API.
+Both instance pages explain the common machine/resource effects; no content or
+stored configuration is migrated.
+
+The resource drivers separate finite every-field/caller/owner mappings, actual
+scoped pages/native documents/nonpublishing cold engines and individual retained
+restart/HTTP/inhibitor lifetimes. Controlled service and inhibitor endpoints are
+not the host MCP, a real logind inhibitor or physical/broad visual acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
