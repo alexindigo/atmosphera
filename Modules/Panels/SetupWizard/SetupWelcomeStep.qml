@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import qs.Commons
 import qs.Widgets
 
@@ -27,29 +26,13 @@ ColumnLayout {
       scale: 1.3
     }
 
-    Image {
+    // The brand glyph shipped in the shell's icon set
+    AtmoIcon {
       anchors.centerIn: parent
-      width: 110
-      height: 110
-      source: Qt.resolvedUrl(Quickshell.shellDir + "/Assets/atmosphera.svg")
-      fillMode: Image.PreserveAspectFit
-      smooth: true
-
-      Rectangle {
-        anchors.fill: parent
-        color: AtmoColor.mSurfaceVariant
-        radius: width / 2
-        border.color: AtmoColor.mOutline
-        border.width: Style.borderM
-        visible: parent.status === Image.Error
-
-        AtmoIcon {
-          icon: Icon.featured
-          pointSize: Style.fontSizeXXL * 1.5
-          color: AtmoColor.mPrimary
-          anchors.centerIn: parent
-        }
-      }
+      icon: Icon.atmosphera
+      pointSize: 82
+      applyUiScale: false
+      color: AtmoColor.mPrimary
 
       SequentialAnimation on scale {
         running: true

@@ -229,22 +229,6 @@
   },
   {
    "repository": "shell",
-   "path": "Modules/Panels/Settings/Tabs/About/VersionSubTab.qml",
-   "rule": "native-image",
-   "node": "Image",
-   "nodeSha256": "f7cb734f374becfc2c10182fed9ad89cf8466c358ad6f57a627d448b2b8327c7",
-   "line": 364,
-   "disposition": "missing-packaged-asset",
-   "reason": "Literal packaged logo path; Assets/atmosphera.svg has never been shipped (pre-existing on origin/main), so nothing is decoded.",
-   "assets": [
-    {
-     "path": "Assets/atmosphera.svg",
-     "missing": true
-    }
-   ]
-  },
-  {
-   "repository": "shell",
    "path": "Modules/Panels/Settings/Tabs/Connections/BluetoothSubTab.qml",
    "rule": "text-markup",
    "node": "NText",
@@ -262,22 +246,6 @@
    "line": 163,
    "disposition": "shell-authored-markup",
    "reason": "Translation markup written by the shell; the only data (the Bluetooth host name) is escaped."
-  },
-  {
-   "repository": "shell",
-   "path": "Modules/Panels/SetupWizard/SetupWelcomeStep.qml",
-   "rule": "native-image",
-   "node": "Image",
-   "nodeSha256": "6f1103e001b446c07096fa11940901e605055c4219416c2a23d7f3b920f3a440",
-   "line": 30,
-   "disposition": "missing-packaged-asset",
-   "reason": "Literal packaged logo path; Assets/atmosphera.svg has never been shipped (pre-existing on origin/main), so nothing is decoded.",
-   "assets": [
-    {
-     "path": "Assets/atmosphera.svg",
-     "missing": true
-    }
-   ]
   },
   {
    "repository": "shell",
@@ -626,22 +594,6 @@
      "path": "catwalk/Panel.qml",
      "name": "idleIcons",
      "sha256": "00e8aa3d2a629db6b98c49e4ea7cc26b1b0d62d833d4fdae216a046a261ec68f"
-    }
-   ]
-  },
-  {
-   "repository": "plugins",
-   "path": "claude-code-panel/Panel.qml",
-   "rule": "native-image",
-   "node": "Image",
-   "nodeSha256": "5fe6dc4505b5fb3b4b352fc1f4a921ff9482e0a460195f58471a9f7c612337a0",
-   "line": 696,
-   "disposition": "missing-packaged-asset",
-   "reason": "Literal packaged logo path; claude-code-panel/assets/claude.svg has never been shipped (pre-existing), so nothing is decoded.",
-   "assets": [
-    {
-     "path": "claude-code-panel/assets/claude.svg",
-     "missing": true
     }
    ]
   },
