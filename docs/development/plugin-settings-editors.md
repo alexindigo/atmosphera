@@ -495,6 +495,31 @@ keyboard binary/delayed-show and real private-bus monitor retirement. Compositor
 keyboard, preemption, gsettings and dconf endpoints are inert. These are not
 physical, broad visual/translation or whole-catalog proofs.
 
+## Selected device request and completion policy
+
+USB Drive Manager keeps one udev/lsblk/df observation and mount/unmount/eject
+owner. Panel/card, Bar and Control Center actions carry their originating browser,
+terminal and notification policy. Completion and debounce retain that admission,
+not a later caller's preferences. Accepted Settings completion selects automatic
+policy; merely constructing a view does not. Automatic startup stays plugin-level.
+Retiring automatic policy fences mounts without stopping pure device observation.
+The existing pre-enumeration auto-mount timing is unchanged.
+
+Supergfxctl keeps one CLI/state/mode owner and one NotificationServer. Context-keyed
+clients select polling through the original QML bool/int boundary. Queries and
+mode commands capture patch/debug policy for parsing, completion and follow-up;
+retired contexts cannot publish responses or start later requests. An ephemeral
+manual-request record is distinct from daemon-reported pending state. The disabled
+rogcc notification preference remains stored and disabled, not implemented here.
+Both instance pages explain that physical effects and observations are shared.
+
+The device drivers separate finite every-field/caller/owner mappings, actual
+Settings/native documents and nonpublishing cold readers, omitted-origin controls,
+held action/parser/mode stages, typed schedules and real private-bus notifications.
+udev, devices, mounts, terminals, browsers and GPU CLI endpoints are inert. These
+are selected consumer/lifetime proofs, not physical, broad visual/translation or
+whole-catalog acceptance.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
