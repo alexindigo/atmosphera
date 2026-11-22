@@ -11,6 +11,7 @@ import tempfile
 from urllib.parse import unquote, unquote_to_bytes, urlsplit
 
 from .process import command, CommandError
+from .storage import directory as cache_directory, descriptor_path
 
 
 class SourceError(Exception):
@@ -37,10 +38,9 @@ def local_path(source):
 @asynccontextmanager
 async def prepare(source, root, revision='', emit=lambda event: None, follow_symlinks=True):
     root = Path(root)
-    root.mkdir(mode=0o700, parents=True, exist_ok=True)
     # The safe operation-private basename is intentional: brackets, colon and
     # leading '-' in the user's filename never reach ImageMagick's parser.
-    with tempfile.TemporaryDirectory(prefix='.source-', dir=root) as directory:
+    with cache_directory(root) as staging, tempfile.TemporaryDirectory(prefix='.source-', dir=descriptor_path(staging)) as directory:
         directory = Path(directory)
         target = directory / 'source.bin'
         path, before = None, None

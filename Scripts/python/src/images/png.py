@@ -8,9 +8,10 @@ import hashlib
 import os
 from pathlib import Path
 import struct
-import tempfile
 from urllib.parse import quote_from_bytes
 import zlib
+
+from .storage import atomic_write
 
 PNG = b'\x89PNG\r\n\x1a\n'
 BUCKETS = ((128, 'normal'), (256, 'large'), (512, 'x-large'), (1024, 'xx-large'))
@@ -145,24 +146,3 @@ def with_metadata(data, attributes):
 
 def empty_png():
     return PNG + chunk(b'IHDR', struct.pack('!IIBBBBB', 1, 1, 8, 6, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(b'\0\0\0\0\0')) + chunk(b'IEND', b'')
-
-
-def atomic_write(path, data, root):
-    root = Path(root)
-    root.mkdir(mode=0o700, parents=True, exist_ok=True)
-    folder = root
-    folder.chmod(0o700)
-    for part in path.parent.relative_to(root).parts:
-        folder = folder / part
-        folder.mkdir(mode=0o700, exist_ok=True)
-        folder.chmod(0o700)
-    fd, temporary = tempfile.mkstemp(prefix='.atmosphera-', dir=path.parent)
-    try:
-        with os.fdopen(fd, 'wb') as stream:
-            os.fchmod(stream.fileno(), 0o600)
-            stream.write(data)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, path)
-    finally:
-        Path(temporary).unlink(missing_ok=True)

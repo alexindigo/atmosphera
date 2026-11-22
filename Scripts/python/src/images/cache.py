@@ -18,6 +18,7 @@ from .png import (atomic_write, bucket, cache_name, canonical_uri, empty_png,
                   metadata, png_chunks, validate as validate_png, with_metadata)
 from .process import command, CommandError
 from .sources import prepare, identity, SourceError
+from .storage import directory as cache_directory, descriptor_path
 
 SCHEMA = 2
 
@@ -71,8 +72,7 @@ class Cache:
             return False
 
     async def command(self, argv):
-        self.staging.mkdir(parents=True, mode=0o700, exist_ok=True)
-        with tempfile.TemporaryDirectory(dir=self.staging, prefix='.video-command-') as folder:
+        with cache_directory(self.staging) as staging, tempfile.TemporaryDirectory(dir=descriptor_path(staging), prefix='.video-command-') as folder:
             output = await command(argv, folder, self.timeout)
             return output.read_bytes()
 

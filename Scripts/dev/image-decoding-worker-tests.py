@@ -320,6 +320,65 @@ def main():
             self.assertEqual(outside.read_bytes(), data)
             self.assertFalse(target.is_symlink())
 
+        async def test_cache_output_parent_symlink_never_writes_or_chmods_source_directory(self):
+            outside = self.folder / 'user-originals'
+            outside.mkdir(mode=0o755)
+            sentinel = outside / 'original.png'
+            sentinel.write_bytes((fixtures / 'frame-1.png').read_bytes())
+            self.cache.private.mkdir(parents=True)
+            (self.cache.private / 'still').symlink_to(outside, target_is_directory=True)
+            try:
+                with self.assertRaises(OSError):
+                    await self.cache.render(self.request())
+                self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+                self.assertEqual(list(outside.iterdir()), [sentinel])
+                self.assertEqual(sentinel.read_bytes(), (fixtures / 'frame-1.png').read_bytes())
+            finally:
+                self.events.append(dict(outsideMode=outside.stat().st_mode & 0o777,
+                                        outsideNames=sorted(path.name for path in outside.iterdir())))
+
+        async def test_cache_staging_symlink_never_admits_decoder_work(self):
+            outside = self.folder / 'user-originals'
+            outside.mkdir(mode=0o755)
+            self.cache.private.mkdir(parents=True)
+            self.cache.staging.symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(OSError):
+                await self.cache.render(self.request())
+            self.assertFalse(any(row.get('event') == 'command' for row in self.events))
+            self.assertEqual(list(outside.iterdir()), [])
+            self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+
+        async def test_atomic_cache_parent_swap_keeps_write_bound_and_refuses_publication(self):
+            from images.storage import atomic_write
+            outside, parent, held = (self.folder / name for name in ('originals', 'cache/normal', 'held-cache'))
+            outside.mkdir(mode=0o755)
+            parent.mkdir(parents=True)
+            sentinel = outside / 'source.png'
+            sentinel.write_bytes(b'original source bytes')
+            replace = os.replace
+            def swap(source, target, **directories):
+                parent.rename(held)
+                parent.symlink_to(outside, target_is_directory=True)
+                return replace(source, target, **directories)
+            with patch.object(os, 'replace', swap), self.assertRaises(OSError):
+                atomic_write(parent / 'result.png', empty_png(), self.folder / 'cache')
+            self.assertEqual(list(outside.iterdir()), [sentinel])
+            self.assertEqual(sentinel.read_bytes(), b'original source bytes')
+            self.assertEqual(outside.stat().st_mode & 0o777, 0o755)
+            self.assertEqual((held / 'result.png').read_bytes(), empty_png())
+            self.assertEqual(list(held.glob('.atmosphera-*')), [])
+
+        async def test_atomic_cache_collision_never_unlinks_another_writer_staging(self):
+            from images.storage import atomic_write
+            parent = self.folder / 'cache/normal'
+            parent.mkdir(parents=True)
+            foreign = parent / '.atmosphera-controlled-collision'
+            foreign.write_bytes(b'another writer owns these bytes')
+            with patch('images.storage.secrets.token_hex', return_value='controlled-collision'), self.assertRaises(FileExistsError):
+                atomic_write(parent / 'result.png', empty_png(), self.folder / 'cache')
+            self.assertEqual(foreign.read_bytes(), b'another writer owns these bytes')
+            self.assertFalse((parent / 'result.png').exists())
+
         async def test_thumbnail_independent_processes_publish_complete_freedesktop_png(self):
             workers, identities, replies = [], [], []
             cache = self.folder / 'shared/thumbnails'
