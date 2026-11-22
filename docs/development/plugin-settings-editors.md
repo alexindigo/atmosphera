@@ -612,6 +612,29 @@ typed projection, held replacement, coalesced decode and retirement cases use
 inert clipboard/shell endpoints, intercepted before original temporary-file shell
 redirections. These are not physical clipboard or broad visual/translation proofs.
 
+## Selected OBS policy over shared output state
+
+OBS Control keeps one Main-owned connection, credential reader, managed-launch
+state and physical process/status domain. Main-owned context clients select its
+seventeen presentation, polling and action fields. Bar, Control Center, its child
+button and Panel resolve the same API-keyed client; opening a Panel carries the
+originating runtime API. Main/IPC and the explicitly plugin-level Settings gear
+remain shared. A client's retirement does not stop common status observation.
+
+Action entry captures launch and resolved video/opener policy before probing.
+The same operation identity/current-context fence covers WebSocket status/action,
+four-output auto-close, termination, delayed confirmation and later Toast action.
+Configuration replacement cannot retarget those stages. Managed-launch state
+records the start's admitted choice, not a later view's preference. No new OBS
+owner, preference store, credentials or content migration is introduced.
+
+The OBS drivers join actual combo intent, complete native documents and separate
+nonpublishing cold engines to actual Bar Text/CC visibility and child identities
+in both scopes. Individual typed/poll/action/held-stage/Toast lifetimes use one
+loopback protocol and inert executable endpoints. The finite parsed checker maps
+every field, caller and physical owner with rejecting controls. These are not
+physical OBS, broad visual/translation or final catalog proofs.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
