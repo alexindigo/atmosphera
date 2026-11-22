@@ -656,6 +656,27 @@ with plugin-settings-niri-group-check.py --plugin niri-auto-tile --selftest.
 Screensaver remains parked for native completion qualification, not covered
 by Auto-Tile acceptance. No physical or broad visual/translation claim.
 
+## Shared Sticky Notes synchronization
+
+Sticky Notes keeps one Main-owned notes set, cache, expanded window, Gist ID and
+sync status. Instance Settings identifies the shared effect and disables its
+otherwise ineffective sync/token controls. Configure those in Settings > Plugins;
+legacy overrides and content stay untouched. Sync now retains its accepted-Apply
+completion gate and explicitly updates the same shared notes/Gist owner.
+
+Each operation captures notes, token and target, retaining Main's native runtime
+context. Credential, Gist or owner replacement cancels pending requests and fences
+every HTTP continuation and native Gist-ID publication. The utility has no live
+native writer; Main retains that responsibility. Automatic and explicit sync keep
+their existing enabled/missing-token/busy policies. No notes/content migration.
+
+The sticky native driver joins both actual page scopes and native configuration
+files to real rendered common notes and loopback Gist requests. Separate cold
+readers, field/whole configuration Reset and retained-request/source/destruction
+cases supplement the finite four-field/caller/owner contract. Original ineffective
+instance controls and late credential-replacement requests have independent reds.
+All endpoints are inert, not GitHub-account, broad visual or final catalog proof.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
