@@ -25,9 +25,10 @@ function context(lifetime, readSettings, current) {
     // The JS token outlives its QObject. Never invoke a retained owner callback
     // after destruction, even to ask that destroyed owner whether it is current.
     Object.defineProperty(result, "settingsView", {get: function () {
-        return lifetime.alive ? readSettings() : retiredValues;
+        return lifetime.alive && current() === true ? readSettings() : retiredValues;
     }, enumerable: true});
-    // Identity is the captured API, not configuration equality or a row index.
+    // Identity includes the API's captured incarnation, never configuration
+    // equality or a current row index. Both callbacks use the same admission.
     Object.defineProperty(result, "current", {value: function () {
         return lifetime.alive && current() === true;
     }});
