@@ -715,6 +715,28 @@ the existing raw filesystem and full runtime failure/cold cases. These use
 disposable files and inert effect collaborators, not the user's shell or physical
 wallpapers, broad visual or final paired acceptance.
 
+## Selected Claude policy over one ACP conversation
+
+Claude Code Panel Main retains one conversation, draft, cache and serial ACP
+process/session owner. Main-owned context clients select Panel/Bar policy. Every
+queued prompt captures its originating context, atomic claude record and history
+limit. A different origin or changed source replaces the process generation, not
+the conversation. Source replacement, native retirement and Main destruction
+fence old handshake/stream/permission continuations. Manual permission entries
+retain exact process, session and RPC identity; no preference adds automatic
+approval. Slash writers use the originating runtime API; IPC stays plugin-level.
+
+The Claude native regression joins actual controls and complete native documents
+to rendered cwd/reply and actual inert ACP cwd/prefix, both scopes, staged Reset,
+Discard/inheritance and separate nonpublishing cold readers. Individual tests
+observe serial originating queues, held handshake/stream retirement, manual
+permission buttons and stale refusal, history debounce, native slash writes,
+failed start and before-engine-exit process identities. Finite field/entry and
+rejecting runtime controls complement these controlled endpoints. Existing
+unused binary/model/tool/MCP/resume/permission options are not implemented or
+certified; common conversation content is not migrated. No real CLI/account,
+physical input, broad visual or final paired acceptance is implied.
+
 ## Verification boundaries
 
 The P001 safety regression command now runs field-only real desktop routes,
