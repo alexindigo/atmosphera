@@ -1638,6 +1638,19 @@ os.execv('/usr/bin/find', ['find', *args])
             return result
         def center(name, state):
             return pixel(output / (name + '.png'), int(state['x'] + state['width'] / 2), int(state['y'] + state['height'] / 2))
+        self.check('text-parser-resource-and-syntax-boundaries', all(result['parserChecks'].values()), result['parserChecks'])
+        before, after = result['retainedBefore'], result['retained']
+        self.check('text-only-update-retains-ready-image-sizes', len(after['states']) == 2
+                   and all(s['state'] == 'ready' and s['placed'] and s['naturalWidth'] > 0 for s in after['states'])
+                   and [(s['width'], s['height']) for s in before['states']] == [(s['width'], s['height']) for s in after['states']]
+                   and near(center('retained', after['states'][0]), COLORS[1])
+                   and near(center('retained', after['states'][1]), COLORS[0]), dict(before=before, after=after))
+        self.check('markdown-backgrounds-blocked-before-conversion', not fetched
+                   and result['guardedMarkdown']['imageCount'] == 0
+                   and 'markdown cell' in result['guardedMarkdown']['plain']
+                   and 'url(literal.png)' in result['guardedMarkdown']['plain']
+                   and count('guarded-markdown', COLORS[0]) == 0,
+                   dict(consumer=result['guardedMarkdown'], fetched=fetched))
         rich, markdown, failing, replaced, plain = (result[k] for k in ('rich', 'markdown', 'failing', 'replaced', 'plain'))
         slot = '\ufffc'
         self.check('rich-images-found-comment-ignored', rich['imageCount'] == 3 and rich['plain'].count(slot) == 3

@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "Helpers/ImageTextSources.js" as TextSources
 import qs.Commons
 import qs.Modules.Panels.Changelog
 import qs.Services
@@ -20,6 +21,31 @@ ShellRoot {
   property int pending: 0
   property var linkClicks: []
   property var motion: []
+  property var retainedBefore: ({})
+  function parserChecks() {
+    const slot = "file:///slot.png";
+    const richAttribute = "<a title=\"literal <img src='example.png'>\">link</a><img src='real.png'>";
+    const quoted = "> ~~~html\n> <span style=background:url(code.png)>![code](code.png)</span>\n> ~~~\n\n![real](real.png)";
+    const literal = "`<span style=background:url(code.png)>code</span>`\n\n    <span style=background:url(indented.png)>code</span>";
+    const richGuard = TextSources.withoutResourceImages("<table style=background:url(unquoted.png)><tr><td title=\"literal style='background:url(literal.png)'\">text</td></tr></table>", slot);
+    const mdGuard = TextSources.parse("<span style=background:url(remote.png)>text</span>", "markdown", "", slot);
+    return {
+      unquotedStyle: richGuard.html.indexOf("url(unquoted.png)") < 0,
+      attributeLiteral: richGuard.html.indexOf("title=\"literal style='background:url(literal.png)'\"") >= 0,
+      markdownBeforeConversion: mdGuard.text.indexOf("url(remote.png)") < 0,
+      richTagBoundary: TextSources.parse(richAttribute, "rich", "", slot).images.length === 1,
+      markdownTagBoundary: TextSources.parse(richAttribute, "markdown", "", slot).images.length === 1,
+      ownReferences: TextSources.parse("![example][constructor] ![__proto__] ![real][ok]\n\n[ok]: real.png", "markdown", "", slot).images.length === 1,
+      quotedFence: TextSources.parse(quoted, "markdown", "", slot).images.length === 1 && TextSources.parse(quoted, "markdown", "", slot).text.indexOf("url(code.png)") >= 0,
+      paragraphBoundary: TextSources.parse("unmatched `\n\n![real](real.png)\n\nclosing `", "markdown", "", slot).images.length === 1,
+      softLineImage: TextSources.parse("![soft](\nreal.png\n)", "markdown", "", slot).images.length === 1,
+      literalCode: TextSources.parse(literal, "markdown", "", slot).text === literal,
+      urlSuffix: TextSources.resolve("icons/logo.png?path=a/../b#x/../y", "https://example.test/docs/page") === "https://example.test/docs/icons/logo.png?path=a/../b#x/../y",
+      cssEscapedResource: TextSources.parse("<style>p { background-image: u\\72l(remote.png); color: red }</style>", "markdown", "", slot).text.indexOf("remote.png") < 0,
+      cssImport: TextSources.parse("<style>@import 'sheet.css'; p { color: red }</style>", "markdown", "", slot).text.indexOf("sheet.css") < 0,
+      cssStringLiteral: TextSources.parse("<style>p:before { content: 'url(literal.png)'; color: red }</style>", "markdown", "", slot).text.indexOf("'url(literal.png)'") >= 0
+    };
+  }
   FileView {
     path: Quickshell.env("IMAGE_ICON_DIR") + "/icons.json"
     onLoaded: IconRegistry.register("fixture:atmosphera-icons", JSON.parse(text()), Quickshell.env("IMAGE_ICON_DIR"))
@@ -204,6 +230,30 @@ ShellRoot {
     walk(item);
     return found;
   }
+  FloatingWindow {
+    visible: true
+    implicitWidth: 440
+    implicitHeight: 400
+    color: "white"
+    Column {
+      NImageText {
+        id: guardedMarkdown
+        width: 400
+        color: "black"
+        format: "markdown"
+        text: "<style>@import '" + Quickshell.env("IMAGE_TEXT_HTTP") + "/markdown-import.css'; p { background-image: u\\72l('" + Quickshell.env("IMAGE_TEXT_HTTP") + "/markdown-escaped.png') }</style><table style=background:url(" + Quickshell.env("IMAGE_TEXT_HTTP") + "/markdown-unquoted.png)><tr><td background='" + Quickshell.env("IMAGE_TEXT_HTTP")
+              + "/markdown-background.png'>markdown cell</td></tr></table>\n\n`<span style=background:url(literal.png)>literal</span>`"
+
+      }
+      NImageText {
+        id: retained
+        width: 400
+        color: "black"
+        property bool revised: false
+        text: (revised ? "after " : "before ") + "<img src='" + root.inputs + "/frame-1.png'> <img src='" + root.inputs + "/frame-0.png' width='40'>"
+      }
+    }
+  }
   function tooltipText() {
     var tip = TooltipService.activeTooltip;
     return tip ? root.imageTexts(tip.contentItem)[0] || null : null;
@@ -239,11 +289,14 @@ ShellRoot {
       if (root.tick === 5)
         TooltipService.show(tipTarget, "tip <b>text</b>\n<img src='" + root.inputs + "/Still.webp' width='40' height='24'> after", "bottom", 1);
       if (root.tick === 30) {
+        root.retainedBefore = root.describe(retained);
         root.grab(replaced, "replaced-before");
         root.interestsBeforePlain = ImageCacheService.sourceInterestSources().length;
       }
-      if (root.tick === 33)
+      if (root.tick === 33) {
         replaced.second = true;
+        retained.revised = true;
+      }
       if (root.tick >= 40 && root.tick <= 60) {
         var moving = (markdown.imageStates[2] || {});
         if (moving.placed)
@@ -255,6 +308,8 @@ ShellRoot {
         root.grab(replaced, "replaced-after");
         root.grab(cappedFrame, "capped");
         root.grab(backgrounds, "backgrounds");
+        root.grab(guardedMarkdown, "guarded-markdown");
+        root.grab(retained, "retained");
         if (root.changelogText())
           root.grab(root.changelogText(), "changelog");
         if (root.tooltipText())
@@ -267,6 +322,10 @@ ShellRoot {
       if (root.tick >= 70 && !root.pending) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          rich: root.describe(rich),
+                                                         parserChecks: root.parserChecks(),
+                                                         retainedBefore: root.retainedBefore,
+                                                         retained: root.describe(retained),
+                                                         guardedMarkdown: root.describe(guardedMarkdown),
                                                          markdown: root.describe(markdown),
                                                          failing: root.describe(failing),
                                                          replaced: root.describe(replaced),
