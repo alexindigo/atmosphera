@@ -123,6 +123,29 @@ ShellRoot {
         keys.push(chrome.field.key);
     return keys;
   }
+  function jsonValue(value) {
+    return JSON.stringify(value, function (_, item) {
+      if (!item || typeof item !== "object" || Array.isArray(item))
+        return item;
+      var ordered = Object.create(null);
+      for (var key of Object.keys(item).sort())
+        ordered[key] = item[key];
+      return ordered;
+    });
+  }
+  function captureApplyIntent(keys) {
+    // Store detached JSON text, not fields whose getters follow the refreshed draft.
+    return keys.map(function (key) {
+      var field = popup._pageApi.field(key);
+      var value = jsonValue(field.value);
+      check(value !== undefined, "pending Set without a JSON value " + key);
+      return {
+        key: key,
+        value: value,
+        omitted: scopeName === "instance" && field.inheritedPresent && jsonValue(field.inheritedValue) === value
+      };
+    });
+  }
   function kind(item) {
     if (typeof item.toggled === "function" && typeof item.checked === "boolean")
       return "toggle";
@@ -384,8 +407,9 @@ ShellRoot {
         return;
       }
       queue = [];
-      row.intentValue = chosen.field.value;
       row.intentKeys = pendingSets();
+      row.applyIntent = captureApplyIntent(row.intentKeys);
+      row.intentValue = JSON.parse(row.applyIntent.find(intent => intent.key === row.key).value);
       check(popup.applySettings(), "Apply refused");
       waited = 0;
       phase = "applied";
@@ -401,17 +425,15 @@ ShellRoot {
         return;
       }
       row.afterApply = stored();
-      for (var key of row.intentKeys) {
-        var intent = popup._pageApi.field(key);
-        // Equal-to-inherited instance values are omitted by the native difference policy.
-        var omitted = scopeName === "instance" && intent.inheritedPresent && JSON.stringify(intent.inheritedValue) === JSON.stringify(intent.value);
-        if (JSON.stringify(row.afterApply[key]) !== JSON.stringify(omitted ? undefined : intent.value)) {
-          emit("FAIL", "persisted value differs from intent " + key);
+      for (var intent of row.applyIntent) {
+        var present = Object.prototype.hasOwnProperty.call(row.afterApply, intent.key);
+        if (present === intent.omitted || (present && jsonValue(row.afterApply[intent.key]) !== intent.value)) {
+          emit("FAIL", "persisted value differs from intent " + intent.key);
           return;
         }
       }
       var touched = Object.keys(row.afterApply).concat(Object.keys(row.before)).filter(function (key, index, all) {
-        return all.indexOf(key) === index && JSON.stringify(row.afterApply[key]) !== JSON.stringify(row.before[key]);
+        return all.indexOf(key) === index && jsonValue(row.afterApply[key]) !== jsonValue(row.before[key]);
       });
       if (touched.indexOf(row.key) === -1 || touched.some(function (key) {
         return row.intentKeys.indexOf(key) === -1;
@@ -456,7 +478,7 @@ ShellRoot {
         return;
       }
       row.afterReset = stored();
-      if (JSON.stringify(row.afterReset) !== JSON.stringify(row.before)) {
+      if (jsonValue(row.afterReset) !== jsonValue(row.before)) {
         emit("FAIL", "Reset did not restore stored state");
         return;
       }
