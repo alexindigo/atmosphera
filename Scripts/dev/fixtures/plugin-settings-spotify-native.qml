@@ -28,6 +28,10 @@ ShellRoot {
   property string diskBoundary: ""
   property var actionExpected: null
   property int requestCount: 0
+  property int holdCursor: 0
+  property var heldRequests: []
+  property var searchExit: null
+  readonly property string heldSearchPath: "/v1/search?q=held%20query&type=album%2Cplaylist%2Ctrack"
   readonly property var targetApi: scope === "shared" ? api : selected
   readonly property var targetPanel: presentations.length ? presentations[scope === "shared" ? 0 : 1].panel : null
   FileView {
@@ -219,6 +223,39 @@ ShellRoot {
     requests.waitForJob();
     return requests.text().trim().split("\n").filter(Boolean).map(line => JSON.parse(line));
   }
+  function beginHold() {
+    holdCursor = requestRows().reduce((latest, row) => Math.max(latest, row.id || 0), 0);
+    heldRequests = [];
+  }
+  function heldRequest(rows, path, client, method) {
+    var seen = rows.filter(row => row.id > holdCursor && row.held && row.path === path && row.client === client && row.method === method);
+    check(seen.length <= 1, "unambiguous held admission: " + path);
+    return seen[0];
+  }
+  function watchToken(row) {
+    var xhr = targetPanel.settingsConsumer?._request;
+    check(xhr && xhr.readyState > XMLHttpRequest.UNSENT && xhr.readyState < XMLHttpRequest.DONE, "observe the admitted, pending token exchange before invalidating it");
+    return {
+      id: row.id,
+      outcome: function () {
+        // Abort resets this observed, already-admitted object to UNSENT.
+        if (xhr.readyState === XMLHttpRequest.UNSENT)
+          return "cancelled";
+        // DONE is observed on a later fixture turn, after the runtime's
+        // synchronous ready-state dispatch, and must bear this response ID.
+        return xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200 && xhr.getResponseHeader("X-Fixture-Request") === String(row.id) ? "completed" : "pending";
+      }
+    };
+  }
+  function heldRequestsSettled() {
+    var rows = requestRows();
+    var outcomes = heldRequests.map(request => rows.some(row => row.cancelled === request.id) ? "cancelled" : request.outcome());
+    if (outcomes.includes("pending"))
+      return false;
+    check(heldRequests.length > 0, "held admission before settlement");
+    console.log("SPOTIFY_HELD_SETTLED " + phase + " " + heldRequests.map((req, i) => req.id + ":" + outcomes[i]).join(","));
+    return true;
+  }
   function actionData() {
     return scope === "shared" ? actionExpected.shared : actionExpected.bar.widgets.left[0].instanceSettings;
   }
@@ -373,11 +410,27 @@ ShellRoot {
     else if (phase === "hold-api-create")
       probe("marker:hold-api:1", "hold-start");
     else if (phase === "hold-start") {
-      requestCount = requestRows().filter(row => row.path === "/api/token").length;
+      beginHold();
       targetPanel.searchForQuery("held query");
+      var job = targetPanel.settingsConsumer?._slots.get("search");
+      check(job, "observe the held search process before invalidating it");
+      searchExit = {
+        complete: false
+      };
+      var receipt = searchExit;
+      job.exited.connect(code => receipt.complete = code === 0);
       button("spotify-authorize");
       phase = "hold-pending";
-    } else if (phase === "hold-pending" && requestRows().filter(row => row.path === "/api/token").length > requestCount) {
+    } else if (phase === "hold-pending") {
+      var rows = requestRows(), token = heldRequest(rows, "/api/token", "action-selected", "POST"), search = heldRequest(rows, heldSearchPath, "", "GET");
+      if (!token || !search)
+        return;
+      heldRequests = [watchToken(token),
+                      {
+                        id: search.id,
+                        outcome: () => searchExit.complete ? "completed" : "pending"
+                      }
+          ];
       targetApi.pluginSettings.clientId = "replacement";
       actionData().clientId = "replacement";
       phase = "replacement-saving";
@@ -391,20 +444,24 @@ ShellRoot {
       probe("marker:hold-action-selected:0", "release-api");
     else if (phase === "release-api")
       probe("marker:hold-api:0", "replacement-wait");
-    else if (phase === "replacement-wait" && Date.now() - phaseStarted > 500) {
+    else if (phase === "replacement-wait" && heldRequestsSettled()) {
       check(targetApi.pluginSettings.accessToken === "access-action-selected", "old source cannot adopt a late token");
       check(targetPanel.searchResults.length === 0, "held old search cannot repopulate replacement source");
       probe("action-replaced", "retire-hold");
     } else if (phase === "retire-hold")
       probe("marker:hold-replacement:1", "retire-start");
     else if (phase === "retire-start") {
-      requestCount = requestRows().filter(row => row.path === "/api/token").length;
+      beginHold();
       button("spotify-authorize");
       phase = "retire-pending";
-    } else if (phase === "retire-pending" && requestRows().filter(row => row.path === "/api/token").length > requestCount) {
+    } else if (phase === "retire-pending") {
+      var token = heldRequest(requestRows(), "/api/token", "replacement", "POST");
+      if (!token)
+        return;
+      heldRequests = [watchToken(token)];
       Service.loadedPlugins = ({});
       probe("marker:hold-replacement:0", "retired");
-    } else if (phase === "retired" && Date.now() - phaseStarted > 600) {
+    } else if (phase === "retired" && heldRequestsSettled()) {
       check(main._settingsConsumers.size === 0 && targetPanel.settingsConsumer === null, "last runtime context retires Main client and IO");
       check(targetApi.pluginSettings.accessToken === "access-action-selected", "retired token response cannot publish");
       probe("action-retired", "finish");

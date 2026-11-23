@@ -11,6 +11,7 @@ import json
 import os
 import re
 from pathlib import Path
+import select
 import shutil
 import socket
 import threading
@@ -57,21 +58,48 @@ def run_with_endpoint(args, profile, scope, resources):
     request_file = case / 'requests.jsonl'; request_file.write_text('')
     record_lock = threading.Lock()
     released = threading.Event()
+    request_id = 0
+
+    def record(row):
+        with request_file.open('a') as log: log.write(json.dumps(row) + '\n')
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_): pass
+        def peer_closed(self):
+            if not select.select([self.connection], [], [], 0)[0]:
+                return False
+            try:
+                return self.connection.recv(1, socket.MSG_PEEK) == b''
+            except ConnectionResetError:
+                return True
+
         def respond(self):
+            nonlocal request_id
             body = self.rfile.read(int(self.headers.get('Content-Length', 0))).decode()
             client = ''
             if self.headers.get('Authorization', '').startswith('Basic '):
                 client = base64.b64decode(self.headers['Authorization'][6:]).decode().split(':')[0]
-            row = dict(path=self.path, method=self.command, client=client, bearer=self.headers.get('Authorization', '') if not client else '', body=body)
-            with record_lock:
-                with request_file.open('a') as log: log.write(json.dumps(row) + '\n')
             marker = case / ('hold-' + client) if client else case / 'hold-api'
             held = marker.exists()
+            with record_lock:
+                request_id += 1
+                identity = request_id
+                record(dict(id=identity, path=self.path, method=self.command, client=client, bearer=self.headers.get('Authorization', '') if not client else '', body=body, held=held))
             end = time.monotonic() + 15
-            while marker.exists() and time.monotonic() < end and not released.wait(.025): pass
+            if held:
+                while not released.is_set():
+                    # Before any response bytes, EOF/reset confirms this exact
+                    # held connection cannot get a response. A server write
+                    # (including a failed write) is not a client receipt.
+                    if self.peer_closed():
+                        with record_lock:
+                            record(dict(cancelled=identity))
+                        return
+                    if not marker.exists() or time.monotonic() >= end:
+                        break
+                    released.wait(.025)
+                if released.is_set():
+                    return
             if self.path == '/api/token':
                 values = parse_qs(body)
                 data = dict(access_token=('late-' if held else 'access-') + client, refresh_token='refresh-' + client, expires_in=3600)
@@ -82,7 +110,7 @@ def run_with_endpoint(args, profile, scope, resources):
             else: data = dict(shuffle_state=False)
             payload = json.dumps(data).encode()
             try:
-                self.send_response(200); self.send_header('Content-Type', 'application/json'); self.send_header('Content-Length', str(len(payload))); self.end_headers(); self.wfile.write(payload)
+                self.send_response(200); self.send_header('Content-Type', 'application/json'); self.send_header('Content-Length', str(len(payload))); self.send_header('X-Fixture-Request', str(identity)); self.end_headers(); self.wfile.write(payload)
             except (BrokenPipeError, ConnectionResetError): pass
         do_GET = respond
         do_POST = respond
