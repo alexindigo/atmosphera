@@ -79,6 +79,94 @@ def main():
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
 
+        async def test_atomic_write_closes_directory_when_cleanup_also_fails(self):
+            from images.storage import atomic_write
+            def descriptors():
+                rows = {}
+                for path in Path('/proc/self/fd').iterdir():
+                    try:
+                        rows[int(path.name)] = os.readlink(path)
+                    except FileNotFoundError:
+                        pass
+                return rows
+            before = descriptors()
+            leaked = set()
+            try:
+                with patch('images.storage.os.replace', side_effect=OSError('publication failed')), patch('images.storage.os.unlink', side_effect=PermissionError('cleanup failed')):
+                    with self.assertRaises(OSError):
+                        atomic_write(self.folder / 'cache/normal/result.png', empty_png(), self.folder / 'cache')
+                leaked = set(descriptors()) - set(before)
+                self.assertEqual(leaked, set())
+            finally:
+                for fd in leaked:
+                    os.close(fd)
+
+        async def test_legacy_clear_continues_after_a_concurrent_removal(self):
+            from images.storage import clear_legacy
+            directory = self.folder / 'legacy'
+            directory.mkdir()
+            for name in ('a.png', 'b.png'):
+                (directory / name).write_bytes(empty_png())
+            original = os.stat
+            def vanish(path, *args, **kwargs):
+                if path == 'a.png' and kwargs.get('dir_fd') is not None:
+                    os.unlink(path, dir_fd=kwargs['dir_fd'])
+                    raise FileNotFoundError('Concurrent clear removed entry')
+                return original(path, *args, **kwargs)
+            with patch('images.storage.os.listdir', return_value=['a.png', 'b.png']), patch('images.storage.os.stat', vanish):
+                counts = clear_legacy(directory)
+            self.assertEqual(counts['removed'], 1)
+            self.assertFalse((directory / 'b.png').exists())
+
+        async def test_animation_reuse_has_the_same_precision_as_cold_validation(self):
+            from images.content import known
+            def fractional_delays(path):
+                info = known(path)
+                if info and info['format'] == 'webp' and info['animated']:
+                    info = dict(info, delaysMs=[delay + 2 for delay in info['delaysMs']])
+                return info
+            request = dict(self.request('Motion.webp'), animationIntent='preserve')
+            with patch('images.cache.content.known', fractional_delays):
+                first = await self.cache.render(request)
+                second = await self.cache.render(request)
+            self.assertEqual(first['status'], 'generated')
+            self.assertEqual(second['status'], 'hit')
+            self.assertEqual(first['url'], second['url'])
+
+        async def test_partial_gif_decode_error_is_not_accepted_on_zero_exit(self):
+            data = bytearray((fixtures / 'Motion.gif').read_bytes())
+            position = 13 + (3 * (1 << ((data[10] & 7) + 1)) if data[10] & 128 else 0)
+            frames = []
+            while position < len(data):
+                marker = data[position]
+                position += 1
+                if marker == 0x3b:
+                    break
+                if marker == 0x21:
+                    position += 1
+                elif marker == 0x2c:
+                    flags = data[position + 8]
+                    position += 9
+                    if flags & 128:
+                        position += 3 * (1 << ((flags & 7) + 1))
+                    position += 1
+                    frames.append(position)
+                else:
+                    self.fail('Unexpected GIF fixture marker')
+                while data[position]:
+                    position += 1 + data[position]
+                position += 1
+            self.assertEqual(len(frames), 3)
+            data[frames[1] + 1:frames[1] + 3] = b'\0\0'
+            path = self.folder / 'partly-decoded.gif'
+            path.write_bytes(data)
+            info = gif(data)
+            control = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-i', str(path), '-f', 'null', '-'], capture_output=True, timeout=10)
+            self.assertEqual(control.returncode, 0, control.stderr)
+            self.assertIn(b'LZW decode failed', control.stderr)
+            with self.assertRaises((ValueError, CommandError)):
+                await self.cache.validate_output(path, self.folder, True, dict(width=info['width'], height=info['height'], fit='contain'))
+
         async def test_http_retirement_cleans_server_when_worker_creation_fails(self):
             servers, threads = [], []
             server_class, thread_class = ThreadingHTTPServer, threading.Thread

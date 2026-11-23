@@ -226,12 +226,15 @@ def clear_legacy(path):
     try:
         with directory(path, create=False, private=False) as parent:
             for entry in os.listdir(parent):
-                info = os.stat(entry, dir_fd=parent, follow_symlinks=False)
-                if (entry.startswith('.') or not entry.endswith('.png') or not stat.S_ISREG(info.st_mode)
-                        or info.st_uid != os.getuid()):
-                    counts['kept'] += 1
+                try:
+                    info = os.stat(entry, dir_fd=parent, follow_symlinks=False)
+                    if (entry.startswith('.') or not entry.endswith('.png') or not stat.S_ISREG(info.st_mode)
+                            or info.st_uid != os.getuid()):
+                        counts['kept'] += 1
+                        continue
+                    os.unlink(entry, dir_fd=parent)
+                except FileNotFoundError:
                     continue
-                os.unlink(entry, dir_fd=parent)
                 counts['removed'] += 1
     except FileNotFoundError:
         pass
@@ -284,9 +287,11 @@ def atomic_write(path, data, root):
                 if (before.st_dev, before.st_ino) != (after.st_dev, after.st_ino):
                     raise OSError(errno.ESTALE, 'Image cache directory changed during publication')
         finally:
-            if temporary is not None:
-                try:
-                    os.unlink(temporary, dir_fd=fd)
-                except FileNotFoundError:
-                    pass
-            os.close(fd)
+            try:
+                if temporary is not None:
+                    try:
+                        os.unlink(temporary, dir_fd=fd)
+                    except FileNotFoundError:
+                        pass
+            finally:
+                os.close(fd)

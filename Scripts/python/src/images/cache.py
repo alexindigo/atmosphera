@@ -34,6 +34,13 @@ def iterations(info):
     return value + 1 if info['format'] == 'gif' else value
 
 
+def animation_matches(output, source):
+    """Cold validation and cache reuse share GIF's centisecond precision."""
+    return (output['frames'] == source['frames'] and iterations(output) == iterations(source)
+            and len(output['delaysMs']) == len(source['delaysMs'])
+            and all(abs(a - b) <= 5 for a, b in zip(output['delaysMs'], source['delaysMs'])))
+
+
 def capability_fingerprint():
     rows = []
     for executable in ('magick', 'ffmpeg', 'ffprobe'):
@@ -229,9 +236,7 @@ class Cache:
                 if not target.is_file() or not target.stat().st_size:
                     raise ValueError('Decoder did not produce the exact output')
                 output = await self.validate_output(target, prepared['directory'], moving, request)
-                if moving and (output['frames'] != info['frames'] or iterations(output) != iterations(info)
-                               or len(output['delaysMs']) != len(info['delaysMs'])
-                               or any(abs(a - b) > 5 for a, b in zip(output['delaysMs'], info['delaysMs']))):
+                if moving and not animation_matches(output, info):
                     raise ValueError('Decoder did not preserve frame count, timing and looping')
                 return target, output, decoder
             except (CommandError, ValueError, OSError) as error:
@@ -258,12 +263,16 @@ class Cache:
             return result
         # Full independent GIF pixel decoding, in addition to complete structure.
         if shutil.which('ffmpeg'):
-            argv = ['ffmpeg', '-nostdin', '-v', 'error', '-threads', '1', '-i', str(path), '-f', 'null', '-']
+            argv = ['ffmpeg', '-nostdin', '-v', 'error', '-xerror', '-threads', '1', '-i', str(path), '-f', 'null', '-']
         elif shutil.which('magick'):
-            argv = ['magick', str(path), '-coalesce', 'null:']
+            argv = ['magick', '-regard-warnings', str(path), '-coalesce', 'null:']
         else:
             raise CommandError('decoder-unavailable', 'GIF validation requires an image decoder')
         await command(argv, directory, self.animation_timeout, name='validate-gif', emit=self.emit)
+        # FFmpeg can log an LZW error yet return 0 even with -xerror. Its
+        # error-only diagnostics are a failed full pixel decode, not success.
+        if (Path(directory) / 'validate-gif.stderr').stat().st_size:
+            raise ValueError('GIF pixel decoding reported an error')
         return result
 
     def retain_original(self, prepared, request, result):
@@ -415,7 +424,7 @@ class Cache:
                 if not current():
                     raise OSError('Image cache entry changed during capture')
                 output = await self.validate_output(snapshot, prepared['directory'], moving, request)
-                if moving and (output['frames'] != info['frames'] or iterations(output) != iterations(info) or output['delaysMs'] != info['delaysMs']):
+                if moving and not animation_matches(output, info):
                     raise ValueError('Stale animation cache')
                 if not prepared['current']():
                     raise SourceError('source-changed', 'Image source changed before publication')
