@@ -102,3 +102,45 @@ attributes, CSS `background-image` in style attributes, `<style>` blocks and
 linked style sheets). `NImageText` does not load those; the text stays.
 With `maximumLineCount`, rich text with images is cut after that many lines
 (no ellipsis); styled text without images keeps Qt's elide.
+
+## End-consumer qualification
+
+Run builds and probes inside the owned `atmosphera-image-decoding` VM on
+`ark.home`, workspace `/home/tester/Projects/image-decoding`, using its pinned
+`ark-user-vms` access route. Set `TMPDIR` inside that disk workspace. The
+headless Wayland CI profile is a separate, additive container route; see
+[regression profiles](regression-profiles.md).
+
+`Scripts/dev/image-decoding-regression.py` provides `owner`,
+`chooser-wallpaper`, `shell`, `plugins`, `packaging`, `all` and `review-results`.
+Use genuine installed/removed `qt6-imageformats` conditions, never a simulated
+Qt error. Every invocation needs explicit `--guest-profile`, `--source`,
+`--plugins`, `--qt-webp`, fresh `--work-root` and `--output` paths.
+Plugin cohorts also need `--baseline-plugins`. For changed-QML reporting use
+`--lint-baseline-source`; `--baseline-source` instead requests historical red
+controls in cases that support them.
+
+Long cohorts run in an owned guest user unit with an exclusive lock, captured
+PID/start/cgroup, durable logs and exit receipts. Repeating the identical
+invocation joins that run; it does not retry a failed run or start a duplicate.
+The last owned job restores the original Linger value. Private notification
+buses use the profile's short runtime root, independent of evidence path depth.
+Their explicit bus configuration exposes only fixture-owned servers/producers,
+not login-session service directories or portal/a11y activation. The original
+consumer watchdogs and ten-second bus teardown deadline are unchanged. A cleanup
+failure retains the primary consumer error and reaps only the captured daemon
+group; activation-isolation and failure controls run in
+`Scripts/dev/image-decoding-bus-selftest.py` and the final `all` aggregate.
+
+Run source/setup cohorts before package installation: the wizard fixture needs
+no managed keyd layer or installed xremap unit. Packaging builds and installs
+the actual AUR candidate, builds the locked Nix candidate, invokes both installed
+shell and locker image graphs, and builds the tooling container. Nix-on-Arch
+image probes use software rendering on real Wayland, not incidental host GPU
+drivers, Qt imports or PATH entries.
+
+`review-results --results <saved-artifacts>` checks exact current input hashes,
+all IDs in `fixtures/image-decoding/required-cases.json`, raw Qt observations,
+saved PNGs, animation frame colors and actual package receipts. Historical trees
+cannot satisfy a current cohort. Its rejection controls and real guest Linger
+lease checks are in `Scripts/dev/image-decoding-review-selftest.py`.
