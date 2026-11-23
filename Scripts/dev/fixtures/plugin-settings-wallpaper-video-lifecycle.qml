@@ -22,7 +22,10 @@ ShellRoot {
   property double since: Date.now()
   onPhaseChanged: since = Date.now()
   property string afterDisk: ""
-  property int firstBackendRows: 0
+  property var seededPlayback: null
+  property int playbackCursor: 0
+  property bool playbackJoinStarted: false
+  property bool playbackJoined: false
   FileView {
     id: manifest
     path: Settings.configDir + "plugins/" + root.plugin + "/manifest.json"
@@ -32,6 +35,20 @@ ShellRoot {
     id: requests
     path: root.base + "/requests.jsonl"
     blockLoading: true
+  }
+  FileView {
+    id: expectations
+    path: root.base + "/playback.json"
+    blockLoading: true
+  }
+  Process {
+    id: joinPlayback
+    onExited: code => {
+      if (code !== 0)
+        root.fail("WALLPAPER_VIDEO_LIFETIME_ASSERT: " + root.scenario + "/" + root.phase + ": exact playback identities did not retire before release or expiry");
+      else
+        root.playbackJoined = true;
+    }
   }
   Process {
     id: disk
@@ -90,7 +107,32 @@ ShellRoot {
   function rows() {
     requests.reload();
     requests.waitForJob();
-    return String(requests.text()).trim().split("\n").filter(line => line).map(line => JSON.parse(line)).filter(row => row.endpoint === "mpvpaper" && !row.argv.includes("--help"));
+    return String(requests.text()).trim().split("\n").filter(line => line).map(line => JSON.parse(line)).filter(row => row.endpoint === "mpvpaper" && !row.argv.includes("--help") && !row.argv.includes("--list-properties"));
+  }
+  function playbackReady() {
+    const current = backends();
+    if (current.length !== names.length)
+      return false;
+    const admitted = rows().slice(playbackCursor);
+    for (const row of admitted) {
+      const policy = seededPlayback[row.argv[2]];
+      check(row.argv.length === 4 && row.argv[0] === "-o" && policy && row.argv[3] === policy.path && row.argv[1].split(" ").includes("profile='" + policy.profile + "'"), "output endpoint matches seeded playback policy");
+    }
+    for (const name of names) {
+      const members = current.filter(item => item.screenName === name);
+      check(members.length === 1 && members[0].settingsContext === context, "one selected physical backend per output");
+    }
+    return names.every(name => admitted.some(row => row.argv[2] === name));
+  }
+  function waitForPlaybackRetirement() {
+    const cohort = rows();
+    playbackCursor = cohort.length;
+    playbackJoinStarted = true;
+    playbackJoined = false;
+    joinPlayback.command = ["python3", "-c", "import json,sys,time;from pathlib import Path\nbase=Path(sys.argv[1]);rows=json.loads(sys.argv[2]);end=time.monotonic()+float(sys.argv[3])\n" + "def identity(row):return row['pid'],row['start']\n"
+                            + "def live(row):\n try:return (Path('/proc')/str(row['pid'])/'stat').read_text().rsplit(') ',1)[1].split()[19]==row['start']\n except FileNotFoundError:return False\n" + "while any(map(live,rows)):\n if time.monotonic()>=end:raise SystemExit(1)\n time.sleep(.02)\n"
+                            + "if (base/'release-engine').exists() or set(map(identity,rows)) & {identity(json.loads(line)) for line in (base/'expired-engines.jsonl').read_text().splitlines()}:raise SystemExit(2)", base, JSON.stringify(cohort), String(Math.max(0, 18000 - (Date.now() - since)) / 1000)];
+    joinPlayback.running = true;
   }
   function probe(boundary, next) {
     afterDisk = next;
@@ -128,6 +170,8 @@ ShellRoot {
       return;
     started = true;
     check(names.length === 2, "two actual compositor outputs");
+    expectations.waitForJob();
+    seededPlayback = JSON.parse(expectations.text());
     manifest.waitForJob();
     const descriptor = JSON.parse(manifest.text());
     Registry.installedPlugins = {
@@ -157,7 +201,7 @@ ShellRoot {
     });
   }
   function drive() {
-    check(Date.now() - since < 18000, "finite Video phase deadline");
+    check(Date.now() - since < 18000, joinPlayback.running ? "exact playback identities did not retire" : "finite Video phase deadline");
     if (phase === "ready" && target.settingsReady && WallpaperService.isInitialized) {
       if (scenario === "baseline") {
         saveTimer = component("common/SaveTimer.qml", {
@@ -183,22 +227,22 @@ ShellRoot {
       check(target.pluginSettings.monitors[names[1]].currentWallpaper === base + "/selected-1.mp4", "disabled output automation retains its own path");
       check(main.activatePolicy(api.settingsContext), "explicitly quiesce automatic admission after the observed action");
       settle("applied-disk");
-    } else if (phase === "backend" && Date.now() - since > 700 && backends().length === 2 && rows().length >= 2) {
-      for (const name of names) {
-        const backend = backends().find(item => item.screenName === name);
-        check(backend && backend.settingsContext === context, "one selected physical backend per output");
-        const row = rows().filter(row => row.argv.includes(name)).pop();
-        check(row && row.argv.includes(backend.currentWallpaper) && row.argv.join(" ").includes("profile='" + backend.profile + "'"), "selected output command reaches inert backend");
-      }
-      firstBackendRows = rows().length;
+    } else if (phase === "backend" && playbackReady()) {
       target.pluginSettings.activeBackend = "none";
       target.saveSettings();
       phase = "backend-off";
-    } else if (phase === "backend-off" && Date.now() - since > 250 && backends().length === 0) {
+    } else if (phase === "backend-off" && backends().length === 0) {
+      if (!playbackJoinStarted)
+        waitForPlaybackRetirement();
+      if (!playbackJoined)
+        return;
+      check(rows().length === playbackCursor, "no playback is admitted during the backend-off drain");
+      playbackJoinStarted = false;
+      playbackJoined = false;
       target.pluginSettings.activeBackend = "mpvpaper";
       target.saveSettings();
       phase = "backend-return";
-    } else if (phase === "backend-return" && backends().length === 2 && rows().length >= firstBackendRows + 2)
+    } else if (phase === "backend-return" && playbackReady())
       settle("applied-disk");
     else if (phase === "baseline" && receipt) {
       check(["saved", "nothing_to_save"].includes(receipt.status), "captured delayed native publication");
@@ -214,22 +258,26 @@ ShellRoot {
         saveTimer.running = false;
       }
       retire();
-    } else if (phase === "retired" && !context.current() && Date.now() - since > 600) {
+    } else if (phase === "retired" && !context.current() && (scenario === "backend" || Date.now() - since > 600)) {
       if (scenario === "baseline") {
         saveTimer.running = true;
         phase = "retired-baseline";
       } else {
-        check(scenario !== "backend" || backends().length === 0, "retired policy removes physical backends");
         if (scenario === "backend") {
+          if (backends().length !== 0)
+            return;
+          if (!playbackJoinStarted)
+            waitForPlaybackRetirement();
+          if (!playbackJoined)
+            return;
+          check(rows().length === playbackCursor, "no playback is admitted after placement retirement");
           PluginInstances._dropPlugin(plugin);
-          phase = "retired-api";
+          check(main.activatePolicy(api.settingsContext), "shared policy can be reselected after registered API destruction");
+          check(main.runtimeWriter === api, "destroyed placement cannot poison shared writer lookup");
+          probe("retired", "finish");
         } else
           probe("retired", "finish");
       }
-    } else if (phase === "retired-api" && Date.now() - since > 150) {
-      check(main.activatePolicy(api.settingsContext), "shared policy can be reselected after registered API destruction");
-      check(main.runtimeWriter === api, "destroyed placement cannot poison shared writer lookup");
-      probe("retired", "finish");
     } else if (phase === "retired-baseline" && Date.now() - since > 150) {
       check(!saveTimer.busy, "held retired baseline cannot publish");
       probe("retired", "finish");

@@ -20,13 +20,17 @@ from pathlib import Path
 base=Path(os.environ['PHA_WALLPAPER_CASE']);name=Path(sys.argv[0]).name;args=sys.argv[1:]
 if name=='endpoint.py':name=args.pop(0)
 start=(Path('/proc')/str(os.getpid())/'stat').read_text().split(') ',1)[1].split()[19]
-with (base/'requests.jsonl').open('a') as stream:
- fcntl.flock(stream,fcntl.LOCK_EX);stream.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start))+'\\n');stream.flush()
+def record(path):
+ with (base/path).open('a') as stream:
+  fcntl.flock(stream,fcntl.LOCK_EX);stream.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start))+'\\n');stream.flush()
+record('requests.jsonl')
 if name=='scan-wallpapers.sh':print(args[0]+'/controlled\\tControlled')
 if name in ('linux-wallpaperengine','mpvpaper') and '--help' not in args and '--list-properties' not in args:
  deadline=time.monotonic()+25
  while not (base/'release-engine').exists():
-  if time.monotonic()>deadline:raise SystemExit('inert engine deadline')
+  if time.monotonic()>deadline:
+   record('expired-engines.jsonl')
+   raise SystemExit('inert engine deadline')
   time.sleep(.02)
 '''
 

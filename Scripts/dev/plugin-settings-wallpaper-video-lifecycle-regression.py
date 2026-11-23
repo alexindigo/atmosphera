@@ -44,11 +44,13 @@ def run(args,profile,scenario):
     if scenario=='baseline':applied['bar']['widgets']['left'][0]['instanceSettings']['monitors'][args.screens[0]]['noctaliaWallpaper']=str(case/'captured-baseline')
     retired=deepcopy(applied);retired['bar']['widgets']['left'][0]['id']='plugin:retired-wallpaper'
     expected=dict(applied=applied,retired=retired)
-    for path,value in [('input.json',dict(plugin=plugin)),('expectations.json',expected),('config/settings.json',dict(settingsVersion=62)),
+    playback={name:dict(path=monitors[name]['currentWallpaper'],profile=monitors[name]['profile']) for name in args.screens}
+    for path,value in [('input.json',dict(plugin=plugin)),('expectations.json',expected),('playback.json',playback),('config/settings.json',dict(settingsVersion=62)),
         ('config/settings/colorSchemes.json',dict(useWallpaperColors=False)),('config/plugins.json',dict(version=6,states={},sources=[])),
         ('config/settings/plugins/'+plugin+'.json',shared),('config/settings/bar.json',bar),
         ('cache/wallpapers.json',dict(wallpapers={name:dict(light=str(image),dark=str(image)) for name in args.screens}))]:runner.write_json(case/path,value)
     (case/'requests.jsonl').write_text('')
+    (case/'expired-engines.jsonl').write_text('')
     for name in ('mpvpaper','ffmpeg'):
         path=case/'bin'/name;path.write_text(native.runtime.ENDPOINT);path.chmod(0o755)
     runner.write_json(out/'sources.json',{str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(product.rglob('*')) if p.is_file()})
