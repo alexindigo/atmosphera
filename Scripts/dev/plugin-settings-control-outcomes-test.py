@@ -49,12 +49,18 @@ class OutcomeTests(unittest.TestCase):
                       'captured USB completion notification policy')
 
             def fixture(profile, install, case, output, fixture, **kwargs):
+                name, environment = ('resource-native', None) if resource else (
+                    ('automatic-lifecycle', 'PHA_AUTO_SCENARIO') if driver is AUTOMATIC else
+                    ('device-lifecycle', 'PHA_DEVICE_SCENARIO'))
+                self.assertEqual(fixture, source/'Scripts/dev/fixtures'/('plugin-settings-'+name+'.qml'))
+                if environment:
+                    self.assertEqual(kwargs['extra_env'][environment], scenario)
                 if resource:
                     expected = json.loads((case/'expectations.json').read_text())
                     persisted = args.output/scenario/'persisted'
                     for boundary, values in expected.items():
                         driver.runner.write_json(persisted/(boundary+'.json'), dict(status='PASS', values=values))
-                    if outcome == 'rejected':
+                    if outcome in ('rejected', 'wrong-exit'):
                         wrong = deepcopy(expected['runtime-disabled'])
                         wrong['shared']['enabled'] = False
                         wrong['bar']['widgets']['left'][0]['instanceSettings'].pop('enabled', None)
