@@ -10,10 +10,45 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 import xml.etree.ElementTree as ET
 
 from guest_profile import activate_profile, profile_argument
-from image_decoding_sources import discover, RENDERERS, TEXT_TYPES
+from image_decoding_sources import discover, RENDERERS, TEXT_TYPES, QmlTypes, production_files
+from image_decoding_evidence import source_manifest
+
+
+AUDITED_RESEARCH = {
+    ('atmosphera', '702b62f2212a319fd0667386e93e1be8c7f2f4c4', 'Modules/FileChooser/Optional/PdfQuickLook.qml',
+     '2290a071f3d505e2f341d40ba778b51c4d1d20119f8731e381cf8793cd9e2025'): 'pdf',
+    ('atmosphera', '702b62f2212a319fd0667386e93e1be8c7f2f4c4', 'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml',
+     'a05cd7b8da9ededf8f9bc750bcf42a92e396d11a1b35581faddbc6bb22598064'): 'notification-format',
+}
+
+
+def research_identity(row):
+    return (row['repository'], row['revision'], row['file'], hashlib.sha256(row['context'].encode()).hexdigest())
+
+
+def audited_positions(historical):
+    matches = {identity: [i for i, row in enumerate(historical) if research_identity(row) == identity]
+               for identity in AUDITED_RESEARCH}
+    if any(len(indices) != 1 for indices in matches.values()):
+        raise ValueError('Each audited historical source identity must occur exactly once')
+    return {indices[0]: AUDITED_RESEARCH[identity] for identity, indices in matches.items()}
+
+
+def source_identity(root):
+    source = source_manifest(root)
+    revision = None
+    if (root / '.git').exists():
+        git = ['git', '--no-optional-locks', '-C', str(root)]
+        top = Path(subprocess.check_output(git + ['rev-parse', '--show-toplevel'], text=True, timeout=30).strip())
+        if top.resolve() != root.resolve():
+            raise ValueError('Inventory Git identity must belong to the input tree')
+        revision = subprocess.check_output(git + ['rev-parse', 'HEAD'], text=True, timeout=30).strip()
+    return dict(revision=revision, revisionMeaning='Git HEAD, not a clean-tree claim' if revision else 'export; no Git revision asserted',
+                contentSha256=source['sha256'], entries=len(source['files']))
 
 
 def fixed_provenance(row, root):
@@ -109,7 +144,10 @@ def main():
     historical = json.loads(args.research.read_text())
     if len(historical) != 171:
         raise ValueError('Historical inventory must contain all 171 rows')
-    rows = discover(args.source, 'shell') + discover(args.plugins, 'plugins')
+    audited = audited_positions(historical)
+    pins = {name: source_identity(root) for name, root in (('shell', args.source), ('plugins', args.plugins))}
+    shell_types = QmlTypes(args.source, production_files(args.source, 'shell'))
+    rows = discover(args.source, 'shell') + discover(args.plugins, 'plugins', shell_types)
     by_file = {}
     for index, row in enumerate(rows):
         row['id'] = row['key']
@@ -147,12 +185,12 @@ def main():
         # These two original rows are a PDF page renderer and a format-source
         # property, not image-node declarations. Their dispositions are explicit
         # rather than mapping the latter to the nearest unrelated bell icon.
-        if index + 1 == 28:
+        if audited.get(index) == 'pdf':
             record.update(site=None, reconciliation='audited-pdf-not-raster-image',
                           reason='PdfDocument/PdfPageImage operate on PDFs; no arbitrary raster input',
                           fileSha256=hashlib.sha256((args.source / old['file']).read_bytes()).hexdigest())
             chosen = None
-        elif index + 1 == 46:
+        elif audited.get(index) == 'notification-format':
             targets = [r for r in by_file[(repository, old['file'])]
                        if r['identity'] in ('summaryText', 'bodyText')]
             record.update(site=None, sites=[r['id'] for r in targets], reconciliation='audited-format-source-to-two-text-consumers',
@@ -163,8 +201,10 @@ def main():
         if chosen:
             chosen['researchRows'].append(index + 1)
         reconciled.append(record)
+    if pins != {name: source_identity(root) for name, root in (('shell', args.source), ('plugins', args.plugins))}:
+        raise ValueError('Inventory source changed during discovery')
     result = dict(schema=1, researchSha256=hashlib.sha256(args.research.read_bytes()).hexdigest(),
-                  sourcePins={'shell': '702b62f2212a319fd0667386e93e1be8c7f2f4c4', 'plugins': '685169497bd4b0cffe3b6d3aaa6b1225caed474d'},
+                   sourcePins=pins,
                   researchRows=reconciled, sites=rows,
                   status='inventory-candidate; pending audit/adoption/endpoint qualification is not an exemption')
     args.manifest.write_text(json.dumps(result, indent=2) + '\n')

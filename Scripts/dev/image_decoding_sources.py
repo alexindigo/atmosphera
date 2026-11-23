@@ -29,12 +29,12 @@ def walk(node):
         yield from walk(child)
 
 
-def discover(root, repository):
+def discover(root, repository, shell_types=None):
     root = Path(root).resolve()
     paths = sorted(p for base in (SHELL_ROOTS if repository == 'shell' else ('.',))
                    for p in (root / base).rglob('*') if p.suffix in ('.qml', '.js') and p.is_file()
                     and not any(part.startswith('.') or part in ('tests', 'node_modules') for part in p.relative_to(root).parts))
-    types = QmlTypes(root, paths)
+    types = QmlTypes(root, paths, shell_types)
     rows = []
     for path in paths:
         ordinals = {}
@@ -78,7 +78,7 @@ def discover(root, repository):
                              node=kind, identity=identity, bindings=bindings,
                              nodeSha256=hashlib.sha256(data[node.start_byte:node.end_byte]).hexdigest(),
                               fileSha256=file_hash,
-                              **({'inheritedFrom': sorted(bases)} if bases and kind not in bases else {})))
+                              **({'inheritedFrom': sorted(bases - {kind})} if bases - {kind} else {})))
     return rows
 
 

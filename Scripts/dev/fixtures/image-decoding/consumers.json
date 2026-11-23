@@ -1,5 +1,32 @@
 {
  "schema": 2,
+ "sourceSelectionFiles": {
+  "shell:Modules/Cards/WeatherCard.qml": "dfdcf22ea46fa06f108bc3e1f88878117c006b26b8416be7af4cbe785509549a",
+  "shell:Modules/DesktopWidgets/Widgets/DesktopWeather.qml": "fe410931f7b4becb971ec301ec4a322bb040f5975f3b93d20f33b1baf4320b2d",
+  "shell:Modules/LockScreen/LockScreenPanel.qml": "ea0dff798c82e63d0497a09049d7c6c0c5e9a060114fe9d1808c3ef56548dd39",
+  "plugins:catwalk/BarWidget.qml": "370d65edde0e52385b2febb247f9adcc0447def187a77b1a12ec8cbd814fb97d",
+  "plugins:catwalk/DesktopWidget.qml": "fda65d493360daa1855ffe4dde5d60109bcf931a12e09125ef73184d3b8c7f1e",
+  "plugins:catwalk/Panel.qml": "b41956e9b893826891adb9530eadaa39451a25c10bca6681654aa10ed76d7e49",
+  "plugins:cloudflare-warp/CloudflareIcon.qml": "2c638d7fbb5b23e3b9de521568ff912cec0b471c177b4011bf2676568eed3124",
+  "plugins:coin-flip/Panel.qml": "790effda610f15af139fe2da00e6a3e824a6f86b5f4fa62764a60553300eee7b",
+  "plugins:custom-battery/BarPillHorizontal.qml": "dd2b8c4121166f3ef1d2286ef783d966e707165adb6ae5c7ef7f7000ee346290",
+  "plugins:hermes-ssh-chat/BarWidget.qml": "05b8e779e8b8a622846eb3012cb19ee67acdf61e14f2b732833ff722367f05de",
+  "plugins:hermes-ssh-chat/Panel.qml": "517fd16f9e5fb768908fe03adaebfebb876676c5990d2c700ca473cfe0710287",
+  "plugins:hyprland-visual-editor/modules/WelcomeModule.qml": "ee2664d9dce22c0de89c78d9d0e1ad6bca767bca00f7abe75cbc01a62e78b92f",
+  "plugins:netbird/NetBirdIcon.qml": "f1a42490ee9d14ac5ce57b095d2dbd1d14004b32cd5ab495cee88d693a551887",
+  "plugins:niri-screensaver/BarWidget.qml": "df02ec13cce3d24700c2c9a7572de8340f3a0faa157779d9f3c0d3c2147ab9c2",
+  "plugins:nvidia-optimus/BarWidget.qml": "2a19e216a2427ce34aac8bea83fc5c31db0b9a6940dd3b237903550e5b271880",
+  "plugins:nvidia-optimus/Panel.qml": "89cecabcf50aac7ff7e102f5f24412d825e6a5e8105214f6e2fcfd0f7902ebb1",
+  "plugins:openvpn3/OpenVpnIcon.qml": "5b89cab3342e8118768767797ceeb49f10e73f8e221bfb3d8a1d240c34786d7c",
+  "plugins:somnus/SomnusWindow.qml": "1e82bb598152b6b23c8484b612a5c46906d140a657b944fd4d88b6408e2533b0",
+  "plugins:syncthing-status/BarWidget.qml": "801ce0afe030b13abfcec3f1dc86cd79f1d678553b123b48b6db7b71f2bcc7fa",
+  "plugins:syncthing-status/Panel.qml": "32515be2e56ac17441a4bb1ff1b7f3b0a66198c739702c2be072844f62d83946",
+  "plugins:tamagotchi/Ball.qml": "c39f7e2eb18ecd624c379f2847f428fca64c49926236243db2ceab1e2ec62ae2",
+  "plugins:tamagotchi/Bed.qml": "101ee90bf15e2cbbe42a8eb579e7773e05405bfdbb9d9d2947910ceabefdfe7a",
+  "plugins:tamagotchi/Food.qml": "6b4938900145e4bb4b4459cc7ae30d1c7b52f5d3786efe5f053d7b2ff186e38c",
+  "plugins:tamagotchi/Soap.qml": "0c574d61b5b2c1fdcbf71f9af48768979d59eb1bfb5fb39f6f1ab1d3ceaa3f21",
+  "plugins:tamagotchi/components/AnimationController.qml": "e871551da310d3422ae605e12621cc875fbfc4ac1bd63e890cb83dd6d30185f7"
+ },
  "description": "Reviewed image boundary: every site where Qt or a process decodes image bytes outside the shared owner. Checked by Scripts/dev/image-decoding-boundary-check.py; line numbers are informational, identity is the parsed node text hash.",
  "sites": [
   {
@@ -605,7 +632,7 @@
    "nodeSha256": "8026eed3919304b2aff6707278cd94a4301d862baa7f5ed71469281f023a1442",
    "line": 163,
    "disposition": "shell-authored-markup",
-   "reason": "Translation markup written by the shell; the only data (the Bluetooth host name) is escaped."
+   "reason": "Shell-authored translation I18n.tr(\"panels.connections.wifi-header-text\") with no runtime interpolation."
   },
   {
    "repository": "shell",

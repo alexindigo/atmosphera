@@ -79,7 +79,12 @@ built from strings, and `magick`/`ffmpeg` commands. Each must match a
 reviewed entry in `Scripts/dev/fixtures/image-decoding/consumers.json`
 (fixed packaged assets with their hashes, the owner's own renderers,
 reviewed shell-authored markup, ...). A new site, a changed asset or a
-changed exempt source fails the check. Run it in the dev container:
+changed exempt source fails the check. Fixed/finite asset entries also pin the
+complete selecting QML file in `sourceSelectionFiles`, so a sibling handler
+cannot change the source while the image node remains unchanged. Cross-file
+selection helpers retain their explicit definition pins. Inventory adoption
+requires an exact current owner site, not just a historical renderer name.
+Run it in the dev container:
 
 ```sh
 python3 -B Scripts/dev/image-decoding-boundary-check.py --source . \

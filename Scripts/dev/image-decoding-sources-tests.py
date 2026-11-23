@@ -9,6 +9,20 @@ from unittest import mock
 from image_decoding_sources import discover, scan
 
 
+def boundary_module():
+    spec = importlib.util.spec_from_file_location('boundary', Path(__file__).with_name('image-decoding-boundary-check.py'))
+    boundary = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(boundary)
+    return boundary
+
+
+def inventory_module():
+    spec = importlib.util.spec_from_file_location('inventory', Path(__file__).with_name('image-decoding-inventory.py'))
+    inventory = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(inventory)
+    return inventory
+
+
 class ScopeTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix='image-source-scope-')
@@ -98,10 +112,18 @@ class ScopeTests(unittest.TestCase):
         self.write('Modules/Main.qml', 'import qs.Widgets\nNText { text: "plain" }')
         self.assertEqual(self.usages(discover(self.root, 'shell'), 'Modules/Main.qml'), [])
 
+    def test_inventory_resolves_plugin_usages_of_shell_wrappers(self):
+        self.write('shell/Widgets/Preview.qml', 'import QtQuick\nNImageRounded {}')
+        _, shell_types = scan(self.root / 'shell', 'shell')
+        self.write('plugins/example/Main.qml', 'import qs.Widgets as W\nW.Preview { source: path }')
+        rows = discover(self.root / 'plugins', 'plugins', shell_types)
+        uses = self.usages(rows, 'example/Main.qml')
+        self.assertEqual(len(uses), 1, uses)
+        self.assertEqual(uses[0]['node'], 'W.Preview')
+        self.assertIn('NImageRounded', uses[0]['inheritedFrom'])
+
     def test_hidden_wrapper_control_cannot_pass_on_the_definition_alone(self):
-        spec = importlib.util.spec_from_file_location('boundary', Path(__file__).with_name('image-decoding-boundary-check.py'))
-        boundary = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(boundary)
+        boundary = boundary_module()
         shell, plugins = self.root / 'shell', self.root / 'plugins'
         shell.mkdir()
         plugins.mkdir()
@@ -112,6 +134,67 @@ class ScopeTests(unittest.TestCase):
         with mock.patch.object(boundary, 'scan', without_usage):
             results = boundary.selftest([], {'sites': []}, dict(shell=shell, plugins=plugins), shell_types)
         self.assertFalse(next(r['passed'] for r in results if r['control'] == 'hidden-wrapper'))
+
+    def test_shell_only_control_requires_the_shell_only_check(self):
+        boundary = boundary_module()
+        shell, plugins = self.root / 'shell', self.root / 'plugins'
+        shell.mkdir()
+        plugins.mkdir()
+        _, shell_types = scan(shell, 'shell')
+        with mock.patch.object(boundary, 'SHELL_ONLY', set()):
+            results = boundary.selftest([], {'sites': []}, dict(shell=shell, plugins=plugins), shell_types)
+        self.assertFalse(next(r['passed'] for r in results if r['control'] == 'plugin-claims-shell-disposition'))
+
+    def test_fixed_asset_needs_its_source_selection_code(self):
+        boundary = boundary_module()
+        self.write('example/Logo.qml', 'import QtQuick\nImage { source: "assets/logo.png" }')
+        (self.root / 'example/assets').mkdir()
+        (self.root / 'example/assets/logo.png').write_bytes(boundary.PNG)
+        sites, _ = scan(self.root, 'plugins')
+        entry = {key: sites[0][key] for key in boundary.IDENTITY}
+        entry.update(disposition='fixed-asset', reason='control logo', assets=[dict(
+            path='example/assets/logo.png', sha256=boundary.hashlib.sha256(boundary.PNG).hexdigest())])
+        failures = boundary.check(sites, {'sites': [entry]}, dict(plugins=self.root))
+        self.assertTrue(any(f['problem'] == 'asset exemption without pinned source-selection file' for f in failures), failures)
+
+    def test_deleted_baseline_owner_does_not_count_as_current_adoption(self):
+        boundary = boundary_module()
+        row = dict(repository='plugins', path='example/Main.qml', node='NImageRounded',
+                   nodeSha256='old-node', key='old-key', disposition='inherited-owner-pending')
+        result = boundary.reconcile([], dict(sites=[], baseline={'sites': [row]}, researchRows=[]))
+        self.assertEqual(result['baseline'], {'replaced-or-removed': 1})
+
+    def test_reconciliation_requires_exact_current_owner_evidence(self):
+        boundary = boundary_module()
+        row = dict(repository='plugins', path='example/Main.qml', node='NImageRounded',
+                   nodeSha256='old-node', key='old-key', disposition='inherited-owner-pending')
+        manifest = dict(sites=[], baseline={'sites': [row]}, researchRows=[])
+        self.assertEqual(boundary.reconcile([], manifest, [row])['baseline'], {'owner-renderer': 1})
+        native_lookalike = dict(row, inheritedFrom=['Image'])
+        self.assertEqual(boundary.reconcile([], manifest, [native_lookalike])['baseline'], {'replaced-or-removed': 1})
+
+    def test_audited_history_is_identified_independently_of_row_order(self):
+        inventory = inventory_module()
+        pdf = dict(repository='shell', revision='old', file='Pdf.qml', context='PdfPageImage {}')
+        text = dict(repository='shell', revision='old', file='History.qml', context='property int format: Text.RichText')
+        other = dict(repository='shell', revision='old', file='Other.qml', context='Image {}')
+        audits = {inventory.research_identity(pdf): 'pdf', inventory.research_identity(text): 'notification-format'}
+        with mock.patch.object(inventory, 'AUDITED_RESEARCH', audits):
+            self.assertEqual(inventory.audited_positions([pdf, text, other]), {0: 'pdf', 1: 'notification-format'})
+            self.assertEqual(inventory.audited_positions([other, pdf, text]), {1: 'pdf', 2: 'notification-format'})
+            for bad in ([pdf, other], [pdf, pdf, text], [dict(pdf, context='changed'), text]):
+                with self.assertRaisesRegex(ValueError, 'exactly once'):
+                    inventory.audited_positions(bad)
+
+    def test_inventory_source_identity_follows_actual_bytes(self):
+        inventory = inventory_module()
+        self.write('Main.qml', 'import QtQuick\nImage { source: "one.png" }')
+        first = inventory.source_identity(self.root)
+        self.assertIsNone(first['revision'])
+        self.write('Main.qml', 'import QtQuick\nImage { source: "two.png" }')
+        second = inventory.source_identity(self.root)
+        self.assertNotEqual(first['contentSha256'], second['contentSha256'])
+        self.assertEqual(first['entries'], second['entries'])
 
 
 if __name__ == '__main__':
