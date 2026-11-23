@@ -16,7 +16,7 @@ def prepare(source):
     workspace = Path(os.environ['TMPDIR']).parent
     assert workspace == Path('/home/tester/Projects/atcq')
     assert subprocess.check_output(['sudo', '-n', 'cat', '/sys/class/dmi/id/product_uuid'], text=True).strip() == '12f17a02-25e9-474c-9dae-fea092c2d2be'
-    metadata = json.loads((source/'Scripts/dev/native-metadata/dependencies/configqml-053/manifest.json').read_text())
+    metadata = json.loads((source/'Scripts/dev/native-metadata/dependencies/configqml-054/manifest.json').read_text())
     pin = metadata['sourceCommit']
     version = metadata['version']
     for name, expected in metadata['artifacts'].items():

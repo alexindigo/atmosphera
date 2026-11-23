@@ -137,8 +137,9 @@ not catalog runtime effects. The catalog page regression separately exercises
 each manifest entry and Settings child in both scopes through its actual page
 signal, native Apply/Reset and independent files; it does not construct Main.
 The focused selected-client and Pomodoro input gates provide their additional
-real-input/runtime-consumer proof. ConfigQml >=0.5.3 is required, including
-retained bound-value notification when native Reset removes an optional leaf.
+real-input/runtime-consumer proof. ConfigQml >=0.5.4 is required, including
+selected-session batch staging and retained bound-value notification when
+native Reset removes an optional leaf.
 
 `plugin-settings-values-regression.py` adds a reviewed synthetic generic page
 with Boolean false, Integer zero, empty String, absent versus empty optional

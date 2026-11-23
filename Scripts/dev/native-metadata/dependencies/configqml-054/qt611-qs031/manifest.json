@@ -1,6 +1,6 @@
 {
-  "version": "0.5.3",
-  "sourceCommit": "51ee4693590451e213664cc57507dea409bced8a",
+  "version": "0.5.4",
+  "sourceCommit": "9d9ca0f37bdcb864c1747f65635cc555ae1f38d3",
   "qtVersion": "6.11.2",
   "qtMetatypes": {
     "qt6core_metatypes.json": "47fdb1d9e58246995b2196c2f1ee2661392581a9b18c20111635e3b1aafef7f2",
@@ -8,7 +8,7 @@
     "qt6network_metatypes.json": "5fc803255e781b3a64143fa23508ba62ba2902839146f29dbcedbe22d65bc687"
   },
   "artifacts": {
-    "configqml.qmltypes": "e8e8e53d1c621894646cbcbf0f180f9ae0b20a09b78f6ce0738e153cbecdbbb2",
+    "configqml.qmltypes": "cce0967ec941c474cc7aa5d680e40aef4165130173033f6105c275b30d27a747",
     "qmldir": "823e57764a4e96f5fe954381d2f88ea08a893fc7207d2707ec6e00b1dd1dcd36"
   },
   "producer": "configqml-metadata-generate.py (moc and qmltyperegistrar; tooling only)"

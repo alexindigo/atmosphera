@@ -31,7 +31,7 @@ SOURCE_INPUTS = (
     "Scripts/dev/fixtures/native-settings-model/probe.h",
     "Scripts/dev/fixtures/native-settings-model/probe.cpp",
     "Scripts/dev/fixtures/native-settings-model/native-io.cpp",
-    "Scripts/dev/native-metadata/dependencies/configqml-053/manifest.json",
+    "Scripts/dev/native-metadata/dependencies/configqml-054/manifest.json",
     "Scripts/dev/settings-model-regression.py",
     "Scripts/dev/guest_profile.py",
 )
@@ -141,7 +141,7 @@ def main():
                XDG_DATA_HOME=str(out / "data"), XDG_RUNTIME_DIR=str(runtime_dir))
     # The test friend is compiled against headers verified against the exact
     # installed library's git archive, not an arbitrary development checkout.
-    metadata = json.loads((source / "Scripts/dev/native-metadata/dependencies/configqml-053/manifest.json").read_text())
+    metadata = json.loads((source / "Scripts/dev/native-metadata/dependencies/configqml-054/manifest.json").read_text())
     pin = metadata["sourceCommit"]
     version = metadata["version"]
     for name, expected in metadata["artifacts"].items():

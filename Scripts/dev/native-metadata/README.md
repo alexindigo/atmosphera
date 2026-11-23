@@ -8,13 +8,13 @@ universe for ordinary `qmllint.sh`. Other installed modules remain unchanged.
 An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
-`dependencies/configqml-053` contains the **unmodified registrar outputs** for
-ConfigQml 0.5.3, regenerated inside `atmosphera-plugin-settings-host-and-assets`
+`dependencies/configqml-054` contains the **unmodified registrar outputs** for
+ConfigQml 0.5.4, regenerated inside `atmosphera-plugin-settings-host-and-assets`
 on ark.home with Qt 6.12.0 and the signed historical Qt 6.11.2 SDK packages.
-The published release source is `51ee4693590451e213664cc57507dea409bced8a`.
-The archive matches the install recipe's pinned checksum, and every input header
-matches that release's Git tree. The Qt 6.12.0 output is byte-identical to the
-real 0.5.3 package metadata. Both manifests identify the same release source.
+The published release source is `9d9ca0f37bdcb864c1747f65635cc555ae1f38d3`.
+The release archive matches the install recipe's pinned checksum and identifies
+that Git commit. The Qt 6.12.0 output is byte-identical to the metadata installed
+by building the release archive. Both manifests identify the same release source.
 When the tooling image lacks that module, the materializer copies these real
 registrar outputs into its private import universe, checking artifact hashes
 and the selected family's Qt version. An installed module takes precedence.
@@ -36,7 +36,7 @@ or installing libraries. In the assigned VM, with disk-backed TMPDIR:
 ```sh
 python3 -B Scripts/dev/configqml-metadata-generate.py \
   --source "$IMMUTABLE_CONFIGQML_SOURCE" --qt "$SDK/usr/lib/qt6" \
-  --reference Scripts/dev/native-metadata/dependencies/configqml-053 \
+  --reference Scripts/dev/native-metadata/dependencies/configqml-054 \
   --output "$WORKSPACE/generated-configqml"
 LD_LIBRARY_PATH="$SDK/usr/lib" python3 -B Scripts/dev/qml-native-metadata-selftest.py \
   --sdk "$SDK/usr/lib/qt6" -k configqml_fallback

@@ -104,11 +104,10 @@ The native editor captures base and owning-leaf generations. A changed capture,
 same-ID replacement, reorder, base change or owner loss cannot retarget it to a
 new placement. A closed/conflicted editor cannot recapture an index to recover.
 
-ConfigQml >=0.5.3 is required for untouched-overlay preservation, native staged
-draft Reset, selected publication and retained QML notification when an optional
-leaf becomes absent. Package, Nix and devcontainer pins select the signed release;
-0.5.2 introduced preservation and staged Reset but lacks the absence-notification
-correction needed by retained selected clients.
+ConfigQml >=0.5.4 is required. Package, Nix and devcontainer pins select the
+release with selected-session batch staging and retained Apply settlement as
+well as untouched-overlay preservation, native staged draft Reset, selected
+publication and retained QML notification when an optional leaf becomes absent.
 
 ## Selected runtime consumers
 
