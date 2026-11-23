@@ -754,9 +754,10 @@ class Run:
                         else list(COLORS[int(name[6])]) if name.startswith('frame-') else None)
             capture = output/('ack-'+str(index)+'.png')
             observed = pixel(capture) if capture.is_file() else None
-            checks.append(dict(event=row, observed=observed, expected=expected))
+            checks.append(dict(event=row, observed=observed, expected=expected, captured=capture.is_file()))
         self.check(prefix+'-acknowledgment-after-presented-ready', len(checks) >= 9
-                   and all(row['observed'] == row['expected'] and not row['event']['transitioning'] for row in checks), checks)
+                    and all(row['expected'] is not None and row['captured'] and row['event'].get('visible') is True
+                            and row['observed'] == row['expected'] and not row['event']['transitioning'] for row in checks), checks)
         self.check(prefix+'-failure-reason', all(row['reason'] for row in result['snapshots']
                    if row['name'] in ('invalid','solid-invalid')), result['snapshots'])
         self.check(prefix+'-destruction-retires-all-interests', result['interests'] == result['requests'] == 0
