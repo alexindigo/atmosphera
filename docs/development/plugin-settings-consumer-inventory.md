@@ -240,7 +240,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 6 | `amd-gpu-monitor/Panel.qml` | `iconColor`:29; `showDcefclk`:113,382,415,423; `showFanSpeed`:346; `showFclk`:109,380,401,423; `showGpuUse`:258; `showMclk`:107,379,394,423; `showPower`:363; `showSclk`:105,378,387,423; `showSocclk`:111,381,408,423; `showTempEdge`:87,282,297; `showTempJunction`:85,275,297; `showTempMemory`:89,289,297; `showVram`:137,314,317,324,329,440; `showVramActivity`:142,321,324,329,440 | 17, 20 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `da36f8835a46863c2c7be09a985bdd03f5b87f3ffcd61a9df968d9708d17f22e`.
+Runtime-source/manifest fingerprint: `3323b3d037b6f10145b5b673734aff7159058b9aefe800c1a5da20628b4fe010`.
 
 ## arch-updater
 

@@ -14,6 +14,15 @@ ShellRoot {
   readonly property string heldStage: Quickshell.env("PHA_OBSERVATION_HOLD_STAGE")
   readonly property bool receiveHandoff: Quickshell.env("PHA_OBSERVATION_HANDOFF") === "1"
   readonly property bool extraLifetime: Quickshell.env("PHA_OBSERVATION_EXTRA_LIFETIME") === "1"
+  readonly property bool gpuCadence: Quickshell.env("PHA_OBSERVATION_GPU_CADENCE") === "1"
+  property double cadenceAt: 0
+  property int cadenceSharedCount: 0
+  property int cadenceSelectedCount: 0
+  FileView {
+    id: cadenceLog
+    path: root.caseDir + "/gpu-cadence.jsonl"
+    blockLoading: true
+  }
   property var peerApi: null
   property var peerClient: null
   property var peerPanel: null
@@ -105,7 +114,11 @@ ShellRoot {
       property var mainInstance: root.main
       property bool alive: true
       readonly property var settingsView: pluginSettings
-      readonly property var settingsContext: Read.context(function () {
+      property var lifetime: ({
+                                alive: true
+                              })
+      Component.onDestruction: lifetime.alive = false
+      readonly property var settingsContext: Read.context(lifetime, function () {
         return api.pluginSettings;
       }, function () {
         return api.alive;
@@ -222,6 +235,10 @@ ShellRoot {
     phase = 1;
   }
   function observe() {
+    if (gpuCadence) {
+      driveGpuCadence();
+      return;
+    }
     if (plugin === "port-monitor") {
       if (main.portCount !== 3)
         return false;
@@ -497,6 +514,71 @@ ShellRoot {
       retirementProbe.running = true;
     return stageProcessRetired;
   }
+  function driveGpuCadence() {
+    cadenceLog.reload();
+    cadenceLog.waitForJob();
+    const text = cadenceLog.text().trim();
+    if (!text)
+      return;
+    const events = text.split("\n").map(line => JSON.parse(line));
+    const sharedStarts = events.filter(row => row.index === 0 && row.kind === "start");
+    const selectedStarts = events.filter(row => row.index === 1 && row.kind === "start");
+    const selectedFinishes = events.filter(row => row.index === 1 && row.kind === "finish");
+    for (var rows of [sharedStarts, selectedStarts]) {
+      for (var i = 1; i < rows.length; i++)
+        check(rows[i].at - rows[0].at >= 0.75 * i, "GPU cadence preserves the interval after process exit");
+    }
+    if (phase === 1) {
+      if (sharedStarts.length < 2 || selectedStarts.length < 2)
+        return;
+      check(bar.mon === client.observation && panel.mon === client.observation && sharedBar.mon === sharedClient.observation, "real views retain device-specific observation owners");
+      check(client.observation.gpuUseHistory.slice(-1)[0] === 11 && sharedClient.observation.gpuUseHistory.slice(-1)[0] === 10, "cadenced results reach both view histories");
+      phase = 20;
+    } else if (phase === 20) {
+      stageHeld.reload();
+      stageHeld.waitForJob();
+      if (!stageHeld.text())
+        return;
+      check(selectedStarts.length === 3 && selectedFinishes.length === 2, "third selected query is actually held");
+      cadenceSharedCount = sharedStarts.length;
+      cadenceAt = Date.now();
+      phase = 21;
+    } else if (phase === 21) {
+      if (Date.now() - cadenceAt < 2200)
+        return;
+      check(selectedStarts.length === 3 && selectedFinishes.length === 2, "busy observation skips scheduler ticks without overlap");
+      check(sharedStarts.length >= cadenceSharedCount + 2, "other device continues during the held query");
+      holdFlag.command = ["touch", caseDir + "/stage-release"];
+      holdFlag.running = true;
+      phase = 22;
+    } else if (phase === 22) {
+      if (selectedFinishes.length < 4)
+        return;
+      check(client.observation.gpuUseHistory.slice(-1)[0] === 11, "released observation resumes results");
+      selected.alive = false;
+      cadenceSelectedCount = selectedStarts.length;
+      cadenceSharedCount = sharedStarts.length;
+      cadenceAt = Date.now();
+      phase = 23;
+    } else if (phase === 23) {
+      if (Date.now() - cadenceAt < 1200)
+        return;
+      check(selectedStarts.length === cadenceSelectedCount && !main._observations.has(1), "selected retirement stops only its observation");
+      check(sharedStarts.length > cadenceSharedCount && main._observations.has(0), "shared observation retains its subscriber");
+      if (events.filter(row => row.index === 0 && row.kind === "finish").length !== sharedStarts.length)
+        return;
+      shared.alive = false;
+      cadenceSharedCount = sharedStarts.length;
+      cadenceAt = Date.now();
+      phase = 24;
+    } else if (phase === 24) {
+      if (Date.now() - cadenceAt < 1200)
+        return;
+      check(sharedStarts.length === cadenceSharedCount && selectedStarts.length === cadenceSelectedCount && main._observations.size === 0, "last subscriber retirement stops every scheduler");
+      console.log("OBSERVATION_CONTEXT: PASS " + plugin + " cadence");
+      Qt.exit(0);
+    }
+  }
   Timer {
     interval: 60
     running: true
@@ -512,6 +594,8 @@ ShellRoot {
           root.driveAction();
         else if (root.phase >= 10 && root.phase <= 14)
           root.driveExtraLifetime();
+        else if (root.gpuCadence && root.phase >= 20 && root.phase <= 24)
+          root.driveGpuCadence();
         else if (root.phase === 4) {
           if (root.plugin === "tailscale") {
             received.reload();

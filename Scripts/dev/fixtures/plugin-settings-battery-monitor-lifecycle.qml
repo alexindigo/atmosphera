@@ -75,7 +75,11 @@ ShellRoot {
       required property var pluginSettings
       property var mainInstance: root.main
       property bool alive: true
-      readonly property var settingsContext: Read.context(function () {
+      property var lifetime: ({
+                                alive: true
+                              })
+      Component.onDestruction: lifetime.alive = false
+      readonly property var settingsContext: Read.context(lifetime, function () {
         return selected.pluginSettings;
       }, function () {
         return selected.alive;

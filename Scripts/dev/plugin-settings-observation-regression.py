@@ -110,8 +110,17 @@ elif name=='openvpn3':
  else: raise SystemExit('unreviewed OpenVPN action '+repr(args))
 elif name=='rocm-smi':
  index=int(args[args.index('-d')+1])
+ if os.environ.get('PHA_OBSERVATION_GPU_CADENCE')=='1':
+  def event(kind):
+   with (case/'gpu-cadence.jsonl').open('a') as stream:
+    fcntl.flock(stream,fcntl.LOCK_EX)
+    stream.write(json.dumps(dict(kind=kind,index=index,pid=os.getpid(),at=time.monotonic()))+'\\n'); stream.flush()
+  event('start')
+  count=sum(json.loads(line)['kind']=='start' and json.loads(line)['index']==index for line in (case/'gpu-cadence.jsonl').read_text().splitlines())
+  if index==1 and count==3: (case/'gpu-1-hold').touch()
  hold('gpu-'+str(index))
  print(json.dumps({'card'+str(index):{'Card Series':'Controlled GPU '+str(index),'GPU use (%)':10+index,'Temperature (Sensor junction) (C)':40+index}}))
+ if os.environ.get('PHA_OBSERVATION_GPU_CADENCE')=='1': event('finish')
 elif name=='battery-endpoint':
  selected=args==['selected-battery']
  if not selected and args!=['base-battery']: raise SystemExit('unreviewed battery target')
@@ -177,7 +186,7 @@ if os.environ.get('PHA_OBSERVATION_EXTRA_LIFETIME')=='1': (case/(row['stage']+'-
         runner.write_json(out / 'mutation.json', dict(path='tailscale/Main.qml', old=old, new='if (!taildropRequestCurrent()) return;'))
     try:
         text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-observation.qml',
-            extra_env=dict(PHA_OBSERVATION_PLUGIN=plugin, PHA_OBSERVATION_CASE=str(case), PHA_OBSERVATION_REQUESTS=str(case / 'requests.jsonl'), PHA_OBSERVATION_OLD_RED='1' if args.old_red else '0', PHA_OBSERVATION_CANCEL_STARTING='1' if args.cancel_starting else '0', PHA_OBSERVATION_HOLD_STAGE='receive' if args.taildrop_lifetime == 'handoff' else args.taildrop_lifetime or '', PHA_OBSERVATION_HANDOFF='1' if args.taildrop_lifetime == 'handoff' else '0', PHA_OBSERVATION_EXTRA_LIFETIME='1' if args.extra_lifetime else '0', HOME=str(case / 'home'), PATH=str(case / 'bin') + ':' + os.environ['PATH']),
+            extra_env=dict(PHA_OBSERVATION_PLUGIN=plugin, PHA_OBSERVATION_CASE=str(case), PHA_OBSERVATION_REQUESTS=str(case / 'requests.jsonl'), PHA_OBSERVATION_OLD_RED='1' if args.old_red else '0', PHA_OBSERVATION_CANCEL_STARTING='1' if args.cancel_starting else '0', PHA_OBSERVATION_HOLD_STAGE='receive' if args.taildrop_lifetime == 'handoff' else args.taildrop_lifetime or '', PHA_OBSERVATION_HANDOFF='1' if args.taildrop_lifetime == 'handoff' else '0', PHA_OBSERVATION_EXTRA_LIFETIME='1' if args.extra_lifetime or args.gpu_cadence else '0', PHA_OBSERVATION_GPU_CADENCE='1' if args.gpu_cadence else '0', HOME=str(case / 'home'), PATH=str(case / 'bin') + ':' + os.environ['PATH']),
             extra_lint=tuple(sorted(dest.glob('*.qml'))), timeout=60)
     except RuntimeError:
         if not wanted or wanted not in (out / 'runtime.log').read_text() or (out / 'runtime.exit').read_text().strip() != '2':
@@ -189,6 +198,20 @@ if os.environ.get('PHA_OBSERVATION_EXTRA_LIFETIME')=='1': (case/(row['stage']+'-
         result = dict(status='PASS', plugin=plugin, nativeOrUIAcceptance=False, completePlanAcceptance=False)
     shutil.copy2(case / 'requests.jsonl', out / 'requests.jsonl')
     requests = [json.loads(line) for line in (case / 'requests.jsonl').read_text().splitlines()]
+    if args.gpu_cadence:
+        events = [json.loads(line) for line in (case / 'gpu-cadence.jsonl').read_text().splitlines()]
+        for index in (0, 1):
+            rows = [row for row in events if row['index'] == index]
+            starts = [row for row in rows if row['kind'] == 'start']
+            finishes = [row for row in rows if row['kind'] == 'finish']
+            if len(starts) < 4 or [row['pid'] for row in starts] != [row['pid'] for row in finishes]:
+                raise RuntimeError('cadence queries must all start and finish for each device')
+            if any(row['at'] - starts[0]['at'] < .75 * i for i, row in enumerate(starts[1:], 1)):
+                raise RuntimeError('GPU cadence must not restart immediately after process exit')
+            if any(b['at'] < a['at'] for a, b in zip(finishes, starts[1:])):
+                raise RuntimeError('GPU cadence must not overlap queries')
+        shutil.copy2(case / 'gpu-cadence.jsonl', out / 'gpu-cadence.jsonl')
+        result.update(cadenceVerified=True, busyTicksSkipped=True, subscribersRetired=True)
     for row in requests:
         path = Path('/proc') / str(row['pid']) / 'stat'
         if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']:
@@ -244,6 +267,7 @@ def main():
     parser.add_argument('--receive-completion-control', action='store_true')
     parser.add_argument('--extra-lifetime', action='store_true')
     parser.add_argument('--lifetime-control', action='store_true')
+    parser.add_argument('--gpu-cadence', action='store_true')
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-observation-regression.py':
         parser.error('execute supplied source')
@@ -255,6 +279,8 @@ def main():
     if args.receive_completion_control and args.taildrop_lifetime != 'handoff': parser.error('completion control requires handoff case')
     if args.extra_lifetime and args.plugin not in ('amd-gpu-monitor', 'netbird', 'openvpn3'): parser.error('explicit unusual observation member required')
     if args.lifetime_control and not args.extra_lifetime: parser.error('retirement control requires unusual observation lifetime case')
+    if args.gpu_cadence and (args.plugin != 'amd-gpu-monitor' or args.old_red or args.extra_lifetime or args.lifetime_control):
+        parser.error('GPU cadence requires its unmodified explicit GPU case')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent):
             parser.error('fresh owned profile roots required')
