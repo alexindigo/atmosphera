@@ -250,13 +250,13 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `arch-updater/ArchUpdaterQueryWorker.qml` | `aurCmd`:135; `flatpak`:140; `noctalia`:27; `refreshInterval`:237; `systemCmd`:100 | No namespace/Main reference |
-| 2 | `arch-updater/ArchUpdaterSettingsClient.qml` | `aurCmd`:15; `aurHomepageCmd`:32; `flatpak`:16; `noctalia`:17; `refreshInterval`:18; `systemCmd`:14; `toast`:30; `updateCmd`:31 | 8, 11, 12, 13 |
+| 1 | `arch-updater/ArchUpdaterQueryWorker.qml` | `aurCmd`:127; `flatpak`:132; `noctalia`:27; `refreshInterval`:222; `systemCmd`:100 | No namespace/Main reference |
+| 2 | `arch-updater/ArchUpdaterSettingsClient.qml` | `aurCmd`:16; `aurHomepageCmd`:32; `flatpak`:17; `noctalia`:18; `refreshInterval`:19; `systemCmd`:15; `toast`:31; `updateCmd`:42 | 8, 12, 13, 14 |
 | 3 | `arch-updater/BarWidget.qml` | `boldText`:36; `customIconPath`:41; `enableColorization`:42; `hideOnEmpty`:55; `iconColor`:43; `iconName`:39; `tooltip`:246; `useDistroLogo`:40 | 19, 36, 39, 40, 41, 42, 43, 55, ... |
 | 4 | `arch-updater/ControlCenterWidget.qml` | No literal field edge | No namespace/Main reference |
 | 5 | `arch-updater/DesktopWidget.qml` | `boldVerDesktop`:119; `hoverTip`:193 | 15, 119, 193 |
 | 6 | `arch-updater/LauncherProvider.qml` | No literal field edge | 10, 89 |
-| 7 | `arch-updater/Main.qml` | No literal field edge | 20, 26, 37 |
+| 7 | `arch-updater/Main.qml` | No literal field edge | 20, 26, 40 |
 | 8 | `arch-updater/Panel.qml` | `boldVerPanel`:265; `closeButton`:21,131; `closeOnSettings`:321; `panelContext`:101; `panelTooltip`:91 | 15, 21, 61, 64, 91, 100, 101, 131, ... |
 
 Declared leaves without a literal runtime namespace edge: `boldVer` (configuration), `desktopTip` (configuration), `refreshTimer` (configuration).
@@ -266,7 +266,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `boldVer,desktopTip,refreshTimer` | `arch-updater/Settings.qml:21` | No supported runtime read for these declared leaves; existing timer/feature-surface gaps, not proof of selected behavior. |
-Runtime-source/manifest fingerprint: `195d96edcc285236a9c646f46f49d36f2e3d7d9a455f7faa1e2f1f78de533097`.
+Runtime-source/manifest fingerprint: `6018b54b289be630b6ad0bb601f487a55fc5d461d36121c5961f7f761be0967c`.
 
 ## assistant-panel
 

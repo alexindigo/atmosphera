@@ -27,6 +27,29 @@ ShellRoot {
   property var failedEditor: null
   readonly property bool cold: Quickshell.env("PHA_ARCH_COLD") === "1"
   readonly property string checkCommand: Quickshell.env("PHA_ARCH_CHECK")
+  readonly property string updateCommand: Quickshell.env("PHA_ARCH_UPDATE")
+  readonly property string effectsDir: Quickshell.env("PHA_ARCH_EFFECT")
+  FileView {
+    id: updateStarted
+    path: root.effectsDir + (root.phase === "hold-retired" ? "/retired.started" : "/selected.started")
+    watchChanges: true
+    onFileChanged: reload()
+    printErrors: false
+  }
+  FileView {
+    id: retiredFinished
+    path: root.effectsDir + "/retired.finished"
+    watchChanges: true
+    onFileChanged: reload()
+    printErrors: false
+  }
+  Process {
+    id: releaseUpdate
+    onExited: function (code) {
+      if (code !== 0)
+        root.fail("admitted update did not survive " + root.phase + " (endpoint probe " + code + ")");
+    }
+  }
   FileView {
     id: manifestFile
     path: Settings.configDir + "plugins/arch-updater/manifest.json"
@@ -145,12 +168,16 @@ ShellRoot {
                 name: Quickshell.screens[0].name,
                 widgets: [
                   {
-                    id: "plugin:arch-updater"
+                    id: "plugin:arch-updater",
+                    instanceSettings: {
+                      updateCmd: "exec " + root.updateCommand + " hold selected"
+                    }
                   },
                   {
                     id: "plugin:arch-updater",
                     instanceSettings: {
-                      systemCmd: root.checkCommand + " other"
+                      systemCmd: root.checkCommand + " other",
+                      updateCmd: "exec " + root.updateCommand + " hold retired"
                     }
                   }
                 ]
@@ -260,6 +287,9 @@ ShellRoot {
       siblings();
       check(!popup.requestClose() && popup.discardPending, "failed Close refuses");
       popup.keepEditing();
+      desktopA.updater.update();
+      phase = "hold-selected";
+    } else if (phase === "hold-selected" && updateStarted.text().trim()) {
       permissions.command = ["chmod", "700", Settings.configDir + "settings"];
       phase = "make-writable";
       permissions.running = true;
@@ -270,10 +300,24 @@ ShellRoot {
     } else if (phase === "refreshed" && !clientA.refreshing && names(clientA) === "beta-pkg" && shows(desktopA, "beta-pkg")) {
       check(clientA.systemCmd === root.checkCommand + " beta", "selected client consumes the accepted command");
       siblings();
+      if (main.updating)
+        check(desktopB.updater.update() === false, "Main does not admit a second update while the first owns it");
+      phase = "query replacement";
+      releaseUpdate.command = [updateCommand, "release", "selected"];
+      releaseUpdate.running = true;
+    } else if (phase === "query replacement" && !releaseUpdate.running && !clientA.refreshing && names(clientA) === "beta-after-update-pkg" && shows(desktopA, "beta-after-update-pkg")) {
+      siblings();
       check(popup.requestClose(), "Close after save");
+      desktopB.updater.update();
+      phase = "hold-retired";
+    } else if (phase === "hold-retired" && updateStarted.text().trim()) {
       Service.loadedPlugins = ({});
-      phase = "retired";
-    } else if (phase === "retired" && main._settingsConsumers.size === 0) {
+      phase = "await-retirement";
+    } else if (phase === "await-retirement" && main._settingsConsumers.size === 0) {
+      phase = "context retirement";
+      releaseUpdate.command = [updateCommand, "release", "retired"];
+      releaseUpdate.running = true;
+    } else if (phase === "context retirement" && !releaseUpdate.running && retiredFinished.text().trim() === "23" && !main.updating) {
       console.log("ARCH_SELECTED: PASS");
       Qt.exit(0);
     }
