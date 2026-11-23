@@ -80,6 +80,54 @@ def main():
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
 
+        async def start_publication_writer(self, number, cache_home, target):
+            # Stop the real worker after cache lookup and validation, just before
+            # publishing. No production hook or assumed decoder timing is needed.
+            worker = args.source / 'Scripts/python/image-worker.py'
+            launcher = '''
+import runpy, sys, time
+from pathlib import Path
+
+worker, target, gate, number = sys.argv[1:]
+sys.path.insert(0, str(Path(worker).parent / 'src'))
+from images import cache
+write = cache.atomic_write
+
+def synchronized_write(path, *args, **kwargs):
+    if str(path) == target or (path.parent == Path(target) and path.suffix == '.png'):
+        marker = Path(gate) / (number + '.pending')
+        marker.write_text(str(path))
+        marker.replace(Path(gate) / number)
+        deadline = time.monotonic() + 12
+        while not (Path(gate) / 'release').exists():
+            if time.monotonic() >= deadline:
+                raise TimeoutError('peer did not reach publication')
+            time.sleep(.005)
+    return write(path, *args, **kwargs)
+
+cache.atomic_write = synchronized_write
+runpy.run_path(worker, run_name='__main__')
+'''
+            return await asyncio.create_subprocess_exec(sys.executable, '-B', '-c', launcher,
+                str(worker), str(target), str(self.folder), str(number),
+                stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                env=dict(os.environ, XDG_CACHE_HOME=str(cache_home)))
+
+        async def release_publication_writers(self, workers):
+            markers = [self.folder / str(number) for number in range(len(workers))]
+            async def wait_for_markers():
+                while not all(path.exists() for path in markers):
+                    await asyncio.sleep(.005)
+            try:
+                await asyncio.wait_for(wait_for_markers(), 8)
+            except TimeoutError:
+                self.fail(f'writers at publication: {[path.name for path in markers if path.exists()]}')
+            paths = [Path(path.read_text()) for path in markers]
+            self.assertEqual(len(set(paths)), 1, paths)
+            self.assertFalse(paths[0].exists(), paths)
+            (self.folder / 'release').touch()
+            self.events.append(dict(writersAtPublication=len(paths), target=str(paths[0])))
+
         def test_notification_pending_handoff_and_last_release(self):
             directory = self.folder / 'retained'
             history = self.folder / 'history.json'
@@ -1034,15 +1082,14 @@ def main():
                         return row
             try:
                 for number in range(2):
-                    process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source / 'Scripts/python/image-worker.py'),
-                        stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                        env=dict(os.environ, XDG_CACHE_HOME=str(cache.parent)))
+                    process = await self.start_publication_writer(number, cache.parent, target)
                     workers.append(process)
                     identities.append(self.process_identity(process.pid))
                     self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
                     process.stdin.write((json.dumps([dict(self.thumbnail_request(), source=str(source),
                                                           id=str(number), generation=number)]) + '\n').encode())
                     await process.stdin.drain()
+                await self.release_publication_writers(workers)
                 pending = [asyncio.create_task(receive(process)) for process in workers]
                 observations = []
                 while not all(task.done() for task in pending):
@@ -1054,6 +1101,7 @@ def main():
                 results = await asyncio.gather(*pending)
                 for result in results:
                     self.assertIn(result['status'], ('generated', 'hit'))
+                    self.assertEqual(result['thumbnailOrigin'], 'generated')
                     self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
                 self.assertEqual(pixel(target), list(COLORS[0]))
                 observations.append(hashlib.sha256(target.read_bytes()).hexdigest())
@@ -1603,6 +1651,8 @@ def main():
 
         async def test_independent_workers_publish_same_representation_atomically(self):
             workers, identities, replies = [], [], []
+            cache_home = self.folder/'shared'
+            directory = cache_home/'thumbnails/atmosphera-representations-v1/still'
             async def receive(process):
                 while True:
                     row = json.loads(await asyncio.wait_for(process.stdout.readline(), 8))
@@ -1618,18 +1668,16 @@ def main():
                         return row
             try:
                 for number in range(2):
-                    process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
-                        stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                        env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'shared')))
+                    process = await self.start_publication_writer(number, cache_home, directory)
                     workers.append(process)
                     identities.append(self.process_identity(process.pid))
                     self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
                 for number, process in enumerate(workers):
                     process.stdin.write((json.dumps([dict(self.request('Motion.webp'), id=str(number), generation=number)])+'\n').encode())
                     await process.stdin.drain()
+                await self.release_publication_writers(workers)
                 pending = [asyncio.create_task(receive(process)) for process in workers]
                 observed = []
-                directory = self.folder/'shared/thumbnails/atmosphera-representations-v1/still'
                 while not all(task.done() for task in pending):
                     for path in directory.glob('*.png'):
                         data = path.read_bytes()
@@ -1638,8 +1686,7 @@ def main():
                     await asyncio.sleep(.001)
                 first, second = await asyncio.gather(*pending)
                 self.assertEqual(first['url'], second['url'])
-                self.assertIn(first['status'], ('generated', 'hit'))
-                self.assertIn(second['status'], ('generated', 'hit'))
+                self.assertEqual((first['status'], second['status']), ('generated', 'generated'))
                 target = Path(first['url'].removeprefix('file://'))
                 self.assertEqual(pixel(target), list(COLORS[0]))
                 validate(target.read_bytes())
