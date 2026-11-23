@@ -21,6 +21,7 @@ ShellRoot {
         property var inherited: null
         property var failureApi: null
         property var selected: null
+        property var replacement: null
         property int familyIndex: 0
         readonly property var placements: [
           {
@@ -392,14 +393,25 @@ ShellRoot {
               phase = "moved";
             });
           } else if (phase === "moved") {
-            // The native token can invalidate preview before the live namespace has
-            // delivered the replacement value. Observe that consumer, then assert.
-            if (first.pluginSettings.label !== "two")
+            // The original API is tied to its placement token. A replacement
+            // consumer must resolve the address again after that token retires.
+            if (first.settingsError !== "overlay-identity")
               return;
-            check(firstText.text === "two" && !preview.update({
-                                                                label: "wrong-owner"
-                                                              }) && preview.pending(), "moved/replaced row cannot receive old preview; work retained");
+            check(first.pluginSettings === null && !first.settingsReady && first.createSettingsEditor() === null, "moved API is retired");
+            check(!preview.update({
+                                    label: "wrong-owner"
+                                  }) && preview.pending(), "moved/replaced row cannot receive old preview; work retained");
             preview.close();
+            replacement = PluginInstances.apiFor("i4-preview", placement);
+            check(replacement !== null && replacement !== first, "replacement resolves a different API");
+            phase = "moved-replacement";
+          } else if (phase === "moved-replacement") {
+            if (!replacement.settingsReady) {
+              check(!replacement.settingsError, "replacement API opens: " + replacement.settingsError);
+              return;
+            }
+            check(replacementText.text === "two", "replacement runtime consumer sees only its own value");
+            console.info("I4_PREVIEW: moved replacement verified");
             var rows = [
                   {
                     id: "plugin:i4-preview",
@@ -461,12 +473,22 @@ ShellRoot {
             replaceFamily([rows[1], rows[0]]);
             phase = "family-moved";
           } else if (phase === "family-moved") {
-            if (selected.pluginSettings.label !== "second")
+            if (selected.settingsError !== "overlay-identity")
               return;
-            check(selectedText.text === "second" && !preview.update({
-                                                                      label: "wrong-placement"
-                                                                    }) && preview.pending(), "all placement families fence replacement");
+            check(selected.pluginSettings === null && !selected.settingsReady && selected.createSettingsEditor() === null, "family API is retired");
+            check(!preview.update({
+                                    label: "wrong-placement"
+                                  }) && preview.pending(), "all placement families fence replacement");
             preview.close();
+            replacement = PluginInstances.apiFor("i4-preview", placements[familyIndex]);
+            check(replacement !== null && replacement !== selected, "family replacement resolves a different API");
+            phase = "family-replacement";
+          } else if (phase === "family-replacement") {
+            if (!replacement.settingsReady) {
+              check(!replacement.settingsError, "family replacement API opens: " + replacement.settingsError);
+              return;
+            }
+            check(replacementText.text === "second", "family replacement runtime consumer sees only its own value");
             familyIndex++;
             nextFamily();
           } else if (phase === "popup" && popup.opened && popup.settingsPage) {
@@ -483,6 +505,9 @@ ShellRoot {
                                                                   label: "must-not-stage-while-busy"
                                                                 }), "busy preview action is refused without publishing");
             deliver();
+            phase = "held-observed";
+          } else if (phase === "held-observed" && !popup.busy) {
+            check(!popup.saveFailed, "held current write observed by consumer");
             check(popup.settingsPage.labelText === "newer-local" && popup.dirty, "held receipt retains newer local input");
             popup.settingsPage.change("newer-local");
             phase = "newer";
@@ -492,6 +517,8 @@ ShellRoot {
             phase = "newer-held";
           } else if (phase === "newer-held" && release) {
             deliver();
+            phase = "newer-observed";
+          } else if (phase === "newer-observed" && !popup.busy) {
             check(!popup.dirty && shared.text === "newer-local", "current captured preview settles");
             popup.settingsPage.change("newer-local");
             popup.applySettings();
@@ -499,12 +526,16 @@ ShellRoot {
           } else if (phase === "equal-held" && release) {
             check(held.status === "saved" && held.refreshState === "current", "explicit equal native input remains intent");
             deliver();
+            phase = "equal-observed";
+          } else if (phase === "equal-observed" && !popup.busy) {
             popup.settingsPage.stageOnSave = false;
             popup.applySettings();
             phase = "noop-held";
           } else if (phase === "noop-held" && release) {
             check(held.status === "nothing_to_save", "actual no-op receipt");
             deliver();
+            phase = "noop-observed";
+          } else if (phase === "noop-observed" && !popup.busy) {
             popup.settingsPage.stageOnSave = true;
             check(!popup.dirty && shared.text === "newer-local", "no-op acknowledges its preview");
             stale = true;
@@ -571,6 +602,8 @@ ShellRoot {
             phase = "final-held";
           } else if (phase === "final-held" && release) {
             deliver();
+            phase = "final-observed";
+          } else if (phase === "final-observed" && !popup.busy) {
             check(!popup.dirty && api.pluginSettings.label === "final", "final saved preferences");
             popup.requestClose();
             phase = "lifetime";
@@ -621,6 +654,10 @@ ShellRoot {
             Text {
               id: selectedText
               text: root.selected && root.selected.settingsView ? root.selected.settingsView.label : ""
+            }
+            Text {
+              id: replacementText
+              text: root.replacement && root.replacement.settingsView ? root.replacement.settingsView.label : ""
             }
           }
           NPluginSettingsPopup {
