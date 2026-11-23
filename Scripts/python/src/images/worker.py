@@ -23,6 +23,16 @@ class Worker:
         if fd is not None:
             os.close(fd)
 
+    def _restore_lease(self, key, url):
+        # Lease snapshots and clear commands share one synchronous protocol
+        # order. Restoring a held URL cannot wait for a decoder task turn.
+        try:
+            lease = self.cache.lease(dict(status='hit', url=url))
+        except (OSError, ValueError):
+            lease = None
+        if lease is not None:
+            self.leases[key] = lease
+
     def clear(self, message):
         # Synchronous on the protocol loop: a sweep completes before EOF can
         # retire this process, and its own leases cannot interleave with it.
@@ -38,12 +48,7 @@ class Worker:
         if 'lease' in item:
             # A settled consumer still holds this URL. Never re-render it; a
             # name already cleared simply has no lease to restore.
-            try:
-                lease = self.cache.lease(dict(status='hit', url=item['lease']))
-            except (OSError, ValueError):
-                lease = None
-            if lease is not None:
-                self.leases[key] = lease
+            self._restore_lease(key, item['lease'])
             return
         try:
             for _attempt in range(3):
@@ -94,7 +99,10 @@ class Worker:
                 task.add_done_callback(self.retired.discard)
         self.tasks = {key: task for key, task in self.tasks.items() if same(key)}
         for key, item in wanted.items():
-            if key not in self.tasks:
+            if 'lease' in item:
+                if key not in self.leases:
+                    self._restore_lease(key, item['lease'])
+            elif key not in self.tasks:
                 self.tasks[key] = asyncio.create_task(self.request(item))
         self.wanted = wanted
 

@@ -79,6 +79,87 @@ def main():
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
 
+        async def test_malformed_containers_emit_terminal_unavailable(self):
+            malformed = {
+                'empty-header.png': PNG + chunk(b'IHDR', b'') + chunk(b'IDAT', zlib.compress(b'')) + chunk(b'IEND', b''),
+                'short-header.png': PNG + chunk(b'IHDR', b'\0' * 8) + chunk(b'IDAT', zlib.compress(b'')) + chunk(b'IEND', b''),
+                'extension.gif': b'GIF89a' + struct.pack('<HH', 1, 1) + b'\0\0\0\x21',
+            }
+            for name, data in malformed.items():
+                path = self.folder / name
+                path.write_bytes(data)
+                replies = []
+                worker = Worker(self.cache, replies.append)
+                try:
+                    await worker.request(dict(self.request(), source=str(path), id=name))
+                    self.assertEqual(len(replies), 1, (name, replies))
+                    self.assertEqual(replies[0]['status'], 'unavailable', name)
+                    self.assertEqual(replies[0]['url'], '', name)
+                finally:
+                    await worker.close()
+
+        async def test_png_validation_errors_share_the_value_error_boundary(self):
+            header = struct.pack('!IIBBBBB', 1, 1, 8, 6, 0, 0, 0)
+            for parts in ((chunk(b'IHDR', b''), chunk(b'IDAT', zlib.compress(b''))),
+                          (chunk(b'IHDR', header), chunk(b'IDAT', b'not zlib'))):
+                with self.subTest(parts=parts), self.assertRaises(ValueError):
+                    validate(PNG + b''.join(parts) + chunk(b'IEND', b''))
+            data = zlib.compress(b'\0\x01\x02\x03\xff')
+            consecutive = PNG + chunk(b'IHDR', header) + chunk(b'IDAT', data[:3]) + chunk(b'IDAT', data[3:]) + chunk(b'IEND', b'')
+            self.assertEqual(validate(consecutive)['width'], 1)
+            broken = PNG + chunk(b'IHDR', header) + chunk(b'IDAT', data[:3]) + chunk(b'tEXt', b'k\0v') + chunk(b'IDAT', data[3:]) + chunk(b'IEND', b'')
+            with self.assertRaises(ValueError):
+                validate(broken)
+
+        async def test_png_inflation_is_bounded_by_declared_pixels(self):
+            header = struct.pack('!IIBBBBB', 1, 1, 8, 6, 0, 0, 0)
+            bomb = PNG + chunk(b'IHDR', header) + chunk(b'IDAT', zlib.compress(b'\0' * 1048576)) + chunk(b'IEND', b'')
+            original = zlib.decompressobj
+            calls = []
+            class Observed:
+                def __init__(self):
+                    self.decoder = original()
+                def decompress(self, data, max_length=0):
+                    calls.append(max_length)
+                    return self.decoder.decompress(data, max_length)
+                def __getattr__(self, key):
+                    return getattr(self.decoder, key)
+            with patch('images.png.zlib.decompressobj', Observed), self.assertRaises(ValueError):
+                validate(bomb)
+            self.assertTrue(calls)
+            self.assertTrue(all(0 < limit <= 6 for limit in calls), calls)
+
+        async def test_transient_decoder_failure_is_not_persisted(self):
+            calls = []
+            async def transient(prepared, request, info):
+                calls.append(request)
+                error = SourceError('decode-unavailable', 'Temporary decoder failure')
+                error.attempts = [dict(decoder='magick', code='timeout'), dict(decoder='ffmpeg', code='decoder-failed')]
+                raise error
+            with patch.object(self.cache, 'decode', transient):
+                for _ in range(2):
+                    with self.assertRaises(SourceError):
+                        await self.cache.render(self.request())
+            self.assertEqual(len(calls), 2)
+            self.assertEqual(list((self.cache.private / 'fail').glob('*.json')), [])
+
+        async def test_restarted_worker_restores_held_lease_before_same_read_clear(self):
+            result = await self.cache.render(self.request())
+            target = Path(result['url'].removeprefix('file://'))
+            replies = []
+            worker = Worker(self.cache, replies.append)
+            try:
+                worker.replace([dict(id='held', generation=1, lease=result['url'])])
+                reply = worker.clear(dict(id='clear'))
+                self.assertEqual(reply['event'], 'cleared')
+                self.assertTrue(target.is_file(), reply)
+                await asyncio.gather(*worker.tasks.values())
+                self.assertIn('held', worker.leases)
+            finally:
+                await worker.close()
+            worker.clear(dict(id='released'))
+            self.assertFalse(target.exists())
+
         async def test_literal_sources_data_and_file_urls(self):
             for name in ('Still.webp', 'Misleading.png', 'bracket[0]: image.webp', '-leading.webp', 'image:literal.webp', 'Space \u6d77\u5cb8.webp'):
                 result = await self.cache.render(self.request(name))
@@ -1237,7 +1318,7 @@ def main():
                             stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                             env=dict(os.environ, PATH=str(shim) + ':' + os.environ['PATH'], XDG_CACHE_HOME=str(self.folder / 'cache')))
             try:
-                self.assertEqual(json.loads(await process.stdout.readline())['event'], 'ready')
+                self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 5))['event'], 'ready')
                 process.stdin.write((json.dumps([dict(self.request(), id='death', generation=1)]) + '\n').encode())
                 await process.stdin.drain()
                 for _ in range(300):

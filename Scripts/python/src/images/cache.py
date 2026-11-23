@@ -438,7 +438,10 @@ class Cache:
         except SourceError as error:
             if not prepared['current']():
                 raise SourceError('source-changed', 'Image source changed during decoding') from error
-            if error.code != 'source-changed':
+            # Transient resource/deadline failures must not survive a new
+            # request or worker process as a permanent decoder-capability miss.
+            timed_out = error.code == 'timeout' or any(attempt.get('code') == 'timeout' for attempt in getattr(error, 'attempts', ()))
+            if error.code != 'source-changed' and not timed_out:
                 atomic_write(failure, json.dumps(dict(capability=fingerprint, code=error.code, reason=str(error))).encode(), self.root)
             raise
         if not prepared['current']():

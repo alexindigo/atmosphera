@@ -75,6 +75,8 @@ def gif(data):
             return dict(format='gif', width=width, height=height, frames=frames, animated=frames > 1,
                         delaysMs=delays, loop=loop, disposals=disposals)
         if marker == 0x21:
+            if offset >= len(data):
+                raise ValueError('Truncated GIF extension')
             label = data[offset]
             offset += 1
             offset, value = blocks(offset)
