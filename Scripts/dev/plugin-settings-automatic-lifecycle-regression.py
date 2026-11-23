@@ -60,6 +60,8 @@ elif name=='hyprctl':
   print(json.dumps({'touch':[{'name':'touch-one','output':'eDP-test'},{'name':'touch-two','output':'eDP-test'}]}))
  elif args[:2]==['keyword','monitor']:
   if scenario in ('apply','retire-apply'): wait('apply')
+ elif args[:1]==['keyword'] and len(args)==3 and args[1].startswith('device[') and args[1].endswith(']:transform'):
+  record(event='completed')
  elif args==['-j','monitors']: print(json.dumps([dict(name='eDP-test',width=1280,height=720,refreshRate=60,scale=1,transform=2)]))
 elif name=='which':
  if scenario=='detect' and args[0]=='wvkbd-old': wait('detect')

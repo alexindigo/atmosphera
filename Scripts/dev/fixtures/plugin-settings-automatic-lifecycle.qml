@@ -112,6 +112,20 @@ ShellRoot {
   function match(name, predicate) {
     return rows().filter(row => row.endpoint === name && (!predicate || predicate(row)));
   }
+  function verifyCapturedTouchEffects(effects) {
+    const policyCheck = "captured apply keeps touch and notification policy";
+    check(notices === 0, policyCheck);
+    const starts = effects.filter(row => !row.event);
+    const completed = effects.filter(row => row.event === "completed");
+    // The fixture cycles the initially unrotated output to 90 degrees (ID 1).
+    const expected = ["keyword device[touch-one]:transform 1", "keyword device[touch-two]:transform 1"];
+    check(starts.length <= expected.length && starts.every((row, i) => row.argv.join(" ") === expected[i]), policyCheck);
+    check(completed.length <= expected.length && completed.every((row, i) => {
+      const start = starts[i];
+      return start && row.pid === start.pid && row.start === start.start && row.argv.join(" ") === expected[i];
+    }), policyCheck);
+    return completed.length === expected.length && main._hyprTouchActiveTarget === "";
+  }
   function patch(values) {
     selectedApi.pluginSettings = Object.assign({}, selectedApi.pluginSettings, values);
   }
@@ -147,7 +161,8 @@ ShellRoot {
   function drive() {
     if (phase === "begin")
       return;
-    check(Date.now() - since < 18000, "finite lifetime phase");
+    const capturedEffects = phase === "held-result" && !scenario.startsWith("retire");
+    check(Date.now() - since < 18000, capturedEffects ? "captured apply keeps touch and notification policy" : "finite lifetime phase");
     if (phase === "initial") {
       if (Date.now() - since < 400 || (!osk && main.compositorBackend === "unknown"))
         return;
@@ -215,14 +230,14 @@ ShellRoot {
               });
       releaseTag(scenario.includes("touch") ? "touch" : "apply");
       phase = "held-result";
-    } else if (phase === "held-result" && Date.now() - since > 700) {
+    } else if (phase === "held-result" && (capturedEffects || Date.now() - since > 700)) {
       const effects = rows().slice(before).filter(row => row.endpoint === "hyprctl" && row.argv[0] === "keyword" && row.argv[1].startsWith("device["));
       if (scenario === "retire-touch")
         check(effects.length === 0, "retired touch query cannot dispatch");
       else if (scenario === "retire-apply")
         check(!match("hyprctl", row => row.argv.join(" ") === "-j devices").length && notices === 0, "retired apply cannot start touch or notification");
-      else
-        check(effects.length === 2 && notices === 0, "captured apply keeps touch and notification policy");
+      else if (!verifyCapturedTouchEffects(effects))
+        return;
       pass();
     } else if (phase === "restore") {
       if (scenario === "restore-retry" && main.compositorBackend === "unsupported") {
