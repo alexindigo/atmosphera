@@ -1059,11 +1059,13 @@ class Checker:
         return ended + [value.state for value in self.expression(node, active)]
 
     def signature(self, state):
-        return (tuple(sorted(state.env.items())), tuple(sorted((key, node.id) for key, node in state.dirty.items())),
-                state.control, frozenset(state.escaped), frozenset(state.locals), tuple(sorted(state.scalars.items())),
+        # These are maps, not ordered sequences. Read every mutable field afresh,
+        # but do not repeatedly sort entries just to obtain order-free equality.
+        return (frozenset(state.env.items()), frozenset((key, node.id) for key, node in state.dirty.items()),
+                state.control, frozenset(state.escaped), frozenset(state.locals), frozenset(state.scalars.items()),
                 state.owner, state.this_owner,
-                tuple((token, tuple(sorted((path, frozenset(values)) for path, values in slots.items())))
-                      for token, slots in sorted(state.contained.items())),
+                frozenset((token, frozenset((path, frozenset(values)) for path, values in slots.items()))
+                          for token, slots in state.contained.items()),
                 tuple((values.key, frozenset(locals_)) for values, locals_ in state.scopes))
 
     def bound(self, states, node):

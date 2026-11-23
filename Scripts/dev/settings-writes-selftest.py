@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import sys
 import time
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('settings_writes',Path(__file__).with_name('check-settings-writes.py'))
@@ -119,6 +120,18 @@ for label,mutate in mutations.items():
     before=checker.signature(row); mutate(row)
     if checker.signature(row) == before:
         raise RuntimeError('signature retained mutable '+label)
+# Proof equality is map equality, not iteration order. Build every mutable
+# signature afresh without repeatedly sorting those same unordered entries.
+ordered=module.State(env={'z':reference,'a':None}, dirty={303:definition.node},
+                     scalars={'z':(False,True),'a':(None,None)},
+                     contained={303:{('z',):{404},('a',):{505}}},scopes=[(frame,{'outer'})])
+reordered=ordered.fork()
+reordered.env=dict(reversed(list(ordered.env.items())))
+reordered.scalars=dict(reversed(list(ordered.scalars.items())))
+reordered.contained[303]=dict(reversed(list(ordered.contained[303].items())))
+with patch('builtins.sorted',side_effect=RuntimeError('signature rebuilt an unnecessary ordering')):
+    if checker.signature(ordered) != checker.signature(reordered):
+        raise RuntimeError('signature depends on map insertion order')
 changed=module.SavedBindings((('rows',(True,module.Ref(reference.path,'detached',404),True,(True,False))),))
 other=module.State(scopes=[(changed,{'other'})])
 joined,_=checker.join_sequence((state,[]),(other,[]))
