@@ -68,6 +68,13 @@ def main():
         assert not args.bypass_observation, 'bypassed observation escaped'
         assert 'SETTINGS_OBSERVATION: PASS ' + args.scope + ' ' + args.scenario in text
         assert not any(marker in text for marker in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected'))
+        if args.scenario not in ('owner-loss', 'destroy'):
+            # Successful acquisition has a real native result. Do not accept a
+            # diagnostic whose undefined field was silently omitted by JSON.
+            diagnostics = [json.loads(line.split('SETTINGS_OBSERVATION_RESULT ', 1)[1])
+                           for line in text.splitlines() if 'SETTINGS_OBSERVATION_RESULT ' in line]
+            if not diagnostics or any(row.get('readerStateValid') is not True for row in diagnostics):
+                raise RuntimeError('native read-state diagnostic missing or not valid')
         if args.scope == 'shared':
             shared['label'] = 'saved'
         else:

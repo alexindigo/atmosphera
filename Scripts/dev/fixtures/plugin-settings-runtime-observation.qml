@@ -174,7 +174,21 @@ ShellRoot {
                                                 label: "saved"
                                               }), "explicit selected preview");
       check(session.applySettings(), "Apply admitted");
-      phase = scenario === "inherited-preview" ? "observed" : "held";
+      phase = scenario === "inherited-preview" ? (placed ? "observed" : "foreign-preview-blocked") : "held";
+    } else if (phase === "foreign-preview-blocked" && !session.busy) {
+      check(last.status === "failed" && last.error.phase === "observation" && last.write.status === "saved", "foreign shared preview refuses observation, not the completed write");
+      check(session.failed && writes === 1 && signals === 1 && callbacks === 1 && reads === 0, "foreign reader failure delivered once without a controlled native read");
+      check(nativeReader.values.label === "saved" && selected.settingsContext.settingsView.label === "foreign-preview", "persisted native value and foreign preview remain distinct");
+      check(externalPreview.close(), "foreign preview released by its owner");
+      externalPreview = null;
+      order = "";
+      check(session.applySettings(), "observation-only Retry after foreign preview release");
+      phase = "foreign-preview-retry";
+    } else if (phase === "foreign-preview-retry" && held) {
+      check(session.busy && writes === 1 && reads === 1 && signals === 1 && callbacks === 1, "Retry waits for the selected native reader without restaging");
+      var foreignRetry = held;
+      foreignRetry(false);
+      phase = "observed";
     } else if (phase === "held" && held) {
       check(session.busy && session.pageApi.busy && signals === 0 && callbacks === 0, "busy and no observer before runtime acquisition");
       if (scenario === "preview")
@@ -211,7 +225,7 @@ ShellRoot {
                                                                     error: last?.error,
                                                                     order: order,
                                                                     readerReady: selected.settingsReadOwner?.ready,
-                                                                    readerStateValid: selected.settingsReadOwner?.readProjection.state(["label"]).valid
+                                                                    readerStateValid: !!root.frozen && root.frozen.state(["label"]).valid
                                                                   }));
       check(!session.failed && order === "signal,callback" && last.runtimeRead.status === "observed", "ordered complete observation");
       check(session.editor === openedEditor && session.page === testPage, "same editor/page survives observation");
