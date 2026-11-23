@@ -1484,7 +1484,8 @@ os.execv('/usr/bin/find', ['find', *args])
         private = self.work / (name + '-profile/cache/thumbnails/atmosphera-representations-v1')
         self.check('actual-clear-button-clicked', result['clicked'] and len(toasts) == 1, toasts)
         self.check('released-adapter-output-was-owner-representation', released['success']
-                   and Path(released['path']).is_relative_to(private), released)
+                   and Path(released['path']).is_relative_to(private) and probes['releasedBeforeButton'],
+                   dict(released=released, probes=probes))
         if red:
             self.check('actual-clear-button-leaves-owner-representations', toasts[0]['type'] == 'notice'
                        and probes['releasedAfterButton'] and not result['ownerClear'], dict(probes=probes, toasts=toasts), red=True)
