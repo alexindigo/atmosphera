@@ -16,6 +16,9 @@ ShellRoot {
   property var settled: null
   property bool staleRejected: false
   property var staleTicket: null
+  property bool fenceChecked: false
+  property int originalGeneration: -1
+  property bool replacementCaptured: false
   property int sharingBefore: 0
   property int sharingAfter: 0
   property int pausedFrame: -1
@@ -215,15 +218,25 @@ ShellRoot {
         root.grab(firstFrame, "first-frame");
         root.sharingBefore = ImageCacheService.sourceRequestCount;
         sharedA.active = false;
+        root.originalGeneration = replacing.generation;
         replacing.source = root.inputs + "/frame-1.png";
         fencing.active = true;
       }
-      if (root.tick === 15) {
+      if (root.tick === 15)
         root.sharingAfter = ImageCacheService.sourceRequestCount;
+      if (root.tick >= 15 && !root.staleTicket && fencing.candidate) {
         root.staleTicket = fencing.candidate;
         fencing.source = root.inputs + "/frame-2.png";
-        fencing.report(root.staleTicket, Image.Ready, 128, 128, 1);
-        root.staleRejected = fencing.state !== "ready";
+      }
+      if (root.staleTicket && !root.fenceChecked && fencing.candidate && fencing.candidate.generation !== root.staleTicket.generation) {
+        const live = fencing.candidate;
+        // A zero-size Ready would fail a live ticket immediately, even before
+        // metadata arrives. Both tickets must exist to exercise the fence.
+        fencing.report(root.staleTicket, Image.Ready, 0, 0, 1);
+        root.staleRejected = fencing.state === "loading" && fencing.candidate === live;
+        root.fenceChecked = true;
+        if (root.staleRejected)
+          fencing.report(live, Image.Ready, 128, 128, 1);
       }
       if (root.tick === 20) {
         motion.paused = true;
@@ -235,10 +248,13 @@ ShellRoot {
       }
       if (root.tick === 30) {
         root.grab(sharedB, "shared-survivor");
-        root.grab(replacing, "replacing");
         root.grab(data, "data");
       }
-      if (root.tick === 40) {
+      if (root.tick >= 30 && !root.replacementCaptured && replacing.generation !== root.originalGeneration && replacing.status === Image.Ready && replacing.imageResult.generation === replacing.generation) {
+        root.replacementCaptured = true;
+        root.grab(replacing, "replacing");
+      }
+      if (root.tick >= 40 && root.settled === null && root.replacementCaptured && root.pendingGrabs === 0 && root.fenceChecked && (!root.staleRejected || fencing.state === "ready")) {
         root.settled = {
           formats: root.formats.map((name, i) => ({
             name: name,
@@ -270,7 +286,7 @@ ShellRoot {
       for (var item of [motion, firstFrame, sharedB, replacing, corrupt, missing, provider, data, fencing])
         item.active = false;
     }
-    if (root.tick >= 50 && root.pendingGrabs === 0) {
+    if (root.tick >= 50 && root.settled !== null && root.pendingGrabs === 0) {
       root.settled.finalInterests = ImageCacheService.sourceInterestCount;
       root.settled.finalRequests = ImageCacheService.sourceRequestCount;
       root.settled.workerRunning = ImageCacheService.sourceWorkerRunning;
