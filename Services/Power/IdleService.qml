@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.UI
@@ -25,7 +26,7 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  // True if ext-idle-notify-v1 is supported by the compositor
+  // True after input-only (protocol v2) idle monitoring is available.
   readonly property bool nativeIdleMonitorAvailable: _monitorsCreated
 
   // Live idle time in seconds (updated by the 1s heartbeat monitor)
@@ -43,6 +44,10 @@ Singleton {
   property var _customMonitors: ({})
   property var _queuedStages: []
   property bool _screenOffActive: false
+  property var _completedStages: ({})
+  property var _customResumes: ({})
+  property bool _protocolChecked: false
+  property bool _inputProtocolReady: false
 
   // Signals for external listeners (plugins, modules)
   signal screenOffRequested
@@ -52,7 +57,18 @@ Singleton {
   // -------------------------------------------------------
   function init() {
     Logger.i("IdleService", "Service started");
-    _applyTimeouts();
+    if (_protocolChecked)
+      return;
+    _protocolChecked = true;
+    // Quickshell silently falls back to inhibitor-aware notifications on v1.
+    // Do not enable automatic stages unless input-only notification is real.
+    OwnedProcess.run(root, ["timeout", "5", "python3", "-B", Quickshell.shellDir + "/Scripts/python/idle-input-protocol.py"], null, function (result) {
+      root._inputProtocolReady = result.success;
+      if (result.success)
+        root._applyTimeouts();
+      else
+        Logger.w("IdleService", "Input-only idle requires ext-idle-notify-v1 version 2:", result.stderr || result.error);
+    });
   }
 
   // Grace period timer — fires when fade completes without cancellation
@@ -113,6 +129,27 @@ Singleton {
     }
   }
 
+  // Only the input-only heartbeat may end an activity epoch. Stage monitors
+  // report eligibility, not input: inhibitors can make all of them resume.
+  function _onInputActivity() {
+    idleCounter.stop();
+    idleSeconds = 0;
+    const completed = _completedStages;
+    const resumes = _customResumes;
+    _completedStages = {};
+    _customResumes = {};
+    cancelFade();
+    for (const stage of ["lock", "suspend"]) {
+      const command = Settings.data.idle["resume" + (stage === "lock" ? "Lock" : "Suspend") + "Command"];
+      if (completed[stage] && command)
+        _executeCustomCommand(command);
+    }
+    for (const key in resumes) {
+      if (resumes[key])
+        _executeCustomCommand(resumes[key]);
+    }
+  }
+
   function _queueStage(stage) {
     if (!_isValidStage(stage)) {
       Logger.w("IdleService", "Ignoring unknown queued stage:", stage);
@@ -131,7 +168,7 @@ Singleton {
   }
 
   function _isStageEnabled(stage) {
-    // KeepAwake / portal inhibit: idle actions are entirely suspended.
+    // KeepAwake / portal inhibit: do not admit another idle stage.
     if (IdleInhibitorService.isInhibited)
       return false;
     const idle = Settings.data.idle;
@@ -142,6 +179,11 @@ Singleton {
     if (stage === "suspend")
       return idle.suspendTimeout > 0;
     return false;
+  }
+
+  function _canStartStage(stage) {
+    const monitor = root["_" + stage + "Monitor"];
+    return _isStageEnabled(stage) && monitor !== null && monitor.isIdle && !_completedStages[stage];
   }
 
   function _resyncStageMonitors() {
@@ -170,7 +212,7 @@ Singleton {
         Logger.w("IdleService", "Dropping queued unknown stage:", nextStage);
         continue;
       }
-      if (!_isStageEnabled(nextStage)) {
+      if (!_canStartStage(nextStage)) {
         Logger.d("IdleService", "Dropping queued disabled stage:", nextStage);
         continue;
       }
@@ -186,7 +228,7 @@ Singleton {
       Logger.w("IdleService", "Idle fired with unknown stage:", stage);
       return;
     }
-    if (!_isStageEnabled(stage)) {
+    if (!_canStartStage(stage)) {
       Logger.d("IdleService", "Ignoring idle stage because it is disabled:", stage);
       return;
     }
@@ -201,10 +243,9 @@ Singleton {
   }
 
   function _executeAction(stage) {
-    if (IdleInhibitorService.isInhibited) {
-      Logger.i("IdleService", "Suppressed inhibited idle action:", stage);
-      return;
-    }
+    // Admission happened when the fade began. A later inhibitor gates the next
+    // stage, not the already-started fade/action. Overlay cleanup is not resume.
+    _completedStages[stage] = true;
     Logger.i("IdleService", "Executing action:", stage);
     if (stage === "screenOff") {
       // screenOffCommand legacy path is now a handler in HooksService;
@@ -262,10 +303,7 @@ Singleton {
   Connections {
     target: IdleInhibitorService
     function onIsInhibitedChanged() {
-      if (IdleInhibitorService.isInhibited) {
-        // Engaged (possibly mid-fade): abort any pending/queued idle action.
-        root.cancelFade();
-      } else {
+      if (!IdleInhibitorService.isInhibited) {
         // Released: recreate stage monitors so the compositor re-fires
         // idled immediately when the user is still idle past timeout.
         root._resyncStageMonitors();
@@ -274,13 +312,16 @@ Singleton {
   }
 
   function _applyTimeouts() {
+    if (!_inputProtocolReady)
+      return;
     const idle = Settings.data.idle;
     const globalEnabled = idle.enabled;
 
+    // Arm input observation before any action can reach its (>= 1s) timeout.
+    _ensureHeartbeat();
     _setMonitor("screenOff", globalEnabled ? idle.screenOffTimeout : 0);
     _setMonitor("lock", globalEnabled ? idle.lockTimeout : 0);
     _setMonitor("suspend", globalEnabled ? idle.suspendTimeout : 0);
-    _ensureHeartbeat();
     _applyCustomMonitors();
   }
 
@@ -294,7 +335,7 @@ Singleton {
     root._customMonitors = {};
 
     const idle = Settings.data.idle;
-    if (!idle.enabled)
+    if (!idle.enabled || !_inputProtocolReady)
       return;
 
     var entries = [];
@@ -322,13 +363,13 @@ Singleton {
         const monitor = Qt.createQmlObject(qml, root, "IdleMonitor_custom_" + i);
         const capturedCmd = cmd;
         const capturedResumeCmd = resumeCmd;
+        // Stable for the configured entry across policy-driven monitor rebuilds.
+        const resumeKey = i + ":" + JSON.stringify(entry);
         monitor.isIdleChanged.connect(function () {
-          if (monitor.isIdle) {
-            if (capturedCmd && !IdleInhibitorService.isInhibited)
+          if (monitor.isIdle && !IdleInhibitorService.isInhibited && !(resumeKey in root._customResumes)) {
+            root._customResumes[resumeKey] = capturedResumeCmd;
+            if (capturedCmd)
               root._executeCustomCommand(capturedCmd);
-          } else {
-            if (capturedResumeCmd)
-              root._executeCustomCommand(capturedResumeCmd);
           }
         });
         newMonitors[i] = monitor;
@@ -378,8 +419,6 @@ Singleton {
       monitor.isIdleChanged.connect(function () {
         if (monitor.isIdle)
           root._onIdle(stage);
-        else
-          root.cancelFade();
       });
       root[propName] = monitor;
       root._monitorsCreated = true;
@@ -396,7 +435,7 @@ Singleton {
     try {
       const qml = `
         import Quickshell.Wayland
-        IdleMonitor { timeout: 1 }
+        IdleMonitor { timeout: 1; respectInhibitors: false }
       `;
 
       const monitor = Qt.createQmlObject(qml, root, "IdleMonitor_heartbeat");
@@ -405,17 +444,7 @@ Singleton {
           root.idleSeconds = 1;
           idleCounter.start();
         } else {
-          idleCounter.stop();
-          root.idleSeconds = 0;
-          if (root.fadePending === "lock" && Settings.data.idle.resumeLockCommand) {
-            Logger.i("IdleService", "Executing lock resume command");
-            Quickshell.execDetached(["sh", "-c", Settings.data.idle.resumeLockCommand]);
-          } else if (root.fadePending === "suspend" && Settings.data.idle.resumeSuspendCommand) {
-            Logger.i("IdleService", "Executing suspend resume command");
-            Quickshell.execDetached(["sh", "-c", Settings.data.idle.resumeSuspendCommand]);
-          }
-          root.cancelFade();
-          overlayCleanupTimer.stop();
+          root._onInputActivity();
         }
       });
       _heartbeatMonitor = monitor;
