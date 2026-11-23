@@ -1,13 +1,14 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Effects
-import QtQuick.Layouts
+import QtQuick.Window
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
 
 // Renders an icon from the shell's icon sets (IconRegistry).
-// Font-glyph entries render as text; SVG entries render as a colored
-// rectangle shaped by the SVG alpha mask.
+// Font-glyph entries render as text; SVG entries render in the tint color
+// with the alpha of the admitted image.
 //
 // Root is an Item (not Text) so implicitWidth is bindable: SVG entries have
 // no text, so a Text root would report implicitWidth 0 and collapse in
@@ -29,7 +30,7 @@ Item {
 
   readonly property var _resolved: {
     if (typeof icon === "string") {
-      var entry = IconRegistry.resolved[icon];
+      const entry = IconRegistry.resolved[icon];
       if (entry === undefined) {
         // An empty name is an unset icon, not a missing one: same fallback,
         // no warning (it was logged once per instance, e.g. per launcher row).
@@ -62,8 +63,9 @@ Item {
 
   // Icon-set files (including user icon sets) are decoded by the shared image
   // owner. A set file that cannot be displayed is a labelled failure.
-  readonly property bool failed: mask.item ? mask.item.imageState === "unavailable" : false
-  readonly property string errorReason: failed ? mask.item.errorReason : ""
+  readonly property NImage maskImage: mask.item as NImage
+  readonly property bool failed: maskImage?.imageState === "unavailable"
+  readonly property string errorReason: failed ? maskImage.errorReason : ""
   Accessible.description: errorReason
 
   Loader {
@@ -71,7 +73,8 @@ Item {
     anchors.centerIn: parent
     width: root.implicitHeight
     height: root.implicitHeight
-    // Only the mask samples it (hideSource); never presented in its own colors.
+    // Its pixels are captured below, never presented in their original colors.
+    opacity: 0
     active: root.visible && root._resolved?.type === "svg"
     sourceComponent: NImage {
       source: root._resolved?.source ?? ""
@@ -84,27 +87,67 @@ Item {
     }
   }
 
-  // SVG path — colored Rectangle shaped by the icon file's alpha mask
-  Item {
-    id: svgContainer
-    anchors.centerIn: parent
-    width: root.implicitHeight
-    height: root.implicitHeight
-    visible: root._resolved?.type === "svg" && !root.failed
+  Loader {
+    anchors.fill: mask
+    active: root.maskImage !== null
+    sourceComponent: Canvas {
+      contextType: "2d"
+      readonly property NImage admitted: root.maskImage
+      readonly property bool ready: available && visible && (Window.window?.visible ?? false) && admitted?.imageState === "ready"
+      readonly property int generation: admitted?.generation ?? 0
+      readonly property color tint: root.color
+      property int captureRevision: 0
+      property var pixels: null
+      property bool painted: false
+      opacity: painted ? 1 : 0
 
-    Rectangle {
-      anchors.fill: parent
-      color: root.color
-    }
+      function invalidate(): void {
+        ++captureRevision;
+        if (pixels)
+          unloadImage(pixels.url);
+        pixels = null;
+        painted = false;
+        requestPaint();
+        if (ready)
+          Qt.callLater(capture);
+      }
 
-    layer.enabled: root._resolved?.type === "svg"
-    layer.effect: MultiEffect {
-      maskEnabled: true
-      maskThresholdMin: 0.5
-      maskSpreadAtMin: 0.5
-      maskSource: ShaderEffectSource {
-        hideSource: true
-        sourceItem: mask.item
+      function capture(): void {
+        if (!ready)
+          return;
+        const revision = captureRevision;
+        // Sample the already rendered NImage; the Canvas URL is Qt's in-memory
+        // grab result, never the original source or a fresh decode of it.
+        admitted.grabToImage(result => {
+          if (ready && revision === captureRevision) {
+            pixels = result;
+            loadImage(result.url);
+            requestPaint();
+          }
+        });
+      }
+
+      onReadyChanged: invalidate()
+      onAdmittedChanged: invalidate()
+      onGenerationChanged: invalidate()
+      onCanvasSizeChanged: invalidate()
+      onImageLoaded: requestPaint()
+      onTintChanged: requestPaint()
+
+      onPaint: {
+        const ctx = context;
+        ctx.reset();
+        ctx.clearRect(0, 0, width, height);
+        if (!pixels || !isImageLoaded(pixels.url))
+          return;
+        // Source-in is supported by the raster painter on both Qt Quick
+        // backends. ShaderEffect-based masks disappear on the software backend.
+        ctx.drawImage(pixels.url.toString(), 0, 0, width, height);
+        ctx.globalCompositeOperation = "source-in";
+        ctx.fillStyle = tint;
+        ctx.fillRect(0, 0, width, height);
+        ctx.globalCompositeOperation = "source-over";
+        painted = true;
       }
     }
   }
