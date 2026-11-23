@@ -79,6 +79,30 @@ def main():
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
 
+        async def test_http_retirement_cleans_server_when_worker_creation_fails(self):
+            servers, threads = [], []
+            server_class, thread_class = ThreadingHTTPServer, threading.Thread
+            def server(*args, **kwargs):
+                item = server_class(*args, **kwargs)
+                servers.append(item)
+                return item
+            def thread(*args, **kwargs):
+                item = thread_class(*args, **kwargs)
+                threads.append(item)
+                return item
+            try:
+                with patch('__main__.ThreadingHTTPServer', server), patch.object(threading, 'Thread', thread), patch.object(asyncio, 'create_subprocess_exec', side_effect=OSError('Worker creation failed')):
+                    with self.assertRaisesRegex(OSError, 'Worker creation failed'):
+                        await self.held_http_retirement(False)
+                self.assertTrue(servers and threads)
+                self.assertTrue(all(not item.is_alive() for item in threads))
+            finally:
+                for item in servers:
+                    item.shutdown()
+                    item.server_close()
+                for item in threads:
+                    item.join(timeout=5)
+
         async def test_remote_source_budget_has_terminal_errors_and_no_partial_file(self):
             size = 1024 * 1024
             class Handler(BaseHTTPRequestHandler):
@@ -1227,11 +1251,12 @@ def main():
             server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
             thread = threading.Thread(target=server.serve_forever)
             thread.start()
-            process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
-                stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'cache')))
+            process = None
             identities, replies = [], []
             try:
+                process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
+                    stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                    env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'cache')))
                 self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
                 request = dict(self.request(), id='held-http', generation=1, source=f'http://127.0.0.1:{server.server_port}/held')
                 process.stdin.write((json.dumps([request])+'\n').encode())
@@ -1264,15 +1289,20 @@ def main():
                 self.assertEqual(list((cache/'still').glob('*')), [])
                 self.events.append(dict(replies=replies, malformed=malformed, heldHttp=True))
             finally:
-                if process.returncode is None:
-                    process.kill()
-                    await process.wait()
-                release.set()
-                server.shutdown()
-                server.server_close()
-                thread.join()
-                if entered.is_set():
-                    self.assertTrue(returned.wait(3))
+                try:
+                    if process is not None and process.returncode is None:
+                        process.kill()
+                        await process.wait()
+                finally:
+                    release.set()
+                    try:
+                        server.shutdown()
+                    finally:
+                        server.server_close()
+                        thread.join(timeout=5)
+                    self.assertFalse(thread.is_alive())
+                    if entered.is_set():
+                        self.assertTrue(returned.wait(3))
 
         async def test_eof_retires_held_http_and_every_owned_process(self):
             await self.held_http_retirement(False)
