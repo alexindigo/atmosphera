@@ -22,7 +22,7 @@ from pathlib import Path
 b=Path(os.environ['PHA_NIRI_CASE']);name=Path(sys.argv[0]).name;args=sys.argv[1:]
 start=(Path('/proc')/str(os.getpid())/'stat').read_text().split(') ',1)[1].split()[19]
 with (b/'requests.jsonl').open('a') as f:
- fcntl.flock(f,fcntl.LOCK_EX);f.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start))+'\n');f.flush()
+ fcntl.flock(f,fcntl.LOCK_EX);f.write(json.dumps(dict(run=os.environ['PHA_NIRI_RUN'],endpoint=name,argv=args,pid=os.getpid(),start=start))+'\n');f.flush()
 if name=='python3':os.execv('/usr/bin/python3',['python3',*args])
 if name=='sh':
  if any('setsid' in arg or 'qs kill' in arg for arg in args):sys.exit(0)
@@ -83,7 +83,7 @@ def run(args, profile, scope):
     for mode,boundary in modes:
         part=out/(mode+('-'+boundary if boundary else ''));part.mkdir();before=hashes(case)
         try:
-            text=runner.run_fixture(profile,install,case,part,args.source/'Scripts/dev/fixtures/plugin-settings-niri-native.qml',extra_env=dict(env,PHA_NIRI_MODE=mode,PHA_NIRI_BOUNDARY=boundary),extra_lint=tuple(sorted((case/'config/plugins'/args.plugin).glob('*.qml'))),timeout=120)
+            text=runner.run_fixture(profile,install,case,part,args.source/'Scripts/dev/fixtures/plugin-settings-niri-native.qml',extra_env=dict(env,PHA_NIRI_RUN=part.name,PHA_NIRI_MODE=mode,PHA_NIRI_BOUNDARY=boundary),extra_lint=tuple(sorted((case/'config/plugins'/args.plugin).glob('*.qml'))),timeout=120)
         except RuntimeError:
             # Original Auto-Tile has an independently retained invalid enum.
             # Admit only its completed consumer red, never a clean lint claim.
@@ -105,10 +105,12 @@ def run(args, profile, scope):
             assert args.original_plugins or args.omit_origin,(wanted,observed)
             rejected=True
         else:assert not(args.original_plugins or args.omit_origin),'wrong origin escaped'
-        rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
         if field=='maxVisible':
+            # Endpoints inherit the launching run's identity. A late append from
+            # a prior process cannot become evidence for a fresh engine.
+            rows=[row for row in map(json.loads, (case/'requests.jsonl').read_text().splitlines()) if row['run']==part.name]
             starts=[row for row in rows if row['endpoint']=='python3' and row['argv'] and row['argv'][0].endswith('/auto-tile.py')]
-            assert starts,'actual Python daemon admission'
+            assert starts,('actual Python daemon admission',part.name)
             actual_argv=starts[-1]['argv'];actual_max=int(actual_argv[actual_argv.index('--max-visible')+1])
             actions=[row['argv'][3:] for row in rows if row['endpoint']=='niri' and row['argv'][:3]==['msg','action','set-column-width']]
             if not rejected:
