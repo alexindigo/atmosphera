@@ -10,6 +10,8 @@ ShellRoot {
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
   property int tick: 0
+  property int phase: 0
+  property int phaseStarted: 0
   property int pending: 0
   property var snapshots: []
   property var selections: []
@@ -30,19 +32,18 @@ ShellRoot {
     return null;
   }
   function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
+    if (item && item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
-      if (!root.pending && root.afterCapture) {
-        var next = root.afterCapture;
-        root.afterCapture = null;
-        Qt.callLater(next);
-      }
-    });
+    })) {
+      ++pending;
+    } else {
+      console.error("Setup wallpaper grab rejected: " + name);
+      Qt.exit(3);
+    }
   }
   function snapshot(name, after) {
     var setup = loader.item;
@@ -96,30 +97,41 @@ ShellRoot {
     repeat: true
     onTriggered: {
       ++root.tick;
-      if (root.tick === 20) {
+      if (root.afterCapture) {
+        if (root.pending)
+          return;
+        var next = root.afterCapture;
+        root.afterCapture = null;
+        next();
+        ++root.phase;
+        root.phaseStarted = root.tick;
+        return;
+      }
+      var elapsed = root.tick - root.phaseStarted;
+      if (root.phase === 0 && elapsed >= 20) {
         root.snapshot("before", function () {
           loader.item.selectedWallpaper = root.inputs + "/Corrupt.webp";
         });
-      } else if (root.tick === 40) {
+      } else if (root.phase === 1 && elapsed >= 20) {
         root.snapshot("failed", function () {
           loader.item.selectedWallpaper = root.inputs + "/frame-2.png";
           loader.item.selectedWallpaper = root.inputs + "/frame-1.png";
         });
-      } else if (root.tick === 60) {
+      } else if (root.phase === 2 && elapsed >= 20) {
         root.snapshot("latest", function () {
           if (loader.item.selectWallpaper)
             loader.item.selectWallpaper(root.inputs + "/Corrupt.webp");
         });
-      } else if (root.tick === 80) {
+      } else if (root.phase === 3 && elapsed >= 20) {
         root.snapshot("invalid-intent", function () {
           if (loader.item.selectWallpaper)
             loader.item.selectWallpaper(root.inputs + "/Still.webp");
         });
-      } else if (root.tick === 100) {
+      } else if (root.phase === 4 && elapsed >= 20) {
         root.snapshot("valid-intent", function () {
           loader.item.filteredWallpapers = [root.inputs + "/Motion.webp", root.inputs + "/Corrupt.webp"];
         });
-      } else if (root.tick >= 115 && root.tick <= 125) {
+      } else if (root.phase === 5 && elapsed >= 15 && elapsed <= 25) {
         var thumb = root.find(loader.item, item => "imagePath" in item && item.imagePath.endsWith("Motion.webp") && item.width < 300);
         if (thumb) {
           root.galleryFrames.push({
@@ -128,10 +140,11 @@ ShellRoot {
                                   });
           root.grab(thumb, "gallery-" + root.tick);
         }
-      } else if (root.tick === 130) {
-        if (!root.pending)
-          loader.active = false;
-      } else if (root.tick >= 145 && !root.pending) {
+      } else if (root.phase === 5 && elapsed >= 30 && !root.pending) {
+        loader.active = false;
+        ++root.phase;
+        root.phaseStarted = root.tick;
+      } else if (root.phase === 6 && elapsed >= 15 && !loader.item) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          snapshots: root.snapshots,
                                                          selections: root.selections,
