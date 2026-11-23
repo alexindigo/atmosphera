@@ -18,7 +18,7 @@ if version('tree-sitter') != '0.25.2' or version('tree-sitter-qmljs') != '0.3.1'
     raise RuntimeError('Image checks require the reviewed settings-check-requirements parser versions')
 
 SHELL_ROOTS = ('Commons', 'Helpers', 'Modules', 'Services', 'Widgets', 'builtin')
-RENDERERS = {'Image', 'AnimatedImage', 'IconImage', 'NImageRounded', 'NImage', 'AtmoAppIcon', 'AtmoIcon', 'NImageText'}
+RENDERERS = {'Image', 'AnimatedImage', 'IconImage', 'NImageRounded', 'NImage', 'NImageIcon', 'AtmoAppIcon', 'AtmoIcon', 'NImageText'}
 TEXT_TYPES = {'Text', 'TextEdit', 'TextArea', 'NText', 'NHeader'}
 TEXT_PROPERTIES = {'textFormat', 'richTextEnabled', 'markdownTextEnabled', 'enableDescriptionRichText'}
 
@@ -30,30 +30,32 @@ def walk(node):
 
 
 def discover(root, repository):
-    root = Path(root)
-    parser = Parser(Language(tree_sitter_qmljs.language()))
+    root = Path(root).resolve()
     paths = sorted(p for base in (SHELL_ROOTS if repository == 'shell' else ('.',))
                    for p in (root / base).rglob('*') if p.suffix in ('.qml', '.js') and p.is_file()
-                   and not any(part.startswith('.') or part in ('tests', 'node_modules') for part in p.relative_to(root).parts))
+                    and not any(part.startswith('.') or part in ('tests', 'node_modules') for part in p.relative_to(root).parts))
+    types = QmlTypes(root, paths)
     rows = []
     for path in paths:
         ordinals = {}
-        data = path.read_bytes()
+        data, tree = types.parsed[path]
         file_hash = hashlib.sha256(data).hexdigest()
-        tree = parser.parse(data)
         def text(node):
             return data[node.start_byte:node.end_byte].decode() if node else ''
         for node in walk(tree.root_node):
-            kind, bindings = '', {}
+            kind, bindings, bases = '', {}, set()
             if node.type in ('ui_object_definition', 'ui_object_binding'):
-                kind = text(node.child_by_field_name('type_name')).split('.')[-1]
+                kind = text(node.child_by_field_name('type_name'))
                 init = node.child_by_field_name('initializer')
                 if not init:
                     continue
                 bindings = {text(b.child_by_field_name('name')): text(b.child_by_field_name('value'))
                             for b in init.named_children if b.type in ('ui_binding', 'ui_property')}
-                if kind not in RENDERERS and not (kind in ('Text', 'TextEdit', 'TextArea') or
-                                                  kind in TEXT_TYPES and any(p in bindings for p in TEXT_PROPERTIES)):
+                bases = types.resolve(path, node)
+                text_wrapper = bases & {'NText', 'NHeader'}
+                if not (bases & (RENDERERS | NATIVE_IMAGES) or
+                        not text_wrapper and bases & {'Text', 'TextEdit', 'TextArea'} or
+                        bases & TEXT_TYPES and any(p in bindings for p in TEXT_PROPERTIES)):
                     continue
             elif node.type == 'call_expression':
                 function = text(node.child_by_field_name('function'))
@@ -75,7 +77,8 @@ def discover(root, repository):
                              key=f'{repository}:{path.relative_to(root)}:{kind}:{ordinals[kind]}',
                              node=kind, identity=identity, bindings=bindings,
                              nodeSha256=hashlib.sha256(data[node.start_byte:node.end_byte]).hexdigest(),
-                             fileSha256=file_hash))
+                              fileSha256=file_hash,
+                              **({'inheritedFrom': sorted(bases)} if bases and kind not in bases else {})))
     return rows
 
 
@@ -231,67 +234,136 @@ def _static_text(node, data):
     return False
 
 
-def _component_scope(relative, repository):
-    # Plugin components resolve inside their own plugin directory; shell
-    # components resolve across the shell (qs.* imports and same directory).
-    return relative.parts[0] if repository == 'plugins' else ''
+class QmlTypes:
+    """Resolve a component in its document, never a repository-wide name table.
+
+    Directory aliases and qs module imports keep their own exports. Each parent
+    in an inheritance chain is resolved in the parent's file. Ambiguous imports
+    retain all candidates so an image-capable branch cannot disappear by order.
+    """
+    def __init__(self, root, paths, shell=None):
+        self.root = Path(root).resolve()
+        self.shell = shell
+        self.parser = Parser(Language(tree_sitter_qmljs.language()))
+        self.parsed = {}
+        self.exports = {}
+        for path in paths:
+            data = path.read_bytes()
+            self.parsed[path.resolve()] = (data, self.parser.parse(data))
+
+    def directory(self, directory, implicit=False):
+        directory = directory.resolve()
+        key = (directory, implicit)
+        if key not in self.exports:
+            names = {}
+            qmldir = directory / 'qmldir'
+            if implicit or not qmldir.is_file():
+                names.update({p.stem: p for p in self.parsed if p.parent == directory and p.suffix == '.qml'})
+            if qmldir.is_file():
+                for line in qmldir.read_text().splitlines():
+                    parts = line.split('#', 1)[0].split()
+                    if parts[:1] == ['singleton']:
+                        parts = parts[1:]
+                    if len(parts) >= 2 and parts[0][:1].isupper() and parts[-1].endswith('.qml'):
+                        target = (directory / parts[-1]).resolve()
+                        if target in self.parsed:
+                            names[parts[0]] = target
+            self.exports[key] = names
+        return self.exports[key]
+
+    def spelling(self, path, node):
+        data = self.parsed[path][0]
+        return data[node.start_byte:node.end_byte].decode() if node else ''
+
+    def resolve(self, path, node, seen=()):
+        path = Path(path).resolve()
+        name = self.spelling(path, node.child_by_field_name('type_name'))
+        if '.' not in name:
+            ancestor = node.parent
+            while ancestor is not None:
+                if ancestor.type == 'ui_object_initializer':
+                    for child in ancestor.named_children:
+                        if child.type == 'ui_inline_component' and self.spelling(path, child.child_by_field_name('name')) == name:
+                            return self.parent_types(path, child.child_by_field_name('component'), seen)
+                ancestor = ancestor.parent
+            local = self.directory(path.parent, implicit=True).get(name)
+            if local:
+                return self.file_types(local, seen)
+        alias, short = name.split('.', 1) if '.' in name else ('', name)
+        candidates = set()
+        data, tree = self.parsed[path]
+        for imported in tree.root_node.named_children:
+            if imported.type != 'ui_import' or self.spelling(path, imported.child_by_field_name('alias')) != alias:
+                continue
+            source = imported.child_by_field_name('source')
+            value = self.spelling(path, source)
+            owner, directory = self, None
+            if source.type == 'string':
+                literal = _literal_text(source, data)
+                if literal is not None:
+                    directory = path.parent / literal
+            elif value == 'qs' or value.startswith('qs.'):
+                owner = self.shell or self
+                directory = owner.root.joinpath(*value.split('.')[1:])
+            elif alias and short in NATIVE_IMAGES | AUTO_TEXT | EXPLICIT_TEXT | {'ColorQuantizer'}:
+                candidates.add(short)
+            if directory is not None:
+                target = owner.directory(directory).get(short)
+                if target:
+                    candidates.update(owner.file_types(target, seen))
+        return candidates or {name}
+
+    def parent_types(self, path, node, seen):
+        identity = (path, node.start_byte)
+        if identity in seen:
+            return set()
+        return self.resolve(path, node, seen + (identity,))
+
+    def file_types(self, path, seen):
+        for node in self.parsed[path][1].root_node.named_children:
+            if node.type == 'ui_object_definition':
+                # Retain renderer identity for inventory without hiding a local
+                # lookalike that is actually rooted in a native image type.
+                boundary = {path.stem} & (RENDERERS | TEXT_TYPES)
+                return self.parent_types(path, node, seen) | boundary
+        return set()
 
 
 def scan(root, repository, shell_types=None):
-    """Gated sites of one repository. shell_types maps shell component names to
-    their root types so plugin usages of shell wrappers resolve too."""
-    root = Path(root)
-    parser = Parser(Language(tree_sitter_qmljs.language()))
+    """Gated sites plus the import-scoped shell context for plugin scans."""
+    root = Path(root).resolve()
     files = production_files(root, repository)
-    parsed, roots = {}, {}
-    for path in files:
-        data = path.read_bytes()
-        tree = parser.parse(data)
-        parsed[path] = (data, tree)
-        if path.suffix == '.qml':
-            for node in tree.root_node.named_children:
-                if node.type == 'ui_object_definition':
-                    name = data[node.child_by_field_name('type_name').start_byte:node.child_by_field_name('type_name').end_byte].decode()
-                    roots[(_component_scope(path.relative_to(root), repository), path.stem)] = name.split('.')[-1]
-                    break
-    def resolve(scope, name, seen=()):
-        if name in NATIVE_IMAGES or name in seen or len(seen) > 12:
-            return name
-        if (scope, name) in roots:
-            return resolve(scope, roots[(scope, name)], seen + (name,))
-        if shell_types and name in shell_types:
-            return resolve('', shell_types[name], seen + (name,))
-        return name
+    types = QmlTypes(root, files, shell_types)
+    parser = types.parser
     rows = []
-    for path, (data, tree) in parsed.items():
+    for path, (data, tree) in types.parsed.items():
         relative = path.relative_to(root)
-        scope = _component_scope(relative, repository)
         ordinals = {}
         def text(node):
             return data[node.start_byte:node.end_byte].decode() if node else ''
         for node in walk(tree.root_node):
             rule, kind, bindings, detail = '', '', {}, {}
             if node.type in ('ui_object_definition', 'ui_object_binding'):
-                kind = text(node.child_by_field_name('type_name')).split('.')[-1]
+                kind = text(node.child_by_field_name('type_name'))
                 init = node.child_by_field_name('initializer')
                 members = [b for b in (init.named_children if init else []) if b.type in ('ui_binding', 'ui_property')]
                 bindings = {text(b.child_by_field_name('name')): text(b.child_by_field_name('value')) for b in members}
                 values = {text(b.child_by_field_name('name')): b.child_by_field_name('value') for b in members}
-                base = resolve(scope, kind)
-                if base in NATIVE_IMAGES:
+                bases = types.resolve(path, node)
+                if bases & NATIVE_IMAGES:
                     rule = 'native-image'
-                    if base != kind:
-                        detail['inheritedFrom'] = base
-                elif kind == 'ColorQuantizer':
+                    if kind not in NATIVE_IMAGES:
+                        detail['inheritedFrom'] = sorted(bases & NATIVE_IMAGES)
+                elif 'ColorQuantizer' in bases:
                     rule = 'color-quantizer'
-                elif kind == 'NText':
+                elif 'NText' in bases:
                     if any(bindings.get(flag, 'false').strip().rstrip(';') != 'false' for flag in NTEXT_FLAGS):
                         rule = 'text-markup'
-                elif kind in AUTO_TEXT | EXPLICIT_TEXT:
+                elif bases & (AUTO_TEXT | EXPLICIT_TEXT):
                     fmt = bindings.get('textFormat')
                     if fmt is not None:
                         markup = fmt.strip().rstrip(';') not in ('Text.PlainText', 'TextEdit.PlainText')
-                    elif kind in AUTO_TEXT:
+                    elif bases & AUTO_TEXT:
                         markup = not _static_text(values.get('text'), data)
                     else:
                         markup = False
@@ -326,4 +398,4 @@ def scan(root, repository, shell_types=None):
             rows.append(dict(repository=repository, path=str(relative), line=node.start_point.row + 1, rule=rule, node=kind,
                              key=f'{repository}:{relative}:{rule}:{kind}:{ordinals[(rule, kind)]}', bindings=keep,
                              nodeSha256=hashlib.sha256(data[node.start_byte:node.end_byte]).hexdigest(), **detail))
-    return rows, {name: base for (scope, name), base in roots.items() if scope == ''}
+    return rows, types

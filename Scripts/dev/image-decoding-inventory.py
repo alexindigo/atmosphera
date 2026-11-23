@@ -54,7 +54,8 @@ def fixed_provenance(row, root):
 
 def classify(row):
     path, node, bindings = row['path'], row['node'], row['bindings']
-    if node in TEXT_TYPES:
+    kinds = {node} | set(row.get('inheritedFrom', []))
+    if kinds & TEXT_TYPES:
         origin = bindings.get('text', '')
         fmt = bindings.get('textFormat', '')
         if fmt in ('Text.PlainText', 'TextEdit.PlainText'):
@@ -70,19 +71,19 @@ def classify(row):
                     animationIntent='operation-dependent', cohort='worker' if row['repository'] == 'shell' else 'plugins',
                     disposition='pending-decoder-ownership-audit', endpoint='single-decoder-owner:' + path)
     origin = bindings.get('source', bindings.get('imagePath', bindings.get('icon', bindings.get('name', ''))))
-    animation = 'preserve' if node in ('AnimatedImage', 'NImageRounded') else 'still'
+    animation = 'preserve' if kinds & {'AnimatedImage', 'NImageRounded'} else 'still'
     if any(part in path for part in ('FileChooser', 'Wallpaper', 'Background', 'LockScreen')):
         cohort = 'chooser-wallpaper'
     else:
         cohort = 'shell' if row['repository'] == 'shell' else 'plugins'
     if row['repository'] == 'plugins':
         cohort = 'plugins'
-    if node in ('AtmoAppIcon', 'AtmoIcon'):
-        adapter = node
+    if kinds & {'AtmoAppIcon', 'AtmoIcon'}:
+        adapter = next(name for name in ('AtmoAppIcon', 'AtmoIcon') if name in kinds)
         disposition = 'inherited-owner-pending'
         source_class = 'icon-lookup'
-    elif node == 'NImageRounded':
-        adapter = node
+    elif kinds & {'NImageRounded', 'NImageIcon'}:
+        adapter = next(name for name in ('NImageRounded', 'NImageIcon') if name in kinds)
         disposition = 'inherited-owner-pending'
         source_class = 'arbitrary'
     else:

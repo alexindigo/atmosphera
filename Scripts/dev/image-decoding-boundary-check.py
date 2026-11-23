@@ -173,6 +173,10 @@ CONTROLS = {
     'suffix-gated-animated-image': ('native-image', {'Motion.qml': 'import QtQuick\nItem { property string path\n AnimatedImage { source: path.endsWith(".gif") ? path : "" } }\n'}),
     'icon-image': ('native-image', {'Icon.qml': 'import QtQuick\nimport Quickshell.Widgets\nItem { property string iconPath\n IconImage { source: iconPath } }\n'}),
     'hidden-wrapper': ('native-image', {'Pic.qml': 'import QtQuick\nImage {}\n', 'UsePic.qml': 'import QtQuick\nItem { property string path\n Pic { source: path } }\n'}),
+    'import-scoped-wrapper': ('native-image', {
+        'a/Preview.qml': 'import QtQuick\nImage {}\n',
+        'z/Preview.qml': 'import QtQuick\nItem {}\n',
+        'UsePic.qml': 'import QtQuick\nimport "a" as Pixels\nimport "z" as Plain\nItem { Pixels.Preview { source: path } Plain.Preview {} }\n'}),
     'property-alias': ('native-image', {'Alias.qml': 'import QtQuick\nItem { property alias picture: img.source\n Image { id: img } }\n'}),
     'original-after-failure': ('native-image', {'Retry.qml': 'import QtQuick\nItem { property string thumb; property string original\n Image { source: thumb; onStatusChanged: if (status === Image.Error) source = original } }\n'}),
     'inline-html-text': ('text-markup', {'Message.qml': 'import QtQuick\nItem { property string message\n Text { text: message } }\n'}),
@@ -203,14 +207,22 @@ def selftest(sites, manifest, roots, shell_types):
             plugin = Path(folder) / name / 'zz-image-boundary-control'
             plugin.mkdir(parents=True)
             for filename, content in files.items():
+                (plugin / filename).parent.mkdir(parents=True, exist_ok=True)
                 (plugin / filename).write_text(content)
             injected, _ = scan(plugin.parent, 'plugins', shell_types)
             failures = check(sites + injected, manifest, dict(roots, plugins=[roots['plugins'], plugin.parent]))
             own = [f for f in failures if f['problem'] == 'unclassified site' and f['site'].startswith('plugins:zz-image-boundary-control/')]
             discovered = [s for s in injected if s['rule'] == rule]
+            if name in ('hidden-wrapper', 'import-scoped-wrapper'):
+                # Reject the source-supplying usage, not merely the Image in
+                # its definition. A resolver omission must make this red.
+                expected_node = 'Pic' if name == 'hidden-wrapper' else 'Pixels.Preview'
+                discovered = [s for s in discovered if s['path'].endswith('/UsePic.qml') and s['node'] == expected_node]
+            rejected = {f['key'] for f in own}
             results.append(dict(control=name, expectedRule=rule, discovered=len(discovered),
                                 rejectedRules=sorted({f['rule'] for f in own}),
-                                passed=bool(discovered) and rule in {f['rule'] for f in own} and len(failures) == len(base_failures) + len(own)))
+                                passed=bool(discovered) and all(s['key'] in rejected for s in discovered)
+                                and len(failures) == len(base_failures) + len(own)))
         # Provenance controls: an exact fixed asset is admitted; a changed asset,
         # a changed source binding and a removed site are not.
         plugin = Path(folder) / 'provenance' / 'zz-image-boundary-control'
