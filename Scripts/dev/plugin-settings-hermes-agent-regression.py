@@ -30,7 +30,7 @@ def peer(resources, case, name):
             row = dict(peer=name, method=self.command, path=self.path, body=body, token=self.headers.get('X-Bridge-Token', ''))
             with (case/'requests.jsonl').open('a') as output:
                 fcntl.flock(output, fcntl.LOCK_EX); output.write(json.dumps(row)+'\n'); output.flush()
-            if self.path == '/sessions' or (self.path == '/detect' and (case/'hold-detect').exists()) or (name=='selected' and self.path=='/health' and (case/'hold-health').exists()) or (self.path=='/model' and body.get('model')=='older-model' and (case/'hold-model').exists()):
+            if self.path == '/sessions' or (self.path == '/session/create' and (case/'hold-create').exists()) or (self.path == '/detect' and (case/'hold-detect').exists()) or (name=='selected' and self.path=='/health' and (case/'hold-health').exists()) or (self.path=='/model' and body.get('model')=='older-model' and (case/'hold-model').exists()):
                 while (case/'hold').exists() and not (case/'release').exists() and not done.wait(.02):
                     pass
             model = getattr(self.server, 'model', 'initial-'+name)
@@ -72,6 +72,8 @@ def run_with_peers(args, profile, scenario, resources):
     if scenario in ('held-retire', 'held-destroy', 'held-source'):
         (case/'hold').write_text('hold')
     if scenario=='model-retire':(case/'hold').write_text('hold');(case/'hold-model').write_text('hold')
+    if scenario == 'boundary-retire':
+        (case/'hold').touch(); (case/'hold-create').touch()
     install = case/'install'
     shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     resources.defer(assert_no_survivors, case)
@@ -120,6 +122,8 @@ def prove_peers(args, profile, scenario, case, out, install, product, ports):
             assert len(creates) == 1 and creates[0]['peer'] == 'selected' and creates[0]['token'] == 'selected-token'
         if scenario == 'held-retire':
             assert len([row for row in rows if row['path'] == '/sessions']) == 1
+        if scenario == 'boundary-retire':
+            assert [(row['peer'], row['path']) for row in rows if row['path'] in ('/session/create', '/prompt')] == [('shared', '/session/create'), ('shared', '/prompt')]
         if scenario=='failed-start':
             starts=[json.loads(line) for line in (case/'starts.jsonl').read_text().splitlines()]
             assert len(starts)==2 and starts[0]==starts[1]
@@ -143,7 +147,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
-    parser.add_argument('--scenario', choices=('model', 'pending', 'held-retire', 'held-destroy', 'held-source', 'timers', 'callers', 'local', 'failed-start', 'model-retire', 'owner-retire'))
+    scenarios = ('model', 'pending', 'held-retire', 'held-destroy', 'held-source', 'timers', 'callers', 'local', 'failed-start', 'model-retire', 'owner-retire', 'boundary-retire')
+    parser.add_argument('--scenario', choices=scenarios)
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve()/'Scripts/dev/plugin-settings-hermes-agent-regression.py':
         parser.error('execute supplied source')
@@ -152,7 +157,7 @@ def main():
             parser.error('fresh owned guest roots required')
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
-        for scenario in ((args.scenario,) if args.scenario else ('model', 'pending', 'held-retire', 'held-destroy', 'held-source', 'timers', 'callers', 'local', 'failed-start', 'model-retire', 'owner-retire')):
+        for scenario in ((args.scenario,) if args.scenario else scenarios):
             run(args, profile, scenario)
         stage_receipt(args.output/'result.json', dict(status='PASS', fullMemberAcceptance=False))
 

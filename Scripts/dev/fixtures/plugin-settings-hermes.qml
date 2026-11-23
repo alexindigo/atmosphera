@@ -222,6 +222,9 @@ ShellRoot {
         localState.setText(JSON.stringify(value));
         localToken.setText("rotated-local-token");
         phase = "local-file";
+      } else if (scenario === "boundary-retire") {
+        check(main.createSession(selected.settingsContext), "same-source create admitted");
+        phase = "boundary-held";
       } else if (scenario === "owner-retire") {
         shared.alive = false;
         phase = "owner-retired";
@@ -260,6 +263,24 @@ ShellRoot {
         check(main.openPinnedPanel(Quickshell.screens[0], selected), "originating pinned window");
         phase = "pinned";
       }
+    } else if (phase === "boundary-held") {
+      requests.reload();
+      requests.waitForJob();
+      if (!requests.text().includes('"path": "/session/create"'))
+        return;
+      shared.alive = false;
+      phase = "boundary-reconnect";
+    } else if (phase === "boundary-reconnect" && main.connection?.ready && main.connection !== connectionBefore) {
+      check(!main.pendingBoundary, "lost create settled without replay");
+      release.setText("release");
+      check(main.sendPrompt("after retirement", selected.settingsContext), "actions unblocked");
+      phase = "boundary-recovered";
+    } else if (phase === "boundary-recovered") {
+      requests.reload();
+      requests.waitForJob();
+      if (!requests.text().includes('"text": "after retirement"'))
+        return;
+      finish();
     } else if (phase === "owner-retired" && !main.connection) {
       check(main.state.bridge.status === "offline" && main.state.messages[0].text === "retained-shared", "owner loss withdraws online status without deleting chat");
       finish();
