@@ -160,6 +160,71 @@ def main():
             worker.clear(dict(id='released'))
             self.assertFalse(target.exists())
 
+        async def test_shutdown_joins_retired_cleanup_without_second_cancellation(self):
+            started, cleaning = asyncio.Event(), asyncio.Event()
+            finished = []
+            async def held(request):
+                started.set()
+                try:
+                    await asyncio.Event().wait()
+                finally:
+                    cleaning.set()
+                    await asyncio.sleep(.05)
+                    finished.append(True)
+            worker = Worker(self.cache, self.events.append)
+            with patch.object(self.cache, 'render', held):
+                worker.replace([dict(self.request(), id='retiring')])
+                await asyncio.wait_for(started.wait(), 5)
+                worker.replace([])
+                await asyncio.wait_for(cleaning.wait(), 5)
+                await worker.close()
+            self.assertEqual(finished, [True])
+
+        async def test_diagnostic_failure_still_joins_decoder_supervisor(self):
+            recorded = []
+            def broken(event):
+                recorded.append(event)
+                raise RuntimeError('diagnostic sink rejected event')
+            try:
+                with self.assertRaisesRegex(RuntimeError, 'diagnostic sink'):
+                    await command([sys.executable, '-c', 'import time;time.sleep(30)'], self.folder, 30, emit=broken)
+                pid = recorded[0]['watcher']
+                self.assertFalse(Path(f'/proc/{pid}').exists(), pid)
+            finally:
+                for row in recorded:
+                    try:
+                        os.kill(row['watcher'], signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass
+                await asyncio.sleep(.1)
+
+        async def test_identity_write_failure_retires_created_decoder(self):
+            marker = self.folder / 'decoder.pid'
+            spec = dict(argv=[sys.executable, '-c',
+                'import os,time,sys;from pathlib import Path;Path(sys.argv[1]).write_text(str(os.getpid()));time.sleep(30)', str(marker)],
+                stdout=str(self.folder / 'out'), stderr=str(self.folder / 'err'),
+                identity=str(self.folder / 'missing' / 'identity.json'), result=str(self.folder / 'result.json'), timeout=30)
+            process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source / 'Scripts/python/src/images/owned_command.py'),
+                json.dumps(spec), stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.PIPE)
+            try:
+                await asyncio.wait_for(process.wait(), 5)
+                self.assertNotEqual(process.returncode, 0)
+                await asyncio.sleep(.1)
+                if marker.exists():
+                    pid = int(marker.read_text())
+                    self.assertFalse(Path(f'/proc/{pid}').exists(), pid)
+            finally:
+                process.stdin.close()
+                if process.returncode is None:
+                    process.terminate()
+                    await process.wait()
+                if marker.exists():
+                    pid = int(marker.read_text())
+                    try:
+                        os.killpg(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+
         async def test_literal_sources_data_and_file_urls(self):
             for name in ('Still.webp', 'Misleading.png', 'bracket[0]: image.webp', '-leading.webp', 'image:literal.webp', 'Space \u6d77\u5cb8.webp'):
                 result = await self.cache.render(self.request(name))

@@ -38,9 +38,9 @@ def main():
     with open(spec['stdout'], 'wb') as out, open(spec['stderr'], 'wb') as err:
         process = subprocess.Popen(spec['argv'], stdin=subprocess.DEVNULL, stdout=out, stderr=err,
                                    start_new_session=True, close_fds=True)
-        child = identity(process.pid)
-        Path(spec['identity']).write_text(json.dumps(child) + '\n')
         try:
+            child = identity(process.pid)
+            Path(spec['identity']).write_text(json.dumps(child) + '\n')
             while process.poll() is None:
                 if time.monotonic() - started >= spec['timeout']:
                     timed_out = True
@@ -55,7 +55,7 @@ def main():
             # The group belongs exclusively to the exact child we created. It
             # can contain a delegate after the direct process has already exited.
             try:
-                os.killpg(child['group'], signal.SIGKILL)
+                os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
             process.wait()

@@ -18,8 +18,8 @@ async def command(argv, directory, timeout, *, name='command', emit=lambda event
     watcher = await asyncio.create_subprocess_exec(sys.executable, '-B', str(Path(__file__).with_name('owned_command.py')),
                                                     json.dumps(spec), stdin=asyncio.subprocess.PIPE,
                                                     stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
-    emit(dict(event='command', argv=spec['argv'], watcher=watcher.pid, files=paths))
     try:
+        emit(dict(event='command', argv=spec['argv'], watcher=watcher.pid, files=paths))
         await watcher.wait()
     finally:
         # Closing the exact owner's control pipe joins its watcher/group. Never

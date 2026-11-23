@@ -108,7 +108,9 @@ class Worker:
 
     async def close(self):
         tasks = list(set(self.tasks.values()) | self.retired)
-        for task in tasks:
+        # Retired requests are already cancelling and may be joining a decoder
+        # supervisor. Cancelling them again can interrupt that required join.
+        for task in self.tasks.values():
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
         for key in list(self.leases):
