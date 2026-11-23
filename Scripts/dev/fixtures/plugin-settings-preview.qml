@@ -53,6 +53,7 @@ ShellRoot {
         property var release: null
         property var held: null
         property bool stale: false
+        readonly property string staleIntent: Quickshell.env("PHA_PREVIEW_STALE_INTENT")
         property string phase: "start"
         property bool started: false
         property var afterFault: null
@@ -122,6 +123,15 @@ ShellRoot {
             }
             function copyValue(value) {
               return editor.copyValue(value);
+            }
+            function setField(key, value) {
+              return editor.setField(key, value);
+            }
+            function stageFieldResets(keys, callback) {
+              return editor.stageFieldResets(keys, callback);
+            }
+            function publishPreview(key, value, revision) {
+              return editor.publishPreview(key, value, revision);
             }
             function discard() {
               if (!editor.discard())
@@ -540,13 +550,28 @@ ShellRoot {
             check(!popup.dirty && shared.text === "newer-local", "no-op acknowledges its preview");
             stale = true;
             popup.settingsPage.change("saved-stale");
+            // Submit exactly the intent under test, without a second Set in saveSettings.
+            popup.settingsPage.stageOnSave = false;
+            if (staleIntent === "set")
+              check(popup.settingsPage.pluginApi.field("label").set("direct-stale"), "newer direct field intent admitted");
+            if (staleIntent === "reset")
+              check(popup.settingsPage.pluginApi.field("label").reset(), "newer direct reset intent admitted");
+            phase = "stale-staged";
+          } else if (phase === "stale-staged") {
+            if (staleIntent === "reset" && popup.settingsPage.pluginApi.field("label").pendingIntent !== "reset")
+              return;
             popup.applySettings();
             phase = "stale-held";
           } else if (phase === "stale-held" && release) {
-            check(held.status === "saved" && held.refreshState === "stale", "actual stale receipt");
+            check(held.status === "saved" && held.refreshState === "stale", "actual stale receipt: " + held.status + "/" + held.refreshState);
             deliver();
             stale = false;
-            check(popup.saveFailed && popup.dirty && shared.text === "saved-stale", "stale keeps preview and work");
+            var replay = staleIntent === "preview";
+            check(popup.saveFailed && popup.dirty && shared.text === (replay ? "saved-stale" : "foreign-current"), "stale receipt runtime consumer: " + shared.text);
+            check(popup._editor.dirty === replay, "only the still-current preview is restaged");
+            phase = "stale-disk";
+            staleDisk.running = true;
+          } else if (phase === "stale-disk-read") {
             popup.requestClose();
             popup.confirmDiscard();
             phase = "discarded";
@@ -597,6 +622,7 @@ ShellRoot {
             popup.openPluginSettings(manifest, "settings");
             phase = "final";
           } else if (phase === "final" && popup.opened && popup.settingsPage) {
+            popup.settingsPage.stageOnSave = true;
             popup.settingsPage.change("final");
             popup.applySettings();
             phase = "final-held";
@@ -680,6 +706,24 @@ ShellRoot {
           afterFault = callback;
           faultProcess.command = ["python3", "-B", Quickshell.env("PHA_PREVIEW_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
           faultProcess.running = true;
+        }
+        Process {
+          id: staleDisk
+          command: ["cat", Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/i4-preview.json"]
+          stdout: StdioCollector {}
+          onExited: code => {
+            try {
+              root.check(code === 0, "independent stale disk read");
+              var data = JSON.parse(stdout.text);
+              var expected = root.staleIntent === "set" ? "direct-stale" : "saved-stale";
+              root.check(root.staleIntent === "reset" ? !("label" in data) : data.label === expected, "durable selected intent after stale receipt");
+              root.check(data.other === "foreign-other" && data.opaque.keep === true, "stale save preserves sibling and opaque data");
+              console.info("I4_PREVIEW: saved/stale " + root.staleIntent + " runtime=" + shared.text + " disk=" + JSON.stringify(data));
+              root.phase = "stale-disk-read";
+            } catch (error) {
+              root.fail(error);
+            }
+          }
         }
         Process {
           id: faultProcess

@@ -24,6 +24,9 @@ def main():
     parser.add_argument('--installed', type=Path, help='optional source for an owned install copy; never modified')
     parser.add_argument('--plugins', type=Path, help='accepted for the paired task wrapper; fixtures are synthetic')
     parser.add_argument('--negative-control', choices=('field-capture', 'preview-revision'))
+    stale_intent = parser.add_mutually_exclusive_group()
+    stale_intent.add_argument('--stale-direct-edit', action='store_true')
+    stale_intent.add_argument('--stale-direct-reset', action='store_true')
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
     profile.prepare_roots()
@@ -69,6 +72,7 @@ def main():
         fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-preview.qml'
         fault = args.source / 'Scripts/dev/fixtures/plugin-settings-session-fault.py'
         env = dict(PHA_PREVIEW_FAULT=str(fault), PHA_WORK_BASE=str(profile.work_base))
+        env['PHA_PREVIEW_STALE_INTENT'] = 'set' if args.stale_direct_edit else 'reset' if args.stale_direct_reset else 'preview'
         try:
             if args.negative_control:
                 if args.negative_control == 'field-capture':

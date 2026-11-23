@@ -20,6 +20,9 @@ QtObject {
   property bool _failedApply: false
   property string openError: ""
   property var _initial: ({})
+  property double _editRevision: 0
+  property var _stagedFields: Object.create(null)
+  property var _committedFields: Object.create(null)
   property var _lifetime: ({
                              alive: true
                            })
@@ -51,6 +54,61 @@ QtObject {
 
   function copyValue(value) {
     return Settings.store.copyValue(value);
+  }
+
+  function _canWriteField(key) {
+    return writable && ready && !busy && !_releasePending && fields.indexOf(key) !== -1 && (!ownerCurrent || ownerCurrent());
+  }
+
+  function setField(key, value) {
+    if (!_canWriteField(key))
+      return false;
+    var revision = ++_editRevision;
+    values[key] = value;
+    _recordField(key, revision);
+    return true;
+  }
+
+  function _recordField(key, revision) {
+    _stagedFields[key] = Math.max(_stagedFields[key] || 0, revision);
+  }
+
+  function stageFieldResets(keys, callback) {
+    if (!keys.every(root._canWriteField) || typeof handle.stageReset !== "function")
+      return false;
+    var revision = ++_editRevision;
+    var lifetime = _lifetime;
+    handle.stageReset(keys.map(key => [key]), function (result) {
+      if (!lifetime.alive || root.closed)
+        return;
+      if (result.status === "staged")
+        for (var key of keys)
+          root._recordField(key, revision);
+      callback(result);
+    });
+    return true;
+  }
+
+  function unsetField(key) {
+    if (!_canWriteField(key))
+      return false;
+    var revision = ++_editRevision;
+    if (!handle.unset([key]))
+      return false;
+    _recordField(key, revision);
+    return true;
+  }
+
+  // Every preview write (new input or replay) uses the same selected-editor
+  // ordering. Live source ingress is not a committed selected field edit.
+  function publishPreview(key, value, revision) {
+    if (!_canWriteField(key))
+      return 0;
+    var candidate = revision || ++_editRevision;
+    if (candidate <= Math.max(_committedFields[key] || 0, _stagedFields[key] || 0))
+      return 0;
+    values[key] = value;
+    return candidate;
   }
 
   function previewScope() {
@@ -139,6 +197,7 @@ QtObject {
     if (closed || _releasePending || !ready || busy || value !== values)
       return refuse(callback, "editor-state");
     var lifetime = _lifetime;
+    var submittedFields = _stagedFields;
     return handle.apply(function (result) {
       if (!lifetime.alive || root.closed)
         return;
@@ -154,6 +213,9 @@ QtObject {
         refresh = success ? (current ? "current" : "stale") : "not_refreshed";
       }
       if (success) {
+        for (var key of Object.keys(submittedFields))
+          root._committedFields[key] = submittedFields[key];
+        root._stagedFields = Object.create(null);
         if (refresh === "current")
           root._initial = root.snapshot();
         root.rebased({

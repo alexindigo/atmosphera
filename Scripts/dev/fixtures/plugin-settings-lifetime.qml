@@ -93,6 +93,18 @@ Component {
     function copyValue(value) {
       return editor.copyValue(value);
     }
+    function setField(key, value) {
+      return editor.setField(key, value);
+    }
+    function stageFieldResets(keys, callback) {
+      return editor.stageFieldResets(keys, callback);
+    }
+    function unsetField(key) {
+      return editor.unsetField(key);
+    }
+    function publishPreview(key, value, revision) {
+      return editor.publishPreview(key, value, revision);
+    }
     function previewScope() {
       return editor.previewScope();
     }

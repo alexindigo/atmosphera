@@ -29,15 +29,23 @@ QtObject {
   }
   function rebased(result) {
     var editor = root._editor;
-    if (!_lifetime.alive || !_token || !editor || editor.closed)
+    if (!_lifetime.alive || !_token || !editor || editor.closed || currentOwner() !== _owner)
       return;
     if (_baseScope)
       _baseScope.detach();
     // These are explicit UI inputs, not a preference snapshot. Successful
     // native Apply closes its scopes even when its acknowledgement is stale.
-    if (result && result.refreshState === "stale")
+    if (result && result.refreshState === "stale") {
+      var revisions = Object.create(null);
+      var inputs = Object.create(null);
       for (var key of Object.keys(_revisions))
-        editor.values[key] = _inputs[key];
+        if (editor.publishPreview(key, _inputs[key], _revisions[key])) {
+          revisions[key] = _revisions[key];
+          inputs[key] = _inputs[key];
+        }
+      _revisions = revisions;
+      _inputs = inputs;
+    }
     _baseScope = editor.previewScope();
   }
   Component.onDestruction: {
@@ -84,18 +92,23 @@ QtObject {
               return false;
           var revisions = Object.assign(Object.create(null), root._revisions);
           var inputs = Object.assign(Object.create(null), root._inputs);
-          // The host's writer keeps field intent at its existing capability
-          // owner. Never mutate it before preview admission, or write it twice.
+          function publish(key) {
+            var revision = editor.publishPreview(key, edits[key]);
+            if (!revision)
+              return false;
+            revisions[key] = revision;
+            inputs[key] = edits[key];
+            return true;
+          }
+          // The selected capability still owns field validation and dirty state,
+          // but it uses the same publisher as the standalone preview and replay.
           if (typeof writeFields === "function") {
-            if (writeFields(edits) !== true)
+            if (writeFields(edits, publish) !== true)
               return false;
           } else {
             for (var key of Object.keys(edits))
-              editor.values[key] = edits[key];
-          }
-          for (var key of Object.keys(edits)) {
-            revisions[key] = {};
-            inputs[key] = edits[key];
+              if (!publish(key))
+                return false;
           }
           root._inputs = inputs;
           root._revisions = revisions;

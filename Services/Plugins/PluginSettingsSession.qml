@@ -205,11 +205,8 @@ QtObject {
                         return false;
                       if (!root._preview)
                         root._preview = base.createSettingsPreview(selected);
-                      return !!root._preview && root._preview.update(patch, function (edits) {
-                        for (var key of Object.keys(edits))
-                          if (!selectedFields.field(key).set(edits[key]))
-                            return false;
-                        return true;
+                      return !!root._preview && root._preview.update(patch, function (edits, publish) {
+                        return selectedFields.publishPreview(edits, publish);
                       });
                     }
                   });

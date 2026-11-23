@@ -84,15 +84,24 @@ QtObject {
     try {
       // This setter is the existing checked native atomic-leaf ingress. No
       // stored effective snapshot or compound presentation alias enters Apply.
-      editor.values[key] = value;
-      var pending = Object.assign(Object.create(null), _pending);
-      pending[key] = "set";
-      _pending = pending;
-      _clearError(key);
+      if (!editor.setField(key, value))
+        return _recordError(key, "settings-field-state");
+      _markPending(key, "set");
       return true;
     } catch (error) {
       return _recordError(key, "settings-field-value");
     }
+  }
+  function publishPreview(edits, publish) {
+    var keys = Object.keys(edits);
+    if (!keys.every(key => _canEdit(key, false)))
+      return false;
+    for (var key of keys) {
+      if (!publish(key))
+        return _recordError(key, "settings-field-value");
+      _markPending(key, "set");
+    }
+    return true;
   }
   function _reset(key, content) {
     if (!_canEdit(key, content))
@@ -110,28 +119,25 @@ QtObject {
         return _recordError(keys[0], "settings-staged-reset-unavailable");
       var lifetime = _lifetime;
       try {
-        editor.handle.stageReset(keys.map(function (key) {
-          return [key];
-        }), function (result) {
+        return editor.stageFieldResets(keys, function (result) {
           if (!lifetime.alive)
             return;
           for (var key of keys) {
             if (result.status !== "staged")
               root._recordError(key, "settings-field-reset");
             else
-              root._markReset(key);
+              root._markPending(key, "reset");
           }
         });
-        return true;
       } catch (error) {
         return _recordError(keys[0], "settings-field-reset");
       }
     }
     try {
       for (var key of keys) {
-        if (!editor.handle.unset([key]))
+        if (!editor.unsetField(key))
           return _recordError(key, "settings-field-reset");
-        _markReset(key);
+        _markPending(key, "reset");
       }
       return true;
     } catch (error) {
@@ -148,9 +154,9 @@ QtObject {
         return false;
     return _resetKeys(keys.slice());
   }
-  function _markReset(key) {
+  function _markPending(key, intent) {
     var pending = Object.assign(Object.create(null), _pending);
-    pending[key] = "reset";
+    pending[key] = intent;
     _pending = pending;
     _clearError(key);
   }
