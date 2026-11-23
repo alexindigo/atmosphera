@@ -479,8 +479,7 @@ Item {
             }
             return icon;
           }
-          opacity: status === Image.Ready ? 1 : 0
-
+          // NImageIcon owns both image readiness and the unavailable badge.
           layer.enabled: widgetSettings.colorizeIcons !== false
           layer.effect: ShaderEffect {
             property color targetColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mOnSurface : AtmoColor.mSurfaceVariant
