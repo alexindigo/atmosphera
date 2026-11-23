@@ -18,6 +18,7 @@ import time
 import urllib.error
 import urllib.request
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile
 
 
@@ -120,19 +121,32 @@ def main():
             peer.bind(('127.0.0.1', 0))
             port = peer.getsockname()[1]
         env = {**os.environ, 'HERMES_CLI_CASE': str(case), 'HOME': str(case)}
-        stdout = (case / 'server.stdout').open('w')
-        stderr = (case / 'server.stderr').open('w')
-        server = subprocess.Popen([sys.executable, '-B', str(script), '--port', str(port),
-                                   '--state-file', str(case / 'state/state.json'),
-                                   '--hermes-home', str(home), '--hermes-command', str(cli)],
-                                  env=env, stdout=stdout, stderr=stderr)
-        parent = identity(server.pid)
-        records.append(parent)
-        worker = None
         child = None
         replies = []
         failures = []
-        try:
+
+        def stop_exact_child():
+            owned_child = child or load_record(case / 'child.json')
+            if owned_child and alive(owned_child):
+                cmd = (Path('/proc') / str(owned_child['pid']) / 'cmdline').read_bytes().split(b'\0')
+                assert os.fsencode(str(cli)) in cmd, cmd
+                os.kill(owned_child['pid'], signal.SIGTERM)
+                wait_for(lambda: not alive(owned_child), 'exact synthetic cleanup')
+
+        with FixtureResources() as resources:
+            stdout = resources.open(case / 'server.stdout', 'w')
+            stderr = resources.open(case / 'server.stderr', 'w')
+            workers = FixtureResources()
+            resources.defer(workers.close)
+            resources.defer(stop_exact_child)
+            # The failing control must see its unbound descendant survive
+            # owner death. Never terminate that descendant before the oracle.
+            server = resources.spawn_direct([sys.executable, '-B', str(script), '--port', str(port),
+                                      '--state-file', str(case / 'state/state.json'),
+                                      '--hermes-home', str(home), '--hermes-command', str(cli)],
+                                     env=env, stdout=stdout, stderr=stderr, timeout=10)
+            parent = identity(server.pid)
+            records.append(parent)
             token = wait_for(lambda: (case / 'state/bridge.token').read_text().strip()
                              if (case / 'state/bridge.token').exists() else '', 'server token')
             def invoke():
@@ -140,8 +154,7 @@ def main():
                     replies.append(request(port, token, path))
                 except (OSError, urllib.error.URLError) as exc:
                     failures.append(type(exc).__name__)
-            worker = threading.Thread(target=invoke)
-            worker.start()
+            worker = workers.thread(invoke, timeout=12)
             child = wait_for(lambda: load_record(case / 'child.json'), 'actual CLI child')
             records.append(child)
             expected = ['-z', 'literal prompt ; $(not-a-shell) "quoted"'] if path == '/oneshot' else ['gateway', path.rsplit('/', 1)[1]]
@@ -172,23 +185,6 @@ def main():
                           parent=parent, reply=replies, requestErrors=failures)
             results.append(result)
             write(args.output / (label + '.json'), result)
-        finally:
-            if server.poll() is None:
-                server.terminate()
-                server.wait(10)
-            if child is None:
-                child = load_record(case / 'child.json')
-            if child and alive(child):
-                # Exact synthetic child only, including failing/bypass attempts.
-                cmd = (Path('/proc') / str(child['pid']) / 'cmdline').read_bytes().split(b'\0')
-                assert os.fsencode(str(cli)) in cmd, cmd
-                os.kill(child['pid'], signal.SIGTERM)
-                wait_for(lambda: not alive(child), 'exact synthetic cleanup')
-            if worker:
-                worker.join(12)
-                assert not worker.is_alive(), 'HTTP test worker still running'
-            stdout.close()
-            stderr.close()
 
     try:
         for path in ('/oneshot', '/gateway/start', '/gateway/stop'):

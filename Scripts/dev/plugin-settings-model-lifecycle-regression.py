@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import shutil
 import threading
+from fixture_resources import FixtureResources
 import time
 from urllib.parse import urlparse
 
@@ -31,7 +32,7 @@ def main():
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-model-lifecycle-regression.py': parser.error('execute supplied source')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent): parser.error('fresh owned profile roots required')
-    with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
+    with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock, FixtureResources() as resources:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); case, out = args.work_root, args.output; case.mkdir(); out.mkdir()
         for part in ('config', 'cache', 'state', 'home', 'bin'): (case / part).mkdir()
         install = case / 'install'; shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
@@ -72,7 +73,8 @@ def main():
                 try: self.wfile.write(json.dumps(data).encode())
                 except (BrokenPipeError, ConnectionResetError): pass
 
-        server = ThreadingHTTPServer(('127.0.0.1', 0), Endpoint); thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+        resources.defer(runner.write_json, out / 'requests.json', rows)
+        server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Endpoint), daemon=True)
         base = 'http://127.0.0.1:' + str(server.server_address[1])
         for name, origin in [('Claude', 'https://api.anthropic.com'), ('Copilot', 'https://api.github.com'), ('OpenRouter', 'https://openrouter.ai')]:
             path = dest / ('providers/' + name + '.qml'); text = path.read_text(); assert origin in text
@@ -105,23 +107,20 @@ def main():
         if args.environment_precedence: env.update(PHA_PROVIDER_ENV_PRECEDENCE='1', OPENROUTER_API_KEY='controlled-env-router', OPENCODE_ZEN_API_KEY='controlled-env-zen', OPENCODE_API_KEY='controlled-lower-opencode', ZEN_API_KEY='controlled-lower-legacy')
         wanted = 'equal sources share all six child observations' if args.lease_key_control else 'Codex FileView fallback continuation did not deliver'
         try:
-            try:
-                text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-model-lifecycle.qml', extra_env=env, extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
-            except RuntimeError:
-                text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
-                if not (args.negative_control or args.lease_key_control) or wanted not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
-                runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
-            if args.negative_control or args.lease_key_control: raise RuntimeError('Model provider control escaped')
-            if 'MODEL_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'MODEL_ASSERT:')): raise RuntimeError('model provider lifetime/diagnostic failure')
-            processes = [json.loads(line) for line in requests.read_text().splitlines()]
-            for row in processes:
-                path = Path('/proc') / str(row['pid']) / 'stat'
-                if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('local provider endpoint survived engine')
-            runner.write_json(out / 'processes.json', processes)
-            runner.write_json(out / 'result.json', dict(status='PASS', providers=['claude', 'codex', 'copilot', 'gemini', 'openrouter', 'zen'], environmentPrecedence=args.environment_precedence, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
-            runner.remove_completed_installs(case, out); print('MODEL_LIFECYCLE: PASS', flush=True)
-        finally:
-            server.shutdown(); server.server_close(); thread.join(); runner.write_json(out / 'requests.json', rows)
+            text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-model-lifecycle.qml', extra_env=env, extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
+        except RuntimeError:
+            text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
+            if not (args.negative_control or args.lease_key_control) or wanted not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
+            runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
+        if args.negative_control or args.lease_key_control: raise RuntimeError('Model provider control escaped')
+        if 'MODEL_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'MODEL_ASSERT:')): raise RuntimeError('model provider lifetime/diagnostic failure')
+        processes = [json.loads(line) for line in requests.read_text().splitlines()]
+        for row in processes:
+            path = Path('/proc') / str(row['pid']) / 'stat'
+            if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('local provider endpoint survived engine')
+        runner.write_json(out / 'processes.json', processes)
+        runner.write_json(out / 'result.json', dict(status='PASS', providers=['claude', 'codex', 'copilot', 'gemini', 'openrouter', 'zen'], environmentPrecedence=args.environment_precedence, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
+        runner.remove_completed_installs(case, out); print('MODEL_LIFECYCLE: PASS', flush=True)
 
 
 if __name__ == '__main__': main()

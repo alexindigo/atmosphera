@@ -12,6 +12,7 @@ import signal
 import subprocess
 import time
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 STUB = '''#!/usr/bin/env python3
@@ -58,11 +59,42 @@ def run(args, helper, mode):
     (case / 'bin').mkdir(); (case / 'home').mkdir()
     executable = case / 'bin/ssh'; executable.write_text(STUB); executable.chmod(0o755)
     env = dict(os.environ, HOME=str(case / 'home'), PATH=str(case / 'bin') + ':' + os.environ['PATH'], HERMES_HELPER_CASE=str(case))
-    logs = []; child = None; proc = None; result = dict(mode=mode)
-    try:
+    result = dict(mode=mode)
+    with FixtureResources() as resources:
+        resources.defer(lambda: (out / 'result.json').write_text(json.dumps(result, indent=2) + '\n'))
+
+        def cleanup_owned_child():
+            receipt = case / 'child.json'
+            if receipt.is_file():
+                child = json.loads(receipt.read_text())
+                cleanup(child)
+                result['ownedCharacterizerCleanup'] = state(child)
+
+        resources.defer(cleanup_owned_child)
+        try:
+            return characterize(args, helper, mode, case, env, resources, result)
+        except BaseException as error:
+            result.update(status='FAIL', assertion=str(error))
+            raise
+
+
+def characterize(args, helper, mode, case, env, resources, result):
+        logs = []
         command = ['python3', '-B', str(helper)]
         if mode == 'parent-race': command += ['--owned-ssh-child', '1', 'ssh', *SSH_ARGV]
         proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, start_new_session=True, bufsize=0)
+        for stream in (proc.stdin, proc.stdout, proc.stderr): resources.defer(stream.close)
+
+        def capture_stderr():
+            if proc.poll() is not None:
+                result['stderr'] = proc.stderr.read().decode(errors='replace')
+
+        def stop():
+            if proc.poll() is None: proc.terminate()
+
+        resources.defer(capture_stderr)
+        resources.defer(proc.wait, timeout=8)
+        resources.defer(stop)
         if mode == 'parent-race':
             deadline = time.monotonic() + 5
             while proc.poll() is None and not (case / 'child.json').exists() and time.monotonic() < deadline: time.sleep(0.02)
@@ -71,7 +103,9 @@ def run(args, helper, mode):
             result.update(status='PASS', helperExit=proc.returncode, sshNeverExecuted=True)
             return result
         proc.stdin.write((json.dumps(dict(type='connect', host='inert.invalid', port=2222, user='synthetic-user', password='', rows=32, cols=80)) + '\n').encode()); proc.stdin.flush()
-        selector = selectors.DefaultSelector(); selector.register(proc.stdout, selectors.EVENT_READ)
+        selector = selectors.DefaultSelector()
+        resources.defer(selector.close)
+        selector.register(proc.stdout, selectors.EVENT_READ)
         deadline = time.monotonic() + 10; connected = False
         while time.monotonic() < deadline:
             if not selector.select(0.1): continue
@@ -103,17 +137,6 @@ def run(args, helper, mode):
             if mode != 'sigkill': check(code == 0 and result['childStopReceipt'] == dict(signal=15), 'normal stop joins SSH process group')
         result['status'] = 'RED_REPRODUCED' if args.original_red and mode in ('sigterm', 'sigkill') else 'PASS'
         return result
-    except BaseException as error:
-        result.update(status='FAIL', assertion=str(error)); raise
-    finally:
-        if child is None and (case / 'child.json').is_file(): child = json.loads((case / 'child.json').read_text())
-        if proc:
-            if proc.poll() is None: proc.terminate(); proc.wait(timeout=8)
-            result['stderr'] = proc.stderr.read().decode(errors='replace')
-            for stream in (proc.stdin, proc.stdout, proc.stderr): stream.close()
-        if child:
-            cleanup(child); result['ownedCharacterizerCleanup'] = state(child)
-        (out / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
 
 
 def main():

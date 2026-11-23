@@ -8,6 +8,7 @@ behind it. Test-only additions expose read-only state and diagnostics, never
 authentication, focus setters or unlock methods. No secure holder is killed.
 """
 import argparse
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import json
@@ -20,6 +21,7 @@ import shutil
 import subprocess
 import time
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 from locker_test_support import manage, recover_known_pam_hang, run, wait_for
 
@@ -52,6 +54,15 @@ OBSERVE = '''
 
 def write_json(path, value):
     path.write_text(json.dumps(value, indent=2) + '\n')
+
+
+@contextmanager
+def variant_cleanup(*, capture, credential_or_recovery, finish_background, background_owner, remove_configs, verify):
+    with FixtureResources() as cleanup:
+        for callback in (verify, remove_configs, background_owner.close, finish_background,
+                         credential_or_recovery, capture):
+            cleanup.defer(callback)
+        yield
 
 
 def variant(args, profile, name, baseline):
@@ -137,10 +148,39 @@ def variant(args, profile, name, baseline):
     def locked():
         return run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
 
-    try:
-        with (out / 'background.log').open('w') as log:
-            background_process = subprocess.Popen(['qs', '-p', str(background)], env=environment,
-                stdout=log, stderr=subprocess.STDOUT)
+    def capture():
+        if record:
+            (out / 'native-journal.log').write_text(journal())
+
+    def credential_or_recovery():
+        # Never stop a secure holder or change credentials while it still
+        # needs recovery. Retain recovery files only inside the guest.
+        if authenticated or not record:
+            run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')
+            assert run(['sudo', '-n', 'getent', 'shadow', 'tester']).stdout.split(':')[1] == original_hash
+            marker.unlink()
+            saved_hash.unlink()
+            write_json(out / 'cleanup.json', dict(originalCredentialRestored=True,
+                recoveryFilesRemoved=True, secureHolderKilled=False))
+        else:
+            write_json(out / 'failure-state.json', dict(trace=trace, view=inspect()))
+
+    def finish_background():
+        if background_process is not None and background_process.poll() is None:
+            run(['qs', 'ipc', '-p', str(background), 'call', 'lockBackground', 'finish'], env=environment)
+            background_process.wait(timeout=15)
+
+    def remove_configs():
+        if authenticated:
+            shutil.rmtree(configs)
+
+    background_owner = FixtureResources()
+    with variant_cleanup(capture=capture, credential_or_recovery=credential_or_recovery,
+                         finish_background=finish_background, background_owner=background_owner,
+                         remove_configs=remove_configs, verify=profile.verify):
+        log = background_owner.open(out / 'background.log', 'w')
+        background_process = background_owner.spawn(['qs', '-p', str(background)], env=environment,
+            stdout=log, stderr=subprocess.STDOUT)
         wait_for(lambda: ipc(background, 'lockBackground'))
         keys('--', 'bg')
         wait_for(lambda: (ipc(background, 'lockBackground') or {}).get('length') == 2)
@@ -213,27 +253,6 @@ def variant(args, profile, name, baseline):
             ntoggleSha256=hashlib.sha256((install / 'Widgets/NToggle.qml').read_bytes()).hexdigest())
         write_json(out / 'result.json', result)
         return result
-    finally:
-        if record:
-            (out / 'native-journal.log').write_text(journal())
-        # Never stop a secure holder or restore an unknown credential while it
-        # still needs recovery. Failure retains protected recovery files only
-        # inside the guest, not in the collected evidence directory.
-        if authenticated or not record:
-            run(['sudo', '-n', 'chpasswd', '-e'], input='tester:' + original_hash + '\n')
-            assert run(['sudo', '-n', 'getent', 'shadow', 'tester']).stdout.split(':')[1] == original_hash
-            marker.unlink()
-            saved_hash.unlink()
-            write_json(out / 'cleanup.json', dict(originalCredentialRestored=True,
-                recoveryFilesRemoved=True, secureHolderKilled=False))
-        else:
-            write_json(out / 'failure-state.json', dict(trace=trace, view=inspect()))
-        if background_process is not None and background_process.poll() is None:
-            run(['qs', 'ipc', '-p', str(background), 'call', 'lockBackground', 'finish'], env=environment)
-            background_process.wait(timeout=15)
-        if authenticated:
-            shutil.rmtree(configs)
-        profile.verify()
 
 
 def main():

@@ -8,10 +8,9 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
 import time
-import uuid
 
+from fixture_resources import FixtureResources, start_private_bus
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('device_native', Path(__file__).with_name('plugin-settings-device-native-regression.py'))
@@ -98,20 +97,12 @@ def run(args, profile, scenario):
         path = case/'bin'/name; path.write_text(ENDPOINT); path.chmod(0o755)
     runner.write_json(out/'sources.json', {str(p.relative_to(product)): hashlib.sha256(p.read_bytes()).hexdigest() for p in product.rglob('*') if p.is_file()})
     env = dict(PHA_DEVICE_CASE=str(case), PHA_DEVICE_SCENARIO=scenario, HOME=str(case/'home'), PATH=str(case/'bin')+':'+os.environ['PATH'])
-    bus = None
-    if gpu:
-        socket = profile.work_base/('g2m-bus-'+uuid.uuid4().hex[:12])
-        address = 'unix:path='+str(socket)
-        bus = subprocess.Popen(['/usr/bin/dbus-daemon','--session','--nofork','--address='+address], stdout=(out/'bus.log').open('w'), stderr=subprocess.STDOUT)
-        for _ in range(200):
-            if socket.exists(): break
-            time.sleep(.01)
-        else: raise RuntimeError('private bus unavailable')
-        runner.write_json(out/'private-bus.json', dict(pid=bus.pid, start=(Path('/proc')/str(bus.pid)/'stat').read_text().split(') ',1)[1].split()[19], address=address, joined=False))
-        env['DBUS_SESSION_BUS_ADDRESS'] = address
-        (case/'peer.py').write_text(PEER)
-    rejected = False
-    try:
+    with FixtureResources() as resources:
+        if gpu:
+            env['DBUS_SESSION_BUS_ADDRESS'] = start_private_bus(resources, profile.work_base, out/'bus.log',
+                publish=lambda value: runner.write_json(out/'private-bus.json', value))
+            (case/'peer.py').write_text(PEER)
+        rejected = False
         try:
             text = runner.run_fixture(profile, install, case, out, args.source/'Scripts/dev/fixtures/plugin-settings-device-lifecycle.qml', extra_env=env, extra_lint=tuple(sorted(product.rglob('*.qml'))), timeout=100)
         except RuntimeError:
@@ -122,10 +113,6 @@ def run(args, profile, scenario):
         if args.control and not rejected: raise RuntimeError('device lifetime control escaped')
         if not rejected and 'DEVICE_LIFETIME: PASS '+scenario not in text: raise RuntimeError('incomplete device lifetime')
         if any(word in text for word in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')): raise RuntimeError('unrelated lifetime diagnostic')
-    finally:
-        if bus:
-            bus.terminate(); bus.wait(timeout=5)
-            path = out/'private-bus.json'; receipt = json.loads(path.read_text()); receipt.update(joined=True, returncode=bus.returncode); runner.write_json(path, receipt)
     rows = [json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
     deadline = time.monotonic()+6
     while any(live(row) for row in rows) and time.monotonic()<deadline: time.sleep(.02)

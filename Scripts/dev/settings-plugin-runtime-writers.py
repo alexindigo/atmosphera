@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
-import threading
+from fixture_resources import FixtureResources
 
 
 def main():
@@ -42,14 +42,14 @@ def main():
             self.end_headers()
             self.wfile.write(data)
 
-    server = ThreadingHTTPServer(('127.0.0.1', 0), Bridge)
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
-    probe = args.installed/'i5-runtime-writers.qml'
-    with probe.open('xb') as stream:
-        stream.write((args.source/'Scripts/dev/fixtures/plugin-runtime-writers.qml').read_bytes())
-    cases = []
-    try:
+    with FixtureResources() as resources:
+        server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Bridge), daemon=True)
+        probe = args.installed/'i5-runtime-writers.qml'
+        stream = probe.open('xb')
+        resources.defer(probe.unlink)
+        with stream:
+            stream.write((args.source/'Scripts/dev/fixtures/plugin-runtime-writers.qml').read_bytes())
+        cases = []
         for name in ('todo', 'hermes-agent', 'weekly-calendar'):
             root = args.work_root/name
             config = root/'c'
@@ -103,11 +103,6 @@ def main():
                 cases.append(dict(id=label, status='PASS', rawSha256=hashlib.sha256(raw).hexdigest()))
         (args.output/'result.json').write_text(json.dumps(dict(status='PASS', cases=cases, bridgeRequests=requests), indent=2)+'\n')
         print('SETTINGS_PLUGIN_RUNTIME_WRITERS: PASS (actual Main save, consumer, raw data and cold)')
-    finally:
-        probe.unlink()
-        server.shutdown()
-        server.server_close()
-        thread.join(timeout=5)
 
 
 if __name__ == '__main__':

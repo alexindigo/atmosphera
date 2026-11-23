@@ -2,6 +2,9 @@
 from functools import partial
 import subprocess
 import threading
+import time
+import uuid
+from pathlib import Path
 
 from guest_profile import protect_owned_process
 
@@ -39,7 +42,14 @@ class FixtureResources:
         return stream
 
     def spawn(self, argv, *, timeout=5, guard_factory=protect_owned_process, **kwargs):
-        proc = subprocess.Popen(argv, start_new_session=True, **kwargs)
+        return self._spawn(argv, timeout, guard_factory, **kwargs)
+
+    def spawn_direct(self, argv, *, timeout=5, **kwargs):
+        """Own only the direct child, e.g. when observing a descendant's fate."""
+        return self._spawn(argv, timeout, None, **kwargs)
+
+    def _spawn(self, argv, timeout, guard_factory, **kwargs):
+        proc = subprocess.Popen(argv, start_new_session=guard_factory is not None, **kwargs)
         self.defer(proc.wait, timeout=timeout)
         guard = None
 
@@ -52,7 +62,8 @@ class FixtureResources:
                 guard.terminate()
 
         self.defer(stop)
-        guard = guard_factory(proc)
+        if guard_factory is not None:
+            guard = guard_factory(proc)
         return proc
 
     def thread(self, target, *, stop=None, daemon=None, timeout=5):
@@ -76,3 +87,32 @@ class FixtureResources:
         if release is not None:
             self.defer(release)
         return server
+
+
+def start_private_bus(resources, socket_root, log_path, *, publish=None, **details):
+    """Start the private bus, owning process and log before readiness or receipts."""
+    # AF_UNIX addresses must not inherit the nested case-directory length.
+    socket = socket_root / ('psh-bus-' + uuid.uuid4().hex[:12])
+    address = 'unix:path=' + str(socket)
+    receipt = None
+
+    def mark_joined():
+        if receipt is not None and process.returncode is not None:
+            publish(dict(receipt, joined=True, returncode=process.returncode))
+
+    if publish is not None:
+        resources.defer(mark_joined)
+    log = resources.open(log_path, 'w')
+    process = resources.spawn(['/usr/bin/dbus-daemon', '--session', '--nofork', '--address=' + address],
+                              stdout=log, stderr=subprocess.STDOUT)
+    for _ in range(200):
+        if socket.exists():
+            break
+        time.sleep(.01)
+    else:
+        raise RuntimeError('private bus unavailable')
+    if publish is not None:
+        stat = (Path('/proc') / str(process.pid) / 'stat').read_text()
+        receipt = dict(details, pid=process.pid, start=stat.split(') ', 1)[1].split()[19], address=address, joined=False)
+        publish(receipt)
+    return address

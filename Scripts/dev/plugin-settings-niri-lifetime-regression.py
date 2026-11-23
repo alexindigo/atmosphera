@@ -12,7 +12,8 @@ import signal
 import subprocess
 import sys
 import time
-from guest_profile import activate_profile, profile_argument, protect_owned_process
+from fixture_resources import FixtureResources
+from guest_profile import activate_profile, profile_argument
 
 spec=importlib.util.spec_from_file_location('niri_native',Path(__file__).with_name('plugin-settings-niri-native-regression.py'))
 native=importlib.util.module_from_spec(spec);spec.loader.exec_module(native);runner=native.runner
@@ -37,22 +38,18 @@ def python_children(args,case,out):
     for kind in ('query','action','stream'):
         (case/'requests.jsonl').write_text('');(case/'child-started').unlink(missing_ok=True)
         env=dict(os.environ,PHA_NIRI_CASE=str(case),PATH=str(case/'bin')+':'+os.environ['PATH'])
-        with (out/(kind+'.log')).open('w') as log:
-            process=subprocess.Popen([sys.executable,'-B','-c',entry,str(script),kind],env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
-            guard=protect_owned_process(process)
-            try:
-                deadline=time.monotonic()+8
-                while not (case/'child-started').exists() and time.monotonic()<deadline:
-                    assert process.poll() is None,'Python parent exited before held child'
-                    time.sleep(.02)
-                assert (case/'child-started').exists(),'held actual script child'
-                rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
-                assert len(rows)==1 and rows[0]['endpoint']=='niri',rows
-                # Model Process::~Process's direct SIGKILL, not group cleanup.
-                process.kill();assert process.wait(timeout=5)==-signal.SIGKILL
-                absent(rows);outcomes.append(dict(kind=kind,children=rows,allIdentitiesAbsent=True))
-            finally:
-                if process.poll() is None:guard.terminate();process.wait(timeout=5)
+        with (out/(kind+'.log')).open('w') as log, FixtureResources() as resources:
+            process=resources.spawn([sys.executable,'-B','-c',entry,str(script),kind],env=env,stdout=log,stderr=subprocess.STDOUT)
+            deadline=time.monotonic()+8
+            while not (case/'child-started').exists() and time.monotonic()<deadline:
+                assert process.poll() is None,'Python parent exited before held child'
+                time.sleep(.02)
+            assert (case/'child-started').exists(),'held actual script child'
+            rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
+            assert len(rows)==1 and rows[0]['endpoint']=='niri',rows
+            # Model Process::~Process's direct SIGKILL, not group cleanup.
+            process.kill();assert process.wait(timeout=5)==-signal.SIGKILL
+            absent(rows);outcomes.append(dict(kind=kind,children=rows,allIdentitiesAbsent=True))
     with (out/'race.log').open('w') as log:
         result=subprocess.run([sys.executable,'-B',str(script),'--owned-niri-child','1','-j','windows'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=5)
     assert result.returncode!=0 and 'owner already retired' in (out/'race.log').read_text()

@@ -17,7 +17,8 @@ import shutil
 import subprocess
 import time
 
-from guest_profile import ProcessIdentity, activate_profile, profile_argument, protect_owned_process
+from fixture_resources import FixtureResources
+from guest_profile import ProcessIdentity, activate_profile, profile_argument
 
 
 RED_IDS = ('P001', 'P048', 'P054', 'P055', 'P056', 'P143', 'P161', 'P169', 'G81.generic')
@@ -124,16 +125,13 @@ def run_fixture(profile, install, case, output, fixture, installed=False, extra_
                ATMOSPHERA_CACHE_DIR=str(case / 'cache'),
                ATMOSPHERA_STATE_DIR=str(case / 'state'), QML_DISABLE_DISK_CACHE='1')
     env.update(extra_env or {})
-    with (output / 'runtime.log').open('w') as log:
-        process = subprocess.Popen(['qs', '-p', str(target), '--no-color'], env=env,
-                                   stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-        guard = protect_owned_process(process)
-        try:
+    try:
+        with (output / 'runtime.log').open('w') as log, FixtureResources() as resources:
+            process = resources.spawn(['qs', '-p', str(target), '--no-color'], env=env,
+                                      stdout=log, stderr=subprocess.STDOUT, timeout=10)
             code = process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            guard.terminate()
-            code = process.wait(timeout=10)
-            raise RuntimeError('fixture exceeded deadline; owned child joined, exit=' + str(code))
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError('fixture exceeded deadline; owned child joined, exit=' + str(process.returncode)) from error
     (output / 'runtime.exit').write_text(str(code) + '\n')
     text = (output / 'runtime.log').read_text()
     if code != 0:
@@ -678,14 +676,12 @@ def run_registry_case(args, profile, case, cases, record):
         log_path = args.output / case / (name.replace(':', '-') + '.log')
         runtime_before = set(profile.runtime_base.iterdir())
         started = time.monotonic()
-        with log_path.open('w') as log:
-            process = subprocess.Popen(argv, cwd=cwd, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-            guard = protect_owned_process(process)
-            try:
+        try:
+            with log_path.open('w') as log, FixtureResources() as resources:
+                process = resources.spawn(argv, cwd=cwd, stdout=log, stderr=subprocess.STDOUT, timeout=30)
                 code = process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                guard.terminate()
-                code = 'timeout:' + str(process.wait(timeout=30))
+        except subprocess.TimeoutExpired:
+            code = 'timeout:' + str(process.returncode)
         leftovers = step_leftovers([str(args.work_root / case / name.replace(':', '-')), str(args.output / case / name.replace(':', '-'))])
         for item in leftovers:
             with contextlib.suppress(ProcessLookupError):

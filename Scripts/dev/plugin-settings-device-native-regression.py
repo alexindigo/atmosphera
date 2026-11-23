@@ -9,10 +9,9 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
 import time
-import uuid
 
+from fixture_resources import FixtureResources, start_private_bus
 from guest_profile import activate_profile, profile_argument
 
 spec=importlib.util.spec_from_file_location('device_runner',Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
@@ -64,22 +63,11 @@ def run(args,profile,member,scope):
         path=case/'bin'/name;path.write_text(ENDPOINT);path.chmod(0o755)
     runner.write_json(out/'sources.json',{str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(product.rglob('*')) if p.is_file()})
     env=dict(PHA_DEVICE_CASE=str(case),PHA_DEVICE_SCOPE=scope,PHA_DEVICE_PLUGIN=member,PHA_DEVICE_OUTPUT=str(out),PHA_DEVICE_DISK=str(args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py'),HOME=str(case/'home'),PATH=str(case/'bin')+':'+os.environ['PATH'])
-    bus=None
-    if gpu:
-        # Keep the real AF_UNIX path below its length limit even for long case IDs.
-        socket=profile.work_base/('g2m-bus-'+uuid.uuid4().hex[:12])
-        address='unix:path='+str(socket)
-        bus=subprocess.Popen(['/usr/bin/dbus-daemon','--session','--nofork','--address='+address],stdout=(out/'bus.log').open('w'),stderr=subprocess.STDOUT)
-        for _ in range(200):
-            if socket.exists():break
-            time.sleep(.01)
-        else:
-            bus.terminate();bus.wait(timeout=5)
-            raise RuntimeError('private device bus unavailable')
-        runner.write_json(out/'private-bus.json',dict(pid=bus.pid,start=(Path('/proc')/str(bus.pid)/'stat').read_text().split(') ',1)[1].split()[19],address=address,diskBacked=True,joined=False))
-        env['DBUS_SESSION_BUS_ADDRESS']=address
-    rejected=False
-    try:
+    with FixtureResources() as resources:
+        if gpu:
+            env['DBUS_SESSION_BUS_ADDRESS'] = start_private_bus(resources, profile.work_base, out/'bus.log',
+                publish=lambda value: runner.write_json(out/'private-bus.json', value), diskBacked=True)
+        rejected=False
         modes=[('edit','')] if args.original_plugins else [('edit',''),('cold','edited'),('reset',''),('cold','reset'),('follow',''),('cold','following')]
         for mode,boundary in modes:
             part=out/(mode+('-'+boundary if boundary else ''));part.mkdir();before=hashes(case)
@@ -93,10 +81,6 @@ def run(args,profile,member,scope):
             if any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')):raise RuntimeError('unrelated device native diagnostic')
             after=hashes(case);runner.write_json(part/'configuration-hashes.json',dict(before=before,after=after,nonpublishing=before==after))
             if mode=='cold' and before!=after:raise RuntimeError('device cold reader published')
-    finally:
-        if bus:
-            bus.terminate();bus.wait(timeout=5)
-            receipt=json.loads((out/'private-bus.json').read_text());receipt.update(joined=True,returncode=bus.returncode);runner.write_json(out/'private-bus.json',receipt)
     if args.original_plugins and not rejected:raise RuntimeError('original device policy escaped')
     wanted=['initial','discarded','edited'] if rejected else list(expected)
     for boundary in wanted:

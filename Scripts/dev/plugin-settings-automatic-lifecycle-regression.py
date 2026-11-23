@@ -9,9 +9,9 @@ import os
 from pathlib import Path
 import shutil
 import signal
-import subprocess
 import time
 
+from fixture_resources import FixtureResources, start_private_bus
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('automatic_native', Path(__file__).with_name('plugin-settings-automatic-native-regression.py'))
@@ -120,18 +120,11 @@ def run(args, profile, scenario):
     product=case/'plugin'
     runner.write_json(out/'sources.json',{str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in product.rglob('*') if p.is_file()})
     env=dict(PHA_AUTO_CASE=str(case),PHA_AUTO_SCENARIO=scenario,HOME=str(case/'home'),PATH=str(case/'bin')+':'+os.environ['PATH'])
-    bus=None
-    if scenario in ('private-monitor','private-retire'):
-        address='unix:path='+str(case/'bus')
-        bus=subprocess.Popen(['/usr/bin/dbus-daemon','--session','--nofork','--address='+address],stdout=(out/'bus.log').open('w'),stderr=subprocess.STDOUT)
-        for _ in range(200):
-            if (case/'bus').exists(): break
-            time.sleep(.01)
-        else: raise RuntimeError('private bus unavailable')
-        env['DBUS_SESSION_BUS_ADDRESS']=address
-        (case/'peer.py').write_text(PEER)
-    rejected=False
-    try:
+    with FixtureResources() as resources:
+        if scenario in ('private-monitor','private-retire'):
+            env['DBUS_SESSION_BUS_ADDRESS'] = start_private_bus(resources, profile.work_base, out/'bus.log')
+            (case/'peer.py').write_text(PEER)
+        rejected=False
         try:
             text=runner.run_fixture(profile,install,case,out,args.source/'Scripts/dev/fixtures/plugin-settings-automatic-lifecycle.qml',extra_env=env,extra_lint=tuple(sorted(product.rglob('*.qml'))),timeout=100)
         except RuntimeError:
@@ -142,9 +135,6 @@ def run(args, profile, scenario):
         if args.control and not rejected: raise RuntimeError('automatic lifetime control escaped')
         if not rejected and 'AUTOMATIC_LIFETIME: PASS '+scenario not in text: raise RuntimeError('incomplete automatic lifetime')
         if any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')): raise RuntimeError('unrelated lifetime diagnostic')
-    finally:
-        if bus:
-            bus.terminate(); bus.wait(timeout=5)
     rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
     deadline=time.monotonic()+6
     while any(live(row) for row in rows) and time.monotonic()<deadline: time.sleep(.02)

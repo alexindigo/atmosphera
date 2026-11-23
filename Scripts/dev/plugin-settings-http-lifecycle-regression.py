@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import shutil
 import threading
+from fixture_resources import FixtureResources
 import time
 from urllib.parse import parse_qs, unquote, urlparse
 
@@ -21,6 +22,11 @@ MEMBERS = ('news', 'ntfy-notifications', 'habitica')
 
 
 def run(args, profile, plugin):
+    with FixtureResources() as resources:
+        run_with_endpoint(args, profile, plugin, resources)
+
+
+def run_with_endpoint(args, profile, plugin, resources):
     case, out = args.work_root / plugin, args.output / plugin
     case.mkdir(); out.mkdir()
     for part in ('config', 'cache', 'state', 'home', 'bin'):
@@ -49,8 +55,7 @@ def run(args, profile, plugin):
             try: self.wfile.write((json.dumps(data) + '\n').encode())
             except BrokenPipeError: pass
 
-    server = ThreadingHTTPServer(('127.0.0.1', 0), Endpoint)
-    thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+    server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Endpoint), daemon=True)
     base = 'http://127.0.0.1:' + str(server.server_address[1])
     if plugin == 'news':
         path = dest / 'NewsSettingsClient.qml'; text = path.read_text()
@@ -82,7 +87,10 @@ def run(args, profile, plugin):
         runner.write_json(case / 'config/plugins.json', dict(version=6, states={}, sources=[]))
         runner.write_json(case / 'config/settings/plugins/habitica.json', native_shared)
     runner.write_json(case / 'input.json', dict(plugin=plugin, manifest=manifest, directory=str(dest), base=base, nativeShared=native_shared))
-    try:
+    prove_fixture(args, profile, plugin, install, case, out, requests, wanted, dest)
+
+
+def prove_fixture(args, profile, plugin, install, case, out, requests, wanted, dest):
         rejected = None
         try:
             text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-http-lifecycle.qml', extra_env=dict(PHA_HTTP_PLUGIN=plugin, PHA_HTTP_CASE=str(case), PHA_HTTP_REQUESTS=str(requests), PHA_HTTP_OUTPUT=str(out), PHA_HTTP_CACHE_DISK=str(args.source / 'Scripts/dev/fixtures/plugin-settings-http-cache-disk.py'), HOME=str(case / 'home'), PATH=str(case / 'bin') + ':' + os.environ['PATH']), extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
@@ -113,8 +121,6 @@ def run(args, profile, plugin):
         runner.write_json(out / 'result.json', dict(status='PASS', plugin=plugin, nativeSharedCacheWriter=plugin == 'habitica', nativePlacementAcceptance=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out)
         print('HTTP_LIFECYCLE ' + plugin + ': PASS', flush=True)
-    finally:
-        server.shutdown(); server.server_close(); thread.join()
 
 
 def main():

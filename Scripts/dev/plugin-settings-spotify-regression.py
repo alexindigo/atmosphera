@@ -13,6 +13,7 @@ from pathlib import Path
 import shutil
 import socket
 import threading
+from fixture_resources import FixtureResources
 import time
 from urllib.parse import parse_qs, urlparse
 import base64
@@ -24,6 +25,16 @@ runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 
 def run(args, profile, scope):
+    with FixtureResources() as resources:
+        result, case, out = run_with_endpoint(args, profile, scope, resources)
+    for line in (case / 'endpoint-pids.jsonl').read_text().splitlines() if (case / 'endpoint-pids.jsonl').exists() else []:
+        row = json.loads(line); stat = Path('/proc') / str(row['pid']) / 'stat'
+        if stat.exists() and stat.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('Spotify endpoint survived engine')
+    runner.remove_completed_installs(case, out)
+    print('SPOTIFY ' + scope + ': PASS', flush=True); return result
+
+
+def run_with_endpoint(args, profile, scope, resources):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
     for part in ('config/settings/plugins', 'cache', 'state', 'home', 'bin'):
@@ -43,6 +54,7 @@ def run(args, profile, scope):
     for path, value in [('input.json', dict(plugin='spotify-player')), ('expectations.json', expected), ('config/settings.json', dict(settingsVersion=62)), ('config/plugins.json', dict(version=6, states={}, sources=[])), ('config/settings/plugins/spotify-player.json', shared), ('config/settings/bar.json', bar)]: runner.write_json(case / path, value)
     request_file = case / 'requests.jsonl'; request_file.write_text('')
     record_lock = threading.Lock()
+    released = threading.Event()
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_): pass
@@ -57,7 +69,7 @@ def run(args, profile, scope):
             marker = case / ('hold-' + client) if client else case / 'hold-api'
             held = marker.exists()
             end = time.monotonic() + 15
-            while marker.exists() and time.monotonic() < end: time.sleep(.025)
+            while marker.exists() and time.monotonic() < end and not released.wait(.025): pass
             if self.path == '/api/token':
                 values = parse_qs(body)
                 data = dict(access_token=('late-' if held else 'access-') + client, refresh_token='refresh-' + client, expires_in=3600)
@@ -74,8 +86,18 @@ def run(args, profile, scope):
         do_POST = respond
         do_PUT = respond
 
-    server = ThreadingHTTPServer(('127.0.0.1', 0), Handler); server.daemon_threads = True
-    thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+    def copy_if_present(name):
+        if (case / name).exists(): shutil.copy2(case / name, out / name)
+
+    def remove_hold_markers():
+        with FixtureResources() as markers:
+            for marker in case.glob('hold-*'): markers.defer(marker.unlink, missing_ok=True)
+
+    resources.defer(shutil.copy2, request_file, out / 'requests.jsonl')
+    for name in ('endpoint-pids.jsonl', 'browser.jsonl'):
+        resources.defer(copy_if_present, name)
+    resources.defer(remove_hold_markers)
+    server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Handler), daemon=True, release=released.set)
     origin = 'http://127.0.0.1:' + str(server.server_port)
     substitutions = []
     if (dest / 'Auth.js').read_text().count('https://accounts.spotify.com/api/token') != 1:
@@ -111,7 +133,11 @@ with (Path(os.environ['PHA_SPOTIFY_CASE']) / 'endpoint-pids.jsonl').open('a') as
     modes = [('edit', ''), ('cold', 'edited'), ('reset', ''), ('cold', 'reset'), ('follow', ''), ('cold', 'following'), ('actions', ''), ('action-cold', '')]
     if args.old_red: modes = [('edit', '')]
     if args.control or args.actions_only: modes = [('actions', '')] + ([] if args.control else [('action-cold', '')])
-    try:
+    result = prove_modes(args, profile, scope, modes, case, out, install, dest, env, wanted, expected)
+    return result, case, out
+
+
+def prove_modes(args, profile, scope, modes, case, out, install, dest, env, wanted, expected):
         for mode, boundary in modes:
             output = out / (mode + ('-' + boundary if boundary else '')); output.mkdir()
             before = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case / 'config/settings').rglob('*.json')}
@@ -131,17 +157,7 @@ with (Path(os.environ['PHA_SPOTIFY_CASE']) / 'endpoint-pids.jsonl').open('a') as
         else:
             result = dict(status='PASS', scope=scope, independentBoundaries=sorted(expected) if not args.actions_only else [], unchangedHashColdReaders=(['authorized'] if args.actions_only else ['edited', 'reset', 'following', 'authorized']), runtimeAuthorization=True, nativePageProof=not args.actions_only, physicalProof=False, completePlanAcceptance=False)
             runner.write_json(out / 'result.json', result)
-    finally:
-        for marker in case.glob('hold-*'): marker.unlink()
-        server.shutdown(); server.server_close(); thread.join()
-        shutil.copy2(request_file, out / 'requests.jsonl')
-        for name in ('endpoint-pids.jsonl', 'browser.jsonl'):
-            if (case / name).exists(): shutil.copy2(case / name, out / name)
-    for line in (case / 'endpoint-pids.jsonl').read_text().splitlines() if (case / 'endpoint-pids.jsonl').exists() else []:
-        row = json.loads(line); stat = Path('/proc') / str(row['pid']) / 'stat'
-        if stat.exists() and stat.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('Spotify endpoint survived engine')
-    runner.remove_completed_installs(case, out)
-    print('SPOTIFY ' + scope + ': PASS', flush=True); return result
+        return result
 
 
 def main():

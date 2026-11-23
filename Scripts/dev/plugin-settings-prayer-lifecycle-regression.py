@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 import socket
 import threading
+from fixture_resources import FixtureResources
 import time
 from urllib.parse import parse_qs, urlparse
 
@@ -29,7 +30,7 @@ def main():
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-prayer-lifecycle-regression.py': parser.error('execute supplied source')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent): parser.error('fresh owned profile roots required')
-    with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
+    with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock, FixtureResources() as resources:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); case, out = args.work_root, args.output; case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
         for part in ('config/settings/plugins', 'cache', 'state', 'home', 'bin'): (case / part).mkdir(parents=True)
         install = case / 'install'; shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
@@ -68,7 +69,10 @@ def main():
                 try: self.wfile.write(json.dumps(dict(code=status, data=data)).encode())
                 except (BrokenPipeError, ConnectionResetError): pass
 
-        server = ThreadingHTTPServer(('127.0.0.1', 0), Endpoint); thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+        resources.defer(runner.write_json, out / 'requests.json', requests)
+        server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Endpoint), daemon=True)
+        for event in (held, retry, shared_release):
+            resources.defer(event.set)
         base = 'http://127.0.0.1:' + str(server.server_address[1])
         path = dest / 'MawaqitSettingsClient.qml'; text = path.read_text(); assert text.count('https://api.aladhan.com') == 2; path.write_text(text.replace('https://api.aladhan.com', base))
         for name in ('paplay', 'pw-cat', 'notify-send', 'pkill'):
@@ -81,31 +85,27 @@ def main():
         runner.write_json(out / 'inputs.json', dict(files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'mawaqit').rglob('*') if p.is_file()}))
         env = dict(PHA_PRAYER_CASE=str(case), PHA_PRAYER_OUTPUT=str(out), PHA_PRAYER_DISK=str(args.source / 'Scripts/dev/fixtures/plugin-settings-prayer-disk.py'), PHA_PRAYER_EFFECTS=str(effects), HOME=str(case / 'home'), PATH=str(case / 'bin') + ':' + os.environ['PATH'])
         try:
-            try:
-                text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-prayer-lifecycle.qml', extra_env=env, extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
-            except RuntimeError:
-                text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
-                if not args.negative_control or 'independent complete prayer native readback' not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
-                runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt='independent complete prayer native readback', completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
-            if args.negative_control: raise RuntimeError('shared prayer cache-owner control escaped')
-            if 'PRAYER_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'PRAYER_ASSERT:')): raise RuntimeError('prayer lifetime/diagnostic failure')
-            rows = [json.loads(line) for line in effects.read_text().splitlines()]
-            for row in rows:
-                path = Path('/proc') / str(row['pid']) / 'stat'
-                if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('prayer effect collaborator survived engine')
-            if not any(row['city'] == 'fallback' and '/timingsByCity?' in row['path'] for row in requests): raise RuntimeError('no actual fallback-day request')
-            if not any(row['city'] == 'fallback' and row['query']['tune'][0].split(',')[1] == '9' for row in requests): raise RuntimeError('tune integer source change did not reach request')
-            marker = next(line.split('PRAYER_RETIRE ', 1)[1] for line in text.splitlines() if 'PRAYER_RETIRE ' in line)
-            retired_at = float(marker.strip())
-            retry_rows = [row for row in requests if row['city'] == 'retry']
-            if not retry_rows or any(row['receivedAtMs'] > retired_at for row in retry_rows): raise RuntimeError('retired retry timer admitted another request')
-            for boundary in ('initial', 'shared', 'selected'):
-                if json.loads((out / ('persisted/' + boundary + '.json')).read_text())['status'] != 'PASS': raise RuntimeError('missing full native documents')
-            runner.write_json(out / 'effects.json', rows); runner.write_json(out / 'result.json', dict(status='PASS', independentNativeDocuments=['initial', 'shared', 'selected'], nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
-            runner.remove_completed_installs(case, out); print('PRAYER_LIFECYCLE: PASS', flush=True)
-        finally:
-            held.set(); retry.set(); shared_release.set()
-            server.shutdown(); server.server_close(); thread.join(); runner.write_json(out / 'requests.json', requests)
+            text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-prayer-lifecycle.qml', extra_env=env, extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
+        except RuntimeError:
+            text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
+            if not args.negative_control or 'independent complete prayer native readback' not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
+            runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt='independent complete prayer native readback', completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
+        if args.negative_control: raise RuntimeError('shared prayer cache-owner control escaped')
+        if 'PRAYER_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'PRAYER_ASSERT:')): raise RuntimeError('prayer lifetime/diagnostic failure')
+        rows = [json.loads(line) for line in effects.read_text().splitlines()]
+        for row in rows:
+            path = Path('/proc') / str(row['pid']) / 'stat'
+            if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('prayer effect collaborator survived engine')
+        if not any(row['city'] == 'fallback' and '/timingsByCity?' in row['path'] for row in requests): raise RuntimeError('no actual fallback-day request')
+        if not any(row['city'] == 'fallback' and row['query']['tune'][0].split(',')[1] == '9' for row in requests): raise RuntimeError('tune integer source change did not reach request')
+        marker = next(line.split('PRAYER_RETIRE ', 1)[1] for line in text.splitlines() if 'PRAYER_RETIRE ' in line)
+        retired_at = float(marker.strip())
+        retry_rows = [row for row in requests if row['city'] == 'retry']
+        if not retry_rows or any(row['receivedAtMs'] > retired_at for row in retry_rows): raise RuntimeError('retired retry timer admitted another request')
+        for boundary in ('initial', 'shared', 'selected'):
+            if json.loads((out / ('persisted/' + boundary + '.json')).read_text())['status'] != 'PASS': raise RuntimeError('missing full native documents')
+        runner.write_json(out / 'effects.json', rows); runner.write_json(out / 'result.json', dict(status='PASS', independentNativeDocuments=['initial', 'shared', 'selected'], nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
+        runner.remove_completed_installs(case, out); print('PRAYER_LIFECYCLE: PASS', flush=True)
 
 
 if __name__ == '__main__': main()

@@ -15,7 +15,8 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from guest_profile import activate_profile, profile_argument, protect_owned_process
+from fixture_resources import FixtureResources
+from guest_profile import activate_profile, profile_argument
 
 BATCH = 24
 
@@ -70,15 +71,13 @@ def main():
         (copy / '.qmlls.ini').touch()
         env = dict(os.environ, **profile.child_environment(''))
         env.update(QT_QPA_PLATFORM='offscreen', QML_DISABLE_DISK_CACHE='1')
-        with (args.output / 'tooling.log').open('w') as log:
-            process = subprocess.Popen(['qs', '-p', str(probe), '--no-color'], cwd=copy, env=env,
-                                       stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-            guard = protect_owned_process(process)
-            try:
+        try:
+            with (args.output / 'tooling.log').open('w') as log, FixtureResources() as resources:
+                process = resources.spawn(['qs', '-p', str(probe), '--no-color'], cwd=copy, env=env,
+                                          stdout=log, stderr=subprocess.STDOUT)
                 code = process.wait(timeout=180)
-            except subprocess.TimeoutExpired:
-                guard.terminate()
-                raise RuntimeError('Quickshell tooling probe exceeded its deadline')
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError('Quickshell tooling probe exceeded its deadline') from error
         vfs = (copy / '.qmlls.ini').resolve(strict=True).parent
         if code != 0 or not vfs.is_relative_to(Path(env['XDG_RUNTIME_DIR'])):
             raise RuntimeError('Quickshell did not generate its tooling configuration; see tooling.log')

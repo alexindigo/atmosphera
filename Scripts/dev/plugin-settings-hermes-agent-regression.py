@@ -11,6 +11,7 @@ import shutil
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('hermes_runner', Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
@@ -21,7 +22,7 @@ class Peer(ThreadingHTTPServer):
     daemon_threads = True
 
 
-def peer(case, name):
+def peer(resources, case, name):
     class Handler(BaseHTTPRequestHandler):
         def call(self):
             body = json.loads(self.rfile.read(int(self.headers.get('Content-Length', '0'))) or '{}')
@@ -29,7 +30,7 @@ def peer(case, name):
             with (case/'requests.jsonl').open('a') as output:
                 fcntl.flock(output, fcntl.LOCK_EX); output.write(json.dumps(row)+'\n'); output.flush()
             if self.path == '/sessions' or (self.path == '/detect' and (case/'hold-detect').exists()) or (name=='selected' and self.path=='/health' and (case/'hold-health').exists()) or (self.path=='/model' and body.get('model')=='older-model' and (case/'hold-model').exists()):
-                while (case/'hold').exists() and not (case/'release').exists() and not self.server.done.wait(.02):
+                while (case/'hold').exists() and not (case/'release').exists() and not done.wait(.02):
                     pass
             model = getattr(self.server, 'model', 'initial-'+name)
             if self.path == '/model':
@@ -47,13 +48,18 @@ def peer(case, name):
         do_GET = do_POST = call
         def log_message(self, *args):
             pass
+    done = threading.Event()
     server = Peer(('127.0.0.1', 0), Handler)
-    server.done = threading.Event()
-    thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
-    return server, thread
+    return resources.serve(server, daemon=True, release=done.set)
 
 
 def run(args, profile, scenario):
+    with FixtureResources() as resources:
+        case, out = run_with_peers(args, profile, scenario, resources)
+    runner.remove_completed_installs(case, out)
+
+
+def run_with_peers(args, profile, scenario, resources):
     case, out = args.work_root/scenario, args.output/scenario
     case.mkdir(); out.mkdir()
     for name in ('config/settings', 'cache', 'state', 'home'):
@@ -66,11 +72,13 @@ def run(args, profile, scenario):
     if scenario=='model-retire':(case/'hold').write_text('hold');(case/'hold-model').write_text('hold')
     install = case/'install'
     shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
-    peers = [peer(case, name) for name in ('shared', 'selected')]
-    ports = [server.server_address[1] for server, _ in peers]
+    resources.defer(assert_no_survivors, case)
+    shared = FixtureResources()
+    resources.defer(shared.close)
+    peers = [peer(shared, case, 'shared'), peer(resources, case, 'selected')]
+    ports = [server.server_address[1] for server in peers]
     if scenario in ('local','failed-start'):
-        server, thread = peers[0]
-        server.shutdown(); server.server_close(); thread.join(timeout=5)
+        shared.close()
         (case/'hermes-home').mkdir()
         (case/'hermes-home/config.yaml').write_text('model:\n  default: local-model\n  provider: fixture\n')
     if scenario=='failed-start':
@@ -88,7 +96,11 @@ os.execv('/usr/bin/python3',['python3',*sys.argv[1:]])
     product = args.plugins/'hermes-agent'
     inputs = dict(shell={str(path.relative_to(args.source)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (Path(__file__), args.source/'Scripts/dev/fixtures/plugin-settings-hermes.qml')}, plugin={str(path.relative_to(product)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(product.rglob('*')) if path.is_file()})
     runner.write_json(out/'inputs.json', inputs)
-    try:
+    prove_peers(args, profile, scenario, case, out, install, product, ports)
+    return case, out
+
+
+def prove_peers(args, profile, scenario, case, out, install, product, ports):
         text = runner.run_fixture(profile, install, case, out, args.source/'Scripts/dev/fixtures/plugin-settings-hermes.qml', extra_env=dict(PHA_HERMES_CASE=str(case), PHA_HERMES_SCENARIO=scenario, PHA_HERMES_PLUGIN=str(product), PHA_HERMES_PORTS=json.dumps(ports), HOME=str(case/'home'),PATH=str(case/'bin')+':'+os.environ['PATH']), extra_lint=tuple(sorted(product.rglob('*.qml'))), timeout=90)
         assert 'HERMES_CONTRACT: PASS '+scenario in text
         assert not any(word in text for word in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), text
@@ -112,19 +124,16 @@ os.execv('/usr/bin/python3',['python3',*sys.argv[1:]])
             assert starts[0][-6:]==['--state-file',str(case/'local-state/state.json'),'--hermes-home',str(case/'hermes-home'),'--hermes-command','inert-not-invoked']
             shutil.copy2(case/'starts.jsonl',out/'starts.jsonl')
         runner.write_json(out/'result.json', dict(status='PASS', scenario=scenario, requestRows=len(rows), physicalProof=False))
-    finally:
-        (case/'release').write_text('release')
-        for server, thread in peers:
-            server.done.set(); server.shutdown(); server.server_close(); thread.join(timeout=5)
-            assert not thread.is_alive()
-        survivors=[]
-        for path in Path('/proc').iterdir():
-            if not path.name.isdigit():continue
-            try:command=(path/'cmdline').read_bytes()
-            except (FileNotFoundError,ProcessLookupError,PermissionError):continue
-            if b'hermes_bridge.py' in command and os.fsencode(str(case)) in command:survivors.append(path.name)
-        assert not survivors,('owned actual helper survived',survivors)
-    runner.remove_completed_installs(case, out)
+
+
+def assert_no_survivors(case):
+    survivors=[]
+    for path in Path('/proc').iterdir():
+        if not path.name.isdigit():continue
+        try:command=(path/'cmdline').read_bytes()
+        except (FileNotFoundError,ProcessLookupError,PermissionError):continue
+        if b'hermes_bridge.py' in command and os.fsencode(str(case)) in command:survivors.append(path.name)
+    assert not survivors,('owned actual helper survived',survivors)
 
 
 def main():

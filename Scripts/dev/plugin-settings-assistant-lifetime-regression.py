@@ -11,7 +11,7 @@ import json
 import os
 from pathlib import Path
 import shutil
-from threading import Thread
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('assistant_runner', Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
@@ -46,14 +46,9 @@ def local_response(mode, out):
         def log_message(self, *args):
             pass
 
-    with HTTPServer(('127.0.0.1', 0), Handler) as server:
-        thread = Thread(target=server.serve_forever)
-        thread.start()
-        try:
-            yield dict(PHA_ASSISTANT_HTTP=f'http://127.0.0.1:{server.server_port}/fixture', PHA_REAL_CURL=shutil.which('curl'))
-        finally:
-            server.shutdown()
-            thread.join()
+    with FixtureResources() as resources:
+        server = resources.serve(HTTPServer(('127.0.0.1', 0), Handler))
+        yield dict(PHA_ASSISTANT_HTTP=f'http://127.0.0.1:{server.server_port}/fixture', PHA_REAL_CURL=shutil.which('curl'))
 
 
 def run(args, profile, mode):
