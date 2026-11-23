@@ -139,7 +139,8 @@ def run(args, profile, scope):
             if not args.wrong_writer:
                 raise
             log = (part/'runtime.log').read_text()
-            assert 'complete resource native documents' in log, log
+            if 'complete resource native documents' not in log or (part/'runtime.exit').read_text().strip() != '2':
+                raise RuntimeError('wrong writer lacks its fixture rejection')
             actual = dict(shared=json.loads((case/'config/settings/plugins/clamshell.json').read_text()), bar=json.loads((case/'config/settings/bar.json').read_text()))
             assert actual['shared']['enabled'] is False and 'enabled' not in actual['bar']['widgets']['left'][0]['instanceSettings'], actual
             assert actual != expected['runtime-disabled'], actual
@@ -174,6 +175,8 @@ def run(args, profile, scope):
         elif args.original_plugins or args.omit_origin:
             raise AssertionError('wrong service origin escaped actual endpoint')
         runner.write_json(part/'consumer.json', dict(status='REJECTED' if rejected else 'PASS', expectedPort=wanted, observed=observed))
+    if (args.wrong_writer or args.original_plugins or args.omit_origin) and not rejected:
+        raise RuntimeError('resource native control escaped')
     wanted_boundaries = ['initial', 'discarded', 'edited'] if rejected else list(expected)
     for boundary in wanted_boundaries:
         if json.loads((out/'persisted'/(boundary+'.json')).read_text()) != dict(status='PASS', values=expected[boundary]):

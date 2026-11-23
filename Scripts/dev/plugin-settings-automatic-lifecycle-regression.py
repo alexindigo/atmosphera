@@ -139,6 +139,7 @@ def run(args, profile, scenario):
             wanted={'apply-policy':'captured apply keeps touch and notification policy','exit-policy':'session exit retains admitted restore transform'}[args.control] if args.control else ''
             if not wanted or wanted not in text or (out/'runtime.exit').read_text().strip()!='2': raise
             rejected=True
+        if args.control and not rejected: raise RuntimeError('automatic lifetime control escaped')
         if not rejected and 'AUTOMATIC_LIFETIME: PASS '+scenario not in text: raise RuntimeError('incomplete automatic lifetime')
         if any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')): raise RuntimeError('unrelated lifetime diagnostic')
     finally:

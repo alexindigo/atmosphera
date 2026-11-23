@@ -119,6 +119,7 @@ def run(args, profile, scenario):
             wanted = CONTROLS[args.control][4] if args.control else ''
             if not wanted or wanted not in text or (out/'runtime.exit').read_text().strip() != '2': raise
             rejected = True
+        if args.control and not rejected: raise RuntimeError('device lifetime control escaped')
         if not rejected and 'DEVICE_LIFETIME: PASS '+scenario not in text: raise RuntimeError('incomplete device lifetime')
         if any(word in text for word in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')): raise RuntimeError('unrelated lifetime diagnostic')
     finally:
