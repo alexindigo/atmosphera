@@ -60,6 +60,11 @@ ShellRoot {
         }
         function begin() {
           guard(function () {
+            IdleService.init();
+            if (testCase === "native" && !IdleService._inputProtocolReady) {
+              beginTimer.restart();
+              return;
+            }
             if (cold) {
               check(Settings.data.idle.suspendTimeout === 0, "built-in zero survives cold load");
               check(JSON.parse(Settings.data.idle.customCommands)[0].timeout === 0, "custom zero survives cold load");
@@ -260,6 +265,7 @@ ShellRoot {
           })
         }
         Timer {
+          id: beginTimer
           interval: 250
           running: true
           onTriggered: root.begin()
