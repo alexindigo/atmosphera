@@ -45,15 +45,19 @@ ShellRoot {
       onStatusChanged: {
         if (status === Image.Ready && !grabbed) {
           grabbed = true;
-          ++root.grabs;
-          grabToImage(result => {
+          if (grabToImage(result => {
             console.log("IMAGE_GRAB|" + JSON.stringify({
                                                          name: "retained-" + rowIndex,
                                                          saved: result.saveToFile(root.output + "/retained-" + rowIndex + ".png")
                                                        }));
             active = false;
             --root.grabs;
-          });
+          })) {
+            ++root.grabs;
+          } else {
+            console.error("Retained image grab rejected: retained-" + rowIndex);
+            Qt.exit(3);
+          }
         }
       }
     }
