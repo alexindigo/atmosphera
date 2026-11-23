@@ -80,6 +80,7 @@ Scope {
       width: request.width,
       height: request.height,
       fit: request.fit || "contain",
+      roundedRadius: request.roundedRadius || 0,
       animationIntent: request.animationIntent || "still",
       operation: request.operation || "render",
       destinationDirectory: String(request.destinationDirectory || ""),

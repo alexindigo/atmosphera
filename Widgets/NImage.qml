@@ -16,7 +16,12 @@ Item {
   // Optional still-image presentation: fit and tint the decoded alpha mask.
   property var alphaMaskTint: null
   readonly property bool _alphaMask: alphaMaskTint !== null && animationIntent === "still"
-  on_AlphaMaskChanged: renderer.replace()
+  // Optional rounded presentation for the software scene graph. Provider
+  // pixmaps stay in process; file and network sources use the worker owner.
+  property real roundedRadius: 0
+  readonly property bool _roundedProvider: roundedRadius > 0 && source.startsWith("image://")
+  readonly property bool _raster: _alphaMask || _roundedProvider
+  on_RasterChanged: renderer.replace()
   property bool playing: true
   property bool paused: false
   property int fillMode: Image.PreserveAspectFit
@@ -68,6 +73,7 @@ Item {
     revision: root.sourceRevision
     requestedSize: root.sourceSize
     fit: root.imageTransform
+    roundedRadius: root._roundedProvider ? 0 : Math.round(Math.max(0, root.roundedRadius) * Screen.devicePixelRatio)
     animationIntent: root.animationIntent
     normalize: root.normalize
     thumbnail: root.thumbnail
@@ -83,12 +89,12 @@ Item {
       active = false;
       ticket = handle.candidate;
       if (ticket) {
-        sourceComponent = root._alphaMask ? mask : (ticket.animated ? moving : still);
+        sourceComponent = root._raster ? mask : (ticket.animated ? moving : still);
         active = true;
       }
     }
     active: false
-    visible: root._alphaMask || root.imageState === "ready"
+    visible: root._raster || root.imageState === "ready"
   }
   Connections {
     target: handle
@@ -130,6 +136,8 @@ Item {
       property bool reported: false
       readonly property color tint: root.alphaMaskTint ?? "transparent"
       readonly property bool admitted: root.imageState === "ready"
+      readonly property real radius: Math.min(root.roundedRadius, width / 2, height / 2)
+      readonly property int fillMode: root._roundedProvider ? root.fillMode : Image.PreserveAspectFit
 
       function begin(): void {
         if (!available || !ticket)
@@ -148,6 +156,8 @@ Item {
       onImageLoaded: requestPaint()
       onAdmittedChanged: requestPaint()
       onTintChanged: requestPaint()
+      onRadiusChanged: requestPaint()
+      onFillModeChanged: requestPaint()
 
       onPaint: {
         const ctx = context;
@@ -173,14 +183,23 @@ Item {
         }
         if (!admitted || pixels.width < 1 || pixels.height < 1)
           return;
-        const scale = Math.min(width / pixels.width, height / pixels.height);
-        const w = pixels.width * scale;
-        const h = pixels.height * scale;
+        const sx = width / pixels.width;
+        const sy = height / pixels.height;
+        const scale = fillMode === Image.PreserveAspectCrop ? Math.max(sx, sy) : Math.min(sx, sy);
+        const w = fillMode === Image.Stretch ? width : pixels.width * scale;
+        const h = fillMode === Image.Stretch ? height : pixels.height * scale;
+        if (radius > 0) {
+          ctx.beginPath();
+          ctx.roundedRect(0, 0, width, height, radius, radius);
+          ctx.clip();
+        }
         ctx.drawImage(pixels, (width - w) / 2, (height - h) / 2, w, h);
         // Raster composition also works with the software scene graph.
-        ctx.globalCompositeOperation = "source-in";
-        ctx.fillStyle = tint;
-        ctx.fillRect(0, 0, width, height);
+        if (root._alphaMask) {
+          ctx.globalCompositeOperation = "source-in";
+          ctx.fillStyle = tint;
+          ctx.fillRect(0, 0, width, height);
+        }
       }
     }
   }

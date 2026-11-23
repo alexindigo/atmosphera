@@ -19,6 +19,12 @@ never replaced by an ordinary icon that looks like success.
 | `AtmoIcon` | Icon-set glyphs; SVG/image entries render their mask through `NImage`. |
 | `NImageText` | Rich text (`format: "rich"`) or Markdown (`format: "markdown"`) that can contain images. |
 
+Rounded artwork samples the owner's texture on the hardware scene graph. On
+the software scene graph, which cannot run that shader, the owner supplies a
+fitted and rounded representation keyed by physical size, fill mode and corner
+radius. Qt provider images stay in process and use the owner's existing Canvas
+renderer. Neither path captures a live scene item or opens a second source.
+
 ## Thumbnails held by plugins
 
 A plugin that needs a thumbnail file rather than a rendered item (a video

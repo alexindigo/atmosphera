@@ -12,6 +12,7 @@ Scope {
   property string revision: ""
   property size requestedSize: Qt.size(128, 128)
   property string fit: "contain"
+  property int roundedRadius: 0
   property string animationIntent: "still"
   property bool normalize: false
   property bool thumbnail: false
@@ -189,6 +190,7 @@ Scope {
       width: Math.max(1, Math.ceil(requestedSize.width)),
       height: Math.max(1, Math.ceil(requestedSize.height)),
       fit: fit,
+      roundedRadius: roundedRadius,
       animationIntent: animationIntent,
       retry: _retry
     };
@@ -206,7 +208,7 @@ Scope {
     // Never expose an unbounded Qt network reader or a transient native URL
     // for requests that require normalization. The worker admits source bytes
     // before any representation is offered to a renderer.
-    if (!provider && (normalize || thumbnail || /^https?:/i.test(source))) {
+    if (!provider && (normalize || thumbnail || roundedRadius > 0 || /^https?:/i.test(source))) {
       _render();
       return;
     }
@@ -229,6 +231,7 @@ Scope {
   onRevisionChanged: _schedule()
   onRequestedSizeChanged: _schedule()
   onFitChanged: _schedule()
+  onRoundedRadiusChanged: _schedule()
   onAnimationIntentChanged: _schedule()
   onNormalizeChanged: _schedule()
   onThumbnailChanged: _schedule()

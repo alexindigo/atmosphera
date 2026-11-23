@@ -42,6 +42,11 @@ def warning_coverage(path, color, *, background=None):
                if max(abs(a - b) for a, b in zip(rgba[i:i + 3], color[:3])) <= 8) / 255
 
 
+def red_warning_coverage(pixels, color):
+    """Measure blended warning coverage over neutral chrome or green icons."""
+    return sum(max(0, r - g) * a / 255 for r, g, _, a in pixels) / (color[0] - color[1])
+
+
 class Run:
     def __init__(self, args, profile):
         self.args, self.profile = args, profile
@@ -292,7 +297,9 @@ class Run:
             raise AssertionError('Composite-aware consumer fixture lint failed')
         rows = [json.loads(line.split('IMAGE_BASELINE|', 1)[1]) for line in text.splitlines() if 'IMAGE_BASELINE|' in line]
         grabs = [json.loads(line.split('IMAGE_GRAB|', 1)[1]) for line in text.splitlines() if 'IMAGE_GRAB|' in line]
-        assert len(rows) == 1 and grabs and all(row['saved'] for row in grabs)
+        bad_grabs = [row for row in grabs if not row['saved']]
+        if len(rows) != 1 or not grabs or bad_grabs:
+            raise AssertionError(dict(baselines=len(rows), grabs=len(grabs), failedGrabs=bad_grabs))
         (output / 'consumer.json').write_text(json.dumps(rows[0], indent=2) + '\n')
         return rows[0], output
 
@@ -1143,9 +1150,10 @@ os.execv('/usr/bin/find', ['find', *args])
                    and {tuple(p) for p in centers} == set(COLORS), dict(consumer=result['motion'],centers=centers))
         self.check('rounded-failure-is-labelled-not-ordinary-icon', result['failure']['status'] == 3 and result['failure']['reason'], result['failure'])
         width,height,pixels = read_png(output/'failure.png')
-        warning_pixels = sum(max(abs(a-b) for a,b in zip(pixels[(y*width+x)*4:(y*width+x+1)*4],result['warningColor'])) < 8
-                             for y in range(height//2,height) for x in range(width//2,width))
-        self.check('rounded-error-warning-is-actually-presented',warning_pixels > 10,dict(pixels=warning_pixels,color=result['warningColor']))
+        badge_region = (pixels[(y*width+x)*4:(y*width+x+1)*4]
+                        for y in range(height//2,height) for x in range(width//2,width))
+        warning = red_warning_coverage(badge_region, result['warningColor'])
+        self.check('rounded-error-warning-is-actually-presented', warning > 10, dict(warningCoverage=warning))
         for name in ('fit','crop','stretch'):
             path = output/(name+'.png')
             centers = [pixel(path,x,64) for x in (16,64,112)]
@@ -1615,21 +1623,34 @@ os.execv('/usr/bin/find', ['find', *args])
             raise ValueError('Launcher red requires an explicit immutable baseline source')
         result, output = self.qt(self.args.baseline_source if red else self.args.source,
                                  self.args.source / 'Scripts/dev/fixtures/image-decoding/launcher.qml', inputs, self.args.case)
+        expected = {f'{view}-{kind}.png' for view in ('list', 'grid') for kind in ('art', 'failed', 'noart')}
+        missing = sorted(name for name in expected if not (output / name).is_file())
+        self.check('launcher-captures-complete', not missing, dict(missing=missing))
         def near(actual, expected, tolerance=8):
             return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
-        def counts(name):
+        def counts(view, kind, *, measure_badge=False):
+            name = f'{view}-{kind}'
             width, height, pixels = read_png(output / (name + '.png'))
             rows = [pixels[i * 4:i * 4 + 4] for i in range(width * height)]
+            if measure_badge:
+                # The fixed fixture places the list badge to the left of the
+                # label and the grid warning at the lower right of the art
+                # tile, above the label. Exclude subpixel text fringing.
+                xs, ys = ((range(64), range(height)) if view == 'list'
+                          else (range(64, width), range(48, 80)))
+                warning = red_warning_coverage((rows[y * width + x] for y in ys for x in xs), result['warningColor'])
+            else:
+                warning = sum(near(p, result['warningColor']) for p in rows)
             return dict(art=sum(near(p, COLORS[0]) for p in rows), icon=sum(near(p, COLORS[1]) for p in rows),
-                        warning=sum(near(p, result['warningColor']) for p in rows))
+                        warning=warning)
         self.check('launcher-rows-instantiated', result['listCount'] == result['gridCount'] == 3, result)
         for view in ('list', 'grid'):
-            failed = counts(view + '-failed')
+            failed = counts(view, 'failed', measure_badge=not red)
             if red:
                 self.check(view + '-failed-art-shows-ordinary-icon', failed['icon'] > 50 and failed['warning'] == 0,
                            failed, red=True)
                 continue
-            art, noart = counts(view + '-art'), counts(view + '-noart')
+            art, noart = counts(view, 'art'), counts(view, 'noart')
             self.check(view + '-art-presented', art['art'] > 50 and art['warning'] == 0 and art['icon'] == 0, art)
             self.check(view + '-failed-art-distinct-labelled', failed['warning'] > 10 and failed['icon'] == 0
                        and failed['art'] == 0, failed)

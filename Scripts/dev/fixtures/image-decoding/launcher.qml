@@ -77,15 +77,25 @@ ShellRoot {
       }
     }
   ]
-  function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
-      console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                   name: name,
-                                                   saved: result.saveToFile(root.output + "/" + name + ".png")
-                                                 }));
+  function reportGrab(name: string, error: string): void {
+    console.log("IMAGE_GRAB|" + JSON.stringify({
+                                                 name: name,
+                                                 saved: !error,
+                                                 error: error
+                                               }));
+  }
+  function grab(item: Item, name: string): void {
+    if (!item) {
+      reportGrab(name, "delegate-absent");
+      return;
+    }
+    if (item.grabToImage(result => {
+      root.reportGrab(name, result.saveToFile(root.output + "/" + name + ".png") ? "" : "save-failed");
       --root.pending;
-    });
+    }))
+      ++pending;
+    else
+      reportGrab(name, "grab-rejected");
   }
   FloatingWindow {
     visible: true
