@@ -32,9 +32,19 @@ wallpaper that hands its frame to color generation, a card sorted by color)
 asks the owner directly and holds the interest while it uses the file:
 
 ```qml
-token = ImageCacheService.acquireSource({ source: path, width: 1024, height: 1024,
-  fit: "contain", animationIntent: "still", operation: "video-thumbnail" }, reply => { ... })
-ImageCacheService.releaseSource(token)
+thumbnailToken = ImageCacheService.acquireSource({ source: path, width: 1024, height: 1024,
+  fit: "contain", animationIntent: "still", operation: "video-thumbnail" }, reply => {
+    if (reply.status === "hit" || reply.status === "generated")
+      startUsingThumbnail(reply.url)
+    else
+      finishThumbnailUse()
+  })
+
+// Call after the last reader finishes, or on cancellation after stopping readers.
+function finishThumbnailUse() {
+  ImageCacheService.releaseSource(thumbnailToken)
+  thumbnailToken = null
+}
 ```
 
 The reply has `status` (`hit`, `generated` or `unavailable`), the validated
