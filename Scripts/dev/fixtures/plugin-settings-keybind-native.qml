@@ -12,6 +12,8 @@ ShellRoot {
   readonly property string mode: Quickshell.env("PHA_KEYBIND_MODE")
   readonly property string boundary: Quickshell.env("PHA_KEYBIND_BOUNDARY")
   readonly property bool oldRed: Quickshell.env("PHA_KEYBIND_RED") === "1"
+  readonly property string panelControl: Quickshell.env("PHA_KEYBIND_PANEL_CONTROL")
+  property var previewEvidence: null
   property bool started: false
   property string phase: "startup"
   property double since: Date.now()
@@ -225,6 +227,11 @@ ShellRoot {
   function hasBind(view, name) {
     return view.rawCategories.some(cat => cat.binds.some(bind => bind.desc === name + " bind"));
   }
+  function discard() {
+    check(!popup.requestClose(), "dirty Close refuses");
+    popup.confirmDiscard();
+    phase = "discarded";
+  }
   function consumers(name) {
     var index = scope === "instance" ? 0 : -1, values = expected(name, index), label = consumerName(name, index);
     if (oldRed) {
@@ -292,17 +299,52 @@ ShellRoot {
       open("discard-page");
     else if (phase === "discard-page" && popup.opened && popup.settingsPage) {
       check(!popup.dirty, "no construction intent");
-      var sourceBeforeDraft = panel.settingsConsumer?.sourceKey;
-      edit();
-      if (!oldRed && Quickshell.env("PHA_KEYBIND_READER_CONTROL") !== "1") {
-        var runtime = scope === "shared" ? api : selected;
-        check(runtime.settingsView.keyColorSuper === edits.keyColorSuper, "color preview is active");
-        check(runtime.settingsView.niriConfigPath === edits.niriConfigPath && runtime.pluginSettings.niriConfigPath !== edits.niriConfigPath, "preview contains an unapplied parser path");
-        check((scope === "shared" ? main.clientFor(api) : main.clientFor(selected)).sourceKey === sourceBeforeDraft, "color preview must not change parser source before Apply");
+      var runtime = scope === "shared" ? api : selected;
+      var client = !oldRed ? main.clientFor(runtime) : null;
+      if (client) {
+        var initialLabel = consumerName("initial", scope === "shared" ? -1 : 0);
+        if (!client.categories.some(cat => cat.binds.some(bind => bind.desc === initialLabel + " bind")) || api.state.cheatsheetSource !== main.clientFor(api).sourceKey)
+          return;
+        previewEvidence = {
+          client: client,
+          source: client.sourceKey,
+          worker: client.worker,
+          version: client.cheatsheetDataVersion,
+          label: initialLabel,
+          cache: JSON.stringify(api.state)
+        };
       }
-      check(!popup.requestClose(), "dirty Close refuses");
-      popup.confirmDiscard();
-      phase = "discarded";
+      edit();
+      if (!client) {
+        check(oldRed, "selected preview has a parser client");
+        discard();
+        return;
+      }
+      check(runtime.settingsView.keyColorSuper === edits.keyColorSuper, "color preview is active");
+      check(runtime.settingsView.niriConfigPath === edits.niriConfigPath && runtime.pluginSettings.niriConfigPath !== edits.niriConfigPath, "preview contains an unapplied parser path");
+      check(client.sourceKey === previewEvidence.source && client.worker === previewEvidence.worker, "color preview must not change parser source before Apply");
+      phase = "preview-active";
+    } else if (phase === "preview-active") {
+      var before = previewEvidence;
+      check(before.client.sourceKey === before.source && before.client.cheatsheetDataVersion === before.version && JSON.stringify(api.state) === before.cache, "preview must not replace the accepted parser result or shared cache");
+      if (!panelControl) {
+        var badge = find(panel, item => item.text === "Super");
+        if (!find(panel, item => item.text === before.label + " bind") || !badge || String(badge.parent.color).toLowerCase() !== edits.keyColorSuper.toLowerCase())
+          return;
+        check(!find(panel, item => item.text === "selected bind"), "preview never renders the draft bind");
+      }
+      var refresh = find(popup.settingsPage, item => item.text === api.tr("settings.refresh-keybinds") && item.clicked !== undefined);
+      check(refresh, "actual Settings Refresh action");
+      refresh.clicked();
+      phase = "preview-refreshed";
+    } else if (phase === "preview-refreshed") {
+      var active = previewEvidence;
+      check(active.client.sourceKey === active.source, "Refresh must still use the applied parser source");
+      if (active.client.cheatsheetDataVersion === active.version)
+        return;
+      check(active.client.categories.some(cat => cat.binds.some(bind => bind.desc === active.label + " bind")), "Refresh resolves the applied bind during preview");
+      check(JSON.stringify(api.state) === active.cache, "Refresh keeps the shared cache on applied input");
+      discard();
     } else if (phase === "discarded" && !popup.opened && !popup._editor)
       probe("discarded", "open-edit");
     else if (phase === "open-edit")

@@ -115,7 +115,11 @@ correction needed by retained selected clients.
 Runtime APIs retain their live preference contract, distinct from page APIs.
 Each API owns a stable read-only `settingsContext`. Configuration-dependent
 Main-owned clients use that captured context, not the shared Main configuration
-for every instance. One API shared across views keeps one client. Retired query
+for every instance. Use `appliedSettings` for work that must not be triggered by
+a draft, such as parser I/O and result cache publication. `settingsView` is the
+presentation projection and can include active preview values. Both read from
+the same selected API and lose access when it retires.
+One API shared across views keeps one client. Retired query
 generations cannot publish into replacement accounts, repositories or locations.
 
 `plugin-settings-git-matrix-regression.py` adds seven real Git Settings/Main/Panel

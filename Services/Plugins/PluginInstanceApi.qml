@@ -72,11 +72,16 @@ QtObject {
   readonly property var pluginSettings: runtime && !_placementReplaced ? runtime.values : null
   readonly property var settingsView: settingsPreviewOwner.values
   readonly property var settingsReadOwner: settingsPreviewOwner.readOwner
-  readonly property var settingsContext: Read.context(_lifetime, function () {
+  function readContextValues(source) {
     var owner = root.base ? root.base.settingsOwner : null;
-    return Read.values(root.settingsView, owner && !owner.closed && owner.store ? owner.store.settingsKeys : [], function (value) {
+    return Read.values(source, owner && !owner.closed && owner.store ? owner.store.settingsKeys : [], function (value) {
       return Settings.store.copyValue(value);
     });
+  }
+  readonly property var settingsContext: Read.context(_lifetime, function () {
+    return root.readContextValues(root.settingsView);
+  }, function () {
+    return root.readContextValues(root.pluginSettings);
   }, function () {
     return Service.getPluginAPI(root.pluginId) === root.base && root.settingsReady;
   })

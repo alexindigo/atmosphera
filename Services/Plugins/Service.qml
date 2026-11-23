@@ -1975,10 +1975,15 @@ Singleton {
     api.currentLanguage = I18n.langCode;
 
     api.settingsOwner = settings;
-    api._settingsContext = SettingsRead.context(api._contextLifetime, function () {
-      return SettingsRead.values(api.settingsView, settings && !settings.closed && settings.store ? settings.store.settingsKeys : [], function (value) {
+    function readContextValues(source) {
+      return SettingsRead.values(source, settings && !settings.closed && settings.store ? settings.store.settingsKeys : [], function (value) {
         return Settings.store.copyValue(value);
       });
+    }
+    api._settingsContext = SettingsRead.context(api._contextLifetime, function () {
+      return readContextValues(api.settingsView);
+    }, function () {
+      return readContextValues(api.pluginSettings);
     }, function () {
       return root.getPluginAPI(pluginId) === api && api.settingsReady;
     });

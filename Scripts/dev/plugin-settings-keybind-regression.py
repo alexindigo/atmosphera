@@ -55,7 +55,7 @@ def run(args, profile, scope):
     expected = dict(initial=initial,discarded=initial,edited=edited,**{'reset-staged':edited},reset=reset,following=following_doc)
     for name,value in [('input.json',dict(plugin='keybind-cheatsheet',keys=keys,edits=edits,following=following)),('expectations.json',expected),('config/settings.json',dict(settingsVersion=62)),('config/plugins.json',dict(version=6,states={},sources=[])),('config/settings/plugins/keybind-cheatsheet.json',shared),('config/settings/bar.json',bar)]: runner.write_json(case/name,value)
     fixture = args.source/'Scripts/dev/fixtures/plugin-settings-keybind-native.qml'
-    env = dict(HOME=str(home),PHA_KEYBIND_SCOPE=scope,PHA_KEYBIND_CASE=str(case),PHA_KEYBIND_OUTPUT=str(out),PHA_KEYBIND_DISK=str(args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py'),PHA_KEYBIND_RED='1' if args.old_red else '0')
+    env = dict(HOME=str(home),PHA_KEYBIND_SCOPE=scope,PHA_KEYBIND_CASE=str(case),PHA_KEYBIND_OUTPUT=str(out),PHA_KEYBIND_DISK=str(args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py'),PHA_KEYBIND_RED='1' if args.old_red else '0',PHA_KEYBIND_PANEL_CONTROL=args.control if args.control in ('reader','child') else '')
     wanted = 'original parser consumes saved selected source' if args.old_red else controls[args.control][3] if args.control else None
     modes = [('edit',''),('reset','')] if args.control=='reset' else [('edit','')] if wanted else [('edit',''),('cold','edited'),('reset',''),('cold','reset'),('follow',''),('cold','following')]
     for mode,boundary in modes:
