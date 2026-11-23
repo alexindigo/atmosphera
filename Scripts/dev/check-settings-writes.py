@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import time
 from types import MappingProxyType
 import warnings
 
@@ -75,6 +76,35 @@ class Ref:
     lineage: tuple = ()
 
 
+@dataclass(frozen=True)
+class SavedBindings:
+    """An owned immutable restore snapshot, not a cache of a mutable map."""
+    entries: tuple = field(compare=False)
+    key: frozenset = field(init=False)
+
+    def __post_init__(self):
+        entries = tuple(self.entries)
+        for name, binding in entries:
+            if (not isinstance(name, str) or not isinstance(binding, tuple) or len(binding) != 4
+                    or type(binding[0]) is not bool or type(binding[2]) is not bool):
+                raise TypeError('saved bindings require immutable named binding tuples')
+            value, scalar = binding[1], binding[3]
+            if value is not None and (not isinstance(value, Ref) or not isinstance(value.path, tuple)
+                    or not all(isinstance(part, (str, int, float, bool, type(None))) for part in value.path)
+                    or not isinstance(value.mode, str) or type(value.token) is not int
+                    or not isinstance(value.lineage, tuple) or not all(type(token) is int for token in value.lineage)):
+                raise TypeError('saved reference must contain only immutable values')
+            if scalar is not None and (not isinstance(scalar, tuple) or len(scalar) != 2
+                    or any(part is not None and type(part) is not bool for part in scalar)):
+                raise TypeError('saved scalar must be an immutable truth/nullish pair')
+        if len({name for name, _ in entries}) != len(entries):
+            raise ValueError('saved binding names must be unique')
+        object.__setattr__(self, 'entries', entries)
+        # Mapping order is irrelevant to proof equality, but restore order is
+        # retained separately. frozenset also reuses its immutable hash.
+        object.__setattr__(self, 'key', frozenset(entries))
+
+
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
@@ -90,7 +120,8 @@ class State:
 
     def fork(self):
         return State(env=self.env.copy(), dirty=self.dirty.copy(), control=self.control,
-                     escaped=self.escaped.copy(), scopes=self.scopes.copy(), locals=self.locals.copy(),
+                     escaped=self.escaped.copy(), scopes=[(saved, locals_.copy()) for saved, locals_ in self.scopes],
+                     locals=self.locals.copy(),
                      contained={token: {path: values.copy() for path, values in slots.items()}
                                 for token, slots in self.contained.items()},
                      scalars=self.scalars.copy(), owner=self.owner, this_owner=self.this_owner)
@@ -635,14 +666,15 @@ class Checker:
         if state.control != other.control: state.control = ''
         frames = []
         for index in range(max(len(state.scopes), len(other.scopes))):
-            a, a_locals = state.scopes[index] if index < len(state.scopes) else ({}, set())
-            b, b_locals = other.scopes[index] if index < len(other.scopes) else ({}, set())
+            a, a_locals = state.scopes[index] if index < len(state.scopes) else (SavedBindings(()), set())
+            b, b_locals = other.scopes[index] if index < len(other.scopes) else (SavedBindings(()), set())
+            a, b = dict(a.entries), dict(b.entries)
             saved = {}
             for name in a.keys() | b.keys():
                 av = a.get(name, (False, None, False, None)); bv = b.get(name, (False, None, False, None))
                 value = self.join_value(Evaluation(None, av[1]), Evaluation(None, bv[1])).value
                 saved[name] = (av[0] or bv[0], value, av[2] or bv[2], av[3] if av[3] == bv[3] else (None, None))
-            frames.append((saved, a_locals | b_locals))
+            frames.append((SavedBindings(tuple(saved.items())), a_locals | b_locals))
         state.scopes = frames
         return state, [self.join_value(a, b) for a, b in zip(left[1], right[1])]
 
@@ -944,7 +976,8 @@ class Checker:
     def block(self, node, states):
         names, functions = self.block_declarations(node)
         for state in states:
-            saved = {name: (name in state.env, state.env.get(name), name in state.scalars, state.scalars.get(name)) for name in names}
+            saved = SavedBindings(tuple((name, (name in state.env, state.env.get(name),
+                                               name in state.scalars, state.scalars.get(name))) for name in names))
             state.scopes.append((saved, state.locals.copy()))
             for name in names:
                 state.env[name] = Ref((), 'callable', functions[name]) if name in functions else None
@@ -953,7 +986,7 @@ class Checker:
         for statement in node.named_children: results = self.statement(statement, results)
         for state in results:
             saved, state.locals = state.scopes.pop()
-            for name, (present, value, scalar_present, scalar) in saved.items():
+            for name, (present, value, scalar_present, scalar) in saved.entries:
                 if present: state.env[name] = value
                 else: state.env.pop(name, None)
                 if scalar_present: state.scalars[name] = scalar
@@ -1031,7 +1064,7 @@ class Checker:
                 state.owner, state.this_owner,
                 tuple((token, tuple(sorted((path, frozenset(values)) for path, values in slots.items())))
                       for token, slots in sorted(state.contained.items())),
-                tuple((tuple(sorted(values.items())), frozenset(locals_)) for values, locals_ in state.scopes))
+                tuple((values.key, frozenset(locals_)) for values, locals_ in state.scopes))
 
     def bound(self, states, node):
         if len(states) <= 1: return states
@@ -1183,6 +1216,7 @@ def main():
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--report', type=Path)
+    parser.add_argument('--timings', action='store_true', help='emit per-file progress/timing JSON to stderr')
     parser.add_argument('paths', nargs='*', type=Path)
     args = parser.parse_args(); checker = Checker(json.loads((args.root / 'Configs/settings-schema.json').read_text()))
     files = set()
@@ -1191,7 +1225,20 @@ def main():
         files.update(p for p in (path.rglob('*') if path.is_dir() else [path]) if p.suffix in ('.qml', '.js')
                      and '.git' not in p.parts and 'node_modules' not in p.parts
                      and not p.is_relative_to(args.root / 'Scripts/dev/fixtures/settings-writes'))
-    for file in sorted(files): checker.check(file.relative_to(args.root), file.read_text())
+    scan_started = time.perf_counter() if args.timings else None
+    for index, file in enumerate(sorted(files)):
+        relative = file.relative_to(args.root)
+        if args.timings:
+            file_started = time.perf_counter()
+            print('SETTINGS_WRITES_TIME: ' + json.dumps(dict(file=str(relative), status='started',
+                  filesCompleted=index, filesTotal=len(files), totalSeconds=file_started-scan_started)),
+                  file=sys.stderr, flush=True)
+        checker.check(relative, file.read_text())
+        if args.timings:
+            finished = time.perf_counter()
+            print('SETTINGS_WRITES_TIME: ' + json.dumps(dict(file=str(relative), status='finished',
+                  filesCompleted=index+1, filesTotal=len(files), seconds=finished-file_started,
+                  totalSeconds=finished-scan_started)), file=sys.stderr, flush=True)
     issues = list({(i['file'], i['line'], i['code'], i['level']): i for i in checker.issues}.values())
     result = {'files': len(files), 'counts': checker.counts, 'issues': issues}
     if args.report: args.report.write_text(json.dumps(result, indent=2) + '\n')

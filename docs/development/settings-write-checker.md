@@ -79,8 +79,31 @@ Immutable syntax facts (decoded tokens, parameters, local/block declarations and
 candidate capture nodes) are computed once per parsed file and reused. Capture
 values, function summaries and ownership-state signatures remain state-dependent:
 they are never memoized from a mutable environment. Singleton alternatives need
-no signature because there is nothing to coalesce. Multi-alternative signatures,
-joins, scan coverage and the shared runner's 300-second deadline are unchanged.
+no signature because there is nothing to coalesce. Multi-alternative equality,
+conservative join semantics, scan coverage and the shared runner's 300-second
+deadline are unchanged.
+
+Saved lexical bindings are immutable owned snapshots. Block entry constructs
+their restore-order entries and canonical mapping key once; a complexity-limit
+join creates a new snapshot. No caller-owned mutable map is retained. Forks
+share only immutable saved bindings and copy saved-local sets. Current state
+and every mutable set/map still contribute fresh values to every signature;
+captured token values and function summaries are not memoized.
+
+The analyzer selftest reports elapsed time for all 139 cases, scope isolation
+controls, a nested-scope QML fixture and 20,000 fresh signature/hash probes over
+24 saved scopes with 64 bindings each. Its fixed budget is **1.000 second**:
+post-fix VM measurements were 0.099/0.104/0.099 seconds; eight times the maximum
+is 0.832 seconds, rounded up to a whole second for slower CI CPUs and scheduling
+noise. Exceeding that budget fails the test. Imports are outside that measured
+fixture interval. This small regression guard does not replace or increase the
+full scanner's 300-second deadline or reduce its input coverage.
+
+`--timings` emits flushed per-file start/finish JSON records to stderr, including
+completed/total file counts and cumulative elapsed seconds. The full contract
+runner enables it so an actual CI timeout identifies its last completed file
+and the unfinished file's start time. Default CLI stdout, stderr and report
+bytes are unchanged; timings are opt-in diagnostics, not another optimization.
 
 In the assigned VM, use a disk-backed venv with
 `.devcontainer/settings-check-requirements.txt`, then bounded commands through

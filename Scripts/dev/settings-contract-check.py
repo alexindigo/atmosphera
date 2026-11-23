@@ -22,7 +22,7 @@ FULL_CHECKS = [
     QUICK_CHECKS[0],
     # Measured at 62.5s in the 2-CPU VM container and 100-130s on CI.
     # Five minutes allows runner variation without hiding an actual hang.
-    ('check-settings-writes.py', ['--check']),
+    ('check-settings-writes.py', ['--check', '--timings']),
     *QUICK_CHECKS[1:],
     ('settings-schema-selftest.py', []),
     ('settings-formatter-selftest.py', []),
