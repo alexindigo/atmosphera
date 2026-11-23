@@ -540,7 +540,22 @@ class Run:
         required = ['file', 'metadata-only', 'replace-green', 'replace-blue', 'collision', 'compact', 'data', 'no-art', 'missing', 'corrupt', 'hidden',
                     'dnd', 'transient', 'blocked', 'no-owner', 'pending-clear', 'pending-dismiss', 'pending-remove',
                     'slow-superseded', 'transient-replacement', 'blocked-replacement', 'shared-one', 'shared-two', 'shared-remove',
-                    'overflow-trigger', 'clear-with-popup', 'cold-provider', 'cold-file', 'closed']
+                    'overflow-trigger', 'same-provider-first', 'same-provider-replacement',
+                    'same-provider-new', 'clear-with-popup', 'cold-provider', 'cold-file', 'closed']
+        actual = []
+        for stage, color in [('same-provider-first', COLORS[0]), ('same-provider-replacement', COLORS[2]),
+                             ('same-provider-new', COLORS[2])]:
+            target = next(row for row in snapshots[stage]['history'] if row['summary'] == stage)
+            rows = [dict(cohort=row['cohort'], status=row['status'], rgba=pixel(output / row['file']))
+                    for row in result['widgets'] if row['stage'] == stage and row['id'] == target['id']]
+            actual.append(dict(stage=stage, expected=list(color), rows=rows, id=target['id'],
+                               revision=target['imageRevision'], source=target['originalImage']))
+        self.check('notification-service-same-provider-actual-pixels',
+                   len({row['source'] for row in actual}) == 1 and actual[0]['id'] == actual[1]['id'] != actual[2]['id']
+                   and actual[0]['revision'] != actual[1]['revision']
+                   and all({row['cohort'] for row in step['rows']} == {'popup', 'history'}
+                           and all(row['status'] == 1 and row['rgba'] == step['expected'] for row in step['rows'])
+                           for step in actual), actual)
         self.check('notification-service-complete-schedules', list(snapshots) == required, list(snapshots))
         self.check('notification-service-actual-native-control', result['raw'] == (1 if installed else 3), result['raw'])
         first = snapshots['file']['history'][0]

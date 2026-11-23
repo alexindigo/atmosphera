@@ -62,33 +62,52 @@ Singleton {
       property var targetNotification
       property var targetDataId
       target: targetNotification
-
+      // Capture in the signal stack; a dirty QML binding can be reevaluated
+      // only after the provider's borrowed pixels have changed or retired.
       function onSummaryChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onBodyChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onAppNameChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onDesktopEntryChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
       function onUrgencyChanged() {
-        updateNotificationFromObject(targetDataId);
-      }
-      function onAppIconChanged() {
-        updateNotificationFromObject(targetDataId);
-      }
-      function onImageChanged() {
-        updateNotificationFromObject(targetDataId);
-      }
-      function onActionsChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onExpireTimeoutChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onAppIconChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onImageChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onActionsChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
       function onTransientChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onResidentChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHasActionIconsChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHasInlineReplyChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onInlineReplyPlaceholderChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHintsChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
     }
   }
@@ -327,22 +346,21 @@ Singleton {
       dismissPopup(internalId);
       return;
     }
-    const changedImage = entry.data.originalImage !== data.originalImage;
     const retained = entry.data;
     data.id = internalId;
     data.timestamp = retained.timestamp;
     const index = findPopupIndex(internalId);
     data.progress = index >= 0 ? popupModel.get(index).progress : retained.progress;
-    if (!changedImage) {
-      for (const key of ["cachedImage", "imageState", "imageErrorCode", "imageErrorReason", "imageRevision", "imageFormat", "imageRepresentation"])
-        data[key] = retained[key];
-    }
     entry.data = data;
     // Persistence policy applies to the new revision, not permission to erase
     // a previously admitted record (or cancel its still-pending capture).
     const updateHistory = entry.historyWanted && shouldSaveToHistory(data, notification);
-    if (updateHistory)
-      entry.historyData = data;
+    if (updateHistory) {
+      const previousHistory = entry.historyData;
+      entry.historyData = Object.assign({}, data);
+      keepSnapshot(entry.historyData, previousHistory);
+    }
+    keepSnapshot(data, retained);
     entry.metadata.urgency = data.urgency;
     entry.metadata.duration = calculateDuration(data);
     cacheActions(entry);
@@ -350,10 +368,27 @@ Singleton {
       dismissPopup(internalId);
     if (popupState[internalId] !== entry)
       return;
+    const targets = [];
+    if (entry.popupWanted)
+      targets.push(data);
+    if (updateHistory)
+      targets.push(entry.historyData);
+    if (targets.length)
+      queueImage(entry, targets);
+    // Subscribe before releasing obsolete targets. The image owner can then
+    // share an in-flight acquisition of identical inputs, including a remote
+    // URL, without restarting the transfer or keeping the obsolete targets.
     releaseUnusedImages(entry);
-    if (changedImage && (entry.popupWanted || updateHistory))
-      queueImage(entry);
     publishEntry(entry);
+  }
+
+  function keepSnapshot(data, previous) {
+    if (data.originalImage === previous.originalImage)
+      data.imageRevision = previous.imageRevision;
+    if (!data.originalImage || previous.imageState !== "ready")
+      return;
+    for (const key of ["cachedImage", "imageState", "imageRevision", "imageFormat", "imageRepresentation", "imageContentSha256"])
+      data[key] = previous[key];
   }
 
   function cacheActions(entry) {
@@ -463,6 +498,7 @@ Singleton {
       "imageRevision": "",
       "imageFormat": "",
       "imageRepresentation": "",
+      "imageContentSha256": "",
       "imageErrorCode": "",
       "imageErrorReason": "",
       "originalId": n.originalId || n.id || 0 // Ensure originalId is passed through
@@ -485,7 +521,7 @@ Singleton {
 
     function updateNotificationFromObject(internalId) {
     const notifData = popupState[internalId];
-    if (!notifData || !notifData.notification)
+    if (!notifData?.watcher || !notifData.notification)
     return;
     const data = createData(notifData.notification);
     updatePopup(internalId, notifData.notification, data);
@@ -558,36 +594,45 @@ Singleton {
   }
 
     // Capture runs in the producer's signal stack. Only decoding and retained
-    // publication are asynchronous. Deferred insertion reads this same entry.
-    function queueImage(entry) {
-    const revision = ++entry.imageRevision;
-    entry.data.imageRevision = entry.data.id + ":" + revision;
-    entry.data.cachedImage = "";
-    entry.data.imageFormat = "";
-    entry.data.imageRepresentation = "";
-    entry.data.imageErrorCode = "";
-    entry.data.imageErrorReason = "";
-    entry.data.imageState = entry.data.originalImage ? "loading" : "idle";
+    // publication are asynchronous. Own the attempt by its target records, not
+    // their displayed revision, which may still refer to a previous snapshot.
+    function queueImage(entry, targets = [entry.data]) {
+    let revision = "";
+    function newRevision() {
+    if (!revision)
+    revision = entry.data.id + ":" + ++entry.imageRevision;
+    return revision;
+  }
+    for (const data of targets) {
+    if (!data.imageRevision)
+    data.imageRevision = newRevision();
+  }
     if (!entry.data.originalImage)
     return;
     const request = {
-    revision: entry.data.imageRevision,
+    targets: targets,
     interest: null,
     pending: true
   };
     entry.imageRequests.push(request);
-    var pending = true;
     const interest = ImageCacheService.getNotificationIcon(entry.data.originalImage, "", "", function (path, success, detail) {
-    pending = false;
-    if (popupState[entry.data.id] !== entry || !ownsImage(entry, request.revision))
-    return;
     request.interest = null;
     request.pending = false;
-    for (const data of new Set([entry.data, entry.historyData])) {
-    if (data.imageRevision !== request.revision)
+    if (popupState[entry.data.id] !== entry)
+    return;
+    for (const data of request.targets) {
+    if (!ownsImage(entry, data))
     continue;
+    if (data.imageState === "ready") {
+    // A capture attempt is not a new snapshot. The retention owner
+    // hashes the captured content independently of source and cache URLs.
+    if (!success || detail.contentSha256 === data.imageContentSha256)
+    continue;
+    data.imageRevision = newRevision();
+  }
     data.cachedImage = success ? PortalPaths.pathToUri(path).uri : "";
     data.imageState = success ? "ready" : "unavailable";
+    data.imageContentSha256 = success ? detail.contentSha256 : "";
     data.imageFormat = success ? String(detail.originalFormat || "") : "";
     data.imageRepresentation = success ? String(detail.url || "") : "";
     data.imageErrorCode = success ? "" : String(detail.code || "image-unavailable");
@@ -596,17 +641,17 @@ Singleton {
     releaseUnusedImages(entry);
     publishEntry(entry);
   });
-    if (pending)
+    if (request.pending)
     request.interest = interest;
   }
 
-    function ownsImage(entry, revision) {
-    return (entry.popupWanted && entry.data.imageRevision === revision) || (entry.historyWanted && entry.historyData.imageRevision === revision);
+    function ownsImage(entry, data) {
+    return (entry.popupWanted && entry.data === data) || (entry.historyWanted && entry.historyData === data);
   }
 
     function releaseUnusedImages(entry) {
     entry.imageRequests = entry.imageRequests.filter(request => {
-    if (request.pending && ownsImage(entry, request.revision))
+    if (request.pending && request.targets.some(data => ownsImage(entry, data)))
     return true;
     request.interest?.cancel();
     return false;

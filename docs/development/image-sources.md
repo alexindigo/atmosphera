@@ -69,6 +69,19 @@ Plain `Text` and `Label` default to `AutoText`, which also lays out markup
 (and loads its images) when the string looks like HTML. Text that shows data
 sets `textFormat: Text.PlainText`.
 
+## Notification replacement
+
+On an observable replacement of an existing notification, the shell attempts
+a fresh producer-time image capture even if the URL did not change. A
+successful capture replaces the snapshot shown in popup and history; if the
+source is gone or capture fails, the previous snapshot remains.
+
+Known limitation: Quickshell reports field changes, not identical-field
+replacements. If no field changes, new pixels at a stable URL cannot be
+observed. Keeping Quickshell unchanged for this publication is an orchestrator
+decision; the user can override it. An upstream replacement event or content
+generation would supply the missing edge.
+
 ## The boundary check
 
 `Scripts/dev/image-decoding-boundary-check.py` parses the production QML/JS

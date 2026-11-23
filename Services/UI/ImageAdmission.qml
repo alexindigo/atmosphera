@@ -10,6 +10,8 @@ import "../../Helpers/PortalPaths.js" as PortalPaths
 Scope {
   id: root
   readonly property bool ready: canvas.available && canvas.context !== null
+  readonly property string captureNamespace: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2)
+  property int captureSerial: 0
 
   function failure(code, reason) {
     return {
@@ -55,9 +57,17 @@ Scope {
       };
     if (!ready)
       return failure("provider-not-ready", "The image capture surface is not ready");
+    const parts = /^image:\/\/(?:[^\/?#@]*@)?([A-Za-z0-9_-]+)\/(.*)$/.exec(source);
+    if (!parts)
+      return failure("invalid-source", "The image provider URL is invalid");
+    // Qt uses the full URL as the pixmap key, but dispatches by host and
+    // passes only path/query (and fragment) to the provider. Vary the URL's
+    // user-info so Image and Canvas share only this capture's fresh pixmap.
+    const serial = ++captureSerial;
+    const captureUrl = "image://capture-" + captureNamespace + "-" + serial + "@" + parts[1] + "/" + parts[2];
     // Providers may expose borrowed pixels. Load and detach on this call stack,
     // not from a deferred Image/worker/grab callback after replacement or close.
-    provider.source = source;
+    provider.source = captureUrl;
     if (provider.status !== Image.Ready) {
       provider.source = "";
       return failure("provider-failed", "The image provider could not supply this image");
@@ -66,8 +76,8 @@ Scope {
     context.reset();
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(provider, 0, 0, canvas.width, canvas.height);
-    const captured = canvas.isImageLoaded(source) ? canvas.toDataURL("image/png") : "";
-    canvas.unloadImage(source);
+    const captured = canvas.isImageLoaded(captureUrl) ? canvas.toDataURL("image/png") : "";
+    canvas.unloadImage(captureUrl);
     provider.source = "";
     if (!captured.startsWith("data:image/png;base64,"))
       return failure("provider-failed", "The image provider pixels could not be captured");
