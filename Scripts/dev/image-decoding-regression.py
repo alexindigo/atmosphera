@@ -1848,6 +1848,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def count(name, color, tolerance=10):
             width, height, pixels = read_png(output / (name + '.png'))
             return sum(near(pixels[i * 4:i * 4 + 4], color, tolerance) for i in range(width * height))
+        def warning(name):
+            return warning_coverage(output / (name + '.png'), result['warningColor'])
         entries = {row['name']: row for row in result['entries']}
         self.check('plugin-roots-created', all(not row['error'] for row in entries.values()),
                    {name: row['error'] for name, row in entries.items() if row['error']})
@@ -1860,8 +1862,10 @@ os.execv('/usr/bin/find', ['find', *args])
                        and any(row['state'] == 'ready' for row in shown) and count(name, color) > 50,
                        dict(images=shown, pixels=count(name, color)))
         failed = images('hermes-avatar-failed')
+        failed_warning, ready_warning = warning('hermes-avatar-failed'), warning('hermes-avatar')
         self.check('plugin-avatar-failure-labelled', any(row['state'] == 'unavailable' and row['code'] for row in failed)
-                   and count('hermes-avatar-failed', result['warningColor']) > 5, dict(images=failed))
+                   and failed_warning > 5 and ready_warning == 0,
+                   dict(images=failed, warningCoverage=failed_warning, readyWarningCoverage=ready_warning))
         sticker = images('sticker')
         frames = {tuple(pixel(path)) for path in output.glob('sticker-*.png')}
         self.check('plugin-sticker-keeps-animation', len(sticker) == 1 and sticker[0]['state'] == 'ready' and sticker[0]['animated']
@@ -1892,11 +1896,12 @@ os.execv('/usr/bin/find', ['find', *args])
             tiles = images(name, 'rounded')
             shown = [row for row in tiles if row['state'] == 'ready']
             failed = [row for row in tiles if row['state'] == 'unavailable']
+            coverage = warning(name)
             self.check('plugin-' + name + '-video-thumbnails', len(tiles) == 2 and len(shown) == 1 and len(failed) == 1
                        and '/thumbnails/' in shown[0]['source']
                        and not shown[0]['source'].endswith('.mp4') and failed[0]['code'] and failed[0]['source'] == ''
-                       and count(name, COLORS[0], 24) > 50 and count(name, result['warningColor']) > 5,
-                       dict(tiles=tiles, videos=videos, pixels=count(name, COLORS[0], 24)))
+                       and count(name, COLORS[0], 24) > 50 and coverage > 5,
+                       dict(tiles=tiles, videos=videos, pixels=count(name, COLORS[0], 24), warningCoverage=coverage))
         # One interest per producer and video; the broken video stays failed.
         self.check('plugin-video-producers-settle-honestly', videos['mpvReady'] and videos['vwSettled'] and not videos['vwReady']
                    and videos['vwFailed'] and sorted(videos['interests']) == sorted([str(inputs / 'videos/Red.mp4'), str(inputs / 'videos/Broken.mp4')] * 2), videos)
