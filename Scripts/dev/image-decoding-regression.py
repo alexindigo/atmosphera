@@ -309,7 +309,8 @@ class Run:
             name = 'producer-retirement-red' if red else 'notification-adapter' if adapter else 'producer-capture'
             result, output = self.qt(source, self.args.source / ('Scripts/dev/fixtures/image-decoding/' + name + '.qml'),
                                      inputs, name, extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
-                                     IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
+                                      IMAGE_LEGACY_HOLD_CALLBACKS='1' if red else '0',
+                                      IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
         finally:
             guard.terminate()
             bus_record['exit'] = bus.wait(timeout=10)
