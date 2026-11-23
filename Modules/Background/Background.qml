@@ -170,7 +170,6 @@ Variants {
         anchors.fill: parent
         active: false
         source: ""
-        normalize: true
         animationIntent: "still"
         imageTransform: "contain"
         fillMode: Image.Stretch // The wallpaper shader owns fit/crop exactly once.
@@ -185,7 +184,6 @@ Variants {
         anchors.fill: parent
         active: false
         source: ""
-        normalize: true
         animationIntent: "still"
         imageTransform: "contain"
         fillMode: Image.Stretch
@@ -491,6 +489,9 @@ Variants {
           _candidateReady();
         } else {
           var scale = CompositorService.getDisplayScale(modelData.name);
+          // Capture the preference on the candidate, not the displayed slot.
+          // A preference change must not invalidate the front texture.
+          nextWallpaper.normalize = !Settings.data.wallpaper.useOriginalImages;
           nextWallpaper.sourceSize = Qt.size(Math.max(1, Math.round(modelData.width * scale)), Math.max(1, Math.round(modelData.height * scale)));
           nextWallpaper.source = source;
           nextWallpaper.active = true;
