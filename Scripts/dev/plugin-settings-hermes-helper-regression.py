@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Hermes bridge/PTY cancellation and parent-death proof, with inert SSH."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -54,6 +55,7 @@ def cleanup(row):
     check(absent(row), 'owned inert child identity not absent after cleanup')
 
 
+@receipt_run
 def run(args, helper, mode):
     case = args.work_root / mode; out = args.output / mode; case.mkdir(); out.mkdir()
     (case / 'bin').mkdir(); (case / 'home').mkdir()
@@ -61,7 +63,7 @@ def run(args, helper, mode):
     env = dict(os.environ, HOME=str(case / 'home'), PATH=str(case / 'bin') + ':' + os.environ['PATH'], HERMES_HELPER_CASE=str(case))
     result = dict(mode=mode)
     with FixtureResources() as resources:
-        resources.defer(lambda: (out / 'result.json').write_text(json.dumps(result, indent=2) + '\n'))
+        resources.defer(lambda: stage_receipt(out / 'result.json', result))
 
         def cleanup_owned_child():
             receipt = case / 'child.json'
@@ -139,6 +141,7 @@ def characterize(args, helper, mode, case, env, resources, result):
         return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -172,7 +175,7 @@ def main():
         else:
             check(not wanted, 'Hermes helper control escaped')
             report = dict(status='PASS', originalRed=args.original_red, rows=results, realSshOrNetwork=False, helperOnly=True, completeMemberAcceptance=False)
-        (args.output / 'result.json').write_text(json.dumps(report, indent=2) + '\n'); print(json.dumps(report))
+        stage_receipt(args.output / 'result.json', report); print(json.dumps(report))
 
 
 if __name__ == '__main__': main()

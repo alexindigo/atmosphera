@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Automatic-owner held stages and private-bus monitor retirement (guest only)."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -95,6 +96,7 @@ def live(row):
         return False
 
 
+@receipt_run
 def run(args, profile, scenario):
     member = 'osk-toggle' if scenario in ('keyboard', 'detect', 'backend-detect', 'delayed-retire', 'private-monitor', 'private-retire') else '2-in-1-tools'
     case, out = args.work_root/scenario, args.output/scenario
@@ -140,10 +142,11 @@ def run(args, profile, scenario):
     while any(live(row) for row in rows) and time.monotonic()<deadline: time.sleep(.02)
     if any(live(row) for row in rows): raise RuntimeError('endpoint survived actual engine teardown')
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',scenario=scenario,kind='runtime-control' if rejected else 'individual-lifetime',control=args.control,endpointIdentities=len(rows),quiescent=True,privateBus=scenario in ('private-monitor','private-retire'),nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scenario=scenario,kind='runtime-control' if rejected else 'individual-lifetime',control=args.control,endpointIdentities=len(rows),quiescent=True,privateBus=scenario in ('private-monitor','private-retire'),nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name,type=Path,required=True)
@@ -158,7 +161,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB); args.work_root.mkdir();args.output.mkdir()
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-automatic-lifecycle.qml')})
         for scenario in ((args.scenario,) if args.scenario else scenarios): run(args,profile,scenario)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__': main()

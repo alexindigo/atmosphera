@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Controlled real content-owner lifetimes; no physical clipboard/media actions."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -39,6 +40,7 @@ elif name=='music-helper':
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name,type=Path,required=True)
@@ -94,7 +96,7 @@ def main():
         if before!={str(p.relative_to(content)):hashlib.sha256(p.read_bytes()).hexdigest() for p in content.rglob('*.json')}:raise RuntimeError('shared pin/note bytes changed')
         shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
         cases=[json.loads(line.split('CONTENT_LIFETIME ',1)[1]) for line in text.splitlines() if 'CONTENT_LIFETIME ' in line]
-        runner.write_json(out/'result.json',dict(status='PASS',plugin=args.plugin,kind='runtime-control' if rejected else 'runtime',mutation=args.mutation,rejectedAt=wanted if rejected else None,cases=cases,protectedContent=before,nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',plugin=args.plugin,kind='runtime-control' if rejected else 'runtime',mutation=args.mutation,rejectedAt=wanted if rejected else None,cases=cases,protectedContent=before,nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
         runner.remove_completed_installs(case,out)
 
 

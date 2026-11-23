@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Controlled actual wallpaper Main/action consumers; not native acceptance."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -30,6 +31,7 @@ if name in ('linux-wallpaperengine','mpvpaper') and '--help' not in args and '--
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--'+name, type=Path, required=True)
@@ -84,7 +86,7 @@ def main():
                 if time.monotonic()>deadline: raise RuntimeError('wallpaper endpoint survived')
                 time.sleep(.02)
         shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-        runner.write_json(out/'result.json',dict(status='PASS',plugin=args.plugin,kind='original-red' if args.original_plugins else 'focused-runtime',rejectedAt=expected if args.original_plugins else None,nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',plugin=args.plugin,kind='original-red' if args.original_plugins else 'focused-runtime',rejectedAt=expected if args.original_plugins else None,nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
         runner.remove_completed_installs(case,out)
 
 

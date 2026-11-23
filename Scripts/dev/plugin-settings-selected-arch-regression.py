@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """P055 selected Arch Updater check client at the actual Desktop list, VM only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -55,6 +56,7 @@ else:
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -131,7 +133,7 @@ def main():
             raise RuntimeError('separate cold Arch Desktop result failed')
         inputs = {str(path.relative_to(args.plugins)): hashlib.sha256(path.read_bytes()).hexdigest()
                   for path in sorted((args.plugins / 'arch-updater').glob('*.qml'))}
-        runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, actualSettingsAndDesktop=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', inputs=inputs, actualSettingsAndDesktop=True,
             inertCheckEndpoint=True, oneClientPerContext=True, genuineKeyboardCommand=True, discardDoesNotPublish=True,
             realIoFailureRetry=True, failedPersistenceNoRefresh=True, refreshOnlyAfterCurrentSuccess=True,
             sharedAndSiblingUnchanged=True, independentPersistedReadback=True, separateColdConsumer=True,

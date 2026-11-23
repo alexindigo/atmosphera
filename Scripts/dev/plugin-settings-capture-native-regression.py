@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual capture page/native publication joined to inert originating actions."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -31,6 +32,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     case, out = args.work_root/(plugin+'-'+scope), args.output/(plugin+'-'+scope)
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -99,7 +101,7 @@ def run(args, profile, plugin, scope):
         except RuntimeError:
             if not control or wanted not in (output/'runtime.log').read_text() or (output/'runtime.exit').read_text().strip() != '2': raise
             if not (out/'persisted/edited.json').exists(): raise RuntimeError('capture control lacks independent native edited publication')
-            runner.write_json(out/'result.json', dict(status='PASS', kind='original-red' if args.original_plugins else 'omitted-caller', rejectedAt=wanted, nativeEditedBoundary=True, completeGroupAcceptance=False))
+            stage_receipt(out/'result.json', dict(status='PASS', kind='original-red' if args.original_plugins else 'omitted-caller', rejectedAt=wanted, nativeEditedBoundary=True, completeGroupAcceptance=False))
             runner.remove_completed_installs(case, out); return
         if control: raise RuntimeError('capture control escaped')
         if 'CAPTURE_NATIVE: PASS '+plugin+' '+scope+' '+mode+' '+boundary not in text: raise RuntimeError('capture native did not finish')
@@ -114,10 +116,11 @@ def run(args, profile, plugin, scope):
             if time.monotonic() > deadline: raise RuntimeError('capture native endpoint survived')
             time.sleep(.02)
     shutil.copy2(case/'requests.jsonl', out/'requests.jsonl')
-    runner.write_json(out/'result.json', dict(status='PASS', plugin=plugin, scope=scope, actualPageAndOriginatingView=True, completeNativeBoundaries=sorted(expected), nonpublishingColdReaders=['edited','reset','following'], inertActions=len(rows), physicalProof=False, completeGroupAcceptance=False))
+    stage_receipt(out/'result.json', dict(status='PASS', plugin=plugin, scope=scope, actualPageAndOriginatingView=True, completeNativeBoundaries=sorted(expected), nonpublishingColdReaders=['edited','reset','following'], inertActions=len(rows), physicalProof=False, completeGroupAcceptance=False))
     runner.remove_completed_installs(case, out); print('CAPTURE_NATIVE '+plugin+' '+scope+': PASS', flush=True)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--'+key, type=Path, required=True)
@@ -133,7 +136,7 @@ def main():
         runner.write_json(args.output/'inputs.json', {str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__), args.source/'Scripts/dev/fixtures/plugin-settings-capture-native.qml', args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py')})
         for plugin in ((args.plugin,) if args.plugin else ('screen-recorder', 'screen-shot-and-record')):
             for scope in ((args.scope,) if args.scope else ('instance', 'shared')): run(args, profile, plugin, scope)
-        runner.write_json(args.output/'result.json', dict(status='PASS', completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json', dict(status='PASS', completeGroupAcceptance=False))
 
 
 if __name__ == '__main__': main()

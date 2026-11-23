@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Selected HTTP results: real pages/native documents and final Bar/Panel children."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -25,6 +26,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     with FixtureResources() as resources:
         return run_with_endpoint(args, profile, plugin, scope, resources)
@@ -104,23 +106,24 @@ def run_with_endpoint(args, profile, plugin, scope, resources):
             if args.old_red and not (out / 'persisted/edited.json').is_file():
                 raise RuntimeError('original HTTP red never reached independent native publication')
             result = dict(status='PASS', kind='original-shared-http-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         if 'HTTP_NATIVE: PASS ' + plugin + ' ' + scope + ' ' + mode not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'HTTP_NATIVE_ASSERT:')):
             raise RuntimeError('HTTP native consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before:
             raise RuntimeError('cold HTTP reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
     if wanted:
         raise RuntimeError('HTTP control escaped')
     for boundary, data in expected.items():
         if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=data):
             raise RuntimeError('complete HTTP documents differ')
     result = dict(status='PASS', plugin=plugin, scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'] + ([] if news else ['actions']), physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('HTTP_NATIVE ' + plugin + '/' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -140,7 +143,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-http-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-http-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for member in ((args.plugin,) if args.plugin else MEMBERS) for p in (args.plugins / member).rglob('*') if p.is_file()}))
         results = [run(args, profile, plugin, scope) for plugin in ((args.plugin,) if args.plugin else MEMBERS) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

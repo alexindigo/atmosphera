@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native selected projection policy, with independent files and cold children."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -21,6 +22,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     case, out = args.work_root / (plugin + '-' + scope), args.output / (plugin + '-' + scope)
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -89,13 +91,13 @@ def run(args, profile, plugin, scope):
             if args.old_red and not (out / 'persisted/edited.json').is_file():
                 raise RuntimeError('original red never reached independent native publication')
             result = dict(status='PASS', kind='original-shared-projection-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         marker = 'PROJECTION_NATIVE: ' + ('COLD_PASS ' + plugin + ' ' + scope + ' ' + boundary if mode == 'cold' else 'PASS ' + plugin + ' ' + scope + ' ' + mode)
         if marker not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'PROJECTION_NATIVE_ASSERT:')):
             raise RuntimeError('native projection consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before:
             raise RuntimeError('cold projection reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
     if wanted:
         raise RuntimeError('projection control escaped')
     for boundary, data in expected.items():
@@ -108,11 +110,12 @@ def run(args, profile, plugin, scope):
         if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']:
             raise RuntimeError('projection endpoint survived engine')
     result = dict(status='PASS', plugin=plugin, scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'] + (['actions'] if kde else []), physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('PROJECTION_NATIVE ' + plugin + '/' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -134,7 +137,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-projection-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-projection-endpoint.py', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py', args.source / 'Scripts/dev/fixtures/plugin-settings-projection-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for member in ((args.plugin,) if args.plugin else ('privacy-indicator', 'noctalia-calculator', 'kde-connect')) for p in (args.plugins / member).rglob('*') if p.is_file()}))
         results = [run(args, profile, plugin, scope) for plugin in ((args.plugin,) if args.plugin else ('privacy-indicator', 'noctalia-calculator', 'kde-connect')) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

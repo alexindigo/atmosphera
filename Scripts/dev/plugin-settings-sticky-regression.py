@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real Sticky Notes pages/native owners and controlled Gist operation lifetime."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 
+@receipt_run
 def run(args, profile, scope, mode):
     with FixtureResources() as resources:
         return run_with_endpoint(args, profile, scope, mode, resources)
@@ -135,7 +137,7 @@ def run_with_endpoint(args, profile, scope, mode, resources):
         assert all(row['token'] == 'Bearer '+wanted and row['path'] == '/gists/shared-gist' for row in requests), requests
         content = 'unadmitted-later-content' if mode == 'original-replace' else 'shared-note'
         assert requests[-1]['body']['files'] == {'shared': {'content': content}}, requests
-    runner.write_json(out/'result.json', dict(status='PASS', scope=scope, mode=mode, completeDocuments=True, requestCount=len(requests), inheritedOriginalLintFailed=original_lint, physicalProof=False))
+    stage_receipt(out/'result.json', dict(status='PASS', scope=scope, mode=mode, completeDocuments=True, requestCount=len(requests), inheritedOriginalLintFailed=original_lint, physicalProof=False))
     if mode in ('native', 'create', 'find', 'reset'):
         cold = out/'cold'; cold.mkdir()
         before = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case/'config').rglob('*.json')}
@@ -147,6 +149,7 @@ def run_with_endpoint(args, profile, scope, mode, resources):
     runner.remove_completed_installs(case, out)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
@@ -166,7 +169,7 @@ def main():
         runner.write_json(args.output/'inputs.json', {str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs})
         for scope in ((args.scope,) if args.scope else ('instance', 'shared')):
             run(args, profile, scope, args.mode)
-        runner.write_json(args.output/'result.json', dict(status='PASS', mode=args.mode))
+        stage_receipt(args.output/'result.json', dict(status='PASS', mode=args.mode))
     print('STICKY_REGRESSION: PASS')
 
 

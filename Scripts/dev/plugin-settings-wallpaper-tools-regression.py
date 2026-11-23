@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual scoped wallpaper Settings tools, with native documents and cold pages."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -18,6 +19,7 @@ spec.loader.exec_module(native)
 runner = native.runner
 
 
+@receipt_run
 def run(args, profile, plugin, scope, choice):
     label = plugin+'-'+scope+'-'+choice
     case, out = args.work_root/label, args.output/label
@@ -75,12 +77,13 @@ def run(args, profile, plugin, scope, choice):
     expected = json.loads((case/'expectations.json').read_text())
     for boundary, document in expected.items():
         assert json.loads((out/'persisted'/(boundary+'.json')).read_text()) == dict(status='PASS',values=document)
-    runner.write_json(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,choice=choice,actualPages=3,
+    stage_receipt(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,choice=choice,actualPages=3,
         completeDocuments=sorted(expected),coldReaders=1,immediateMainDispatches=0,physicalProof=False))
     runner.remove_completed_installs(case,out)
     print('WALLPAPER_TOOLS '+label+': PASS',flush=True)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source','plugins','work-root','output'): parser.add_argument('--'+key,type=Path,required=True)
@@ -100,7 +103,7 @@ def main():
         for plugin in ((args.plugin,) if args.plugin else ('mpvpaper','video-wallpaper')):
             for scope in ((args.scope,) if args.scope else ('instance','shared')):
                 for choice in ((args.choice,) if args.choice else ('clear','random')): run(args,profile,plugin,scope,choice)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeWallpaperAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeWallpaperAcceptance=False))
 
 
 if __name__=='__main__': main()

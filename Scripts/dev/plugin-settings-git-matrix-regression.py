@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Git selected-client failure/source/inheritance/query matrix. Named guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -124,6 +125,7 @@ def hashes(config):
     return {str(path.relative_to(config)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(config.rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scenario):
     started = time.monotonic()
     case, out = args.work_root / scenario, args.output / scenario
@@ -182,7 +184,7 @@ def run(args, profile, scenario):
         # generic Settings/Main/session errors always remain fatal.
         if any(not item.startswith(('BarWidget.qml/', 'DraggableDesktopWidget.qml/')) for item in inherited):
             raise RuntimeError('baseline failed outside the inherited presentation sources')
-        runner.write_json(baseline / 'result.json', dict(status='CHARACTERIZED', productionCoverage=False,
+        stage_receipt(baseline / 'result.json', dict(status='CHARACTERIZED', productionCoverage=False,
             diagnostics=inherited, seededConfigurationHashesUnchanged=before, generatedFiles=sorted(generated),
             sourceHashes={name: hashlib.sha256((baseline_widgets / name).read_bytes()).hexdigest()
                           for name in ('BarWidget.qml', 'DesktopWidget.qml')}))
@@ -198,7 +200,7 @@ def run(args, profile, scenario):
                 raise
             result = dict(id=scenario, status='PASS', kind='rejecting-control', control=args.negative_control,
                           actualRuntimeExit=2, rejectedAt=rejected_at, productionCoverage=False)
-            runner.write_json(out / 'result.json', result)
+            stage_receipt(out / 'result.json', result)
             runner.remove_completed_installs(case, out)
             return result
     finally:
@@ -239,12 +241,13 @@ def run(args, profile, scenario):
                   coldConfigurationHashes=before, coldExpected=cold_expected,
                   input='real controls own committed/selection signals; original keyboard witness remains separate',
                   completeCatalog=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print('GIT_MATRIX ' + scenario + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -279,12 +282,12 @@ def main():
             for scenario in scenarios:
                 runner.write_json(args.output / 'status.json', dict(status='RUNNING', completed=len(results), expected=len(scenarios), current=scenario))
                 results.append(run(args, profile, scenario))
-            runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results,
+            stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results,
                 kind='rejecting-control' if args.negative_control else 'selected-git-matrix', completePlanAcceptance=False))
-            runner.write_json(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(scenarios)))
+            stage_receipt(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(scenarios)))
             print('PLUGIN_SETTINGS_GIT_MATRIX: PASS', flush=True)
         except Exception as error:
-            runner.write_json(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(scenarios), error=str(error)))
+            stage_receipt(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(scenarios), error=str(error)))
             raise
 
 

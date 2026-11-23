@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Controlled query-generation lifetimes, not native page/instance acceptance."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import base64
 import fcntl
@@ -144,6 +145,7 @@ print('64 bytes: time='+('5' if sys.argv[-1]=='192.0.2.1' else '80')+' ms')
 '''
 
 
+@receipt_run
 def run(args, profile, plugin):
     with FixtureResources() as resources:
         return run_with_peer(args, profile, plugin, resources)
@@ -238,12 +240,13 @@ def run_with_peer(args, profile, plugin, resources):
         actions = [(row['player'], row['method']) for row in rows if 'method' in row]
         if actions != [('new', 'Next'), ('new', 'Previous'), ('new', 'Pause')] or not any(row.get('event') == 'late-metadata' for row in rows):
             raise RuntimeError('actual MPRIS action/source-lifetime receipts differ')
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print(plugin + ': ' + json.dumps(result), flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -265,7 +268,7 @@ def main():
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), driver=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), fixture=hashlib.sha256((args.source / 'Scripts/dev/fixtures/plugin-settings-query-lifecycle.qml').read_bytes()).hexdigest(), mprisPeer=hashlib.sha256((args.source / 'Scripts/dev/fixtures/plugin-settings-mpris-peer.py').read_bytes()).hexdigest(), nativeOrUIAcceptance=False))
         members = ('latency-monitor', 'hassio') if args.expect_handoff_red else ('latency-monitor', 'hassio', 'mpris-lyric')
         results = [run(args, profile, plugin) for plugin in ((args.plugin,) if args.plugin else members)]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, nativeOrUIAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, nativeOrUIAcceptance=False))
 
 
 if __name__ == '__main__':

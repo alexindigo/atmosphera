@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual selected popup geometry, field state and hidden override scroll. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -15,6 +16,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -96,7 +98,7 @@ ColumnLayout {
         bottom = states['fr-many-bottom']
         hidden = next(item for item in bottom['texts'] if item['text'] == 'hidden23')
         assert bottom['popup']['y'] <= hidden['y'] < bottom['popup']['y'] + bottom['popup']['height'], 'last hidden field reachable by normal scroll'
-        runner.write_json(out / 'result.json', dict(status='PASS', states=list(states), nativeOwners=True, hiddenOverrides=24, lastResetStaged=True, seededHashesUnchanged=before, geometryAssertions=True, visualReview=False, completePlanAcceptance=False))
+        stage_receipt(out / 'result.json', dict(status='PASS', states=list(states), nativeOwners=True, hiddenOverrides=24, lastResetStaged=True, seededHashesUnchanged=before, geometryAssertions=True, visualReview=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out)
         print('PLUGIN_SETTINGS_CHROME: PASS (geometry/scroll/native control state; visual review separate)', flush=True)
 

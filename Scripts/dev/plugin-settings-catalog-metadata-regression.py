@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reviewed catalog usage preparation, not generic-page adoption. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import copy
 import fcntl
@@ -61,6 +62,7 @@ PROTECTED = {
 }
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -150,7 +152,7 @@ def main():
             for name, digest in before.items():
                 if hashlib.sha256((case / 'config/settings/plugins' / (name + '.json')).read_bytes()).hexdigest() != digest:
                     raise RuntimeError('untouched Apply changed exact stored bytes: ' + name)
-        runner.write_json(out / 'result.json', dict(status='PASS', reviewedPlugins=len(expected), genericEntries=len(inventory),
+        stage_receipt(out / 'result.json', dict(status='PASS', reviewedPlugins=len(expected), genericEntries=len(inventory),
                           inputs=fingerprints, storedSha256=before, nativeAdmissionUnchanged=True,
                           shellInputs={name: hashlib.sha256((args.source / name).read_bytes()).hexdigest() for name in (
                               'Scripts/dev/plugin-settings-catalog-metadata-regression.py',

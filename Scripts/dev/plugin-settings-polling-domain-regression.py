@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """G1a Real-domain/QML int conversion and original Timer running policies."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -19,6 +20,7 @@ CASES=[('battery-wireless-devices',1.5,1,1000,True),('battery-wireless-devices',
        ('ip-monitor',1.5,1,1000,True),('ip-monitor',0.5,0,0,False),('ip-monitor',0,0,0,False)]
 
 
+@receipt_run
 def run(a,profile,index,case_input):
     plugin,value,projection,interval,running=case_input
     name=str(index)+'-'+plugin
@@ -48,10 +50,11 @@ def run(a,profile,index,case_input):
     if not match: raise RuntimeError('actual Main/Timer observation missing')
     actual=json.loads(match[1]); expected=dict(input=value,mainProjection=projection,interval=interval,running=running)
     result=dict(status='PASS' if actual==expected else 'FAIL',plugin=plugin,expected=expected,actual=actual,nativeInstanceAcceptance=False)
-    r.write_json(out/'result.json',result); r.remove_completed_installs(case,out)
+    stage_receipt(out/'result.json',result); r.remove_completed_installs(case,out)
     return result
 
 
+@receipt_run
 def main():
     p=argparse.ArgumentParser(description=__doc__); profile_argument(p)
     for name in ('source','plugins','work-root','output'): p.add_argument('--'+name,type=Path,required=True)
@@ -71,7 +74,7 @@ def main():
         if a.negative_control:
             if not any(row['status']=='FAIL' for row in results): raise RuntimeError('polling domain control escaped')
         elif any(row['status']!='PASS' for row in results): raise RuntimeError('polling domain behavior changed: '+json.dumps(results))
-        r.write_json(a.output/'result.json',dict(status='PASS',kind='rejecting-control' if a.negative_control else 'actual-main-typed-domain',cases=results,nativeInstanceAcceptance=False))
+        stage_receipt(a.output/'result.json',dict(status='PASS',kind='rejecting-control' if a.negative_control else 'actual-main-typed-domain',cases=results,nativeInstanceAcceptance=False))
         print('PLUGIN_SETTINGS_POLLING_DOMAIN: PASS ('+str(len(results))+' cases)',flush=True)
 
 

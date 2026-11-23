@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """P001 consumer gate after field-only supersession. Assigned guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -71,7 +73,7 @@ def main():
                                args.source / 'Services/Plugins/PluginSettingsPageApi.qml',
                                args.source / 'Services/UI/DesktopWidgetRegistry.qml']}
         inputs['todo/Settings.qml'] = hashlib.sha256((args.plugins / 'todo/Settings.qml').read_bytes()).hexdigest()
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=receipts, inputs=inputs,
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=receipts, inputs=inputs,
             genuineKeyboardInput=True, intermediatePersistedReadbacks=14, realIoFailureAndRetry=True,
             protectedConfigurationReset=True, fieldOnlySupersession=True, completeCatalog=False, inputInjectorSha256=hashlib.sha256(injector.read_bytes()).hexdigest()))
         print('PLUGIN_SETTINGS_P001_SAFETY: PASS', flush=True)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Selected session writer/read acknowledgment contract, named guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -15,6 +16,7 @@ runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -69,7 +71,7 @@ def main():
             text = (out / 'runtime.log').read_text()
             if not args.bypass_observation or 'OBSERVATION_ASSERT: native read receipt accompanies success' not in text:
                 raise
-            runner.write_json(out / 'result.json', dict(status='PASS', kind='bypassed-observation-rejected', originalConsumerFailure='native read receipt accompanies success', runtimeExit=(out / 'runtime.exit').read_text().strip()))
+            stage_receipt(out / 'result.json', dict(status='PASS', kind='bypassed-observation-rejected', originalConsumerFailure='native read receipt accompanies success', runtimeExit=(out / 'runtime.exit').read_text().strip()))
             print('SETTINGS_OBSERVATION_CONTROL: REJECTED ' + args.scope)
             return
         assert not args.bypass_observation, 'bypassed observation escaped'
@@ -96,7 +98,7 @@ def main():
         inputs = {str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__), fixture, *(args.source / name for name in qml))}
         if args.scenario == 'popup-check':
             inputs[str(a11y_helper.relative_to(args.source))] = hashlib.sha256(a11y_helper.read_bytes()).hexdigest()
-        runner.write_json(out / 'result.json', dict(status='PASS', scope=args.scope, scenario=args.scenario, inputs=inputs, shared=shared, bar=bar, independentNativeFiles=True, controlledReader=True, physicalProof=False))
+        stage_receipt(out / 'result.json', dict(status='PASS', scope=args.scope, scenario=args.scenario, inputs=inputs, shared=shared, bar=bar, independentNativeFiles=True, controlledReader=True, physicalProof=False))
         runner.remove_completed_installs(case, out)
         print('SETTINGS_OBSERVATION: PASS ' + args.scope + ' ' + args.scenario)
 

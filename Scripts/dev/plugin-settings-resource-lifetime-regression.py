@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Individual managed-service and inhibitor lifetimes against inert endpoints."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -42,6 +43,7 @@ else:raise SystemExit('unreviewed endpoint '+name)
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
@@ -90,7 +92,7 @@ def main():
             if not live: break
             time.sleep(.02)
         if live: raise RuntimeError('live resource endpoints '+repr(live))
-        runner.write_json(args.output/'result.json', dict(status='PASS', case=args.case, endpointRows=len(rows), allEndpointIdentitiesAbsent=True, physicalProof=False, nativeScopeProof=False))
+        stage_receipt(args.output/'result.json', dict(status='PASS', case=args.case, endpointRows=len(rows), allEndpointIdentitiesAbsent=True, physicalProof=False, nativeScopeProof=False))
         runner.remove_completed_installs(args.work_root, args.output)
 
 

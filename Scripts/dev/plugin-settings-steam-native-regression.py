@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Steam page/native files and originating Bar geometry, both scopes."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -22,6 +23,7 @@ def hashes(case):
     return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args,profile,scope):
     case,out=args.work_root/scope,args.output/scope;case.mkdir();out.mkdir();(out/'persisted').mkdir()
     install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -80,10 +82,11 @@ def run(args,profile,scope):
         if not live:break
         time.sleep(.02)
     if live:raise RuntimeError('live native Steam endpoints '+repr(live))
-    runner.write_json(out/'result.json',dict(status='PASS',scope=scope,kind='original-native-red' if args.original_plugins else 'omitted-origin-control' if args.omit_origin else 'native',completeNativeBoundaries=wanted,nonpublishingColdReaders=[] if rejected else ['edited','reset','following'],endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scope=scope,kind='original-native-red' if args.original_plugins else 'omitted-origin-control' if args.omit_origin else 'native',completeNativeBoundaries=wanted,nonpublishingColdReaders=[] if rejected else ['edited','reset','following'],endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False))
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -96,7 +99,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),Path(steam.__file__),args.source/'Scripts/dev/fixtures/plugin-settings-steam-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py')})
         for scope in ((args.scope,) if args.scope else ('instance','shared')):run(args,profile,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

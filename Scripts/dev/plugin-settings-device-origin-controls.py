@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Omitted-origin controls through actual device Settings/native consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -15,6 +16,7 @@ native = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(native)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--'+name, type=Path, required=True)
@@ -39,7 +41,7 @@ def main():
             path.write_text(text.replace(old, new))
             native.run(SimpleNamespace(source=args.source, plugins=args.plugins, original_plugins=mutant, work_root=args.work_root, output=args.output), profile, member, 'instance')
             controls.append(dict(plugin=member, path=relative, before=old, after=new, rejected=True))
-        native.runner.write_json(args.output/'result.json', dict(status='PASS', kind='omitted-origin-native-controls', controls=controls, completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json', dict(status='PASS', kind='omitted-origin-native-controls', controls=controls, completeGroupAcceptance=False))
 
 
 if __name__ == '__main__': main()

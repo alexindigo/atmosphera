@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual OBS native page/Bar/CC/Panel consumers against a loopback protocol."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -107,6 +108,7 @@ def hashes(case):
     return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     with FixtureResources() as resources:
         return run_with_endpoint(args, profile, scope, resources)
@@ -159,10 +161,11 @@ def run_with_endpoint(args, profile, scope, resources):
     for row in rows:
         stat=Path('/proc')/str(row['pid'])/'stat'; assert not stat.exists() or stat.read_text().split(') ',1)[1].split()[19]!=row['start'],row
     assert not any(json.loads(line)['event']=='error' for line in (out/'socket.jsonl').read_text().splitlines())
-    runner.write_json(out/'result.json',dict(status='PASS',scope=scope,kind='original-native-red' if args.original_plugins else 'shared-reader-control' if args.shared_reader else 'native',completeNativeBoundaries=boundaries,nonpublishingColdReaders=[] if controlled else ['edited','reset','following'],endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scope=scope,kind='original-native-red' if args.original_plugins else 'shared-reader-control' if args.shared_reader else 'native',completeNativeBoundaries=boundaries,nonpublishingColdReaders=[] if controlled else ['edited','reset','following'],endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False))
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name,type=Path,required=True)
@@ -176,6 +179,6 @@ def main():
         inputs=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-obs-native.qml',args.source/'Scripts/dev/plugin-settings-query-lifecycle-regression.py',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs})
         for scope in ((args.scope,) if args.scope else ('instance','shared')): run(args,profile,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 if __name__=='__main__': main()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real shared state owner, native second Apply and independent cold cache reuse."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -12,6 +13,7 @@ from guest_profile import activate_profile, profile_argument
 spec = importlib.util.spec_from_file_location('keybind_cache_runner', Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
+@receipt_run
 def main():
     p = argparse.ArgumentParser(description=__doc__); profile_argument(p)
     for name in ('source', 'plugins', 'work-root', 'output'): p.add_argument('--'+name, type=Path, required=True)
@@ -50,6 +52,6 @@ def main():
         cold=out/'cold'; cold.mkdir()
         text=runner.run_fixture(profile,install,case,cold,fixture,extra_env=dict(env,KEYBIND_CACHE_COLD='1'),extra_lint=tuple(sorted(dest.glob('*.qml'))),timeout=100)
         if 'KEYBIND_CACHE: COLD_PASS' not in text or before!={str(path):hashlib.sha256(path.read_bytes()).hexdigest() for path in [preference,state]}: raise RuntimeError('cold cache read published or endpoint missing')
-        runner.write_json(out/'result.json',dict(status='PASS',nativeApplies=2,independentCompleteDocuments=2,coldReaders=1,coldHashes=before,completePlanAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',nativeApplies=2,independentCompleteDocuments=2,coldReaders=1,coldHashes=before,completePlanAcceptance=False))
         runner.remove_completed_installs(case,out)
 if __name__=='__main__': main()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Selected Bongo page/native documents and real Bar animation over inert IO."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -85,10 +87,10 @@ def run(args, profile, scope):
             if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2': raise
             if args.old_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('Bongo red precedes native publication')
             result = dict(status='PASS', rejectedAt=wanted, originalRed=args.old_red, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         if 'BONGO_NATIVE: PASS ' + scope + ' ' + mode not in text or any(x in text for x in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'BONGO_ASSERT:')): raise RuntimeError('Bongo consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before: raise RuntimeError('Bongo cold reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
     if wanted: raise RuntimeError('Bongo control escaped')
     if not args.lifetime:
         for boundary, value in expected.items():
@@ -98,10 +100,11 @@ def run(args, profile, scope):
         path = Path('/proc') / str(row['pid']) / 'stat'
         if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('Bongo endpoint survived engine')
     result = dict(status='PASS', scope=scope, independentBoundaries=[] if args.lifetime else sorted(expected), coldReaders=[] if args.lifetime else ['edited', 'reset', 'following', 'policy'], lifetime=args.lifetime, physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('BONGO_NATIVE ' + scope + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -117,7 +120,7 @@ def main():
         paths = [Path(__file__), *sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-bongo-*')), args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.is_file()}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'slowbongo').rglob('*') if p.is_file()}))
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

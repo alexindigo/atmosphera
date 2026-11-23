@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Controlled compositor grammars and all nine held parser-stage lifetimes."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -28,6 +29,7 @@ def files(case):
     (case/'empty.kdl').write_text('')
     (case/'empty.conf').write_text('')
 
+@receipt_run
 def main():
     p=argparse.ArgumentParser(description=__doc__); profile_argument(p)
     for name in ('source','plugins','work-root','output'): p.add_argument('--'+name,type=Path,required=True)
@@ -77,6 +79,6 @@ def main():
                 except FileNotFoundError: continue
                 if current==row['start']: raise RuntimeError('endpoint still present after engine')
         shutil.copy2(case/'endpoints.jsonl',out/'endpoints.jsonl')
-        runner.write_json(out/'result.json',dict(status='PASS',mode=args.mode,stage=args.stage,control=args.control,rejected=bool(args.control),checks=text.count('KEYBIND_LIFE_CHECK:'),endpoints=len(rows),physicalProof=False,completePlanAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',mode=args.mode,stage=args.stage,control=args.control,rejected=bool(args.control),checks=text.count('KEYBIND_LIFE_CHECK:'),endpoints=len(rows),physicalProof=False,completePlanAcceptance=False))
         runner.remove_completed_installs(case,out)
 if __name__=='__main__': main()

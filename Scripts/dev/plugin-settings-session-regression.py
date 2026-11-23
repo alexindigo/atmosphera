@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Selected-session extraction gate, only inside the explicitly named guest."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -17,6 +18,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -101,7 +103,7 @@ def main():
                 install / 'Services/Plugins/Service.qml') if path.exists()}
             inputs.update({str(path.relative_to(args.source)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (
                 fixture, fault, args.source / 'Scripts/dev/fixtures/plugin-settings-session-page.qml')})
-            runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, nativeApply=True, realIoFailureAndRetry=True,
+            stage_receipt(out / 'result.json', dict(status='PASS', inputs=inputs, nativeApply=True, realIoFailureAndRetry=True,
                 savedButStaleRetention=True, dirtyCloseKeepDiscard=True, busyExclusion=True, signalBeforeCallbacks=True,
                 instanceReset=True, independentPersistedReadback=True, separateColdConsumer=True, fieldOnlyRoleAdoption=True,
                 nativeHideRetainsHeldPage=True, directoryQuarantinePreserved=True, untrackedBufferCloseConfirmation=True,

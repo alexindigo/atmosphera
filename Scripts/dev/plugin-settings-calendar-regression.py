@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real weekly calendar page/native files and selected projection consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -64,19 +66,20 @@ def run(args, profile, scope):
             if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2': raise
             if args.old_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('old calendar red precedes independent native publication')
             result = dict(status='PASS', rejectedAt=wanted, originalRed=args.old_red, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         marker = 'CALENDAR_NATIVE: PASS ' + scope + ' ' + mode
         if marker not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'CALENDAR_ASSERT:')): raise RuntimeError('calendar consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before: raise RuntimeError('calendar cold reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
     if wanted: raise RuntimeError('calendar control escaped')
     for boundary, data in expected.items():
         if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=data): raise RuntimeError('calendar complete documents differ')
     result = dict(status='PASS', scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following', 'policy'], physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('CALENDAR_NATIVE ' + scope + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -93,7 +96,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-calendar-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'weekly-calendar').rglob('*') if p.is_file()}))
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

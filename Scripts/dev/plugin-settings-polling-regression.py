@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """G1a runtime representatives; all execution stays in the verified named guest."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     name = plugin + '-' + scope
     case, out = args.work_root / name, args.output / name
@@ -108,21 +110,22 @@ else:
             if not wanted or not log.is_file() or not code.is_file() or code.read_text().strip() != '2' or wanted not in log.read_text(): raise
             if args.expect_old_timer_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('old red never published selected native interval')
             result = dict(status='PASS', kind='old-timer-red' if args.expect_old_timer_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         marker = 'POLL: COLD_PASS ' + plugin + ' ' + scope + ' ' + boundary if mode == 'cold' else 'POLL: PASS ' + plugin + ' ' + scope + ' ' + mode
         if marker not in text or any(item in text for item in BAD): raise RuntimeError('polling actual consumer failed: ' + name + '/' + mode)
         if mode == 'cold' and hashes(case) != before: raise RuntimeError('polling cold reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
     if wanted: raise RuntimeError('polling rejecting control escaped')
     for boundary, value in expected.items():
         if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=value): raise RuntimeError('independent polling documents differ')
     requests = [json.loads(line) for line in (case / 'requests.jsonl').read_text().splitlines()]
     result = dict(status='PASS', plugin=plugin, scope=scope, actualMainPageBar=True, actualPanel=not wireless, periodicSharedObservation=True,
                   independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'], requests=requests, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('POLLING ' + name + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + name, type=Path, required=True)
@@ -142,7 +145,7 @@ def main():
             for root, paths in ((args.source, [Path(__file__), args.source / 'Services/Plugins/PluginSettingsPoller.qml', *sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-polling*'))]),
                                 (args.plugins, [p for plugin in ('cloudflare-warp', 'battery-wireless-devices') for p in sorted((args.plugins / plugin).rglob('*'))])) for p in paths if p.is_file()}))
         results = [run(args, profile, plugin, scope) for plugin in ((args.plugin,) if args.plugin else ('cloudflare-warp', 'battery-wireless-devices')) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False)); print('PLUGIN_SETTINGS_POLLING: PASS', flush=True)
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False)); print('PLUGIN_SETTINGS_POLLING: PASS', flush=True)
 
 
 if __name__ == '__main__': main()

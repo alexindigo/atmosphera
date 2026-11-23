@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Typed field intents, native Reset/equal omission and cold inheritance. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -45,7 +46,7 @@ def cold_boundary_from_environment(boundary):
              for p in sorted((case / 'config').rglob('*.json'))}
     if before != after:
         raise RuntimeError('typed cold reader published or changed configuration')
-    runner.write_json(output / 'result.json', dict(status='PASS', family=family, boundary=boundary,
+    stage_receipt(output / 'result.json', dict(status='PASS', family=family, boundary=boundary,
         independentEngine=True, noPageOrReceipt=True, configurationHashesUnchanged=before,
         observed='four bound native runtime Text consumers; absent optional distinct from empty'))
 
@@ -103,6 +104,7 @@ def seed(case, source, family):
     return result
 
 
+@receipt_run
 def run(args, profile, install, family):
     case, out = args.work_root / family, args.output / family
     case.mkdir(); out.mkdir()
@@ -150,11 +152,12 @@ def run(args, profile, install, family):
         protectedAndOpaquePreserved=True, independentPersistedBoundaries=len(phases), separateColdConsumer=True,
         intermediateColdBoundaries=['edited', 'reset'], nonpublishingColdReaders=3,
         input='actual controls own signals; not physical keyboard or device proof')
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE values.' + family + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -210,18 +213,18 @@ def main():
                         raise
                     result = dict(id=family, status='PASS', kind='rejecting-control', control=args.negative_control,
                                   actualRuntimeExit=2, rejectedAt=expected_rejection, productionCoverage=False)
-                    runner.write_json(args.output / family / 'result.json', result)
+                    stage_receipt(args.output / family / 'result.json', result)
                 else:
                     if expected_rejection:
                         raise RuntimeError('typed rejecting control unexpectedly passed')
                 results.append(result)
             runner.remove_completed_installs(args.work_root, args.output)
-            runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results,
+            stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results,
                 kind='rejecting-control' if args.negative_control else 'typed-native-matrix', completePlanAcceptance=False))
-            runner.write_json(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(families)))
+            stage_receipt(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(families)))
             print('PLUGIN_SETTINGS_VALUES_CONTROL: PASS' if args.negative_control else 'PLUGIN_SETTINGS_VALUES: PASS', flush=True)
         except Exception as error:
-            runner.write_json(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(families), error=str(error)))
+            stage_receipt(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(families), error=str(error)))
             raise
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Clipboard typed projections, shared content and originating decode lifetime."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -38,6 +39,7 @@ else:raise SystemExit('unexpected endpoint '+repr(args))
 '''
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -78,7 +80,7 @@ def main():
         assert not live,live
         runner.write_json(out/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),fixture,args.source/'Scripts/dev/plugin-settings-clipboard-regression.py')})
         runner.write_json(out/'sources.json',{str(p.relative_to(args.plugins/'clipboard')):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'clipboard').rglob('*') if p.is_file()})
-        runner.write_json(out/'result.json',dict(status='PASS',kind='omitted-origin-control' if rejected else 'clipboard-lifetimes',typedZeroNegativeFractional=True,sharedPinsAndTimestamps=True,coalescedDecode=True,retiredQueuedAndHeldDecode=True,allEndpointIdentitiesAbsent=True,endpointRows=len(rows),physicalProof=False))
+        stage_receipt(out/'result.json',dict(status='PASS',kind='omitted-origin-control' if rejected else 'clipboard-lifetimes',typedZeroNegativeFractional=True,sharedPinsAndTimestamps=True,coalescedDecode=True,retiredQueuedAndHeldDecode=True,allEndpointIdentitiesAbsent=True,endpointRows=len(rows),physicalProof=False))
         runner.remove_completed_installs(case,out)
 
 if __name__=='__main__':main()

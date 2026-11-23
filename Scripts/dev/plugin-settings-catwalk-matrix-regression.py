@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Both-scope Catwalk sparse/reset/inheritance/failure/stale/native-lifetime matrix."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -11,6 +12,7 @@ import shutil
 from guest_profile import activate_profile,profile_argument
 spec=importlib.util.spec_from_file_location('cat_matrix_runner',Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
 runner=importlib.util.module_from_spec(spec);spec.loader.exec_module(runner)
+@receipt_run
 def run(args,profile,scope):
     case,out=args.work_root/scope,args.output/scope;case.mkdir();out.mkdir();(out/'persisted').mkdir()
     install=case/'install';shutil.copytree(args.source,install,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -48,18 +50,19 @@ def run(args,profile,scope):
             if not marker or marker not in (leg/'runtime.log').read_text() or (leg/'runtime.exit').read_text().strip()!='2':raise
             actual=dict(shared=json.loads((case/'config/settings/plugins/catwalk.json').read_text()),bar=json.loads((case/'config/settings/bar.json').read_text()))
             if actual!=expected['initial']:raise RuntimeError('rejecting consumer changed native configuration')
-            runner.write_json(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=marker,independentInitialDocuments=actual,completePlanAcceptance=False));runner.remove_completed_installs(case,out);return
+            stage_receipt(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=marker,independentInitialDocuments=actual,completePlanAcceptance=False));runner.remove_completed_installs(case,out);return
         finally:(case/('config/settings/plugins' if scope=='shared' else 'config/settings')).chmod(0o700)
         if args.control:raise RuntimeError('Catwalk matrix control escaped')
         if 'CATWALK_MATRIX: PASS '+scope+' '+mode not in text or any(s in text for s in ['TypeError:','ReferenceError:','SyntaxError:','Binding loop detected','CAT_MATRIX_ASSERT:']):raise RuntimeError('matrix runtime failure')
         after={str(path):hashlib.sha256(path.read_bytes()).hexdigest() for path in (case/'config').rglob('*.json')}
         if mode=='cold' and before!=after:raise RuntimeError('cold runtime reader published')
-        runner.write_json(leg/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=after))
+        stage_receipt(leg/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=after))
         checks+=text.count('CAT_MATRIX_CHECK:')
     for name,value in expected.items():
         if json.loads((out/'persisted'/(name+'.json')).read_text())!=dict(status='PASS',values=value):raise RuntimeError('independent complete document boundary '+name)
-    runner.write_json(out/'result.json',dict(status='PASS',scope=scope,independentDocuments=list(expected),checks=checks,coldReaders=1,completePlanAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scope=scope,independentDocuments=list(expected),checks=checks,coldReaders=1,completePlanAcceptance=False))
     runner.remove_completed_installs(case,out)
+@receipt_run
 def main():
     p=argparse.ArgumentParser(description=__doc__);profile_argument(p)
     for name in ['source','plugins','work-root','output']:p.add_argument('--'+name,type=Path,required=True)
@@ -71,5 +74,5 @@ def main():
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         for scope in ([args.scope] if args.scope else ['instance','shared']):run(args,profile,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
 if __name__=='__main__':main()

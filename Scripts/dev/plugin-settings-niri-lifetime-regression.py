@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Unusual niri daemon/config/probe lifetimes with literal inert endpoints."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -57,6 +58,7 @@ def python_children(args,case,out):
     return [row for item in outcomes for row in item['children']]
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -103,7 +105,7 @@ def main():
                 if args.scenario=='screensaver-config':assert 'FRAME_RATE="48"' in content and observed['idle'][0]['timeout']==900,'latest serialized config wins'
             absent(rows)
             shutil.copy2(case/'requests.jsonl',out/'requests.jsonl');runner.remove_completed_installs(case,out)
-        runner.write_json(out/'result.json',dict(status='PASS',scenario=args.scenario,endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False,completeGroupAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',scenario=args.scenario,endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False,completeGroupAcceptance=False))
         print('NIRI_LIFETIME: PASS '+args.scenario)
 
 

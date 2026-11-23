@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """G1c native representatives: actual controls, complete files and cold children."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -26,6 +27,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     name = plugin + '-' + scope
     case, out = args.work_root / name, args.output / name
@@ -92,12 +94,12 @@ def run(args, profile, plugin, scope):
             if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2': raise
             if args.old_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('old observation red did not reach independent native publication')
             result = dict(status='PASS', kind='original-shared-policy-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         marker = 'OBSERVATION_NATIVE: ' + ('COLD_PASS ' + plugin + ' ' + scope + ' ' + boundary if mode == 'cold' else 'PASS ' + plugin + ' ' + scope + ' ' + mode)
         if marker not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'OBSERVATION_NATIVE_ASSERT:')):
             raise RuntimeError('native observation consumer/diagnostic failure: ' + name + '/' + mode)
         if mode == 'cold' and hashes(case) != before: raise RuntimeError('cold observation reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
     if wanted: raise RuntimeError('native observation control escaped')
     for boundary, value in expected.items():
         if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=value): raise RuntimeError('complete observation documents differ')
@@ -110,10 +112,11 @@ def run(args, profile, plugin, scope):
         path = Path('/proc') / str(row['pid']) / 'stat'
         if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('native observation endpoint survived engine')
     result = dict(status='PASS', plugin=plugin, scope=scope, actualPageMainBarPanel=True, originatingInertActions=actions, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'], physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('OBSERVATION_NATIVE ' + name + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -130,7 +133,7 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(path.relative_to(args.source)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-observation-endpoint.py', args.source / 'Scripts/dev/fixtures/plugin-settings-observation-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py')}))
         results = [run(args, profile, plugin, scope) for plugin in ((args.plugin,) if args.plugin else ('port-monitor', 'mullvad')) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

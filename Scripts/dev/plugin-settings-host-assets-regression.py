@@ -6,6 +6,7 @@ routes, desktop-plugins, catalog, assets, lint and all) run the existing
 qualified drivers in order, each in fresh roots under its own run lock. A
 partial characterization can never produce RED_CONTROLS or overall PASS.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import contextlib
 import fcntl
@@ -197,7 +198,7 @@ def startup(args, profile):
     result = dict(id='startup', status='PASS' if not errors else 'FAIL',
                   fullProductionEntry=True, bootstrapReady=True, shellSessionReady=True,
                   originalEntrySha256=hashlib.sha256(original.encode()).hexdigest(), diagnostics=errors)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE startup: ' + result['status'], flush=True)
     return result
 
@@ -218,7 +219,7 @@ def metadata_case(args, profile):
     result = dict(id='metadata', status='PASS', declaredFields=True, nativeOwnerOpened=True,
                   nativeUntouchedApply='nothing_to_save', sharedBytesUnchanged=True,
                   productionPageProtection=False)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE metadata: PASS (compiler only; P001 protection pending)', flush=True)
     return result
 
@@ -235,7 +236,7 @@ def fields_case(args, profile):
         results.append(fields_family(args, profile, selected_case, selected_out, family))
     result = dict(id='fields', status='PASS', placementFamilies=results, productionPageAdoption=False,
                   pluginScopeReset='pending final shared-scope field unit')
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE fields: PASS (four native placement families; adapter gate, not page adoption)', flush=True)
     return result
 
@@ -274,7 +275,7 @@ def fields_family(args, profile, case, out, family):
                   sharedBytesUnchanged=True, siblingOverridesAbsent=True,
                   separateColdConsumer=True, productionPageAdoption=False,
                    pluginScopeReset='pending final shared-scope field unit')
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE fields.' + family + ': PASS (native instance adapter; page adoption not certified)', flush=True)
     return result
 
@@ -309,7 +310,7 @@ def red_todo(args, profile):
                   beforeTasks=len(before['todos']), afterTasks=len(after['todos']),
                   nativeSave=True, mainAndDesktopObserved=True, persistedReadback=True,
                   separateColdConsumers=True)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('RED_CONTROL P001: REPRODUCED', flush=True)
     return result
 
@@ -355,7 +356,7 @@ def todo_case(args, profile):
                   sharedBytesPreserved=True, legacyAndOpaquePreserved=True, coldMainAndDesktop=True,
                   genuineControlInput=True, fieldReset=True, realIoFailureAndRetry=True, intermediatePersistedReadbacks=14,
                   completeCatalog=False, inheritedDesktopConstructionDiagnosticNotExercised=True)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE todo: PASS (two real routes, keyboard input, IO Retry, Reset, protected bytes and cold consumers; catalog still pending)', flush=True)
     return result
 
@@ -378,7 +379,7 @@ def input_case(args, profile):
     result = dict(id='input', status='PASS', injector=str(injector), sha256=hashlib.sha256(injector.read_bytes()).hexdigest(),
                   literalSlash=True, nativeTextField=True, nativeModalField=True, shiftedPunctuationAndCase=True,
                   nativeButton=True, namedEscape=True, namedSpace=True, controlA=True)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE input: PASS (real Wayland input and control canaries)', flush=True)
     return result
 
@@ -439,7 +440,7 @@ def red_consumer(args, profile, finding):
                   nativeSave=True, actualMain=True, desktopConstructed=True,
                   observedConsumer='panel-result-row' if finding == 'P048' else 'desktop', persistedReadback=True,
                   endpointCalls=len(calls), realWaylandTyping=finding == 'P048')
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('RED_CONTROL ' + finding + ': REPRODUCED', flush=True)
     return result
 
@@ -465,7 +466,7 @@ def red_navigation(args, profile):
     result = dict(id='G81.generic', status='REPRODUCED', actualServiceNavigation=True,
                   actualPageDestroyed=True, directCloseRefused=True,
                   sharedBytesUnchanged=True, placementOverridesAbsent=True)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('RED_CONTROL G81.generic: REPRODUCED', flush=True)
     return result
 
@@ -508,7 +509,7 @@ def red_input(args, profile):
     result = dict(id='P169', status='REPRODUCED', actualPomodoroPage=True, actualMain=True,
                   keyboardControls=4, inaccessibleToggleActions=4, liveKeyboardCanary=True,
                   liveAtspiPressCanary=True, nativeApply=True, persistedReadback=True)
-    write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('RED_CONTROL P169: REPRODUCED', flush=True)
     return result
 
@@ -719,7 +720,10 @@ def final_main(args, profile):
                         worker=worker, inputs=inputs, selectedCases=selected, finishedCases=finished,
                         remainingCases=[case for case in selected if case not in finished],
                         completedSteps=len(done), failedSteps=[c['id'] for c in cases if c not in done], cases=cases)
-            write_json(args.output / 'status.json', data)
+            if status == 'RUNNING':
+                write_json(args.output / 'status.json', data)
+            else:
+                stage_receipt(args.output / 'status.json', data)
             (args.output / 'interim-report.md').write_text(
                 '# Plugin Settings final runner\n\n' + status + ', elapsed ' + str(data['elapsedSeconds']) + 's, cases ' +
                 str(len(finished)) + '/' + str(len(selected)) + '\n\n' +
@@ -737,7 +741,7 @@ def final_main(args, profile):
             record('RUNNING')
         status = 'PASS' if all(value == 'PASS' for value in finished.values()) else 'FAIL'
         result = record(status)
-        write_json(args.output / 'result.json', result)
+        stage_receipt(args.output / 'result.json', result)
         if status == 'PASS':
             remove_completed_installs(args.work_root, args.output)
         if args.case == 'all' or status != 'PASS':
@@ -745,6 +749,7 @@ def final_main(args, profile):
         return 0 if status == 'PASS' else 2
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -784,7 +789,10 @@ def main():
             data = dict(status=status, guest=profile.record(), elapsedSeconds=round(time.monotonic()-start, 3),
                         pid=os.getpid(), worker=worker, inputs=inputs, cases=cases, expectedRed=list(RED_IDS),
                         completed=sum(c['status'] == 'REPRODUCED' for c in cases))
-            write_json(args.output / 'status.json', data)
+            if status == 'RUNNING':
+                write_json(args.output / 'status.json', data)
+            else:
+                stage_receipt(args.output / 'status.json', data)
             (args.output / 'interim-report.md').write_text(
                 '# Plugin Settings characterization\n\n' + status + '\n\n' +
                 '\n'.join(c['id'] + ': ' + c['status'] for c in cases) + '\n')
@@ -795,7 +803,7 @@ def main():
             if args.case in ('startup', 'metadata', 'fields', 'todo', 'input'):
                 cases.append({'startup': startup, 'metadata': metadata_case, 'fields': fields_case, 'todo': todo_case, 'input': input_case}[args.case](args, profile))
                 status = cases[-1]['status']
-                write_json(args.output / 'result.json', record(status))
+                stage_receipt(args.output / 'result.json', record(status))
                 if status == 'PASS':
                     remove_completed_installs(args.work_root, args.output)
                 return 0 if status == 'PASS' else 2
@@ -813,19 +821,19 @@ def main():
                         cases.append(dict(id=finding, status='BLOCKED', reason='witness not implemented yet'))
                     record('RUNNING')
                 if not args.finding and len(cases) == len(RED_IDS) and all(c['status'] == 'REPRODUCED' for c in cases):
-                    write_json(args.output / 'result.json', record('RED_CONTROLS_PASS'))
+                    stage_receipt(args.output / 'result.json', record('RED_CONTROLS_PASS'))
                     remove_completed_installs(args.work_root, args.output)
                     print('RED_CONTROLS: PASS (characterization only; production correction pending)', flush=True)
                     return 0
             else:
                 cases.append(dict(id=args.case, status='BLOCKED', reason='witness not implemented yet'))
             result = record('BLOCKED')
-            write_json(args.output / 'result.json', result)
+            stage_receipt(args.output / 'result.json', result)
             print('PLUGIN_SETTINGS_HOST_ASSETS: BLOCKED (incomplete witness registry)', flush=True)
             return 3
         except Exception as error:
             cases.append(dict(id=args.case, status='FAIL', error=str(error)))
-            write_json(args.output / 'result.json', record('FAIL'))
+            stage_receipt(args.output / 'result.json', record('FAIL'))
             print('PLUGIN_SETTINGS_HOST_ASSETS: FAIL (' + str(error) + ')', flush=True)
             return 2
 

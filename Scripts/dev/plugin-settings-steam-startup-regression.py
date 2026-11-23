@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Hold actual startup observations while an originating Steam request is admitted."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -15,6 +16,7 @@ spec=importlib.util.spec_from_file_location('steam',Path(__file__).with_name('pl
 steam=importlib.util.module_from_spec(spec);spec.loader.exec_module(steam)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -44,7 +46,7 @@ def main():
         (args.output/'geometry.json').write_text(json.dumps(geometry,indent=2)+'\n')
         shutil.copy2(args.work_root/'requests.jsonl',args.output/'requests.jsonl')
         inputs={str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),Path(steam.__file__),args.source/'Scripts/dev/fixtures/plugin-settings-steam-startup.qml')}
-        (args.output/'result.json').write_text(json.dumps(dict(status='PASS',inputs=inputs,physicalProof=False),indent=2)+'\n')
+        stage_receipt(args.output/'result.json', dict(status='PASS',inputs=inputs,physicalProof=False))
         steam.runner.remove_completed_installs(args.work_root,args.output)
 
 

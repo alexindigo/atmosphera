@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Retained actual shared/placement context callbacks after API destruction."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -19,6 +20,7 @@ def hashes(root):
     return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('*.json')}
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -63,9 +65,9 @@ def main():
                 assert 'CONTEXT_RED: ' + scope + ' reproduced' in text
             assert before == hashes(case / 'config'), 'retained capability tests must not publish'
             runner.write_json(out / 'configuration-hashes.json', dict(before=before, after=hashes(case / 'config')))
-            runner.write_json(out / 'result.json', dict(status='PASS', scope=scope, original=args.original, callbacks=['current', 'settingsView'], nonpublishing=True, replacementRetargeting=False if not args.original else None))
+            stage_receipt(out / 'result.json', dict(status='PASS', scope=scope, original=args.original, callbacks=['current', 'settingsView'], nonpublishing=True, replacementRetargeting=False if not args.original else None))
             runner.remove_completed_installs(case, out)
-        runner.write_json(args.output / 'result.json', dict(status='PASS', original=args.original, scopes=['instance', 'shared'], callbacksPerScope=2, actualNativeApis=True))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', original=args.original, scopes=['instance', 'shared'], callbacksPerScope=2, actualNativeApis=True))
         print('CONTEXT_LIFETIME: PASS (both actual API scopes, both callbacks)', flush=True)
 
 

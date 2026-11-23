@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """G1b native query representatives with final children and independent cold readers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -43,6 +44,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     name = plugin + '-' + scope
     case, out = args.work_root / name, args.output / name
@@ -117,7 +119,7 @@ def run(args, profile, plugin, scope):
             if args.expect_shared_main_red and not (out / 'persisted/edited.json').is_file():
                 raise RuntimeError('original shared Main red did not reach native publication')
             result = dict(status='PASS', kind='original-shared-main-red' if args.expect_shared_main_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         marker = 'QUERY_NATIVE: COLD_PASS ' + plugin + ' ' + scope + ' ' + boundary if mode == 'cold' else 'QUERY_NATIVE: PASS ' + plugin + ' ' + scope + ' ' + mode
         if marker not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed', 'QUERY_ASSERT:')):
             raise RuntimeError('native query consumer/diagnostic failure: ' + name + '/' + mode)
@@ -133,7 +135,7 @@ def run(args, profile, plugin, scope):
             wanted_actions = sorted(value['terminalCommand'] or 'ghostty' for value in configs)
             if sorted(row['command'] for row in actions) != wanted_actions or any(row['argv'] != ['-e', 'ssh', 'Active'] for row in actions):
                 raise RuntimeError('originating native terminal targets differ from action endpoints')
-        runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
     if wanted:
         raise RuntimeError('native query control escaped')
     for boundary, value in expected.items():
@@ -141,10 +143,11 @@ def run(args, profile, plugin, scope):
             raise RuntimeError('complete query documents differ')
     shutil.copy2(case / 'requests.jsonl', out / 'requests.jsonl')
     result = dict(status='PASS', plugin=plugin, scope=scope, actualPageMainBarPanel=True, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'], physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('QUERY_NATIVE ' + name + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -167,7 +170,7 @@ def main():
             for root, paths in ((args.source, [Path(__file__), *sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-query*'))]),
                                 (args.plugins, [p for name in ('latency-monitor', 'ramadan-iftar', 'ssh-sessions') for p in sorted((args.plugins / name).rglob('*'))])) for p in paths if p.is_file()}))
         results = [run(args, profile, plugin, scope) for plugin in ((args.plugin,) if args.plugin else ('latency-monitor', 'ramadan-iftar', 'ssh-sessions')) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

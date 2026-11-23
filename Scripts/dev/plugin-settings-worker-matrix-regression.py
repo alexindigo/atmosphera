@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Existing Air/Contributions/Arch clients, both native scopes and held generations."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -60,6 +61,7 @@ else:
   day=(date(2026,11,18)-timedelta(days=364-i)).isoformat();print('<td data-date="'+day+'" id="day-'+str(i)+'" data-level="2"></td>');print('<tool-tip for="day-'+str(i)+'">'+str(count)+' contributions</tool-tip>')
 '''
 def hashes(case):return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (case/'config').rglob('*.json')}
+@receipt_run
 def run(a,profile,plugin,scope):
     name=plugin+'-'+scope;case,out=a.work_root/name,a.output/name;case.mkdir();out.mkdir();(out/'persisted').mkdir()
     install=case/'install';shutil.copytree(a.source,install,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -124,13 +126,13 @@ def run(a,profile,plugin,scope):
             assert set(after)-set(before)<={'config/colors.json'},'unreviewed bootstrap configuration addition'
             actual=dict(shared=json.loads((case/('config/settings/plugins/'+plugin+'.json')).read_text()),bar=json.loads((case/'config/settings/bar.json').read_text()))
             assert actual==expected['initial'],'rejecting control changed native settings documents'
-            runner.write_json(out/'result.json',dict(status='PASS',control=a.control,rejectedAt=wanted,configurationBefore=before,configurationAfter=after,bootstrapAdditions=sorted(set(after)-set(before)),independentInitialDocuments=actual));runner.remove_completed_installs(case,out);return
+            stage_receipt(out/'result.json',dict(status='PASS',control=a.control,rejectedAt=wanted,configurationBefore=before,configurationAfter=after,bootstrapAdditions=sorted(set(after)-set(before)),independentInitialDocuments=actual));runner.remove_completed_installs(case,out);return
         finally:(case/('config/settings/plugins' if scope=='shared' else 'config/settings')).chmod(0o700)
         if wanted:raise RuntimeError('worker matrix control escaped')
         if 'WORKER_MATRIX: PASS '+plugin+' '+scope+' '+mode not in text or any(x in text for x in ['TypeError:','ReferenceError:','SyntaxError:','Binding loop detected','WORKER_MATRIX_ASSERT:']):raise RuntimeError('worker matrix runtime failure')
         after=hashes(case)
         if mode=='cold' and before!=after:raise RuntimeError('cold reader published')
-        runner.write_json(leg/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=after,checks=text.count('WORKER_MATRIX_CHECK:')))
+        stage_receipt(leg/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=after,checks=text.count('WORKER_MATRIX_CHECK:')))
     for boundary,value in expected.items():
         if a.edges and boundary=='initial':continue
         assert json.loads((out/'persisted'/(boundary+'.json')).read_text())==dict(status='PASS',values=value),boundary
@@ -142,8 +144,9 @@ def run(a,profile,plugin,scope):
         time.sleep(.05)
     if live:raise RuntimeError('worker matrix endpoint still alive')
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,independentDocuments=[key for key in expected if not a.edges or key!='initial'],coldReaders=0 if a.edges else 1,endpointIdentitiesAbsent=len(rows),physicalProof=False,completePlanAcceptance=False));runner.remove_completed_installs(case,out)
+    stage_receipt(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,independentDocuments=[key for key in expected if not a.edges or key!='initial'],coldReaders=0 if a.edges else 1,endpointIdentitiesAbsent=len(rows),physicalProof=False,completePlanAcceptance=False));runner.remove_completed_installs(case,out)
     print('WORKER_MATRIX '+name+': PASS',flush=True)
+@receipt_run
 def main():
     p=argparse.ArgumentParser(description=__doc__);profile_argument(p)
     for name in ['source','plugins','work-root','output']:p.add_argument('--'+name,type=Path,required=True)
@@ -157,5 +160,5 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);a.work_root.mkdir();a.output.mkdir()
         for plugin in ([a.plugin] if a.plugin else MEMBERS):
             for scope in ([a.scope] if a.scope else ['instance','shared']):run(a,profile,plugin,scope)
-        runner.write_json(a.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
+        stage_receipt(a.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
 if __name__=='__main__':main()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reject disposable shared-admission and retirement Steam consumer controls."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import hashlib
 import json
@@ -11,6 +12,7 @@ import subprocess
 from guest_profile import activate_profile, profile_argument
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -43,7 +45,7 @@ def main():
         print(label+' control rejected',flush=True)
     names=['plugin-settings-steam-controls.py','plugin-settings-steam-regression.py','fixtures/plugin-settings-steam-lifetime.qml']
     inputs={name:hashlib.sha256((args.source/'Scripts/dev'/name).read_bytes()).hexdigest() for name in names}
-    (args.output/'result.json').write_text(json.dumps(dict(status='PASS',controls=results,inputs=inputs,physicalProof=False),indent=2)+'\n')
+    stage_receipt(args.output/'result.json', dict(status='PASS',controls=results,inputs=inputs,physicalProof=False))
     profile.verify()
 
 

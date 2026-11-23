@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Captured Main windows: native pages, independent files and cold consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -22,6 +23,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     case, out = args.work_root / (plugin + '-' + scope), args.output / (plugin + '-' + scope)
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -90,7 +92,7 @@ def run(args, profile, plugin, scope):
             if args.old_red and not (out / 'persisted/edited.json').is_file():
                 raise RuntimeError('original window red did not reach native publication')
             result = dict(status='PASS', kind='original-window-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         marker = 'WINDOW_NATIVE: PASS ' + plugin + ' ' + scope + ' ' + mode
         if marker not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'WINDOW_NATIVE_ASSERT:')):
             raise RuntimeError('window consumer/diagnostic failure')
@@ -103,17 +105,18 @@ def run(args, profile, plugin, scope):
                 expected_actions *= 2
             if actions != expected_actions:
                 raise RuntimeError('actual inert compositor action targets differ: ' + repr(actions))
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
     if wanted:
         raise RuntimeError('window control escaped')
     for boundary, data in expected.items():
         if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=data):
             raise RuntimeError('complete window documents differ')
     result = dict(status='PASS', plugin=plugin, scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'] + (['writer'] if wall else []), physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('WINDOW_NATIVE ' + plugin + '/' + scope + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -135,7 +138,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-window-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-window-compositor.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for member in ((args.plugin,) if args.plugin else MEMBERS) for p in (args.plugins / member).rglob('*') if p.is_file()}))
         results = [run(args, profile, plugin, scope) for plugin in ((args.plugin,) if args.plugin else MEMBERS) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

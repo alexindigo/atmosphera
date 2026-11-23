@@ -4,6 +4,7 @@
 Observe real namespace bindings, Source projections and separate cold restarts.
 This does not activate plugin runtime ports or replace the old production owner.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import copy
 import importlib.util
@@ -125,6 +126,7 @@ Scope {
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--plugins', type=Path, required=True)
@@ -252,7 +254,7 @@ Scope {
         'catalogConfigNamespaces':0,'cases':results,'rejectingControls':rejected,
         'legacyIdentityUnchanged':True,'noStartupWrite':True,'separateColdRestart':True,
         'scope':'Compiler/installed library only; production owner and plugin runtime ports unchanged'}
-    (args.output/'result.json').write_text(json.dumps(summary,indent=2)+'\n')
+    stage_receipt(args.output/'result.json', summary)
     print('PLUGIN_SETTINGS_CONTRACT: PASS ('+str(len(results))+' endpoints, '+str(len(rejected))+' rejecting controls; inert metadata)')
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Installed gear, BarService and external plugin IPC shared Settings routes. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -45,6 +46,7 @@ def seed(case, source):
     return expected
 
 
+@receipt_run
 def run(args, profile, route):
     case, out = args.work_root / route, args.output / route
     case.mkdir(); out.mkdir()
@@ -74,7 +76,7 @@ def run(args, profile, route):
             if not args.negative_control or not log.is_file() or not code.is_file() or code.read_text().strip() != '2' or not any('SHARED_ROUTE_ASSERT:' in line and marker in line for line in log.read_text().splitlines()):
                 raise
             result = dict(id=route, status='PASS', kind='rejecting-control', rejectedAt=marker, actualRuntimeExit=2, productionCoverage=False)
-            runner.write_json(out / 'result.json', result)
+            stage_receipt(out / 'result.json', result)
             runner.remove_completed_installs(case, out)
             return result
     finally:
@@ -104,12 +106,13 @@ def run(args, profile, route):
         for line in (out / 'runtime.log').read_text().splitlines() if 'SHARED_ROUTE_FAILED_STATE ' in line]
     if [state.get('attempt') for state in result['failedNativeDesiredState']] != [1, 2]:
         raise RuntimeError('failed native desired-state observation missing')
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print('SHARED_ROUTE ' + route + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -137,12 +140,12 @@ def main():
             for route in routes:
                 runner.write_json(args.output / 'status.json', dict(status='RUNNING', completed=len(results), expected=len(routes), current=route))
                 results.append(run(args, profile, route))
-            runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False,
+            stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False,
                 kind='rejecting-control' if args.negative_control else 'explicit-shared-routes'))
-            runner.write_json(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(routes)))
+            stage_receipt(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(routes)))
             print('PLUGIN_SETTINGS_SHARED_ROUTES: PASS', flush=True)
         except Exception as error:
-            runner.write_json(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(routes), error=str(error)))
+            stage_receipt(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(routes), error=str(error)))
             raise
 
 

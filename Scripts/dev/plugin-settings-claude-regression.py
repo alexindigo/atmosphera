@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Scoped Claude pages/native documents and inert ACP wire consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case/'config').rglob('*.json')}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -87,12 +89,12 @@ for line in sys.stdin:
             if not (out/'persisted/edited.json').is_file():
                 raise RuntimeError('Claude red preceded actual native publication')
             result = dict(status='PASS', originalRed=args.old_red, control=args.control, rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out/'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out/'result.json', result); runner.remove_completed_installs(case, out); return result
         if 'CLAUDE_NATIVE: PASS '+scope+' '+mode not in text or any(v in text for v in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'CLAUDE_ASSERT:')):
             raise RuntimeError('Claude consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before:
             raise RuntimeError('Claude cold reader published')
-        runner.write_json(output/'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
+        stage_receipt(output/'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
     if args.old_red or wanted:
         raise RuntimeError('Claude original red escaped')
     for boundary, value in expected.items():
@@ -105,9 +107,10 @@ for line in sys.stdin:
         cwd = cfg['claude'].get('workingDir') or str(case/'home')
         assert any(r['event'].get('method') == 'session/new' and r['event']['params']['cwd'] == cwd and r['cwd'] == cwd for r in rows), 'actual captured ACP cwd '+boundary
     result = dict(status='PASS', scope=scope, independentBoundaries=sorted(expected), coldReaders=['edited', 'reset', 'following'], physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out/'result.json', result); runner.remove_completed_installs(case, out); return result
+    stage_receipt(out/'result.json', result); runner.remove_completed_installs(case, out); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
@@ -126,7 +129,7 @@ def main():
         runner.write_json(args.output/'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs},
             pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'claude-code-panel').rglob('*') if p.is_file()}))
         rows = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output/'result.json', dict(status='PASS', cases=rows, completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json', dict(status='PASS', cases=rows, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

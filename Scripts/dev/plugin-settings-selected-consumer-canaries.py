@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reject shared-Main config regressions through actual selected consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import hashlib
 import json
@@ -17,6 +18,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -71,8 +73,8 @@ def main():
         runner.remove_completed_installs(case / 'job', out)
         print('SELECTED_CONSUMER_CANARY ' + plugin + ': REJECTED', flush=True)
     profile.verify()
-    (args.output / 'result.json').write_text(json.dumps(dict(status='PASS', cases=results,
-        completeCatalogBoundaryNotCertified=True), indent=2) + '\n')
+    stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results,
+        completeCatalogBoundaryNotCertified=True))
     print('SELECTED_CONSUMER_CANARIES: PASS', flush=True)
 
 

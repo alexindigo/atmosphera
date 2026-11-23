@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Currency Exchange native both-scope page and actual runtime consumers. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -23,6 +24,7 @@ def hashes(case):
             for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -101,7 +103,7 @@ def run(args, profile, scope):
                 runner.write_json(out / 'old-timer-native.json', actual)
             result = dict(status='PASS', kind='old-consumer-red' if args.expect_old_timer_red else 'rejecting-control',
                           rejectedAt=wanted, productionCoverage=False)
-            runner.write_json(out / 'result.json', result)
+            stage_receipt(out / 'result.json', result)
             return result
         if args.negative_control or args.expect_old_timer_red:
             raise RuntimeError('Currency rejecting control escaped')
@@ -110,7 +112,7 @@ def run(args, profile, scope):
             raise RuntimeError('Currency actual consumer failed: ' + mode + '/' + boundary)
         if mode in ('cold', 'policy', 'retire') and hashes(case) != before:
             raise RuntimeError('Currency nonpublishing engine changed configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
     observed = {p.stem for p in (out / 'persisted').glob('*.json')}
     if observed != set(expected):
         raise RuntimeError('missing independent Currency document boundaries')
@@ -128,11 +130,12 @@ def run(args, profile, scope):
     result = dict(status='PASS', scope=scope, realMainPagePanelBarLauncher=True, allFourConfigurationFields=True,
                   independentBoundaries=sorted(observed), unchangedHashColdReaders=['edited', 'reset', 'following'],
                   discardFailureRetryResetInheritanceRetirement=True, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('CURRENCY ' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -159,7 +162,7 @@ def main():
                                           (args.plugins, sorted((args.plugins / 'currency-exchange').rglob('*')))) for p in paths if p.is_file()})
         runner.write_json(args.output / 'inputs.json', inputs)
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
         print('PLUGIN_SETTINGS_CURRENCY: PASS', flush=True)
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Finite real Assistant lifetimes with synthetic responses (no external calls)."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from contextlib import contextmanager
 from copy import deepcopy
@@ -51,6 +52,7 @@ def local_response(mode, out):
         yield dict(PHA_ASSISTANT_HTTP=f'http://127.0.0.1:{server.server_port}/fixture', PHA_REAL_CURL=shutil.which('curl'))
 
 
+@receipt_run
 def run(args, profile, mode):
     case, out = args.work_root/mode, args.output/mode
     case.mkdir(); out.mkdir()
@@ -117,7 +119,7 @@ if held:
             stat=Path('/proc')/str(row['pid'])/'stat'
             assert not stat.exists() or stat.read_text().split(') ',1)[1].split()[19]!=row['start'],'control endpoint survived engine'
         assert {name:json.loads((case/'config'/name).read_text()) for name in docs}==docs,'control native documents'
-        runner.write_json(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,requests=rows,completePlanAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,requests=rows,completePlanAcceptance=False))
         runner.remove_completed_installs(case,out);return
     if wanted:raise RuntimeError('Assistant runtime control escaped: '+args.control)
     assert 'ASSISTANT_LIFETIME: PASS '+mode in text and not any(s in text for s in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), text[-3000:]
@@ -143,10 +145,11 @@ if held:
         runner.write_json(out/'cache.json', saved)
     if mode in HTTP_BODIES and (len(rows) != 1 or not (out/'http.json').is_file()):
         raise RuntimeError('expected one real loopback response')
-    runner.write_json(out/'result.json',dict(status='PASS',mode=mode,requests=rows,configurationBefore=before,documents=expected,beforeEngineExitJoin=True,completePlanAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',mode=mode,requests=rows,configurationBefore=before,documents=expected,beforeEngineExitJoin=True,completePlanAcceptance=False))
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -163,7 +166,7 @@ def main():
         runner.write_json(args.output/'inputs.json',dict(source=str(args.source),plugins=str(args.plugins),files={str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},pluginFiles={str(p.relative_to(args.plugins)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'assistant-panel').rglob('*') if p.is_file()}))
         modes=(args.mode,) if args.mode else MODES
         for mode in modes:run(args,profile,mode)
-        runner.write_json(args.output/'result.json',dict(status='PASS',modes=modes,completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',modes=modes,completePlanAcceptance=False))
 
 
 if __name__=='__main__':main()

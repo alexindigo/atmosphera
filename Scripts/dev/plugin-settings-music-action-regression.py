@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real Music Main/Settings helper-action result, busy admission and IO Retry. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -22,6 +23,7 @@ def config_hashes(case):
             for path in [case / 'config' / name for name in ('settings.json', 'plugins.json', 'settings/bar.json', 'settings/plugins/music-search.json')]}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir()
@@ -73,12 +75,13 @@ def run(args, profile, scope):
                   intermediateIndependentReadbacks=list(phases),
                   preferenceHashesUnchanged=before, foreignMediaUnchanged=media, separateColdConsumer=True,
                   noDeletion=True, visualReview=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print('MUSIC_ACTION ' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -98,7 +101,7 @@ def main():
             'shell': {str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), *sorted((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-music-action*'))] if p.is_file()},
             'music': {str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((args.plugins / 'music-search').rglob('*')) if p.is_file()}})
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('shared', 'instance'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, visualReview=False, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, visualReview=False, completePlanAcceptance=False))
         print('PLUGIN_SETTINGS_MUSIC_ACTION: PASS', flush=True)
 
 

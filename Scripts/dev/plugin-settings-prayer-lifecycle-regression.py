@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Prayer week/fallback/retry/countdown and original native cache/effect owners."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from datetime import datetime, timezone
 import fcntl
@@ -22,6 +23,7 @@ spec = importlib.util.spec_from_file_location('prayer_lifetime_runner', Path(__f
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -89,7 +91,7 @@ def main():
         except RuntimeError:
             text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
             if not args.negative_control or 'independent complete prayer native readback' not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
-            runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt='independent complete prayer native readback', completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
+            stage_receipt(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt='independent complete prayer native readback', completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
         if args.negative_control: raise RuntimeError('shared prayer cache-owner control escaped')
         if 'PRAYER_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'PRAYER_ASSERT:')): raise RuntimeError('prayer lifetime/diagnostic failure')
         rows = [json.loads(line) for line in effects.read_text().splitlines()]
@@ -104,7 +106,7 @@ def main():
         if not retry_rows or any(row['receivedAtMs'] > retired_at for row in retry_rows): raise RuntimeError('retired retry timer admitted another request')
         for boundary in ('initial', 'shared', 'selected'):
             if json.loads((out / ('persisted/' + boundary + '.json')).read_text())['status'] != 'PASS': raise RuntimeError('missing full native documents')
-        runner.write_json(out / 'effects.json', rows); runner.write_json(out / 'result.json', dict(status='PASS', independentNativeDocuments=['initial', 'shared', 'selected'], nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
+        runner.write_json(out / 'effects.json', rows); stage_receipt(out / 'result.json', dict(status='PASS', independentNativeDocuments=['initial', 'shared', 'selected'], nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out); print('PRAYER_LIFECYCLE: PASS', flush=True)
 
 

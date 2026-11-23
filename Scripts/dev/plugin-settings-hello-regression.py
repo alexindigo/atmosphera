@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Hello World both-scope real page/native/Panel/Bar consumers. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -22,6 +23,7 @@ def hashes(case):
             for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -81,7 +83,7 @@ def run(args, profile, scope):
                 raise
             result = dict(status='PASS', kind='rejecting-control', control=args.negative_control,
                           rejectedAt=expected_rejection, productionCoverage=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
             return result
         if args.negative_control:
             raise RuntimeError('Hello World rejecting control escaped')
@@ -90,7 +92,7 @@ def run(args, profile, scope):
             raise RuntimeError('Hello World actual consumer failed: ' + mode + '/' + boundary)
         if mode == 'cold' and hashes(case) != before:
             raise RuntimeError('Hello World cold reader changed configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
     observed = {p.stem for p in (out / 'persisted').glob('*.json')}
     if observed != set(expected):
         raise RuntimeError('missing independent Hello World document boundaries')
@@ -100,11 +102,12 @@ def run(args, profile, scope):
     result = dict(status='PASS', scope=scope, realMainPagePanelBar=True, bothConfigurationFields=True,
                   independentBoundaries=sorted(observed), unchangedHashColdReaders=['edited', 'reset', 'following'],
                   discardResetInheritance=True, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('HELLO ' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -130,7 +133,7 @@ def main():
                                           (args.plugins, sorted((args.plugins / 'hello-world').rglob('*')))) for p in paths if p.is_file()})
         runner.write_json(args.output / 'inputs.json', inputs)
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
         print('PLUGIN_SETTINGS_HELLO: PASS', flush=True)
 
 

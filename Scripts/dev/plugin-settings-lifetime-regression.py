@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native selected-session conflict, preview and release matrix. Named guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -48,6 +49,7 @@ def disk(case, family):
     return shared, rows
 
 
+@receipt_run
 def run(args, profile, install, scenario, family):
     name = scenario + '-' + family
     case, out = args.work_root / name, args.output / name
@@ -89,11 +91,12 @@ def run(args, profile, install, scenario, family):
     result = dict(id=name, status='PASS', seconds=round(time.monotonic() - start, 3), nativeApplyReceipt=scenario != 'preview-chain',
                   boundRuntimeConsumer=True, readableInputBeforeExplicitDiscard=rejected, newerBufferedInput=scenario == 'held',
                   previewChain=scenario == 'preview-chain', independentFiles=True, separateColdConsumer=True)
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('CASE lifetime.' + name + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -148,17 +151,17 @@ def main():
                         raise
                     result = dict(id=scenario + '-' + family, status='PASS', negativeControl=args.negative_control,
                                   rejectedAt=rejected_at, nativeRuntimeStatus='FAIL', catalogCoverage=False)
-                    runner.write_json(out / 'result.json', result)
+                    stage_receipt(out / 'result.json', result)
                 else:
                     if rejected_at: raise RuntimeError('negative control unexpectedly passed its actual consumer gate')
                 results.append(result)
             runner.remove_completed_installs(args.work_root, args.output)
-            runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, inputs=inputs, negativeControl=args.negative_control, catalogCoverage=False))
-            runner.write_json(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(cases)))
+            stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, inputs=inputs, negativeControl=args.negative_control, catalogCoverage=False))
+            stage_receipt(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(cases)))
             print(('PLUGIN_SETTINGS_LIFETIME_CONTROL: PASS (' + args.negative_control + '; actual native result FAIL as expected)')
                   if args.negative_control else 'PLUGIN_SETTINGS_LIFETIME: PASS', flush=True)
         except Exception as error:
-            runner.write_json(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(cases), error=str(error)))
+            stage_receipt(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(cases), error=str(error)))
             raise
 
 

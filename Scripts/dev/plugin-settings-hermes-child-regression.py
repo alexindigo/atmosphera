@@ -2,6 +2,8 @@
 """VM-only finite Hermes CLI lifetime proof using the actual HTTP dispatcher."""
 from __future__ import annotations
 
+from fixture_receipts import receipt_run, stage_receipt
+
 import argparse
 import hashlib
 import importlib.util
@@ -80,6 +82,7 @@ print('synthetic-stderr',file=sys.stderr)
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for key in ('source', 'plugins', 'guest-profile', 'work-root', 'output'):
@@ -318,7 +321,7 @@ print('EXPECTED_MISSING_EXECUTABLE')
                 fullHermesMemberAccepted=False))
         for record in records:
             assert record and not alive(record), record
-        write(args.output / 'result.json', dict(status='PASS', cases=results,
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results,
               controls=['timeout', 'retired-owner', 'binding-failure', 'missing-binary',
                         'post-bind-race-bypass', 'literal-output'],
               allIdentitiesQuiescent=records, realAccountsUsed=False))

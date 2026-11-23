@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Provider-chain native representative; original reds follow native publication."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config/settings').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -54,10 +56,10 @@ def run(args, profile, scope):
             if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2': raise
             if args.old_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('original provider red did not reach independent native publication')
             result = dict(status='PASS', kind='original-provider-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         if 'PROVIDER_NATIVE: PASS ' + scope + ' ' + mode not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'PROVIDER_ASSERT:')): raise RuntimeError('provider native consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before: raise RuntimeError('cold provider reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
     if wanted: raise RuntimeError('provider control escaped')
     for boundary, data in expected.items():
         if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=data): raise RuntimeError('complete provider documents differ')
@@ -66,10 +68,11 @@ def run(args, profile, scope):
         path = Path('/proc') / str(row['pid']) / 'stat'
         if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('provider endpoint survived engine')
     result = dict(status='PASS', scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'], physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'requests.json', rows); runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    runner.write_json(out / 'requests.json', rows); stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('PROVIDER_NATIVE ' + scope + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -86,7 +89,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-provider-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-provider-endpoint.py', args.source / 'Scripts/dev/fixtures/plugin-settings-http-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'github-feed').rglob('*') if p.is_file()}))
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

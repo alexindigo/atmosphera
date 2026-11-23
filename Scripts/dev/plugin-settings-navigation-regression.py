@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual generic Settings page/input retention through host navigation, guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -27,6 +28,7 @@ MODULES = (
 )
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -122,7 +124,7 @@ def main():
         readback = bool(placements) and placements[0]['widgets'] == [expected_row] and shared_matches
         passed = not error and not bad and len(rows) == 1 and readback
         control_passed = bool(args.negative_control and error and ('NAVIGATION_ASSERT: ' + rejected_at) in text)
-        runner.write_json(args.output / 'result.json', dict(status='PASS' if control_passed else 'FAIL' if args.negative_control else 'PASS' if passed else 'FAIL', fixtureError=error,
+        stage_receipt(args.output / 'result.json', dict(status='PASS' if control_passed else 'FAIL' if args.negative_control else 'PASS' if passed else 'FAIL', fixtureError=error,
             negativeControl=args.negative_control, rejectedAt=rejected_at, catalogCoverageNotCertified=bool(args.negative_control),
             inputs={name: hashlib.sha256((args.source / name).read_bytes()).hexdigest() for name in MODULES},
             fixtureSha256=hashlib.sha256(fixture.read_bytes()).hexdigest(),

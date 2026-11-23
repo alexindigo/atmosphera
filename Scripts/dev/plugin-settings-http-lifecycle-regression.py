@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Individual source/chain/read/cache/action lifetimes; native matrix is separate."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -21,6 +22,7 @@ runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 MEMBERS = ('news', 'ntfy-notifications', 'habitica')
 
 
+@receipt_run
 def run(args, profile, plugin):
     with FixtureResources() as resources:
         run_with_endpoint(args, profile, plugin, resources)
@@ -102,7 +104,7 @@ def prove_fixture(args, profile, plugin, install, case, out, requests, wanted, d
             for row in [json.loads(line) for line in requests.read_text().splitlines()]:
                 path = Path('/proc') / str(row.get('pid', -1)) / 'stat'
                 if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('negative HTTP endpoint survived engine')
-            runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=rejected, completePlanAcceptance=False))
+            stage_receipt(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=rejected, completePlanAcceptance=False))
             runner.remove_completed_installs(case, out)
             print('HTTP_LIFECYCLE_CONTROL ' + args.negative_control + ': PASS', flush=True)
             return
@@ -118,11 +120,12 @@ def prove_fixture(args, profile, plugin, install, case, out, requests, wanted, d
         runner.write_json(out / 'requests.json', rows)
         if plugin == 'habitica' and json.loads((out / 'native-cache.json').read_text())['status'] != 'PASS':
             raise RuntimeError('missing independent native cache proof')
-        runner.write_json(out / 'result.json', dict(status='PASS', plugin=plugin, nativeSharedCacheWriter=plugin == 'habitica', nativePlacementAcceptance=False, completePlanAcceptance=False))
+        stage_receipt(out / 'result.json', dict(status='PASS', plugin=plugin, nativeSharedCacheWriter=plugin == 'habitica', nativePlacementAcceptance=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out)
         print('HTTP_LIFECYCLE ' + plugin + ': PASS', flush=True)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -138,7 +141,7 @@ def main():
         fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-http-lifecycle.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-http-endpoint.py', args.source / 'Scripts/dev/fixtures/plugin-settings-http-cache-disk.py']}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for member in ((args.plugin,) if args.plugin else MEMBERS) for p in (args.plugins / member).rglob('*') if p.is_file()}))
         for plugin in ((args.plugin,) if args.plugin else MEMBERS): run(args, profile, plugin)
-        runner.write_json(args.output / 'result.json', dict(status='PASS', completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

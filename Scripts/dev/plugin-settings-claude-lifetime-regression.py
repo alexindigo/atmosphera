@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual ACP generations, manual permissions and originating native writers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -16,6 +17,7 @@ runner=importlib.util.module_from_spec(spec);spec.loader.exec_module(runner)
 MODES=('prompt','queued','handshake','replace','native-retired','destroyed','permission-allow','permission-deny','permission-retired','permission-new-session','cache','slash','start-failure','notification-session','stop')
 
 
+@receipt_run
 def run(args,profile,mode):
     case,out=args.work_root/mode,args.output/mode;case.mkdir();out.mkdir()
     install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -89,7 +91,7 @@ for line in sys.stdin:
     except RuntimeError:
         if not wanted or not (out/'runtime.log').is_file() or wanted not in (out/'runtime.log').read_text() or (out/'runtime.exit').read_text().strip()!='2':raise
         result=dict(status='PASS',control=args.control,rejectedAt=wanted,completePlanAcceptance=False)
-        runner.write_json(out/'result.json',result);runner.remove_completed_installs(case,out);return
+        stage_receipt(out/'result.json',result);runner.remove_completed_installs(case,out);return
     if wanted:raise RuntimeError('Claude lifetime control escaped '+args.control)
     assert 'CLAUDE_LIFETIME: PASS '+mode in text and not any(s in text for s in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')),text[-3000:]
     assert {name:json.loads((case/'config'/name).read_text()) for name in docs}==expected,'complete native documents'
@@ -104,9 +106,10 @@ for line in sys.stdin:
     elif mode.startswith('permission'):assert not permission,'retired permission cannot reach any successor'
     if mode=='cache':assert json.loads((case/'cache/plugins/claude-code-panel/state.json').read_text())['messages']==[dict(role='user',text='last')]
     result=dict(status='PASS',mode=mode,requests=rows,documents=expected,beforeEngineExitJoin=True,completePlanAcceptance=False)
-    runner.write_json(out/'result.json',result);runner.remove_completed_installs(case,out)
+    stage_receipt(out/'result.json',result);runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -121,7 +124,7 @@ def main():
         files=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-claude-lifetime.qml',args.source/'Scripts/dev/fixtures/plugin-settings-claude-probe.py']
         runner.write_json(args.output/'inputs.json',dict(source=str(args.source),plugins=str(args.plugins),files={str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},pluginFiles={str(p.relative_to(args.plugins)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'claude-code-panel').rglob('*') if p.is_file()}))
         for mode in ((args.mode,) if args.mode else MODES):run(args,profile,mode)
-        runner.write_json(args.output/'result.json',dict(status='PASS',modes=[args.mode] if args.mode else MODES,completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',modes=[args.mode] if args.mode else MODES,completePlanAcceptance=False))
 
 
 if __name__=='__main__':main()

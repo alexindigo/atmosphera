@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """OBS action admission, protocol stages, retained Toast and origin lifetimes."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -17,6 +18,7 @@ spec=importlib.util.spec_from_file_location('obs',Path(__file__).with_name('plug
 obs=importlib.util.module_from_spec(spec);spec.loader.exec_module(obs);runner=obs.runner
 SCENARIOS=('typed','panel-origin','launch-normal','launch-retire','start-Record','start-Replay','start-Stream','online-actions','failure','record-toast','toast-retire','request-retire','output-retire','auto-retire','terminate-retire','confirm-retire','auto-close','auto-active','auto-failure')
 
+@receipt_run
 def run(args,profile,scenario):
     with FixtureResources() as resources:
         return run_with_endpoint(args,profile,scenario,resources)
@@ -63,9 +65,10 @@ def run_with_endpoint(args,profile,scenario,resources):
     assert not live,live
     assert not any(json.loads(line)['event']=='error' for line in (out/'socket.jsonl').read_text().splitlines())
     runner.write_json(out/'sources.json',{str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in product.rglob('*') if p.is_file()})
-    runner.write_json(out/'result.json',dict(status='PASS',scenario=scenario,control=args.control,allEndpointIdentitiesAbsent=True,endpointRows=len(rows),physicalProof=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scenario=scenario,control=args.control,allEndpointIdentitiesAbsent=True,endpointRows=len(rows),physicalProof=False))
     runner.remove_completed_installs(case,out)
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -79,6 +82,6 @@ def main():
         inputs=(Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-obs-lifetime.qml',args.source/'Scripts/dev/plugin-settings-obs-regression.py',args.source/'Scripts/dev/plugin-settings-query-lifecycle-regression.py')
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs})
         for scenario in ((args.scenario,) if args.scenario else SCENARIOS):run(args,profile,scenario)
-        runner.write_json(args.output/'result.json',dict(status='PASS',scenarios=[args.scenario] if args.scenario else SCENARIOS,completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',scenarios=[args.scenario] if args.scenario else SCENARIOS,completeGroupAcceptance=False))
 
 if __name__=='__main__':main()

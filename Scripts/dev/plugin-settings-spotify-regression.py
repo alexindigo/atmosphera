@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Selected Spotify native pages and inert runtime OAuth/action continuations."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -24,6 +25,7 @@ spec = importlib.util.spec_from_file_location('spotify_runner', Path(__file__).w
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 
+@receipt_run
 def run(args, profile, scope):
     with FixtureResources() as resources:
         result, case, out = run_with_endpoint(args, profile, scope, resources)
@@ -148,18 +150,19 @@ def prove_modes(args, profile, scope, modes, case, out, install, dest, env, want
                 if not wanted or wanted not in log or (output / 'runtime.exit').read_text().strip() != '2': raise
                 if args.old_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('original red precedes independent native publication')
                 result = dict(status='PASS', kind='original-native-red' if args.old_red else 'rejecting-runtime-control', rejectedAt=wanted, completePlanAcceptance=False)
-                runner.write_json(out / 'result.json', result); break
+                stage_receipt(out / 'result.json', result); break
             if wanted: raise RuntimeError('Spotify control escaped')
             if 'SPOTIFY_NATIVE: PASS ' + scope + ' ' + mode not in text or any(k in text for k in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'SPOTIFY_ASSERT:')): raise RuntimeError('Spotify runtime outcome/diagnostic failure')
             after = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case / 'config/settings').rglob('*.json')}
             if mode in ('cold', 'action-cold') and before != after: raise RuntimeError('cold Spotify reader published')
-            runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, configurationBefore=before, configurationAfter=after))
+            stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, configurationBefore=before, configurationAfter=after))
         else:
             result = dict(status='PASS', scope=scope, independentBoundaries=sorted(expected) if not args.actions_only else [], unchangedHashColdReaders=(['authorized'] if args.actions_only else ['edited', 'reset', 'following', 'authorized']), runtimeAuthorization=True, nativePageProof=not args.actions_only, physicalProof=False, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result)
+            stage_receipt(out / 'result.json', result)
         return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -174,7 +177,7 @@ def main():
         paths = [Path(__file__)] + list((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-spotify-*'))
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'spotify-player').rglob('*') if p.is_file()}))
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual battery Settings/Main/Panel/Bar with native owners and disk batteries. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -23,6 +24,7 @@ def hashes(case):
             for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -129,7 +131,7 @@ os.execv('/usr/bin/sh',['sh',*sys.argv[1:]])
                 raise
             result = dict(status='PASS', kind='rejecting-control', control=args.negative_control,
                           rejectedAt=marker, productionCoverage=False)
-            runner.write_json(out / 'result.json', result)
+            stage_receipt(out / 'result.json', result)
             runner.remove_completed_installs(case, out)
             return result
     finally:
@@ -159,12 +161,13 @@ os.execv('/usr/bin/sh',['sh',*sys.argv[1:]])
                    explicitSharedIpc=True, physicalFailureRetry=True, retiredActionFenced=True,
                    sharedPhysicalState=True, coldSequentialRestores=4, literalWriteArgv=writes,
                    sourceQualified=True, independentColdConsumer=True, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print('BATTERY ' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -191,7 +194,7 @@ def main():
             battery={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest()
                      for p in sorted((args.plugins / 'battery-threshold').rglob('*')) if p.is_file()}))
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
         print('PLUGIN_SETTINGS_BATTERY: PASS', flush=True)
 
 

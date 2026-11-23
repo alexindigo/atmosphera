@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Controlled capture admission/lifetime characterization, not native acceptance."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -59,6 +60,7 @@ if name=='swaymsg':print('{"nodes":[]}')
 '''
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -170,7 +172,7 @@ def main():
             wanted = 'controlled conversion' if args.lifetime == 'record' else 'controlled annotation'
             if not files or any(path.read_text() != wanted for path in files): raise RuntimeError('independent captured output byte check failed')
             runner.write_json(out/'saved-output.json', {str(path.relative_to(case)):hashlib.sha256(path.read_bytes()).hexdigest() for path in files})
-        runner.write_json(out/'result.json', dict(status='PASS', plugin=args.plugin, lifetime=args.lifetime, kind='candidate-red' if args.expect_rejection else 'original-red' if args.original_plugins else 'shared-input-control' if args.shared_control else 'focused-runtime', rejectedAt=expected if control else None, nativeAcceptance=False, physicalProof=False, completeGroupAcceptance=False))
+        stage_receipt(out/'result.json', dict(status='PASS', plugin=args.plugin, lifetime=args.lifetime, kind='candidate-red' if args.expect_rejection else 'original-red' if args.original_plugins else 'shared-input-control' if args.shared_control else 'focused-runtime', rejectedAt=expected if control else None, nativeAcceptance=False, physicalProof=False, completeGroupAcceptance=False))
         runner.remove_completed_installs(case, out)
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Bar/monitor/Control Center section-editor routes, native files and cold readers. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -41,7 +42,7 @@ def cold_boundary_from_environment(boundary):
              for p in (case / 'config').rglob('*.json')}
     if before != after:
         raise RuntimeError('intermediate route cold reader changed configuration')
-    runner.write_json(output / 'result.json', dict(status='PASS', route=route, boundary=boundary,
+    stage_receipt(output / 'result.json', dict(status='PASS', route=route, boundary=boundary,
         independentEngine=True, configurationHashesUnchanged=before))
 
 
@@ -92,6 +93,7 @@ def seed(case, source, route, screen):
     return stages
 
 
+@receipt_run
 def run(args, profile, route):
     case, out = args.work_root / route, args.output / route
     case.mkdir(); out.mkdir()
@@ -140,7 +142,7 @@ def run(args, profile, route):
             raise
         result = dict(id=route, status='PASS', kind='rejecting-control', productionCoverage=False,
                       actualRuntimeExit=2, rejectedAt='route captures exact selected instance')
-        runner.write_json(out / 'result.json', result)
+        stage_receipt(out / 'result.json', result)
         runner.remove_completed_installs(case, out)
         print('CASE entry-route-control.' + route + ': PASS', flush=True)
         return result
@@ -172,12 +174,13 @@ def run(args, profile, route):
         independentPersistedBoundaries=len(expected), realIoFailureAndSameEditorRetry=True,
         sameIdReplacementRefused=True, protectedAndUnselectedPreserved=True, separateColdConsumer=True,
         intermediateColdBoundaries=['edited', 'whole-reset', 'retry'], coldReaders=4)
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print('CASE entry-route.' + route + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -208,11 +211,11 @@ def main():
             for route in routes:
                 runner.write_json(args.output / 'status.json', dict(status='RUNNING', completed=len(results), expected=len(routes), current=route))
                 results.append(run(args, profile, route))
-            runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False,
+            stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False,
                 kind='rejecting-control' if args.negative_control else 'actual-entry-routes'))
-            runner.write_json(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(routes)))
+            stage_receipt(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(routes)))
         except Exception as error:
-            runner.write_json(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(routes), error=str(error)))
+            stage_receipt(args.output / 'status.json', dict(status='FAIL', completed=len(results), expected=len(routes), error=str(error)))
             raise
         print('PLUGIN_SETTINGS_ENTRY_ROUTES_CONTROL: PASS' if args.negative_control else 'PLUGIN_SETTINGS_ENTRY_ROUTES: PASS', flush=True)
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual G4 pages, independent native documents and cold rendered consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -17,6 +18,7 @@ backend = importlib.util.module_from_spec(spec); spec.loader.exec_module(backend
 runner = backend.runner
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -72,10 +74,11 @@ def run(args, profile, scope):
     for row in rows:
         stat = Path('/proc')/str(row['pid'])/'stat'
         assert not stat.exists() or stat.read_text().split(') ',1)[1].split()[19] != row['start'], row
-    runner.write_json(out/'result.json', dict(status='PASS', plugin=plugin, scope=scope, kind='shared-popup-control' if args.shared_popup else 'native', completeNativeBoundaries=boundaries, nonpublishingColdReaders=[] if args.shared_popup else ['edited','reset','following'], endpointRows=len(rows), allEndpointIdentitiesAbsent=True, physicalProof=False))
+    stage_receipt(out/'result.json', dict(status='PASS', plugin=plugin, scope=scope, kind='shared-popup-control' if args.shared_popup else 'native', completeNativeBoundaries=boundaries, nonpublishingColdReaders=[] if args.shared_popup else ['edited','reset','following'], endpointRows=len(rows), allEndpointIdentitiesAbsent=True, physicalProof=False))
     runner.remove_completed_installs(case, out)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name, type=Path, required=True)
@@ -91,7 +94,7 @@ def main():
         inputs = [Path(__file__), Path(backend.__file__), args.source/'Scripts/dev/fixtures/plugin-settings-backend-native.qml', args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output/'inputs.json', {str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs})
         for scope in ((args.scope,) if args.scope else ('instance','shared')): run(args,profile,scope)
-        runner.write_json(args.output/'result.json', dict(status='PASS', completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json', dict(status='PASS', completeGroupAcceptance=False))
 
 
 if __name__ == '__main__': main()

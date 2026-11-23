@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Steam overlay processes against inert compositor/launch endpoints."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -90,6 +91,7 @@ def check_geometry(rows, values, lua=False):
     return dict(status='PASS',widths=widths,coordinates=coordinates,height=height,top=top,lua=lua,custom=values.get('useCustomLayout',False))
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -132,7 +134,7 @@ def main():
             time.sleep(.02)
         if live:raise RuntimeError('live Steam endpoints '+repr(live))
         runner.write_json(args.output/'quiescence.json',dict(status='PASS',identities=len(rows),allAbsent=True))
-        runner.write_json(args.output/'result.json',dict(status='PASS',case=args.case,physicalProof=False,nativeScopeProof=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',case=args.case,physicalProof=False,nativeScopeProof=False))
         runner.remove_completed_installs(args.work_root,args.output)
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual battery helper in a private guest mount namespace over disposable sysfs."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import hashlib
 import json
@@ -10,6 +11,7 @@ import subprocess
 from guest_profile import activate_profile, profile_argument
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -38,7 +40,7 @@ def main():
         rows.append(dict(name=name, selection=selection, expected=expected, observed=data, mismatch=mismatch))
         if mismatch:
             if not args.expect_selection_red: raise RuntimeError('selected helper mismatch: ' + repr(rows[-1]))
-            (out / 'result.json').write_text(json.dumps(dict(status='PASS', kind='helper-selection-red', rejectedAt=name, rows=rows, helperSha256=hashlib.sha256(helper.read_bytes()).hexdigest()), indent=2) + '\n')
+            stage_receipt(out / 'result.json', dict(status='PASS', kind='helper-selection-red', rejectedAt=name, rows=rows, helperSha256=hashlib.sha256(helper.read_bytes()).hexdigest()))
             print('BATTERY_SYSFS: SELECTION_RED'); return False
         return True
 
@@ -66,7 +68,7 @@ def main():
         run('aggregate-' + selection, selection, aggregate, dict(ok=True, source='BAT1,BAT10', powerWatts=50))
     run('missing', 'BAT2', common, dict(ok=False, source='', powerWatts=-1))
     result = dict(status='PASS', cases=rows, helperSha256=hashlib.sha256(helper.read_bytes()).hexdigest(), physicalProof=False, completePlanAcceptance=False)
-    (out / 'result.json').write_text(json.dumps(result, indent=2) + '\n'); print('BATTERY_SYSFS: PASS ' + str(len(rows)))
+    stage_receipt(out / 'result.json', result); print('BATTERY_SYSFS: PASS ' + str(len(rows)))
 
 
 if __name__ == '__main__': main()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual output Main/Panel consumers with inert compositor collaborators."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -31,6 +32,7 @@ elif name=='niri' and 'outputs' in args:
 '''
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -67,7 +69,7 @@ def main():
         if any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')):raise RuntimeError('unrelated output runtime diagnostics')
         rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
         shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-        runner.write_json(out/'result.json',dict(status='PASS',plugin=args.plugin,kind='original-red' if rejected else 'focused-runtime',rejectedAt=wanted if rejected else None,nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',plugin=args.plugin,kind='original-red' if rejected else 'focused-runtime',rejectedAt=wanted if rejected else None,nativeAcceptance=False,physicalProof=False,completeGroupAcceptance=False))
         runner.remove_completed_installs(case,out)
 
 

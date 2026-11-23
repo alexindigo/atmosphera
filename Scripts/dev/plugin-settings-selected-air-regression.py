@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """P054/P161 selected Settings and real AQI consumers, verified VM only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -77,7 +79,7 @@ def main():
             raise RuntimeError('separate cold Air AQI consumer failed')
         inputs = {str(path.relative_to(args.plugins)): hashlib.sha256(path.read_bytes()).hexdigest()
                   for path in sorted((args.plugins / 'air-quality').glob('*.qml'))}
-        runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, actualSettingsBarDesktop=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', inputs=inputs, actualSettingsBarDesktop=True,
             inertRealCurlEndpoint=True, genuineKeyboardLatitude=True, discardDoesNotPublish=True,
             realIoFailureRetry=True, sharedAndSiblingUnchanged=True, incompleteLocationClearsData=True,
             oldResponseRetired=True, independentPersistedReadback=True, separateColdConsumer=True, completeCatalog=False))

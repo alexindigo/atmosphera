@@ -6,6 +6,7 @@ same import probe as qml-lint-ci.py. The project's qmllint.sh then checks the
 changed files in bounded batches: one qmllint process over hundreds of files
 exceeds the guest's memory. Every batch runs; any batch that is not clean fails.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import importlib.util
@@ -41,6 +42,7 @@ def changed(root, baseline):
     return found
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -104,7 +106,7 @@ def main():
         shutil.rmtree(copy)
         result = dict(status='FAIL' if failed else 'PASS', shellFiles=len(shell_files), pluginFiles=len(plugin_files),
                       qsModules=len(modules), batches=batches, failedBatches=failed)
-        (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+        stage_receipt(args.output / 'result.json', result)
         print('PLUGIN_SETTINGS_CHANGED_LINT: %s (%d shell + %d plugin QML files, %d failed batches)'
               % (result['status'], len(shell_files), len(plugin_files), len(failed)), flush=True)
         if failed:

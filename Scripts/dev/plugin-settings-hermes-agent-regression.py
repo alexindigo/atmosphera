@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Hermes connection/session generations against isolated HTTP peers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -53,6 +54,7 @@ def peer(resources, case, name):
     return resources.serve(server, daemon=True, release=done.set)
 
 
+@receipt_run
 def run(args, profile, scenario):
     with FixtureResources() as resources:
         case, out = run_with_peers(args, profile, scenario, resources)
@@ -123,7 +125,7 @@ def prove_peers(args, profile, scenario, case, out, install, product, ports):
             assert len(starts)==2 and starts[0]==starts[1]
             assert starts[0][-6:]==['--state-file',str(case/'local-state/state.json'),'--hermes-home',str(case/'hermes-home'),'--hermes-command','inert-not-invoked']
             shutil.copy2(case/'starts.jsonl',out/'starts.jsonl')
-        runner.write_json(out/'result.json', dict(status='PASS', scenario=scenario, requestRows=len(rows), physicalProof=False))
+        stage_receipt(out/'result.json', dict(status='PASS', scenario=scenario, requestRows=len(rows), physicalProof=False))
 
 
 def assert_no_survivors(case):
@@ -136,6 +138,7 @@ def assert_no_survivors(case):
     assert not survivors,('owned actual helper survived',survivors)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
@@ -151,7 +154,7 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         for scenario in ((args.scenario,) if args.scenario else ('model', 'pending', 'held-retire', 'held-destroy', 'held-source', 'timers', 'callers', 'local', 'failed-start', 'model-retire', 'owner-retire')):
             run(args, profile, scenario)
-        runner.write_json(args.output/'result.json', dict(status='PASS', fullMemberAcceptance=False))
+        stage_receipt(args.output/'result.json', dict(status='PASS', fullMemberAcceptance=False))
 
 
 if __name__ == '__main__':

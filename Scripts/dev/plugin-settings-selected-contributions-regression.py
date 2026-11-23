@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """P056/P143 native selected page and actual contribution graph, VM only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -73,7 +75,7 @@ def main():
         if 'CONTRIBUTIONS_SELECTED: COLD_PASS' not in text or any(marker in text for marker in bad):
             raise RuntimeError('separate cold Contributions graph failed')
         inputs = {str(path.relative_to(args.plugins)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted((args.plugins / plugin).glob('*.qml'))}
-        runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, actualDesktopGraph=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', inputs=inputs, actualDesktopGraph=True,
             genuineUsernameTokenWeeksInput=True, inertHtmlAndGraphql=True, realIoFailureRetry=True,
             incompleteAccountClearsGraph=True, heldResponseRetired=True, independentPersistedReadback=True,
             separateColdConsumer=True, completeCatalog=False))

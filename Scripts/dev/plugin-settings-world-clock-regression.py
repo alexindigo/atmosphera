@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """World Clock direct selected consumers, native pages and cold readers. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -27,6 +28,7 @@ def zones(*names):
     return [dict(name=name, timezone=timezone, enabled=True) for name, timezone in names]
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -91,7 +93,7 @@ def run(args, profile, scope):
             if not wanted or not log.is_file() or not code.is_file() or code.read_text().strip() != '2' or wanted not in log.read_text():
                 raise
             result = dict(status='PASS', kind='rejecting-control', control=args.negative_control, rejectedAt=wanted, productionCoverage=False)
-            runner.write_json(out / 'result.json', result)
+            stage_receipt(out / 'result.json', result)
             return result
         if args.negative_control:
             raise RuntimeError('World Clock rejecting control escaped')
@@ -102,7 +104,7 @@ def run(args, profile, scope):
             raise RuntimeError('actual selected Timer rotation was not observed')
         if mode == 'cold' and hashes(case) != before:
             raise RuntimeError('World Clock cold reader changed configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', mode=mode, boundary=boundary, configurationHashes=hashes(case)))
     observed = {p.stem for p in (out / 'persisted').glob('*.json')}
     if observed != set(expected):
         raise RuntimeError('missing independent World Clock document boundaries')
@@ -116,11 +118,12 @@ def run(args, profile, scope):
                   preservedFields=['timezones', 'showDate', 'opaque'], knownUnrepairedFindings=['P023', 'P088', 'P107', 'P128'],
                   independentBoundaries=sorted(observed), unchangedHashColdReaders=['edited', 'reset', 'following'],
                   actualRotation=True, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('WORLD ' + scope + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -146,7 +149,7 @@ def main():
                                           (args.plugins, sorted((args.plugins / 'world-clock').rglob('*')))) for p in paths if p.is_file()})
         runner.write_json(args.output / 'inputs.json', inputs)
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
         print('PLUGIN_SETTINGS_WORLD_CLOCK: PASS', flush=True)
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real disposable profile IO, originating native marker and held action inputs."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -26,6 +27,7 @@ os.execv('/usr/bin/sh',['sh']+sys.argv[1:])
 '''
 
 
+@receipt_run
 def run(args, profile, mode):
     case, out = args.work_root/mode, args.output/mode
     case.mkdir(); out.mkdir()
@@ -70,7 +72,7 @@ def run(args, profile, mode):
     except RuntimeError:
         if args.start_failure_red: wanted = 'failed-start settles one action and clears busy'
         if not wanted or wanted not in (output/'runtime.log').read_text() or (output/'runtime.exit').read_text().strip() != '2': raise
-        runner.write_json(out/'result.json', dict(status='PASS',control=args.control,originalStartFailure=args.start_failure_red,rejectedAt=wanted,completePlanAcceptance=False))
+        stage_receipt(out/'result.json', dict(status='PASS',control=args.control,originalStartFailure=args.start_failure_red,rejectedAt=wanted,completePlanAcceptance=False))
         runner.remove_completed_installs(case,out); return
     assert 'PROFILES_LIFETIME: PASS '+mode in text and not any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'PROFILES_LIFE_ASSERT:')), text[-5000:]
     actual = dict(shared=json.loads((case/'config/settings/plugins/shell-profiles.json').read_text()), bar=json.loads((case/'config/settings/bar.json').read_text()))
@@ -92,7 +94,7 @@ def run(args, profile, mode):
             # Count and directory are from action admission, not the later fake runtime inputs.
             count = len([p for p in (case/'selected/_backups').iterdir() if p.is_dir()])
             if args.control == 'count' and count != 2:
-                runner.write_json(out/'result.json', dict(status='PASS',control=args.control,rejectedAt=wanted,observedBackupCount=count,completePlanAcceptance=False))
+                stage_receipt(out/'result.json', dict(status='PASS',control=args.control,rejectedAt=wanted,observedBackupCount=count,completePlanAcceptance=False))
                 runner.remove_completed_installs(case,out); return
             assert count == 2, 'held backup count retains captured policy'
     assert actual == expected, (actual, expected)
@@ -104,13 +106,14 @@ def run(args, profile, mode):
     for row in rows:
         proc = Path('/proc')/str(row['pid'])/'stat'
         assert not proc.exists() or proc.read_text().split(') ',1)[1].split()[19] != row['start'], ('profile endpoint survived', row)
-    runner.write_json(out/'result.json', dict(status='PASS', mode=mode, completeDocuments=actual,
+    stage_receipt(out/'result.json', dict(status='PASS', mode=mode, completeDocuments=actual,
         endpointRows=rows, rawHelperFiles={str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (case/'selected').rglob('*.json')},
         physicalShellMutation=False, completePlanAcceptance=False))
     if wanted or args.start_failure_red: raise RuntimeError('profile lifetime control escaped')
     runner.remove_completed_installs(case, out)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'):
@@ -128,7 +131,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         inputs=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-profiles-lifetime.qml']
         runner.write_json(args.output/'inputs.json',dict(source=str(args.source),plugins=str(args.plugins),files={str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs},pluginFiles={str(p.relative_to(args.plugins)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'shell-profiles').rglob('*') if p.is_file()}))
-        run(args,profile,args.mode); runner.write_json(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
+        run(args,profile,args.mode); stage_receipt(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
 
 
 if __name__=='__main__': main()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual device policy pages/native documents and inert final consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -39,6 +40,7 @@ elif name=='supergfxctl':print('5.2.8\\nHybrid\\n[Integrated, Hybrid, AsusMuxDgp
 def hashes(case):return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args,profile,member,scope):
     case,out=args.work_root/(member+'-'+scope),args.output/(member+'-'+scope);case.mkdir();out.mkdir();(out/'persisted').mkdir()
     install=case/'install';shutil.copytree(args.source,install,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -86,10 +88,11 @@ def run(args,profile,member,scope):
     for boundary in wanted:
         if json.loads((out/'persisted'/(boundary+'.json')).read_text())!=dict(status='PASS',values=expected[boundary]):raise RuntimeError('device complete native documents differ')
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',plugin=member,scope=scope,kind='original-native-red' if rejected else 'native',completeNativeBoundaries=wanted,nonpublishingColdReaders=[] if rejected else ['edited','reset','following'],privateBus=gpu,physicalProof=False,completeGroupAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',plugin=member,scope=scope,kind='original-native-red' if rejected else 'native',completeNativeBoundaries=wanted,nonpublishingColdReaders=[] if rejected else ['edited','reset','following'],privateBus=gpu,physicalProof=False,completeGroupAcceptance=False))
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -103,7 +106,7 @@ def main():
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-device-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py')})
         for member in ((args.plugin,) if args.plugin else ('usb-drive-manager','noctalia-supergfxctl')):
             for scope in ((args.scope,) if args.scope else ('instance','shared')):run(args,profile,member,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

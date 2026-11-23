@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real output Settings/native documents and actual selected Panel consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -19,6 +20,7 @@ runner=runtime.runner
 def hashes(case):return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args,profile,member,scope):
     case,out=args.work_root/(member+'-'+scope),args.output/(member+'-'+scope);case.mkdir();out.mkdir();(out/'persisted').mkdir()
     install=case/'install';shutil.copytree(args.source,install,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -54,10 +56,11 @@ def run(args,profile,member,scope):
     for name,value in expected.items():
         if json.loads((out/'persisted'/(name+'.json')).read_text())!=dict(status='PASS',values=value):raise RuntimeError('complete native output documents differ')
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',plugin=member,scope=scope,actualPageAndPanel=True,completeNativeBoundaries=list(expected),nonpublishingColdReaders=['edited','reset','following'],physicalProof=False,completeGroupAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',plugin=member,scope=scope,actualPageAndPanel=True,completeNativeBoundaries=list(expected),nonpublishingColdReaders=['edited','reset','following'],physicalProof=False,completeGroupAcceptance=False))
     runner.remove_completed_installs(case,out);print('OUTPUT_NATIVE '+member+' '+scope+': PASS',flush=True)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -71,7 +74,7 @@ def main():
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-output-native.qml',args.source/'Scripts/dev/plugin-settings-output-runtime-regression.py',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py')})
         for member in ((args.plugin,) if args.plugin else ('display-settings','monitor-layout')):
             for scope in ((args.scope,) if args.scope else ('instance','shared')):run(args,profile,member,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

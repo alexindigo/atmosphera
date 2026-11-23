@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Controlled source/int/phase/timer/alarm and retirement Pomodoro endpoints."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -10,6 +11,7 @@ import shutil
 from guest_profile import activate_profile, profile_argument
 spec=importlib.util.spec_from_file_location('pomo_life_runner',Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
 runner=importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
+@receipt_run
 def main():
     p=argparse.ArgumentParser(description=__doc__); profile_argument(p)
     for name in ('source','plugins','work-root','output'): p.add_argument('--'+name,type=Path,required=True)
@@ -43,10 +45,10 @@ def main():
         except RuntimeError:
             text=(args.output/'runtime.log').read_text()
             if not args.control or wanted not in text or (args.output/'runtime.exit').read_text().strip()!='2': raise
-            runner.write_json(args.output/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,completePlanAcceptance=False))
+            stage_receipt(args.output/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,completePlanAcceptance=False))
             runner.remove_completed_installs(case,args.output); return
         if args.control: raise RuntimeError('lifetime control escaped')
         if 'POMO_LIFETIME: PASS ' not in text or any(v in text for v in ('TypeError:','ReferenceError:','SyntaxError:','POMO_LIFE_ASSERT:','Binding loop detected')): raise RuntimeError('lifetime endpoint failure')
-        runner.write_json(args.output/'result.json',dict(status='PASS',checks=text.count('POMO_LIFE_CHECK: '),physicalProof=False,completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',checks=text.count('POMO_LIFE_CHECK: '),physicalProof=False,completePlanAcceptance=False))
         runner.remove_completed_installs(case,args.output)
 if __name__=='__main__': main()

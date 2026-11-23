@@ -7,6 +7,7 @@ only after successful PAM. An independent keyboard canary remains unchanged
 behind it. Test-only additions expose read-only state and diagnostics, never
 authentication, focus setters or unlock methods. No secure holder is killed.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from contextlib import contextmanager
 import fcntl
@@ -251,10 +252,11 @@ def variant(args, profile, name, baseline):
                 for line in native.splitlines() if any(marker in line for marker in
                     ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'is not installed', 'is not a type')))),
             ntoggleSha256=hashlib.sha256((install / 'Widgets/NToggle.qml').read_bytes()).hexdigest())
-        write_json(out / 'result.json', result)
+        stage_receipt(out / 'result.json', result)
         return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -274,7 +276,7 @@ def main():
         rows = [variant(args, profile, 'candidate', None),
                 variant(args, profile, 'previous-ntoggle', args.baseline_ntoggle)]
         new_diagnostics = sorted(set(rows[0]['diagnostics']) - set(rows[1]['diagnostics']))
-        write_json(args.output / 'result.json', dict(status='FAIL' if new_diagnostics else 'PASS', variants=rows,
+        stage_receipt(args.output / 'result.json', dict(status='FAIL' if new_diagnostics else 'PASS', variants=rows,
             newDiagnostics=new_diagnostics, inheritedDiagnostics=rows[1]['diagnostics']))
         if new_diagnostics:
             raise RuntimeError('new candidate locker runtime diagnostics: ' + repr(new_diagnostics))

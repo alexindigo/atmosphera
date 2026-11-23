@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native originating Syncthing writers and inert captured Kubernetes actions."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -46,6 +47,7 @@ else:
 '''
 
 
+@receipt_run
 def run(args, profile, plugin):
     case, out = args.work_root / plugin, args.output / plugin
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -112,7 +114,7 @@ def run(args, profile, plugin):
             raise RuntimeError('owned action endpoint survived engine')
     if rejected:
         result = dict(status='PASS', kind='rejecting-action-control', rejectedAt=wanted, endpointProcessesQuiescent=True)
-        runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+        stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
         print('QUERY_ACTION_CONTROL ' + plugin + ': PASS', flush=True); return result
     if wanted:
         raise RuntimeError('native action control escaped')
@@ -127,10 +129,11 @@ def run(args, profile, plugin):
         if len(terminals) != 1 or "'selected'" not in terminals[0][-1] or "'selected-ns'" not in terminals[0][-1]:
             raise RuntimeError('terminal action did not capture originating inputs')
     result = dict(status='PASS', plugin=plugin, nativeWriter=True, independentBoundaries=sorted(expected), endpointProcessesQuiescent=True, externalEffects=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('QUERY_ACTIONS ' + plugin + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -149,7 +152,7 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         runner.write_json(args.output / 'inputs.json', {str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-query-actions.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py']})
         results = [run(args, profile, plugin) for plugin in ((args.plugin,) if args.plugin else ('syncthing-status', 'kubectl-ctx'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Six provider IO/lease lifetimes in synthetic HOME with inert HTTP origins."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from datetime import datetime
 import fcntl
@@ -21,6 +22,7 @@ spec = importlib.util.spec_from_file_location('model_lifetime_runner', Path(__fi
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -111,7 +113,7 @@ def main():
         except RuntimeError:
             text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
             if not (args.negative_control or args.lease_key_control) or wanted not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
-            runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
+            stage_receipt(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)); runner.remove_completed_installs(case, out); return
         if args.negative_control or args.lease_key_control: raise RuntimeError('Model provider control escaped')
         if 'MODEL_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'MODEL_ASSERT:')): raise RuntimeError('model provider lifetime/diagnostic failure')
         processes = [json.loads(line) for line in requests.read_text().splitlines()]
@@ -119,7 +121,7 @@ def main():
             path = Path('/proc') / str(row['pid']) / 'stat'
             if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('local provider endpoint survived engine')
         runner.write_json(out / 'processes.json', processes)
-        runner.write_json(out / 'result.json', dict(status='PASS', providers=['claude', 'codex', 'copilot', 'gemini', 'openrouter', 'zen'], environmentPrecedence=args.environment_precedence, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
+        stage_receipt(out / 'result.json', dict(status='PASS', providers=['claude', 'codex', 'copilot', 'gemini', 'openrouter', 'zen'], environmentPrecedence=args.environment_precedence, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out); print('MODEL_LIFECYCLE: PASS', flush=True)
 
 

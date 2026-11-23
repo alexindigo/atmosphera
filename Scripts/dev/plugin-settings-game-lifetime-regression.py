@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual game actions, native operational writers, timer and retirement."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -19,6 +20,7 @@ pointer_module = importlib.util.module_from_spec(pointer_spec); pointer_spec.loa
 def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case/'config').rglob('*.json')}
 
+@receipt_run
 def run(args, profile):
     case, out = args.work_root/'instance', args.output/'instance'
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -61,7 +63,7 @@ def run(args, profile):
             text = runner.run_fixture(profile,install,case,output,args.source/'Scripts/dev/fixtures/plugin-settings-game-lifetime.qml',extra_env=dict(env,PHA_GAME_MODE=mode),extra_lint=tuple(sorted(dest.rglob('*.qml'))),timeout=100)
         except RuntimeError:
             if not wanted or not (output/'runtime.log').is_file() or wanted not in (output/'runtime.log').read_text() or (output/'runtime.exit').read_text().strip() != '2': raise
-            runner.write_json(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,completePlanAcceptance=False)); runner.remove_completed_installs(case,out); return
+            stage_receipt(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,completePlanAcceptance=False)); runner.remove_completed_installs(case,out); return
         finally:
             release = subprocess.run([str(pointer)],input='button 272 0\n',text=True,capture_output=True,timeout=5,env=dict(os.environ,**profile.session_environment()))
             (output/'pointer-release.log').write_text(release.stdout+release.stderr)
@@ -69,7 +71,7 @@ def run(args, profile):
         marker = 'GAME_LIFETIME: '+('PASS' if mode=='life' else 'COLD_PASS')
         if marker not in text or any(v in text for v in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected','GAME_LIFE_ASSERT:')): raise RuntimeError('game lifetime consumer/diagnostic failure')
         if mode=='cold' and before != hashes(case): raise RuntimeError('cold operational reader published')
-        runner.write_json(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
+        stage_receipt(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
     if wanted: raise RuntimeError('game lifetime control escaped')
     for name, value in expected.items():
         row=json.loads((out/'persisted'/(name+'.json')).read_text()); assert row['status']=='PASS' and row['values'] in (value if isinstance(value,list) else [value]),name
@@ -77,8 +79,9 @@ def run(args, profile):
     assert final==json.loads((out/'persisted/timer.json').read_text())['values']==json.loads((out/'persisted/retired.json').read_text())['values']
     elapsed = [float(line.split('GAME_TIMER_ELAPSED ',1)[1]) for line in (out/'life/runtime.log').read_text().splitlines() if 'GAME_TIMER_ELAPSED ' in line]
     assert len(elapsed)==1 and 29500 <= elapsed[0] <= 34000,elapsed
-    runner.write_json(out/'result.json',dict(status='PASS',completeDocuments=len(expected),coldReader=True,timerElapsedMs=elapsed[0],physicalProof=False,completePlanAcceptance=False)); runner.remove_completed_installs(case,out)
+    stage_receipt(out/'result.json',dict(status='PASS',completeDocuments=len(expected),coldReader=True,timerElapsedMs=elapsed[0],physicalProof=False,completePlanAcceptance=False)); runner.remove_completed_installs(case,out)
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name,type=Path,required=True)
@@ -91,5 +94,5 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         paths=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-game-lifetime.qml',args.source/'Scripts/dev/fixtures/plugin-settings-game-disk.py',args.source/'Scripts/dev/plugin-settings-pomodoro-input-regression.py',args.source/'Scripts/dev/edge-scroll-test-pointer.c',args.source/'Scripts/dev/wlr-virtual-pointer-unstable-v1.xml']
         runner.write_json(args.output/'inputs.json',dict(source=str(args.source),plugins=str(args.plugins),files={str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},pluginFiles={str(p.relative_to(args.plugins)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'tamagotchi').rglob('*') if p.is_file()}))
-        run(args,profile); runner.write_json(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
+        run(args,profile); stage_receipt(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
 if __name__=='__main__': main()

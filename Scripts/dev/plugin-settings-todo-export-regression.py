@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native Todo export policy, actual Panel action and independent output bytes."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -27,6 +28,7 @@ os.execv('/usr/bin/sh',['sh']+sys.argv[1:])
 '''
 
 def hashes(case): return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
+@receipt_run
 def run(args, profile, scope):
     case,out=args.work_root/scope,args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -72,7 +74,7 @@ def run(args, profile, scope):
             if not wanted or not (output/'runtime.log').is_file() or wanted not in (output/'runtime.log').read_text() or (output/'runtime.exit').read_text().strip()!='2': raise
             if args.old_red and not (out/'persisted/edited.json').is_file(): raise RuntimeError('Todo original red preceded independent native publication')
             result=dict(status='PASS',originalRed=args.old_red,rejectedAt=wanted,completePlanAcceptance=False)
-            runner.write_json(out/'result.json',result); runner.remove_completed_installs(case,out); return result
+            stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out); return result
         marker='TODO_EXPORT_LIFETIME: PASS' if args.lifetime else 'TODO_EXPORT_NATIVE: PASS '+scope+' '+mode
         if marker not in text or any(k in text for k in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected','TODO_EXPORT_ASSERT:','TODO_EXPORT_LIFE_ASSERT:')): raise RuntimeError('Todo export consumer/diagnostic failure')
         if args.lifetime:
@@ -82,7 +84,7 @@ def run(args, profile, scope):
             if 'Empty page' not in value:
                 if args.control=='empty':
                     result=dict(status='PASS',originalRed=False,rejectedAt=wanted,completePlanAcceptance=False)
-                    runner.write_json(out/'result.json',result); runner.remove_completed_installs(case,out); return result
+                    stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out); return result
                 raise RuntimeError('held Markdown output retains admitted empty policy')
             if not all(task['text'] in value for task in tasks) or list((case/'export-later').iterdir()): raise RuntimeError('held export reread replacement content/policy')
             if hashes(case)!=before: raise RuntimeError('explicit-context export changed stored content/configuration')
@@ -92,9 +94,9 @@ def run(args, profile, scope):
                 if proc.exists() and proc.read_text().split(') ',1)[1].split()[19]==row['start']: raise RuntimeError('export endpoint survived engine')
             result=dict(status='PASS',lifetime=True,endpointRows=rows,configurationBefore=before,configurationAfter=hashes(case),heldOutputSha256=hashlib.sha256(paths[0].read_bytes()).hexdigest(),completePlanAcceptance=False)
             if wanted: raise RuntimeError('Todo lifetime control escaped')
-            runner.write_json(out/'result.json',result); runner.remove_completed_installs(case,out); return result
+            stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out); return result
         if mode=='cold' and hashes(case)!=before: raise RuntimeError('Todo cold reader published configuration')
-        runner.write_json(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
+        stage_receipt(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
         rows=[json.loads(line.split('TODO_EXPORT_OUTPUT ',1)[1]) for line in text.splitlines() if 'TODO_EXPORT_OUTPUT ' in line]
         if len(rows)!=1: raise RuntimeError('missing actual Panel export output')
         row=rows[0]; path=Path(row['path'])
@@ -111,9 +113,10 @@ def run(args, profile, scope):
     for boundary,value in expected.items():
         if json.loads((out/('persisted/'+boundary+'.json')).read_text())!=dict(status='PASS',values=value): raise RuntimeError('Todo independent document mismatch: '+boundary)
     result=dict(status='PASS',scope=scope,exports=exports,independentBoundaries=sorted(expected),coldReaders=['edited','reset','following'],physicalProof=False,completePlanAcceptance=False)
-    runner.write_json(out/'result.json',result); runner.remove_completed_installs(case,out)
+    stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out)
     print('TODO_EXPORT_NATIVE '+scope+': PASS',flush=True); return result
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source','plugins','work-root','output'): parser.add_argument('--'+key,type=Path,required=True)
@@ -132,5 +135,5 @@ def main():
         paths=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-todo-export-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-todo-export-lifetime.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output/'inputs.json',dict(source=str(args.source),plugins=str(args.plugins),files={str(f.relative_to(args.source)):hashlib.sha256(f.read_bytes()).hexdigest() for f in paths},pluginFiles={str(f.relative_to(args.plugins)):hashlib.sha256(f.read_bytes()).hexdigest() for f in (args.plugins/'todo').rglob('*') if f.is_file()}))
         rows=[run(args,profile,scope) for scope in ((args.scope,) if args.scope else ('instance','shared'))]
-        runner.write_json(args.output/'result.json',dict(status='PASS',cases=rows,completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',cases=rows,completePlanAcceptance=False))
 if __name__=='__main__': main()

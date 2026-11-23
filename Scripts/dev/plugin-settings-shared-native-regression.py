@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native shared field facts and context preparation. Assigned guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import importlib.util
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -63,7 +65,7 @@ def main():
         text = runner.run_fixture(profile, install, case, cold, fixture, extra_env=dict(PHA_SHARED_NATIVE_COLD='1'))
         if 'PLUGIN_SETTINGS_SHARED_NATIVE: COLD_PASS' not in text or any(item in text for item in bad):
             raise RuntimeError('separate cold runtime consumer')
-        runner.write_json(out / 'result.json', dict(status='PASS', nativeSharedCapture=True, stageDiscardApply=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', nativeSharedCapture=True, stageDiscardApply=True,
             independentReadback=True, separateColdConsumer=True, stableRuntimeContext=True, pageAdoption=False))
         if install.is_symlink() or install.resolve() != install or not install.is_relative_to(case):
             raise RuntimeError('owned install cleanup identity')

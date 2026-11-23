@@ -7,6 +7,7 @@ Space/Return, and AT-SPI toggle actions activate the same controls. Each pass
 must give identical field intents, native Apply, persisted values and Main
 consumer state. The persisted file is read again independently here.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -40,6 +41,7 @@ def build_pointer(source, build):
     return build / 'pointer'
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -129,7 +131,7 @@ def main():
                       pointer=dict(path=str(pointer), sha256=hashlib.sha256(pointer.read_bytes()).hexdigest()),
                       injector=dict(path=str(injector), sha256=hashlib.sha256(injector.read_bytes()).hexdigest()),
                       witness='real niri pointer/keyboard input and AT-SPI actions on the actual Pomodoro page and Main')
-        runner.write_json(out / 'result.json', result)
+        stage_receipt(out / 'result.json', result)
         print('CASE P169-input: %s %s' % (result['status'], json.dumps(checks)), flush=True)
         if result['status'] != 'PASS':
             raise SystemExit(1)

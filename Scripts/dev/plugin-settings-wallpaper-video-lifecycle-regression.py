@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Two real outputs: Video's native automation, backend and delayed writer owners."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import base64
 from copy import deepcopy
@@ -19,6 +20,7 @@ native=importlib.util.module_from_spec(spec);spec.loader.exec_module(native)
 runner=native.runner
 
 
+@receipt_run
 def run(args,profile,scenario):
     case,out=args.work_root/scenario,args.output/scenario;case.mkdir();out.mkdir();(out/'persisted').mkdir();install=case/'install'
     shutil.copytree(args.source,install,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -66,10 +68,11 @@ def run(args,profile,scenario):
             if time.monotonic()>end:raise RuntimeError('Video endpoint survived')
             time.sleep(.02)
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',scenario=scenario,actualOutputs=args.screens,completeDocuments=sorted(expected),inertEndpoints=len(rows),physicalProof=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scenario=scenario,actualOutputs=args.screens,completeDocuments=sorted(expected),inertEndpoints=len(rows),physicalProof=False))
     runner.remove_completed_installs(case,out);print('WALLPAPER_VIDEO_LIFETIME '+scenario+': PASS',flush=True)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for key in ('source','plugins','work-root','output'):parser.add_argument('--'+key,type=Path,required=True)
@@ -84,7 +87,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-wallpaper-video-lifecycle.qml')})
         for scenario in ((args.scenario,) if args.scenario else ('automation','backend','baseline')):run(args,profile,scenario)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeWallpaperAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeWallpaperAcceptance=False))
 
 
 if __name__=='__main__':main()

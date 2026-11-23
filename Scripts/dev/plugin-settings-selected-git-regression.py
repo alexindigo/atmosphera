@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """P048 real page/query/Panel outcome with inert endpoints, verified VM only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -71,7 +73,7 @@ def main():
             raise RuntimeError('separate cold Git Panel result failed')
         inputs = {str(path.relative_to(args.plugins)): hashlib.sha256(path.read_bytes()).hexdigest()
                   for path in sorted((args.plugins / 'git-companion').glob('*.qml'))}
-        runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, actualSettingsAndPanel=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', inputs=inputs, actualSettingsAndPanel=True,
             inertRealQueryEndpoint=True, oneClientPerContext=True, genuineKeyboardRepository=True,
             discardDoesNotPublish=True, nativeApply=True, sharedAndSiblingUnchanged=True,
             independentPersistedReadback=True, separateColdConsumer=True, completeCatalog=False))

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Independent real-input canary for the task-owned Wayland fixture injector."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -45,7 +47,7 @@ def main():
         result = dict(status='PASS', injector=str(args.injector), sha256=hashlib.sha256(args.injector.read_bytes()).hexdigest(),
                       nativeTextField=True, nativeModalField=True, nativeButton=True, literalSlash=True,
                       shiftedPunctuationAndCase=True, namedEscape=True, namedSpace=True, controlA=True)
-        (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+        stage_receipt(args.output / 'result.json', result)
         print('PLUGIN_SETTINGS_INPUT: PASS (plain/modal native fields, physical text/control keys, native Button)')
 
 

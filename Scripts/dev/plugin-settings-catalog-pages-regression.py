@@ -7,6 +7,7 @@ from the owning files by the fixture and again independently here. Main entry
 points are not constructed, so no plugin command/network/device effect runs;
 this is page/persistence proof, not a claim about each plugin's consumers.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -37,6 +38,7 @@ def settings_files(plugin_dir):
     return [entry] + children
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -128,7 +130,7 @@ def main():
                        fixtureError=error, lintExit=lint_exit, shellDiagnostics=diagnostics.get('shell', []),
                        passed=passed, failed=[plugin for plugin in ids if plugin not in passed + unexercised], inputs=inputs, results=results,
                        witness='control user-signal emission through the actual popup/session/native owners; not physical input; Main not constructed')
-        runner.write_json(out / 'result.json', summary)
+        stage_receipt(out / 'result.json', summary)
         for plugin in ids:
             print('CATALOG %s: %s %s' % (plugin, results[plugin]['status'], '; '.join(results[plugin]['reasons'])[:600]), flush=True)
         print('CATALOG_PAGES: %s (%d/%d exercised, %d unexercised %s, lint rc %d%s)' % (summary['status'], len(passed), len(ids), len(unexercised), unexercised, lint_exit,

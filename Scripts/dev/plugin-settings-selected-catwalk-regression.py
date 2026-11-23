@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Selected Catwalk configuration at actual Bar/Desktop consumers, VM only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -64,7 +66,7 @@ def main():
             raise RuntimeError('separate cold Catwalk consumer failed')
         inputs = {str(path.relative_to(args.plugins)): hashlib.sha256(path.read_bytes()).hexdigest()
                   for path in sorted((args.plugins / 'catwalk').glob('*.qml'))}
-        runner.write_json(out / 'result.json', dict(status='PASS', inputs=inputs, actualBarDesktop=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', inputs=inputs, actualBarDesktop=True,
             controlledCpuSample=15, oneClientPerContext=True, genuineKeyboardSlider=True,
             nativeApplyAndReset=True, sharedAndSiblingUnchanged=True, separateColdConsumer=True,
             realIoFailureRetry=True, failedCloseRetainsPage=True, signalBeforeCallback=True, ownerRetiresClients=True,

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native shared MPV cache publication and captured/retired delayed color input."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -16,6 +17,7 @@ native=importlib.util.module_from_spec(spec);spec.loader.exec_module(native)
 runner=native.runner
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for key in ('source','plugins','work-root','output'):parser.add_argument('--'+key,type=Path,required=True)
@@ -52,7 +54,7 @@ def main():
         for row in rows:
             path=Path('/proc')/str(row['pid'])/'stat'
             assert not path.exists() or path.read_text().split(') ',1)[1].split()[19]!=row['start']
-        runner.write_json(out/'result.json',dict(status='PASS',completeDocuments=sorted(expected),sharedCacheNativeWriter=True,capturedColorInput=True,retiredDelayedCallback=True,physicalProof=False))
+        stage_receipt(out/'result.json',dict(status='PASS',completeDocuments=sorted(expected),sharedCacheNativeWriter=True,capturedColorInput=True,retiredDelayedCallback=True,physicalProof=False))
         runner.remove_completed_installs(case,out)
         print('WALLPAPER_MPV_LIFETIME: PASS',flush=True)
 

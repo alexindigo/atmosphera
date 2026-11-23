@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual clipboard pages, complete native documents and cold Panel consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -54,6 +55,7 @@ def seed(case, plugins):
     return product
 
 
+@receipt_run
 def run(args, profile, scope):
     case,out=args.work_root/scope,args.output/scope;case.mkdir();out.mkdir();(out/'persisted').mkdir()
     install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -90,10 +92,11 @@ def run(args, profile, scope):
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl');rows=[json.loads(line) for line in (out/'requests.jsonl').read_text().splitlines()]
     for row in rows:
         stat=Path('/proc')/str(row['pid'])/'stat';assert not stat.exists() or stat.read_text().split(') ',1)[1].split()[19]!=row['start'],row
-    runner.write_json(out/'result.json',dict(status='PASS',scope=scope,kind='original-native-red' if args.original_plugins else 'shared-reader-control' if args.shared_reader else 'native',completeNativeBoundaries=boundaries,nonpublishingColdReaders=[] if controlled else ['edited','reset','following'],endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scope=scope,kind='original-native-red' if args.original_plugins else 'shared-reader-control' if args.shared_reader else 'native',completeNativeBoundaries=boundaries,nonpublishingColdReaders=[] if controlled else ['edited','reset','following'],endpointRows=len(rows),allEndpointIdentitiesAbsent=True,physicalProof=False))
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -108,6 +111,6 @@ def main():
         inputs=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-clipboard-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs})
         for scope in ((args.scope,) if args.scope else ('instance','shared')):run(args,profile,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 if __name__=='__main__':main()

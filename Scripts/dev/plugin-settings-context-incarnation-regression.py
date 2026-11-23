@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual native placement incarnation/read/action admission across all families."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -78,9 +80,9 @@ def main():
                 else: expected[filename]['monitorWidgets'][0]['widgets'] = changed
                 actual = {name: json.loads((case / 'config' / name).read_text()) for name in documents}
                 assert actual == expected, (label, actual, expected)
-                runner.write_json(out / 'result.json', dict(status='PASS', family=family, change=change, original=args.original, documents=actual, replacementWrite=False))
+                stage_receipt(out / 'result.json', dict(status='PASS', family=family, change=change, original=args.original, documents=actual, replacementWrite=False))
                 results.append(label); runner.remove_completed_installs(case, out)
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, original=args.original, actualNativeApis=True))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, original=args.original, actualNativeApis=True))
         print('CONTEXT_INCARNATION: PASS', flush=True)
 
 

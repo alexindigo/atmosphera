@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Pomodoro native page, selected timers and independent complete documents."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -16,6 +17,7 @@ EDIT = dict(zip(KEYS, [30, 7, 20, 3, True, True, True, False]))
 FOLLOW = dict(zip(KEYS, [35, 8, 25, 5, False, False, False, False]))
 def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case/'config').rglob('*.json')}
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -51,10 +53,10 @@ def run(args, profile, scope):
             if not wanted or not (output/'runtime.log').is_file() or wanted not in (output/'runtime.log').read_text() or (output/'runtime.exit').read_text().strip()!='2': raise
             if not (out/'persisted/edited.json').is_file(): raise RuntimeError('red preceded native publication')
             result=dict(status='PASS',originalRed=args.old_red,control=args.control,rejectedAt=wanted,completePlanAcceptance=False)
-            runner.write_json(out/'result.json',result); runner.remove_completed_installs(case,out); return result
+            stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out); return result
         if 'POMO_NATIVE: PASS '+scope+' '+mode not in text or any(v in text for v in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected','POMO_ASSERT:')): raise RuntimeError('Pomodoro consumer/diagnostic failure')
         if mode=='cold' and hashes(case)!=before: raise RuntimeError('cold reader published')
-        runner.write_json(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
+        stage_receipt(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
     if wanted: raise RuntimeError('original red escaped')
     if args.native_lifetime:
         if 'POMO_NATIVE_LIFETIME: PASS' not in text: raise RuntimeError('native retirement marker absent')
@@ -62,7 +64,8 @@ def run(args, profile, scope):
     for boundary,value in expected.items():
         if json.loads((out/'persisted'/(boundary+'.json')).read_text())!=dict(status='PASS',values=value): raise RuntimeError('independent documents: '+boundary)
     result=dict(status='PASS',scope=scope,independentBoundaries=sorted(expected),coldReaders=[] if args.native_lifetime else ['edited','reset','following'],nativeLifetime=args.native_lifetime,physicalProof=False,completePlanAcceptance=False)
-    runner.write_json(out/'result.json',result); runner.remove_completed_installs(case,out); return result
+    stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out); return result
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name,type=Path,required=True)
@@ -81,5 +84,5 @@ def main():
         paths=[Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-pomodoro-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output/'inputs.json',dict(source=str(args.source),plugins=str(args.plugins),files={str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},pluginFiles={str(p.relative_to(args.plugins)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins/'pomodoro').rglob('*') if p.is_file()}))
         rows=[run(args,profile,scope) for scope in ((args.scope,) if args.scope else ('instance','shared'))]
-        runner.write_json(args.output/'result.json',dict(status='PASS',cases=rows,completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',cases=rows,completePlanAcceptance=False))
 if __name__=='__main__': main()

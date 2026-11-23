@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Dmenu IPC/Panel session-policy witnesses in the assigned guest."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -23,6 +24,7 @@ def replace_code(text, old, new):
     return changed
 
 
+@receipt_run
 def run(args, profile):
     case, out = args.work_root / 'session', args.output / 'session'
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -108,14 +110,15 @@ def run(args, profile):
             if 'DMENU_SESSION: PASS cold' not in text or any(marker in text for marker in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'DMENU_ASSERT:')): raise RuntimeError('cold consumer failed')
             after = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in (case / 'config').rglob('*.json')}
             if before != after: raise RuntimeError('cold consumer published configuration')
-            runner.write_json(cold_out / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=after))
+            stage_receipt(cold_out / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=after))
             cold = True
         result = dict(status='PASS', mode=args.mode, nonpublishingColdConsumer=cold, physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -132,7 +135,7 @@ def main():
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         paths = [Path(__file__), args.source / 'Scripts/dev/guest_profile.py', args.source / 'Scripts/dev/plugin-settings-host-assets-regression.py', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py'] + list((args.source / 'Scripts/dev/fixtures').glob('plugin-settings-dmenu-*.qml'))
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'dmenu').rglob('*') if p.is_file()}))
-        runner.write_json(args.output / 'result.json', run(args, profile))
+        stage_receipt(args.output / 'result.json', run(args, profile))
 
 
 if __name__ == '__main__': main()

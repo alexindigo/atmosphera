@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Plugin-level field capture, native staged Reset and inheriting consumers, VM only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -16,6 +17,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -59,7 +61,7 @@ def main():
         text = runner.run_fixture(profile, install, case, cold, fixture, extra_env=dict(PHA_SHARED_COLD='1'))
         if 'SHARED_FIELDS: COLD_PASS' not in text or any(marker in text for marker in bad):
             raise RuntimeError('separate cold shared consumer failed')
-        runner.write_json(out / 'result.json', dict(status='PASS', pluginScopeCapture=True, genuineKeyboardSlider=True,
+        stage_receipt(out / 'result.json', dict(status='PASS', pluginScopeCapture=True, genuineKeyboardSlider=True,
             nativeLowerLevelWhileStaged=True, discardPublishesNothing=True, stagedResetApply=True,
             writableSourceRemovalOnly=True, inheritingInstancePropagation=True, overriddenSiblingUnchanged=True,
             separateColdConsumer=True))

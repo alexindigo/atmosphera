@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """G2 representative native publication joined to inert originating actions."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -61,6 +62,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     case, out = args.work_root / (plugin + '-' + scope), args.output / (plugin + '-' + scope)
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -155,10 +157,10 @@ def run(args, profile, plugin, scope):
             if not control or not (output/'runtime.log').exists() or wanted not in (output/'runtime.log').read_text() or (output/'runtime.exit').read_text().strip()!='2':raise
             if not (out/'persisted/edited.json').exists():raise RuntimeError('G2 control did not reach independent native publication')
             result=dict(status='PASS',kind='original-red' if args.old_red else 'rejecting-control',rejectedAt=wanted,completeGroupAcceptance=False)
-            runner.write_json(out/'result.json',result);runner.remove_completed_installs(case,out);return result
+            stage_receipt(out/'result.json',result);runner.remove_completed_installs(case,out);return result
         if 'G2_NATIVE: PASS '+plugin+' '+scope+' '+mode+' '+boundary not in text or any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')):raise RuntimeError('G2 native/action diagnostic failure')
         if mode=='cold' and hashes(case)!=before:raise RuntimeError('G2 cold action reader published preferences')
-        runner.write_json(output/'observed.json',dict(status='PASS',hashes=hashes(case),actions=[json.loads(line.split('G2_ACTION ',1)[1]) for line in text.splitlines() if 'G2_ACTION ' in line]))
+        stage_receipt(output/'observed.json',dict(status='PASS',hashes=hashes(case),actions=[json.loads(line.split('G2_ACTION ',1)[1]) for line in text.splitlines() if 'G2_ACTION ' in line]))
     if control:raise RuntimeError('G2 control escaped')
     for boundary,value in expected.items():
         if json.loads((out/('persisted/'+boundary+'.json')).read_text())!=dict(status='PASS',values=value):raise RuntimeError('G2 complete native documents differ')
@@ -168,9 +170,10 @@ def run(args, profile, plugin, scope):
         path=Path('/proc')/str(row['pid'])/'stat'
         if path.exists() and path.read_text().split(') ',1)[1].split()[19]==row['start']:raise RuntimeError('G2 endpoint process survived')
     result=dict(status='PASS',plugin=plugin,scope=scope,actualPageMainAndOriginatingView=True,nativeBoundaries=sorted(expected),unchangedHashColdReaders=['edited','reset','following'],inertActions=len(rows),physicalProof=False,completeGroupAcceptance=False)
-    runner.write_json(out/'result.json',result);runner.remove_completed_installs(case,out);print('G2_NATIVE '+plugin+' '+scope+': PASS',flush=True);return result
+    stage_receipt(out/'result.json',result);runner.remove_completed_installs(case,out);print('G2_NATIVE '+plugin+' '+scope+': PASS',flush=True);return result
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for key in ('source','plugins','work-root','output'):parser.add_argument('--'+key,type=Path,required=True)
@@ -188,7 +191,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-action-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py']})
         results=[run(args,profile,plugin,scope) for plugin in ((args.plugin,) if args.plugin else ('screencast-gif','network-manager-vpn')) for scope in ((args.scope,) if args.scope else ('instance','shared'))]
-        runner.write_json(args.output/'result.json',dict(status='PASS',cases=results,completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',cases=results,completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

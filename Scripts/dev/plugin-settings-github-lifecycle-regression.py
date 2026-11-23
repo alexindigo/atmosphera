@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """All GitHub request stages and original shared cache owner, inert curl only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -17,6 +18,7 @@ spec = importlib.util.spec_from_file_location('github_lifetime_runner', Path(__f
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -59,7 +61,7 @@ def main():
             if not args.notification_control or wanted not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
             runner.write_json(out / 'requests.json', [json.loads(line) for line in requests.read_text().splitlines()])
             runner.write_json(out / 'effects.json', [json.loads(line) for line in effects.read_text().splitlines()])
-            runner.write_json(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False))
+            stage_receipt(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False))
             runner.remove_completed_installs(case, out); return
         if args.notification_control: raise RuntimeError('common GitHub notification control escaped')
         if 'GITHUB_LIFECYCLE: PASS' not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'GITHUB_LIFECYCLE_ASSERT:')): raise RuntimeError('GitHub chain lifetime/diagnostic failure')
@@ -79,7 +81,7 @@ def main():
             path = Path('/proc') / str(row['pid']) / 'stat'
             if path.exists() and path.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('GitHub inert endpoint survived engine')
         runner.write_json(out / 'cache.json', cache); runner.write_json(out / 'requests.json', rows); runner.write_json(out / 'effects.json', notification_rows)
-        runner.write_json(out / 'result.json', dict(status='PASS', avatarDownloads=len(avatar_rows), decodedAvatarImages=3, avatarFiles=sorted(expected), commonNotifications=len(notification_rows), unconfiguredProjection=True, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
+        stage_receipt(out / 'result.json', dict(status='PASS', avatarDownloads=len(avatar_rows), decodedAvatarImages=3, avatarFiles=sorted(expected), commonNotifications=len(notification_rows), unconfiguredProjection=True, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out); print('GITHUB_LIFECYCLE: PASS', flush=True)
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Native originating description/hide writer, real failure/Retry and retirement."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -13,6 +14,7 @@ from guest_profile import activate_profile, profile_argument
 spec=importlib.util.spec_from_file_location('kbd_action_runner',Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
 runner=importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
+@receipt_run
 def run(args,profile,scope):
     case,out=args.work_root/scope,args.output/scope; case.mkdir(); out.mkdir()
     install=case/'install'; shutil.copytree(args.source,install,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
@@ -51,7 +53,7 @@ def run(args,profile,scope):
         actual=dict(shared=json.loads((case/'config/settings/plugins/keybind-cheatsheet.json').read_text()),bar=json.loads((case/'config/settings/bar.json').read_text()))
         if actual==expected['described'] or actual['shared'].get('bindOverrides',{}).get(bind,{}).get('desc')!='Selected description': raise RuntimeError('wrong-writer control lacks independent wrong-owner publication')
         runner.write_json(out/'wrong-owner.json',actual)
-        runner.write_json(out/'result.json',dict(status='PASS',control='writer',rejected=True,completePlanAcceptance=False)); runner.remove_completed_installs(case,out); return
+        stage_receipt(out/'result.json',dict(status='PASS',control='writer',rejected=True,completePlanAcceptance=False)); runner.remove_completed_installs(case,out); return
     finally:
         (case/('config/settings/plugins' if scope=='shared' else 'config/settings')).chmod(0o700)
     if args.control: raise RuntimeError('wrong writer control escaped')
@@ -66,9 +68,10 @@ def run(args,profile,scope):
         if mode=='cold' and before!={str(path):hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}: raise RuntimeError('cold action consumer published')
         checks+=text.count('KEYBIND_ACTION_CHECK:')
     if not set(expected).issubset(p.stem for p in out.glob('*.json')): raise RuntimeError('missing independent documents')
-    runner.write_json(out/'result.json',dict(status='PASS',scope=scope,boundaries=list(expected),checks=checks,coldReaders=1,completePlanAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scope=scope,boundaries=list(expected),checks=checks,coldReaders=1,completePlanAcceptance=False))
     runner.remove_completed_installs(case,out)
 
+@receipt_run
 def main():
     p=argparse.ArgumentParser(description=__doc__); profile_argument(p)
     for name in ('source','plugins','work-root','output'): p.add_argument('--'+name,type=Path,required=True)
@@ -81,5 +84,5 @@ def main():
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         for scope in ([args.scope] if args.scope else ['instance','shared']): run(args,profile,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completePlanAcceptance=False))
 if __name__=='__main__': main()

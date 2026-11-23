@@ -6,6 +6,7 @@ Never-ready changes only a disposable fixture's observation predicate. It must
 fail explicitly at the finite opening budget. Neither control patches product
 code, the installed native library, or normal catalog admission.
 """
+from fixture_receipts import receipt_run, stage_receipt, staged_receipt
 import argparse
 import hashlib
 import importlib.util
@@ -18,6 +19,7 @@ import sys
 from guest_profile import activate_profile, profile_argument
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -74,7 +76,7 @@ def main():
         catalog.main()
     except SystemExit as failure:
         code = failure.code
-    result = json.loads((args.output / 'result.json').read_text())
+    result = staged_receipt(args.output / 'result.json')
     log = (args.output / 'runtime.log').read_text()
     instance = result['results']['music-search']['rows'].get('instance', {})
     expiry = re.search(r'CATALOG_FATAL instance api music-search:.*elapsedMs=(\d+), budgetMs=(\d+)', log)
@@ -88,7 +90,7 @@ def main():
                   nativeOpenBudgetMs=15000, injectedSyncDelayMs=6331 if args.mode == 'slow' else 0,
                   shimSourceSha256=hashlib.sha256(shim_source.read_bytes()).hexdigest(),
                   interpretation='negative catalog failure is expected only for never-ready; no retries or missing-row waiver')
-    catalog.runner.write_json(args.output / 'budget-control.json', report)
+    stage_receipt(args.output / 'budget-control.json', report)
     print('CATALOG_OPERATION_BUDGET: ' + json.dumps(report), flush=True)
     if not passed:
         raise SystemExit(1)

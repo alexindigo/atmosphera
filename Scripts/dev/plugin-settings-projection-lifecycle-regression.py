@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Individual shared history/notification/device/calculation lifetime outcomes."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -15,6 +16,7 @@ spec = importlib.util.spec_from_file_location('projection_lifecycle_runner', Pat
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 
+@receipt_run
 def run(args, profile, plugin):
     case, out = args.work_root / plugin, args.output / plugin
     case.mkdir(); out.mkdir()
@@ -75,11 +77,12 @@ def run(args, profile, plugin):
         p = Path('/proc') / str(row['pid']) / 'stat'
         if p.exists() and p.read_text().split(') ', 1)[1].split()[19] == row['start']:
             raise RuntimeError('projection endpoint survived engine')
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('PROJECTION_LIFECYCLE ' + plugin + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -99,7 +102,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-projection-lifecycle.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-projection-endpoint.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for member in ((args.plugin,) if args.plugin else ('privacy-indicator', 'kde-connect', 'noctalia-calculator')) for p in (args.plugins / member).rglob('*') if p.is_file()}))
         results = [run(args, profile, plugin) for plugin in ((args.plugin,) if args.plugin else ('privacy-indicator', 'kde-connect', 'noctalia-calculator'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

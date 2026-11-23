@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """LWE's individual captured engine, query and color lifetimes on native owners."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -41,6 +42,7 @@ if name=='linux-wallpaperengine':
 '''
 
 
+@receipt_run
 def run(args,profile,scenario):
     case,out=args.work_root/scenario,args.output/scenario
     case.mkdir();out.mkdir();(out/'persisted').mkdir();install=case/'install'
@@ -97,10 +99,11 @@ def run(args,profile,scenario):
             if time.monotonic()>end:raise RuntimeError('individual endpoint survived')
             time.sleep(.02)
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',scenario=scenario,completeDocuments=sorted(expected),inertEndpoints=len(rows),physicalProof=False))
+    stage_receipt(out/'result.json',dict(status='PASS',scenario=scenario,completeDocuments=sorted(expected),inertEndpoints=len(rows),physicalProof=False))
     runner.remove_completed_installs(case,out);print('WALLPAPER_LIFETIME '+scenario+': PASS',flush=True)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for key in ('source','plugins','work-root','output'):parser.add_argument('--'+key,type=Path,required=True)
@@ -115,7 +118,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-wallpaper-lifecycle.qml',args.source/'Scripts/dev/fixtures/plugin-settings-wallpaper-lifecycle-disk.py')})
         for scenario in ((args.scenario,) if args.scenario else ('engine','source','color')):run(args,profile,scenario)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeWallpaperAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeWallpaperAcceptance=False))
 
 
 if __name__=='__main__':main()

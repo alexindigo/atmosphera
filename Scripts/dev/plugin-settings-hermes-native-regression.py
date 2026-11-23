@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Hermes pages/native documents/cold readers and model HTTP consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -16,6 +17,7 @@ life = importlib.util.module_from_spec(spec); spec.loader.exec_module(life)
 runner = life.runner
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
@@ -89,7 +91,7 @@ def run(args, profile, scope):
                 boundaries=['initial','discarded','edited'] if args.omit_origin else ['initial']
                 for name in boundaries:assert json.loads((out/'persisted'/(name+'.json')).read_text())==dict(status='PASS',values=expected[name])
                 shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-                runner.write_json(out/'result.json',dict(status='PASS',kind='omitted-origin-control' if args.omit_origin else 'original-page-red',rejectedAt=wanted,failedEngineRetained=True,documents=boundaries))
+                stage_receipt(out/'result.json',dict(status='PASS',kind='omitted-origin-control' if args.omit_origin else 'original-page-red',rejectedAt=wanted,failedEngineRetained=True,documents=boundaries))
                 return
             assert not (args.omit_origin or args.original_page),'Hermes negative control escaped'
             assert 'HERMES_NATIVE: PASS '+scope+' '+mode in text
@@ -115,7 +117,7 @@ def run(args, profile, scope):
         else:
             creates=[row for row in rows if row['path']=='/session/create']
             assert len(creates)==1 and creates[0]['peer']=='selected' and creates[0]['token']=='native-token'
-        runner.write_json(out/'result.json',dict(status='PASS',scope=scope,scenario=args.scenario,engines=len(modes),documents=list(expected),coldReaders=['edited','reset','following'] if args.scenario=='native' else [],httpRows=len(rows)))
+        stage_receipt(out/'result.json',dict(status='PASS',scope=scope,scenario=args.scenario,engines=len(modes),documents=list(expected),coldReaders=['edited','reset','following'] if args.scenario=='native' else [],httpRows=len(rows)))
     finally:
         (case/'release').write_text('release')
         peer.done.set();peer.shutdown();peer.server_close();thread.join(timeout=5);assert not thread.is_alive()
@@ -124,6 +126,7 @@ def run(args, profile, scope):
     runner.remove_completed_installs(case,out)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -139,7 +142,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         runner.write_json(args.output/'inputs.json',{str(f.relative_to(args.source)):hashlib.sha256(f.read_bytes()).hexdigest() for f in (Path(__file__),args.source/'Scripts/dev/plugin-settings-hermes-agent-regression.py',args.source/'Scripts/dev/fixtures/plugin-settings-hermes-agent-native.qml',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py')})
         for scope in ((args.scope,) if args.scope else ('instance','shared')):run(args,profile,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',fullMemberAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',fullMemberAcceptance=False))
 
 
 if __name__=='__main__':main()

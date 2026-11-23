@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual G4 backend/renderer lifetimes, confined to an explicit guest profile."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -93,6 +94,7 @@ def seed(case, source, plugins, plugin):
     return product
 
 
+@receipt_run
 def run(args, profile, plugin):
     case, out = args.work_root/plugin, args.output/plugin
     case.mkdir(); out.mkdir()
@@ -142,11 +144,12 @@ def run(args, profile, plugin):
     for row in rows:
         p=Path('/proc')/str(row['pid'])/'stat'
         assert not p.exists() or p.read_text().split(') ',1)[1].split()[19]!=row['start'], 'live synthetic endpoint'
-    runner.write_json(out/'result.json', dict(status='PASS', kind=kind, plugin=plugin, endpointRows=len(rows), configurationUnchanged=True, physicalProof=False))
+    stage_receipt(out/'result.json', dict(status='PASS', kind=kind, plugin=plugin, endpointRows=len(rows), configurationUnchanged=True, physicalProof=False))
     runner.remove_completed_installs(case, out)
     print('BACKEND_LIFETIME '+plugin+': '+kind, flush=True)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'):
@@ -164,7 +167,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB); args.work_root.mkdir();args.output.mkdir()
         for plugin in ((args.plugin,) if args.plugin else MEMBERS):
             run(args,profile,plugin)
-        runner.write_json(args.output/'result.json',dict(status='PASS',original=args.original,completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',original=args.original,completeGroupAcceptance=False))
 
 
 if __name__=='__main__':

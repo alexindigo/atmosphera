@@ -6,6 +6,7 @@ caller-owned Loader. Root, inherited and absent context declarations run with
 a real field-page capability and both real runtime API kinds. The negative
 controls mutate disposable installs only, never canonical source.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -62,6 +63,7 @@ Item {
     return shared
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -132,7 +134,7 @@ def main():
                                'Scripts/dev/fixtures/plugin-settings-loader-matrix.qml',
                                'Scripts/dev/plugin-settings-loader-regression.py')},
                       witness='production admission/context delivery with actual native selected page API; no catalog consumer claim')
-        runner.write_json(args.output / 'result.json', result)
+        stage_receipt(args.output / 'result.json', result)
         print('PLUGIN_SETTINGS_LOADER: ' + result['status'], flush=True)
         if passed:
             runner.remove_completed_installs(args.work_root, args.output)

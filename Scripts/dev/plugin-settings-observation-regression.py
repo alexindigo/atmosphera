@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Explicit-context observation diagnostics; not native page/placement acceptance."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -129,6 +130,7 @@ else: raise SystemExit('unreviewed observation endpoint '+name+' '+repr(args))
 '''
 
 
+@receipt_run
 def run(args, profile, plugin):
     compile(ENDPOINT, '<controlled-observation-endpoint>', 'exec')
     case, out = args.work_root / plugin, args.output / plugin
@@ -249,12 +251,13 @@ if os.environ.get('PHA_OBSERVATION_EXTRA_LIFETIME')=='1': (case/(row['stage']+'-
             raise RuntimeError('originating selected login endpoint differs')
         if (case / 'receive-original/received.txt').read_text() != 'controlled received bytes' or (case / 'receive-original/existing.txt').read_text() != 'unrelated bytes' or list((case / 'receive-replacement').iterdir()):
             raise RuntimeError('captured receive files differ')
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     runner.remove_completed_installs(case, out)
     print('OBSERVATION_CONTEXT ' + plugin + ': PASS', flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'):
@@ -289,7 +292,7 @@ def main():
         args.work_root.mkdir(); args.output.mkdir()
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(path.relative_to(args.source)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-observation.qml')}, nativeOrUIAcceptance=False))
         results = [run(args, profile, plugin) for plugin in ((args.plugin,) if args.plugin else DATA)]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, nativeOrUIAcceptance=False, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, nativeOrUIAcceptance=False, completePlanAcceptance=False))
 
 
 if __name__ == '__main__':

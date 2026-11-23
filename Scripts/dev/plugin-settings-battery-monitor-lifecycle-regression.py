@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Battery Monitor selected-source/fallback/retirement proof with actual UPower."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -19,6 +20,7 @@ def module(name, path):
     return value
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -97,7 +99,7 @@ assert not (case/('base-release' if base else 'release')).exists(), 'helper comp
         for row in map(json.loads, (case / 'requests.jsonl').read_text().splitlines()):
             stat = Path('/proc') / str(row['pid']) / 'stat'
             if stat.exists() and stat.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('battery endpoint survived')
-        runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+        stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
         print(json.dumps(result))
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual Hermes scoped page/native owner and terminal consumers, inert SSH only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -41,6 +42,7 @@ def hashes(case):
     return {str(p.relative_to(case)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case / 'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, scope):
     case, out = args.work_root / scope, args.output / scope
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
@@ -93,10 +95,10 @@ def run(args, profile, scope):
             if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2': raise
             if args.old_red and not (out / 'persisted/edited.json').is_file(): raise RuntimeError('Hermes red precedes native publication')
             result = dict(status='PASS', rejectedAt=wanted, originalRed=args.old_red, completePlanAcceptance=False)
-            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+            stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
         if 'HERMES_NATIVE: PASS ' + scope + ' ' + mode not in text or any(x in text for x in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'HERMES_ASSERT:')): raise RuntimeError('Hermes consumer/diagnostic failure')
         if mode == 'cold' and hashes(case) != before: raise RuntimeError('Hermes cold reader published configuration')
-        runner.write_json(output / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
+        stage_receipt(output / 'observed.json', dict(status='PASS', configurationBefore=before, configurationAfter=hashes(case)))
     if wanted: raise RuntimeError('Hermes control escaped')
     life_boundaries = {'remembered', 'replaced', 'retired'}
     for boundary, value in [(key, value) for key, value in expected.items() if (key in life_boundaries) == args.lifetime]:
@@ -109,10 +111,11 @@ def run(args, profile, scope):
         while proc.exists() and proc.read_text().split(') ', 1)[1].split()[19] == row['start'] and time.monotonic() < deadline: time.sleep(0.02)
         if proc.exists() and proc.read_text().split(') ', 1)[1].split()[19] == row['start']: raise RuntimeError('actual SSH endpoint survived engine')
     result = dict(status='PASS', scope=scope, independentBoundaries=sorted(life_boundaries) if args.lifetime else sorted(set(expected) - life_boundaries), coldReaders=[] if args.lifetime else ['edited', 'reset', 'following'], lifetime=args.lifetime, endpointRows=len(rows), physicalProof=False, completePlanAcceptance=False)
-    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    stage_receipt(out / 'result.json', result); runner.remove_completed_installs(case, out)
     print('HERMES_NATIVE ' + scope + ': PASS', flush=True); return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
@@ -129,7 +132,7 @@ def main():
         paths = [Path(__file__), args.source / 'Scripts/dev/fixtures/plugin-settings-hermes-native.qml', args.source / 'Scripts/dev/fixtures/plugin-settings-hermes-children.py', args.source / 'Scripts/dev/fixtures/plugin-settings-query-disk.py']
         runner.write_json(args.output / 'inputs.json', dict(source=str(args.source), plugins=str(args.plugins), files={str(p.relative_to(args.source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}, pluginFiles={str(p.relative_to(args.plugins)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.plugins / 'hermes-ssh-chat').rglob('*') if p.is_file()}))
         results = [run(args, profile, scope) for scope in ((args.scope,) if args.scope else ('instance', 'shared'))]
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, completePlanAcceptance=False))
 
 
 if __name__ == '__main__': main()

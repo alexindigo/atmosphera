@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Held output parser/backend/apply lifetimes with actual Main owners."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -29,6 +30,7 @@ if name=='cat':os.execv('/usr/bin/cat',['cat',*args])
 '''
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -69,9 +71,9 @@ def main():
                 stat=Path('/proc')/str(row['pid'])/'stat'
                 if stat.exists() and stat.read_text().split(') ',1)[1].split()[19]==row['start']:raise RuntimeError('output endpoint survived')
             shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-            runner.write_json(out/'result.json',dict(status='PASS',plugin=member,scenario=scenario,unchangedNativeDocuments=True,absentEndpointIdentities=len(rows),physicalProof=False,completeGroupAcceptance=False))
+            stage_receipt(out/'result.json',dict(status='PASS',plugin=member,scenario=scenario,unchangedNativeDocuments=True,absentEndpointIdentities=len(rows),physicalProof=False,completeGroupAcceptance=False))
             runner.remove_completed_installs(case,out);print('OUTPUT_LIFETIME '+scenario+': PASS',flush=True)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

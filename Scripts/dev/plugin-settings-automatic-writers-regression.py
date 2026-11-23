@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Independent native tablet restore documents and omitted-origin controls."""
+from fixture_receipts import receipt_run, stage_receipt, staged_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -60,7 +61,7 @@ def run_writer(args,profile):
     for boundary,expected in [('initial',initial),('active',active),('restored',initial)]:
         if json.loads((out/'persisted'/(boundary+'.json')).read_text())!=dict(status='PASS',values=expected):raise RuntimeError('complete native restore mismatch')
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
-    runner.write_json(out/'result.json',dict(status='PASS',kind='native-operational-writer',completeDocuments=['initial','active','restored'],configurationAndOpaquePreserved=True,physicalProof=False,completeGroupAcceptance=False))
+    stage_receipt(out/'result.json',dict(status='PASS',kind='native-operational-writer',completeDocuments=['initial','active','restored'],configurationAndOpaquePreserved=True,physicalProof=False,completeGroupAcceptance=False))
     runner.remove_completed_installs(case,out)
 
 
@@ -75,10 +76,11 @@ def controls(args,profile):
         child=SimpleNamespace(work_root=work,output=out,source=args.source,plugins=args.plugins,original_plugins=product)
         native.run(child,profile,member,'instance')
         receipt=out/(member+'-instance')/'result.json'
-        result=json.loads(receipt.read_text());result.update(kind='omitted-origin-native-red',mutation=dict(file=name,old=old,new=new))
-        runner.write_json(receipt,result)
+        result=staged_receipt(receipt);result.update(kind='omitted-origin-native-red',mutation=dict(file=name,old=old,new=new))
+        stage_receipt(receipt,result)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -92,7 +94,7 @@ def main():
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-automatic-writers.qml',args.source/'Scripts/dev/plugin-settings-automatic-native-regression.py',args.source/'Scripts/dev/fixtures/plugin-settings-automatic-native.qml')})
         if args.case in ('writers','all'):run_writer(args,profile)
         if args.case in ('controls','all'):controls(args,profile)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

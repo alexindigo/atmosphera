@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Shared child field intent and explicit dependent-choice ownership. Guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -17,6 +18,7 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -95,7 +97,7 @@ def main():
                                    for path in (args.source / 'Scripts/dev/fixtures/plugin-settings-child-writers.qml',
                                                 args.source / 'Scripts/dev/plugin-settings-child-writers-regression.py')},
                       witness='actual control signals, native selected field publication, shared children and runtime Panel; no physical media/device claim')
-        runner.write_json(out / 'result.json', result)
+        stage_receipt(out / 'result.json', result)
         print('PLUGIN_SETTINGS_CHILD_WRITERS: ' + result['status'], flush=True)
         if result['status'] == 'PASS':
             runner.remove_completed_installs(case, out)

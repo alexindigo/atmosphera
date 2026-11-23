@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real Video Wallpaper page and automation consumer. Assigned guest only."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,6 +21,7 @@ CASES = ('monitor-intent', 'automation-fallback', 'navigation', 'domains', 'ackn
          'custom-monitor', 'custom-domain', 'custom-space', 'custom-discard')
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -44,6 +46,7 @@ def main():
         raise
 
 
+@receipt_run
 def run(args, profile):
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -137,11 +140,11 @@ def run(args, profile):
                 raise RuntimeError(name + ': cold page/consumer published configuration')
             results.append(dict(id=name, status='PASS', independentReadback=True, separateColdConsumer=True,
                                 runningAutomation=name in ('monitor-intent', 'automation-fallback'), screens=order[0]))
-            runner.write_json(out / 'result.json', results[-1])
+            stage_receipt(out / 'result.json', results[-1])
             runner.remove_completed_installs(case, out)
-        runner.write_json(args.output / 'result.json', dict(status='PASS', cases=results, screenCount=len(screens),
+        stage_receipt(args.output / 'result.json', dict(status='PASS', cases=results, screenCount=len(screens),
             witness='actual control signals, native Apply, dual-output/domain navigation, invalid input, IO Retry and running automation; not physical input'))
-        runner.write_json(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(results)))
+        stage_receipt(args.output / 'status.json', dict(status='PASS', completed=len(results), expected=len(results)))
         print('PLUGIN_SETTINGS_VIDEO_PAGE: PASS')
 
 

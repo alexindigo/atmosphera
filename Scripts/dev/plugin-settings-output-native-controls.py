@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reject omitted-origin output consumers after independent native publication."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import hashlib
 import json
@@ -9,6 +10,7 @@ import subprocess
 from guest_profile import activate_profile,profile_argument
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
@@ -39,7 +41,7 @@ def main():
         shutil.copy2(work/(member+'-instance')/'requests.jsonl',out/'requests.jsonl')
         (out/'control.json').write_text(json.dumps(dict(status='PASS',plugin=member,kind='omitted-origin',nativeEditedBoundary=True,rejectedAt=wanted,mutation=dict(path='Panel.qml',old=old,new=new)),indent=2)+'\n')
         print('OUTPUT_NATIVE_CONTROL '+member+': PASS',flush=True)
-    (args.output/'result.json').write_text(json.dumps(dict(status='PASS',controls=2,completeGroupAcceptance=False),indent=2)+'\n')
+    stage_receipt(args.output/'result.json', dict(status='PASS',controls=2,completeGroupAcceptance=False))
 
 
 if __name__=='__main__':main()

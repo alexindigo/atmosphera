@@ -9,6 +9,7 @@ control center and the lock preview through the shell's own IPC routes and
 sends real Wayland keys. Both runs must satisfy every focus assertion and
 produce the same focus trace. No protocol lock, Return or PAM attempt.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import fcntl
 import hashlib
@@ -68,11 +69,12 @@ def run_variant(args, profile, name, ntoggle, mode):
                   trace=trace, fixtureError=error, diagnostics=diagnostics,
                   ntoggleSha256=hashlib.sha256((install / 'Widgets/NToggle.qml').read_bytes()).hexdigest(),
                   originalEntrySha256=hashlib.sha256(original.encode()).hexdigest())
-    runner.write_json(out / 'result.json', result)
+    stage_receipt(out / 'result.json', result)
     print('FOCUS %s: %s' % (name, result['status']), flush=True)
     return result
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -102,7 +104,7 @@ def main():
                                sameTrace=same, newDiagnostics=new_diagnostics,
                                inheritedDiagnostics=sorted(set(baseline['diagnostics'])))
         status = 'PASS' if all(row['status'] == 'PASS' for row in modes.values()) else 'FAIL'
-        runner.write_json(args.output / 'result.json', dict(status=status, modes=modes,
+        stage_receipt(args.output / 'result.json', dict(status=status, modes=modes,
                             witness='full production entry, all three Settings presentations, shell IPC routes, real Wayland keys; baseline diagnostics retained'))
         print('CASE focus: %s %s' % (status, json.dumps(modes)), flush=True)
         if status != 'PASS':

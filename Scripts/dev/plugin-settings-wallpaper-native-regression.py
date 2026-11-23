@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Actual wallpaper pages/native owners and selected inert engine consumers."""
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 from copy import deepcopy
 import fcntl
@@ -21,6 +22,7 @@ def hashes(case):
     return {str(p.relative_to(case)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((case/'config').rglob('*.json'))}
 
 
+@receipt_run
 def run(args, profile, plugin, scope):
     case, out = args.work_root/(plugin+'-'+scope), args.output/(plugin+'-'+scope)
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir(); install=case/'install'
@@ -103,12 +105,13 @@ def run(args, profile, plugin, scope):
             time.sleep(.02)
     shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
     if rejected:
-        runner.write_json(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,kind=args.negative_control,rejectedAt=wanted,nativeEditedBoundary=True,inertActions=len(rows),physicalProof=False,completeGroupAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,kind=args.negative_control,rejectedAt=wanted,nativeEditedBoundary=True,inertActions=len(rows),physicalProof=False,completeGroupAcceptance=False))
     else:
-        runner.write_json(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,actualPageAndEngine=True,completeNativeBoundaries=sorted(key for key in expected if not args.caller_proof or key in ('initial','discarded','edited')),nonpublishingColdReaders=[] if args.tool_origin or args.caller_proof else ['edited','reset','following'],inertActions=len(rows),physicalProof=False,completeGroupAcceptance=False))
+        stage_receipt(out/'result.json',dict(status='PASS',plugin=plugin,scope=scope,actualPageAndEngine=True,completeNativeBoundaries=sorted(key for key in expected if not args.caller_proof or key in ('initial','discarded','edited')),nonpublishingColdReaders=[] if args.tool_origin or args.caller_proof else ['edited','reset','following'],inertActions=len(rows),physicalProof=False,completeGroupAcceptance=False))
     runner.remove_completed_installs(case,out); print('WALLPAPER_NATIVE '+plugin+' '+scope+': PASS',flush=True)
 
 
+@receipt_run
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source','plugins','work-root','output'): parser.add_argument('--'+key,type=Path,required=True)
@@ -127,7 +130,7 @@ def main():
         runner.write_json(args.output/'inputs.json',{str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),args.source/'Scripts/dev/fixtures/plugin-settings-wallpaper-native.qml',args.source/'Scripts/dev/plugin-settings-wallpaper-runtime-regression.py',args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py')})
         for plugin in ((args.plugin,) if args.plugin else ('linux-wallpaperengine-controller','mpvpaper')):
             for scope in ((args.scope,) if args.scope else ('instance','shared')): run(args,profile,plugin,scope)
-        runner.write_json(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
+        stage_receipt(args.output/'result.json',dict(status='PASS',completeGroupAcceptance=False))
 
 
 if __name__=='__main__': main()
