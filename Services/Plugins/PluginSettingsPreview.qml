@@ -74,7 +74,7 @@ QtObject {
       return lifetime.alive && root._token === token && root._editor && !root._editor.closed;
     }
     return {
-      update: function (patch) {
+      update: function (patch, writeFields) {
         if (!active() || root.currentOwner() !== identity || !patch || typeof patch !== "object" || Array.isArray(patch) || editor.busy)
           return false;
         try {
@@ -84,8 +84,16 @@ QtObject {
               return false;
           var revisions = Object.assign(Object.create(null), root._revisions);
           var inputs = Object.assign(Object.create(null), root._inputs);
+          // The host's writer keeps field intent at its existing capability
+          // owner. Never mutate it before preview admission, or write it twice.
+          if (typeof writeFields === "function") {
+            if (writeFields(edits) !== true)
+              return false;
+          } else {
+            for (var key of Object.keys(edits))
+              editor.values[key] = edits[key];
+          }
           for (var key of Object.keys(edits)) {
-            editor.values[key] = edits[key];
             revisions[key] = {};
             inputs[key] = edits[key];
           }

@@ -190,12 +190,14 @@ QtObject {
                         return selectedFields.configurationKeys.indexOf(key) !== -1;
                       }))
                         return false;
-                      for (var key of keys)
-                        if (!selectedFields.field(key).set(patch[key]))
-                          return false;
                       if (!root._preview)
                         root._preview = base.createSettingsPreview(selected);
-                      return !!root._preview && root._preview.update(patch);
+                      return !!root._preview && root._preview.update(patch, function (edits) {
+                        for (var key of Object.keys(edits))
+                          if (!selectedFields.field(key).set(edits[key]))
+                            return false;
+                        return true;
+                      });
                     }
                   });
     return Object.freeze(result);

@@ -3,8 +3,10 @@
 Runtime `pluginApi.settingsView` is the effective read view for preview-aware
 consumers; runtime `pluginSettings` remains their preference/write boundary.
 Generic pages instead receive isolated reads and explicit field capabilities.
-Their injected `previewSettings(patch)` admits declared configuration leaves
-through those same field setters before updating the selected preview. The page
+Their injected `previewSettings(patch)` first acquires the selected preview.
+Its admitted update writes declared configuration leaves once through the same
+field setters before recording preview revisions. A foreign preview refusal
+does not change the page's existing draft or field intent. The page
 cannot use preview as a content writer or bypass native Apply. No disk
 publication occurs until Apply. Shared and placement APIs have independent sessions.
 An inherited placement reads the shared preview, then its stored overrides, then

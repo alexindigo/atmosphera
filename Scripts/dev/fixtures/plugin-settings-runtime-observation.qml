@@ -21,6 +21,7 @@ ShellRoot {
   property var frozen: null
   property var session: null
   property var externalPreview: null
+  property var foreignEditor: null
   property var openedEditor: null
   readonly property string scenario: Quickshell.env("PHA_OBSERVATION_SCENARIO")
   readonly property bool placed: Quickshell.env("PHA_OBSERVATION_SCOPE") === "instance"
@@ -169,12 +170,35 @@ ShellRoot {
     } else if (phase === "apply") {
       openedEditor = session.editor;
       check(session.pageApi.field("label").set("saved"), "actual field intent");
+      if (scenario === "preview-refused") {
+        foreignEditor = selected.createSettingsEditor();
+        check(foreignEditor, "foreign editor admitted");
+        phase = "foreign-preview-opening";
+        return;
+      }
       if (scenario === "preview")
         check(session.pageApi.previewSettings({
                                                 label: "saved"
                                               }), "explicit selected preview");
       check(session.applySettings(), "Apply admitted");
       phase = scenario === "inherited-preview" ? (placed ? "observed" : "foreign-preview-blocked") : "held";
+    } else if (phase === "foreign-preview-opening" && foreignEditor.ready) {
+      externalPreview = selected.createSettingsPreview(foreignEditor);
+      check(externalPreview && externalPreview.update({
+                                                        label: "foreign-preview"
+                                                      }), "foreign owner holds selected preview");
+      var field = session.pageApi.field("label");
+      check(field.value === "saved" && field.pendingIntent === "set", "existing field intent before refused preview");
+      check(!session.pageApi.previewSettings({
+                                               label: "refused-patch"
+                                             }), "foreign preview refuses page admission");
+      check(field.value === "saved" && field.pendingIntent === "set", "refused preview preserves field intent");
+      check(selected.settingsContext.settingsView.label === "foreign-preview", "foreign preview remains owned");
+      check(externalPreview.close() && foreignEditor.discard(), "foreign owner releases its own editor");
+      externalPreview = null;
+      foreignEditor = null;
+      check(session.applySettings(), "Apply original intent after refused preview");
+      phase = "held";
     } else if (phase === "foreign-preview-blocked" && !session.busy) {
       check(last.status === "failed" && last.error.phase === "observation" && last.write.status === "saved", "foreign shared preview refuses observation, not the completed write");
       check(session.failed && writes === 1 && signals === 1 && callbacks === 1 && reads === 0, "foreign reader failure delivered once without a controlled native read");

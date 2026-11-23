@@ -20,7 +20,7 @@ def main():
     profile_argument(parser)
     for name in ('source', 'work-root', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
-    parser.add_argument('--scenario', choices=('hold', 'failure', 'noop', 'owner-loss', 'destroy', 'preview', 'inherited-preview'), required=True)
+    parser.add_argument('--scenario', choices=('hold', 'failure', 'noop', 'owner-loss', 'destroy', 'preview', 'inherited-preview', 'preview-refused'), required=True)
     parser.add_argument('--scope', choices=('instance', 'shared'), required=True)
     parser.add_argument('--bypass-observation', action='store_true', help='disposable old-boundary negative control')
     args = parser.parse_args()
