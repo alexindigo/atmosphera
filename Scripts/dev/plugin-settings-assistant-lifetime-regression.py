@@ -1,19 +1,59 @@
 #!/usr/bin/env python3
-"""Finite real Assistant request/cache generation lifetimes, using inert curl only."""
+"""Finite real Assistant lifetimes with synthetic responses (no external calls)."""
 import argparse
+from contextlib import contextmanager
 from copy import deepcopy
 import fcntl
 import hashlib
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import importlib.util
 import json
 import os
 from pathlib import Path
 import shutil
+from threading import Thread
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('assistant_runner', Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
-MODES = ('chat', 'gemini', 'environment', 'edit', 'translation-google', 'translation-deepl', 'translation-environment', 'translation-replace', 'cache', 'replace', 'retired', 'native-retired', 'stop', 'clear', 'destroyed', 'start-failure')
+HTTP_BODIES = {
+    'chat-http': b'data: {"choices":[{"delta":{"content":"reply-selected-model"}}]}\n\n',
+    'http-empty': b'',
+    'http-provider-error': b'{"error":{"message":"synthetic rejection"}}',
+    'http-stream': b'data: {"choices":[{"delta":{"content":"not a reply"}}]}\n\n',
+    'translation-http': b'{"translations":[{"text":"not a translation"}]}',
+}
+MODES = ('chat', 'gemini', 'environment', 'edit', 'translation-google', 'translation-deepl', 'translation-environment', 'translation-replace', 'cache', 'replace', 'retired', 'native-retired', 'stop', 'clear', 'destroyed', 'start-failure', *HTTP_BODIES)
+
+
+@contextmanager
+def local_response(mode, out):
+    if mode not in HTTP_BODIES:
+        yield {}
+        return
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            self.rfile.read(int(self.headers.get('Content-Length', '0')))
+            body = HTTP_BODIES[mode]
+            status = 200 if mode == 'chat-http' else 401
+            self.send_response(status)
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            runner.write_json(out/'http.json', dict(status=status, body=body.decode()))
+
+        def log_message(self, *args):
+            pass
+
+    with HTTPServer(('127.0.0.1', 0), Handler) as server:
+        thread = Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            yield dict(PHA_ASSISTANT_HTTP=f'http://127.0.0.1:{server.server_port}/fixture', PHA_REAL_CURL=shutil.which('curl'))
+        finally:
+            server.shutdown()
+            thread.join()
 
 
 def run(args, profile, mode):
@@ -29,7 +69,7 @@ def run(args, profile, mode):
         name,old,new,wanted = {
             'origin': ('Main.qml','_consumer(context)?.captureChat()','_consumer(undefined)?.captureChat()','captured provider stream reaches common conversation'),
             'retirement': ('Main.qml','if ((kind === "all" || kind === "chat") && _chatRequest?.policy.context === client.settingsContext) _cancelChat(false);','/* deliberately omit common request retirement */','request generation settled after source/owner/action change'),
-            'cache': ('Main.qml','_queueState(client.maxHistoryLength)','_queueState(settingsConsumer.maxHistoryLength)','debounced cache retains captured limit, common content not truncated'),
+            'cache': ('Main.qml','_conversation = {messages: next, historyLimit: limit}', '_conversation = {messages: next, historyLimit: settingsConsumer.maxHistoryLength}', 'debounced cache retains captured limit, common content not truncated'),
             'parser': ('Main.qml','ProviderLogic.parseTranslateResponse(worker.policy.backend, output)','ProviderLogic.parseTranslateResponse(root.translatorBackend, output)','captured selected translation backend/parser'),
         }[args.control]
         path=dest/name;text=path.read_text();assert old in text;path.write_text(text.replace(old,new))
@@ -42,6 +82,11 @@ import json,os,sys,time
 from pathlib import Path
 a=sys.argv[1:];m=os.environ['PHA_ASSISTANT_LIFE_MODE'];c=Path(os.environ['PHA_ASSISTANT_CASE'])
 with (c/'requests.jsonl').open('a') as f:f.write(json.dumps(dict(pid=os.getpid(),start=Path('/proc/self/stat').read_text().split(') ',1)[1].split()[19],argv=a))+'\\n')
+if os.environ.get('PHA_ASSISTANT_HTTP'):
+ urls=[i for i,arg in enumerate(a) if arg.startswith(('http://','https://'))]
+ if len(urls)!=1:sys.exit(2)
+ a[urls[0]]=os.environ['PHA_ASSISTANT_HTTP'];curl=os.environ['PHA_REAL_CURL']
+ os.execv(curl,[curl,'-q','--noproxy','*',*a])
 held=m in ('replace','retired','native-retired','stop','clear','destroyed','translation-replace')
 payload=json.loads(a[a.index('-d')+1]) if '-d' in a and a[a.index('-d')+1].startswith('{') else None
 if payload and 'messages' in payload:
@@ -68,7 +113,8 @@ if held:
     env = dict(PATH=str(case/'bin') if mode == 'start-failure' else str(case/'bin')+os.pathsep+os.environ['PATH'],
                PHA_ASSISTANT_CASE=str(case), PHA_ASSISTANT_LIFE_MODE=mode, NOCTALIA_AP_GOOGLE_API_KEY='synthetic-environment' if mode=='environment' else '', NOCTALIA_AP_OPENAI_COMPATIBLE_API_KEY='', NOCTALIA_AP_DEEPL_API_KEY='synthetic-environment:fx' if mode=='translation-environment' else '')
     try:
-        text = runner.run_fixture(profile,install,case,out,fixture,installed=True,extra_env=env,extra_lint=tuple(sorted(dest.glob('*.qml'))),timeout=100)
+        with local_response(mode, out) as http_env:
+            text = runner.run_fixture(profile,install,case,out,fixture,installed=True,extra_env=env | http_env,extra_lint=tuple(sorted(dest.glob('*.qml'))),timeout=100)
     except RuntimeError:
         if not wanted or not (out/'runtime.log').is_file() or wanted not in (out/'runtime.log').read_text() or (out/'runtime.exit').read_text().strip()!='2':raise
         rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()] if (case/'requests.jsonl').exists() else []
@@ -94,7 +140,14 @@ if held:
     if mode=='gemini':assert 'selected-gemini' in rows[0]['argv'][-1] and 'synthetic-key' in rows[0]['argv'][-1]
     if mode=='environment':assert 'selected-gemini' in rows[0]['argv'][-1] and 'synthetic-environment' in rows[0]['argv'][-1] and 'synthetic-key' not in rows[0]['argv'][-1]
     if mode=='translation-environment':assert 'Authorization: DeepL-Auth-Key synthetic-environment:fx' in rows[0]['argv']
-    if mode=='cache':assert json.loads((case/'cache/plugins/assistant-panel/state.json').read_text())['messages']==[dict(role='user',content='last')]
+    if mode == 'cache':
+        saved = json.loads((case/'cache/plugins/assistant-panel/state.json').read_text())
+        if ([(m['role'], m['content']) for m in saved['messages']] != [('user', 'last')]
+                or (saved['activeTab'], saved['chatInputText'], saved['chatInputCursorPosition']) != ('translate', 'new draft', 3)):
+            raise RuntimeError('independent cache readback did not preserve history and UI fields')
+        runner.write_json(out/'cache.json', saved)
+    if mode in HTTP_BODIES and (len(rows) != 1 or not (out/'http.json').is_file()):
+        raise RuntimeError('expected one real loopback response')
     runner.write_json(out/'result.json',dict(status='PASS',mode=mode,requests=rows,configurationBefore=before,documents=expected,beforeEngineExitJoin=True,completePlanAcceptance=False))
     runner.remove_completed_installs(case,out)
 

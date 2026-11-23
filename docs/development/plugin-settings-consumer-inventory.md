@@ -281,14 +281,14 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 3 | `assistant-panel/AssistantSettingsClient.qml` | `ai`:11,12,14,17,18,19,20; `maxHistoryLength`:21; `translator`:22,23,24,25 | 6, 9, 10, 17, 30, 34 |
 | 4 | `assistant-panel/BarWidget.qml` | `ai`:29,39,43,183; `scale`:63 | 23, 24, 25, 29, 39, 43, 63, 165, ... |
 | 5 | `assistant-panel/Constants.js` | No literal field edge | No namespace/Main reference |
-| 6 | `assistant-panel/Main.qml` | `ai`:250,256,257,259,260,261,262 | 42, 45, 52, 53, 69, 70, 250, 256, ... |
+| 6 | `assistant-panel/Main.qml` | `ai`:255,261,262,264,265,266,267 | 42, 45, 52, 53, 69, 70, 255, 261, ... |
 | 7 | `assistant-panel/MessageBubble.qml` | No literal field edge | No namespace/Main reference |
 | 8 | `assistant-panel/Panel.qml` | `attachmentStyle`:50; `panelDetached`:49; `panelHeightRatio`:84; `panelPosition`:48; `panelWidth`:83; `scale`:89 | 38, 39, 40, 48, 49, 50, 83, 84, ... |
 | 9 | `assistant-panel/ProviderLogic.js` | No literal field edge | No namespace/Main reference |
 | 10 | `assistant-panel/TranslatorView.qml` | `scale`:455; `translator`:27,28,29,30,187,208,209,230 | 15, 16, 22, 23, 24, 27, 28, 29, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `99e3845d129cfaea524c6b959ae7801a4e4b124249d117b0e1cc81b50a9ce59d`.
+Runtime-source/manifest fingerprint: `315fcbb593104d9faa3a9a2fecb994e52d869ca290765e0ea322a3f067121a46`.
 
 ## auto-cpufreq
 

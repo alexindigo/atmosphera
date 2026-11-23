@@ -12,12 +12,13 @@ ANCHORS={
   'root.retireRequests(retired, "all"); root._settingsConsumers.delete(context); retired.destroy()',
   'settingsConsumerFor(context === undefined ? pluginApi?.settingsContext : context)',
   'var policy = _consumer(context)?.captureChat()', 'var policy = _consumer(context)?.captureTranslation(target, source)',
-  'model: settingsConsumer?.model || ""', '_queueState(client.maxHistoryLength)', '_saveHistoryLength = limit',
-  'prepareStateForSave(messages, activeTab, _saveHistoryLength, chatInputText, chatInputCursorPosition)',
-  'addMessage("user", text.trim(), policy.maxHistoryLength)', 'messages = messages.slice(0, index)',
+  'model: settingsConsumer?.model || ""', '_recordConversation([], client.maxHistoryLength)',
+  '_conversation = {messages: next, historyLimit: limit}',
+  'prepareStateForSave(_conversation, activeTab, chatInputText, chatInputCursorPosition)',
+  'addMessage("user", text.trim(), policy.maxHistoryLength)', 'messages.slice(0, index)',
   'policy.openaiBaseUrl, policy.apiKey, policy.model, policy.systemPrompt, history, policy.temperature',
   'policy.model, policy.apiKey, policy.systemPrompt, history, policy.temperature',
-  'requestFactory.createObject(root, {policy: policy, command: command.args',
+  'requestFactory.createObject(root, {policy: policy, curlArgs: command.args', 'if (worker.rejectedHttp(code))',
   'if (_chatRequest !== worker || !worker.policy.context.current()) return', 'if (_chatRequest !== worker) return',
   'if (_translationRequest !== worker) return', 'if (!worker.policy.context.current())',
   'ProviderLogic.parseTranslateResponse(worker.policy.backend, output)', 'worker.policy.maxHistoryLength',
@@ -32,6 +33,7 @@ ANCHORS={
   'maxHistoryLength: maxHistoryLength', 'backend: translatorBackend', 'owner.retireRequests(client, "chat")',
   'owner.retireRequests(client, "translation")', 'onCurrentChanged: if (!current && _constructed) retire(client)'],
  'AssistantRequest.qml':['required property var delivered', 'required property var settled', 'if (!worker._finished)',
+  'command: ["curl", "--fail-with-body", ...curlArgs]',
   'worker.delivered(worker, data)', 'if (_finished) return', '_finished = true; settled(worker, code, output, errors.text)',
   'function cancel() { _finished = true; running = false; }', 'onExited: code => finish(code)',
   'if (life.alive) worker.finish(-1)', 'Component.onDestruction: _lifetime.alive = false'],
@@ -61,7 +63,7 @@ def check(sources,manifest,dictionaries):
     for name,anchors in ANCHORS.items():
         for anchor in anchors:syntax.require(code[name],anchor,name+': '+anchor)
     assert 'messages' not in code['AssistantSettingsClient.qml'], 'one common conversation, no client content store'
-    assert code['Main.qml'].count(syntax.squash('requestFactory.createObject(root, {policy: policy, command: command.args'))==2,'one owned worker per chat/translation admission'
+    assert code['Main.qml'].count(syntax.squash('requestFactory.createObject(root, {policy: policy, curlArgs: command.args'))==2,'one owned worker per chat/translation admission'
     assert 'mainInstance' not in code['Settings.qml'],'Settings has no request capability'
     for name,value in dictionaries.items():assert value['settings']['sharedContent']==dictionaries['en.json']['settings']['sharedContent'],name+' explicit fallback'
     return dict(configuration=CONFIG,legacyAiMembers=['model','maxHistoryLength'],contentOwner='one Main/cache',runtimeAcceptance=False)
@@ -75,7 +77,7 @@ def main():
     member=check(sources,m,d);controls=[]
     mutations=[('Main.qml','_consumer(context)?.captureChat()','_consumer(undefined)?.captureChat()','shared-chat'),
       ('Main.qml','_consumer(context)?.captureTranslation(target, source)','_consumer(undefined)?.captureTranslation(target, source)','shared-translation'),
-      ('Main.qml','_queueState(client.maxHistoryLength)','_queueState(settingsConsumer.maxHistoryLength)','shared-history-policy'),
+      ('Main.qml','_recordConversation([], client.maxHistoryLength)','_recordConversation([], settingsConsumer.maxHistoryLength)','shared-history-policy'),
       ('Main.qml','ProviderLogic.parseTranslateResponse(worker.policy.backend, output)','ProviderLogic.parseTranslateResponse(root.translatorBackend, output)','late-parser'),
       ('Main.qml','requestFactory.createObject(root,','requestFactory.createObject(null,','unowned-request'),
       ('Main.qml','worker.cancel(); worker.destroy();','worker.destroy();','missing-process-stop'),

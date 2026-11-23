@@ -118,29 +118,23 @@ ShellRoot {
       var client = main.settingsConsumerFor(context);
       check(client === main.settingsConsumerFor(context), "one policy client per captured API");
       if (mode === "cache") {
-        main.messages = [
-              {
-                role: "user",
-                content: "old"
-              },
-              {
-                role: "assistant",
-                content: "middle"
-              },
-              {
-                role: "user",
-                content: "last"
-              }
-            ];
-        check(main.saveState(context), "originating cache admission");
+        main.addMessage("user", "old", client.maxHistoryLength);
+        main.addMessage("assistant", "middle", client.maxHistoryLength);
+        main.addMessage("user", "last", client.maxHistoryLength);
         cfg = Object.assign({}, cfg, {
                               maxHistoryLength: 99
                             });
+        main.activeTab = "translate";
+        main.chatInputText = "new draft";
+        main.chatInputCursorPosition = 3;
+        check(main.saveState(api.settingsContext), "sibling UI save admission");
         phase = "cache";
       } else if (mode.startsWith("translation")) {
         check(main.translate("synthetic", "de", "fr", context), "selected translation admission");
         phase = "translation";
       } else {
+        if (mode.startsWith("http-"))
+          main.chatInputText = "keep draft";
         check(main.sendMessage("synthetic", context), "selected chat admission");
         check(!main.sendMessage("must refuse", api.settingsContext), "one common chat admission");
         phase = "chat";
@@ -150,11 +144,17 @@ ShellRoot {
       cache.waitForJob();
       var saved = JSON.parse(cache.text());
       check(saved.messages.length === 1 && saved.messages[0].content === "last" && main.messages.length === 3, "debounced cache retains captured limit, common content not truncated");
+      check(saved.activeTab === "translate" && saved.chatInputText === "new draft" && saved.chatInputCursorPosition === 3, "UI save persists without owning history policy");
+      joinChildren();
+    } else if (phase === "chat" && mode.startsWith("http-") && !main.isGenerating) {
+      check(main.errorMessage !== "" && main.messages.length === 1 && main.chatInputText === "keep draft", "HTTP rejection does not settle as successful chat");
+      if (mode === "http-provider-error")
+        check(main.errorMessage === "synthetic rejection", "HTTP error body retained");
       joinChildren();
     } else if (phase === "chat" && mode === "start-failure" && !main.isGenerating) {
       check(main.errorMessage !== "" && main.messages.length === 1, "failed start settles without invented assistant response");
       joinChildren();
-    } else if (phase === "chat" && (mode === "chat" || mode === "gemini" || mode === "environment" || mode === "edit") && !main.isGenerating && main.messages.length >= 2) {
+    } else if (phase === "chat" && (mode === "chat" || mode === "chat-http" || mode === "gemini" || mode === "environment" || mode === "edit") && !main.isGenerating && main.messages.length >= 2) {
       check(main.messages[main.messages.length - 1].content === (mode === "gemini" || mode === "environment" ? "gemini-reply" : "reply-selected-model"), "captured provider stream reaches common conversation");
       if (mode !== "edit" || step === 2)
         joinChildren();
@@ -218,7 +218,10 @@ ShellRoot {
       check(!main.isTranslating && main._translationRequest === null && main.translatedText === "", "replacement fences translation parser/result generation");
       joinChildren();
     } else if (phase === "translation" && !main.isTranslating) {
-      check(main.translatedText === (mode === "translation-google" ? "google-reply" : "deepl-reply") && main.translationError === "", "captured selected translation backend/parser");
+      if (mode === "translation-http")
+        check(main.translatedText === "" && main.translationError === api.tr("errors.translationFailed"), "HTTP rejection settles as translation transport failure");
+      else
+        check(main.translatedText === (mode === "translation-google" ? "google-reply" : "deepl-reply") && main.translationError === "", "captured selected translation backend/parser");
       joinChildren();
     }
   }
