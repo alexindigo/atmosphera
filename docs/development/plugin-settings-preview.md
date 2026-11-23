@@ -26,8 +26,10 @@ not unsaved input. It keeps the same editor/page/input and waits for ConfigQml's
 causal observation on the actual runtime reader before delivering completion.
 Newer pending preview revisions and every failed/stale-write preview remain
 untouched; no unsaved input is discarded. A saved-but-unobserved failure retains
-the write receipt for observation-only Retry, without another Apply or page
-staging. Another session's inherited preview is not closed by this handoff.
+the write receipt for the separate **Check again** action, without another Apply,
+page staging or preview acknowledgment. Apply always submits current page input.
+This orchestrator decision (overridable by the user) supersedes the one-action
+retry contract. Another session's inherited preview is not closed by this handoff.
 
 ## Historical pre-cutover owner
 

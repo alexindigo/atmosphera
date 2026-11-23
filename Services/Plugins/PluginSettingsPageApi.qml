@@ -85,11 +85,11 @@ QtObject {
   function complete(result) {
     var callbacks = _callbacks;
     _callbacks = [];
-    // Observation-only Retry does not rerun the page's staging function. Its
+    // Check again does not rerun the page's staging function. Its
     // original observers must still see the retried terminal result.
     if (result?.error?.phase === "observation")
       _observationCallbacks = callbacks;
-    if (result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current")
+    if (result && (result.status === "saved" || result.status === "nothing_to_save" || result.status === "observed") && result.refreshState === "current")
       staged = previewDirty;
     settingsCompleted(result);
     for (var callback of callbacks) {

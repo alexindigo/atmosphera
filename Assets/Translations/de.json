@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Die Änderungen wurden gespeichert, konnten aber nicht überprüft werden.",
+    "editor-observation-draft-changed": "Es gibt neue Änderungen. Mit Anwenden speichern.",
+    "check-again": "Erneut prüfen",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Aktionen",

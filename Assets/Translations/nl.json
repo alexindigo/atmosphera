@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "De wijzigingen zijn opgeslagen, maar konden niet worden gecontroleerd.",
+    "editor-observation-draft-changed": "Er zijn nieuwe wijzigingen. Klik op Toepassen om ze op te slaan.",
+    "check-again": "Opnieuw controleren",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Acties",

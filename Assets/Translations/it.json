@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Le modifiche sono state salvate, ma non è stato possibile verificarle.",
+    "editor-observation-draft-changed": "Ci sono nuove modifiche. Premi Applica per salvarle.",
+    "check-again": "Controlla di nuovo",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Azioni",

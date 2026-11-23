@@ -103,7 +103,11 @@ Popup {
       root.close();
     }
     onDiscardRequired: discardDialog.open()
-    onSettingsCompleted: result => root.settingsCompleted(result)
+    onSettingsCompleted: result => {
+      if (result?.error?.phase === "observation")
+        resetInstanceDialog.close();
+      root.settingsCompleted(result);
+    }
     onPresentationInvalidated: root.presentationInvalidated()
     onOpeningFailed: {
       if (root.showToastOnSave)
@@ -232,11 +236,29 @@ Popup {
         }
       }
 
-      NText {
+      RowLayout {
         visible: root.saveFailed
-        text: I18n.tr("common.editor-save-failed")
-        wrapMode: Text.WordWrap
         Layout.fillWidth: true
+        spacing: Style.marginM
+
+        NText {
+          Layout.fillWidth: true
+          text: I18n.tr(settingsSession.observationError === "settings-observation-draft-changed" ? "common.editor-observation-draft-changed" : (settingsSession.observationError ? "common.editor-observation-failed" : "common.editor-save-failed"))
+          wrapMode: Text.WordWrap
+        }
+
+        Loader {
+          active: root.saveFailed && settingsSession.observationError !== ""
+          visible: active
+          sourceComponent: NButton {
+            objectName: "checkObservationButton"
+            enabled: !root.busy
+            outlined: true
+            keyboardAccessible: true
+            text: I18n.tr("common.check-again")
+            onClicked: settingsSession.retryObservation()
+          }
+        }
       }
 
       // Action buttons

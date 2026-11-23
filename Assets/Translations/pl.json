@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Zmiany zapisano, ale nie udało się ich sprawdzić.",
+    "editor-observation-draft-changed": "Masz nowe zmiany. Kliknij Zastosuj, aby je zapisać.",
+    "check-again": "Sprawdź ponownie",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Akcje",

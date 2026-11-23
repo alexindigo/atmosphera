@@ -33,6 +33,13 @@ QtObject {
   property var _cancelOpening: null
   property var _observation: null
   property var _observationRetry: null
+  property string observationError: ""
+  property int _draftEditGeneration: 0
+  readonly property bool _draftDirty: editor?.dirty === true
+  on_DraftDirtyChanged: {
+    if (_draftDirty)
+      _draftEditGeneration++;
+  }
   readonly property var _runtimeReadOwner: currentPluginApi ? currentPluginApi.settingsReadOwner : null
   on_RuntimeReadOwnerChanged: {
     if (_observation && _runtimeReadOwner !== _observation.reader)
@@ -213,23 +220,14 @@ QtObject {
   function resetInstanceSettings() {
     if (!currentInstanceApi || !editor || !fields || !fields.ready || !pageApi || !page || busy)
       return false;
+    _beginSubmission();
     _submit(true);
     return true;
   }
   function applySettings() {
     if (!editor || editor.writable === false || !page || busy)
       return false;
-    // Saving already succeeded. Retry only the missing observation, without
-    // asking the page to restage input or requesting persistence a second time.
-    if (_observationRetry && !editor.dirty) {
-      busy = true;
-      pageApi.busy = true;
-      pageApi.retryObservation();
-      _observe(_observationRetry.write, _observationRetry.reset);
-      return true;
-    }
-    _observationRetry = null;
-    pageApi.beginSubmission();
+    _beginSubmission();
     commitInputs();
     busy = true;
     try {
@@ -248,6 +246,24 @@ QtObject {
               }, false);
     }
     return true;
+  }
+  function _beginSubmission() {
+    _observationRetry = null;
+    observationError = "";
+    pageApi.beginSubmission();
+  }
+  function retryObservation() {
+    var retained = _observationRetry;
+    if (!retained || !editor || !page || busy)
+      return false;
+    pageApi.busy = true;
+    busy = true;
+    pageApi.retryObservation();
+    _synchronizeObservation(retained, true);
+    return true;
+  }
+  function _sameDraft(receipt) {
+    return editor === receipt.editor && editor.ready && !editor.dirty && !editor.busy && !editor.handle.conflicted && _draftEditGeneration === receipt.draftGeneration;
   }
   function _submit(reset) {
     _inputFence = captureInputs();
@@ -296,14 +312,27 @@ QtObject {
       if (!_preview.pending() && _preview.close())
         _preview = null;
     }
-    // Select the native reader now backing settingsView. Another session's
-    // inherited preview is not ours to close or silently bypass.
+    _synchronizeObservation({
+                              write: write,
+                              reset: reset,
+                              editor: editor,
+                              draftGeneration: _draftEditGeneration
+                            }, false);
+  }
+  function _synchronizeObservation(receipt, checking) {
+    // A check uses exactly this retained write. It does not stage, persist or
+    // acknowledge preview revisions. The same session can acquire the native
+    // reader again (e.g. once an unrelated preview has closed).
     var pending = {
-      write: write,
-      reset: reset,
+      receipt: receipt,
+      checking: checking,
       reader: _runtimeReadOwner
     };
     _observation = pending;
+    if (checking && !_sameDraft(receipt)) {
+      _observationFailed(pending, "settings-observation-draft-changed");
+      return;
+    }
     if (_preview && _preview.pending()) {
       _observationFailed(pending, "settings-preview-pending");
       return;
@@ -314,18 +343,23 @@ QtObject {
     }
     var lifetime = _lifetime;
     try {
-      pending.reader.readProjection.synchronize(write.observation, function (read) {
+      pending.reader.readProjection.synchronize(receipt.write.observation, function (read) {
         if (!lifetime.alive || root._observation !== pending)
           return;
         if (!root._runtimeCurrent || root._runtimeReadOwner !== pending.reader || read.status !== "observed") {
           root._observationFailed(pending, read.error?.code || "settings-runtime-observation");
           return;
         }
+        if (checking && !root._sameDraft(receipt)) {
+          root._observationFailed(pending, "settings-observation-draft-changed");
+          return;
+        }
         root._observation = null;
         root._observationRetry = null;
+        root.observationError = "";
         // The native capture has installed on this exact reader, including
         // bindings, before this callback. Never infer that from writer signals.
-        root._finish(write, reset, read);
+        root._finish(receipt.write, receipt.reset, read, checking);
       });
     } catch (error) {
       _observationFailed(pending, "settings-runtime-observation");
@@ -335,7 +369,8 @@ QtObject {
     if (_observation !== pending)
       return;
     _observation = null;
-    _observationRetry = pending;
+    _observationRetry = pending.receipt;
+    observationError = code;
     _finish({
               status: "failed",
               refreshState: "not_refreshed",
@@ -343,10 +378,10 @@ QtObject {
                 code: code,
                 phase: "observation"
               },
-              write: pending.write
-            }, pending.reset);
+              write: pending.receipt.write
+            }, pending.receipt.reset, null, pending.checking);
   }
-  function _finish(result, reset, read) {
+  function _finish(result, reset, read, checking) {
     var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";
     failed = !accepted;
     if (accepted && !fields.acknowledge(result)) {
@@ -363,20 +398,28 @@ QtObject {
     if (accepted) {
       _initial = Read.freeze(editor.initialValue);
     }
-    if (accepted && !reset)
+    if (accepted && !reset && !checking)
       acknowledgeInputs(_inputFence);
     // Read snapshots are native immutable facts, not field metadata or a new
     // preference store. Keep them out of copyValue/field receipt serialization.
-    if (accepted)
-      result = Object.assign({}, result, {
-                               runtimeRead: read
-                             });
+    if (accepted) {
+      // The generic dirty flag cannot identify generations of buffered page
+      // input. Do not tell a potentially dirty page that its input was saved.
+      result = checking && (inputDirty || page?.settingsDirty !== false) ? {
+                                                                             status: "observed",
+                                                                             refreshState: "current",
+                                                                             write: result,
+                                                                             runtimeRead: read
+                                                                           } : Object.assign({}, result, {
+                                                                                               runtimeRead: read
+                                                                                             });
+    }
     // Preserve signal-before-callback and action exclusion through delivery.
     settingsCompleted(result);
     pageApi.complete(result);
     pageApi.busy = false;
     busy = false;
-    if (!accepted)
+    if (!accepted || checking)
       return;
     if (reset)
       reloadRequested();
@@ -410,6 +453,7 @@ QtObject {
   function _releaseSelection() {
     _observation = null;
     _observationRetry = null;
+    observationError = "";
     if (_cancelOpening) {
       _cancelOpening();
       _cancelOpening = null;

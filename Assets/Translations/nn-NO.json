@@ -372,6 +372,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Endringane vart lagra, men kunne ikkje kontrollerast.",
+    "editor-observation-draft-changed": "Du har nye endringar. Trykk Bruk for å lagre dei.",
+    "check-again": "Sjekk på nytt",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Handlingar",

@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Změny byly uloženy, ale nepodařilo se je ověřit.",
+    "editor-observation-draft-changed": "Máte nové úpravy. Uložte je tlačítkem Použít.",
+    "check-again": "Zkontrolovat znovu",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Akce",

@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Зміни збережено, але перевірити їх не вдалося.",
+    "editor-observation-draft-changed": "Є нові зміни. Натисніть «Застосувати», щоб зберегти їх.",
+    "check-again": "Перевірити ще раз",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Дії",

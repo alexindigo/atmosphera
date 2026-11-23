@@ -220,6 +220,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Brigdi vart lagra, men kunde ikkje etterrøkjast.",
+    "editor-observation-draft-changed": "Du hev nye brigde. Trykk Bruk for å lagra dei.",
+    "check-again": "Check again",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "brightness": "Ljosstyrke",

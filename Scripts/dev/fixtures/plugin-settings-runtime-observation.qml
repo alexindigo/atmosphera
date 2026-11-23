@@ -1,8 +1,11 @@
 import QtQuick
+import QtQuick.Controls
+import QtTest
 import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Plugins
+import qs.Widgets
 
 ShellRoot {
   id: root
@@ -19,13 +22,19 @@ ShellRoot {
   property string order: ""
   property var last: null
   property var frozen: null
+  property var retainedWrite: null
   property var session: null
   property var externalPreview: null
   property var foreignEditor: null
   property var openedEditor: null
+  property var hostWindow: null
+  property var checkButton: null
+  property bool a11yCompleted: false
   readonly property string scenario: Quickshell.env("PHA_OBSERVATION_SCENARIO")
   readonly property bool placed: Quickshell.env("PHA_OBSERVATION_SCOPE") === "instance"
   readonly property var selected: placed ? instance : api
+  readonly property bool failInitialRead: ["failure", "newer-apply", "newer-check", "changed-draft"].includes(scenario)
+  readonly property string expectedSavedValue: scenario === "newer-apply" && writes === 2 ? "newer-input" : "saved"
   FileView {
     id: manifestFile
     path: Settings.configDir + "plugins/observation-fixture/manifest.json"
@@ -122,13 +131,20 @@ ShellRoot {
   QtObject {
     id: testPage
     property var pluginApi: root.session ? root.session.pageApi : null
-    readonly property bool settingsDirty: false
+    property string buffer: ""
+    readonly property bool settingsDirty: buffer !== ""
     function saveSettings() {
       writes++;
+      if (buffer !== "")
+        root.check(pluginApi.field("label").set(buffer), "buffered page input staged on Apply");
       pluginApi.saveSettings(function (result) {
         callbacks++;
         order += ",callback";
         last = result;
+        // A generic page may treat a current saved result as an acknowledgment
+        // of its buffer. Check again must not masquerade as that result.
+        if (result?.status === "saved" && result.refreshState === "current")
+          buffer = "";
       });
     }
   }
@@ -150,23 +166,135 @@ ShellRoot {
         root.last = result;
         if (result.refreshState === "current") {
           root.check(result.runtimeRead && result.runtimeRead.status === "observed", "native read receipt accompanies success");
-          root.check(root.selected.settingsContext.settingsView.label === "saved", "actual runtime consumer installed before signal");
+          root.check(root.selected.settingsContext.settingsView.label === root.expectedSavedValue, "actual runtime consumer installed before signal");
           root.frozen = result.runtimeRead.snapshot;
-          root.check(root.frozen.state(["label"]).value === "saved", "immutable native selected snapshot");
+          root.check(root.frozen.state(["label"]).value === root.expectedSavedValue, "immutable native selected snapshot");
         }
       }
     }
   }
+  Component {
+    id: windowFactory
+    Window {
+      width: 700
+      height: 420
+      visible: true
+      title: "Observation fixture"
+      property alias popup: popup
+      property alias input: input
+      TestEvent {
+        id: input
+      }
+      NPluginSettingsPopup {
+        id: popup
+        parent: Overlay.overlay
+        onSettingsCompleted: result => {
+          root.signals++;
+          root.last = result;
+        }
+      }
+    }
+  }
+  function findItem(parent, name) {
+    if (parent.objectName === name)
+      return parent;
+    for (var child of parent.children) {
+      var item = findItem(child, name);
+      if (item)
+        return item;
+    }
+    return null;
+  }
+  Process {
+    id: a11yPress
+    command: ["/usr/bin/python3", "-B", Quickshell.env("PHA_OBSERVATION_A11Y_HELPER")]
+    stderr: StdioCollector {
+      id: a11yErrors
+    }
+    onExited: (code, status) => {
+      if (code !== 0 || status !== 0)
+        root.fail("external AT-SPI press failed: " + a11yErrors.text);
+      else
+        root.a11yCompleted = true;
+    }
+  }
+  function drivePopup() {
+    var popup = hostWindow.popup;
+    if (phase === "popup-opening" && hostWindow.active && popup.opened && popup.settingsPage && I18n.isLoaded) {
+      check(!findItem(popup.contentItem, "checkObservationButton"), "no Check again before failure");
+      popup.settingsPage.setLabel("saved");
+      check(popup.applySettings(), "popup applied actual page input");
+      phase = "popup-held";
+    } else if (phase === "popup-held" && held) {
+      held(true);
+      phase = "popup-failed";
+    } else if (phase === "popup-failed" && !popup.busy) {
+      check(signals === 1 && last.error.phase === "observation", "popup enters observation failure");
+      popup.settingsPage.setLabel("newer-input");
+      checkButton = findItem(popup.contentItem, "checkObservationButton");
+      check(checkButton && checkButton.visible && checkButton.enabled && checkButton.activeFocusOnTab, "visible Check again enters tab chain");
+      check(checkButton.Accessible.role === Accessible.Button && checkButton.Accessible.name === "Check again", "Check again accessible name and button role");
+      check(hostWindow.input.keyClick(Qt.Key_Tab, Qt.NoModifier, 0), "Tab delivered");
+      phase = "popup-focused";
+    } else if (phase === "popup-focused") {
+      check(checkButton.activeFocus, "Tab actually focuses Check again");
+      phase = "popup-capturing";
+      check(hostWindow.contentItem.grabToImage(function (image) {
+        check(image.saveToFile(Quickshell.env("PHA_OBSERVATION_OUTPUT") + "/popup-check-focused.png"), "focused popup capture saved");
+        phase = "popup-captured";
+      }), "focused popup capture admitted");
+    } else if (phase === "popup-captured") {
+      check(hostWindow.input.keyClick(Qt.Key_Return, Qt.NoModifier, 0), "Return delivered to Check again");
+      phase = "popup-retry-held";
+    } else if (phase === "popup-retry-held" && held) {
+      check(reads === 2 && popup.busy && !checkButton.enabled, "keyboard triggers only one check; busy action is disabled");
+      held(true);
+      phase = "popup-space";
+    } else if (phase === "popup-space" && !popup.busy) {
+      check(checkButton.activeFocus && popup.saveFailed && signals === 2, "failed check keeps its focused action");
+      check(hostWindow.input.keyClick(Qt.Key_Space, Qt.NoModifier, 0), "Space delivered to Check again");
+      phase = "popup-space-held";
+    } else if (phase === "popup-space-held" && held) {
+      check(reads === 3 && popup.busy, "Space triggers one check");
+      held(true);
+      phase = "popup-accessible";
+    } else if (phase === "popup-accessible" && !popup.busy) {
+      check(popup.saveFailed && signals === 3, "failed Space check retains the action");
+      a11yPress.running = true;
+      phase = "popup-accessible-held";
+    } else if (phase === "popup-accessible-held" && held && a11yCompleted) {
+      check(reads === 4 && popup.busy, "accessible press triggers one check");
+      held(false);
+      phase = "popup-checked";
+    } else if (phase === "popup-checked" && !popup.busy) {
+      check(!findItem(popup.contentItem, "checkObservationButton"), "successful Check again leaves no hidden tab stop or focus ring");
+      check(signals === 4 && last.status === "observed" && last.write.status === "saved" && last.runtimeRead.snapshot.state(["label"]).value === "saved" && nativeReader.values.label === "saved", "keyboard and accessible actions checked the retained native write");
+      check(popup.settingsPage.labelText === "newer-input" && popup.dirty, "newer popup input is still dirty");
+      phase = "popup-capturing-checked";
+      check(hostWindow.contentItem.grabToImage(function (image) {
+        check(image.saveToFile(Quickshell.env("PHA_OBSERVATION_OUTPUT") + "/popup-check-complete.png"), "checked popup capture saved");
+        finish();
+      }), "checked popup capture admitted");
+    }
+  }
   function drive() {
     if (phase === "reader" && selected && selected.settingsReady && (scenario !== "inherited-preview" || !placed || instance._inheritedPreview?.ready)) {
-      session = sessionFactory.createObject(root);
       var wrapped = wrap(placed ? instance.runtime : api.settingsHandle);
       if (placed)
         instance.runtime = wrapped;
       else
         api.settingsOwner.settingsScope = wrapped;
+      if (scenario === "popup-check") {
+        hostWindow = windowFactory.createObject(root);
+        check(hostWindow && (placed ? hostWindow.popup.openInstanceSettings(manifest, instance) : hostWindow.popup.openPluginSettings(manifest)), "open real selected popup");
+        phase = "popup-opening";
+        return;
+      }
+      session = sessionFactory.createObject(root);
       check(placed ? session.openInstanceSettings(manifest, instance) : session.openPluginSettings(manifest), "open selected session");
       phase = "opening";
+    } else if (hostWindow) {
+      drivePopup();
     } else if (phase === "apply") {
       openedEditor = session.editor;
       check(session.pageApi.field("label").set("saved"), "actual field intent");
@@ -206,7 +334,7 @@ ShellRoot {
       check(externalPreview.close(), "foreign preview released by its owner");
       externalPreview = null;
       order = "";
-      check(session.applySettings(), "observation-only Retry after foreign preview release");
+      check(session.retryObservation(), "Check again after foreign preview release");
       phase = "foreign-preview-retry";
     } else if (phase === "foreign-preview-retry" && held) {
       check(session.busy && writes === 1 && reads === 1 && signals === 1 && callbacks === 1, "Retry waits for the selected native reader without restaging");
@@ -228,17 +356,34 @@ ShellRoot {
         phase = "destroyed";
       } else {
         var releaseRead = held;
-        releaseRead(scenario === "failure");
-        phase = scenario === "failure" ? "retry" : "observed";
+        releaseRead(failInitialRead);
+        phase = failInitialRead ? "retry" : "observed";
       }
     } else if (phase === "retry" && !session.busy) {
       check(last.status === "failed" && last.error.phase === "observation" && last.write.status === "saved", "saved-but-unobserved failure is explicit");
       check(session.failed && signals === 1 && callbacks === 1 && writes === 1, "failed input retained and delivered once");
+      retainedWrite = last.write;
       order = "";
-      check(session.applySettings(), "observation-only Retry admitted");
+      if (scenario === "newer-apply" || scenario === "newer-check")
+        testPage.buffer = "newer-input";
+      if (scenario === "newer-apply") {
+        check(session.applySettings(), "Apply newer buffered page input");
+        check(writes === 2, "Apply after observation failure stages newer buffered input");
+      } else if (scenario === "changed-draft") {
+        check(session.pageApi.field("label").set("new-native-draft") && session.editor.dirty, "native draft changed");
+        check(session.retryObservation(), "Check again produces an explicit result");
+        check(!session.busy && session.failed && session.dirty && !held && reads === 1 && writes === 1, "changed draft refuses before acquiring or saving");
+        check(last.status === "failed" && last.error.phase === "observation" && last.error.code === "settings-observation-draft-changed" && last.write === retainedWrite, "changed draft refusal retains the original write");
+        check(order === "signal,callback" && session.pageApi.field("label").value === "new-native-draft", "changed draft remains intact after the explicit refusal");
+        finish();
+        return;
+      } else {
+        check(session.retryObservation(), "Check again admitted");
+      }
       phase = "retry-held";
     } else if (phase === "retry-held" && held) {
-      check(writes === 1 && session.busy && reads === 2, "Retry did not restage or write");
+      check(writes === (scenario === "newer-apply" ? 2 : 1) && session.busy && reads === 2, "only Apply stages another write");
+      check(!session.retryObservation(), "busy excludes another Check again");
       var retry = held;
       retry(false);
       phase = "observed";
@@ -253,7 +398,14 @@ ShellRoot {
                                                                   }));
       check(!session.failed && order === "signal,callback" && last.runtimeRead.status === "observed", "ordered complete observation");
       check(session.editor === openedEditor && session.page === testPage, "same editor/page survives observation");
-      check(nativeReader.values.label === "saved" && frozen.state(["label"]).value === "saved", "installed and immutable selected facts");
+      check(nativeReader.values.label === expectedSavedValue && frozen.state(["label"]).value === expectedSavedValue, "installed and immutable selected facts");
+      if (scenario === "newer-apply")
+        check(writes === 2 && signals === 2 && callbacks === 2 && last.status === "saved" && !testPage.settingsDirty && !session.dirty, "newer buffered Apply saved and acknowledged exactly once");
+      else if (scenario === "newer-check")
+        check(writes === 1 && signals === 2 && callbacks === 2 && last.status === "observed" && last.write === retainedWrite && testPage.buffer === "newer-input" && session.dirty, "Check again observed the retained write while newer input remains dirty");
+      else if (scenario === "failure")
+        check(writes === 1 && signals === 2 && callbacks === 2 && last.status === "saved" && last.observation === retainedWrite.observation && !session.dirty, "Check again delivered the unchanged page's retained write");
+      check(!session.retryObservation(), "successful observation retires the retry action");
       if (scenario === "noop") {
         order = "";
         check(session.applySettings(), "no-op Apply admitted");

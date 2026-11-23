@@ -57,8 +57,16 @@ one Apply. It never calls the native all-data `resetOverrides` on mixed content.
 
 Only `saved` or `nothing_to_save` with `refreshState: current` acknowledge work.
 Accepted-current field recapture precedes observers. `settingsCompleted` precedes
-callbacks. Failed/stale results retain input/preview for Retry or confirmed
+callbacks. Failed/stale writes retain input/preview for another Apply or confirmed
 discard; busy excludes competing input/actions. A second Open refuses replacement.
+After a failed runtime observation, Apply still commits controls and stages the
+current page input. **Check again**, in the failure message, only retries the
+retained write's observation. It issues no save, refuses a changed native draft,
+and does not reload the page or clear its input. Clean pages can receive the
+retained write result; potentially dirty pages receive `status: observed` with
+`write` and `runtimeRead`, not a new `saved` acknowledgment. This is the
+orchestrator-approved split (overridable by the user), replacing the earlier
+single Apply action for both operations.
 Ordinary Close uses dirty confirmation. Genuine presentation loss uses native
 deferred `release()` and fences late callbacks, not a forced busy discard.
 
