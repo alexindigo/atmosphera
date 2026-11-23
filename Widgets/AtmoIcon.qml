@@ -72,7 +72,7 @@ Item {
     width: root.implicitHeight
     height: root.implicitHeight
     // Only the mask samples it (hideSource); never presented in its own colors.
-    active: root._resolved?.type === "svg"
+    active: root.visible && root._resolved?.type === "svg"
     sourceComponent: NImage {
       source: root._resolved?.source ?? ""
       fillMode: Image.PreserveAspectFit

@@ -6,9 +6,10 @@ import sys
 
 
 class CommandError(Exception):
-    def __init__(self, code, reason):
+    def __init__(self, code, reason, exit_code=None):
         super().__init__(reason)
         self.code = code
+        self.exit_code = exit_code
 
 
 async def command(argv, directory, timeout, *, name='command', emit=lambda event: None):
@@ -36,5 +37,5 @@ async def command(argv, directory, timeout, *, name='command', emit=lambda event
     if result['cancelled']:
         raise asyncio.CancelledError
     if result['exit']:
-        raise CommandError('decoder-failed', 'Decoder could not read this image')
+        raise CommandError('decoder-failed', 'Decoder could not read this image', exit_code=result['exit'])
     return Path(paths['stdout'])

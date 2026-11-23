@@ -11,6 +11,8 @@ import tempfile
 from urllib.parse import unquote, unquote_to_bytes, urlsplit
 
 from .process import command, CommandError
+from .download import SOURCE_TOO_LARGE_EXIT
+from .limits import source_byte_budget
 from .storage import directory as cache_directory, descriptor_path, identity, open_file as cache_file
 
 
@@ -81,9 +83,11 @@ async def prepare(source, root, revision='', emit=lambda event: None, follow_sym
             elif urlsplit(source).scheme.lower() in ('http', 'https'):
                 try:
                     # Keep URL credentials and query tokens out of diagnostics.
-                    await command([sys.executable, '-B', str(Path(__file__).with_name('download.py')), source, target],
+                    await command([sys.executable, '-B', str(Path(__file__).with_name('download.py')), source, target, source_byte_budget()],
                                   directory, 30, name='download')
                 except CommandError as error:
+                    if error.exit_code == SOURCE_TOO_LARGE_EXIT:
+                        raise SourceError('source-too-large', 'Image source is too large for the decode allocation budget') from error
                     raise SourceError('download-failed', 'Could not download the image') from error
                 with target.open('rb') as stream:
                     while block := stream.read(1024 * 1024):

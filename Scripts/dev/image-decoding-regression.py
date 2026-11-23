@@ -20,7 +20,7 @@ from image_decoding_workspace import retire_fixture_copy
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'source-admission', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -197,9 +197,11 @@ class Run:
         if not vfs.is_relative_to(self.profile.runtime_base) or not (vfs / 'qs/Commons/qmldir').is_file():
             raise AssertionError('Consumer did not generate authoritative QML tooling')
         lint_paths = [str(entry)]
-        if self.args.case in ('owner', 'legacy'):
+        if self.args.case in ('owner', 'source-admission', 'legacy'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageSource.qml',
-                                                    'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml')]
+                                                    'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml', 'Widgets/AtmoIcon.qml')]
+            if not assembled:
+                lint_paths.append(str(shell / 'Widgets/NImageIcon.qml'))
         if self.args.case in ('cache', 'cache-read'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageSource.qml', 'Widgets/NImage.qml',
                 'Services/UI/ImageCacheService.qml', 'Modules/FileChooser/FileEntryArtwork.qml')]
@@ -1912,8 +1914,57 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('owner-locker-standalone-consumer', locked['motion']['state'] == 'ready'
                    and locked['motion']['frameCount'] == 3 and {tuple(p) for p in centers} == set(COLORS)
                    and all(row['consumer']['state'] == 'ready' for row in locked['formats'])
-                   and locked['finalInterests'] == locked['finalRequests'] == 0 and not locked['workerRunning'], locked)
+                    and locked['finalInterests'] == locked['finalRequests'] == 0 and not locked['workerRunning'], locked)
+        self.source_admission(inputs)
         return result
+
+    def source_admission(self, inputs=None):
+        if inputs is None:
+            inputs = self.work / 'fixtures'
+            manifest = create_fixtures(inputs, self.commands)
+            (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+            def do_GET(self):
+                requests.append(self.path)
+                data = (inputs / 'frame-0.png').read_bytes() if self.path == '/valid' else b'x' * (1024 * 1024 + 1)
+                self.send_response(200)
+                if self.path != '/streamed':
+                    self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                try:
+                    for offset in range(0, len(data), 65536):
+                        self.wfile.write(data[offset:offset + 65536])
+                        self.wfile.flush()
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/source-admission.qml',
+                inputs, 'source-admission', dict(QT_IMAGEIO_MAXALLOC='1', IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}'))
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+        self.check('owner-normalized-admission-never-offers-native', all(row['origin'] == 'fallback' for row in result['candidates']
+                   if row['name'] in ('normalized', 'thumbnail')) and result['settled'].get('normalized') == result['settled'].get('thumbnail') == 'ready', result)
+        self.check('owner-synchronous-error-keeps-render-interest', result['settled'].get('synchronous') == 'ready'
+                   and result['settled'].get('synchronousOrigin') == 'fallback', result)
+        self.check('owner-remote-one-bounded-owner-request', sorted(requests) == ['/declared', '/streamed', '/valid'], requests)
+        for name in ('declared', 'streamed'):
+            row = result['settled'].get(name, {})
+            self.check('owner-source-too-large-' + name, row.get('failed') and row.get('code') == 'source-too-large' and row.get('reason'), row)
+            width, height, rgba = read_png(output / (name + '.png'))
+            self.check('owner-source-too-large-visible-badge-' + name, width == height == 96 and any(rgba[3::4]),
+                       dict(width=width, height=height, visiblePixels=sum(a > 0 for a in rgba[3::4])))
+        self.check('owner-terminal-error-publishes-details-first', len(result['terminalDetails']) == 2 and
+                   all(row['code'] == 'source-too-large' and row['reason'] for row in result['terminalDetails']), result['terminalDetails'])
+        self.check('owner-admitted-remote-presents-pixels', result['settled'].get('valid') == 'ready' and pixel(output / 'valid.png') == list(COLORS[0]), result)
+        self.check('owner-admission-retires-all-interests', result['interests'] == result['requests'] == 0 and not result['workerRunning'], result)
 
 
 def main():
@@ -1950,6 +2001,8 @@ def main():
             run.cache_clear()
         elif args.case == 'owner':
             run.owner()
+        elif args.case == 'source-admission':
+            run.source_admission()
         elif args.case in ('cache', 'cache-red', 'cache-read', 'cache-read-red'):
             run.cache_contract()
         elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):

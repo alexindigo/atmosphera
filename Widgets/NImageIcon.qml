@@ -26,8 +26,8 @@ Item {
   readonly property int status: image.status
   readonly property string imageState: image.imageState
   readonly property bool failed: replacementCode !== "" || image.imageState === "unavailable"
-  readonly property string errorCode: image.imageState === "unavailable" ? image.errorCode : replacementCode
-  readonly property string errorReason: image.imageState === "unavailable" ? image.errorReason : replacementReason
+  readonly property string errorCode: image.errorCode || replacementCode
+  readonly property string errorReason: image.errorCode ? image.errorReason : replacementReason
   readonly property real paintedWidth: image.paintedWidth
   readonly property real paintedHeight: image.paintedHeight
   readonly property var imageResult: image.imageResult

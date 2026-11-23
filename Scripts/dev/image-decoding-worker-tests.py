@@ -79,6 +79,140 @@ def main():
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
 
+        async def test_remote_source_budget_has_terminal_errors_and_no_partial_file(self):
+            size = 1024 * 1024
+            class Handler(BaseHTTPRequestHandler):
+                def log_message(self, *args):
+                    pass
+                def do_GET(self):
+                    self.send_response(200)
+                    if self.path == '/declared':
+                        self.send_header('Content-Length', str(size + 1))
+                    self.end_headers()
+                    try:
+                        for _ in range(17):
+                            self.wfile.write(b'x' * 65536)
+                            self.wfile.flush()
+                    except (BrokenPipeError, ConnectionResetError):
+                        pass
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                with environment(QT_IMAGEIO_MAXALLOC='1'):
+                    for route in ('declared', 'streamed'):
+                        replies = []
+                        worker = Worker(self.cache, replies.append)
+                        try:
+                            await asyncio.wait_for(worker.request(dict(self.request(),
+                                source=f'http://127.0.0.1:{server.server_port}/{route}', id=route)), 10)
+                            with self.subTest(route=route):
+                                self.assertEqual(len(replies), 1)
+                                self.assertEqual(replies[0]['status'], 'unavailable')
+                                self.assertEqual(replies[0]['code'], 'source-too-large', replies)
+                                self.assertIn('too large', replies[0]['reason'].lower())
+                                self.assertEqual(list(self.cache.staging.glob('.source-*')), [])
+                        finally:
+                            await worker.close()
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+            self.assertFalse(thread.is_alive())
+
+        async def test_remote_source_exact_budget_is_preserved(self):
+            payload = b'p' * (1024 * 1024)
+            class Handler(BaseHTTPRequestHandler):
+                def log_message(self, *args):
+                    pass
+                def do_GET(self):
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(payload)))
+                    self.end_headers()
+                    self.wfile.write(payload)
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                with environment(QT_IMAGEIO_MAXALLOC='1'):
+                    async with prepare(f'http://127.0.0.1:{server.server_port}/exact', self.cache.staging) as row:
+                        self.assertEqual(row['path'].stat().st_size, len(payload))
+                        self.assertEqual(row['contentSha256'], hashlib.sha256(payload).hexdigest())
+                self.assertEqual(list(self.cache.staging.glob('.source-*')), [])
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+
+        async def test_remote_declared_oversize_is_rejected_before_body_read(self):
+            from contextlib import nullcontext
+            spec = importlib.util.spec_from_file_location('image_download', args.source / 'Scripts/python/src/images/download.py')
+            download = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(download)
+            class Response:
+                status = 200
+                headers = {'Content-Length': '1048577'}
+                def geturl(self):
+                    return 'https://example.test/image'
+                def read(self, size):
+                    raise AssertionError('Declared oversize body was read')
+            class Opener:
+                def open(self, *args, **kwargs):
+                    return nullcontext(Response())
+            target = self.folder / 'download'
+            with patch.object(download, 'build_opener', return_value=Opener()), patch.object(sys, 'argv', ['download.py', 'https://example.test/image', str(target), '1048576']):
+                with self.assertRaises(download.SourceTooLarge):
+                    download.main()
+            self.assertFalse(target.exists())
+
+        async def test_source_budget_follows_qt_allocation_units(self):
+            from images.limits import source_byte_budget, QT_DEFAULT_ALLOCATION_MIB
+            for value, expected in (('1', 1), ('32', 32), ('0', QT_DEFAULT_ALLOCATION_MIB), ('bad', QT_DEFAULT_ALLOCATION_MIB)):
+                with environment(QT_IMAGEIO_MAXALLOC=value):
+                    self.assertEqual(source_byte_budget(), expected * 1024 * 1024)
+
+        async def test_remote_redirect_is_refused_before_ftp_open(self):
+            import urllib.request
+            spec = importlib.util.spec_from_file_location('image_download', args.source / 'Scripts/python/src/images/download.py')
+            download = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(download)
+            contacted = []
+            def ftp_open(handler, request):
+                contacted.append(request.full_url)
+                raise ValueError('FTP endpoint was contacted')
+            class Handler(BaseHTTPRequestHandler):
+                def log_message(self, *args):
+                    pass
+                def do_GET(self):
+                    self.send_response(302)
+                    self.send_header('Location', 'ftp://127.0.0.1/should-not-be-contacted')
+                    self.end_headers()
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                # Both old and corrected downloader interfaces are exercised.
+                extra = ['1048576'] if hasattr(download, 'SourceTooLarge') else []
+                with patch.object(sys, 'argv', ['download.py', f'http://127.0.0.1:{server.server_port}/redirect', str(self.folder / 'download'), *extra]), patch.object(urllib.request.FTPHandler, 'ftp_open', ftp_open):
+                    try:
+                        download.main()
+                    except (ValueError, OSError):
+                        pass
+                self.assertEqual(contacted, [])
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+
+        async def test_known_source_inspection_does_not_read_the_whole_file(self):
+            from images.content import known
+            for name in ('Still.webp', 'Motion.webp', 'frame-0.png', 'Motion.gif'):
+                path = fixtures / name
+                with patch.object(Path, 'read_bytes', side_effect=AssertionError('whole-file read')):
+                    row = known(path)
+                self.assertGreater(row['width'], 0)
+                self.assertGreater(row['height'], 0)
+
         async def test_malformed_containers_emit_terminal_unavailable(self):
             malformed = {
                 'empty-header.png': PNG + chunk(b'IHDR', b'') + chunk(b'IDAT', zlib.compress(b'')) + chunk(b'IEND', b''),

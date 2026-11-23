@@ -102,3 +102,27 @@ attributes, CSS `background-image` in style attributes, `<style>` blocks and
 linked style sheets). `NImageText` does not load those; the text stays.
 With `maximumLineCount`, rich text with images is cut after that many lines
 (no ellipsis); styled text without images keeps Qt's elide.
+
+## Source resources and fixture preservation
+
+The originating image-decoding orchestrator made these decisions, both
+overridable by the user:
+
+- Remote source bytes are bounded by the image owner's existing decode
+  allocation limit, or Qt's `QImageReader` allocation limit when the owner has
+  no separate limit. `images/limits.py` derives bytes from Qt 6's 256 MiB
+  default allocation budget and honors positive `QT_IMAGEIO_MAXALLOC` (MiB)
+  overrides. A disabled Qt allocation check retains that finite default for
+  network admission. One derived source-byte budget covers the declared
+  Content-Length and the running streamed byte count. Exceeding it is an
+  explicit `source-too-large` terminal failure; partial files are removed,
+  never silently truncated or read wholly into memory by the downloader.
+  HTTP(S) sources enter that owner before rendering; Qt is offered the
+  validated local representation, never a second unbounded network URL.
+  Container inspection uses read-only mapped views and incremental SVG root
+  parsing, not a second whole-file Python allocation.
+- Guest fixture retirement retains immutable content-addressed base objects
+  (deduplicated) and atomic complete reconstruction receipts on the guest's
+  disk workspace. Canonical source mutation and receipt-write failures must
+  not destroy reconstructable fixture bytes. This is test-harness custody,
+  not product cache policy.
