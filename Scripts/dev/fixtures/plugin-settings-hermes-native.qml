@@ -327,6 +327,8 @@ ShellRoot {
       check(second.panel.settingsConsumer.connected && starts("second-user@second.invalid").length === 1, "replacement cannot stop sibling connection");
       probe("replaced", "life-replacement-children");
     } else if (phase === "life-replacement-children") {
+      if (!requests().some(row => row.event === "term" && row.target === "first-user@first.invalid"))
+        return;
       probeChildren("replacement", ["replacement-user@replacement.invalid", "second-user@second.invalid"], "life-auto-start");
     } else if (phase === "life-auto-start") {
       var attempt = automatic();
@@ -366,6 +368,8 @@ ShellRoot {
       phase = "life-native-retired";
     } else if (phase === "life-native-retired" && !selected.settingsContext.current()) {
       check(main._settingsConsumers.size === 2, "native context retirement releases all four sessions");
+      if (!["replacement-user@replacement.invalid", "second-user@second.invalid"].every(target => requests().some(row => row.event === "term" && row.target === target)))
+        return;
       probeChildren("native-retired", ["manual-user@manual.invalid"], "life-destroy-main");
     } else if (phase === "life-destroy-main") {
       main.destroy();

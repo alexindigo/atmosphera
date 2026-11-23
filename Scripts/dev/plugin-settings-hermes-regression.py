@@ -18,7 +18,7 @@ spec = importlib.util.spec_from_file_location('hermes_runner', Path(__file__).wi
 runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 STUB = '''#!/usr/bin/env python3
-import fcntl, json, os, struct, sys, termios, tty
+import fcntl, json, os, signal, struct, sys, termios, tty
 from pathlib import Path
 case = Path(os.environ['PHA_HERMES_CASE'])
 target = sys.argv[-2]
@@ -26,6 +26,9 @@ def record(event, **values):
  row = dict(event=event, pid=os.getpid(), start=Path('/proc/self/stat').read_text().split(') ', 1)[1].split()[19], target=target, **values)
  fd = os.open(case / 'requests.jsonl', os.O_WRONLY | os.O_APPEND)
  os.write(fd, (json.dumps(row) + '\\n').encode()); os.close(fd)
+def terminate(signum, frame):
+ record('term'); sys.exit(0)
+signal.signal(signal.SIGTERM, terminate)
 rows, cols, _, _ = struct.unpack('HHHH', fcntl.ioctl(0, termios.TIOCGWINSZ, b'\\0' * 8))
 tty.setraw(0)
 record('start', argv=sys.argv[1:], rows=rows, cols=cols)
