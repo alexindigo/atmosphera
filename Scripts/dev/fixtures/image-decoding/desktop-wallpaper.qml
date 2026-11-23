@@ -39,23 +39,18 @@ ShellRoot {
     return null;
   }
   function grab(item, name) {
-    if (!item)
-      return;
-    ++pending;
-    var accepted = item.grabToImage(result => {
+    if (item && item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
-      if (!root.pending && root.afterCapture) {
-        var next = root.afterCapture;
-        root.afterCapture = null;
-        Qt.callLater(next);
-      }
-    });
-    if (!accepted)
-      --pending;
+    })) {
+      ++pending;
+      return;
+    }
+    console.error("Wallpaper grab rejected: " + name);
+    Qt.exit(3);
   }
   function request(path) {
     expectedPath = path;
@@ -155,7 +150,9 @@ ShellRoot {
                               transitioning: root.desktop().transitioning,
                               visible: root.desktop().visible
                             });
-      if (root.desktop().visible)
+      // Keep the grab on the signal edge: deferring until a later frame could
+      // conceal an acknowledgment that preceded the new wallpaper.
+      if (!root.redControl && root.desktop().visible)
         root.grab(root.visual(root.desktop()), "ack-" + index);
     }
   }
@@ -178,6 +175,12 @@ ShellRoot {
       ++root.tick;
       if (root.pending)
         return;
+      if (root.afterCapture) {
+        var next = root.afterCapture;
+        root.afterCapture = null;
+        next();
+        return;
+      }
       if (root.redControl && root.completions.length && root.tick - root.completions[0].tick >= 8) {
         root.snapshot("red-control");
         root.afterCapture = root.finish;
