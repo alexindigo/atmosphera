@@ -212,7 +212,11 @@ ShellRoot {
     phase = next;
   }
   function accepted() {
-    return receipt && !popup.busy && receipt.status === "saved" && receipt.refreshState === "current";
+    if (!receipt || popup.busy)
+      return false;
+    check(receipt.status === "saved" && receipt.refreshState === "current", "native Apply failed: " + (receipt.error?.code ?? receipt.status));
+    check(receipt.runtimeRead?.status === "observed", "selected runtime reader observed Apply");
+    return true;
   }
   function consumerName(name, index) {
     var path = expected(name, index).niriConfigPath;
@@ -261,6 +265,8 @@ ShellRoot {
   function drive() {
     check(Date.now() - since < 18000, phase === "row-reset" ? "actual row Reset removes selected overrides" : "finite native phase");
     if (phase === "runtime" && selected.settingsReady && sibling.settingsReady && inherited.settingsReady) {
+      var reader = (scope === "instance" ? selected : api).settingsReadOwner;
+      check(typeof reader?.readProjection?.synchronize === "function", "selected reader lacks ConfigQml readProjection.synchronize; load the qualified native module");
       input.waitForJob();
       var data = JSON.parse(input.text());
       edits = data.edits;
@@ -286,7 +292,14 @@ ShellRoot {
       open("discard-page");
     else if (phase === "discard-page" && popup.opened && popup.settingsPage) {
       check(!popup.dirty, "no construction intent");
+      var sourceBeforeDraft = panel.settingsConsumer?.sourceKey;
       edit();
+      if (!oldRed && Quickshell.env("PHA_KEYBIND_READER_CONTROL") !== "1") {
+        var runtime = scope === "shared" ? api : selected;
+        check(runtime.settingsView.keyColorSuper === edits.keyColorSuper, "color preview is active");
+        check(runtime.settingsView.niriConfigPath === edits.niriConfigPath && runtime.pluginSettings.niriConfigPath !== edits.niriConfigPath, "preview contains an unapplied parser path");
+        check((scope === "shared" ? main.clientFor(api) : main.clientFor(selected)).sourceKey === sourceBeforeDraft, "color preview must not change parser source before Apply");
+      }
       check(!popup.requestClose(), "dirty Close refuses");
       popup.confirmDiscard();
       phase = "discarded";
