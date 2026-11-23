@@ -980,61 +980,61 @@ Module {
             isReadonly: true
             isPropertyConstant: true
         }
-        Signal { name: "schemaChanged"; lineNumber: 118 }
-        Signal { name: "valuesChanged"; lineNumber: 119 }
-        Signal { name: "statusChanged"; lineNumber: 120 }
+        Signal { name: "schemaChanged"; lineNumber: 122 }
+        Signal { name: "valuesChanged"; lineNumber: 123 }
+        Signal { name: "statusChanged"; lineNumber: 124 }
         Signal {
             name: "completed"
-            lineNumber: 121
+            lineNumber: 125
             Parameter { name: "result"; type: "QJSValue" }
         }
         Signal {
             name: "autoSaved"
-            lineNumber: 122
+            lineNumber: 126
             Parameter { name: "result"; type: "QJSValue" }
         }
         Signal {
             name: "sourceError"
-            lineNumber: 123
+            lineNumber: 127
             Parameter { name: "error"; type: "QJSValue" }
         }
         Signal {
             name: "sourceWarning"
-            lineNumber: 124
+            lineNumber: 128
             Parameter { name: "warning"; type: "QJSValue" }
         }
         Signal {
             name: "inputRejected"
-            lineNumber: 125
+            lineNumber: 129
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "code"; type: "QString" }
         }
         Signal {
             name: "settingValuesChanged"
-            lineNumber: 126
+            lineNumber: 130
             Parameter { name: "paths"; type: "configqml::ConfigPath"; isList: true }
         }
-        Signal { name: "draftStateChanged"; lineNumber: 127 }
+        Signal { name: "draftStateChanged"; lineNumber: 131 }
         Signal {
             name: "migrationCompleted"
-            lineNumber: 128
+            lineNumber: 132
             Parameter { name: "result"; type: "QJSValue" }
         }
-        Signal { name: "sourceStatesChanged"; lineNumber: 129 }
+        Signal { name: "sourceStatesChanged"; lineNumber: 133 }
         Signal {
             name: "sourceAccepted"
-            lineNumber: 130
+            lineNumber: 134
             Parameter { name: "event"; type: "QJSValue" }
         }
         Signal {
             name: "projectionEffects"
-            lineNumber: 131
+            lineNumber: 135
             Parameter { name: "event"; type: "QJSValue" }
         }
         Method {
             name: "setUser"
             type: "QString"
-            lineNumber: 75
+            lineNumber: 78
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "value"; type: "QVariant" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1043,14 +1043,14 @@ Module {
             name: "setUser"
             type: "QString"
             isCloned: true
-            lineNumber: 75
+            lineNumber: 78
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "value"; type: "QVariant" }
         }
         Method {
             name: "setRuntime"
             type: "QString"
-            lineNumber: 77
+            lineNumber: 80
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "value"; type: "QVariant" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1059,14 +1059,14 @@ Module {
             name: "setRuntime"
             type: "QString"
             isCloned: true
-            lineNumber: 77
+            lineNumber: 80
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "value"; type: "QVariant" }
         }
         Method {
             name: "reset"
             type: "QString"
-            lineNumber: 79
+            lineNumber: 82
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "target"; type: "QString" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1075,14 +1075,14 @@ Module {
             name: "reset"
             type: "QString"
             isCloned: true
-            lineNumber: 79
+            lineNumber: 82
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "target"; type: "QString" }
         }
         Method {
             name: "clearRuntime"
             type: "QString"
-            lineNumber: 81
+            lineNumber: 84
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1090,41 +1090,41 @@ Module {
             name: "clearRuntime"
             type: "QString"
             isCloned: true
-            lineNumber: 81
+            lineNumber: 84
             Parameter { name: "path"; type: "QStringList" }
         }
         Method {
             name: "info"
             type: "QVariantMap"
             isMethodConstant: true
-            lineNumber: 82
+            lineNumber: 85
             Parameter { name: "path"; type: "QStringList" }
         }
         Method {
             name: "listModel"
             type: "configqml::ConfigListModel"
             isPointer: true
-            lineNumber: 83
+            lineNumber: 86
             Parameter { name: "path"; type: "QStringList" }
         }
         Method {
             name: "keyedModel"
             type: "configqml::ConfigListModel"
             isPointer: true
-            lineNumber: 84
+            lineNumber: 87
             Parameter { name: "path"; type: "QStringList" }
         }
         Method {
             name: "save"
             type: "QString"
-            lineNumber: 85
+            lineNumber: 88
             Parameter { name: "callback"; type: "QJSValue" }
         }
-        Method { name: "save"; type: "QString"; isCloned: true; lineNumber: 85 }
+        Method { name: "save"; type: "QString"; isCloned: true; lineNumber: 88 }
         Method {
             name: "saveSelected"
             type: "QString"
-            lineNumber: 86
+            lineNumber: 89
             Parameter { name: "paths"; type: "QVariantList" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1132,20 +1132,20 @@ Module {
             name: "saveSelected"
             type: "QString"
             isCloned: true
-            lineNumber: 86
+            lineNumber: 89
             Parameter { name: "paths"; type: "QVariantList" }
         }
         Method {
             name: "reload"
             type: "QString"
-            lineNumber: 87
+            lineNumber: 90
             Parameter { name: "callback"; type: "QJSValue" }
         }
-        Method { name: "reload"; type: "QString"; isCloned: true; lineNumber: 87 }
+        Method { name: "reload"; type: "QString"; isCloned: true; lineNumber: 90 }
         Method {
             name: "initializeIfMissing"
             type: "QString"
-            lineNumber: 88
+            lineNumber: 91
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "value"; type: "QVariant" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1154,29 +1154,29 @@ Module {
             name: "initializeIfMissing"
             type: "QString"
             isCloned: true
-            lineNumber: 88
+            lineNumber: 91
             Parameter { name: "path"; type: "QStringList" }
             Parameter { name: "value"; type: "QVariant" }
         }
         Method {
             name: "flush"
             type: "QString"
-            lineNumber: 90
+            lineNumber: 93
             Parameter { name: "callback"; type: "QJSValue" }
         }
-        Method { name: "flush"; type: "QString"; isCloned: true; lineNumber: 90 }
+        Method { name: "flush"; type: "QString"; isCloned: true; lineNumber: 93 }
         Method {
             name: "close"
             type: "QString"
-            lineNumber: 91
+            lineNumber: 94
             Parameter { name: "callback"; type: "QJSValue" }
         }
-        Method { name: "close"; type: "QString"; isCloned: true; lineNumber: 91 }
+        Method { name: "close"; type: "QString"; isCloned: true; lineNumber: 94 }
         Method {
             name: "scope"
             type: "ConfigQmlStore"
             isPointer: true
-            lineNumber: 92
+            lineNumber: 95
             Parameter { name: "key"; type: "QStringList" }
             Parameter { name: "writable"; type: "bool" }
         }
@@ -1185,42 +1185,56 @@ Module {
             type: "ConfigQmlStore"
             isPointer: true
             isCloned: true
-            lineNumber: 92
+            lineNumber: 95
             Parameter { name: "key"; type: "QStringList" }
         }
         Method {
             name: "draft"
             type: "ConfigQmlStore"
             isPointer: true
-            lineNumber: 93
+            lineNumber: 96
             Parameter { name: "paths"; type: "QVariantList" }
         }
-        Method { name: "draft"; type: "ConfigQmlStore"; isPointer: true; isCloned: true; lineNumber: 93 }
+        Method { name: "draft"; type: "ConfigQmlStore"; isPointer: true; isCloned: true; lineNumber: 96 }
         Method {
             name: "copyValue"
             type: "QJSValue"
-            lineNumber: 94
+            lineNumber: 97
             Parameter { name: "value"; type: "QJSValue" }
         }
         Method {
             name: "previewScope"
             type: "ConfigQmlStore"
             isPointer: true
-            lineNumber: 96
+            lineNumber: 99
             Parameter { name: "path"; type: "QStringList" }
         }
         Method {
             name: "apply"
             type: "QString"
-            lineNumber: 97
+            lineNumber: 100
             Parameter { name: "callback"; type: "QJSValue" }
         }
-        Method { name: "apply"; type: "QString"; isCloned: true; lineNumber: 97 }
-        Method { name: "discard"; type: "bool"; lineNumber: 98 }
+        Method { name: "apply"; type: "QString"; isCloned: true; lineNumber: 100 }
+        Method {
+            name: "stageReset"
+            type: "QString"
+            lineNumber: 101
+            Parameter { name: "paths"; type: "QVariantList" }
+            Parameter { name: "callback"; type: "QJSValue" }
+        }
+        Method {
+            name: "stageReset"
+            type: "QString"
+            isCloned: true
+            lineNumber: 101
+            Parameter { name: "paths"; type: "QVariantList" }
+        }
+        Method { name: "discard"; type: "bool"; lineNumber: 102 }
         Method {
             name: "openOverlay"
             type: "QString"
-            lineNumber: 99
+            lineNumber: 103
             Parameter { name: "options"; type: "QJSValue" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1228,27 +1242,27 @@ Module {
             name: "openOverlay"
             type: "QString"
             isCloned: true
-            lineNumber: 99
+            lineNumber: 103
             Parameter { name: "options"; type: "QJSValue" }
         }
         Method {
             name: "resetOverrides"
             type: "QString"
-            lineNumber: 100
+            lineNumber: 104
             Parameter { name: "callback"; type: "QJSValue" }
         }
-        Method { name: "resetOverrides"; type: "QString"; isCloned: true; lineNumber: 100 }
+        Method { name: "resetOverrides"; type: "QString"; isCloned: true; lineNumber: 104 }
         Method {
             name: "unset"
             type: "bool"
-            lineNumber: 101
+            lineNumber: 105
             Parameter { name: "path"; type: "QStringList" }
         }
-        Method { name: "detach"; lineNumber: 102 }
+        Method { name: "detach"; lineNumber: 106 }
         Method {
             name: "exportProfile"
             type: "QString"
-            lineNumber: 103
+            lineNumber: 107
             Parameter { name: "name"; type: "QString" }
             Parameter { name: "file"; type: "QString" }
             Parameter { name: "paths"; type: "QVariantList" }
@@ -1258,7 +1272,7 @@ Module {
             name: "exportProfile"
             type: "QString"
             isCloned: true
-            lineNumber: 103
+            lineNumber: 107
             Parameter { name: "name"; type: "QString" }
             Parameter { name: "file"; type: "QString" }
             Parameter { name: "paths"; type: "QVariantList" }
@@ -1267,14 +1281,14 @@ Module {
             name: "exportProfile"
             type: "QString"
             isCloned: true
-            lineNumber: 103
+            lineNumber: 107
             Parameter { name: "name"; type: "QString" }
             Parameter { name: "file"; type: "QString" }
         }
         Method {
             name: "importProfile"
             type: "QString"
-            lineNumber: 106
+            lineNumber: 110
             Parameter { name: "file"; type: "QString" }
             Parameter { name: "paths"; type: "QVariantList" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1283,7 +1297,7 @@ Module {
             name: "importProfile"
             type: "QString"
             isCloned: true
-            lineNumber: 106
+            lineNumber: 110
             Parameter { name: "file"; type: "QString" }
             Parameter { name: "paths"; type: "QVariantList" }
         }
@@ -1291,13 +1305,13 @@ Module {
             name: "importProfile"
             type: "QString"
             isCloned: true
-            lineNumber: 106
+            lineNumber: 110
             Parameter { name: "file"; type: "QString" }
         }
         Method {
             name: "updateRecordListPolicy"
             type: "QString"
-            lineNumber: 108
+            lineNumber: 112
             Parameter { name: "policyId"; type: "QString" }
             Parameter { name: "metadata"; type: "QJSValue" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1306,14 +1320,14 @@ Module {
             name: "updateRecordListPolicy"
             type: "QString"
             isCloned: true
-            lineNumber: 108
+            lineNumber: 112
             Parameter { name: "policyId"; type: "QString" }
             Parameter { name: "metadata"; type: "QJSValue" }
         }
         Method {
             name: "editRecordList"
             type: "QString"
-            lineNumber: 110
+            lineNumber: 114
             Parameter { name: "policyId"; type: "QString" }
             Parameter { name: "options"; type: "QJSValue" }
             Parameter { name: "callback"; type: "QJSValue" }
@@ -1322,14 +1336,14 @@ Module {
             name: "editRecordList"
             type: "QString"
             isCloned: true
-            lineNumber: 110
+            lineNumber: 114
             Parameter { name: "policyId"; type: "QString" }
             Parameter { name: "options"; type: "QJSValue" }
         }
         Method {
             name: "retainGroup"
             type: "QString"
-            lineNumber: 112
+            lineNumber: 116
             Parameter { name: "options"; type: "QJSValue" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1337,13 +1351,13 @@ Module {
             name: "retainGroup"
             type: "QString"
             isCloned: true
-            lineNumber: 112
+            lineNumber: 116
             Parameter { name: "options"; type: "QJSValue" }
         }
         Method {
             name: "saveGroup"
             type: "QString"
-            lineNumber: 113
+            lineNumber: 117
             Parameter { name: "token"; type: "QString" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1351,13 +1365,13 @@ Module {
             name: "saveGroup"
             type: "QString"
             isCloned: true
-            lineNumber: 113
+            lineNumber: 117
             Parameter { name: "token"; type: "QString" }
         }
         Method {
             name: "retryGroup"
             type: "QString"
-            lineNumber: 114
+            lineNumber: 118
             Parameter { name: "token"; type: "QString" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1365,13 +1379,13 @@ Module {
             name: "retryGroup"
             type: "QString"
             isCloned: true
-            lineNumber: 114
+            lineNumber: 118
             Parameter { name: "token"; type: "QString" }
         }
         Method {
             name: "releaseGroup"
             type: "QString"
-            lineNumber: 115
+            lineNumber: 119
             Parameter { name: "token"; type: "QString" }
             Parameter { name: "callback"; type: "QJSValue" }
         }
@@ -1379,14 +1393,14 @@ Module {
             name: "releaseGroup"
             type: "QString"
             isCloned: true
-            lineNumber: 115
+            lineNumber: 119
             Parameter { name: "token"; type: "QString" }
         }
         Method {
             name: "groupInfo"
             type: "QVariantMap"
             isMethodConstant: true
-            lineNumber: 116
+            lineNumber: 120
             Parameter { name: "token"; type: "QString" }
         }
     }
