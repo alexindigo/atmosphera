@@ -194,7 +194,11 @@ def prove_modes(args, profile, scope, modes, case, out, install, dest, env, want
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
-    parser.add_argument('--scope', choices=('shared', 'instance')); parser.add_argument('--old-red', action='store_true'); parser.add_argument('--control', choices=('writer',)); parser.add_argument('--actions-only', action='store_true')
+    parser.add_argument('--scope', choices=('shared', 'instance'))
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--control', choices=('writer',))
+    oracle.add_argument('--actions-only', action='store_true')
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-spotify-regression.py': parser.error('execute supplied source')
     if (args.old_red or args.control) and args.scope != 'instance': parser.error('control requires instance scope')

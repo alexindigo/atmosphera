@@ -122,11 +122,12 @@ def run(args, profile):
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
-    parser.add_argument('--old-red', action='store_true')
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--control', choices=('prefix', 'toast', 'toast-disabled', 'rendered-child', 'defaults', 'open', 'close', 'toggle', 'options', 'retirement', 'close-policy'))
     parser.add_argument('--mode', choices=('policy', 'lifetime'), default='policy')
-    parser.add_argument('--control', choices=('prefix', 'toast', 'toast-disabled', 'rendered-child', 'defaults', 'open', 'close', 'toggle', 'options', 'retirement', 'close-policy'))
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
-    if args.old_red and (args.control or args.mode != 'policy'): parser.error('original red requires the unmutated policy witness')
+    if args.old_red and args.mode != 'policy': parser.error('original red requires the unmutated policy witness')
     if args.control and args.mode != ('policy' if args.control in ('prefix', 'toast', 'toast-disabled', 'rendered-child') else 'lifetime'): parser.error('control requires its policy/lifetime witness')
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-dmenu-regression.py': parser.error('execute supplied source')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):

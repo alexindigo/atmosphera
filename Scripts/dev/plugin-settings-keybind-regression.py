@@ -79,7 +79,10 @@ def run(args, profile, scope):
 def main():
     p=argparse.ArgumentParser(description=__doc__); profile_argument(p)
     for name in ('source','plugins','work-root','output'): p.add_argument('--'+name,type=Path,required=True)
-    p.add_argument('--scope',choices=('instance','shared')); p.add_argument('--old-red',action='store_true'); p.add_argument('--control',choices=('reader','child','reset'))
+    p.add_argument('--scope',choices=('instance','shared'))
+    oracle = p.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red',action='store_true')
+    oracle.add_argument('--control',choices=('reader','child','reset'))
     args=p.parse_args(); profile=activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve()!=args.source.resolve()/'Scripts/dev/plugin-settings-keybind-regression.py': p.error('execute supplied source')
     if (args.old_red or args.control) and args.scope!='instance': p.error('explicit instance control required')

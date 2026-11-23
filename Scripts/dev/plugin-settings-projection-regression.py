@@ -122,8 +122,9 @@ def main():
         parser.add_argument('--' + key, type=Path, required=True)
     parser.add_argument('--plugin', choices=('privacy-indicator', 'noctalia-calculator', 'kde-connect'))
     parser.add_argument('--scope', choices=('shared', 'instance'))
-    parser.add_argument('--old-red', action='store_true')
-    parser.add_argument('--negative-control', choices=('shared-client', 'child', 'retirement'))
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--negative-control', choices=('shared-client', 'child', 'retirement'))
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-projection-regression.py':
         parser.error('execute supplied source')

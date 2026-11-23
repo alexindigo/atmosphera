@@ -108,9 +108,13 @@ def run(args, profile, scope):
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
-    parser.add_argument('--scope', choices=('shared', 'instance')); parser.add_argument('--old-red', action='store_true'); parser.add_argument('--lifetime', action='store_true')
-    parser.add_argument('--control', choices=('shared-client', 'child', 'retirement', 'device-filter'))
-    args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
+    parser.add_argument('--scope', choices=('shared', 'instance')); parser.add_argument('--lifetime', action='store_true')
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--control', choices=('shared-client', 'child', 'retirement', 'device-filter'))
+    args = parser.parse_args()
+    if args.old_red and args.lifetime: parser.error('original red requires the policy witness, not --lifetime')
+    profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-bongo-regression.py': parser.error('execute supplied source')
     if (args.old_red or args.control or args.lifetime) and args.scope != 'instance': parser.error('explicit instance scope required')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):

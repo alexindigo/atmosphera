@@ -69,14 +69,16 @@ def run(args, profile, scope):
 def main():
     parser=argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source','plugins','work-root','output'): parser.add_argument('--'+name,type=Path,required=True)
-    parser.add_argument('--scope',choices=('instance','shared')); parser.add_argument('--old-red',action='store_true')
-    parser.add_argument('--control',choices=('bar','panel','child'))
-    parser.add_argument('--native-lifetime',action='store_true')
+    parser.add_argument('--scope',choices=('instance','shared'))
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red',action='store_true')
+    oracle.add_argument('--control',choices=('bar','panel','child'))
+    oracle.add_argument('--native-lifetime',action='store_true')
     args=parser.parse_args(); profile=activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve()!=args.source.resolve()/'Scripts/dev/plugin-settings-pomodoro-regression.py': parser.error('execute supplied source')
     if args.old_red and args.scope!='instance': parser.error('explicit instance red required')
-    if args.control and (args.scope!='instance' or args.old_red): parser.error('explicit candidate instance control required')
-    if args.native_lifetime and (args.scope!='instance' or args.control or args.old_red): parser.error('explicit candidate instance lifetime required')
+    if args.control and args.scope!='instance': parser.error('explicit candidate instance control required')
+    if args.native_lifetime and args.scope!='instance': parser.error('explicit candidate instance lifetime required')
     for path,parent in ((args.work_root,profile.work_base),(args.output,profile.journal_base)):
         if path!=path.resolve() or path==parent or not path.is_relative_to(parent): parser.error('fresh owned guest roots required')
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:

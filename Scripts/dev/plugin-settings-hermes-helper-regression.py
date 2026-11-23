@@ -145,13 +145,13 @@ def characterize(args, helper, mode, case, env, resources, result):
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for key in ('source', 'plugins', 'work-root', 'output'): parser.add_argument('--' + key, type=Path, required=True)
-    parser.add_argument('--original-red', action='store_true')
-    parser.add_argument('--negative-control', choices=('parent-death', 'sigterm', 'parent-race'))
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--original-red', action='store_true')
+    oracle.add_argument('--negative-control', choices=('parent-death', 'sigterm', 'parent-race'))
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-hermes-helper-regression.py': parser.error('execute supplied source')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent): parser.error('fresh owned guest roots required')
-    if args.original_red and args.negative_control: parser.error('separate original/control cases')
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         original = args.plugins / 'hermes-ssh-chat/helpers/hermes_ssh_bridge.py'

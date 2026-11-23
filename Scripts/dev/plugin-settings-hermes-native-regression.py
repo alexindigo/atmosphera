@@ -132,9 +132,13 @@ def main():
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--scope',choices=('instance','shared'))
     parser.add_argument('--scenario',choices=('native','detect','detect-retire','probe','pending'),default='native')
-    parser.add_argument('--omit-origin',action='store_true')
-    parser.add_argument('--original-page',type=Path)
-    args=parser.parse_args();profile=activate_profile(args.guest_profile);profile.prepare_roots()
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--omit-origin',action='store_true')
+    oracle.add_argument('--original-page',type=Path)
+    args=parser.parse_args()
+    if (args.omit_origin or args.original_page) and args.scenario != 'native':
+        parser.error('original page and omitted origin each requires the native scenario')
+    profile=activate_profile(args.guest_profile);profile.prepare_roots()
     if Path(__file__).resolve()!=args.source.resolve()/'Scripts/dev/plugin-settings-hermes-native-regression.py':parser.error('execute supplied source')
     for path,parent in ((args.work_root,profile.work_base),(args.output,profile.journal_base)):
         if path!=path.resolve() or path==parent or not path.is_relative_to(parent):parser.error('fresh owned guest roots required')

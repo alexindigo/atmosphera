@@ -116,8 +116,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
     for name in ('source', 'plugins', 'work-root', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
-    parser.add_argument('--scope', choices=('instance', 'shared')); parser.add_argument('--old-red', action='store_true')
-    parser.add_argument('--control', choices=('client', 'child', 'response'))
+    parser.add_argument('--scope', choices=('instance', 'shared'))
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--control', choices=('client', 'child', 'response'))
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve()/'Scripts/dev/plugin-settings-assistant-regression.py': parser.error('execute supplied source')
     if (args.old_red or args.control) and args.scope != 'instance': parser.error('explicit instance red required')

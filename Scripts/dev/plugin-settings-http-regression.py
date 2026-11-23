@@ -129,7 +129,9 @@ def main():
     for key in ('source', 'plugins', 'work-root', 'output'):
         parser.add_argument('--' + key, type=Path, required=True)
     parser.add_argument('--plugin', choices=MEMBERS); parser.add_argument('--scope', choices=('shared', 'instance'))
-    parser.add_argument('--old-red', action='store_true'); parser.add_argument('--negative-control', action='store_true')
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--negative-control', action='store_true')
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-http-regression.py':
         parser.error('execute supplied source')

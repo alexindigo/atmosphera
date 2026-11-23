@@ -90,7 +90,10 @@ def run(args,profile,scope):
 def main():
     parser=argparse.ArgumentParser(description=__doc__);profile_argument(parser)
     for name in ('source','plugins','work-root','output'):parser.add_argument('--'+name,type=Path,required=True)
-    parser.add_argument('--scope',choices=('instance','shared'));parser.add_argument('--original-plugins',type=Path);parser.add_argument('--omit-origin',action='store_true')
+    parser.add_argument('--scope',choices=('instance','shared'))
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--original-plugins',type=Path)
+    oracle.add_argument('--omit-origin',action='store_true')
     args=parser.parse_args();profile=activate_profile(args.guest_profile);profile.prepare_roots()
     if Path(__file__).resolve()!=args.source.resolve()/'Scripts/dev/plugin-settings-steam-native-regression.py':parser.error('execute supplied source')
     for path,parent in ((args.work_root,profile.work_base),(args.output,profile.journal_base)):

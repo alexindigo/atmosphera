@@ -277,26 +277,26 @@ def main():
     for key in ('source', 'plugins', 'work-root', 'output'):
         parser.add_argument('--' + key, required=True, type=Path)
     parser.add_argument('--plugin', choices=tuple(DATA))
-    parser.add_argument('--old-red', action='store_true')
-    parser.add_argument('--cancel-starting', action='store_true')
+    oracle = parser.add_mutually_exclusive_group()
+    oracle.add_argument('--old-red', action='store_true')
+    oracle.add_argument('--cancel-starting', action='store_true')
+    oracle.add_argument('--taildrop-lifetime', choices=('pre', 'receive', 'post', 'handoff'))
+    oracle.add_argument('--extra-lifetime', action='store_true')
+    oracle.add_argument('--gpu-cadence', action='store_true')
     parser.add_argument('--expect-starting-red', action='store_true')
-    parser.add_argument('--taildrop-lifetime', choices=('pre', 'receive', 'post', 'handoff'))
     parser.add_argument('--receive-completion-control', action='store_true')
-    parser.add_argument('--extra-lifetime', action='store_true')
     parser.add_argument('--lifetime-control', action='store_true')
-    parser.add_argument('--gpu-cadence', action='store_true')
     args = parser.parse_args(); profile = activate_profile(args.guest_profile); profile.prepare_roots()
     if Path(__file__).resolve() != args.source.resolve() / 'Scripts/dev/plugin-settings-observation-regression.py':
         parser.error('execute supplied source')
     if args.old_red and not args.plugin:
         parser.error('explicit member required for original red')
     if (args.cancel_starting or args.expect_starting_red or args.taildrop_lifetime) and args.plugin != 'tailscale': parser.error('receive lifetime case requires Tailscale')
-    if args.cancel_starting and args.taildrop_lifetime: parser.error('one lifetime case at a time')
     if args.expect_starting_red and not args.cancel_starting: parser.error('starting red needs cancellation case')
     if args.receive_completion_control and args.taildrop_lifetime != 'handoff': parser.error('completion control requires handoff case')
     if args.extra_lifetime and args.plugin not in ('amd-gpu-monitor', 'netbird', 'openvpn3'): parser.error('explicit unusual observation member required')
     if args.lifetime_control and not args.extra_lifetime: parser.error('retirement control requires unusual observation lifetime case')
-    if args.gpu_cadence and (args.plugin != 'amd-gpu-monitor' or args.old_red or args.extra_lifetime or args.lifetime_control):
+    if args.gpu_cadence and args.plugin != 'amd-gpu-monitor':
         parser.error('GPU cadence requires its unmodified explicit GPU case')
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or path == parent or not path.is_relative_to(parent):
