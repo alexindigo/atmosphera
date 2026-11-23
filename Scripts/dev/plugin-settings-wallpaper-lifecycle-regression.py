@@ -18,20 +18,25 @@ spec=importlib.util.spec_from_file_location('wallpaper_native',Path(__file__).wi
 native=importlib.util.module_from_spec(spec); spec.loader.exec_module(native)
 runner=native.runner
 ENDPOINT='''#!/usr/bin/python3
-import fcntl,json,os,sys,time
+import fcntl,json,os,signal,sys,time
 from pathlib import Path
 b=Path(os.environ['PHA_WALLPAPER_CASE']); name=Path(sys.argv[0]).name; args=sys.argv[1:]
 if name=='endpoint.py':name=args.pop(0)
+held=name=='scan-wallpapers.sh' and args[0].endswith('/held-source')
+if held:signal.signal(signal.SIGTERM,signal.SIG_IGN)
 start=(Path('/proc')/str(os.getpid())/'stat').read_text().split(') ',1)[1].split()[19]
-with (b/'requests.jsonl').open('a') as stream:
- fcntl.flock(stream,fcntl.LOCK_EX);stream.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start))+'\\n');stream.flush()
+def record(event):
+ with (b/'requests.jsonl').open('a') as stream:
+  fcntl.flock(stream,fcntl.LOCK_EX);stream.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start,event=event))+'\\n');stream.flush()
+record('admitted')
 if name=='scan-wallpapers.sh':
- if args[0].endswith('/held-source'):
+ if held:
   end=time.monotonic()+20
   while not (b/'release-scan').exists():
    if time.monotonic()>end:raise SystemExit('held scan deadline')
    time.sleep(.02)
- print(args[0]+'/controlled\\tControlled')
+ print(args[0]+'/controlled\\tControlled',flush=True)
+ if held:record('emitted')
 if name=='linux-wallpaperengine':
  end=time.monotonic()+25
  while not (b/'release-engine').exists():

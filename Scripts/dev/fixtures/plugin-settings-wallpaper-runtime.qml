@@ -16,6 +16,7 @@ ShellRoot {
   property string phase: "startup"
   property double since: Date.now()
   property int savedAtRetirement: 0
+  property var browseEvents: []
   onPhaseChanged: since = Date.now()
   FileView {
     id: manifest
@@ -72,6 +73,12 @@ ShellRoot {
     }
     function withCurrentScreen(callback) {
       callback(Quickshell.screens[0]);
+    }
+    function recordBrowse(event, value) {
+      root.browseEvents.push({
+                               event: event,
+                               value: value
+                             });
     }
   }
   QtObject {
@@ -182,20 +189,24 @@ ShellRoot {
           main.setWallpaper(base + "/selected/controlled.mp4", Quickshell.screens[0].name, selected);
         phase = "writer";
       }
-    } else if (phase === "browse-writer" && Date.now() - since > 500) {
+    } else if (phase === "browse-writer" && selected.saves > 0) {
       const screen = Quickshell.screens[0].name;
       const path = plugin === "mpvpaper" ? selected.pluginSettings.currentWallpaper : selected.pluginSettings.monitors[screen]?.currentWallpaper;
       const sharedPath = plugin === "mpvpaper" ? shared.pluginSettings.currentWallpaper : shared.pluginSettings.monitors[screen]?.currentWallpaper;
       check(path === base + "/selected/controlled.mp4" && !sharedPath && selected.saves > 0, "selected browse source and runtime writer");
       selected.pluginSettings.wallpapersFolder = base + "/replacement";
       savedAtRetirement = selected.saves;
+      browseEvents = [];
       if (plugin === "mpvpaper")
         main.nextWallpaper(selected);
       else
         main.nextWallpaper(screen, selected);
+      const admitted = browseEvents[0];
+      const request = admitted?.value.request;
+      check(browseEvents.length === 1 && admitted?.event === "admitted" && request?.folder === base + "/replacement" && admitted.value.source === request.folder && request.mode === "next" && request.writer === selected && request.context === selected.settingsContext, "replacement browse was admitted with its exact source and selected writer");
       current = false;
       phase = "browse-retired";
-    } else if (phase === "browse-retired" && Date.now() - since > 500) {
+    } else if (phase === "browse-retired" && browseEvents.some(row => row.event === "settled" && row.value === base + "/replacement")) {
       check(selected.saves === savedAtRetirement, "retired queued browse cannot publish to its native writer");
       gate.command = ["touch", base + "/release-engine"];
       gate.running = true;

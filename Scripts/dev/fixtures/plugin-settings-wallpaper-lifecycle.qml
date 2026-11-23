@@ -62,7 +62,7 @@ ShellRoot {
     requests.reload();
     requests.waitForJob();
     const all = String(requests.text()).trim().split("\n").filter(line => line).map(line => JSON.parse(line));
-    return name ? all.filter(row => row.endpoint === name) : all;
+    return name ? all.filter(row => row.endpoint === name && row.event === "admitted") : all;
   }
   function probe(boundary, next) {
     afterDisk = next;
@@ -200,10 +200,18 @@ ShellRoot {
       target.saveSettings();
       phase = "held-source";
     } else if (phase === "held-source" && rows("scan-wallpapers.sh").some(row => row.argv[0] === base + "/held-source")) {
+      heldScan = rows("scan-wallpapers.sh").find(row => row.argv[0] === base + "/held-source");
       target.pluginSettings.wallpapersFolder = base + "/replacement-folder";
       target.saveSettings();
+      phase = "superseded";
+    } else if (phase === "superseded" && client.folderPath === base + "/replacement-folder") {
+      check(context.current(), "scan must be superseded without retiring the native context");
+      check(!rows().some(row => row.event === "emitted" && row.pid === heldScan.pid && row.start === heldScan.start), "superseded endpoint remains held until release");
+      control.command = ["touch", base + "/release-scan"];
+      control.running = true;
       phase = "replacement";
     } else if (phase === "replacement" && client.cachedWallpaperItems[0]?.path === base + "/replacement-folder/controlled") {
+      check(context.current() && rows().some(row => row.event === "emitted" && row.pid === heldScan.pid && row.start === heldScan.start), "exact superseded scan emitted while its context remained current");
       check(!client.scanningWallpapers, "replacement scan completed");
       check(main.sharedCatalog.cachedWallpaperItems.every(row => row.path.startsWith(base + "/shared-folder/")), "shared source is independent");
       settle("replaced-disk");
@@ -239,6 +247,14 @@ ShellRoot {
     } else if (phase === "join" && !control.running) {
       console.log("WALLPAPER_LIFETIME: PASS " + scenario);
       Qt.exit(0);
+    }
+  }
+  property var heldScan: null
+  Connections {
+    target: root.scenario === "source" ? root.client : null
+    function onCachedWallpaperItemsChanged() {
+      if (root.context.current() && root.client.cachedWallpaperItems.some(item => item.path === root.base + "/held-source/controlled"))
+        root.fail("WALLPAPER_LIFETIME_ASSERT: superseded scan reached the still-current catalog");
     }
   }
   Connections {

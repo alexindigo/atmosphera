@@ -31,6 +31,22 @@ if name in ('linux-wallpaperengine','mpvpaper') and '--help' not in args and '--
 '''
 
 
+def observe_browse(dest, plugin):
+    # Trace admission at the request owner and settlement at the exact model's
+    # destruction. Instrument only the fixture copy, not either plugin API.
+    path = dest / ('Main.qml' if plugin == 'mpvpaper' else 'main/Functions.qml')
+    source = path.read_text()
+    model = 'required property string sourceFolder'
+    admission = 'browseChoices = browseChoicesComponent.createObject(root, {sourceFolder: Settings.preprocessPath(pendingBrowse.folder)});'
+    if source.count(model) != 1 or source.count(admission) != 1:
+        raise RuntimeError('wallpaper browse observation points changed')
+    result = source.replace(model, model + '\n            Component.onDestruction: root.pluginApi.recordBrowse("settled", sourceFolder)')
+    result = result.replace(admission, admission + '\n        if (browseChoices) root.pluginApi.recordBrowse("admitted", {request: pendingBrowse, source: browseChoices.sourceFolder});')
+    path.write_text(result)
+    return dict(path=str(path.relative_to(dest)), sha256=hashlib.sha256(source.encode()).hexdigest(),
+                reason='observe exact model admission and settlement; do not change browse behavior')
+
+
 @receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__); profile_argument(parser)
@@ -60,6 +76,8 @@ def main():
         runner.write_json(out/'sources.json', {str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(product.rglob('*')) if p.is_file()})
         runner.write_json(out/'inputs.json', {str(p.relative_to(args.source)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__), args.source/'Scripts/dev/fixtures/plugin-settings-wallpaper-runtime.qml')})
         adapters = []
+        if args.browse and not args.original_plugins:
+            adapters.append(observe_browse(dest, args.plugin))
         for name in ('linux-wallpaperengine','mpvpaper','ffmpeg'):
             path=case/'bin'/name; path.write_text(ENDPOINT); path.chmod(0o755)
         if args.plugin == 'linux-wallpaperengine-controller':
