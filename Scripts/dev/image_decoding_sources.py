@@ -343,7 +343,13 @@ def scan(root, repository, shell_types=None):
             return data[node.start_byte:node.end_byte].decode() if node else ''
         for node in walk(tree.root_node):
             rule, kind, bindings, detail = '', '', {}, {}
-            if node.type in ('ui_object_definition', 'ui_object_binding'):
+            if repository == 'shell' and ((node.type in ('identifier', 'property_identifier') and text(node) == 'grabToImage')
+                    or (node.type == 'string' and node.parent.type == 'subscript_expression'
+                        and _decode_literal(text(node)[1:-1]) == 'grabToImage')):
+                # No live shell item may own an in-flight Qt Quick readback.
+                # Match method references too: taking an alias must not bypass it.
+                rule, kind = 'item-grab', 'grabToImage'
+            elif node.type in ('ui_object_definition', 'ui_object_binding'):
                 kind = text(node.child_by_field_name('type_name'))
                 init = node.child_by_field_name('initializer')
                 members = [b for b in (init.named_children if init else []) if b.type in ('ui_binding', 'ui_property')]
@@ -370,7 +376,10 @@ def scan(root, repository, shell_types=None):
                     if markup:
                         rule = 'text-markup'
             elif node.type == 'call_expression':
-                if text(node.child_by_field_name('function')).split('.')[-1] == 'createQmlObject':
+                name = text(node.child_by_field_name('function')).split('.')[-1]
+                if repository == 'shell' and name == 'loadImage':
+                    rule, kind = 'canvas-image', 'loadImage'
+                elif name == 'createQmlObject':
                     arguments = node.child_by_field_name('arguments')
                     args = arguments.named_children if arguments else []
                     first = args[0] if args else None

@@ -36,6 +36,7 @@ DISPOSITIONS = {
     'color-quantizer': {'owner-output'},
     'dynamic-qml': {'reviewed-construction'},
     'converter-command': {'owner-event-name', 'generated-output-edit'},
+    'canvas-image': {'owner-renderer'},
 }
 SHELL_ONLY = {'owner-renderer', 'provider-adapter', 'wrapper-definition', 'shell-authored-markup', 'owner-event-name'}
 OWNER_FILES = {'owner-renderer': {'Widgets/NImage.qml', 'Widgets/NImageText.qml'},
@@ -246,6 +247,21 @@ def selftest(sites, manifest, roots, shell_types):
                                 rejectedRules=sorted({f['rule'] for f in own}),
                                 passed=bool(discovered) and all(s['key'] in rejected for s in discovered)
                                 and len(failures) == len(base_failures) + len(own)))
+        # Use a new shipped QML file rather than a fixture (fixtures deliberately
+        # sit outside the product rule). There is no manifest disposition for grabs.
+        shell = Path(folder) / 'direct-item-grab'
+        (shell / 'Widgets').mkdir(parents=True)
+        (shell / 'Widgets' / 'DirectGrab.qml').write_text('''import QtQuick
+Item {
+  id: item
+  Component.onCompleted: item.grabToImage(result => console.log(result.url))
+}
+''')
+        injected, _ = scan(shell, 'shell')
+        own = [f for f in check(sites + injected, manifest, roots)
+               if f['site'].startswith('shell:Widgets/DirectGrab.qml:')]
+        results.append(dict(control='direct-item-grab', expectedRule='item-grab', rejected=own,
+                            passed=len(own) == 1 and own[0]['rule'] == 'item-grab'))
         # Provenance controls: an exact fixed asset is admitted; a changed asset,
         # a changed source binding and a removed site are not.
         plugin = Path(folder) / 'provenance' / 'zz-image-boundary-control'

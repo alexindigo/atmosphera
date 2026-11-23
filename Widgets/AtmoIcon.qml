@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Window
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
@@ -73,81 +72,13 @@ Item {
     anchors.centerIn: parent
     width: root.implicitHeight
     height: root.implicitHeight
-    // Its pixels are captured below, never presented in their original colors.
-    opacity: 0
     active: root.visible && root._resolved?.type === "svg"
     sourceComponent: NImage {
       source: root._resolved?.source ?? ""
-      fillMode: Image.PreserveAspectFit
-      smooth: true
+      alphaMaskTint: root.color
       onImageStateChanged: {
         if (imageState === "unavailable")
           Logger.w("AtmoIcon", "Icon file", source, "could not be displayed:", errorReason);
-      }
-    }
-  }
-
-  Loader {
-    anchors.fill: mask
-    active: root.maskImage !== null
-    sourceComponent: Canvas {
-      contextType: "2d"
-      readonly property NImage admitted: root.maskImage
-      readonly property bool ready: available && visible && (Window.window?.visible ?? false) && admitted?.imageState === "ready"
-      readonly property int generation: admitted?.generation ?? 0
-      readonly property color tint: root.color
-      property int captureRevision: 0
-      property var pixels: null
-      property bool painted: false
-      opacity: painted ? 1 : 0
-
-      function invalidate(): void {
-        ++captureRevision;
-        if (pixels)
-          unloadImage(pixels.url);
-        pixels = null;
-        painted = false;
-        requestPaint();
-        if (ready)
-          Qt.callLater(capture);
-      }
-
-      function capture(): void {
-        if (!ready)
-          return;
-        const revision = captureRevision;
-        // Sample the already rendered NImage; the Canvas URL is Qt's in-memory
-        // grab result, never the original source or a fresh decode of it.
-        admitted.grabToImage(result => {
-          if (ready && revision === captureRevision) {
-            pixels = result;
-            loadImage(result.url);
-            requestPaint();
-          }
-        });
-      }
-
-      onReadyChanged: invalidate()
-      onAdmittedChanged: invalidate()
-      onGenerationChanged: invalidate()
-      onCanvasSizeChanged: invalidate()
-      onImageLoaded: requestPaint()
-      onTintChanged: requestPaint()
-
-      onPaint: {
-        const ctx = context;
-        ctx.reset();
-        ctx.clearRect(0, 0, width, height);
-        if (!pixels || !isImageLoaded(pixels.url))
-          return;
-        // Source-in is supported by the raster painter on both Qt Quick
-        // backends. ShaderEffect-based masks disappear on the software backend.
-        ctx.drawImage(pixels.url.toString(), 0, 0, width, height);
-        ctx.globalCompositeOperation = "source-in";
-        ctx.fillStyle = tint;
-        ctx.fillRect(0, 0, width, height);
-        ctx.globalCompositeOperation = "source-over";
-        painted = true;
       }
     }
   }

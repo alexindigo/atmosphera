@@ -13,6 +13,10 @@ Item {
   property string animationIntent: "still"
   property bool normalize: false
   property bool thumbnail: false
+  // Optional still-image presentation: fit and tint the decoded alpha mask.
+  property var alphaMaskTint: null
+  readonly property bool _alphaMask: alphaMaskTint !== null && animationIntent === "still"
+  on_AlphaMaskChanged: renderer.replace()
   property bool playing: true
   property bool paused: false
   property int fillMode: Image.PreserveAspectFit
@@ -79,12 +83,12 @@ Item {
       active = false;
       ticket = handle.candidate;
       if (ticket) {
-        sourceComponent = ticket.animated ? moving : still;
+        sourceComponent = root._alphaMask ? mask : (ticket.animated ? moving : still);
         active = true;
       }
     }
     active: false
-    visible: root.imageState === "ready"
+    visible: root._alphaMask || root.imageState === "ready"
   }
   Connections {
     target: handle
@@ -114,6 +118,69 @@ Item {
       Component.onCompleted: {
         ticket = renderer.ticket;
         handle.report(ticket, status, implicitWidth, implicitHeight, frameCount);
+      }
+    }
+  }
+  Component {
+    id: mask
+    Canvas {
+      id: maskCanvas
+      contextType: "2d"
+      property var ticket: null
+      property bool reported: false
+      readonly property color tint: root.alphaMaskTint ?? "transparent"
+      readonly property bool admitted: root.imageState === "ready"
+
+      function begin(): void {
+        if (!available || !ticket)
+          return;
+        // This is the owner renderer for the ticket, not a copy of a rendered
+        // item. Qt manages the pixmap load without a scene-graph readback.
+        loadImage(ticket.url, Qt.size(ticket.width, ticket.height));
+        requestPaint();
+      }
+
+      Component.onCompleted: {
+        ticket = renderer.ticket;
+        begin();
+      }
+      onAvailableChanged: begin()
+      onImageLoaded: requestPaint()
+      onAdmittedChanged: requestPaint()
+      onTintChanged: requestPaint()
+
+      onPaint: {
+        const ctx = context;
+        ctx.reset();
+        ctx.clearRect(0, 0, width, height);
+        if (!ticket)
+          return;
+        const url = ticket.url.toString();
+        if (isImageError(url)) {
+          if (!reported) {
+            reported = true;
+            handle.report(ticket, Image.Error, 0, 0, 0);
+          }
+          return;
+        }
+        if (!isImageLoaded(url))
+          return;
+        // Reads the pixmap already loaded in this Canvas, without another decode.
+        const pixels = ctx.createImageData(url);
+        if (!reported) {
+          reported = true;
+          handle.report(ticket, Image.Ready, pixels.width, pixels.height, 1);
+        }
+        if (!admitted || pixels.width < 1 || pixels.height < 1)
+          return;
+        const scale = Math.min(width / pixels.width, height / pixels.height);
+        const w = pixels.width * scale;
+        const h = pixels.height * scale;
+        ctx.drawImage(pixels, (width - w) / 2, (height - h) / 2, w, h);
+        // Raster composition also works with the software scene graph.
+        ctx.globalCompositeOperation = "source-in";
+        ctx.fillStyle = tint;
+        ctx.fillRect(0, 0, width, height);
       }
     }
   }

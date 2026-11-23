@@ -727,6 +727,16 @@
   {
    "repository": "shell",
    "path": "Widgets/NImage.qml",
+   "rule": "canvas-image",
+   "node": "loadImage",
+   "nodeSha256": "82a710884b867d5254a948e947acdd7fb406aeacf515977d0fe720d4df5af2ae",
+   "line": 139,
+   "disposition": "owner-renderer",
+   "reason": "The still alpha-mask renderer loads only the bounded owner ticket and reports the Qt outcome to its source handle without an asynchronous item grab."
+  },
+  {
+   "repository": "shell",
+   "path": "Widgets/NImage.qml",
    "rule": "native-image",
    "node": "AnimatedImage",
    "nodeSha256": "a0fc271c5f276392119927b4d4b4f99579b91a96bbc2547ce70ce4507e217f36",
