@@ -26,6 +26,21 @@ ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable 
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
 
 
+def warning_coverage(path, color, *, background=None):
+    """Measure equivalent opaque warning pixels in a straight-alpha grab."""
+    width, height, rgba = read_png(path)
+    offsets = range(0, len(rgba), 4)
+    if background is not None:
+        bg_width, bg_height, bg = read_png(background)
+        if (bg_width, bg_height) != (width, height):
+            raise AssertionError('Warning and background grabs differ in size')
+        # On transparent parts of the paired fallback, straight RGB and alpha
+        # describe the warning itself, not its blend with the fallback art.
+        offsets = (i for i in offsets if bg[i + 3] == 0)
+    return sum(rgba[i + 3] for i in offsets
+               if max(abs(a - b) for a, b in zip(rgba[i:i + 3], color[:3])) <= 8) / 255
+
+
 class Run:
     def __init__(self, args, profile):
         self.args, self.profile = args, profile
@@ -1506,10 +1521,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def glyph_center(name):
             width, height, _ = read_png(output / (name + '.png'))
             return pixel(output / (name + '.png'), width // 2, height // 2)
-        def warning(name):
-            width, height, pixels = read_png(output / (name + '.png'))
-            return sum(near(pixels[(y * width + x) * 4:(y * width + x + 1) * 4], result['warningColor'])
-                       for y in range(height) for x in range(width))
+        def warning(name, *, background=None):
+            return warning_coverage(output / (name + '.png'), result['warningColor'], background=background)
         self.check('icon-set-registered', result['glyphCount'] == 4, result['glyphCount'])
         if red:
             self.check('theme-icon-webp-bytes-under-png-name-not-presented', apps['webp']['status'] == 3
@@ -1524,17 +1537,19 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('theme-lookup-failure-uses-ordinary-fallback', apps['missing']['status'] == 1 and not apps['missing']['failed']
                    and apps['missing']['source'].endswith('fixture-png-app.png') and near(center('app-missing'), COLORS[1])
                    and warning('app-missing') == 0, dict(consumer=apps['missing'], center=center('app-missing')))
+        coverage = warning('app-corrupt', background=output / 'app-svg.png')
         self.check('theme-decode-failure-is-labelled-fallback', apps['corrupt']['status'] == 1 and apps['corrupt']['failed']
                    and apps['corrupt']['reason'] and apps['corrupt']['source'].endswith('fixture-svg-app.svg')
-                   and near(center('app-corrupt'), COLORS[0]) and warning('app-corrupt') > 10,
-                   dict(consumer=apps['corrupt'], center=center('app-corrupt'), warning=warning('app-corrupt')))
+                   and near(center('app-corrupt'), COLORS[0]) and coverage > 10,
+                   dict(consumer=apps['corrupt'], center=center('app-corrupt'), warningCoverage=coverage))
         for kind in ('webp', 'png', 'svg'):
             self.check('icon-set-' + kind + '-mask-presented', not glyphs[kind]['failed']
                        and near(glyph_center('glyph-' + kind), (*icon, 255)) and warning('glyph-' + kind) == 0,
                        dict(consumer=glyphs[kind], center=glyph_center('glyph-' + kind)))
+        coverage = warning('glyph-corrupt')
         self.check('icon-set-failure-is-labelled', glyphs['corrupt']['failed'] and glyphs['corrupt']['reason']
-                   and not near(glyph_center('glyph-corrupt'), (*icon, 255)) and warning('glyph-corrupt') > 10,
-                   dict(consumer=glyphs['corrupt'], warning=warning('glyph-corrupt')))
+                   and not near(glyph_center('glyph-corrupt'), (*icon, 255)) and coverage > 10,
+                   dict(consumer=glyphs['corrupt'], warningCoverage=coverage))
         return result
 
     def artwork(self):
@@ -1553,6 +1568,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def count(name, color):
             width, height, pixels = read_png(output / (name + '.png'))
             return sum(near(pixels[i * 4:i * 4 + 4], color) for i in range(width * height))
+        def warning(kind):
+            return warning_coverage(output / ('icon-' + kind + '.png'), result['warningColor'])
         control = dict(consumer=result['controlCenter'], center=pixel(output / 'control-center.png'),
                        art=count('control-center', COLORS[0]))
         options = dict(consumer=result['appOptions'], art=count('app-options', COLORS[0]))
@@ -1564,16 +1581,17 @@ os.execv('/usr/bin/find', ['find', *args])
         for kind in ('webp', 'svg'):
             self.check('image-icon-' + kind + '-presented', icons[kind]['status'] == 1 and not icons[kind]['failed']
                        and near(pixel(output / ('icon-' + kind + '.png')), COLORS[0])
-                       and count('icon-' + kind, result['warningColor']) == 0,
+                       and warning(kind) == 0,
                        dict(consumer=icons[kind], center=pixel(output / ('icon-' + kind + '.png'))))
         # Quickshell's icon provider answers a missing name with its own
         # placeholder: a provider result presented in process, not a failure.
         self.check('image-icon-provider-presented-in-process', icons['provider']['status'] == 1 and not icons['provider']['failed'],
                    icons['provider'])
         for kind in ('corrupt', 'unprovided'):
+            coverage = warning(kind)
             self.check('image-icon-' + kind + '-failure-labelled', icons[kind]['status'] == 3 and icons[kind]['failed']
-                       and icons[kind]['reason'] and count('icon-' + kind, result['warningColor']) > 10,
-                       dict(consumer=icons[kind], warning=count('icon-' + kind, result['warningColor'])))
+                       and icons[kind]['reason'] and coverage > 10,
+                       dict(consumer=icons[kind], warningCoverage=coverage))
         self.check('image-icon-provider-never-reaches-cli', icons['unprovided']['code'] == 'provider-failed', icons['unprovided'])
         self.check('bar-custom-icon-webp-presented', near(control['center'], COLORS[0]) and control['art'] > 40, control)
         self.check('app-options-theme-icon-webp-presented', options['art'] > 15, options)
