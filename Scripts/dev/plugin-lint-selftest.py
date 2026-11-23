@@ -93,6 +93,37 @@ class Regression(unittest.TestCase):
                    '  function f() { if (x) { return { Key: 1 } } }\n}\n')
         self.assertEqual([e for e in self.errors() if "unknown type" in e], [])
 
+    def test_implicit_directory_exports_qmldir_names(self):
+        (self.plugin / "CardImpl.qml").write_text("import QtQuick\nItem {}\n")
+        (self.plugin / "qmldir").write_text("PublicCard CardImpl.qml\n")
+        self.write("import QtQuick\nItem { PublicCard {} CardImpl {} }\n")
+        self.assertEqual([e for e in self.errors() if "unknown type" in e], [])
+
+    def test_explicit_directory_does_not_export_hidden_filenames(self):
+        parts = self.plugin / "parts"
+        parts.mkdir()
+        (parts / "CardImpl.qml").write_text("import QtQuick\nItem {}\n")
+        (parts / "qmldir").write_text("PublicCard CardImpl.qml\n")
+        self.write('import QtQuick\nimport "parts"\nItem { PublicCard {} CardImpl {} }\n')
+        errors = [e for e in self.errors() if "unknown type" in e]
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("unknown type CardImpl", errors[0])
+
+    def test_optional_modules_do_not_export_unselected_types(self):
+        lexer = lint.load_lexer(lint.SHELL_ROOT)
+        modules = self.root / "modules"
+        for name, declaration in {
+            "Theme": "optional import Theme.Dark\ndefault import Theme.Light\nimport Theme.Common\n",
+            "Theme/Dark": "DarkDecoration Dark.qml\n",
+            "Theme/Light": "LightDecoration Light.qml\n",
+            "Theme/Common": "CommonDecoration Common.qml\n",
+        }.items():
+            directory = modules / name
+            directory.mkdir(parents=True, exist_ok=True)
+            (directory / "qmldir").write_text(declaration)
+        exports = lexer.ForeignModules(str(modules)).exports("Theme")
+        self.assertEqual(set(exports), {"LightDecoration", "CommonDecoration"})
+
     def test_minimum_shell_version(self):
         self.manifest["minAtmospheraVersion"] = "0.7.0"
         self.write("import QtQuick\nimport qs.Commons\nItem { property color p: AtmoColor.mPrimary }\n")
