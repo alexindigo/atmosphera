@@ -16,6 +16,8 @@ def source_manifest(root):
         info = path.lstat()
         if path.is_symlink():
             rows[str(relative)] = dict(type='link', target=os.readlink(path), mode=stat.S_IMODE(info.st_mode))
+        elif path.is_dir():
+            rows[str(relative)] = dict(type='directory', mode=stat.S_IMODE(info.st_mode))
         elif path.is_file():
             rows[str(relative)] = dict(type='file', sha256=hashlib.sha256(path.read_bytes()).hexdigest(), mode=stat.S_IMODE(info.st_mode))
     digest = hashlib.sha256(json.dumps(rows, sort_keys=True).encode()).hexdigest()
