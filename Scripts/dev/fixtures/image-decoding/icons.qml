@@ -11,9 +11,10 @@ ShellRoot {
   id: root
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
-  property int tick: 0
   property int pending: 0
   property bool registered: false
+  property bool settledOnPreviousTick: false
+  property bool captureStarted: false
   FileView {
     path: Quickshell.env("IMAGE_ICON_DIR") + "/icons.json"
     onLoaded: IconRegistry.register("fixture:atmosphera-icons", JSON.parse(text()), Quickshell.env("IMAGE_ICON_DIR"))
@@ -26,14 +27,41 @@ ShellRoot {
     }
   }
   function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
+    if (!item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
-    });
+    })) {
+      console.error("Icon grab rejected: " + name);
+      Qt.exit(4);
+      return false;
+    }
+    ++pending;
+    return true;
+  }
+  function settled() {
+    if (!registered || apps.count !== appNames.length || glyphs.count !== glyphNames.length)
+      return false;
+    for (var i = 0; i < apps.count; ++i) {
+      var app = apps.itemAt(i);
+      if (!app || (app.status !== Image.Ready && app.status !== Image.Error))
+        return false;
+    }
+    for (var j = 0; j < glyphs.count; ++j) {
+      var glyph = glyphs.itemAt(j);
+      if (!glyph || !glyph.visible)
+        return false;
+      // The historical icons-red shell renders the mask synchronously and
+      // does not expose the shared decoder's presentation state.
+      if ("maskImage" in glyph) {
+        var mask = glyph.maskImage;
+        if (!mask || (mask.imageState !== "ready" && mask.imageState !== "unavailable"))
+          return false;
+      }
+    }
+    return true;
   }
   function describe(item) {
     return {
@@ -86,14 +114,27 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      ++root.tick;
-      if (root.tick === 40) {
-        for (var i = 0; i < apps.count; ++i)
-          root.grab(apps.itemAt(i), "app-" + root.appNames[i][0]);
-        for (var j = 0; j < glyphs.count; ++j)
-          root.grab(glyphs.itemAt(j), "glyph-" + root.glyphNames[j]);
+      if (!root.captureStarted) {
+        // Allow queued fallback selection and a render turn after settlement.
+        if (!root.settled()) {
+          root.settledOnPreviousTick = false;
+          return;
+        }
+        if (!root.settledOnPreviousTick) {
+          root.settledOnPreviousTick = true;
+          return;
+        }
+        root.captureStarted = true;
+        for (var i = 0; i < apps.count; ++i) {
+          if (!root.grab(apps.itemAt(i), "app-" + root.appNames[i][0]))
+            return;
+        }
+        for (var j = 0; j < glyphs.count; ++j) {
+          if (!root.grab(glyphs.itemAt(j), "glyph-" + root.glyphNames[j]))
+            return;
+        }
       }
-      if (root.tick >= 50 && !root.pending) {
+      if (!root.pending) {
         var result = {
           apps: {},
           glyphs: {},
