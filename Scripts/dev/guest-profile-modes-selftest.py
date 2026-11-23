@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from unittest.mock import patch
 
 from guest_profile import (GuestProfile, HeadlessWaylandProfile, ProcessIdentity, ProfileBlocked,
                            activate_profile, current_profile, profile_argument)
@@ -27,10 +28,12 @@ def main():
         results.append(dict(id=name, status='PASS'))
         print('CASE ' + name + ': PASS', flush=True)
 
-    def refused(name, call):
+    def refused(name, call, reason=None):
         try:
             call()
-        except ProfileBlocked:
+        except ProfileBlocked as error:
+            if reason is not None:
+                assert str(error) == reason, (name, 'wrong refusal boundary', str(error))
             check(name, current_profile() is profile)
         else:
             raise AssertionError('required refusal did not occur: ' + name)
@@ -63,7 +66,8 @@ def main():
                          compositor=dict(ProcessIdentity.read(os.getpid()).record(), argv=['sway']))
         path = args.output / 'not-a-container.json'
         path.write_text(json.dumps(container))
-        refused('no-headless-container-admission-on-vm', lambda: activate_profile(path))
+        refused('no-headless-container-admission-on-vm', lambda: activate_profile(path),
+                'explicit container engine is not the current execution boundary')
     copied = args.output / 'changed.json'
     copied.write_text(json.dumps(data))
     captured = (HeadlessWaylandProfile if headless else GuestProfile)(copied)
@@ -85,6 +89,15 @@ def main():
         forwarded = subprocess.run(query, env=dict(os.environ, **child), capture_output=True, text=True, check=True, timeout=15)
         check('vm-keeps-real-session-manager', bool(original.stdout.strip()) and original.stdout == forwarded.stdout)
     profile.verify()
+    # verify() checks the session first, but activation must also finish its
+    # final session capture before publishing the replacement profile.
+    environment = profile.session_environment()
+    before = dict(os.environ)
+    with patch.object(type(profile), 'session_environment', side_effect=[
+            environment, ProfileBlocked('injected final session capture failure')]):
+        refused('final-session-failure-keeps-active-profile', lambda: activate_profile(args.guest_profile),
+                'injected final session capture failure')
+    check('final-session-failure-keeps-environment', dict(os.environ) == before)
     (args.output / 'result.json').write_text(json.dumps(dict(status='PASS', profile=profile.record(), cases=results), indent=2) + '\n')
     return 0
 
