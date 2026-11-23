@@ -33,8 +33,13 @@ Item {
   readonly property string errorReason: image.errorReason
 
   readonly property string _primaryPath: primary.path.toString()
+  property int _primaryGeneration: 0
   property var _failure: ({})
   readonly property bool _primaryRejected: _primaryPath !== "" && _failure.path === _primaryPath
+  on_PrimaryPathChanged: {
+    ++_primaryGeneration;
+    _failure = ({});
+  }
 
   implicitWidth: pixelSize
   implicitHeight: pixelSize
@@ -64,11 +69,12 @@ Item {
     onImageStateChanged: {
       if (imageState !== "unavailable" || source !== root._primaryPath || !source)
         return;
-      var path = source;
+      const path = source;
+      const generation = root._primaryGeneration;
       // Read the settled failure and switch to the fallback after this state
       // notification, never inside it.
       Qt.callLater(() => {
-        if (root._primaryPath !== path || image.source !== path || image.imageState !== "unavailable")
+        if (root._primaryGeneration !== generation || root._primaryPath !== path || image.source !== path || image.imageState !== "unavailable")
           return;
         Logger.w("AtmoAppIcon", "Icon", root.name, "could not be displayed:", image.errorReason);
         root._failure = {
