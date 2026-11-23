@@ -32,7 +32,7 @@ def desktop_fixture(data):
 
 
 class Run:
-    def __init__(self, source, label):
+    def __init__(self, source, label, *, runtime_cleanup=None):
         enter()
         guest()
         assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
@@ -40,7 +40,10 @@ class Run:
         assert exact_source(self.source) and self.source.is_dir()
         self.runtime, self.output = current_profile().runtime / label, current_profile().evidence / label
         assert not self.runtime.exists() and not self.output.exists()
-        self.runtime.mkdir(); self.output.mkdir()
+        self.runtime.mkdir()
+        if runtime_cleanup is not None:
+            runtime_cleanup.callback(shutil.rmtree, self.runtime)
+        self.output.mkdir()
         self.shell = self.runtime / "shell"
         shutil.copytree(self.source, self.shell, symlinks=True)
         self.profile = self.runtime / "profile"
