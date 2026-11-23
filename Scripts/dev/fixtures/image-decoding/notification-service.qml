@@ -57,19 +57,42 @@ ShellRoot {
     for (var i = 0; item.children && i < item.children.length; ++i)
       collect(item.children[i], result);
   }
-  function recordWidgets(name) {
+  function widgetCohorts() {
     var items = [];
     if (popups.instances.length && popups.instances[0].item)
       collect(popups.instances[0].item.contentItem, items);
     var density = Settings.data.notifications.density;
     // Both popup densities exist in the actual card; select the visible layout.
     items = items.filter(item => Math.round(item.width) === Math.round((density === "compact" ? 24 : 40) * Style.uiScaleRatio));
-    var popupCount = items.length;
-    collect(history, items);
-    items.forEach((item, index) => {
+    var historyItems = [];
+    collect(history, historyItems);
+    return {
+      popup: items,
+      history: historyItems
+    };
+  }
+  function grab(item, name) {
+    if (!item || !item.grabToImage(image => {
+      console.log("IMAGE_GRAB|" + JSON.stringify({
+                                                   name: name,
+                                                   saved: image.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/" + name)
+                                                 }));
+      --root.pending;
+    })) {
+      console.error("Notification fixture grab rejected: " + name);
+      Qt.exit(3);
+      return false;
+    }
+    ++root.pending;
+    return true;
+  }
+  function recordWidgets(name, cohorts) {
+    var items = cohorts.popup.concat(cohorts.history);
+    for (var index = 0; index < items.length; ++index) {
+      var item = items[index];
       var row = {
         stage: name,
-        cohort: index < popupCount ? "popup" : "history",
+        cohort: index < cohorts.popup.length ? "popup" : "history",
         summary: item.notification.summary,
         id: item.notification.id,
         path: item.imagePath,
@@ -82,15 +105,9 @@ ShellRoot {
         file: name + "-" + index + ".png"
       };
       root.widgets.push(row);
-      ++root.pending;
-      item.grabToImage(image => {
-        console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                     name: row.file,
-                                                     saved: image.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/" + row.file)
-                                                   }));
-        --root.pending;
-      });
-    });
+      if (!root.grab(item, row.file))
+        return false;
+    }
     if (["file", "compact", "missing", "closed"].includes(name)) {
       var captures = [
             {
@@ -103,24 +120,21 @@ ShellRoot {
                         item: popups.instances[0].item.contentItem.children.find(child => "spacing" in child),
                         name: name + "-popup-window"
                       });
-      captures.forEach(capture => {
-        ++root.pending;
-        capture.item.grabToImage(image => {
-          console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                       name: capture.name,
-                                                       saved: image.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/" + capture.name + ".png")
-                                                     }));
-          --root.pending;
-        });
-      });
+      for (const capture of captures) {
+        if (!root.grab(capture.item, capture.name + ".png"))
+          return false;
+      }
     }
+    return true;
   }
-  function presented() {
-    var items = [];
-    if (popups.instances.length && popups.instances[0].item)
-      collect(popups.instances[0].item.contentItem, items);
-    collect(history, items);
-    return items.every(item => item.notification.imageState === "ready" ? item.status === Image.Ready : item.notification.imageState === "unavailable" ? item.status === Image.Error : true);
+  function presented(step, cohorts) {
+    if (step.name === "file") {
+      // The D-Bus producer sees Quickshell's numeric ID; widgets use the persisted ID.
+      const id = NotificationService.quickshellIdToInternalId[step.id];
+      if (!id || ![cohorts.popup, cohorts.history].every(items => items.some(item => item.visible && item.notification.id === id)))
+        return false;
+    }
+    return cohorts.popup.concat(cohorts.history).every(item => item.notification.imageState === "ready" ? item.status === Image.Ready : item.notification.imageState === "unavailable" ? item.status === Image.Error : true);
   }
   // Admission interests only. Icon-set masks shown by the popups are shared
   // image interests too, but never a notification image admission.
@@ -201,9 +215,13 @@ ShellRoot {
       }
     }
     stderr: StdioCollector {}
-    onExited: code => {
+    onExited: (code, status) => {
       root.producerExit = code;
       root.producerErrors = stderr.text;
+      if (code !== 0 || status !== 0 || !root.done) {
+        console.error("Notification producer exited before successful completion: code=" + code + " status=" + status + " stderr=" + root.producerErrors);
+        Qt.exit(4);
+      }
     }
   }
   Timer {
@@ -226,7 +244,8 @@ ShellRoot {
       }
       if (root.step && root.step.kind !== "ack" && root.tick > root.stepTick + 6 && !root.pending) {
         var unsettled = Object.values(NotificationService.popupState).some(entry => entry.imageRequests.some(request => request.pending));
-        if (!unsettled && presented()) {
+        var cohorts = root.widgetCohorts();
+        if (!unsettled && root.presented(root.step, cohorts)) {
           var current = root.step;
           root.step = null;
           root.snapshots.push({
@@ -244,7 +263,8 @@ ShellRoot {
                                   native: !!entry.notification
                                 }))
         });
-        recordWidgets(current.name);
+        if (!root.recordWidgets(current.name, cohorts))
+          return;
         root.done = current.name === "closed";
         root.step = {
           kind: "ack",
