@@ -116,7 +116,9 @@ ShellRoot {
         typing.running = true;
         ticks = 0;
       } else {
-        accessibility.command = [Quickshell.env("PHA_A11Y_PYTHON"), "-B", Quickshell.env("PHA_A11Y_PROBE")];
+        const observedLabels = controls.map(toggle => toggle.label);
+        console.log("P169_A11Y_LABELS: " + JSON.stringify(observedLabels));
+        accessibility.command = [Quickshell.env("PHA_A11Y_PYTHON"), "-B", Quickshell.env("PHA_A11Y_PROBE"), ...observedLabels];
         accessibility.running = true;
         phase = "a11y";
       }
@@ -127,7 +129,7 @@ ShellRoot {
     } else if (phase === "applied" && acceptedReceipt && !popup.busy) {
       check(!main.autoStartBreaks && !main.autoStartWork && !main.compactMode && api.pluginSettings.playSound, "actual runtime consumer still receives original settings after Apply");
       check(!main.pomodoroRunning && !main.pomodoroSoundPlaying, "timer and sound were never started");
-      console.log("RED_CONTROL P169: REPRODUCED (four keyboard intents absent; no AT-SPI toggle actions; native Apply and Main unchanged)");
+      console.log("RED_CONTROL P169: REPRODUCED (four keyboard intents absent; AT-SPI observation recorded; native Apply and Main unchanged)");
       Qt.exit(0);
     }
   }

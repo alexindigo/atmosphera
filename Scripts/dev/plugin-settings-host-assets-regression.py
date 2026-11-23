@@ -501,13 +501,20 @@ def red_input(args, profile):
     if 'RED_CONTROL P169: REPRODUCED' not in text or text.count('P169_KEYBOARD_NO_INTENT:') != 4:
         raise RuntimeError('P169 actual keyboard/consumer markers missing')
     accessibility = json.loads((out / 'a11y.json').read_text())
-    if len(accessibility['controls']) != 4 or any(c['actions'] for c in accessibility['controls']):
+    label_rows = [json.loads(line.split('P169_A11Y_LABELS: ', 1)[1])
+                  for line in text.splitlines() if 'P169_A11Y_LABELS: ' in line]
+    controls = accessibility['controls']
+    if len(label_rows) != 1 or len(controls) != 4 or [c['label'] for c in controls] != label_rows[0]:
+        raise RuntimeError('P169 AT-SPI labels differ from the actual toggles')
+    if any(c['actions'] or type(c['matchingNodes']) is not int or c['matchingNodes'] < 0
+           or c['observation'] != ('present-no-action' if c['matchingNodes'] else 'absent-by-name') for c in controls):
         raise RuntimeError('P169 actual accessibility action evidence mismatch')
     after = json.loads(path.read_text())
     if any(after.get(key) != value for key, value in before.items()):
         raise RuntimeError('P169 independent persisted consumer mismatch')
     result = dict(id='P169', status='REPRODUCED', actualPomodoroPage=True, actualMain=True,
-                  keyboardControls=4, inaccessibleToggleActions=4, liveKeyboardCanary=True,
+                  keyboardControls=4, atspiAbsentByName=[c['label'] for c in controls if not c['matchingNodes']],
+                  atspiPresentWithoutAction=[c['label'] for c in controls if c['matchingNodes']], liveKeyboardCanary=True,
                   liveAtspiPressCanary=True, nativeApply=True, persistedReadback=True)
     stage_receipt(out / 'result.json', result)
     print('RED_CONTROL P169: REPRODUCED', flush=True)

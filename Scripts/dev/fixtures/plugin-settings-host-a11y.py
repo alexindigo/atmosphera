@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+import sys
 
 import pyatspi
 
@@ -35,15 +36,17 @@ def main():
     action, names = actions(canaries[0])
     if action is None or not names or not action.doAction(0):
         raise RuntimeError('live AT-SPI canary press failed')
-    labels = ('!!settings.auto-start-breaks!!', '!!settings.auto-start-work!!',
-              '!!settings.compact-mode!!', 'Play Alarm Sound')
+    labels = sys.argv[1:]
+    if len(labels) != 4 or len(set(labels)) != 4 or not all(labels):
+        raise RuntimeError('expected four unique QML toggle labels')
     result = dict(pid=app.get_process_id(), canaryAction=names[0], controls=[])
     for label in labels:
         matching = [node for node in nodes if node.name == label]
         offered = [name for node in matching for name in actions(node)[1]]
-        result['controls'].append(dict(label=label, matchingNodes=len(matching), actions=offered))
         if offered:
             raise RuntimeError('old toggle unexpectedly exposes an activation action')
+        result['controls'].append(dict(label=label, matchingNodes=len(matching), actions=offered,
+                                       observation='present-no-action' if matching else 'absent-by-name'))
     Path(os.environ['PHA_A11Y_RESULT']).write_text(json.dumps(result, indent=2) + '\n')
 
 
