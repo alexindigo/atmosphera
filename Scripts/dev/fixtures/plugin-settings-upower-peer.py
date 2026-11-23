@@ -2,7 +2,6 @@
 """Controlled UPower protocol on a private bus, not physical battery evidence."""
 import json
 import subprocess
-import threading
 import time
 
 import gi
@@ -15,18 +14,19 @@ DEVICE = SERVICE + '.Device'
 
 
 class Fixture:
-    def __init__(self, case, runtime, guard_factory):
+    def __init__(self, case, runtime, resources, **process_options):
         self.case = case
         self.address = 'unix:path=' + str(runtime / 'upower-bus')
-        self.log = (case / 'bus.log').open('w')
-        self.daemon = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--address=' + self.address], stdout=self.log, stderr=subprocess.STDOUT, start_new_session=True)
-        self.guard = guard_factory(self.daemon)
+        log = resources.open(case / 'bus.log', 'w')
+        daemon = resources.spawn(['dbus-daemon', '--session', '--nofork', '--address=' + self.address],
+                                 stdout=log, stderr=subprocess.STDOUT, **process_options)
         deadline = time.monotonic() + 5
         while not (runtime / 'upower-bus').exists():
-            if self.daemon.poll() is not None or time.monotonic() > deadline:
+            if daemon.poll() is not None or time.monotonic() > deadline:
                 raise RuntimeError('private battery bus not ready')
             time.sleep(.02)
         self.bus = Gio.DBusConnection.new_for_address_sync(self.address, Gio.DBusConnectionFlags.AUTHENTICATION_CLIENT | Gio.DBusConnectionFlags.MESSAGE_BUS_CONNECTION, None, None)
+        resources.defer(self.bus.close_sync, None)
         self.props = {}
         self.labels = ('DisplayDevice', 'BAT0', 'BAT1')
         for label in self.labels:
@@ -43,8 +43,9 @@ class Fixture:
         result = self.bus.call_sync('org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus', 'RequestName', GLib.Variant('(su)', (SERVICE, 4)), None, Gio.DBusCallFlags.NONE, 3000, None)
         if result.unpack() != (1,):
             raise RuntimeError('private UPower name unavailable')
-        self.loop = GLib.MainLoop()
-        self.thread = threading.Thread(target=self.loop.run); self.thread.start()
+        loop = GLib.MainLoop()
+        # Dispatch quit on the context even if the thread has not entered run yet.
+        resources.thread(loop.run, stop=lambda: GLib.idle_add(loop.quit))
 
     def get(self, _bus, _sender, path, interface, name):
         signature, value = self.props[path][name]
@@ -59,8 +60,3 @@ class Fixture:
             invocation.return_value(GLib.Variant('(o)', (ROOT + '/devices/DisplayDevice',)))
         else:
             invocation.return_dbus_error('org.freedesktop.DBus.Error.UnknownMethod', method)
-
-    def finish(self):
-        self.bus.close_sync(None)
-        self.loop.quit(); self.thread.join(timeout=5)
-        self.guard.terminate(); self.daemon.wait(timeout=5); self.log.close()

@@ -13,6 +13,7 @@ import shutil
 import threading
 from urllib.parse import parse_qs, unquote, urlparse
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('http_runner', Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
@@ -25,6 +26,11 @@ def hashes(case):
 
 
 def run(args, profile, plugin, scope):
+    with FixtureResources() as resources:
+        return run_with_endpoint(args, profile, plugin, scope, resources)
+
+
+def run_with_endpoint(args, profile, plugin, scope, resources):
     case, out = args.work_root / (plugin + '-' + scope), args.output / (plugin + '-' + scope)
     case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
     rows, row_lock = [], threading.Lock()
@@ -44,8 +50,8 @@ def run(args, profile, plugin, scope):
                 data = json.dumps(dict(event='message', id='message-' + name, time=2000000000, topic=name, title='headline-' + name, message='controlled ' + name)) + '\n'
             self.send_response(200); self.send_header('Content-Type', 'application/json'); self.end_headers(); self.wfile.write(data.encode())
 
-    server = ThreadingHTTPServer(('127.0.0.1', 0), Endpoint)
-    thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+    resources.defer(runner.write_json, out / 'requests.json', rows)
+    server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Endpoint), daemon=True)
     base_url = 'http://127.0.0.1:' + str(server.server_address[1])
     install = case / 'install'
     shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
@@ -86,37 +92,33 @@ def run(args, profile, plugin, scope):
         path.write_text(text.replace(old, 'settingsConsumerFor(pluginApi.mainInstance.pluginApi.settingsContext)'))
         wanted = 'actual views share exact selected HTTP client'
     env = dict(PHA_HTTP_PLUGIN=plugin, PHA_HTTP_SCOPE=scope, PHA_HTTP_CASE=str(case), PHA_HTTP_OUTPUT=str(out), PHA_HTTP_DISK=str(args.source / 'Scripts/dev/fixtures/plugin-settings-http-disk.py'), PHA_HTTP_OLD_RED='1' if args.old_red else '0', HOME=str(case / 'home'))
-    try:
-        sequence = [('edit', ''), ('cold', 'edited'), ('reset', ''), ('cold', 'reset'), ('follow', ''), ('cold', 'following')]
-        if not news: sequence += [('actions', ''), ('cold', 'actions')]
-        for mode, boundary in sequence:
-            output = out / (mode + ('-' + boundary if boundary else '')); output.mkdir(); before = hashes(case)
-            try:
-                text = runner.run_fixture(profile, install, case, output, args.source / 'Scripts/dev/fixtures/plugin-settings-http-native.qml', extra_env=dict(env, PHA_HTTP_MODE=mode, PHA_HTTP_BOUNDARY=boundary), extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
-            except RuntimeError:
-                if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2':
-                    raise
-                if args.old_red and not (out / 'persisted/edited.json').is_file():
-                    raise RuntimeError('original HTTP red never reached independent native publication')
-                result = dict(status='PASS', kind='original-shared-http-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
-                runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
-            if 'HTTP_NATIVE: PASS ' + plugin + ' ' + scope + ' ' + mode not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'HTTP_NATIVE_ASSERT:')):
-                raise RuntimeError('HTTP native consumer/diagnostic failure')
-            if mode == 'cold' and hashes(case) != before:
-                raise RuntimeError('cold HTTP reader published configuration')
-            runner.write_json(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
-        if wanted:
-            raise RuntimeError('HTTP control escaped')
-        for boundary, data in expected.items():
-            if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=data):
-                raise RuntimeError('complete HTTP documents differ')
-        result = dict(status='PASS', plugin=plugin, scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'] + ([] if news else ['actions']), physicalProof=False, completePlanAcceptance=False)
-        runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
-        print('HTTP_NATIVE ' + plugin + '/' + scope + ': PASS', flush=True)
-        return result
-    finally:
-        server.shutdown(); server.server_close(); thread.join()
-        runner.write_json(out / 'requests.json', rows)
+    sequence = [('edit', ''), ('cold', 'edited'), ('reset', ''), ('cold', 'reset'), ('follow', ''), ('cold', 'following')]
+    if not news: sequence += [('actions', ''), ('cold', 'actions')]
+    for mode, boundary in sequence:
+        output = out / (mode + ('-' + boundary if boundary else '')); output.mkdir(); before = hashes(case)
+        try:
+            text = runner.run_fixture(profile, install, case, output, args.source / 'Scripts/dev/fixtures/plugin-settings-http-native.qml', extra_env=dict(env, PHA_HTTP_MODE=mode, PHA_HTTP_BOUNDARY=boundary), extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
+        except RuntimeError:
+            if not wanted or not (output / 'runtime.log').is_file() or wanted not in (output / 'runtime.log').read_text() or (output / 'runtime.exit').read_text().strip() != '2':
+                raise
+            if args.old_red and not (out / 'persisted/edited.json').is_file():
+                raise RuntimeError('original HTTP red never reached independent native publication')
+            result = dict(status='PASS', kind='original-shared-http-red' if args.old_red else 'rejecting-control', rejectedAt=wanted, completePlanAcceptance=False)
+            runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out); return result
+        if 'HTTP_NATIVE: PASS ' + plugin + ' ' + scope + ' ' + mode not in text or any(key in text for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'HTTP_NATIVE_ASSERT:')):
+            raise RuntimeError('HTTP native consumer/diagnostic failure')
+        if mode == 'cold' and hashes(case) != before:
+            raise RuntimeError('cold HTTP reader published configuration')
+        runner.write_json(output / 'observed.json', dict(status='PASS', configurationHashes=hashes(case)))
+    if wanted:
+        raise RuntimeError('HTTP control escaped')
+    for boundary, data in expected.items():
+        if json.loads((out / ('persisted/' + boundary + '.json')).read_text()) != dict(status='PASS', values=data):
+            raise RuntimeError('complete HTTP documents differ')
+    result = dict(status='PASS', plugin=plugin, scope=scope, independentBoundaries=sorted(expected), unchangedHashColdReaders=['edited', 'reset', 'following'] + ([] if news else ['actions']), physicalProof=False, completePlanAcceptance=False)
+    runner.write_json(out / 'result.json', result); runner.remove_completed_installs(case, out)
+    print('HTTP_NATIVE ' + plugin + '/' + scope + ': PASS', flush=True)
+    return result
 
 
 def main():

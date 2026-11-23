@@ -10,9 +10,9 @@ import json
 import os
 from pathlib import Path
 import shutil
-import threading
 import time
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('sticky_runner', Path(__file__).with_name('plugin-settings-host-assets-regression.py'))
@@ -21,6 +21,11 @@ spec.loader.exec_module(runner)
 
 
 def run(args, profile, scope, mode):
+    with FixtureResources() as resources:
+        return run_with_endpoint(args, profile, scope, mode, resources)
+
+
+def run_with_endpoint(args, profile, scope, mode, resources):
     case = args.work_root/(scope+'-'+mode)
     out = args.output/case.name
     case.mkdir(); out.mkdir()
@@ -72,9 +77,8 @@ def run(args, profile, scope, mode):
         def log_message(self, *unused):
             pass
 
-    server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
-    worker = threading.Thread(target=server.serve_forever)
-    worker.start()
+    resources.defer(runner.write_json, out/'requests.json', requests)
+    server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Handler))
     utility = plugin/'utils/gistSync.js'
     text = utility.read_text()
     old = 'var API_BASE_URL = "https://api.github.com";'
@@ -82,21 +86,18 @@ def run(args, profile, scope, mode):
     utility.write_text(text.replace(old, 'var API_BASE_URL = "http://127.0.0.1:'+str(server.server_port)+'";'))
     original_lint = False
     try:
-        try:
-            log = runner.run_fixture(profile, install, case, out, args.source/'Scripts/dev/fixtures/plugin-settings-sticky-native.qml', extra_env=dict(PHA_STICKY_CASE=str(case), PHA_STICKY_SCOPE=scope, PHA_STICKY_MODE=mode, PHA_STICKY_CAPTURE=str(out/'full-screen.png'), HOME=str(case/'home')), extra_lint=tuple(sorted(plugin.rglob('*.qml'))), timeout=120)
-        except RuntimeError as error:
-            # The unchanged original's duplicate inherited screen declaration is
-            # an explicit failed lint receipt, never candidate lint acceptance.
-            if not args.original_plugins or str(error) != 'fixture lint failed in the actual qs/native universe; see lint.log':
-                raise
-            lint = (out/'lint.log').read_text()
-            assert 'Property "screen" already exists in base type "WindowInterface"' in lint
-            assert (out/'runtime.exit').read_text().strip() == '0'
-            log = (out/'runtime.log').read_text()
-            original_lint = True
-    finally:
-        server.shutdown(); server.server_close(); worker.join()
-        runner.write_json(out/'requests.json', requests)
+        log = runner.run_fixture(profile, install, case, out, args.source/'Scripts/dev/fixtures/plugin-settings-sticky-native.qml', extra_env=dict(PHA_STICKY_CASE=str(case), PHA_STICKY_SCOPE=scope, PHA_STICKY_MODE=mode, PHA_STICKY_CAPTURE=str(out/'full-screen.png'), HOME=str(case/'home')), extra_lint=tuple(sorted(plugin.rglob('*.qml'))), timeout=120)
+    except RuntimeError as error:
+        # The unchanged original's duplicate inherited screen declaration is
+        # an explicit failed lint receipt, never candidate lint acceptance.
+        if not args.original_plugins or str(error) != 'fixture lint failed in the actual qs/native universe; see lint.log':
+            raise
+        lint = (out/'lint.log').read_text()
+        assert 'Property "screen" already exists in base type "WindowInterface"' in lint
+        assert (out/'runtime.exit').read_text().strip() == '0'
+        log = (out/'runtime.log').read_text()
+        original_lint = True
+    resources.close()
     assert 'STICKY: PASS '+scope+' '+mode in log
     assert not any(word in log for word in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), log
     actual = dict(shared=json.loads((case/'config/settings/plugins/sticky-notes.json').read_text()), bar=json.loads((case/'config/settings/bar.json').read_text()))

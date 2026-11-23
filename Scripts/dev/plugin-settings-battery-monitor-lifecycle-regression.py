@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 
@@ -74,8 +75,8 @@ assert not (case/('base-release' if base else 'release')).exists(), 'helper comp
 ''')
         (dest / 'scripts/read_battery_sysfs.sh').write_text('#!/bin/sh\nexec python3 "' + str(endpoint) + '" "$@"\n')
         (case / 'requests.jsonl').write_text(''); (case / 'upower.jsonl').write_text('')
-        peer = peer_module.Fixture(case, Path(profile.child_environment('')['XDG_RUNTIME_DIR']), runner.protect_owned_process)
-        try:
+        with FixtureResources() as resources:
+            peer = peer_module.Fixture(case, Path(profile.child_environment('')['XDG_RUNTIME_DIR']), resources)
             try:
                 text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-battery-monitor-lifecycle.qml',
                     extra_env=dict(DBUS_SYSTEM_BUS_ADDRESS=peer.address, PHA_BATTERY_CASE=str(case), HOME=str(case / 'home')), extra_lint=tuple(sorted(dest.glob('*.qml'))), timeout=50)
@@ -89,8 +90,6 @@ assert not (case/('base-release' if base else 'release')).exists(), 'helper comp
                 unexpected = [line for line in text.splitlines() if any(key in line for key in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'BATTERY_MONITOR_ASSERT:')) and line not in expected_errors]
                 if args.expect_fallback_red or 'BATTERY_MONITOR_LIFECYCLE: PASS' not in text or unexpected or len(expected_errors) != 3: raise RuntimeError('battery outcome/diagnostic failure: ' + repr(unexpected))
                 result = dict(status='PASS', realUPowerProtocol=True, expectedMalformedHelperErrors=len(expected_errors), nativeOrUIAcceptance=False, completePlanAcceptance=False)
-        finally:
-            peer.finish()
         shutil.copy2(case / 'requests.jsonl', out / 'requests.jsonl'); shutil.copy2(case / 'upower.jsonl', out / 'upower.jsonl')
         shutil.copy2(case / 'bus.log', out / 'bus.log')
         if not args.expect_fallback_red:

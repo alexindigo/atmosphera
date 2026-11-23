@@ -3,7 +3,6 @@
 import json
 from pathlib import Path
 import subprocess
-import threading
 import time
 
 import gi
@@ -16,10 +15,11 @@ PATH = '/org/mpris/MediaPlayer2'
 
 
 class Peer:
-    def __init__(self, fixture, label):
+    def __init__(self, fixture, label, resources):
         self.fixture, self.label = fixture, label
         self.bus = Gio.DBusConnection.new_for_address_sync(fixture.address,
             Gio.DBusConnectionFlags.AUTHENTICATION_CLIENT | Gio.DBusConnectionFlags.MESSAGE_BUS_CONNECTION, None, None)
+        resources.defer(self.bus.close_sync, None)
         self.props = {
             ROOT: dict(Identity=('s', 'query-' + label), DesktopEntry=('s', 'query-' + label), CanQuit=('b', False), CanRaise=('b', False), HasTrackList=('b', False), SupportedUriSchemes=('as', []), SupportedMimeTypes=('as', [])),
             PLAYER: dict(PlaybackStatus=('s', 'Playing'), LoopStatus=('s', 'None'), Rate=('d', 1.0), Shuffle=('b', False), Volume=('d', 1.0), Position=('x', 5000000), MinimumRate=('d', 1.0), MaximumRate=('d', 1.0),
@@ -63,21 +63,21 @@ class Peer:
 
 
 class Fixture:
-    def __init__(self, case, runtime, guard_factory):
+    def __init__(self, case, runtime, resources, **process_options):
         self.case = case
         self.address = 'unix:path=' + str(runtime / 'mpris-bus')
-        self.log = (case / 'bus.log').open('w')
-        self.daemon = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--address=' + self.address], stdout=self.log, stderr=subprocess.STDOUT, start_new_session=True)
-        self.guard = guard_factory(self.daemon)
+        log = resources.open(case / 'bus.log', 'w')
+        daemon = resources.spawn(['dbus-daemon', '--session', '--nofork', '--address=' + self.address],
+                                 stdout=log, stderr=subprocess.STDOUT, **process_options)
         deadline = time.monotonic() + 5
         while not (runtime / 'mpris-bus').exists():
-            if self.daemon.poll() is not None or time.monotonic() > deadline:
+            if daemon.poll() is not None or time.monotonic() > deadline:
                 raise RuntimeError('private disk bus did not become ready')
             time.sleep(0.02)
-        self.peers = {label: Peer(self, label) for label in ('base', 'old', 'new')}
-        self.loop = GLib.MainLoop()
-        self.timer = GLib.timeout_add(20, self.control)
-        self.thread = threading.Thread(target=self.loop.run); self.thread.start()
+        self.peers = {label: Peer(self, label, resources) for label in ('base', 'old', 'new')}
+        loop = GLib.MainLoop()
+        resources.defer(GLib.source_remove, GLib.timeout_add(20, self.control))
+        resources.thread(loop.run, stop=lambda: GLib.idle_add(loop.quit))
 
     def record(self, **row):
         with (self.case / 'mpris.jsonl').open('a') as stream:
@@ -89,10 +89,3 @@ class Fixture:
             self.record(player='old', event='late-metadata')
             (self.case / 'mpris-old-event-done').write_text('delivered')
         return True
-
-    def finish(self):
-        GLib.source_remove(self.timer)
-        for peer in self.peers.values():
-            peer.bus.close_sync(None)
-        self.loop.quit(); self.thread.join(timeout=5)
-        self.guard.terminate(); self.daemon.wait(timeout=5); self.log.close()

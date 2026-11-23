@@ -20,6 +20,9 @@ SPEC = importlib.util.spec_from_file_location('host_runner', Path(__file__).with
 runner = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(runner)
 
 
+from fixture_resources import FixtureResources
+
+
 class HassEndpoint(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
     daemon_threads = True
@@ -43,7 +46,6 @@ class HassEndpoint(socketserver.ThreadingTCPServer):
                 peer.shutdown(socket.SHUT_RDWR)
             except OSError:
                 pass
-        self.server_close()
 
 
 class HassConnection(socketserver.StreamRequestHandler):
@@ -143,6 +145,11 @@ print('64 bytes: time='+('5' if sys.argv[-1]=='192.0.2.1' else '80')+' ms')
 
 
 def run(args, profile, plugin):
+    with FixtureResources() as resources:
+        return run_with_peer(args, profile, plugin, resources)
+
+
+def run_with_peer(args, profile, plugin, resources):
     case, out = args.work_root / plugin, args.output / plugin
     case.mkdir(); out.mkdir()
     install = case / 'install'
@@ -158,27 +165,31 @@ def run(args, profile, plugin):
         (case / name).write_text('')
     (case / ('socket-held' if plugin == 'hassio' else 'ping-held')).write_text('')
     (case / 'mpris-old-event-done').write_text('')
-    endpoint = None
-    peer = None
+    for name in ('ping.jsonl', 'socket.jsonl'):
+        resources.defer(shutil.copy2, case / name, out / name)
     extra_env = {}
     if plugin == 'mpris-lyric':
         peer_spec = importlib.util.spec_from_file_location('query_mpris', args.source / 'Scripts/dev/fixtures/plugin-settings-mpris-peer.py')
         module = importlib.util.module_from_spec(peer_spec); peer_spec.loader.exec_module(module)
         runtime = Path(profile.child_environment('')['XDG_RUNTIME_DIR'])
         (case / 'mpris.jsonl').write_text('')
-        peer = module.Fixture(case, runtime, runner.protect_owned_process)
+        resources.defer(shutil.copy2, case / 'mpris.jsonl', out / 'mpris.jsonl')
+        resources.defer(shutil.copy2, case / 'bus.log', out / 'bus.log')
+        peer = module.Fixture(case, runtime, resources)
+        resources.defer((case / 'release').touch)
         extra_env['DBUS_SESSION_BUS_ADDRESS'] = peer.address
         shared = dict(playerName='query-base')
         selected = dict(playerName='query-old', updateInterval=1500)
         replacement = dict(playerName='query-new', updateInterval=750)
     elif plugin == 'hassio':
         endpoint = HassEndpoint(case)
-        thread = threading.Thread(target=endpoint.serve_forever); thread.start()
+        resources.serve(endpoint, interrupt=endpoint.finish, release=(case / 'release').touch)
         base = 'http://127.0.0.1:' + str(endpoint.server_address[1])
         shared = dict(haUrl=base + '/shared', haToken='shared-fake-token', entities=['sensor.shared'])
         selected = dict(haUrl=base + '/old', haToken='old-fake-token', entities=['sensor.old'])
         replacement = dict(haUrl=base + '/new', haToken='new-fake-token', entities=['sensor.new'])
     else:
+        resources.defer((case / 'release').touch)
         ping = case / 'bin/ping'; ping.write_text(PING); ping.chmod(0o755)
         shared = dict(hosts=[dict(name='Shared', address='192.0.2.1')], intervalSeconds=10)
         selected = dict(hosts=[dict(name='Old', address='192.0.2.2')], intervalSeconds=10)
@@ -188,33 +199,23 @@ def run(args, profile, plugin):
     runner.write_json(out / 'sources.json', {str(path.relative_to(args.plugins)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted((args.plugins / plugin).rglob('*')) if path.is_file()})
     wanted = 'source replacement synchronously retires old Hosts' if plugin == 'latency-monitor' else 'source replacement clears browser cache and loading'
     try:
-        try:
-            text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-query-lifecycle.qml',
-                extra_env=dict(extra_env, PHA_QUERY_PLUGIN=plugin, PHA_QUERY_CASE=str(case), PATH=str(case / 'bin') + ':' + os.environ['PATH']),
-                extra_lint=tuple(sorted(dest.glob('*.qml'))), timeout=50)
-        except RuntimeError:
-            log = out / 'runtime.log'
-            if not args.expect_handoff_red or not log.is_file() or wanted not in log.read_text() or (out / 'runtime.exit').read_text().strip() != '2':
-                raise
-            result = dict(status='PASS', kind='handoff-red', rejectedAt=wanted, nativeOrUIAcceptance=False)
-        else:
-            if args.expect_handoff_red:
-                raise RuntimeError('handoff red escaped')
-            if 'QUERY_LIFECYCLE: PASS ' + plugin not in text:
-                raise RuntimeError('missing consumer marker')
-            if any(value in text for value in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')):
-                raise RuntimeError('unexpected construction/runtime diagnostic')
-            result = dict(status='PASS', kind='controlled-query-lifecycle', nativeOrUIAcceptance=False)
-    finally:
-        (case / 'release').touch()
-        if endpoint:
-            endpoint.finish(); thread.join(timeout=5)
-        if peer:
-            peer.finish()
-            shutil.copy2(case / 'mpris.jsonl', out / 'mpris.jsonl')
-            shutil.copy2(case / 'bus.log', out / 'bus.log')
-        for name in ('ping.jsonl', 'socket.jsonl'):
-            shutil.copy2(case / name, out / name)
+        text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-query-lifecycle.qml',
+            extra_env=dict(extra_env, PHA_QUERY_PLUGIN=plugin, PHA_QUERY_CASE=str(case), PATH=str(case / 'bin') + ':' + os.environ['PATH']),
+            extra_lint=tuple(sorted(dest.glob('*.qml'))), timeout=50)
+    except RuntimeError:
+        log = out / 'runtime.log'
+        if not args.expect_handoff_red or not log.is_file() or wanted not in log.read_text() or (out / 'runtime.exit').read_text().strip() != '2':
+            raise
+        result = dict(status='PASS', kind='handoff-red', rejectedAt=wanted, nativeOrUIAcceptance=False)
+    else:
+        if args.expect_handoff_red:
+            raise RuntimeError('handoff red escaped')
+        if 'QUERY_LIFECYCLE: PASS ' + plugin not in text:
+            raise RuntimeError('missing consumer marker')
+        if any(value in text for value in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')):
+            raise RuntimeError('unexpected construction/runtime diagnostic')
+        result = dict(status='PASS', kind='controlled-query-lifecycle', nativeOrUIAcceptance=False)
+    resources.close()
     if plugin == 'latency-monitor':
         rows = [json.loads(line) for line in (case / 'ping.jsonl').read_text().splitlines()]
         for row in rows:

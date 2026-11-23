@@ -10,8 +10,8 @@ import os
 from pathlib import Path
 import re
 import shutil
-import threading
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 def module(name, filename):
@@ -108,6 +108,11 @@ def hashes(case):
 
 
 def run(args, profile, scope):
+    with FixtureResources() as resources:
+        return run_with_endpoint(args, profile, scope, resources)
+
+
+def run_with_endpoint(args, profile, scope, resources):
     case,out=args.work_root/scope,args.output/scope; case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
     install=case/'install'; shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     product=seed(case,args.original_plugins or args.plugins)
@@ -115,7 +120,10 @@ def run(args, profile, scope):
         for name in ('BarWidget.qml','Panel.qml','ControlCenterWidget.qml','components/ObsButton.qml'):
             path=product/name; text=path.read_text(); old='settingsConsumerFor(root.pluginApi.settingsContext)'; assert text.count(old)==1
             path.write_text(text.replace(old,'settingsConsumerFor(root.pluginApi.mainInstance.pluginApi.settingsContext)'))
-    endpoint=ObsEndpoint(case); thread=threading.Thread(target=endpoint.serve_forever); thread.start()
+    resources.defer(shutil.copy2,case/'requests.jsonl',out/'requests.jsonl')
+    resources.defer(shutil.copy2,case/'socket.jsonl',out/'socket.jsonl')
+    endpoint=ObsEndpoint(case)
+    resources.serve(endpoint,interrupt=endpoint.finish)
     runner.write_json(case/'config/obs-studio/plugin_config/obs-websocket/config.json',dict(server_enabled=True,server_port=endpoint.server_address[1],server_password=''))
     shared=dict(barLabelMode='icon-only',showElapsedInBar=True,pollIntervalMs=10000,showBarWhenReady=False,showBarWhenRecording=True,showControlCenterWhenRecording=True,opaque='shared')
     initial=dict(shared=shared,bar=dict(widgets=dict(left=[dict(id='plugin:obs-control',instanceSettings=row) for row in ({'opaque':'selected'},{'barLabelMode':'icon-only','showBarWhenRecording':False,'showControlCenterWhenRecording':False,'opaque':'sibling'},{'opaque':'inherited'})])))
@@ -129,24 +137,22 @@ def run(args, profile, scope):
     env=dict(PHA_OBS_CASE=str(case),PHA_OBS_SCOPE=scope,PHA_OBS_DISK=str(args.source/'Scripts/dev/fixtures/plugin-settings-query-disk.py'),PHA_OBS_OUTPUT=str(out),HOME=str(case/'home'),XDG_CONFIG_HOME=str(case/'config'),PATH=str(case/'bin')+':'+os.environ['PATH'])
     controlled=bool(args.original_plugins or args.shared_reader)
     modes=[('edit','')] if controlled else [('edit',''),('cold','edited'),('reset',''),('cold','reset'),('follow',''),('cold','following')]
-    try:
-        for mode,boundary in modes:
-            part=out/(mode+('-'+boundary if boundary else '')); part.mkdir(); before=hashes(case)
-            text=runner.run_fixture(profile,install,case,part,args.source/'Scripts/dev/fixtures/plugin-settings-obs-native.qml',extra_env=dict(env,PHA_OBS_MODE=mode,PHA_OBS_BOUNDARY=boundary),extra_lint=tuple(sorted(product.rglob('*.qml'))),timeout=90)
-            assert 'OBS_NATIVE: PASS '+scope+' '+mode+' '+boundary in text
-            assert not any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected'))
-            after=hashes(case); runner.write_json(part/'configuration-hashes.json',dict(before=before,after=after))
-            if mode=='cold': assert before==after,'cold consumer published'
-            observed=json.loads(text.split('OBS_NATIVE_CONSUMER ')[1].splitlines()[0]); name=boundary or {'edit':'edited','reset':'reset','follow':'following'}[mode]
-            doc=expected[name]; defaults=json.loads((product/'manifest.json').read_text())['metadata']['defaultSettings']; values=[dict(defaults,**doc['shared'])]
-            values += [dict(values[0],**row['instanceSettings']) for row in doc['bar']['widgets']['left']]
-            good=all(row['mode']==value['barLabelMode'] and row['bar']==value['showBarWhenRecording'] and row['cc']==value['showControlCenterWhenRecording'] and (row['text']=='' if value['barLabelMode']=='icon-only' else row['rendered'] and (bool(re.fullmatch(r'REC \d\d:\d\d',row['text'])) if value['barLabelMode']=='duration' else row['text']=='REC')) and row['client'] for row,value in zip(observed,values))
-            assert good != controlled,('actual OBS child consumers',observed,values)
-            if controlled:
-                assert observed[1]['mode'] != values[1]['barLabelMode'], 'control must reach the selected native label mismatch, not just a missing client'
-            runner.write_json(part/'consumer.json',dict(status='REJECTED' if controlled else 'PASS',observed=observed))
-    finally:
-        endpoint.finish(); thread.join(timeout=5); shutil.copy2(case/'socket.jsonl',out/'socket.jsonl'); shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
+    for mode,boundary in modes:
+        part=out/(mode+('-'+boundary if boundary else '')); part.mkdir(); before=hashes(case)
+        text=runner.run_fixture(profile,install,case,part,args.source/'Scripts/dev/fixtures/plugin-settings-obs-native.qml',extra_env=dict(env,PHA_OBS_MODE=mode,PHA_OBS_BOUNDARY=boundary),extra_lint=tuple(sorted(product.rglob('*.qml'))),timeout=90)
+        assert 'OBS_NATIVE: PASS '+scope+' '+mode+' '+boundary in text
+        assert not any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected'))
+        after=hashes(case); runner.write_json(part/'configuration-hashes.json',dict(before=before,after=after))
+        if mode=='cold': assert before==after,'cold consumer published'
+        observed=json.loads(text.split('OBS_NATIVE_CONSUMER ')[1].splitlines()[0]); name=boundary or {'edit':'edited','reset':'reset','follow':'following'}[mode]
+        doc=expected[name]; defaults=json.loads((product/'manifest.json').read_text())['metadata']['defaultSettings']; values=[dict(defaults,**doc['shared'])]
+        values += [dict(values[0],**row['instanceSettings']) for row in doc['bar']['widgets']['left']]
+        good=all(row['mode']==value['barLabelMode'] and row['bar']==value['showBarWhenRecording'] and row['cc']==value['showControlCenterWhenRecording'] and (row['text']=='' if value['barLabelMode']=='icon-only' else row['rendered'] and (bool(re.fullmatch(r'REC \d\d:\d\d',row['text'])) if value['barLabelMode']=='duration' else row['text']=='REC')) and row['client'] for row,value in zip(observed,values))
+        assert good != controlled,('actual OBS child consumers',observed,values)
+        if controlled:
+            assert observed[1]['mode'] != values[1]['barLabelMode'], 'control must reach the selected native label mismatch, not just a missing client'
+        runner.write_json(part/'consumer.json',dict(status='REJECTED' if controlled else 'PASS',observed=observed))
+    resources.close()
     boundaries=['initial','discarded','edited'] if controlled else list(expected)
     for name in boundaries: assert json.loads((out/'persisted'/(name+'.json')).read_text())==dict(status='PASS',values=expected[name])
     rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]

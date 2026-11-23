@@ -8,9 +8,9 @@ import json
 import os
 from pathlib import Path
 import shutil
-import threading
 import time
 
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 spec=importlib.util.spec_from_file_location('obs',Path(__file__).with_name('plugin-settings-obs-regression.py'))
@@ -18,6 +18,11 @@ obs=importlib.util.module_from_spec(spec);spec.loader.exec_module(obs);runner=ob
 SCENARIOS=('typed','panel-origin','launch-normal','launch-retire','start-Record','start-Replay','start-Stream','online-actions','failure','record-toast','toast-retire','request-retire','output-retire','auto-retire','terminate-retire','confirm-retire','auto-close','auto-active','auto-failure')
 
 def run(args,profile,scenario):
+    with FixtureResources() as resources:
+        return run_with_endpoint(args,profile,scenario,resources)
+
+
+def run_with_endpoint(args,profile,scenario,resources):
     case,out=args.work_root/scenario,args.output/scenario;case.mkdir();out.mkdir()
     install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     product=obs.seed(case,args.plugins);shutil.copy2(args.source/'Assets/ColorScheme/MacOS/MacOS.json',case/'config/colors.json')
@@ -30,21 +35,22 @@ def run(args,profile,scenario):
             text=text.replace(old,'false').replace('if (policy && !actionCurrent)','if (false)').replace('if (!policy.context.current())','if (false)');path.write_text(text)
         elif args.control=='toast-policy':
             path=product/'Main.qml';text=path.read_text();old='root.openVideosForPolicy(policy)';assert text.count(old)==1;path.write_text(text.replace(old,'root.openVideos()'))
-    endpoint=obs.ObsEndpoint(case);thread=threading.Thread(target=endpoint.serve_forever);thread.start()
+    resources.defer(shutil.copy2,case/'socket.jsonl',out/'socket.jsonl')
+    resources.defer(shutil.copy2,case/'requests.jsonl',out/'requests.jsonl')
+    endpoint=obs.ObsEndpoint(case)
+    resources.serve(endpoint,interrupt=endpoint.finish)
     runner.write_json(case/'config/obs-studio/plugin_config/obs-websocket/config.json',dict(server_enabled=True,server_port=endpoint.server_address[1],server_password=''))
     before=obs.hashes(case);fixture=args.source/'Scripts/dev/fixtures/plugin-settings-obs-lifetime.qml'
     env=dict(PHA_OBS_CASE=str(case),PHA_OBS_SCENARIO=scenario,HOME=str(case/'home'),XDG_CONFIG_HOME=str(case/'config'),PATH=str(case/'bin')+':'+os.environ['PATH'])
     rejected=False
-    try:
-        try:text=runner.run_fixture(profile,install,case,out,fixture,extra_env=env,extra_lint=tuple(sorted(product.rglob('*.qml'))),timeout=100)
-        except RuntimeError:
-            text=(out/'runtime.log').read_text();wanted={'launch-policy':'launch keeps admitted normal policy','retirement':'retired request cannot stop output','toast-policy':'Toast retains admitted path/opener and retirement'}.get(args.control)
-            assert wanted and wanted in text and (out/'runtime.exit').read_text().strip()=='2',text;rejected=True
-        assert rejected==bool(args.control)
-        if not rejected:assert 'OBS_LIFETIME: PASS '+scenario in text
-        assert not any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected'))
-    finally:
-        endpoint.finish();thread.join(timeout=5);shutil.copy2(case/'requests.jsonl',out/'requests.jsonl');shutil.copy2(case/'socket.jsonl',out/'socket.jsonl')
+    try:text=runner.run_fixture(profile,install,case,out,fixture,extra_env=env,extra_lint=tuple(sorted(product.rglob('*.qml'))),timeout=100)
+    except RuntimeError:
+        text=(out/'runtime.log').read_text();wanted={'launch-policy':'launch keeps admitted normal policy','retirement':'retired request cannot stop output','toast-policy':'Toast retains admitted path/opener and retirement'}.get(args.control)
+        assert wanted and wanted in text and (out/'runtime.exit').read_text().strip()=='2',text;rejected=True
+    assert rejected==bool(args.control)
+    if not rejected:assert 'OBS_LIFETIME: PASS '+scenario in text
+    assert not any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected'))
+    resources.close()
     after=obs.hashes(case);assert before==after;runner.write_json(out/'configuration-hashes.json',dict(before=before,after=after))
     rows=[json.loads(line) for line in (out/'requests.jsonl').read_text().splitlines()]
     for _ in range(100):
