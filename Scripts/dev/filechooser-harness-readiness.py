@@ -29,10 +29,10 @@ def main():
     assert re.fullmatch(r'[a-z0-9][a-z0-9.-]*', args.label)
     runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     assert not runtime.exists() and not output.exists()
-    harness = subprocess.Popen(['timeout', '90', 'python3', '-B', str(source / 'Scripts/dev/filechooser-harness.py'),
+    harness = subprocess.Popen(['timeout', '--kill-after=5', '90', 'python3', '-B', str(source / 'Scripts/dev/filechooser-harness.py'),
         '--source', str(source), '--label', args.label], env=dict(os.environ))
     probe = runtime / 'shell/filechooser-harness.qml'
-    result = dict(passed=False, snapshot=None, errors=[], failure='')
+    result = dict(passed=False, snapshot=None, errors=[], failure='', shutdownErrors=[])
 
     def ipc(member):
         return subprocess.check_output(['timeout', '5', 'qs', '-p', str(probe), 'ipc', 'call',
@@ -65,8 +65,15 @@ def main():
         raise
     finally:
         if harness.poll() is None:
-            ipc('quit')
-            harness.wait(timeout=15)
+            try:
+                ipc('quit')
+            except (OSError, subprocess.SubprocessError) as error:
+                result['shutdownErrors'].append(repr(error))
+            # The launch deadline remains authoritative even when IPC fails.
+            try:
+                harness.wait(timeout=100)
+            except subprocess.TimeoutExpired as error:
+                result['shutdownErrors'].append(repr(error))
         if output.is_dir():
             (output / 'readiness-result.json').write_text(json.dumps(result, indent=2) + '\n')
         print('CHOOSER_HARNESS_READINESS: ' + ('PASS' if result['passed'] else 'FAIL'), flush=True)
