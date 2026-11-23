@@ -906,6 +906,11 @@ os.execv('/usr/bin/find', ['find', *args])
                                  IMAGE_SCAN_BASELINE='1' if self.args.baseline_source else '0'))
         stages = {row['name']:row for row in result['snapshots']}
         expected = {str(inputs/'scan-main/main.png'), *(str(inputs/'pool-simple'/name) for name in names)}
+        if self.args.baseline_source is not None:
+            actual = set(stages['union']['paths'])
+            self.check('old-wallpaper-scan-loses-part-of-the-union', list(stages) == ['union']
+                       and bool(actual) and actual < expected, stages['union'], red=True)
+            return result
         self.check('wallpaper-scan-publishes-complete-main-pool-union', set(stages['union']['paths']) == expected,
                    stages['union'])
         self.check('wallpaper-scan-browse-never-cancels-publication', set(stages['browse']['paths']) == expected
@@ -927,6 +932,13 @@ os.execv('/usr/bin/find', ['find', *args])
         return result
 
     def wallpaper_wizard(self):
+        red = self.args.case == 'wizard-red'
+        source = self.args.source
+        if red:
+            source = self.args.baseline_source
+            if source is None or source.resolve() == self.args.source.resolve():
+                raise ValueError('Wizard red requires a separate immutable pre-admission wizard source')
+        fixture = self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml'
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
         # The real none deployment must be inapplicable, not able to modify a
@@ -958,11 +970,11 @@ os.execv('/usr/bin/find', ['find', *args])
         thread = threading.Thread(target=server.serve_forever)
         thread.start()
         try:
-            result, output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml',
-                inputs, 'wallpaper-wizard', dict(IMAGE_WIZARD_RED='1' if self.args.case == 'wizard-red' else '0',
+            result, output = self.qt(source, fixture,
+                inputs, 'wallpaper-wizard', dict(IMAGE_WIZARD_RED='1' if red else '0',
                 IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}', NIRI_SOCKET=''))
-            if self.args.case != 'wizard-red':
-                extra, extra_output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml',
+            if not red:
+                extra, extra_output = self.qt(source, fixture,
                     inputs, 'wallpaper-wizard-extra', dict(IMAGE_WIZARD_EXTRA='1',
                     IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}', NIRI_SOCKET=''))
         finally:
@@ -971,7 +983,7 @@ os.execv('/usr/bin/find', ['find', *args])
             server.server_close()
         (self.out/'http-requests.json').write_text(json.dumps(requests, indent=2)+'\n')
         stages = {row['name']: row for row in result['snapshots']}
-        if self.args.case == 'wizard-red':
+        if red:
             self.check('old-wizard-saves-corrupt-unaccepted-wallpaper', stages['red']['request']['status'] == 'Succeeded'
                        and stages['red']['path'] == str(inputs/'frame-1.png') and stages['red']['scale'] == 1.15,
                        result, red=True)
@@ -1069,9 +1081,11 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('setup-emits-only-validated-user-selection', result['selections'] == [str(inputs/'Still.webp')]
                    and stages['valid-intent']['selected'] == str(inputs/'Still.webp')
                    and pixel(output/'valid-intent.png') == list(COLORS[0]), result['selections'])
+        gallery_centers = [pixel(path) for path in output.glob('gallery-*.png')]
         self.check('setup-gallery-is-static-frame-zero', len(result['galleryFrames']) == 11
                    and all(row['status'] == 1 and row['result']['frames'] == 1 for row in result['galleryFrames'])
-                   and all(pixel(path) == list(COLORS[0]) for path in output.glob('gallery-*.png')), result['galleryFrames'])
+                   and gallery_centers == [list(COLORS[0])]*11,
+                   dict(rows=result['galleryFrames'], centers=gallery_centers))
         self.check('setup-destruction-retires-all-interests', result['interests'] == result['requests'] == 0 and not result['workerRunning'], result)
         return result
 
