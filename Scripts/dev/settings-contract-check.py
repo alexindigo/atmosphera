@@ -4,6 +4,7 @@ import argparse
 import io
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import tarfile
@@ -27,6 +28,7 @@ FULL_CHECKS = [
     ('settings-schema-selftest.py', []),
     ('settings-formatter-selftest.py', []),
     ('settings-writes-selftest.py', []),
+    ('settings-writes-parallel-selftest.py', []),
     ('settings-staged-selftest.py', []),
     ('settings-runner-paths-selftest.py', []),
     ('settings-hook-selftest.py', []),
@@ -43,17 +45,32 @@ def staged_snapshot(root,destination):
     return tree
 
 
+def run_command(command, root, deadline):
+    # The deadline owns the whole scanner, including its per-file worker pool.
+    # subprocess.run(timeout=...) alone kills only the immediate child.
+    with subprocess.Popen(command, cwd=root, start_new_session=True) as process:
+        try:
+            return process.wait(timeout=deadline)
+        except BaseException:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            process.wait()
+            raise
+
+
 def check(root, quick=False):
     root = root.resolve()
     for script,args in QUICK_CHECKS if quick else FULL_CHECKS:
         deadline = 300 if script == 'check-settings-writes.py' else 10 if quick else 120
         try:
-            result=subprocess.run([sys.executable,'-B',str(root/'Scripts/dev'/script),*args],cwd=root,timeout=deadline)
+            status=run_command([sys.executable,'-B',str(root/'Scripts/dev'/script),*args],root,deadline)
         except subprocess.TimeoutExpired:
             print(f'SETTINGS_CONTRACTS: {script} exceeded {deadline}s', file=sys.stderr)
             return 1
-        if result.returncode:
-            return result.returncode
+        if status:
+            return status
     print('SETTINGS_SANITY: PASS' if quick else 'SETTINGS_CONTRACTS: PASS')
     return 0
 

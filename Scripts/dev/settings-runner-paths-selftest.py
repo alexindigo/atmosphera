@@ -107,14 +107,15 @@ class RunnerPaths(unittest.TestCase):
         for relative in (True, False):
             root = Path(os.path.relpath(ROOT)) if relative else ROOT
 
-            def observe(argv, *, cwd, **kwargs):
+            def observe(argv, cwd, deadline):
                 self.assertTrue(Path(cwd).is_absolute())
                 script = Path(argv[2])
                 self.assertTrue(script.is_absolute())
                 self.assertTrue(script.is_file())
-                return type('Result', (), {'returncode': 0})()
+                self.assertEqual(deadline, 300 if script.name == 'check-settings-writes.py' else 120)
+                return 0
 
-            with self.subTest(relative=relative), patch.object(module.subprocess, 'run', observe):
+            with self.subTest(relative=relative), patch.object(module, 'run_command', observe):
                 self.assertEqual(module.check(root), 0)
 
 

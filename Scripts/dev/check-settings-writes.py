@@ -6,10 +6,13 @@ lexical/QML lookup and its actual receiver can supply a publishing summary.
 Unmodeled effects retain obligations and emit owner-review advisories.
 """
 import argparse
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from functools import lru_cache
 from importlib.metadata import version
 import json
+from multiprocessing import get_context
+import os
 from pathlib import Path
 import re
 import sys
@@ -1213,14 +1216,50 @@ class Checker:
                     self.finish(self.statement(value, [state]))
 
 
+_worker_metadata = None
+
+
+def initialize_file_worker(metadata):
+    global _worker_metadata
+    # Spawned workers receive schema input only, never a parser or proof state.
+    _worker_metadata = metadata
+
+
+def analyze_file(task, metadata=None):
+    file, relative, timed = task
+    started = time.perf_counter() if timed else None
+    checker = Checker(_worker_metadata if metadata is None else metadata)
+    checker.check(relative, file.read_text())
+    finished = time.perf_counter() if timed else None
+    return checker.counts, checker.issues, started, finished
+
+
+def file_results(files, root, metadata, workers, timed):
+    tasks = ((file, file.relative_to(root), timed) for file in files)
+    if workers == 1 or len(files) <= 1:
+        for task in tasks:
+            yield analyze_file(task, metadata)
+    else:
+        with ProcessPoolExecutor(max_workers=min(workers, len(files)), mp_context=get_context('spawn'),
+                                 initializer=initialize_file_worker, initargs=(metadata,)) as pool:
+            # map retires in input order even when workers finish out of order.
+            yield from pool.map(analyze_file, tasks)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--report', type=Path)
     parser.add_argument('--timings', action='store_true', help='emit per-file progress/timing JSON to stderr')
+    parser.add_argument('--workers', type=int, default=os.cpu_count() or 1,
+                        help='file workers (default: CPU count; 1 for serial debugging)')
     parser.add_argument('paths', nargs='*', type=Path)
-    args = parser.parse_args(); checker = Checker(json.loads((args.root / 'Configs/settings-schema.json').read_text()))
+    args = parser.parse_args()
+    if args.workers < 1:
+        parser.error('--workers must be positive')
+    metadata = json.loads((args.root / 'Configs/settings-schema.json').read_text())
+    checker = Checker(metadata)
     files = set()
     for path in args.paths or [args.root]:
         path = path if path.is_absolute() else args.root / path
@@ -1228,16 +1267,19 @@ def main():
                      and '.git' not in p.parts and 'node_modules' not in p.parts
                      and not p.is_relative_to(args.root / 'Scripts/dev/fixtures/settings-writes'))
     scan_started = time.perf_counter() if args.timings else None
-    for index, file in enumerate(sorted(files)):
+    files = sorted(files)
+    results = file_results(files, args.root, metadata, args.workers, args.timings)
+    for index, (counts, issues, file_started, finished) in enumerate(results):
+        file = files[index]
         relative = file.relative_to(args.root)
+        for name, count in counts.items():
+            checker.counts[name] += count
+        checker.issues.extend(issues)
         if args.timings:
-            file_started = time.perf_counter()
+            # Publish progress deterministically, using the actual worker times.
             print('SETTINGS_WRITES_TIME: ' + json.dumps(dict(file=str(relative), status='started',
                   filesCompleted=index, filesTotal=len(files), totalSeconds=file_started-scan_started)),
                   file=sys.stderr, flush=True)
-        checker.check(relative, file.read_text())
-        if args.timings:
-            finished = time.perf_counter()
             print('SETTINGS_WRITES_TIME: ' + json.dumps(dict(file=str(relative), status='finished',
                   filesCompleted=index+1, filesTotal=len(files), seconds=finished-file_started,
                   totalSeconds=finished-scan_started)), file=sys.stderr, flush=True)
