@@ -8,6 +8,7 @@ import re
 import signal
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 import time
 
 from guest_profile import ProcessIdentity, ProfileBlocked, activate_profile
@@ -130,6 +131,12 @@ def main():
         raise ValueError('label must contain lowercase letters, digits and hyphens')
     if not workspace.is_dir() or workspace.stat().st_uid != os.getuid():
         raise ProfileBlocked('bind-mounted workspace is not owned by the container account')
+    # Each invocation owns its scratch; the journal survives both pass and fail.
+    with TemporaryDirectory(prefix='work-', dir=workspace) as work:
+        return run_lane(args, workspace, Path(work))
+
+
+def run_lane(args, workspace, work):
     (workspace / 'tmp').mkdir(exist_ok=True)
     os.environ['TMPDIR'] = str(workspace / 'tmp')
     runtime = workspace / 'r' / ('s-' + args.label)
@@ -162,7 +169,7 @@ def main():
             profile_path = workspace / ('ci-profile-' + args.label + '.json')
             profile = dict(version=2, mode='container-headless-wayland', name='image-decoding-ci', engine=args.engine,
                            containerId=Path('/etc/hostname').read_text().strip(), uid=os.getuid(), home=str(Path.home()), workspace=str(workspace),
-                           workBase=str(workspace / 'work'), journalBase=str(workspace / 'artifacts'), runtimeBase=str(workspace / 'r'),
+                           workBase=str(work), journalBase=str(workspace / 'artifacts'), runtimeBase=str(workspace / 'r'),
                            sessionRuntime=str(runtime), waylandDisplay=displays[0].name, compositor=captured.record())
             with profile_path.open('x') as output:
                 json.dump(profile, output, indent=2)
