@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 import re
 import sys
+from types import MappingProxyType
 import warnings
 
 warnings.filterwarnings('ignore', message='int argument support is deprecated', category=DeprecationWarning)
@@ -133,7 +134,11 @@ class Checker:
         self.effects = []
 
     def text(self, node):
-        return self.source[node.start_byte:node.end_byte].decode() if node else ''
+        if not node:
+            return ''
+        if node.id not in self.syntax_text:
+            self.syntax_text[node.id] = self.source[node.start_byte:node.end_byte].decode()
+        return self.syntax_text[node.id]
 
     def report(self, node, code, level='error'):
         self.issues.append({'file': self.file, 'line': max(1, node.start_point.row + 1 - self.offset),
@@ -273,15 +278,19 @@ class Checker:
         return Evaluation(state, value, truth, nullish, frozenset(members) | self.tokens(value))
 
     def parameters(self, node):
+        if node.id in self.syntax_parameters:
+            return self.syntax_parameters[node.id]
         params = child(node, 'parameters') or child(node, 'parameter')
-        if not params: return []
-        if params.type == 'identifier': return [self.text(params)]
         result = []
-        for index, parameter in enumerate(params.named_children):
-            if parameter.type == 'comment': continue
-            pattern = child(parameter, 'pattern') or parameter
-            result.append(self.text(pattern) if pattern.type == 'identifier' else '@argument' + str(index))
-        return result
+        if params and params.type == 'identifier':
+            result.append(self.text(params))
+        elif params:
+            for index, parameter in enumerate(params.named_children):
+                if parameter.type == 'comment': continue
+                pattern = child(parameter, 'pattern') or parameter
+                result.append(self.text(pattern) if pattern.type == 'identifier' else '@argument' + str(index))
+        self.syntax_parameters[node.id] = tuple(result)
+        return self.syntax_parameters[node.id]
 
     def property_key(self, owner, name):
         return '@' + str(owner) + '.' + name
@@ -810,8 +819,14 @@ class Checker:
         context = State(env=state.env.copy() if definition.lexical else self.environments[definition.owner].copy(),
                         owner=definition.owner, this_owner=definition.owner if definition.bound else 0)
         for name in self.parameters(definition.node): context.env[name] = None
-        return set().union(*(self.tokens(self.ref(n, context)) for n in walk(child(definition.node, 'body'))
-                             if n.type in ('identifier', 'member_expression', 'subscript_expression')))
+        if definition.node.id not in self.syntax_captures:
+            self.syntax_captures[definition.node.id] = tuple(
+                n for n in walk(child(definition.node, 'body'))
+                if n.type in ('identifier', 'member_expression', 'subscript_expression'))
+        # Only the syntax is reusable. Captured values and their effects still
+        # belong to this particular lexical/environment state.
+        return set().union(*(self.tokens(self.ref(n, context))
+                             for n in self.syntax_captures[definition.node.id]))
 
     def call(self, node, state):
         fn = child(node, 'function'); method = self.method_name(fn); rows = []
@@ -902,22 +917,32 @@ class Checker:
         return self.bound(results, node)
 
     def local_names(self, node):
+        if not node: return frozenset()
+        if node.id in self.syntax_locals:
+            return self.syntax_locals[node.id]
         names = set()
-        if not node: return names
         for nested in node.named_children:
             if nested.type in FUNCTIONS: continue
             if nested.type == 'variable_declaration':
                 names.update(self.text(child(d, 'name')) for d in nested.named_children if d.type == 'variable_declarator')
             names.update(self.local_names(nested))
-        return names
+        self.syntax_locals[node.id] = frozenset(names)
+        return self.syntax_locals[node.id]
 
-    def block(self, node, states):
+    def block_declarations(self, node):
+        if node.id in self.syntax_blocks:
+            return self.syntax_blocks[node.id]
         names = set(); functions = {}
         for statement in node.named_children:
             if statement.type == 'lexical_declaration':
                 names.update(self.text(child(d, 'name')) for d in statement.named_children if d.type == 'variable_declarator')
             elif statement.type == 'function_declaration':
                 name = self.text(child(statement, 'name')); names.add(name); functions[name] = statement.id
+        self.syntax_blocks[node.id] = tuple(names), MappingProxyType(functions)
+        return self.syntax_blocks[node.id]
+
+    def block(self, node, states):
+        names, functions = self.block_declarations(node)
         for state in states:
             saved = {name: (name in state.env, state.env.get(name), name in state.scalars, state.scalars.get(name)) for name in names}
             state.scopes.append((saved, state.locals.copy()))
@@ -1009,6 +1034,7 @@ class Checker:
                 tuple((tuple(sorted(values.items())), frozenset(locals_)) for values, locals_ in state.scopes))
 
     def bound(self, states, node):
+        if len(states) <= 1: return states
         states = list({self.signature(state): state for state in states}.values())
         if len(states) <= 64: return states
         self.report(node, 'control-flow-limit', 'advisory'); merged = states[0].fork()
@@ -1017,6 +1043,7 @@ class Checker:
         return [merged]
 
     def bound_values(self, values, node):
+        if len(values) <= 1: return values
         values = list({(self.signature(e.state), e.value, e.truth, e.nullish, e.members): e for e in values}.values())
         if len(values) <= 64: return values
         self.report(node, 'expression-flow-limit', 'advisory')
@@ -1053,6 +1080,10 @@ class Checker:
 
     def check(self, path, text):
         self.file = str(path); self.original = text; self.offset = 0
+        # Tree-sitter identities and all syntax facts belong to one input file.
+        # None of these caches contains mutable proof-state values.
+        self.syntax_text = {}; self.syntax_parameters = {}; self.syntax_captures = {}
+        self.syntax_locals = {}; self.syntax_blocks = {}
         self.kinds = self.main_kinds.copy()
         self.kind.cache_clear()
         self.effects = []
@@ -1066,9 +1097,10 @@ class Checker:
                 if node.type == 'ERROR' or node.is_missing: self.report(node, 'parse-error')
             if len(self.issues) == before: self.report(tree.root_node, 'parse-error')
             return
+        nodes = tuple(walk(tree.root_node))
         self.scopes = {}; self.ids = {}; self.definitions = {}; self.environments = {}; self.summary_stack = set()
         self.ql_copies = {}; self.binding_copies = {}; self.binding_pass = True
-        for node in walk(tree.root_node):
+        for node in nodes:
             if node.type != 'ui_object_definition': continue
             parent = node.parent; boundary = False
             while parent and parent.id not in self.scopes:
@@ -1088,7 +1120,7 @@ class Checker:
                 key = (component, identity)
                 self.ids[key] = node.id if key not in self.ids else None
         self.store_schema_roots()
-        for node in walk(tree.root_node):
+        for node in nodes:
             if node.type not in FUNCTIONS: continue
             parent = node.parent; lexical = 0
             while parent and parent.id not in self.scopes:
@@ -1134,7 +1166,7 @@ class Checker:
             if definition.lexical and not (self.offset and parent and self.text(child(parent.node, 'name')) == '__script'):
                 continue
             self.analyze_function(definition)
-        for node in walk(tree.root_node):
+        for node in nodes:
             if node.type != 'ui_binding': continue
             value = self.unwrap(child(node, 'value'))
             if not value or value.type in FUNCTIONS | {'ui_object_definition'}: continue

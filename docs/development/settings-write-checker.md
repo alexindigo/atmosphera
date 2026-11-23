@@ -75,6 +75,13 @@ the gate just because a new caller fails it.
 
 ## Guest checks
 
+Immutable syntax facts (decoded tokens, parameters, local/block declarations and
+candidate capture nodes) are computed once per parsed file and reused. Capture
+values, function summaries and ownership-state signatures remain state-dependent:
+they are never memoized from a mutable environment. Singleton alternatives need
+no signature because there is nothing to coalesce. Multi-alternative signatures,
+joins, scan coverage and the shared runner's 300-second deadline are unchanged.
+
 In the assigned VM, use a disk-backed venv with
 `.devcontainer/settings-check-requirements.txt`, then bounded commands through
 the task's guest connector:
