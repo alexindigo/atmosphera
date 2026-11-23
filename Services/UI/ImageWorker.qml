@@ -275,7 +275,9 @@ Scope {
     entry.result = reply;
     for (var callback of Object.values(entry.listeners))
       callback(reply);
-    flush.restart();
+    // The running worker already holds this interest and leases before replying.
+    // Only changes to interests, control commands and worker startup need a
+    // snapshot. A later snapshot can restore settled leases after a restart.
   }
 
   function _sync() {
