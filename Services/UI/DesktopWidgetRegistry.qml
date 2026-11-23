@@ -509,29 +509,21 @@ Singleton {
           return;
         }
         root.currentSettingsDialog = dialog;
-        dialog.closed.connect(() => {
+        function finish() {
           if (root.currentSettingsDialog === dialog) {
             root.currentSettingsDialog = null;
           }
           dialog.destroy();
 
           releaseEditor(editor);
-        });
+        }
         if (genericManifest) {
-          dialog.presentationInvalidated.connect(function () {
-            if (root.currentSettingsDialog === dialog)
-              root.currentSettingsDialog = null;
-            dialog.destroy();
-            releaseEditor(editor);
-          });
-          if (!dialog.openInstanceSettings(genericManifest, genericApi, "settings", genericEditor)) {
-            genericEditor.release();
-            root.currentSettingsDialog = null;
-            dialog.destroy();
-            refused(editor);
-          }
-        } else
+          dialog.presentationClosed.connect(finish);
+          dialog.openInstanceSettings(genericManifest, genericApi, "settings", genericEditor);
+        } else {
+          dialog.closed.connect(finish);
           dialog.open();
+        }
       } else {
         if (genericEditor)
           genericEditor.release();

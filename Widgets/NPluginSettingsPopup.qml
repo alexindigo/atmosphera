@@ -34,7 +34,9 @@ Popup {
   readonly property var _pageApi: settingsSession.pageApi
   readonly property var undisplayedOverrideFields: settingsSession.fields ? settingsSession.fields.undisplayedOverrides : []
   signal settingsCompleted(var result)
-  signal presentationInvalidated
+  // The adopted presentation ends even if the native Popup never opened.
+  signal presentationClosed
+  property bool _presenting: false
 
   // Optional host-owned transition admission, injected without knowing the
   // containing tab/window/service. The returned function releases registration.
@@ -100,7 +102,10 @@ Popup {
     }
     onCloseAccepted: {
       discardDialog.close();
-      root.close();
+      if (root.visible)
+        root.close();
+      else
+        root._finishPresentation();
     }
     onDiscardRequired: discardDialog.open()
     onSettingsCompleted: result => {
@@ -108,10 +113,10 @@ Popup {
         resetInstanceDialog.close();
       root.settingsCompleted(result);
     }
-    onPresentationInvalidated: root.presentationInvalidated()
     onOpeningFailed: {
       if (root.showToastOnSave)
         ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
+      root._finishPresentation();
     }
     onSaved: {
       if (root.showToastOnSave)
@@ -388,17 +393,25 @@ Popup {
       });
       return;
     }
+    _finishPresentation();
+  }
+
+  function _finishPresentation() {
+    if (!_presenting)
+      return;
     resetInstanceDialog.close();
     discardDialog.close();
     // Clear both source and sourceComponent to ensure full cleanup
     settingsLoader.sourceComponent = null;
     settingsLoader.source = "";
     settingsSession.presentationClosed();
+    _presenting = false;
+    presentationClosed();
   }
 
   // Plugin level: the page edits and saves the plugin settings.
   function openPluginSettings(pluginManifest, settingsEntryPoint) {
-    return settingsSession.openPluginSettings(pluginManifest, settingsEntryPoint);
+    return _openSettings(() => settingsSession.openPluginSettings(pluginManifest, settingsEntryPoint));
   }
 
   // One placed instance: the page edits the instance api's settings (plugin
@@ -406,7 +419,14 @@ Popup {
   // overrides. `instanceApi` comes from PluginInstances.apiFor; null when the
   // plugin is not loaded.
   function openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor) {
-    return settingsSession.openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor);
+    return _openSettings(() => settingsSession.openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor));
+  }
+
+  function _openSettings(select) {
+    if (_presenting)
+      return false;
+    _presenting = true;
+    return select();
   }
 
   function _loadPage() {
@@ -428,7 +448,7 @@ Popup {
   }
 
   function requestClose() {
-    return settingsSession.requestClose();
+    return !_presenting || settingsSession.requestClose();
   }
 
   function keepEditing() {

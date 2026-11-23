@@ -48,6 +48,69 @@ ShellRoot {
       check(host.showDialog(popup), "actual host admitted");
     check(selected ? popup.openInstanceSettings(manifest, selected) : popup.openPluginSettings(manifest), "selected editor open admitted");
   }
+  Component {
+    id: nullFactory
+    QtObject {
+      required property var unavailable
+    }
+  }
+  Component {
+    id: openingSessionFactory
+    PluginSettingsSession {
+      commitInputs: () => {}
+      captureInputs: () => ({})
+      acknowledgeInputs: () => {}
+      resetInputs: () => {}
+    }
+  }
+  function openingProbes(next) {
+    var failures = [];
+    var createEditor = api.createSettingsEditor;
+    function probe(label, inject, attempt, delay) {
+      var session = openingSessionFactory.createObject(root);
+      var failed = 0;
+      var presented = 0;
+      session.openingFailed.connect(function () {
+        failed++;
+      });
+      session.presentRequested.connect(function () {
+        presented++;
+      });
+      inject(session);
+      var accepted = session.openPluginSettings(manifest);
+      api.createSettingsEditor = createEditor;
+      if (accepted !== attempt)
+        failures.push(label + ": unexpected admission");
+      function verify() {
+        if (failed !== 1 || presented !== 0 || session.editor || session.pageApi || session.fields || session.currentPluginApi)
+          failures.push(label + ": failed=" + failed + " presented=" + presented + " editor=" + !!session.editor + " fields=" + !!session.fields + " api=" + !!session.currentPluginApi);
+        session.presentationClosed();
+        session.destroy();
+        delay();
+      }
+      // whenReady schedules a Qt.callLater delivery synchronously on admission.
+      Qt.callLater(verify);
+    }
+    probe("refused editor", function () {
+      api.createSettingsEditor = () => null;
+    }, false, function () {
+      probe("null fields", function (session) {
+        session._fieldsFactory = nullFactory;
+      }, true, function () {
+        probe("null page API", function (session) {
+          session._pageApiFactory = nullFactory;
+        }, true, function () {
+          try {
+            check(!failures.length, failures.join("; "));
+            console.log("PLUGIN_SETTINGS_SESSION: OPENING_REFUSALS_RELEASED");
+            next();
+          } catch (error) {
+            fail(error);
+          }
+        });
+      });
+    });
+  }
   function fault(mode, next) {
     afterFault = next;
     faultProcess.command = ["python3", "-B", Quickshell.env("PHA_SESSION_FAULT"), Settings.configDir.replace(/\/$/, ""), mode];
@@ -104,95 +167,102 @@ ShellRoot {
           });
           return;
         }
-        var factory = api.createSettingsEditor;
-        var previewFactory = api.createSettingsPreview;
-        api.createSettingsPreview = function (editor) {
-          root.retainedPreview = previewFactory(editor);
-          return root.retainedPreview;
-        };
-        api.createSettingsEditor = function (fieldIntent) {
-          var editor = factory(fieldIntent);
-          return {
-            get fieldCapture() {
-              return editor.fieldCapture;
-            },
-            get handle() {
-              return editor.handle;
-            },
-            get _releasePending() {
-              return editor._releasePending;
-            },
-            get initialValue() {
-              return editor.initialValue;
-            },
-            get values() {
-              return editor.values;
-            },
-            get previewValues() {
-              return editor.previewValues;
-            },
-            get writable() {
-              return editor.writable;
-            },
-            get ready() {
-              return editor.ready;
-            },
-            get busy() {
-              return editor.busy;
-            },
-            get dirty() {
-              return editor.dirty;
-            },
-            get closed() {
-              return editor.closed;
-            },
-            get error() {
-              return editor.error;
-            },
-            whenReady: editor.whenReady,
-            release: editor.release,
-            discard: editor.discard,
-            copyValue: editor.copyValue,
-            previewScope: editor.previewScope,
-            rebased: editor.rebased,
-            fields: editor.fields,
-            apply: function (value, callback) {
-              applies++;
-              editor.apply(value, function (result) {
-                if (root.hold)
-                  root.held = function () {
-                    callback(result);
-                  };
-                else
-                callback(result);
-              });
-              if (root.stale)
-                root.api.pluginSettings.label = "newer";
-            }
-          };
-        };
-        Settings.data.bar.widgets.left = [
-              {
-                id: "plugin:session-fixture",
-                tag: "keep",
-                instanceSettings: {
-                  label: "instance"
-                }
-              }
-            ];
-        Settings.saveSelected([["bar", "widgets", "left"]], function (result) {
-          try {
-            check(result.status !== "failed", "fixture placement saved");
-            show();
-            phase = "cancel";
-          } catch (error) {
-            fail(error);
-          }
-        });
+        openingProbes(prepare);
       } catch (error) {
         fail(error);
       }
     });
+  }
+  function prepare() {
+    try {
+      var factory = api.createSettingsEditor;
+      var previewFactory = api.createSettingsPreview;
+      api.createSettingsPreview = function (editor) {
+        root.retainedPreview = previewFactory(editor);
+        return root.retainedPreview;
+      };
+      api.createSettingsEditor = function (fieldIntent) {
+        var editor = factory(fieldIntent);
+        return {
+          get fieldCapture() {
+            return editor.fieldCapture;
+          },
+          get handle() {
+            return editor.handle;
+          },
+          get _releasePending() {
+            return editor._releasePending;
+          },
+          get initialValue() {
+            return editor.initialValue;
+          },
+          get values() {
+            return editor.values;
+          },
+          get previewValues() {
+            return editor.previewValues;
+          },
+          get writable() {
+            return editor.writable;
+          },
+          get ready() {
+            return editor.ready;
+          },
+          get busy() {
+            return editor.busy;
+          },
+          get dirty() {
+            return editor.dirty;
+          },
+          get closed() {
+            return editor.closed;
+          },
+          get error() {
+            return editor.error;
+          },
+          whenReady: editor.whenReady,
+          release: editor.release,
+          discard: editor.discard,
+          copyValue: editor.copyValue,
+          previewScope: editor.previewScope,
+          rebased: editor.rebased,
+          fields: editor.fields,
+          apply: function (value, callback) {
+            applies++;
+            editor.apply(value, function (result) {
+              if (root.hold)
+                root.held = function () {
+                  callback(result);
+                };
+              else
+              callback(result);
+            });
+            if (root.stale)
+              root.api.pluginSettings.label = "newer";
+          }
+        };
+      };
+      Settings.data.bar.widgets.left = [
+            {
+              id: "plugin:session-fixture",
+              tag: "keep",
+              instanceSettings: {
+                label: "instance"
+              }
+            }
+          ];
+      Settings.saveSelected([["bar", "widgets", "left"]], function (result) {
+        try {
+          check(result.status !== "failed", "fixture placement saved");
+          show();
+          phase = "cancel";
+        } catch (error) {
+          fail(error);
+        }
+      });
+    } catch (error) {
+      fail(error);
+    }
   }
   function drive() {
     var page = popup.settingsPage;

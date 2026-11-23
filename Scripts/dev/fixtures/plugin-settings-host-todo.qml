@@ -250,6 +250,18 @@ ShellRoot {
     });
     phase = "page";
   }
+  function exerciseEarlyDesktopClose() {
+    var screen = Quickshell.screens[0];
+    check(DesktopWidgetRegistry.openWidgetSettings(screen, 0, "plugin:todo", {
+                                                     id: "plugin:todo"
+                                                   }) !== false, "early desktop opening admitted");
+    var opening = DesktopWidgetRegistry.currentSettingsDialog;
+    check(opening && !opening.visible && opening._editor, "desktop adopted a not-yet-shown editor");
+    var host = PanelService.getPopupMenuWindow(screen);
+    check(host.popupContentItem === opening && host.close(), "host accepts Close during opening");
+    check(host.popupContentItem === null && DesktopWidgetRegistry.currentSettingsDialog === null, "early Close clears both presentation owners");
+    console.log("PLUGIN_SETTINGS_TODO: EARLY_DESKTOP_CLOSE_RELEASED");
+  }
   function begin() {
     if (started || !Settings.isLoaded)
       return;
@@ -323,6 +335,7 @@ ShellRoot {
         Qt.exit(0);
         return;
       }
+      exerciseEarlyDesktopClose();
       openRoute();
     } else if (phase === "page" && popup.opened && popup.settingsPage) {
       contents();

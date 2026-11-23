@@ -64,7 +64,6 @@ QtObject {
   signal closeAccepted
   signal discardRequired
   signal openingFailed
-  signal presentationInvalidated
   signal settingsCompleted(var result)
   signal saved
 
@@ -73,7 +72,11 @@ QtObject {
   }
   function openInstanceSettings(manifest, instanceApi, entryPoint, capturedEditor) {
     if (!instanceApi) {
-      openingFailed();
+      if (presentationOpen || busy || editor !== null)
+        return false;
+      if (capturedEditor)
+        capturedEditor.release();
+      _openingRefused("settings-runtime-owner");
       return false;
     }
     return _open(manifest, entryPoint, instanceApi, capturedEditor);
@@ -86,12 +89,16 @@ QtObject {
     currentInstanceApi = instanceApi || null;
     currentPluginApi = instanceApi || Service.getPluginAPI(key);
     if (!currentPluginApi) {
-      openingFailed();
+      if (capturedEditor)
+        capturedEditor.release();
+      _openingRefused("settings-runtime-owner");
       return false;
     }
     editor = capturedEditor || currentPluginApi.createSettingsEditor(true);
-    if (!editor)
+    if (!editor) {
+      _openingRefused("settings-editor-unavailable");
       return false;
+    }
     failed = false;
     resetInputs();
     settingsEntryPoint = entryPoint || "settings";
@@ -105,26 +112,14 @@ QtObject {
       root._cancelOpening = null;
       if (result.status === "opened") {
         if (!root._runtimeCurrent || !root._runtimeReadOwner) {
-          root._openingRefused(selected, {
-                                 status: "failed",
-                                 refreshState: "not_refreshed",
-                                 error: {
-                                   code: "settings-runtime-owner"
-                                 }
-                               });
+          root._openingRefused("settings-runtime-owner");
           return;
         }
         var base = root.isInstance ? root.currentInstanceApi.base : root.currentPluginApi;
         var capture = selected.fieldCapture;
         var metadata = base.settingsOwner.store.settingsEditorMetadata;
         if (!capture || !capture.current() || !metadata || metadata.ready !== true) {
-          root._openingRefused(selected, {
-                                 status: "failed",
-                                 refreshState: "not_refreshed",
-                                 error: {
-                                   code: "settings-field-contract"
-                                 }
-                               });
+          root._openingRefused("settings-field-contract");
           return;
         }
         var placement = root.isInstance ? Read.freeze(root.currentInstanceApi.placement) : null;
@@ -137,28 +132,35 @@ QtObject {
                                                            return placement ? PluginInstances.captureSettingsFields(base, placement) : Service.captureSharedSettingsFields(base);
                                                          }
                                                        });
+        if (!root.fields) {
+          root._openingRefused("settings-field-capability");
+          return;
+        }
         root._initial = Read.freeze(selected.initialValue);
         root.pageApi = root._pageApiFactory.createObject(root, {
                                                            capability: root._capability(root.currentPluginApi, selected, root.fields)
                                                          });
+        if (!root.pageApi) {
+          root._openingRefused("settings-page-capability");
+          return;
+        }
         root.presentRequested();
         return;
       }
-      root._openingRefused(selected, result);
+      root._openingRefused(result.error.code, result);
     });
     return true;
   }
-  function _openingRefused(selected, result) {
-    root.failed = true;
-    root.settingsCompleted(result);
-    root.openingFailed();
-    selected.discard();
-    root.editor = null;
-    root.currentPlugin = null;
-    root.currentPluginApi = null;
-    root.currentInstanceApi = null;
-    root.failed = false;
-    root.presentationInvalidated();
+  function _openingRefused(code, receipt) {
+    presentationClosed();
+    settingsCompleted(receipt || {
+                        status: "failed",
+                        refreshState: "not_refreshed",
+                        error: {
+                          code: code
+                        }
+                      });
+    openingFailed();
   }
   function _capability(base, selected, selectedFields) {
     var result = Object.create(null);
