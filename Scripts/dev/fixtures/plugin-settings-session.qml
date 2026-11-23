@@ -116,6 +116,120 @@ ShellRoot {
     faultProcess.command = ["python3", "-B", Quickshell.env("PHA_SESSION_FAULT"), Settings.configDir.replace(/\/$/, ""), mode];
     faultProcess.running = true;
   }
+  function registrationProbes() {
+    var key = "registration-fixture";
+    var probeManifest = Object.assign({}, manifest, {
+                                        id: key,
+                                        entryPoints: {
+                                          settings: "Page.qml"
+                                        }
+                                      });
+    Registry.installedPlugins = Object.assign({}, Registry.installedPlugins, {
+                                                [key]: probeManifest
+                                              });
+    var originalApi = null;
+    var session = openingSessionFactory.createObject(root);
+    var effects = [];
+    var failures = [];
+    function expect(ok, message) {
+      if (!ok)
+        failures.push(message);
+    }
+    function finish() {
+      check(failures.length === 0, failures.join("; "));
+      console.log("PLUGIN_SETTINGS_SESSION: RETIRED_REGISTRATION_REFUSED");
+      console.log("PLUGIN_SETTINGS_SESSION: PASS");
+      Qt.exit(0);
+    }
+    session.acknowledgeInputs = () => effects.push("acknowledged");
+    session.captureInputs = () => 0;
+    session.saved.connect(() => effects.push("saved"));
+    session.settingsCompleted.connect(function (result) {
+      effects.push(result.error?.code || result.status);
+      if (Service.getPluginAPI(key) === originalApi)
+        fail("registration probe completed before retirement: " + JSON.stringify(result));
+    });
+    session.presentRequested.connect(function () {
+      try {
+        session.page = {
+          settingsDirty: false
+        };
+        session.fields.field("label").set("probe-written");
+        var reader = originalApi.settingsReadOwner;
+        // Hold delivery at the host boundary after actual native observation.
+        // The native editor also holds retirement open during this call stack.
+        session.currentPluginApi = {
+          settingsContext: originalApi.settingsContext,
+          settingsReadOwner: {
+            readProjection: {
+              synchronize: function (observation, complete) {
+                reader.readProjection.synchronize(observation, function (read) {
+                  try {
+                    check(read.status === "observed" && originalApi.settingsReady, "actual native receipt from a ready registration");
+                    Service.loadPlugin(key, null, function (cached) {
+                      try {
+                        expect(cached.status === "failed" && cached.error?.code === "plugin-load-cancelled", "cached callback accepted a retired registration");
+                        check(session.confirmDiscard(), "failed observation can be discarded");
+                        session.destroy();
+                      } catch (error) {
+                        fail(error);
+                      }
+                    });
+                    Service.unloadPlugin(key, true, function (unloaded) {
+                      try {
+                        check(unloaded.status !== "failed", "retirement settles after editor release");
+                        Service.loadPlugin(key, null, function (first) {
+                          try {
+                            check(first.status === "loaded" && Service.getPluginAPI(key) !== originalApi, "first callback receives the registered replacement");
+                            Service.unloadPlugin(key, true);
+                          } catch (error) {
+                            fail(error);
+                          }
+                        });
+                        Service.loadPlugin(key, null, function (second) {
+                          try {
+                            expect(second.status === "failed" && second.error?.code === "plugin-load-cancelled", "coalesced callback accepted a registration retired by its sibling");
+                            finish();
+                          } catch (error) {
+                            fail(error);
+                          }
+                        });
+                      } catch (error) {
+                        fail(error);
+                      }
+                    });
+                    check(Service.getPluginAPI(key) === null && originalApi.settingsReady, "registration retires while the native owner is still ready");
+                    complete(read);
+                    expect(effects.join(",") === "settings-runtime-owner", "retired observation delivered " + effects.join(","));
+                  } catch (error) {
+                    fail(error);
+                  }
+                });
+              }
+            }
+          }
+        };
+        Qt.callLater(function () {
+          try {
+            check(session.applySettings(), "native observation Apply admitted");
+          } catch (error) {
+            fail(error);
+          }
+        });
+      } catch (error) {
+        fail(error);
+      }
+    });
+    Service.loadPlugin(key, null, function (result) {
+      try {
+        originalApi = Service.getPluginAPI(key);
+        check(result.status === "loaded" && originalApi, "registration probe plugin loaded");
+        check(session.openPluginSettings(probeManifest, "settings"), "registration probe editor admitted");
+      } catch (error) {
+        fail(error);
+      }
+    });
+  }
   function openSessionOwner(callback) {
     Service._openSettingsOwner("session-quarantine", function (quarantined) {
       try {
@@ -414,8 +528,10 @@ ShellRoot {
       popup.keepEditing();
       check(popup.settingsPage === page && page.labelText === "untracked-local-buffer", "untracked buffer survives Keep editing");
       check(popup.confirmDiscard(), "untracked input discarded only explicitly");
-      console.log("PLUGIN_SETTINGS_SESSION: PASS");
-      Qt.exit(0);
+      phase = "registration-open";
+    } else if (phase === "registration-open" && !popup.visible && !popup.currentPlugin) {
+      phase = "registration-probes";
+      registrationProbes();
     }
   }
   Process {

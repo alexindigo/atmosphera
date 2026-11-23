@@ -1377,7 +1377,37 @@ Singleton {
     return true;
   }
 
-  function _finishPluginLoad(pluginId, operation, result) {
+  function _cancelledPluginLoadResult() {
+    return {
+      status: "failed",
+      error: {
+        code: "plugin-load-cancelled"
+      }
+    };
+  }
+
+  function _deliverPluginLoad(pluginId, registration, result, callback) {
+    try {
+      // Even the preceding callback or a pluginLoaded listener can retire the
+      // registration. Only this callback's own delivery can attest success.
+      if (registration && root.loadedPlugins[pluginId] !== registration) {
+        callback(root._cancelledPluginLoadResult());
+        return;
+      }
+      callback(result || (root.hasPluginError(pluginId) ? {
+                                                            status: "failed",
+                                                            error: {
+                                                              code: "plugin-components"
+                                                            }
+                                                          } : {
+                            status: "loaded"
+                          }));
+    } catch (error) {
+      Logger.e("PluginService", "Plugin load callback failed:", error);
+    }
+  }
+
+  function _finishPluginLoad(pluginId, operation, result, registration) {
     if (operation.done)
       return;
     operation.done = true;
@@ -1389,11 +1419,7 @@ Singleton {
     operation.callbacks = [];
     Qt.callLater(function () {
       callbacks.forEach(function (callback) {
-        try {
-          callback(result);
-        } catch (error) {
-          Logger.e("PluginService", "Plugin load callback failed:", error);
-        }
+        root._deliverPluginLoad(pluginId, registration, result, callback);
       });
     });
   }
@@ -1405,8 +1431,8 @@ Singleton {
     if (operation.parts !== 0)
       return;
     var failed = root.hasPluginError(pluginId);
+    var loaded = root.loadedPlugins[pluginId];
     if (!failed) {
-      var loaded = root.loadedPlugins[pluginId];
       if (loaded && loaded.barWidget)
         operation.barCallbacks.forEach(function (barCallback) {
           root._notifyBarRegistered(pluginId, loaded.barWidget, loaded.manifest, barCallback);
@@ -1423,7 +1449,7 @@ Singleton {
                                                            }
                                                          } : {
                              status: "loaded"
-                           });
+                           }, failed ? null : loaded);
   }
 
   function _cancelPluginLoad(pluginId) {
@@ -1432,12 +1458,7 @@ Singleton {
     if (!operation)
       return;
     operation.cancelled = true;
-    root._finishPluginLoad(pluginId, operation, {
-                             status: "failed",
-                             error: {
-                               code: "plugin-load-cancelled"
-                             }
-                           });
+    root._finishPluginLoad(pluginId, operation, root._cancelledPluginLoadResult());
   }
 
   // Full-load completion is independent of the existing bar-only callback.
@@ -1461,14 +1482,7 @@ Singleton {
         root._onPluginLoadComplete();
       if (typeof callback === "function")
         Qt.callLater(function () {
-          callback(root.hasPluginError(pluginId) ? {
-                                                     status: "failed",
-                                                     error: {
-                                                       code: "plugin-components"
-                                                     }
-                                                   } : {
-                     status: "loaded"
-                   });
+          root._deliverPluginLoad(pluginId, existing, null, callback);
         });
       return;
     }

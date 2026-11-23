@@ -45,7 +45,7 @@ QtObject {
     if (_observation && _runtimeReadOwner !== _observation.reader)
       _observationFailed(_observation, "settings-runtime-owner");
   }
-  readonly property bool _runtimeCurrent: !!currentPluginApi && currentPluginApi.settingsContext.current()
+  readonly property bool _runtimeCurrent: _hasCurrentRuntime()
   on_RuntimeCurrentChanged: {
     if (_observation && !_runtimeCurrent)
       _observationFailed(_observation, "settings-runtime-owner");
@@ -66,6 +66,10 @@ QtObject {
   signal openingFailed
   signal settingsCompleted(var result)
   signal saved
+
+  function _hasCurrentRuntime() {
+    return !!currentPluginApi && currentPluginApi.settingsContext.current();
+  }
 
   function openPluginSettings(manifest, entryPoint) {
     return _open(manifest, entryPoint, null);
@@ -111,7 +115,7 @@ QtObject {
         return;
       root._cancelOpening = null;
       if (result.status === "opened") {
-        if (!root._runtimeCurrent || !root._runtimeReadOwner) {
+        if (!root._hasCurrentRuntime() || !root._runtimeReadOwner) {
           root._openingRefused("settings-runtime-owner");
           return;
         }
@@ -339,7 +343,7 @@ QtObject {
       _observationFailed(pending, "settings-preview-pending");
       return;
     }
-    if (!_runtimeCurrent || !pending.reader) {
+    if (!_hasCurrentRuntime() || !pending.reader) {
       _observationFailed(pending, "settings-runtime-owner");
       return;
     }
@@ -348,7 +352,13 @@ QtObject {
       pending.reader.readProjection.synchronize(receipt.write.observation, function (read) {
         if (!lifetime.alive || root._observation !== pending)
           return;
-        if (!root._runtimeCurrent || root._runtimeReadOwner !== pending.reader || read.status !== "observed") {
+        // Registration is mutable in place. A cached QML binding does not
+        // fence a native receipt that arrives after unregistration.
+        if (!root._hasCurrentRuntime() || root._runtimeReadOwner !== pending.reader) {
+          root._observationFailed(pending, "settings-runtime-owner");
+          return;
+        }
+        if (read.status !== "observed") {
           root._observationFailed(pending, read.error?.code || "settings-runtime-observation");
           return;
         }
