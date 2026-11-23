@@ -7,6 +7,7 @@ import qs.Services.Plugins
 ShellRoot {
   id: root
   property bool started: false
+  readonly property bool cold: Quickshell.env("PHA_PRAYER_COLD") === "1"
   property var api
   property var selected
   property var sibling
@@ -100,7 +101,7 @@ ShellRoot {
                                            kind: "bar",
                                            list: "global",
                                            section: "left",
-                                           index: 1
+                                           index: root.cold ? 2 : 1
                                          });
         phase = "contexts";
       } catch (error) {
@@ -125,7 +126,12 @@ ShellRoot {
       sharedClient = main.settingsConsumerFor(api.settingsContext);
       client = main.settingsConsumerFor(selected.settingsContext);
       second = main.settingsConsumerFor(sibling.settingsContext);
-      phase = "selected";
+      phase = cold ? "cold-cache" : "selected";
+    } else if (phase === "cold-cache" && sharedClient.prayerTimings && Date.now() - since > 250) {
+      check(second !== sharedClient && second.gregorianDateStr === "controlled-shared", "compatible placement restored saved week offline");
+      check(!client.prayerTimings, "different source cannot read shared week");
+      console.log("PRAYER_COLD: PASS");
+      Qt.exit(0);
     } else if (phase === "selected" && client.prayerTimings && second.prayerTimings && sharedClient.isLoading && api._pendingSettingsSaves === 0) {
       check(client.hijriDay === 12 && second.hijriDay === 10 && client.secondsToNext >= 0, "selected Hijri offset and actual countdown projection");
       check(main.settingsConsumerFor(selected.settingsContext) === client && main._settingsConsumers.size === 3, "one prayer client per captured API");

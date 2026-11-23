@@ -43,7 +43,7 @@ def main():
             path.write_text(text.replace(old, 'pluginApi.settingsContext.current()'))
             runner.write_json(out / 'mutation.json', dict(path='mawaqit/Main.qml', before=hashlib.sha256(text.encode()).hexdigest(), after=hashlib.sha256(path.read_bytes()).hexdigest(), control='shared-prayer-cache-owner'))
         requests, effects = [], case / 'effects.jsonl'; effects.write_text(''); row_lock = threading.Lock()
-        held, retry, shared_release = threading.Event(), threading.Event(), threading.Event()
+        held, retry, shared_release, offline = (threading.Event() for _ in range(4))
         now = datetime.now(timezone.utc)
         def entry(city):
             return dict(date=now.strftime('%d-%m-%Y'), readable='controlled-' + city, timings=dict(Fajr=now.strftime('%H:%M'), Sunrise='06:00', Dhuhr='12:00', Asr='15:00', Maghrib='18:00', Isha='22:00'), hijri=dict(day='10', month=dict(number=8, en='Controlled', ar='Controlled', days=30), year='1448', date='10-08-1448'))
@@ -58,6 +58,8 @@ def main():
                     shared_release.set(); self.send_response(200); self.end_headers(); return
                 query = parse_qs(parsed.query); city = query['city'][0]
                 with row_lock: requests.append(dict(path=self.path, city=city, query=query, receivedAtMs=time.time() * 1000))
+                if offline.is_set():
+                    self.send_response(503); self.end_headers(); return
                 if city == 'shared': shared_release.wait(25)
                 if city == 'held': held.wait(25)
                 if city == 'retry':
@@ -106,7 +108,18 @@ def main():
         if not retry_rows or any(row['receivedAtMs'] > retired_at for row in retry_rows): raise RuntimeError('retired retry timer admitted another request')
         for boundary in ('initial', 'shared', 'selected'):
             if json.loads((out / ('persisted/' + boundary + '.json')).read_text())['status'] != 'PASS': raise RuntimeError('missing full native documents')
-        runner.write_json(out / 'effects.json', rows); stage_receipt(out / 'result.json', dict(status='PASS', independentNativeDocuments=['initial', 'shared', 'selected'], nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
+        # Retain the week actually written by the shared client. Add a fresh
+        # placement that inherits its source without altering the shared bytes.
+        bar_file = case / 'config/settings/bar.json'
+        cold_bar = json.loads(bar_file.read_text())
+        cold_bar['widgets']['left'].append(dict(id='plugin:mawaqit', instanceSettings={}))
+        runner.write_json(bar_file, cold_bar)
+        plugin_settings = case / 'config/settings/plugins/mawaqit.json'
+        prior = plugin_settings.read_bytes()
+        offline.set(); cold = out / 'cold'; cold.mkdir()
+        text = runner.run_fixture(profile, install, case, cold, paths[1], extra_env=dict(env, PHA_PRAYER_COLD='1'), extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
+        if 'PRAYER_COLD: PASS' not in text or plugin_settings.read_bytes() != prior: raise RuntimeError('cold placement cache read changed shared authority')
+        runner.write_json(out / 'effects.json', rows); stage_receipt(out / 'result.json', dict(status='PASS', independentNativeDocuments=['initial', 'shared', 'selected'], coldCompatiblePlacement=True, nativePlacementAcceptance=False, physicalProof=False, completePlanAcceptance=False))
         runner.remove_completed_installs(case, out); print('PRAYER_LIFECYCLE: PASS', flush=True)
 
 
