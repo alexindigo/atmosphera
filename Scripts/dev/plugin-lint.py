@@ -5,6 +5,7 @@ Uses the target shell's string/comment/template/regex-aware QML lexer. This is
 a targeted compatibility gate, not a substitute for qmllint or runtime tests.
 """
 import argparse
+import plugin_spin_contract
 import importlib.util
 import json
 import re
@@ -70,6 +71,9 @@ def lint_source(path, shell, lexer, api, foreign):
 
     def error(offset, message):
         errors.append(f"{path}:{lexer.line_of(source, offset)}: {message}")
+
+    if path.suffix == ".qml":
+        errors.extend(f"{path}:{line}: {message}" for line, message in plugin_spin_contract.lint(source))
 
     # Keep strings for import declarations, blank comments so commented imports
     # cannot accidentally grant access to a service or trigger an error.
