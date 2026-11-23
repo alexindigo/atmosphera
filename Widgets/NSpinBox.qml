@@ -9,6 +9,9 @@ RowLayout {
 
   // Public properties
   property int value: 0
+  // With an external editor, value is read-only to this control. The callback
+  // can accept, normalize or refuse the proposed value.
+  property var requestValue: null
   property int from: 0
   property int to: 100
   property int stepSize: 1
@@ -64,19 +67,29 @@ RowLayout {
   function changeValue(direction, step) {
     root.commitEdit();
     var currentStep = step || root.stepSize;
+    let nextValue;
 
     if (direction === 1 && root.value < root.to) {
-      root.value = Math.min(root.to, root.value + currentStep);
+      nextValue = Math.min(root.to, root.value + currentStep);
     } else if (direction === -1 && root.value > root.from) {
-      root.value = Math.max(root.from, root.value - currentStep);
+      nextValue = Math.max(root.from, root.value - currentStep);
     } else {
       return;
     }
 
+    root.submitValue(nextValue);
     if (root.value === root.to || root.value === root.from) {
       stopRepeat();
     }
-    root.valueModified(root.value);
+  }
+
+  function submitValue(nextValue: int): void {
+    if (root.requestValue !== null) {
+      root.requestValue(nextValue);
+    } else {
+      root.value = nextValue;
+      root.valueModified(nextValue);
+    }
   }
 
   function stopRepeat() {
@@ -287,7 +300,6 @@ RowLayout {
 
           Keys.onEscapePressed: {
             userEdited = false;
-            text = root.value.toString();
             focus = false;
           }
 
@@ -312,16 +324,10 @@ RowLayout {
           function applyValue() {
             if (!userEdited)
               return;
-            let newValue = parseInt(editText);
-            if (!isNaN(newValue)) {
-              // Don't manually set text here - let the binding handle it
-              newValue = Math.max(root.from, Math.min(root.to, newValue));
-              root.value = newValue;
-              userEdited = false;
-              root.valueModified(newValue);
-            } else {
-              userEdited = false;
-            }
+            const newValue = parseInt(editText);
+            userEdited = false;
+            if (!isNaN(newValue))
+              root.submitValue(Math.max(root.from, Math.min(root.to, newValue)));
           }
         }
 

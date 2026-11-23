@@ -28,6 +28,11 @@ The control's user event or committed input owns that call, not initialization,
 translation, range projection or an effective-value comparison. Atomic lists,
 records and maps remain one declared preference leaf.
 
+For a field-owned `NSpinBox`, bind `value` to the field projection and pass
+its setter as `requestValue: proposed => field.set(proposed)`. Typed and
+stepped edits then propose a value without replacing the binding. `valueModified`
+is the legacy notification for a spin box that owns its own edits.
+
 `NPluginSettingsField` takes the injected handle and presents inherited/stored
 override state, pending intent and Reset. Undisplayed configuration overrides
 appear in the host summary without their values. Native equal-to-base omission
