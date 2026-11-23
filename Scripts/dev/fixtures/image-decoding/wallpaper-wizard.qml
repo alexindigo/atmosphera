@@ -95,8 +95,7 @@ ShellRoot {
                           directory: Settings.data.wallpaper.directory,
                           image: backdrop.imageState
                         });
-    ++root.pending;
-    backdrop.grabToImage(result => {
+    if (backdrop.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
@@ -104,7 +103,12 @@ ShellRoot {
       --root.pending;
       if (after)
         after();
-    });
+    })) {
+      ++root.pending;
+    } else {
+      console.error("Wizard backdrop grab rejected: " + name);
+      Qt.exit(3);
+    }
   }
   Component {
     id: wizardFactory
@@ -176,7 +180,9 @@ ShellRoot {
     repeat: true
     running: true
     onTriggered: {
-      if (!WallpaperService.isInitialized || root.finished)
+      // The capture continuation owns the next request and stage until both
+      // have been installed. Do not inspect the previous request meanwhile.
+      if (!WallpaperService.isInitialized || root.finished || root.pending)
         return;
       ++root.ticks;
       var status = root.request ? BindingsService.requestStatus(root.request) : null;
@@ -210,9 +216,9 @@ ShellRoot {
           root.finished = false;
         });
       } else if (!root.red && root.stage === 2 && status.status === "Succeeded" && backdrop.imageState === "ready") {
-        root.stage = 3;
         root.snapshot("valid", function () {
           root.submit(root.inputs + "/Retry.webp", 1.25);
+          root.stage = 3;
         });
       } else if (root.stage === 3 && status.status === "Stopped" && !root.copying) {
         root.snapshots.push({
@@ -228,9 +234,9 @@ ShellRoot {
         root.copying = true;
         repair.running = true;
       } else if (root.stage === 4 && status.status === "Succeeded" && BindingsService.requestStatus(root.tail).status === "Succeeded" && backdrop.imageState === "ready") {
-        root.stage = 5;
         root.snapshot("retry", function () {
           root.submit(root.url + "/slow.jpg", 1.35);
+          root.stage = 5;
         });
       } else if (root.stage === 5 && status.status === "Running" && ImageCacheService.sourceInterestCount > 0) {
         root.stage = 6;
@@ -255,12 +261,12 @@ ShellRoot {
         root.wizard.retryRetainedHead();
         root.stage = 8;
       } else if (root.stage === 8 && status.status === "Succeeded" && backdrop.imageState === "ready") {
-        root.stage = 9;
         root.snapshot("reopened", function () {
           root.submit(root.url + "/detached.jpg", 1.45);
           root.detached = root.request;
           root.wizard.destroy();
           root.wizard = null;
+          root.stage = 9;
         });
       } else if (root.stage === 9 && status.status === "Succeeded" && backdrop.imageState === "ready") {
         root.stage = 13;
@@ -275,9 +281,9 @@ ShellRoot {
         root.wizard.retryRetainedHead();
         root.stage = 11;
       } else if (root.stage === 11 && status.status === "Succeeded" && backdrop.imageState === "ready") {
-        root.stage = 12;
         root.snapshot("all-targets", function () {
           root.submit("", 1.65);
+          root.stage = 12;
         });
       } else if (root.stage === 12 && status.status === "Succeeded") {
         root.stage = 13;
