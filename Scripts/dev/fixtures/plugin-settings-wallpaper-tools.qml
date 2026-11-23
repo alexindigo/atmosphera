@@ -25,6 +25,7 @@ ShellRoot {
   onPhaseChanged: since = Date.now()
   property string next: ""
   property int activations: 0
+  property list<string> forbiddenMainCalls: []
   property bool sourceLifetimesSeen: false
   QtObject {
     id: actionOwner
@@ -34,11 +35,16 @@ ShellRoot {
       return true;
     }
     function random() {
-      throw new Error("SETTINGS_TOOL_MAIN_DISPATCH: random");
+      return root.recordForbiddenMainCall("random");
     }
     function clear() {
-      throw new Error("SETTINGS_TOOL_MAIN_DISPATCH: clear");
+      return root.recordForbiddenMainCall("clear");
     }
+  }
+  function recordForbiddenMainCall(action) {
+    // Record the invocation even when the caller catches or ignores its result.
+    forbiddenMainCalls.push(action);
+    throw new Error("SETTINGS_TOOL_MAIN_DISPATCH: " + action);
   }
   FileView {
     id: manifest
@@ -239,6 +245,7 @@ ShellRoot {
       check(activations === 1, "only accepted Apply notifies the selected Main policy");
       probe("applied", "finish");
     } else if (phase === "finish") {
+      check(forbiddenMainCalls.length === 0, "forbidden Main dispatch: " + forbiddenMainCalls.join(", "));
       console.log("WALLPAPER_TOOLS: PASS " + plugin + " " + scope + " " + choice + " " + mode);
       Qt.exit(0);
     }
