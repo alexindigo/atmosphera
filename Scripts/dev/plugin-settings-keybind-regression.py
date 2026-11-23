@@ -27,7 +27,7 @@ def run(args, profile, scope):
     controls = {
         'reader': ('Panel.qml', 'pluginApi?.mainInstance?.clientFor(pluginApi)', 'pluginApi?.mainInstance?.settingsConsumer', 'selected entries share exact parser'),
         'child': ('Panel.qml', 'text: bindRow.itemData.desc', 'text: "wrong"', 'actual rendered selected bind Text'),
-        'reset': ('Settings.qml', 'onResetRequested: pluginApi.resetFields(["keyColorSuper", "keyTextSuper"])', 'onResetRequested: pluginApi.field("keyColorSuper").set("#123456")', 'actual row Reset removes selected overrides'),
+        'reset': ('Settings.qml', 'onResetRequested: root._resetPreview(["keyColorSuper", "keyTextSuper"])', 'onResetRequested: pluginApi.field("keyColorSuper").set("#123456")', 'actual row Reset removes selected overrides'),
     }
     if args.control:
         name, old, new, _ = controls[args.control]; path = dest/name; text = path.read_text(); assert text.count(old) == 1

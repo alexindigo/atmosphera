@@ -52,6 +52,27 @@ def main():
         cold=out/'cold'; cold.mkdir()
         text=runner.run_fixture(profile,install,case,cold,fixture,extra_env=dict(env,KEYBIND_CACHE_COLD='1'),extra_lint=tuple(sorted(dest.glob('*.qml'))),timeout=100)
         if 'KEYBIND_CACHE: COLD_PASS' not in text or before!={str(path):hashlib.sha256(path.read_bytes()).hexdigest() for path in [preference,state]}: raise RuntimeError('cold cache read published or endpoint missing')
+        failures=[]
+        def exercise(name, marker, **settings):
+            directory=out/name; directory.mkdir()
+            try:
+                text=runner.run_fixture(profile,install,case,directory,fixture,extra_env=dict(env,**settings),timeout=100)
+                if marker not in text: raise RuntimeError('cache endpoint missing: '+name)
+                print('KEYBIND_CACHE:',name,'PASS',flush=True)
+            except RuntimeError as error:
+                failures.append(name)
+                print('KEYBIND_CACHE:',name,str(error),flush=True)
+        exercise('refresh','KEYBIND_CACHE: REFRESH_PASS',KEYBIND_CACHE_COLD='1',KEYBIND_CACHE_REFRESH='1')
+        held=source.with_suffix(source.suffix+'.held')
+        if held.exists(): held.rename(source)
+        runner.write_json(state,dict(values,cheatsheetData=[]))
+        exercise('empty','KEYBIND_CACHE: STARTUP_PASS empty',KEYBIND_CACHE_STARTUP='empty')
+        source.unlink()
+        for name, compositor in [('legacy-match','niri'),('legacy-mismatch','mango')]:
+            runner.write_json(preference,dict(saved,detectedCompositor=compositor))
+            state.unlink(missing_ok=True)
+            exercise(name,'KEYBIND_CACHE: STARTUP_PASS '+name,KEYBIND_CACHE_STARTUP=name)
+        if failures: raise RuntimeError('failing cache cases: '+', '.join(failures))
         stage_receipt(out/'result.json',dict(status='PASS',nativeApplies=2,independentCompleteDocuments=2,coldReaders=1,coldHashes=before,completePlanAcceptance=False))
         runner.remove_completed_installs(case,out)
 if __name__=='__main__': main()

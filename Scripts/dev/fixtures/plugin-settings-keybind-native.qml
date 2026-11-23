@@ -163,6 +163,14 @@ ShellRoot {
     var values = expected(name, scope === "instance" ? 0 : -1);
     return keys.every(key => JSON.stringify(target.settingsView[key] ?? api.manifest.metadata.defaultSettings[key]) === JSON.stringify(values[key]));
   }
+  function superRow() {
+    var wrapper = find(popup.settingsPage, item => item.field === popup._pageApi.field("keyColorSuper"));
+    return find(wrapper, item => item.resetRequested !== undefined);
+  }
+  function renderedSuper() {
+    var badge = find(panel, item => item.text === "Super");
+    return badge?.parent?.color;
+  }
   function edit() {
     for (var key of keys) {
       var field = popup._pageApi.field(key), value = edits[key];
@@ -270,7 +278,7 @@ ShellRoot {
     Qt.exit(0);
   }
   function drive() {
-    check(Date.now() - since < 18000, phase === "row-reset" ? "actual row Reset removes selected overrides" : "finite native phase");
+    check(Date.now() - since < 18000, phase === "row-reset" || phase === "color-first-reset" ? "actual row Reset removes selected overrides" : "finite native phase: " + phase);
     if (phase === "runtime" && selected.settingsReady && sibling.settingsReady && inherited.settingsReady) {
       var reader = (scope === "instance" ? selected : api).settingsReadOwner;
       check(typeof reader?.readProjection?.synchronize === "function", "selected reader lacks ConfigQml readProjection.synchronize; load the qualified native module");
@@ -294,7 +302,7 @@ ShellRoot {
       else if (mode === "follow")
         phase = "change-base";
       else
-        open("reset-page");
+        open("color-first");
     } else if (phase === "open-discard")
       open("discard-page");
     else if (phase === "discard-page" && popup.opened && popup.settingsPage) {
@@ -356,6 +364,47 @@ ShellRoot {
       probe("edited", "edited-consumers");
     else if (phase === "edited-consumers")
       consumers("edited");
+    else if (phase === "color-first" && popup.opened && popup.settingsPage && !popup.busy) {
+      if (!Qt.colorEqual(renderedSuper() ?? "transparent", edits.keyColorSuper))
+        return;
+      var row = superRow();
+      check(row, "actual Super row before first Reset");
+      row.resetRequested();
+      phase = "color-first-reset";
+    } else if (phase === "color-first-reset" && !popup.busy && !popup._editor.busy) {
+      var field = popup._pageApi.field("keyColorSuper");
+      if (field.pendingIntent !== "reset")
+        return;
+      var runtime = scope === "shared" ? api : selected;
+      check(runtime.pluginSettings.keyColorSuper === edits.keyColorSuper, "first Reset does not write the applied override");
+      if (scope === "instance") {
+        check(runtime.settingsView.keyColorSuper !== edits.keyColorSuper, "first color Reset activates preview");
+        check(Qt.colorEqual(renderedSuper(), AtmoColor.mPrimary), "first color Reset previews the inherited Panel badge");
+        discard();
+        phase = "color-reset-discarded";
+      } else {
+        superRow().bgPicked(edits.keyColorSuper);
+        phase = "color-picked-after-reset";
+      }
+    } else if (phase === "color-picked-after-reset" && !popup.busy && !popup._editor.busy) {
+      var field = popup._pageApi.field("keyColorSuper");
+      check(!field.error && field.pendingIntent === "set", "Reset followed by a pick stages one admissible Set: " + field.error);
+      check(api.settingsView.keyColorSuper === edits.keyColorSuper, "Reset followed by a pick restores the preview");
+      superRow().textPasted(edits.keyTextSuper);
+      phase = "color-pasted-after-reset";
+    } else if (phase === "color-pasted-after-reset" && !popup.busy && !popup._editor.busy) {
+      var textField = popup._pageApi.field("keyTextSuper");
+      check(!textField.error && textField.pendingIntent === "set", "Reset followed by paste stages one admissible Set: " + textField.error);
+      apply("color-picked-applied");
+    } else if ((phase === "color-picked-applied" && accepted() || phase === "color-reset-discarded" && !popup.opened && !popup._editor) && ready("edited")) {
+      if (popup.opened)
+        popup.requestClose();
+      phase = "color-confirmed";
+    } else if (phase === "color-confirmed" && !popup.opened && !popup._editor) {
+      check(Qt.colorEqual(renderedSuper(), edits.keyColorSuper), "applied or discarded color still renders the saved override");
+      probe("edited", "open-reset");
+    } else if (phase === "open-reset")
+      open("reset-page");
     else if (phase === "reset-page" && popup.opened && popup.settingsPage && !popup.busy) {
       if (resetRow < resetRows.length) {
         var suffix = resetRows[resetRow], colorKey = suffix === "Description" ? "descriptionTextColor" : "keyColor" + suffix;
