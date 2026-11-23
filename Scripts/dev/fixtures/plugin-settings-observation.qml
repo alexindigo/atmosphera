@@ -39,6 +39,7 @@ ShellRoot {
   }
   property var replacement: null
   property bool stageProcessRetired: false
+  property bool stageProcessExpired: false
   property bool startupCancelled: false
   property double cancelledAt: 0
   property var data: null
@@ -90,6 +91,8 @@ ShellRoot {
     onExited: function (code) {
       if (code === 0)
         root.stageProcessRetired = true;
+      else if (code === 2)
+        root.stageProcessExpired = true;
     }
   }
   Connections {
@@ -585,6 +588,7 @@ ShellRoot {
     repeat: true
     onTriggered: {
       try {
+        check(!root.stageProcessExpired, "held observation endpoint expired before retirement");
         check(Date.now() - root.started < 18000, "finite observation deadline");
         if (root.phase === 0 && Settings.isLoaded)
           root.begin();

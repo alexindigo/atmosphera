@@ -39,12 +39,17 @@ case=Path(os.environ['PHA_OBSERVATION_CASE'])
 stage=os.environ.get('PHA_OBSERVATION_HOLD_STAGE','')
 handoff=os.environ.get('PHA_OBSERVATION_HANDOFF')=='1'
 extra=os.environ.get('PHA_OBSERVATION_EXTRA_LIFETIME')=='1'
+def expire(row):
+ (case/f"stage-expired-{row['pid']}-{row['start']}.json").write_text(json.dumps(row))
 def hold(label):
  if stage!=label and not (extra and (case/(label+'-hold')).exists()): return
- (case/'stage-held').write_text(json.dumps(dict(stage=label,pid=os.getpid(),start=start)))
+ row=dict(stage=label,pid=os.getpid(),start=start)
+ (case/'stage-held').write_text(json.dumps(row))
  deadline=time.monotonic()+15
  while not (case/'stage-release').exists() and time.monotonic()<deadline: time.sleep(.02)
- if not (case/'stage-release').exists(): raise SystemExit('controlled stage not released')
+ if not (case/'stage-release').exists():
+  expire(row)
+  raise SystemExit('controlled stage not released')
 if name=='which': print('/controlled/'+args[-1])
 elif name=='ss':
  print('State Recv-Q Send-Q Local Address:Port Peer Address:Port Process')
@@ -99,10 +104,12 @@ elif name=='openvpn3':
  elif args[:1]==['config-manage'] and args[-1]=='--show': print('Persistent config: Yes')
  elif args[:1]==['session-stats']: print(json.dumps(dict(BYTES_IN=1234,BYTES_OUT=5678)))
  elif args[:1]==['log']:
-  (case/'log-held').write_text(json.dumps(dict(stage='log',pid=os.getpid(),start=start)))
+  row=dict(stage='log',pid=os.getpid(),start=start)
+  (case/'log-held').write_text(json.dumps(row))
   print('controlled log line',flush=True)
   deadline=time.monotonic()+20
   while time.monotonic()<deadline: time.sleep(.1)
+  expire(row)
  elif args==['session-start','--config-path','/controlled/failure']:
   (case/'action-held').write_text(str(os.getpid()))
   deadline=time.monotonic()+15
@@ -164,8 +171,15 @@ from pathlib import Path
 case=Path(os.environ['PHA_OBSERVATION_CASE'])
 row=json.loads((case/(sys.argv[1] if len(sys.argv)>1 else 'stage-held')).read_text())
 stat=Path('/proc')/str(row['pid'])/'stat'
-if stat.exists() and stat.read_text().split(') ',1)[1].split()[19]==row['start']: raise SystemExit(1)
-assert not (case/'stage-release').exists()
+try:
+ current_start=stat.read_text().split(') ',1)[1].split()[19]
+except FileNotFoundError:
+ current_start=None
+if current_start==row['start']: raise SystemExit(1)
+# Expiry is written by this exact process before it exits. Check it only
+# after disappearance, so the probe cannot race ahead of that receipt.
+if (case/('stage-expired-'+str(row['pid'])+'-'+row['start']+'.json')).exists(): raise SystemExit(2)
+if (case/'stage-release').exists(): raise SystemExit('held stage was already released')
 result=json.dumps(dict(status='PASS',stage=row['stage'],pid=row['pid'],start=row['start'],beforeRelease=True))
 (case/'stage-retired.json').write_text(result)
 if os.environ.get('PHA_OBSERVATION_EXTRA_LIFETIME')=='1': (case/(row['stage']+'-retired.json')).write_text(result)
