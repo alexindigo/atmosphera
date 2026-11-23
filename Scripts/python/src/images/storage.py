@@ -245,12 +245,12 @@ def clear_legacy(path):
     return counts
 
 
-def atomic_write(path, data, root):
+def atomic_write(path, data, root, *, private=True):
     path, root = Path(path), Path(root)
     relative = path.relative_to(root)
     if '..' in relative.parts or len(relative.parts) < 1:
         raise ValueError('Image cache output is outside its owner')
-    with directory(root) as base:
+    with directory(root, private=private) as base:
         fd = os.dup(base)
         temporary = None
         try:

@@ -275,7 +275,7 @@ class Cache:
             raise ValueError('GIF pixel decoding reported an error')
         return result
 
-    def retain_original(self, prepared, request, result):
+    def retain_original(self, prepared, request, result, retention=None):
         if request.get('operation') != 'retain':
             return result
         directory = Path(request['destinationDirectory'])
@@ -287,6 +287,16 @@ class Cache:
         target = directory / ('atmosphera-' + prepared['contentSha256'] + '.' + extension)
         if not prepared['current']():
             raise SourceError('source-changed', 'Image source changed before retention')
+        if retention is not None:
+            if directory != retention.directory:
+                raise ValueError('Notification retention destination does not match its owner')
+            def publish():
+                data = prepared['path'].read_bytes()
+                if not prepared['current']():
+                    raise SourceError('source-changed', 'Image source changed during retention')
+                atomic_write(target, data, directory)
+            retention.publish(request['id'], target.name, publish)
+            return dict(result, originalPath=str(target), originalFormat=prepared['format'], contentSha256=prepared['contentSha256'])
         directory.mkdir(parents=True, exist_ok=True)
         # Unlike the private cache writer, do not chmod a user's destination.
         fd, temporary = tempfile.mkstemp(prefix='.atmosphera-', dir=directory)
@@ -367,7 +377,7 @@ class Cache:
             result = await self.representation(original, request, original_info)
             return dict(result, thumbnailUri=uri, thumbnailOrigin='generated')
 
-    async def render(self, request, inspection_slots=None):
+    async def render(self, request, inspection_slots=None, retention=None):
         for field in ('width', 'height'):
             if type(request.get(field)) is not int or request[field] <= 0:
                 raise ValueError('Positive physical image dimensions required')
@@ -404,9 +414,9 @@ class Cache:
                 if not prepared['current']():
                     raise SourceError('source-changed', 'Image source changed during inspection')
                 return dict(url='', status='inspected', sourceInfo=info, **info)
-            return await self.representation(prepared, request, info)
+            return await self.representation(prepared, request, info, retention)
 
-    async def representation(self, prepared, request, info):
+    async def representation(self, prepared, request, info, retention=None):
         moving = request.get('animationIntent') == 'preserve' and info['animated']
         key_data = dict(schema=SCHEMA, content=prepared['contentSha256'], stat=prepared['stat'], revision=prepared['revision'],
                         width=request['width'], height=request['height'], fit=request.get('fit', 'contain'),
@@ -434,7 +444,7 @@ class Cache:
             pass
         else:
             return self.retain_original(prepared, request,
-                dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output))
+                dict(url=target.as_uri(), status='hit', origin='fallback', sourceInfo=info, **output), retention)
         if not request.get('retry'):
             try:
                 negative = json.loads(cache_bytes(failure))
@@ -459,4 +469,4 @@ class Cache:
         # Retention/destination failure is not a decoder failure and must
         # never create a shared negative representation entry.
         return self.retain_original(prepared, request,
-            dict(url=target.as_uri(), status='generated', origin='fallback', decoder=decoder, sourceInfo=info, **output))
+            dict(url=target.as_uri(), status='generated', origin='fallback', decoder=decoder, sourceInfo=info, **output), retention)

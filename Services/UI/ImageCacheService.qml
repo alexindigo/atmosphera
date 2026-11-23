@@ -140,10 +140,11 @@ Singleton {
 
   // Retention uses the same preparation/decoder/cache owner, and keeps original
   // bytes separate from the still representation acknowledged by Qt.
-  function retainImage(source, directory, width, height, callback) {
+  function retainImage(source, directory, width, height, callback, notification = false) {
     return retainedImage.createObject(root, {
                                         inputSource: String(source),
                                         destinationDirectory: String(directory),
+                                        notification: notification,
                                         sourceSize: Qt.size(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height))),
                                         completed: callback
                                       });
@@ -155,6 +156,7 @@ Singleton {
       id: retained
       property string inputSource
       property string destinationDirectory
+      property bool notification: false
       property var completed
       property string token: ""
       property var retainedResult: null
@@ -184,10 +186,14 @@ Singleton {
                                            code: errorCode,
                                            reason: errorReason
                                          };
-        release();
-        active = false;
-        completed(success ? retainedResult.originalPath : "", success, detail);
-        destroy();
+        try {
+          // The receiving model takes its hold before the pending ticket ends.
+          completed(success ? retainedResult.originalPath : "", success, detail);
+        } finally {
+          release();
+          active = false;
+          destroy();
+        }
       }
       onStatusChanged: Qt.callLater(finish)
       Component.onCompleted: {
@@ -197,6 +203,7 @@ Singleton {
                                      height: sourceSize.height,
                                      animationIntent: "still",
                                      operation: "retain",
+                                     notification: notification,
                                      destinationDirectory: destinationDirectory
                                    }, function (result) {
                                      retained.retainedResult = result;
@@ -258,7 +265,15 @@ Singleton {
       callback("", false, captured);
       return null;
     }
-    return retainImage(captured.source, notificationsDir + "retained/", 64, 64, callback);
+    return retainImage(captured.source, notificationsDir + "retained/", 64, 64, callback, true);
+  }
+
+  function openNotificationHistory(history, callback) {
+    sourceWorker.openNotificationHistory(notificationsDir + "retained/", history, callback);
+  }
+
+  function updateNotificationHolders(paths, rows, callback) {
+    sourceWorker.updateNotificationHolders(paths, rows, callback);
   }
 
   // -------------------------------------------------

@@ -12,6 +12,7 @@ import subprocess
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import unquote, urlsplit
 
 from guest_profile import activate_profile, profile_argument, protect_owned_process
 from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
@@ -679,6 +680,12 @@ class Run:
                    for row in cold['widgets']), cold)
         self.check('notification-service-quiescence', result['interests'] == cold['interests'] == 0
                    and not result['worker'] and not cold['worker'] and not snapshots['closed']['popup'], snapshots['closed'])
+        shared = next(row['cachedImage'] for row in snapshots['clear-with-popup']['popup']
+                      if row['summary'] == 'shared-two')
+        shared_path = Path(unquote(urlsplit(shared).path))
+        self.check('notification-service-last-reference-retires-original', urlsplit(shared).scheme == 'file'
+                   and shared_path.parent.name == 'retained' and not shared_path.exists()
+                   and all(row['cachedImage'] != shared for row in persisted), dict(url=shared, retained=shared_path.exists()))
         return result
 
     def red(self):

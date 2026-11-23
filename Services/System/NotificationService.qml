@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import QtQuick.Window
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Notifications
 import Quickshell.Wayland
 import "../../Helpers/PortalPaths.js" as PortalPaths
@@ -22,6 +21,9 @@ Singleton {
   property int maxPopups: 5
   property int maxHistory: 100
   property string historyFile: Quickshell.env("ATMOSPHERA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
+  property bool historyLoaded: false
+  property bool historyOpening: false
+  property bool historyWritable: false
 
   // State
   property real lastSeenTs: 0
@@ -113,7 +115,7 @@ Singleton {
   }
 
   function updateNotificationServer() {
-    const enabled = Settings.isLoaded && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
+    const enabled = Settings.isLoaded && historyLoaded && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
     if (enabled === Boolean(notificationServerLoader))
       return;
 
@@ -129,7 +131,7 @@ Singleton {
 
   Component.onCompleted: {
     if (Settings.isLoaded) {
-      updateNotificationServer();
+      openHistory();
     }
 
     // Load state from ShellState
@@ -159,7 +161,7 @@ Singleton {
   Connections {
     target: Settings
     function onSettingsLoaded() {
-      updateNotificationServer();
+      openHistory();
     }
     function onEffectiveSettingsChanged(section) {
       if (section === "notifications")
@@ -417,6 +419,7 @@ Singleton {
         }
       }
     }
+    syncOriginalHolders();
     if (entry.historyWanted)
       saveHistory();
   }
@@ -702,21 +705,37 @@ Singleton {
   });
   }
 
-    // Persistence - History
-    FileView {
-    id: historyFileView
-    path: historyFile
-    printErrors: false
-    onLoaded: loadHistory()
-    onLoadFailed: error => {
-    if (error === 2)
-    writeAdapter();
+    // Loading atomically admits cold holders before presenting their paths.
+    function openHistory() {
+    if (historyLoaded || historyOpening)
+    return;
+    historyOpening = true;
+    ImageCacheService.openNotificationHistory(historyFile, (ok, rows) => {
+    if (ok)
+    loadHistory(rows);
+    else
+    Logger.e("Notifications", "Could not load notification history");
+    historyWritable = ok;
+    historyLoaded = true;
+    historyOpening = false;
+    updateNotificationServer();
+  });
   }
 
-    JsonAdapter {
-    id: adapter
-    property var notifications: []
+    function syncOriginalHolders(rows, callback) {
+    const paths = new Set();
+    for (const entry of Object.values(popupState)) {
+    if (entry.popupWanted && entry.data.cachedImage)
+    paths.add(entry.data.cachedImage);
+    if (entry.historyWanted && entry.historyData.cachedImage)
+    paths.add(entry.historyData.cachedImage);
   }
+    for (let i = 0; i < historyModel.count; i++) {
+    const path = historyModel.get(i).cachedImage;
+    if (path)
+    paths.add(path);
+  }
+    ImageCacheService.updateNotificationHolders(Array.from(paths).sort(), rows, callback);
   }
 
     Timer {
@@ -730,7 +749,14 @@ Singleton {
   }
 
     function performSaveHistory() {
-    try {
+    if (historyWritable)
+    syncOriginalHolders(historySnapshotForSave, ok => {
+    if (!ok)
+    Logger.e("Notifications", "Could not save notification history");
+  });
+  }
+
+    function historySnapshotForSave() {
     const items = [];
     for (var i = 0; i < historyModel.count; i++) {
     const n = historyModel.get(i);
@@ -738,17 +764,13 @@ Singleton {
     copy.timestamp = n.timestamp.getTime();
     items.push(copy);
   }
-    adapter.notifications = items;
-    historyFileView.writeAdapter();
-  } catch (e) {
-    Logger.e("Notifications", "Save history failed:", e);
-  }
+    return items;
   }
 
-    function loadHistory() {
+    function loadHistory(rows) {
     try {
     historyModel.clear();
-    for (const item of adapter.notifications || []) {
+    for (const item of rows || []) {
     const time = new Date(item.timestamp);
 
     // A cold reader never reacquires a producer-owned original. Legacy records
@@ -990,6 +1012,7 @@ Singleton {
     if (index >= 0) {
     popupModel.remove(index);
   }
+    syncOriginalHolders();
     cleanupNotification(id);
   }
 
@@ -1149,11 +1172,13 @@ Singleton {
     const notif = historyModel.get(i);
     if (notif.id === notificationId) {
     historyModel.remove(i);
+    syncOriginalHolders();
     saveHistory();
     cleanupNotification(notificationId);
     return true;
   }
   }
+    syncOriginalHolders();
     cleanupNotification(notificationId);
     if (pending)
     saveHistory();
@@ -1169,8 +1194,8 @@ Singleton {
   }
 
     function clearHistory() {
-    // Retained bytes are immutable and may be shared with another entry or
-    // process. Membership owns interests, never permission to unlink sources.
+    // Membership changes are inputs to the retention owner. The previous
+    // committed history still holds its bytes until this clear is saved.
     for (const id in popupState) {
     popupState[id].historyWanted = false;
     releaseUnusedImages(popupState[id]);
@@ -1178,6 +1203,7 @@ Singleton {
   }
 
     historyModel.clear();
+    syncOriginalHolders();
     saveHistory();
   }
 

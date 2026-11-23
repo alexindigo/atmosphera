@@ -47,6 +47,7 @@ def main():
     sys.path.insert(0, str(args.source / 'Scripts/python/src'))
     from images.cache import Cache, iterations
     from images.content import gif
+    from images.notification_originals import NotificationOriginals, save_json
     from images.png import validate, empty_png, PNG, chunk
     from images.process import command, CommandError
     from images.sources import prepare, SourceError
@@ -78,6 +79,57 @@ def main():
 
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
+
+        def test_notification_pending_handoff_and_last_release(self):
+            directory = self.folder / 'retained'
+            history = self.folder / 'history.json'
+            producer = NotificationOriginals(directory, history, os.getpid())
+            collecting_worker = NotificationOriginals(directory, history, os.getppid())
+            name = 'atmosphera-' + 'a' * 64 + '.png'
+            target = directory / name
+            producer.publish('first', name, lambda: target.write_bytes(b'original'))
+            collecting_worker.update(wanted=set(), live=[])
+            self.assertEqual(target.read_bytes(), b'original')
+            # Two independently pending consumers share the same immutable name.
+            producer.publish('second', name, lambda: target.write_bytes(b'original'))
+            producer.update(wanted={'second'})
+            self.assertTrue(target.exists())
+            # Another worker for the same shell must restore pending custody.
+            restarted = NotificationOriginals(directory, history, os.getpid())
+            restarted.update(wanted={'second'})
+            restarted.update(wanted=set(), live=[target.as_uri()])
+            collecting_worker.update(live=[target.as_uri()])
+            restarted.update(live=[])
+            self.assertTrue(target.exists())
+            collecting_worker.update(live=[])
+            self.assertFalse(target.exists())
+
+        def test_notification_cold_history_holds_until_commit(self):
+            from images.storage import atomic_write as save_original
+
+            directory = self.folder / 'retained'
+            history = self.folder / 'history.json'
+            owner = NotificationOriginals(directory, history, os.getpid())
+            target = directory / ('atmosphera-' + 'b' * 64 + '.jpg')
+            target.write_bytes(b'legacy original')
+            stored = [{'cachedImage': target.as_uri()}, {'cachedImage': target.as_uri()}]
+            save_json(history, {'notifications': stored})
+            self.assertEqual(owner.update(load=True), stored)
+            owner.update(live=[], rows=stored[:1])
+            self.assertTrue(target.exists())
+            with patch('images.notification_originals.atomic_write', wraps=save_original) as writer:
+                def fail_history(path, *args, **kwargs):
+                    if path == history:
+                        raise OSError('history write interrupted')
+                    return save_original(path, *args, **kwargs)
+                writer.side_effect = fail_history
+                with self.assertRaisesRegex(OSError, 'history write interrupted'):
+                    owner.update(rows=[])
+            self.assertEqual(owner.history_rows(history), stored[:1])
+            self.assertTrue(target.exists())
+            owner.update(rows=[])
+            self.assertEqual(owner.history_rows(history), [])
+            self.assertFalse(target.exists())
 
         async def test_atomic_write_closes_directory_when_cleanup_also_fails(self):
             from images.storage import atomic_write
