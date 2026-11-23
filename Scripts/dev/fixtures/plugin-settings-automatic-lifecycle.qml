@@ -15,6 +15,9 @@ ShellRoot {
   property var oldBackend: null
   property int before: 0
   property int notices: 0
+  property var heldEndpoint: null
+  property var heldExit: null
+  property string heldTransform: ""
   property string phase: "begin"
   property double since: Date.now()
   onPhaseChanged: since = Date.now()
@@ -126,6 +129,27 @@ ShellRoot {
     }), policyCheck);
     return completed.length === expected.length && main._hyprTouchActiveTarget === "";
   }
+  function observeHeld(endpoint, tag) {
+    const workers = Array.from(main.data).filter(child => child.running && child.command?.join("\n") === [endpoint.endpoint].concat(endpoint.argv).join("\n"));
+    check(workers.length === 1 && !endpoint.event, "exact held endpoint has a running Main worker");
+    heldEndpoint = endpoint;
+    workers[0].exited.connect((code, status) => {
+      heldExit = {
+        code: code,
+        status: status
+      };
+    });
+    check(!rows().some(row => row.pid === endpoint.pid && row.start === endpoint.start && row.event), "endpoint did not complete before barrier release");
+    releaseTag(tag);
+  }
+  function heldCompletion() {
+    if (!heldExit)
+      return null;
+    const endpoint = heldEndpoint;
+    const receipts = rows().filter(row => row.pid === endpoint.pid && row.start === endpoint.start && row.endpoint === endpoint.endpoint && row.argv.join("\n") === endpoint.argv.join("\n"));
+    check(heldExit.code === 0 && heldExit.status === 0 && receipts.length === 3 && receipts[1].event === "released" && receipts[2].event === "completed", "exact released worker completed successfully and delivered its exit");
+    return receipts[2];
+  }
   function patch(values) {
     selectedApi.pluginSettings = Object.assign({}, selectedApi.pluginSettings, values);
   }
@@ -195,6 +219,7 @@ ShellRoot {
               });
         main._setTransform("eDP-test", "180");
         main._beginAutoRotateSession("eDP-test", main.capturePolicy(selectedContext));
+        main._setTransform("eDP-test", "Normal");
         if (scenario === "restore-retry")
           main.compositorBackend = "unsupported";
         patch({
@@ -217,25 +242,33 @@ ShellRoot {
       selectedContext.alive = false;
       join(match("monitor-sensor"));
     } else if (phase === "held") {
-      const held = scenario.includes("touch") ? match("hyprctl", row => row.argv.join(" ") === "-j devices") : match("hyprctl", row => row.argv[1] === "monitor");
+      const touch = scenario.includes("touch");
+      const held = match("hyprctl", row => !row.event && (touch ? row.argv.join(" ") === "-j devices" : row.argv[1] === "monitor"));
       if (!held.length)
         return;
       before = rows().length;
-      if (scenario.startsWith("retire"))
+      if (scenario.startsWith("retire")) {
+        heldTransform = main.transformForOutput("eDP-test");
+        check(touch ? main._hyprTouchApplyNames.length === 0 : main.isBusy("eDP-test"), "worker admitted but not consumed before retirement");
         selectedContext.alive = false;
-      else
+        check(!selectedContext.current(), "selected context retired before release");
+        observeHeld(held[0], touch ? "touch" : "apply");
+      } else {
         patch({
                 syncHyprTouchTransform: false,
                 showSuccessToast: true
               });
-      releaseTag(scenario.includes("touch") ? "touch" : "apply");
+        releaseTag(touch ? "touch" : "apply");
+      }
       phase = "held-result";
-    } else if (phase === "held-result" && (capturedEffects || Date.now() - since > 700)) {
+    } else if (phase === "held-result") {
+      if (!capturedEffects && !heldCompletion())
+        return;
       const effects = rows().slice(before).filter(row => row.endpoint === "hyprctl" && row.argv[0] === "keyword" && row.argv[1].startsWith("device["));
       if (scenario === "retire-touch")
-        check(effects.length === 0, "retired touch query cannot dispatch");
+        check(effects.length === 0 && main._hyprTouchApplyNames.length === 0, "retired touch query cannot dispatch");
       else if (scenario === "retire-apply")
-        check(!match("hyprctl", row => row.argv.join(" ") === "-j devices").length && notices === 0, "retired apply cannot start touch or notification");
+        check(!main.isBusy("eDP-test") && main.transformForOutput("eDP-test") === heldTransform && !main._hyprTouchQueuedTarget && !main._hyprTouchActiveTarget && !match("hyprctl", row => row.argv.join(" ") === "-j devices").length && notices === 0, "retired apply cannot publish transform, touch, or notification");
       else if (!verifyCapturedTouchEffects(effects))
         return;
       pass();
@@ -244,11 +277,18 @@ ShellRoot {
         check(main._autoRotateRestoreOutputName === "eDP-test", "failed admission retains restore Retry");
         main.compositorBackend = "niri";
         main._syncAutoRotateLifecycle();
-        phase = "restore-result";
-      } else
-        phase = "restore-result";
-    } else if (phase === "restore-result" && Date.now() - since > 700) {
-      check(match("niri", row => row.argv.includes("transform") && row.argv.includes("180")).length >= 1, "session exit retains admitted restore transform");
+      }
+      const held = match("niri", row => !row.event && row.argv.includes("transform"));
+      if (!held.length)
+        return;
+      check(main.isBusy("eDP-test") && main.transformForOutput("eDP-test") === "Normal", "restore admitted but not applied");
+      observeHeld(held[0], "restore");
+      phase = "restore-result";
+    } else if (phase === "restore-result") {
+      const result = heldCompletion();
+      if (!result)
+        return;
+      check(result.observed === "180" && !main.isBusy("eDP-test") && main.transformForOutput("eDP-test") === "180", "session exit retains admitted restore transform");
       pass();
     } else if (phase === "state-held") {
       const held = match("sh", row => row.argv[row.argv.length - 1] === base + "/state-old");

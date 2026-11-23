@@ -33,6 +33,9 @@ def wait(tag):
  while not (b/('release-'+tag)).exists():
   if time.monotonic()>end: raise SystemExit('barrier timeout '+tag)
   time.sleep(.01)
+def release(tag):
+ wait(tag)
+ record(event='released')
 record()
 if name=='sh':
  code=args[1]
@@ -53,13 +56,17 @@ elif name=='monitor-sensor':
  while True: time.sleep(.1)
 elif name=='niri' and '--json' in args: print(json.dumps({'eDP-test':{'logical':{'transform':(b/'transform').read_text() if (b/'transform').exists() else '180'}}}))
 elif name=='niri' and 'transform' in args:
+ if scenario in ('exit-restore','restore-retry'): release('restore')
  (b/'transform').write_text(args[-1])
+ record(event='completed',observed=(b/'transform').read_text())
 elif name=='hyprctl':
  if args==['-j','devices']:
-  if scenario in ('touch','retire-touch'): wait('touch')
+  if scenario in ('touch','retire-touch'): release('touch')
   print(json.dumps({'touch':[{'name':'touch-one','output':'eDP-test'},{'name':'touch-two','output':'eDP-test'}]}))
+  record(event='completed')
  elif args[:2]==['keyword','monitor']:
-  if scenario in ('apply','retire-apply'): wait('apply')
+  if scenario in ('apply','retire-apply'): release('apply')
+  record(event='completed')
  elif args[:1]==['keyword'] and len(args)==3 and args[1].startswith('device[') and args[1].endswith(']:transform'):
   record(event='completed')
  elif args==['-j','monitors']: print(json.dumps([dict(name='eDP-test',width=1280,height=720,refreshRate=60,scale=1,transform=2)]))
@@ -119,6 +126,8 @@ def run(args, profile, scenario):
     runner.write_json(case/'config/settings.json', dict(settingsVersion=62))
     runner.write_json(case/'config/plugins.json', dict(version=6,states={},sources=[]))
     (case/'requests.jsonl').write_text('')
+    if scenario in ('exit-restore','restore-retry'):
+        (case/'transform').write_text('Normal')
     for name in ('sh','niri','hyprctl','monitor-sensor','which','pgrep','pkill','gsettings','dconf','busctl','dbus-monitor','wvkbd-mobintl','wvkbd-old','wvkbd-new'):
         path=case/'bin'/name; path.write_text(ENDPOINT); path.chmod(0o755)
     product=case/'plugin'
