@@ -113,6 +113,8 @@ def read_png(path):
 def pixel(path, x=None, y=None):
     width, height, pixels = read_png(path)
     x, y = width // 2 if x is None else x, height // 2 if y is None else y
+    if not (0 <= x < width and 0 <= y < height):
+        raise ValueError(f'Pixel ({x}, {y}) outside {width}x{height} image: {path}')
     start = (y * width + x) * 4
     return list(pixels[start:start + 4])
 
