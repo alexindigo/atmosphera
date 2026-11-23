@@ -39,6 +39,7 @@ def discover(root, repository):
     for path in paths:
         ordinals = {}
         data = path.read_bytes()
+        file_hash = hashlib.sha256(data).hexdigest()
         tree = parser.parse(data)
         def text(node):
             return data[node.start_byte:node.end_byte].decode() if node else ''
@@ -74,7 +75,7 @@ def discover(root, repository):
                              key=f'{repository}:{path.relative_to(root)}:{kind}:{ordinals[kind]}',
                              node=kind, identity=identity, bindings=bindings,
                              nodeSha256=hashlib.sha256(data[node.start_byte:node.end_byte]).hexdigest(),
-                             fileSha256=hashlib.sha256(data).hexdigest()))
+                             fileSha256=file_hash))
     return rows
 
 
@@ -109,29 +110,87 @@ def production_files(root, repository):
     return sorted(found)
 
 
+def _decode_literal(body):
+    """Decode JS/QML string spelling without executing source. Unknown or
+    malformed escapes stay unknown to the gate, never presumed plain text."""
+    out, index = [], 0
+    escapes = {'b': '\b', 'f': '\f', 'n': '\n', 'r': '\r', 't': '\t', 'v': '\v'}
+    while index < len(body):
+        char = body[index]
+        index += 1
+        if char != '\\':
+            out.append(char)
+            continue
+        if index == len(body):
+            return None
+        char = body[index]
+        index += 1
+        if char in '\r\n':
+            if char == '\r' and body[index:index + 1] == '\n':
+                index += 1
+        elif char in ('x', 'u'):
+            if char == 'u' and body[index:index + 1] == '{':
+                end = body.find('}', index + 1)
+                digits = body[index + 1:end] if end >= 0 else ''
+                index = end + 1
+            else:
+                length = 2 if char == 'x' else 4
+                digits = body[index:index + length]
+                if len(digits) != length:
+                    return None
+                index += length
+            if not re.fullmatch(r'[0-9a-fA-F]{1,6}', digits) or int(digits, 16) > 0x10ffff:
+                return None
+            out.append(chr(int(digits, 16)))
+        elif char.isdigit():
+            if char != '0' or body[index:index + 1].isdigit():
+                return None  # legacy octal is not a proof of a plain literal
+            out.append('\0')
+        else:
+            out.append(escapes.get(char, char))
+    try:
+        return ''.join(out).encode('utf-16-le', 'surrogatepass').decode('utf-16-le')
+    except UnicodeError:
+        return None
+
+
+def _literal_text(node, data, substitutions=False):
+    if node.type not in ('string', 'template_string'):
+        return None
+    expressions = [child for child in node.named_children if child.type == 'template_substitution']
+    if expressions and not substitutions:
+        return None
+    start = node.start_byte + 1
+    chunks = []
+    for expression in expressions:
+        chunks.append(data[start:expression.start_byte])
+        start = expression.end_byte
+    chunks.append(data[start:node.end_byte - 1])
+    return _decode_literal(b''.join(chunks).decode())
+
+
 def _static_qml(node, data):
-    """QML text of a string literal or a + concatenation of literals and
-    expressions (expressions become a placeholder); None if nothing is literal."""
-    value = data[node.start_byte:node.end_byte].decode()
+    """Fully known generated QML only. A placeholder is not evidence that an
+    unresolved expression cannot contribute a node, member or image source."""
     if node.type in ('string', 'template_string'):
-        body = re.sub(r'\$\{[^}]*\}', '0', value[1:-1])
-        return re.sub(r'\\(.)', lambda match: {'n': '\n', 't': '\t'}.get(match[1], match[1]), body)
+        return _literal_text(node, data)
     if node.type == 'parenthesized_expression' and node.named_children:
         return _static_qml(node.named_children[0], data)
     if node.type == 'binary_expression' and data[node.child_by_field_name('operator').start_byte:node.child_by_field_name('operator').end_byte] == b'+':
         left = _static_qml(node.child_by_field_name('left'), data)
         right = _static_qml(node.child_by_field_name('right'), data)
-        if left is None and right is None:
-            return None
-        return (left if left is not None else '0') + (right if right is not None else '0')
+        return left + right if left is not None and right is not None else None
     return None
 
 
 def _embedded_sites(parser, body):
-    """Image-capable node types inside QML text ([] when none)."""
+    """Image-capable node types inside known QML; None when parsing is unsure."""
     data = body.encode()
     found = []
-    for node in walk(parser.parse(data).root_node):
+    tree = parser.parse(data)
+    if tree.root_node.has_error:
+        return None
+    for node in walk(tree.root_node):
         if node.type not in ('ui_object_definition', 'ui_object_binding'):
             continue
         name = data[node.child_by_field_name('type_name').start_byte:node.child_by_field_name('type_name').end_byte].decode().split('.')[-1]
@@ -152,9 +211,11 @@ def _static_text(node, data):
     if kind in ('number', 'true', 'false'):
         return True
     if kind == 'string':
-        return '<' not in value and '![' not in value
+        literal = _literal_text(node, data)
+        return literal is not None and '<' not in literal and '![' not in literal
     if kind == 'template_string':
-        return '<' not in value and '![' not in value and all(
+        literal = _literal_text(node, data, substitutions=True)
+        return literal is not None and '<' not in literal and '![' not in literal and all(
             _static_text(child.named_children[0] if child.named_children else None, data)
             for child in node.named_children if child.type == 'template_substitution')
     if kind == 'array':
@@ -239,13 +300,16 @@ def scan(root, repository, shell_types=None):
             elif node.type == 'call_expression':
                 if text(node.child_by_field_name('function')).split('.')[-1] == 'createQmlObject':
                     arguments = node.child_by_field_name('arguments')
-                    first = arguments.named_children[0] if arguments and arguments.named_children else None
+                    args = arguments.named_children if arguments else []
+                    first = args[0] if args else None
                     static = _static_qml(first, data) if first is not None else None
                     embedded = _embedded_sites(parser, static) if static is not None else None
                     # Literal QML without image-capable nodes is not a site;
                     # QML built from variables needs review.
                     if embedded is None or embedded:
                         rule, kind = 'dynamic-qml', 'createQmlObject'
+                        detail['expressionSha256'] = hashlib.sha256(data[first.start_byte:first.end_byte]).hexdigest() if first else ''
+                        detail['constructor'] = text(args[2]) if len(args) > 2 else ''
                         if embedded:
                             detail['embedded'] = embedded
             elif node.type in ('string', 'template_string'):

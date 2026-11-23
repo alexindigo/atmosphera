@@ -96,6 +96,7 @@ def declarations(root, relative, name):
 def check(sites, manifest, roots):
     failures = []
     entries = manifest['sites']
+    current = {tuple(site[k] for k in IDENTITY): site for site in sites}
     for entry in entries:
         rule, disposition = entry.get('rule'), entry.get('disposition')
         where = entry.get('repository', '?') + ':' + entry.get('path', '?')
@@ -107,6 +108,10 @@ def check(sites, manifest, roots):
             failures.append(dict(problem='owner disposition outside the owner files', site=where, disposition=disposition))
         if not entry.get('reason'):
             failures.append(dict(problem='entry without a review reason', site=where))
+        site = current.get(tuple(entry.get(k) for k in IDENTITY))
+        for field in ('constructor', 'expressionSha256'):
+            if field in entry and site is not None and entry[field] != site.get(field):
+                failures.append(dict(problem='changed construction ' + field, site=where, rule=rule))
         if disposition in ('fixed-asset', 'finite-asset-set', 'missing-packaged-asset') and not entry.get('assets'):
             failures.append(dict(problem='asset exemption without assets', site=where))
         if disposition == 'plugin-authored-text' and not entry.get('definitions'):
@@ -176,6 +181,12 @@ CONTROLS = {
     'background-image-markup': ('text-markup', {'Table.qml': 'import QtQuick\nTextEdit { textFormat: TextEdit.RichText; text: "<table background=\\"x.png\\"><tr><td>a</td></tr></table>" }\n'}),
     'generated-qml-image': ('dynamic-qml', {'Generated.qml': 'import QtQuick\nItem { Component.onCompleted: Qt.createQmlObject("import QtQuick; Image { source: \\"x.png\\" }", this) }\n'}),
     'generated-qml-variable': ('dynamic-qml', {'Built.qml': 'import QtQuick\nItem { property string qml\n Component.onCompleted: Qt.createQmlObject(qml, this) }\n'}),
+    'generated-qml-partly-unknown': ('dynamic-qml', {'Partial.qml': 'import QtQuick\nItem { property string child\n Component.onCompleted: Qt.createQmlObject("import QtQuick; Item {" + child + "}", this) }\n'}),
+    'generated-qml-template-type': ('dynamic-qml', {'Template.qml': 'import QtQuick\nItem { property string nodeType\n Component.onCompleted: Qt.createQmlObject(`import QtQuick; ${nodeType} { source: "x.png" }`, this) }\n'}),
+    'generated-qml-escaped-image': ('dynamic-qml', {'Escaped.qml': r'import QtQuick; Item { Component.onCompleted: Qt.createQmlObject("import QtQuick; \u0049mage { source: \'x.png\' }", this) }'}),
+    'escaped-auto-text-hex': ('text-markup', {'Hex.qml': r'import QtQuick; Text { text: "\x3cimg src=\'x.png\'>" }'}),
+    'escaped-auto-text-unicode': ('text-markup', {'Unicode.qml': r'import QtQuick; Text { text: "\u003cimg src=\'x.png\'>" }'}),
+    'escaped-auto-text-template': ('text-markup', {'TemplateText.qml': r'import QtQuick; Text { text: `\u{3c}img src="x.png">` }'}),
     'plugin-magick-converter': ('converter-command', {'Convert.qml': 'import QtQuick\nimport Quickshell.Io\nProcess { property string src\n command: ["magick", src, "png:/tmp/out.png"] }\n'}),
     'plugin-ffmpeg-template': ('converter-command', {'Frame.qml': 'import QtQuick\nimport Quickshell.Io\nProcess { property string video\n command: ["sh", "-c", `ffmpeg -y -i ${video} -vframes:v 1 out.bmp`] }\n'}),
     'arbitrary-color-quantizer': ('color-quantizer', {'Colors.qml': 'import QtQuick\nimport Quickshell\nItem { property string userPath\n ColorQuantizer { source: userPath } }\n'}),
@@ -228,6 +239,28 @@ def selftest(sites, manifest, roots, shell_types):
         wrong_rule = copy.deepcopy(controlled)
         wrong_rule['sites'][-1]['disposition'] = 'shell-authored-markup'
         outcome('plugin-claims-shell-disposition', False, injected, wrong_rule)
+        # The parked injection class admits only the individually reviewed
+        # call/expression, never another constructor or a changed expression.
+        plugin = Path(folder) / 'parked' / 'zz-image-boundary-control'
+        plugin.mkdir(parents=True)
+        generated = ('import QtQuick; Item { property string path; '
+                     'Component.onCompleted: Qt.createQmlObject("import QtQuick; Item {" + path + "}", this, "parked") }')
+        (plugin / 'Generated.qml').write_text(generated)
+        injected, _ = scan(plugin.parent, 'plugins', shell_types)
+        assert len(injected) == 1
+        entry = dict({k: injected[0][k] for k in IDENTITY + ('constructor', 'expressionSha256')},
+                     disposition='reviewed-construction',
+                     reason='generated QML with interpolated values: injection class parked by the user, tracked in todos/command-injection-findings.md')
+        controlled = dict(manifest, sites=manifest['sites'] + [entry])
+        control_roots = dict(roots, plugins=[roots['plugins'], plugin.parent])
+        outcome('reviewed-interpolated-construction', True, injected, controlled)
+        (plugin / 'Generated.qml').write_text(generated.replace('+ path +', '+ (path + path) +'))
+        changed, _ = scan(plugin.parent, 'plugins', shell_types)
+        outcome('reviewed-construction-expression-changed', False, changed, controlled)
+        (plugin / 'Generated.qml').write_text(generated)
+        (plugin / 'New.qml').write_text(generated)
+        changed, _ = scan(plugin.parent, 'plugins', shell_types)
+        outcome('new-unreviewed-construction', False, changed, controlled)
     return results
 
 
