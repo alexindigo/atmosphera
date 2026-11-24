@@ -397,6 +397,15 @@ def scan(root, repository, shell_types=None):
                 value = text(node)
                 if COMMAND.search(value):
                     rule, kind = 'converter-command', 'command'
+                    argv = node.parent
+                    if argv.type == 'array' and argv.named_children[0] == node:
+                        binding = argv.parent
+                        if binding.type == 'expression_statement':
+                            binding = binding.parent
+                        if binding.type == 'ui_binding' and text(binding.child_by_field_name('name')) == 'command':
+                            # The executable's existing identity stays intact;
+                            # stdout-only sampling also checks the complete argv.
+                            detail['commandArgv'] = text(argv)
             if not rule:
                 continue
             ordinals[(rule, kind)] = ordinals.get((rule, kind), 0) + 1

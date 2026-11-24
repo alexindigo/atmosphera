@@ -19,19 +19,29 @@ import subprocess
 
 from launcher_workspace import ROOT
 from launcher_paste_support import profile_environment
+from workspace_guard import require_disk_backed_paths
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--label', required=True)
+    parser.add_argument('--workspace', type=Path, default=ROOT)
     args = parser.parse_args()
     spec = importlib.util.spec_from_file_location('flow', Path(__file__).with_name('launcher-flow-e2e.py'))
     flow = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(flow)
-    flow.boundary()  # the assigned VM's Wayland session; no compositor IPC is passed on
-    output, runtime = ROOT / 'evidence' / args.label, ROOT / 'runtime' / args.label
-    output.mkdir()
+    workspace = args.workspace.resolve()
+    if workspace == ROOT:
+        flow.boundary()
+    else:
+        require_disk_backed_paths(workspace, os.environ.get('TMPDIR', ''), args.source)
+        runtime_dir = os.environ.get('XDG_RUNTIME_DIR')
+        display = os.environ.get('WAYLAND_DISPLAY')
+        if not runtime_dir or not display or not Path(runtime_dir, display).is_socket():
+            parser.error('the fixture needs the guest Wayland session')
+    output, runtime = workspace / 'evidence' / args.label, workspace / 'runtime' / args.label
+    output.mkdir(parents=True)
     tree = runtime / 'tree'
     shutil.copytree(args.source, tree, symlinks=True)
     shell = tree / 'shell.qml'
@@ -48,8 +58,8 @@ def main():
     for row in steps:
         bad = sorted({r['signal'] for r in row['records'] if not r['coherent']})
         print(row['name'], 'PASS' if row['passed'] else 'FAIL', 'settled' if row['settled'] else 'unsettled', bad, flush=True)
-    result = dict(passed=process.returncode == 0 and len(steps) == 16 and all(r['passed'] for r in steps),
-                  complete=len(steps) == 16, exit=process.returncode, cases=steps)
+    result = dict(passed=process.returncode == 0 and len(steps) == 17 and all(r['passed'] for r in steps),
+                  complete=len(steps) == 17, exit=process.returncode, cases=steps)
     (output / 'result.json').write_text(json.dumps(result, indent=2))
     shutil.rmtree(runtime)
     return 0 if result['passed'] else 1

@@ -26,7 +26,7 @@ Singleton {
   }
 
   function regenerate(environment, complete) {
-    if (!Quickshell.env("NIRI_SOCKET")) {
+    if (!NiriIpcStatus.isNiriSession) {
       if (typeof complete === "function")
         complete(true, "", false);
       return;
@@ -48,6 +48,11 @@ Singleton {
         complete(success, error || "", true);
     }
     ipcLoader.active = true;
+    if (ipcLoader.status === Loader.Error || (ipcLoader.item && !ipcLoader.item.stateApiAvailable)) {
+      NiriIpcStatus.reportUnavailable();
+      finish(false, "niriqml 0.3.0 or newer required for configuration handoff");
+      return;
+    }
     var temporary = root.sessionConfig + ".tmp-" + root._nonce + "-" + (++root._serial);
     var io = Quickshell.shellDir + "/Scripts/python/src/settings/section-io.py";
     function inspect(path, callback) {
@@ -67,10 +72,11 @@ Singleton {
       });
     }
     function handoff() {
-      if (ipcLoader.item) {
+      if (ipcLoader.item && ipcLoader.item.stateApiAvailable) {
         ipcLoader.item.activate(root.sessionConfig, finish);
-      } else if (ipcLoader.status === Loader.Error) {
-        finish(false, "niriqml unavailable; configuration handoff failed");
+      } else if (ipcLoader.status === Loader.Error || ipcLoader.status === Loader.Ready) {
+        NiriIpcStatus.reportUnavailable();
+        finish(false, "niriqml 0.3.0 or newer required for configuration handoff");
       } else {
         root._pendingLoader = handoff;
       }

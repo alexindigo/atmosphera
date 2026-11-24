@@ -9,6 +9,7 @@ import qs.Services.Compositor
 ShellRoot {
   id: root
   property var records: []
+  property var publications: []
   property string step: ""
   readonly property string boundTitle: CompositorService.getFocusedWindowTitle()
 
@@ -22,6 +23,23 @@ ShellRoot {
     signal windowListChanged
     function initialize() {
     }
+  }
+
+  QtObject {
+    id: niri
+    property var workspaces: ({
+                                count: 0,
+                                get: () => null
+                              })
+    property var windows: []
+    property var focusedWindowId: null
+    property var focusedWorkspaceId: null
+    property bool overviewActive: false
+    property bool ready: false
+    signal statePublished
+    signal workspaceChanged
+    signal activeWindowChanged
+    signal windowListChanged
   }
 
   function view(signalName) {
@@ -71,6 +89,15 @@ ShellRoot {
 
   Connections {
     target: CompositorService
+    ignoreUnknownSignals: true
+    function onSnapshotChanged() {
+      const s = CompositorService.snapshot;
+      const current = CompositorService.getCurrentWorkspace();
+      root.publications.push({
+                               snapshot: s,
+                               coherent: s.focusedWindowId === CompositorService.focusedWindowId && s.focusedWorkspaceId === (current?.id ?? null) && s.windows.length === CompositorService.windows.count && s.workspaces.length === CompositorService.workspaces.count && s.overviewActive === CompositorService.overviewActive
+                             });
+    }
     function onWindowListChanged() {
       root.record("windowListChanged");
     }
@@ -218,7 +245,7 @@ ShellRoot {
       results.push({
                      name: s.name,
                      order: s.order,
-                     records: records,
+                     records: records.slice(),
                      final: final,
                      expectedFocus: expectedFocus,
                      settled: settled,
@@ -226,9 +253,65 @@ ShellRoot {
                      passed: settled && records.every(r => r.coherent)
                    });
     }
+    results.push(snapshotCase());
     console.info("PUBLICATION_RESULT|" + JSON.stringify(results));
     Qt.exit(0);
   }
 
-  Component.onCompleted: Qt.callLater(run)
-}
+  function snapshotCase() {
+    CompositorService.backend = niri;
+    CompositorService.setupBackendConnections();
+    publications = [];
+    const unseen = CompositorService["snapshot"];
+    niri.ready = true;
+    niri.statePublished();
+    const empty = CompositorService["snapshot"];
+    const workspace = {
+      id: "0",
+      idx: 1,
+      isFocused: true
+    };
+    niri.workspaces = {
+      count: 1,
+      get: () => workspace
+    };
+    niri.focusedWorkspaceId = workspace.id;
+    niri.focusedWindowId = "9007199254740993";
+    niri.windows = [w("9007199254740992"), w(niri.focusedWindowId)];
+    niri.statePublished();
+    const full = CompositorService["snapshot"];
+    niri.statePublished();
+    niri.overviewActive = true;
+    niri.statePublished();
+    const opened = CompositorService["snapshot"];
+    niri.overviewActive = false;
+    niri.statePublished();
+    const closed = CompositorService["snapshot"];
+    niri.ready = false;
+    niri.focusedWorkspaceId = null;
+    niri.focusedWindowId = null;
+    niri.workspaces = {
+      count: 0,
+      get: () => null
+    };
+    niri.windows = [];
+    niri.statePublished();
+    const reset = CompositorService["snapshot"];
+    const overviewPublished = unseen.overviewActive === false && full.overviewActive === false && opened.overviewActive === true && closed.overviewActive === false && reset.overviewActive === false && opened.revision === full.revision + 1 && closed.revision === opened.revision + 1;
+    const passed = unseen?.ready === false && empty?.ready === true && empty.workspaces.length === 0 && empty.windows.length === 0 && full?.ready === true && full.focusedWorkspaceId === "0" && full.workspaces[0].id === "0" && full.focusedWindowId === "9007199254740993" && full.windows[0].id === "9007199254740992" && full.windows[1].isFocused && reset?.ready
+          === false && reset.workspaces.length === 0 && reset.windows.length === 0 && reset.focusedWindowId === null && reset.focusedWorkspaceId === null && empty.revision === unseen.revision + 1 && full.revision === empty.revision + 1 && reset.revision === closed.revision + 1 && publications.length === 5 && publications.every(p => p.coherent)
+          && overviewPublished;
+    return {
+      name: "coherent replace-only snapshots, including ready-empty, overview and disconnect",
+      passed: passed,
+      settled: passed,
+      records: publications.map(p => ({
+        signal: "snapshotChanged",
+        coherent: p.coherent
+      })),
+    publications: publications
+  };
+  }
+
+    Component.onCompleted: Qt.callLater(run)
+  }
