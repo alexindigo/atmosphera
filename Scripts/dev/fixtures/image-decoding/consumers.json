@@ -1687,7 +1687,24 @@
    "nodeSha256": "47e7ec5b0781edc0494f610d54bd24fda187f0384572d2eb26fb50d832c7d378",
    "line": 203,
    "disposition": "owner-output",
-   "reason": "Quantizes the owner's validated thumbnail (reply.url), never the original file."
+   "reason": "Quantizes the owner's validated thumbnail (reply.url), never the original file.",
+   "wallcardsSamplingReplacement": {
+    "repository": "plugins",
+    "path": "wallcards/src/ThumbnailService.qml",
+    "rule": "converter-command",
+    "node": "command",
+    "nodeSha256": "b4e1ec72313fade67f8889fb1d56065c5cb880d27a7ab591e1f128f2e77e0e1c",
+    "line": 245,
+    "disposition": "owner-thumbnail-color-sampling",
+    "reason": "Samples only a successful shared worker thumbnail using direct argv and a stdout histogram. The complete service is pinned to cover the reply, cache-path check and process assignments.",
+    "definitions": [
+     {
+      "path": "wallcards/src/ThumbnailService.qml",
+      "name": "*",
+      "sha256": "b98adfebcf0e97499c5613a8e74ee57d7d5d688c71f1d4ee441fe57489cff1d2"
+     }
+    ]
+   }
   }
  ],
  "baseline": {
