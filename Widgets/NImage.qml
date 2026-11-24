@@ -158,9 +158,17 @@ Item {
       onTintChanged: requestPaint()
       onRadiusChanged: requestPaint()
       onFillModeChanged: requestPaint()
+      onContextChanged: {
+        if (context)
+          requestPaint();
+      }
 
       onPaint: {
+        // Qt can dispatch a dirty paint before delayed context creation.
+        // Context creation requeues paint without touching the pixmap ticket.
         const ctx = context;
+        if (!ctx)
+          return;
         ctx.reset();
         ctx.clearRect(0, 0, width, height);
         if (!ticket)

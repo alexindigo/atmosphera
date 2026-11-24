@@ -45,11 +45,40 @@ def main():
     shim.mkdir()
     decoder_log = fixtures / "ffmpeg.jsonl"
     filling_observed = fixtures / "filling-observed"
+    gate_timeout = 15
+    worker_timeout = gate_timeout + 10
+    # Both the frame coroutine and its owned decoder share Cache.timeout.
+    # Extend it only in this fixture's worker, not for ordinary python3 calls
+    # or production. The FFmpeg gate below still has its own shorter deadline.
+    (shim / "python3").write_text('''#!/usr/bin/python3 -u
+import functools
+import os
+from pathlib import Path
+import runpy
+import sys
+
+args = sys.argv[1:]
+if len(args) != 3 or args[:2] != ["-B", "-u"] or not args[2].endswith("/Scripts/python/image-worker.py"):
+    os.execv("/usr/bin/python3", ["python3", *args])
+
+worker = Path(args[2]).resolve(strict=True)
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(worker.parent / "src"))
+from images import worker as image_worker
+
+image_worker.Cache = functools.partial(image_worker.Cache, timeout=''' + str(worker_timeout) + ''')
+sys.argv = [str(worker)]
+runpy.run_path(str(worker), run_name="__main__")
+''')
+    (shim / "python3").chmod(0o755)
     (shim / "ffmpeg").write_text('#!/usr/bin/python3\nimport os,sys,json,time,fcntl\nfrom pathlib import Path\n'
                                 f'with open({str(decoder_log)!r}, "a+") as f:\n'
                                 ' fcntl.flock(f,fcntl.LOCK_EX)\n f.seek(0)\n ordinal=sum(1 for line in f if "image2pipe" in json.loads(line)["argv"])+1\n f.seek(0,2)\n'
                                 ' f.write(json.dumps({"time":time.monotonic(),"pid":os.getpid(),"argv":sys.argv})+"\\n")\n f.flush()\n'
-                                f'if "image2pipe" in sys.argv and ordinal > 2:\n while not Path({str(filling_observed)!r}).exists(): time.sleep(.01)\n'
+                                f'if "image2pipe" in sys.argv and ordinal > 2:\n deadline=time.monotonic()+{gate_timeout}\n'
+                                f' while not Path({str(filling_observed)!r}).exists():\n'
+                                '  if time.monotonic() >= deadline: sys.exit("Fixture thumbnail gate timed out")\n'
+                                '  time.sleep(.01)\n'
                                 'os.execv("/usr/bin/ffmpeg", ["ffmpeg", *sys.argv[1:]])\n')
     (shim / "ffmpeg").chmod(0o755)
     cache = runtime / "profile/cache"

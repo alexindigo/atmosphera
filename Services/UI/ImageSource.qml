@@ -93,7 +93,7 @@ Scope {
     _token = ImageCacheService.acquireSource(Object.assign({}, _request, {
                                                              operation: operation
                                                            }), function (reply) {
-                                                             if (lifetime.alive && root._generation === generation && root.active)
+                                                             if (lifetime.alive && root && root._generation === generation && root.active)
                                                                callback(reply);
                                                            });
   }
@@ -146,7 +146,7 @@ Scope {
     if (_offering) {
       var lifetime = _lifetime;
       Qt.callLater(function () {
-        if (lifetime.alive)
+        if (lifetime.alive && root)
           root.report(ticket, status, width, height, frames);
       });
       return;
