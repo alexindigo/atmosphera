@@ -43,7 +43,11 @@ class CleanupTests(unittest.TestCase):
                 args = SimpleNamespace(source=root/'source', plugins=root/'plugins', work_root=root/'work',
                                        output=root/'out', guest_profile=None, baseline_source=None, baseline_plugins=None)
                 for path in (args.source, args.plugins, args.work_root, args.output): path.mkdir()
-                profile = SimpleNamespace(child_environment=lambda _: {}, work_base=root, journal_base=root,
+                runtime = root/'owned-runtime'
+                def child_environment(_prefix):
+                    runtime.mkdir()
+                    return {'XDG_RUNTIME_DIR': str(runtime)}
+                profile = SimpleNamespace(child_environment=child_environment, work_base=root, journal_base=root,
                                           runtime_base=root, prepare_roots=lambda: None)
                 events, logs = [], []
                 failure = SetupFailure('guard capture refused')
@@ -78,6 +82,9 @@ class CleanupTests(unittest.TestCase):
                 self.assertIs(raised.exception, failure)
                 self.assertEqual(events, ['spawn', 'guard', 'terminate', 'wait'])
                 self.assertTrue(logs[0].closed)
+                if name == 'host-assets-regression':
+                    self.assertFalse(runtime.exists())
+                    self.assertTrue((args.output/'runtime-evidence/manifest.json').is_file())
 
     def test_private_bus_setup_failure_reaps_process_and_log(self):
         lanes = {'automatic-lifecycle': ('private-monitor',), 'device-lifecycle': ('gpu-test',),

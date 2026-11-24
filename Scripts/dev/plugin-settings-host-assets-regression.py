@@ -120,12 +120,21 @@ def run_fixture(profile, install, case, output, fixture, installed=False, extra_
     # Qt reserves two trailing/leading bytes even for pathname sockets on Linux
     # (qlocalserver_unix.cpp). An empty caller prefix retains the existing
     # private disk runtime while fitting Quickshell's variable-length instance ID.
-    env = dict(os.environ, **profile.child_environment(''))
+    runtime_env = profile.child_environment('')
+    runtime = Path(runtime_env['XDG_RUNTIME_DIR'])
+    env = dict(os.environ, **runtime_env)
     env.update(ATMOSPHERA_CONFIG_DIR=str(case / 'config'),
                ATMOSPHERA_SETTINGS_FILE=str(case / 'config/settings.json'),
                ATMOSPHERA_CACHE_DIR=str(case / 'cache'),
                ATMOSPHERA_STATE_DIR=str(case / 'state'), QML_DISABLE_DISK_CACHE='1')
     env.update(extra_env or {})
+    env['XDG_RUNTIME_DIR'] = runtime_env['XDG_RUNTIME_DIR']
+    with FixtureResources() as resources:
+        resources.defer(retire_fixture_runtime, runtime, qmlls, output / 'runtime-evidence')
+        return run_fixture_and_lint(profile, install, target, output, env, extra_lint, timeout)
+
+
+def run_fixture_and_lint(profile, install, target, output, env, extra_lint, timeout):
     try:
         with (output / 'runtime.log').open('w') as log, FixtureResources() as resources:
             process = resources.spawn(['qs', '-p', str(target), '--no-color'], env=env,
@@ -640,6 +649,21 @@ def retire_step_runtime(profile, before, keep):
                if path.is_dir() and not path.is_symlink() and path.resolve().parent == profile.runtime_base.resolve()]
     if not created or step_leftovers([str(path) for path in created]):
         return
+    preserve_and_remove_runtime_roots(created, keep)
+
+
+def retire_fixture_runtime(runtime, qmlls, keep):
+    if step_leftovers([str(runtime)]):
+        raise RuntimeError('fixture runtime still has live processes; retained for diagnosis')
+    # ProbeFiles replaces the sentinel with a symlink into this launch's VFS.
+    # Restore the sentinel so the next cold launch requests its own universe.
+    if qmlls.is_symlink() and qmlls.resolve().is_relative_to(runtime / 'quickshell/vfs'):
+        qmlls.unlink()
+        qmlls.touch(exist_ok=False)
+    preserve_and_remove_runtime_roots([runtime], keep)
+
+
+def preserve_and_remove_runtime_roots(created, keep):
     manifest = {}
     for path in created:
         for log in path.glob('quickshell/by-id/*/log.*'):
