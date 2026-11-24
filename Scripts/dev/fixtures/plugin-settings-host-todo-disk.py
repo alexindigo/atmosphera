@@ -6,9 +6,12 @@ import os
 from pathlib import Path
 import sys
 
+from json_evidence import require_json_match
+
 phase, route, config = sys.argv[1], int(sys.argv[2]), Path(sys.argv[3])
 shared = config / 'settings/plugins/todo.json'
-assert hashlib.sha256(shared.read_bytes()).hexdigest() == os.environ['PHA_TODO_SHARED_SHA256'], 'shared bytes changed'
+if hashlib.sha256(shared.read_bytes()).hexdigest() != os.environ['PHA_TODO_SHARED_SHA256']:
+    raise RuntimeError('shared bytes changed')
 path = config / 'settings/desktopWidgets.json'
 rows = json.loads(path.read_text())['monitorWidgets'][0]['widgets']
 expected = dict(todos=[dict(id=91, text='legacy task', completed=False, pageId=0, priority='medium', details='')],
@@ -23,7 +26,8 @@ if phase == 'apply':
     expected['exportPath'] = '/synthetic/export'
 if phase == 'retry':
     expected['exportFormat'] = 'json'
-assert rows == [dict(id='plugin:todo', tag='keep', instanceSettings=expected), dict(id='plugin:todo')], (phase, route, rows)
+require_json_match(rows, [dict(id='plugin:todo', tag='keep', instanceSettings=expected), dict(id='plugin:todo')],
+                   f'{phase} route {route}: routed Todo rows differ')
 record = dict(phase=phase, route=route, placementSha256=hashlib.sha256(path.read_bytes()).hexdigest(), sharedBytesPreserved=True,
               exactExpectedOverrides=True, protectedAndOpaquePreserved=True, siblingUnchanged=True)
 out = Path(os.environ['PHA_TODO_OBSERVATIONS']) / (str(route) + '-' + phase + '.json')
