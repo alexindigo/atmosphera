@@ -4,6 +4,7 @@ The real frontend daemon must route to this exact Atmosphera process. Every
 suite owns a fresh disk-backed profile, private bus and bounded children.
 """
 
+from contextlib import ExitStack, contextmanager
 import json
 import os
 from pathlib import Path
@@ -32,7 +33,21 @@ def desktop_fixture(data):
 
 
 class Run:
-    def __init__(self, source, label, *, runtime_cleanup=None):
+    @classmethod
+    @contextmanager
+    def session(cls, source, label, *, collect=True):
+        """Keep receipts, but retire a run's private source and XDG copies."""
+        with ExitStack() as cleanup:
+            run = cls(source, label, cleanup)
+            try:
+                yield run
+            except BaseException as error:
+                run.failure = repr(error)
+                raise
+            finally:
+                run.close(collect=collect)
+
+    def __init__(self, source, label, cleanup):
         enter()
         guest()
         assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
@@ -41,8 +56,7 @@ class Run:
         self.runtime, self.output = current_profile().runtime / label, current_profile().evidence / label
         assert not self.runtime.exists() and not self.output.exists()
         self.runtime.mkdir()
-        if runtime_cleanup is not None:
-            runtime_cleanup.callback(shutil.rmtree, self.runtime)
+        cleanup.callback(shutil.rmtree, self.runtime)
         self.output.mkdir()
         self.shell = self.runtime / "shell"
         shutil.copytree(self.source, self.shell, symlinks=True)
@@ -166,7 +180,7 @@ class Run:
         self.check("runtime-errors", self.qs.returncode == 0 and not errors, errors)
         self.complete = True
 
-    def close(self):
+    def close(self, *, collect):
         if self.qs and self.qs.poll() is None:
             try:
                 self.ipc("quit"); self.qs.wait(timeout=12)
@@ -181,6 +195,8 @@ class Run:
                     pass
         for f in self.logs:
             f.close()
+        if not collect:
+            return
         (self.output / "recipe.json").write_text(json.dumps({"source": str(self.source), "runtime": str(self.runtime),
             "commands": self.commands, "environment": {k: v for k, v in self.env.items() if k.startswith(("ATMOSPHERA_", "XDG_", "DBUS_", "FILECHOOSER_", "TMPDIR", "YDOTOOL_", "WAYLAND_", "NIRI_"))}}, indent=2))
         (self.output / "probe.qml").write_text(self.probe.read_text() if self.probe.exists() else "")

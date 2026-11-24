@@ -19,6 +19,8 @@ ShellRoot {
   readonly property string base: "file://" + inputs + "/"
   property int tick: 0
   property int pending: 0
+  property int phase: 0
+  property int motionSample: 40
   property var linkClicks: []
   property var motion: []
   property var retainedBefore: ({})
@@ -50,7 +52,7 @@ ShellRoot {
     path: Quickshell.env("IMAGE_ICON_DIR") + "/icons.json"
     onLoaded: IconRegistry.register("fixture:atmosphera-icons", JSON.parse(text()), Quickshell.env("IMAGE_ICON_DIR"))
   }
-  function grab(item, name) {
+  function grab(item, name, afterCapture) {
     ++pending;
     item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
@@ -58,6 +60,8 @@ ShellRoot {
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
+      if (afterCapture)
+        afterCapture();
     });
   }
   function describe(item) {
@@ -72,6 +76,9 @@ ShellRoot {
       width: item.width,
       height: item.height
     };
+  }
+  function settled(item, count, state) {
+    return item && item.imageCount === count && item.imageStates.length === count && item.imageStates.every(image => image.state === state && image.placed && image.width > 0 && image.height > 0);
   }
   FloatingWindow {
     visible: true
@@ -288,21 +295,19 @@ ShellRoot {
       }
       if (root.tick === 5)
         TooltipService.show(tipTarget, "tip <b>text</b>\n<img src='" + root.inputs + "/Still.webp' width='40' height='24'> after", "bottom", 1);
-      if (root.tick === 30) {
+      if (root.phase === 0 && root.settled(replaced, 1, "ready") && root.settled(retained, 2, "ready")) {
+        root.phase = 1;
         root.retainedBefore = root.describe(retained);
-        root.grab(replaced, "replaced-before");
         root.interestsBeforePlain = ImageCacheService.sourceInterestSources().length;
+        root.grab(replaced, "replaced-before", function () {
+          replaced.second = true;
+          retained.revised = true;
+          root.phase = 2;
+        });
       }
-      if (root.tick === 33) {
-        replaced.second = true;
-        retained.revised = true;
-      }
-      if (root.tick >= 40 && root.tick <= 60) {
-        var moving = (markdown.imageStates[2] || {});
-        if (moving.placed)
-          root.grab(markdown, "markdown-" + root.tick);
-      }
-      if (root.tick === 45) {
+      if (root.phase === 2 && root.settled(replaced, 1, "ready") && root.settled(rich, 3, "ready") && root.settled(markdown, 3, "ready") && root.settled(failing, 1, "unavailable") && root.settled(styled, 1, "ready") && root.settled(capped, 2, "ready") && root.settled(root.tooltipText(), 1, "ready") && root.settled(root.imageTexts(label)[0], 1, "ready")
+          && root.settled(root.changelogText(), 2, "ready") && root.settled(retained, 2, "ready")) {
+        root.phase = 3;
         root.grab(rich, "rich");
         root.grab(failing, "failing");
         root.grab(replaced, "replaced-after");
@@ -310,16 +315,19 @@ ShellRoot {
         root.grab(backgrounds, "backgrounds");
         root.grab(guardedMarkdown, "guarded-markdown");
         root.grab(retained, "retained");
-        if (root.changelogText())
-          root.grab(root.changelogText(), "changelog");
-        if (root.tooltipText())
-          root.grab(root.tooltipText(), "tooltip");
+        root.grab(root.changelogText(), "changelog");
+        root.grab(root.tooltipText(), "tooltip");
         root.grab(root.imageTexts(label)[0], "label");
         root.grab(linked, "linked");
         root.grab(linkedMarkdown, "linked-markdown");
         root.grab(plainFormat, "plain-format");
       }
-      if (root.tick >= 70 && !root.pending) {
+      if (root.phase === 3 && root.motionSample <= 60) {
+        root.grab(markdown, "markdown-" + root.motionSample);
+        ++root.motionSample;
+      }
+      if (root.phase === 3 && root.motionSample > 60 && !root.pending) {
+        root.phase = 4;
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          rich: root.describe(rich),
                                                          parserChecks: root.parserChecks(),
@@ -380,6 +388,18 @@ ShellRoot {
   Timer {
     interval: 20000
     running: true
-    onTriggered: Qt.exit(3)
+    onTriggered: {
+      console.log("IMAGE_TIMEOUT|" + JSON.stringify({
+                                                      phase: root.phase,
+                                                      sample: root.motionSample,
+                                                      rich: root.describe(rich),
+                                                      markdown: root.describe(markdown),
+                                                      replaced: root.describe(replaced),
+                                                      tooltip: root.tooltipText() ? root.describe(root.tooltipText()) : null,
+                                                      changelog: root.changelogText() ? root.describe(root.changelogText()) : null,
+                                                      pending: root.pending
+                                                    }));
+      Qt.exit(3);
+    }
   }
 }

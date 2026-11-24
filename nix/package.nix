@@ -11,7 +11,6 @@
     wlsunset
     wl-clipboard
     wlr-randr
-    imagemagick
     wget
     glib # gio trash implements the freedesktop Trash specification
     # The real logind delay-inhibitor fd needs both bindings, independently of
@@ -25,6 +24,11 @@
   qt6,
   quickshell,
   configqml,
+  dbusqml,
+  xdgiconqml,
+  pipewirespectrum,
+  niriqml,
+  mangowcqml,
   # runtime deps
   brightnessctl,
   cliphist,
@@ -33,6 +37,9 @@
   wl-clipboard,
   wlr-randr,
   imagemagick,
+  ffmpeg,
+  coreutils,
+  systemd,
   wget,
   python3,
   wayland,
@@ -69,6 +76,17 @@ let
       ]);
   };
 
+  # The image worker's decoders (ImageMagick with its WebP/HEIF delegates,
+  # FFmpeg, Python). Always on PATH, after runtimeDeps: replacing the
+  # configurable runtimeDeps cannot remove them.
+  imageDeps = [
+    imagemagick
+    ffmpeg
+    python3
+    coreutils # dispatcher path resolution and bounded shell-owner calls
+    systemd # busctl used by shell-owner discovery
+  ];
+
   giTypelibPath = lib.makeSearchPath "lib/girepository-1.0" [
     evolution-data-server
     libical
@@ -88,6 +106,11 @@ stdenvNoCC.mkDerivation {
 
   buildInputs = [
     configqml
+    dbusqml
+    xdgiconqml
+    pipewirespectrum
+    niriqml
+    mangowcqml
     qt6.qtbase
     qt6.qtmultimedia
     qt6.qtimageformats
@@ -116,7 +139,7 @@ stdenvNoCC.mkDerivation {
 
   preFixup = ''
     qtWrapperArgs+=(
-      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
+      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages ++ imageDeps)}
       --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ wayland ]}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"

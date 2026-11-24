@@ -18,6 +18,8 @@ from guest_profile import activate_profile, profile_argument, protect_owned_proc
 from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
 from image_decoding_evidence import source_manifest
 from image_decoding_workspace import retire_fixture_copy
+from image_decoding_jobs import Worker, supervise
+from image_decoding_bus import address_for, private_bus
 from qml_probe import bootstrap_fixture
 
 
@@ -25,6 +27,14 @@ CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
+GROUPS = {
+    'chooser-wallpaper': ('chooser', 'legacy', 'backdrops', 'wallpaper-admission', 'wallpaper-setup',
+                          'wallpaper-wizard', 'wallpaper-scan', 'wallpaper-gallery', 'wallpaper-remote',
+                          'desktop-wallpaper', 'parallax-wallpaper'),
+    'shell': ('rounded', 'icons', 'artwork', 'launcher', 'text', 'producer-capture', 'notification-adapter',
+              'notification-service', 'notification-body', 'cache', 'cache-read', 'cache-clear'),
+    'all': ('owner', 'chooser-wallpaper', 'shell', 'plugins', 'packaging'),
+}
 
 
 def warning_coverage(path, color, *, background=None):
@@ -63,8 +73,16 @@ class Run:
         self.commands, self.cases = [], []
         self.started = time.monotonic()
         self.inputs = {key: source_manifest(path) for key, path in
-                       (('source', args.source), ('plugins', args.plugins), ('baselineSource', args.baseline_source),
-                        ('baselinePlugins', args.baseline_plugins)) if path is not None}
+                        (('source', args.source), ('plugins', args.plugins), ('baselineSource', args.baseline_source),
+                         ('baselinePlugins', args.baseline_plugins)) if path is not None}
+        changed = []
+        for source, baseline in ((args.source, getattr(args, 'lint_baseline_source', None)), (args.plugins, args.baseline_plugins)):
+            if baseline is not None:
+                before = source_manifest(baseline)['files']
+                after = source_manifest(source)['files']
+                changed.extend(str(source / name) for name, row in after.items()
+                               if name.endswith('.qml') and before.get(name) != row)
+        (self.out / 'changed-qml.txt').write_text(''.join(path + '\n' for path in sorted(changed)))
         (self.out / 'inputs.json').write_text(json.dumps(self.inputs, indent=2) + '\n')
         self.record('running')
 
@@ -94,14 +112,57 @@ class Run:
         if not condition:
             raise AssertionError(name + ': ' + json.dumps(detail))
 
-    def qt(self, source, fixture, inputs, name, extra_env=None, assembled=False):
-        result = self._qt(source, fixture, inputs, name, extra_env, assembled)
+    def aggregate(self):
+        """Run every cohort through its real driver and retain every assertion."""
+        children = self.out / 'cohorts'
+        children.mkdir()
+        for case in GROUPS[self.args.case]:
+            argv = ['python3', '-B', str(self.args.source / 'Scripts/dev/image-decoding-regression.py'),
+                    '--guest-profile', str(self.args.guest_profile), '--source', str(self.args.source),
+                    '--plugins', str(self.args.plugins), '--qt-webp', self.args.qt_webp,
+                    '--case', case, '--output', str(children / case), '--work-root', str(self.work / case)]
+            for flag, path in (('--baseline-source', self.args.baseline_source), ('--baseline-plugins', self.args.baseline_plugins)):
+                if path is not None:
+                    argv.extend((flag, str(path)))
+            if self.args.lint_baseline_source is not None:
+                argv.extend(('--lint-baseline-source', str(self.args.lint_baseline_source)))
+            result = self.command(argv, timeout=7200)
+            (self.out / (case + '.log')).write_text(result.stdout + result.stderr)
+            report = children / case / 'result.json'
+            data = json.loads(report.read_text()) if report.is_file() else {}
+            self.check('cohort-' + case, result.returncode == 0 and data.get('state') == 'complete'
+                       and data.get('cases') and all(row['result'] == 'PASS' for row in data['cases'])
+                       and data.get('inputs') == {key: row['sha256'] for key, row in self.inputs.items()},
+                       dict(exit=result.returncode, result=str(report), checks=len(data.get('cases', [])),
+                             failure=data.get('failure', ''), log=str(self.out / (case + '.log'))))
+        if self.args.case == 'all':
+            for name, argv in (
+                ('boundary', ['python3', '-B', str(self.args.source / 'Scripts/dev/image-decoding-boundary-check.py'),
+                              '--source', str(self.args.source), '--plugins', str(self.args.plugins), '--selftest',
+                              '--manifest', str(self.args.source / 'Scripts/dev/fixtures/image-decoding/consumers.json'),
+                              '--report', str(self.out / 'boundary.json')]),
+                 ('worker', ['python3', '-B', str(self.args.source / 'Scripts/dev/image-decoding-worker-tests.py'),
+                             '--guest-profile', str(self.args.guest_profile), '--source', str(self.args.source),
+                             '--work-root', str(self.work / 'worker'), '--output', str(self.out / 'worker')]),
+                 ('private-bus', ['python3', '-B', str(self.args.source / 'Scripts/dev/image-decoding-bus-selftest.py'),
+                                  '--guest-profile', str(self.args.guest_profile), '--output', str(self.out / 'private-bus')])):
+                result = self.command(argv, timeout=1800)
+                (self.out / (name + '.log')).write_text(result.stdout + result.stderr)
+                self.check('contract-' + name, result.returncode == 0, dict(exit=result.returncode, log=str(self.out / (name + '.log'))))
+
+    def qt(self, source, fixture, inputs, name, extra_env=None, assembled=False, launcher=None, clean_environment=False):
+        result = self._qt(source, fixture, inputs, name, extra_env, assembled, launcher, clean_environment)
         if not assembled:
             retire_fixture_copy(source, self.work / name, self.out / (name + '-source.json'),
                                 self.out / (name + '-source-retired.json'), self.work)
         return result
 
-    def _qt(self, source, fixture, inputs, name, extra_env=None, assembled=False):
+    def private_bus_address(self):
+        # Aggregate evidence/work paths can exceed sockaddr_un.sun_path. The
+        # admitted profile already owns a short disk-backed IPC runtime root.
+        return address_for(self.profile)
+
+    def _qt(self, source, fixture, inputs, name, extra_env=None, assembled=False, launcher=None, clean_environment=False):
         # Actual production imports are copied, never mocked or rewritten. Only
         # the separate test entry and private XDG preferences are synthesized.
         shell = source if assembled else self.work / name
@@ -177,7 +238,8 @@ class Run:
         output.mkdir()
         child_environment = self.profile.child_environment('image-')
         child_environment.setdefault('QT_QPA_PLATFORM', 'wayland')
-        env = dict(os.environ, **child_environment,
+        base_environment = dict(HOME=str(self.profile.home), LANG='C.UTF-8', PATH='/nonexistent') if clean_environment else os.environ
+        env = dict(base_environment, **child_environment,
                     QML_DISABLE_DISK_CACHE='1', IMAGE_FIXTURES=str(inputs), IMAGE_OUTPUT=str(output),
                     IMAGE_DATA='data:image/jpeg;base64,' + base64.b64encode((inputs / 'Still.webp').read_bytes()).decode(),
                     ATMOSPHERA_CONFIG_DIR=str(profile / 'config') + '/', ATMOSPHERA_CACHE_DIR=str(profile / 'cache') + '/',
@@ -186,31 +248,48 @@ class Run:
                    XDG_CONFIG_HOME=str(profile / 'config'), XDG_CACHE_HOME=str(profile / 'cache'),
                     XDG_STATE_HOME=str(profile / 'state'), XDG_DATA_HOME=str(profile / 'data'), TMPDIR=str(profile / 'tmp'))
         env.update(extra_env or {})
-        argv = ['qs', '-p', str(entry)]
+        argv = [str(launcher), 'run', '--path', str(entry)] if launcher else ['qs', '-p', str(entry)]
         with (output / 'qt.log').open('w') as log:
             proc = subprocess.Popen(argv, env=env, cwd=shell, start_new_session=True, stdout=log, stderr=subprocess.STDOUT)
             guard = protect_owned_process(proc)
             try:
                 # Inspect the actual fresh reader process, not an environment
                 # flag that merely claims a plugin condition.
-                maps = set()
+                maps, executables, environments = set(), set(), []
                 deadline = time.monotonic() + (90 if self.args.case in ('notification-service', 'plugins') else 25)
                 while proc.poll() is None:
                     try:
                         maps.update(line.split()[-1] for line in Path(f'/proc/{proc.pid}/maps').read_text().splitlines()
                                     if 'imageformats/' in line)
+                        executables.add(os.readlink(f'/proc/{proc.pid}/exe'))
+                        if launcher:
+                            values = dict(part.split(b'=', 1) for part in Path(f'/proc/{proc.pid}/environ').read_bytes().split(b'\0') if b'=' in part)
+                            selected = {key: os.fsdecode(values[os.fsencode(key)]) for key in ('PATH', 'QT_PLUGIN_PATH', 'QML_IMPORT_PATH', 'NIXPKGS_QT6_QML_IMPORT_PATH') if os.fsencode(key) in values}
+                            if selected not in environments:
+                                environments.append(selected)
                     except FileNotFoundError:
                         pass
                     if time.monotonic() >= deadline:
                         raise TimeoutError('Qt consumer watchdog')
                     time.sleep(.05)
                 code = proc.wait(timeout=25)
+            except BaseException as error:
+                (output / 'primary-error.txt').write_text(repr(error) + '\n')
+                raise
             finally:
-                if proc.poll() is None:
-                    guard.terminate()
-                    proc.wait(timeout=10)
+                try:
+                    if proc.poll() is None:
+                        guard.terminate()
+                        proc.wait(timeout=10)
+                except BaseException as error:
+                    (output / 'cleanup-error.txt').write_text(repr(error) + '\n')
+                    raise
+                finally:
+                    (output / 'process.json').write_text(json.dumps(dict(argv=argv,
+                        identity=guard.identity.record() if guard.identity else None, exit=proc.returncode,
+                        imagePlugins=sorted(maps), executables=sorted(executables),
+                        cleanEnvironment=clean_environment, environments=environments), indent=2) + '\n')
         text = (output / 'qt.log').read_text()
-        (output / 'process.json').write_text(json.dumps(dict(argv=argv, identity=guard.identity.record() if guard.identity else None, exit=code, imagePlugins=sorted(maps)), indent=2) + '\n')
         errors = [line for line in text.splitlines() if ERRORS.search(line)]
         if code or errors:
             raise AssertionError(dict(exit=code, runtimeErrors=errors, log=str(output / 'qt.log')))
@@ -291,7 +370,7 @@ class Run:
                 'Widgets/NImageRounded.qml', 'Widgets/NNotificationImage.qml', 'Modules/Notification/Notification.qml',
                 'Modules/Panels/NotificationHistory/NotificationHistoryPanel.qml')]
         lint = self.command(['bash', str(self.args.source / 'Scripts/dev/qmllint.sh'), *lint_paths], timeout=900,
-                            cwd=shell, env=dict(env, QS_VFS=str(vfs)))
+                            cwd=shell, env=dict(env, PATH=os.environ['PATH'], QS_VFS=str(vfs)))
         (output / 'qmllint.log').write_text(lint.stdout + lint.stderr)
         if lint.returncode or 'Failed to import qs.' in lint.stderr:
             raise AssertionError('Composite-aware consumer fixture lint failed')
@@ -315,15 +394,7 @@ class Run:
             shutil.copyfile(source, inputs / name)
         # The service and producer share a genuinely private bus, never the
         # guest's real notification endpoint. Keep its socket disk-backed too.
-        address = 'unix:path=' + str(self.work / 'notification-bus')
-        bus_log = (self.out / 'bus.log').open('w')
-        bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1', '--address=' + address],
-                               stdout=subprocess.PIPE, stderr=bus_log, text=True, start_new_session=True)
-        guard = protect_owned_process(bus)
-        bus_record = dict(identity=guard.identity.record())
-        try:
-            actual = bus.stdout.readline().strip()
-            assert actual.startswith(address)
+        with private_bus(self.profile, self.out) as actual:
             red = self.args.case == 'producer-retirement-red'
             adapter = self.args.case == 'notification-adapter'
             if red and self.args.baseline_source is None:
@@ -334,11 +405,6 @@ class Run:
                                      inputs, name, extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
                                       IMAGE_LEGACY_HOLD_CALLBACKS='1' if red else '0',
                                       IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
-        finally:
-            guard.terminate()
-            bus_record['exit'] = bus.wait(timeout=10)
-            bus_log.close()
-            (self.out / 'bus-process.json').write_text(json.dumps(bus_record, indent=2) + '\n')
         if red:
             self.check('producer-file-retirement-old-adapter', len(result['legacyFiles']) == 4
                        and all(row['path'] and not row['success'] and row['statusAfterLoss'] == 3 for row in result['legacyFiles']),
@@ -434,27 +500,18 @@ class Run:
         server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         thread = threading.Thread(target=server.serve_forever)
         thread.start()
-        address = 'unix:path=' + str(self.work / 'body-bus')
-        with (self.out / 'bus.log').open('w') as log:
-            bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1', '--address=' + address],
-                                   stdout=subprocess.PIPE, stderr=log, text=True, start_new_session=True)
-            guard = protect_owned_process(bus)
-            try:
-                actual = bus.stdout.readline().strip()
-                assert actual.startswith(address)
+        try:
+            with private_bus(self.profile, self.out) as actual:
                 result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-body.qml',
                     inputs, 'notification-body', extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
                     ATMOSPHERA_NOTIF_HISTORY_FILE=str(inputs / 'history.json'),
                     IMAGE_HTTP_BASE='http://127.0.0.1:' + str(server.server_port),
                     IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-body-producer.py')))
-            finally:
-                guard.terminate()
-                code = bus.wait(timeout=10)
-                (self.out / 'bus-process.json').write_text(json.dumps(dict(identity=guard.identity.record(), exit=code), indent=2) + '\n')
-                server.shutdown()
-                thread.join(timeout=5)
-                server.server_close()
-                (self.out / 'http.json').write_text(json.dumps(requests, indent=2) + '\n')
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)
+            server.server_close()
+            (self.out / 'http.json').write_text(json.dumps(requests, indent=2) + '\n')
         base = '127.0.0.1:'
         self.check('notification-body-producer', result['producerExit'] == 0 and not result['producerErrors'], result)
         self.check('notification-body-no-request', requests == [], requests)
@@ -488,7 +545,6 @@ class Run:
         if red and self.args.baseline_source is None:
             raise ValueError('Actual notification service red requires immutable baseline source')
         source = self.args.baseline_source if red else self.args.source
-        address = 'unix:path=' + str(self.work / 'service-bus')
         http_events = []
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):
@@ -518,13 +574,8 @@ class Run:
         server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         thread = threading.Thread(target=server.serve_forever)
         thread.start()
-        with (self.out / 'bus.log').open('w') as log:
-            bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1', '--address=' + address],
-                                   stdout=subprocess.PIPE, stderr=log, text=True, start_new_session=True)
-            guard = protect_owned_process(bus)
-            try:
-                actual = bus.stdout.readline().strip()
-                assert actual.startswith(address)
+        try:
+            with private_bus(self.profile, self.out) as actual:
                 name = 'notification-service-red' if red else 'notification-service'
                 result, output = self.qt(source, self.args.source / ('Scripts/dev/fixtures/image-decoding/' + name + '.qml'),
                     inputs, name, extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
@@ -538,14 +589,11 @@ class Run:
                     cold, cold_output = self.qt(source, self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-history.qml',
                         inputs, 'notification-history-cold', extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
                         ATMOSPHERA_NOTIF_HISTORY_FILE=str(inputs / 'history.json')))
-            finally:
-                guard.terminate()
-                code = bus.wait(timeout=10)
-                (self.out / 'bus-process.json').write_text(json.dumps(dict(identity=guard.identity.record(), exit=code), indent=2) + '\n')
-                server.shutdown()
-                thread.join(timeout=5)
-                server.server_close()
-                (self.out / 'http.json').write_text(json.dumps(http_events, indent=2) + '\n')
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)
+            server.server_close()
+            (self.out / 'http.json').write_text(json.dumps(http_events, indent=2) + '\n')
         self.check('actual-service-producer-retired-file', result['producerExit'] == 0 and not result['producerErrors']
                    and not (inputs / 'service-ephemeral.webp').exists(), result)
         if not red:
@@ -2133,14 +2181,35 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--baseline-source', type=Path)
     parser.add_argument('--baseline-plugins', type=Path)
+    parser.add_argument('--lint-baseline-source', type=Path, help='Immutable shell baseline for changed-QML reporting, never a red control')
     parser.add_argument('--qt-webp', choices=('present', 'absent'), required=True)
     parser.add_argument('--case', choices=CASES, required=True)
     parser.add_argument('--results', type=Path)
+    parser.add_argument('--job-control', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.case == 'review-results' and args.results is None:
+        parser.error('review-results requires --results')
     profile = activate_profile(args.guest_profile)
+    for path in (args.source, args.plugins, args.baseline_source, args.baseline_plugins, args.lint_baseline_source):
+        if path is not None and (path != path.resolve() or not path.is_dir() or not path.is_relative_to(profile.workspace)):
+            raise ValueError('Canonical source inside the named execution workspace required')
+    if args.case != 'review-results':
+        missing = [tool for tool in ('python3', 'magick', 'ffmpeg', 'ffprobe', 'qs', 'dbus-daemon', 'busctl') if not shutil.which(tool)]
+        if missing:
+            raise RuntimeError('Missing guest prerequisites before fixture creation: ' + ', '.join(missing))
+    status = supervise(args, profile)
+    if status is not None:
+        return status
+    with Worker(args, profile):
+        return execute(args, profile)
+
+
+def execute(args, profile):
     run = Run(args, profile)
     try:
-        if args.case == 'red':
+        if args.case in GROUPS:
+            run.aggregate()
+        elif args.case == 'red':
             run.red()
         elif args.case == 'remote-red':
             run.remote_red()
@@ -2192,6 +2261,12 @@ def main():
             run.chooser()
         elif args.case == 'plugins':
             run.plugins()
+        elif args.case == 'packaging':
+            from image_decoding_packages import qualify
+            qualify(run)
+        elif args.case == 'review-results':
+            from image_decoding_review import review
+            review(run)
         else:
             raise NotImplementedError('Required image cohort not implemented: ' + args.case)
         current = {key: source_manifest(path) for key, path in
