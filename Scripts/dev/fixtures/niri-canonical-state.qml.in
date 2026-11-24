@@ -177,15 +177,36 @@ ShellRoot {
       run("disconnect clears state and late old output cannot hydrate reconnect", b => {
         publish([win("0", "0", ["1","1"])], [ws("0", 1, "Old", "0")], "0", "0",
           {names:["Old"],currentIdx:0}, true);
+        NiriRequests.deliver("outputs", {Old:{logical:{scale:2}}});
+        eq(CompositorService.forwardedOutputs.Old.scale, 2);
+        b.bootstrap();
         NiriConnection.isConnected = false;
         NiriState.publish(false, [], [], null, null, null, false);
         eq([b.ready, b.windows, b.workspaces.count, b.focusedWindowId, b.keyboardLayouts, b.overviewActive],
           [false, [], 0, null, [], false]);
+        b.queryDisplayScales();
+        eq([Object.keys(b.outputCache), CompositorService.forwardedOutputs.Old?.scale], [[], 2]);
         NiriConnection.isConnected = true;
         NiriRequests.deliver("outputs", {Old:{logical:{scale:4}}});
+        eq(CompositorService.forwardedOutputs.Old.scale, 2);
         NiriRequests.deliver("outputs", {New:{logical:{scale:2}}});
         publish([win(hi, hi, ["2","1"])], [ws(hi, 1, "New", hi)], hi, hi);
         eq([b.ready, b.windows[0].output, b.focusedWindowId, Object.keys(b.outputCache)], [true, "New", hi, ["New"]]);
+        eq(CompositorService.forwardedOutputs.New.scale, 2);
+        b.queryDisplayScales();
+        NiriRequests.deliver("outputs", {});
+        eq(CompositorService.forwardedOutputs, {});
+      });
+      run("standalone controls bypass the retired stream, state-relative actions do not", b => {
+        NiriActions.calls = [];
+        publish([win("0", "0", ["1","1"])], [ws("0", 1, "Old", "0")], "0", "0");
+        NiriConnection.isConnected = false;
+        b.focusWindow("0");
+        b.turnOffMonitors();
+        b.turnOnMonitors();
+        b.logout();
+        b.cycleKeyboardLayout();
+        eq(NiriActions.calls.map(row => row[0]), ["PowerOffMonitors", "PowerOnMonitors", "Quit", "SwitchLayout"]);
       });
       run("handoff requires fresh peer metadata, not merely an open socket", b => {
         const session = handoff.createObject(test);

@@ -36,7 +36,9 @@ def main():
         flow.boundary()
     else:
         require_disk_backed_paths(workspace, os.environ.get('TMPDIR', ''), args.source)
-        if not Path(os.environ['XDG_RUNTIME_DIR'], os.environ['WAYLAND_DISPLAY']).is_socket():
+        runtime_dir = os.environ.get('XDG_RUNTIME_DIR')
+        display = os.environ.get('WAYLAND_DISPLAY')
+        if not runtime_dir or not display or not Path(runtime_dir, display).is_socket():
             parser.error('the fixture needs the guest Wayland session')
     output, runtime = workspace / 'evidence' / args.label, workspace / 'runtime' / args.label
     output.mkdir(parents=True)

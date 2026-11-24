@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import tempfile
 
+from fixture_profile import isolated_profile
 from workspace_guard import require_disk_backed_paths
 
 
@@ -105,6 +106,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--widget', action='store_true', help='also exercise the real Workspace widget in the guest Wayland session')
     args = parser.parse_args()
     source = args.source.resolve()
     output = args.output.resolve()
@@ -158,10 +160,10 @@ QtObject {
                                 env=env, cwd=tree, stdout=log, stderr=subprocess.STDOUT, timeout=40)
     lines = [line.split('BOOTSTRAP_RESULT|', 1)[1] for line in (output / 'shell.log').read_text().splitlines() if 'BOOTSTRAP_RESULT|' in line]
     cases = json.loads(lines[-1]) if lines else []
-    widget_case = workspace_widget(source, output)
-    passed = (result.returncode == 0 and len(cases) == 13
-              and all(c['passed'] for c in cases) and widget_case['passed'])
-    cases.append(widget_case)
+    complete = len(cases) == 14
+    if args.widget:
+        cases.append(workspace_widget(source, output))
+    passed = result.returncode == 0 and complete and all(c['passed'] for c in cases)
     for case in cases:
         print(case['name'], 'PASS' if case['passed'] else 'FAIL', case.get('error', ''))
     (output / 'result.json').write_text(json.dumps(dict(passed=passed, exit_code=result.returncode, cases=cases), indent=2) + '\n')
@@ -171,12 +173,7 @@ QtObject {
 def workspace_widget(source, output):
     # The widget depends on the real shell's relative imports, not the mock
     # backend tree. Give this QS process its own XDG profile nevertheless.
-    profile = {}
-    for key in ('CONFIG', 'DATA', 'CACHE', 'STATE'):
-        directory = output / 'widget-profile' / key.lower()
-        directory.mkdir(parents=True)
-        profile[f'XDG_{key}_HOME'] = str(directory)
-    env = dict(os.environ, **profile)
+    env = isolated_profile(output / 'widget-profile')
     env.pop('NIRI_SOCKET', None)
     env['QT_QPA_PLATFORM'] = 'wayland'
     template = Path(__file__).parent / 'fixtures/niri-workspace-widget.qml.in'

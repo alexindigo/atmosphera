@@ -10,6 +10,7 @@ import tempfile
 import threading
 import time
 
+from fixture_profile import isolated_profile
 from workspace_guard import require_disk_backed_paths
 
 
@@ -109,11 +110,7 @@ def main():
         entry.write(template.read_text().replace('@SCENARIO@', args.scenario))
         entry.flush()
         path = str(Path(temp) / 'socket')
-        env = dict(os.environ, NIRI_SOCKET=path, QT_QPA_PLATFORM='wayland', ATMOSPHERA_LOCKSCREEN='1')
-        for key in ('CONFIG', 'DATA', 'CACHE', 'STATE'):
-            directory = output / key.lower()
-            directory.mkdir()
-            env[f'XDG_{key}_HOME'] = str(directory)
+        env = dict(isolated_profile(output), NIRI_SOCKET=path, QT_QPA_PLATFORM='wayland', ATMOSPHERA_LOCKSCREEN='1')
         with socketserver.ThreadingUnixStreamServer(path, Peer) as peer:
             peer.lock = threading.Lock()
             peer.actions = []

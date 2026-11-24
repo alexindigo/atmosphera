@@ -198,7 +198,7 @@ Item {
     }
     outputCache = cache;
     publishState();
-    queryDisplayScales();
+    CompositorService.onDisplayScalesUpdated(cache);
   }
 
   function bootstrap() {
@@ -231,7 +231,7 @@ Item {
   }
 
   function queryDisplayScales() {
-    CompositorService.onDisplayScalesUpdated(outputCache);
+    bootstrap();
   }
 
   Connections {
@@ -249,7 +249,6 @@ Item {
       outputRetry.stop();
       root.outputCache = ({});
       root.publishState();
-      root.queryDisplayScales();
       root.bootstrap();
     }
   }
@@ -295,7 +294,7 @@ Item {
       fail("IPC returned no reply");
   }
 
-  function handleAction(name, send, completed) {
+  function handleStateAction(name, send, completed) {
     request(name, send, completed, currentStateGuard());
   }
 
@@ -309,24 +308,24 @@ Item {
 
   function switchToWorkspace(workspace) {
     if (workspaceForId(workspace?.id))
-      handleAction("switchToWorkspace", () => NiriActions.focusWorkspace({
-                                                                           Id: workspace.id
-                                                                         }));
+      handleStateAction("switchToWorkspace", () => NiriActions.focusWorkspace({
+                                                                                Id: workspace.id
+                                                                              }));
   }
   function scrollWorkspaceContent(direction) {
-    handleAction("scrollWorkspaceContent", () => NiriActions.sendAction(direction < 0 ? {
-                                                                                          FocusColumnLeft: {}
-                                                                                        } : {
-                                                                          FocusColumnRight: {}
-                                                                        }));
+    handleStateAction("scrollWorkspaceContent", () => NiriActions.sendAction(direction < 0 ? {
+                                                                                               FocusColumnLeft: {}
+                                                                                             } : {
+                                                                               FocusColumnRight: {}
+                                                                             }));
   }
   function focusWindow(win) {
     if (windowForId(win?.id))
-      handleAction("focusWindow", () => NiriActions.focusWindow(win.id));
+      handleStateAction("focusWindow", () => NiriActions.focusWindow(win.id));
   }
   function closeWindow(win) {
     if (windowForId(win?.id))
-      handleAction("closeWindow", () => NiriActions.closeWindow(win.id));
+      handleStateAction("closeWindow", () => NiriActions.closeWindow(win.id));
   }
 
   // An insert moves into a live empty workspace first. Never reorder on a
@@ -363,28 +362,28 @@ Item {
     }, current);
   }
   function turnOffMonitors() {
-    handleAction("turnOffMonitors", () => NiriActions.sendAction({
-                                                                   PowerOffMonitors: {}
-                                                                 }));
+    request("turnOffMonitors", () => NiriActions.sendAction({
+                                                              PowerOffMonitors: {}
+                                                            }));
   }
   function turnOnMonitors() {
-    handleAction("turnOnMonitors", () => NiriActions.sendAction({
-                                                                  PowerOnMonitors: {}
-                                                                }));
+    request("turnOnMonitors", () => NiriActions.sendAction({
+                                                             PowerOnMonitors: {}
+                                                           }));
   }
   function logout() {
-    handleAction("logout", () => NiriActions.sendAction({
-                                                          Quit: {
-                                                            skip_confirmation: true
-                                                          }
-                                                        }));
+    request("logout", () => NiriActions.sendAction({
+                                                     Quit: {
+                                                       skip_confirmation: true
+                                                     }
+                                                   }));
   }
   function cycleKeyboardLayout() {
-    handleAction("cycleKeyboardLayout", () => NiriActions.sendAction({
-                                                                       SwitchLayout: {
-                                                                         layout: "Next"
-                                                                       }
-                                                                     }));
+    request("cycleKeyboardLayout", () => NiriActions.sendAction({
+                                                                  SwitchLayout: {
+                                                                    layout: "Next"
+                                                                  }
+                                                                }));
   }
   function getFocusedScreen() {
     return null;
