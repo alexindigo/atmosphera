@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual battery helper in a private guest mount namespace over disposable sysfs."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.json_evidence import json_matches
 import argparse
 import hashlib
 import json
@@ -36,7 +37,8 @@ def main():
         (out / (name + '.stdout')).write_text(result.stdout); (out / (name + '.stderr')).write_text(result.stderr)
         if result.returncode: raise RuntimeError('namespace helper failure: ' + result.stderr)
         data = json.loads(result.stdout)
-        mismatch = {key: dict(expected=value, observed=data.get(key)) for key, value in expected.items() if data.get(key) != value}
+        mismatch = {key: dict(expected=value, observed=data.get(key)) for key, value in expected.items()
+                    if key not in data or not json_matches(data[key], value)}
         rows.append(dict(name=name, selection=selection, expected=expected, observed=data, mismatch=mismatch))
         if mismatch:
             if not args.expect_selection_red: raise RuntimeError('selected helper mismatch: ' + repr(rows[-1]))

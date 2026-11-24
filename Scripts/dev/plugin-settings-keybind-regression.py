@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Keybind real native controls, selected parser and complete cold documents."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.json_evidence import require_json_match
 import argparse
 from copy import deepcopy
 import fcntl
@@ -71,7 +72,8 @@ def run(args, profile, scope):
         stage_receipt(output/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=hashes(case)))
     if wanted: raise RuntimeError('negative control escaped')
     for name,value in expected.items():
-        if json.loads((out/'persisted'/(name+'.json')).read_text()) != dict(status='PASS',values=value): raise RuntimeError('independent boundary: '+name)
+        require_json_match(json.loads((out/'persisted'/(name+'.json')).read_text()),
+                           dict(status='PASS', values=value), 'independent boundary: '+name)
     result=dict(status='PASS',scope=scope,fields=keys,hidden=['keyLabelColor'],independentBoundaries=sorted(expected),coldReaders=['edited','reset','following'],physicalProof=False,completePlanAcceptance=False)
     stage_receipt(out/'result.json',result); runner.remove_completed_installs(case,out); return result
 

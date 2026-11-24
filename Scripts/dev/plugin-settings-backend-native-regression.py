@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual G4 pages, independent native documents and cold rendered consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.json_evidence import require_json_match
 import argparse
 from copy import deepcopy
 import fcntl
@@ -68,7 +69,8 @@ def run(args, profile, scope):
         runner.write_json(part/'consumer.json', dict(status='REJECTED' if args.shared_popup else 'PASS', observed=observed))
     boundaries = ['initial','discarded','edited'] if args.shared_popup else list(expected)
     for boundary in boundaries:
-        assert json.loads((out/'persisted'/(boundary+'.json')).read_text()) == dict(status='PASS', values=expected[boundary])
+        require_json_match(json.loads((out/'persisted'/(boundary+'.json')).read_text()),
+                           dict(status='PASS', values=expected[boundary]), 'independent boundary: '+boundary)
     shutil.copy2(case/'requests.jsonl', out/'requests.jsonl')
     rows = [json.loads(line) for line in (out/'requests.jsonl').read_text().splitlines()]
     for row in rows:

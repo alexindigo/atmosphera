@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Both-scope Catwalk sparse/reset/inheritance/failure/stale/native-lifetime matrix."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.json_evidence import require_json_match
 import argparse
 from copy import deepcopy
 import fcntl
@@ -49,7 +50,7 @@ def run(args,profile,scope):
             marker=controls[args.control][3] if args.control else None
             if not marker or marker not in (leg/'runtime.log').read_text() or (leg/'runtime.exit').read_text().strip()!='2':raise
             actual=dict(shared=json.loads((case/'config/settings/plugins/catwalk.json').read_text()),bar=json.loads((case/'config/settings/bar.json').read_text()))
-            if actual!=expected['initial']:raise RuntimeError('rejecting consumer changed native configuration')
+            require_json_match(actual, expected['initial'], 'rejecting consumer changed native configuration')
             stage_receipt(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=marker,independentInitialDocuments=actual,completePlanAcceptance=False));runner.remove_completed_installs(case,out);return
         finally:(case/('config/settings/plugins' if scope=='shared' else 'config/settings')).chmod(0o700)
         if args.control:raise RuntimeError('Catwalk matrix control escaped')
@@ -59,7 +60,8 @@ def run(args,profile,scope):
         stage_receipt(leg/'observed.json',dict(status='PASS',configurationBefore=before,configurationAfter=after))
         checks+=text.count('CAT_MATRIX_CHECK:')
     for name,value in expected.items():
-        if json.loads((out/'persisted'/(name+'.json')).read_text())!=dict(status='PASS',values=value):raise RuntimeError('independent complete document boundary '+name)
+        require_json_match(json.loads((out/'persisted'/(name+'.json')).read_text()),
+                           dict(status='PASS', values=value), 'independent complete document boundary '+name)
     stage_receipt(out/'result.json',dict(status='PASS',scope=scope,independentDocuments=list(expected),checks=checks,coldReaders=1,completePlanAcceptance=False))
     runner.remove_completed_installs(case,out)
 @receipt_run
