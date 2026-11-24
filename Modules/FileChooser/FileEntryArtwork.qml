@@ -18,6 +18,13 @@ Item {
   readonly property var videoResult: videoThumbnail.item ? videoThumbnail.item.result : null
   readonly property bool previewUnavailable: thumbnail.imageState === "unavailable" || (!!videoResult && videoResult.status === "unavailable")
   readonly property string previewError: thumbnail.errorReason || (videoResult ? videoResult.reason || "" : "")
+  readonly property string previewTooltip: errorHover.hovered && previewUnavailable ? I18n.tr("widgets.file-picker.preview-unavailable") + ": " + previewError : ""
+  onPreviewTooltipChanged: {
+    if (previewTooltip)
+      TooltipService.show(root, previewTooltip);
+    else
+      TooltipService.hide(root);
+  }
   opacity: descriptor.hidden ? .5 : 1
   layer.enabled: true
   readonly property var metrics: ({
@@ -125,11 +132,5 @@ Item {
   }
   HoverHandler {
     id: errorHover
-    onHoveredChanged: {
-      if (hovered && root.previewUnavailable)
-        TooltipService.show(root, I18n.tr("widgets.file-picker.preview-unavailable") + ": " + root.previewError);
-      else
-        TooltipService.hide();
-    }
   }
 }

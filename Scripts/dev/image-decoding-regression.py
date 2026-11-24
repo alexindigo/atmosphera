@@ -12,6 +12,7 @@ import subprocess
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import unquote, urlsplit
 
 from guest_profile import activate_profile, profile_argument, protect_owned_process
 from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
@@ -22,7 +23,7 @@ from image_decoding_bus import address_for, private_bus
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'source-admission', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -34,6 +35,26 @@ GROUPS = {
               'notification-service', 'notification-body', 'cache', 'cache-read', 'cache-clear'),
     'all': ('owner', 'chooser-wallpaper', 'shell', 'plugins', 'packaging'),
 }
+
+
+def warning_coverage(path, color, *, background=None):
+    """Measure equivalent opaque warning pixels in a straight-alpha grab."""
+    width, height, rgba = read_png(path)
+    offsets = range(0, len(rgba), 4)
+    if background is not None:
+        bg_width, bg_height, bg = read_png(background)
+        if (bg_width, bg_height) != (width, height):
+            raise AssertionError('Warning and background grabs differ in size')
+        # On transparent parts of the paired fallback, straight RGB and alpha
+        # describe the warning itself, not its blend with the fallback art.
+        offsets = (i for i in offsets if bg[i + 3] == 0)
+    return sum(rgba[i + 3] for i in offsets
+               if max(abs(a - b) for a, b in zip(rgba[i:i + 3], color[:3])) <= 8) / 255
+
+
+def red_warning_coverage(pixels, color):
+    """Measure blended warning coverage over neutral chrome or green icons."""
+    return sum(max(0, r - g) * a / 255 for r, g, _, a in pixels) / (color[0] - color[1])
 
 
 class Run:
@@ -276,9 +297,11 @@ class Run:
         if not vfs.is_relative_to(self.profile.runtime_base) or not (vfs / 'qs/Commons/qmldir').is_file():
             raise AssertionError('Consumer did not generate authoritative QML tooling')
         lint_paths = [str(entry)]
-        if self.args.case in ('owner', 'legacy'):
+        if self.args.case in ('owner', 'source-admission', 'legacy'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageWorker.qml', 'Services/UI/ImageSource.qml',
-                                                    'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml')]
+                                                    'Services/UI/ImageCacheService.qml', 'Widgets/NImage.qml', 'Widgets/AtmoIcon.qml')]
+            if not assembled:
+                lint_paths.append(str(shell / 'Widgets/NImageIcon.qml'))
         if self.args.case in ('cache', 'cache-read'):
             lint_paths += [str(shell / p) for p in ('Services/UI/ImageSource.qml', 'Widgets/NImage.qml',
                 'Services/UI/ImageCacheService.qml', 'Modules/FileChooser/FileEntryArtwork.qml')]
@@ -353,7 +376,9 @@ class Run:
             raise AssertionError('Composite-aware consumer fixture lint failed')
         rows = [json.loads(line.split('IMAGE_BASELINE|', 1)[1]) for line in text.splitlines() if 'IMAGE_BASELINE|' in line]
         grabs = [json.loads(line.split('IMAGE_GRAB|', 1)[1]) for line in text.splitlines() if 'IMAGE_GRAB|' in line]
-        assert len(rows) == 1 and grabs and all(row['saved'] for row in grabs)
+        bad_grabs = [row for row in grabs if not row['saved']]
+        if len(rows) != 1 or not grabs or bad_grabs:
+            raise AssertionError(dict(baselines=len(rows), grabs=len(grabs), failedGrabs=bad_grabs))
         (output / 'consumer.json').write_text(json.dumps(rows[0], indent=2) + '\n')
         return rows[0], output
 
@@ -378,7 +403,8 @@ class Run:
             name = 'producer-retirement-red' if red else 'notification-adapter' if adapter else 'producer-capture'
             result, output = self.qt(source, self.args.source / ('Scripts/dev/fixtures/image-decoding/' + name + '.qml'),
                                      inputs, name, extra_env=dict(DBUS_SESSION_BUS_ADDRESS=actual,
-                                     IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
+                                      IMAGE_LEGACY_HOLD_CALLBACKS='1' if red else '0',
+                                      IMAGE_PRODUCER=str(self.args.source / 'Scripts/dev/fixtures/image-decoding/notification-producer.py')))
         if red:
             self.check('producer-file-retirement-old-adapter', len(result['legacyFiles']) == 4
                        and all(row['path'] and not row['success'] and row['statusAfterLoss'] == 3 for row in result['legacyFiles']),
@@ -585,7 +611,22 @@ class Run:
         required = ['file', 'metadata-only', 'replace-green', 'replace-blue', 'collision', 'compact', 'data', 'no-art', 'missing', 'corrupt', 'hidden',
                     'dnd', 'transient', 'blocked', 'no-owner', 'pending-clear', 'pending-dismiss', 'pending-remove',
                     'slow-superseded', 'transient-replacement', 'blocked-replacement', 'shared-one', 'shared-two', 'shared-remove',
-                    'overflow-trigger', 'clear-with-popup', 'cold-provider', 'cold-file', 'closed']
+                    'overflow-trigger', 'same-provider-first', 'same-provider-replacement',
+                    'same-provider-new', 'clear-with-popup', 'cold-provider', 'cold-file', 'closed']
+        actual = []
+        for stage, color in [('same-provider-first', COLORS[0]), ('same-provider-replacement', COLORS[2]),
+                             ('same-provider-new', COLORS[2])]:
+            target = next(row for row in snapshots[stage]['history'] if row['summary'] == stage)
+            rows = [dict(cohort=row['cohort'], status=row['status'], rgba=pixel(output / row['file']))
+                    for row in result['widgets'] if row['stage'] == stage and row['id'] == target['id']]
+            actual.append(dict(stage=stage, expected=list(color), rows=rows, id=target['id'],
+                               revision=target['imageRevision'], source=target['originalImage']))
+        self.check('notification-service-same-provider-actual-pixels',
+                   len({row['source'] for row in actual}) == 1 and actual[0]['id'] == actual[1]['id'] != actual[2]['id']
+                   and actual[0]['revision'] != actual[1]['revision']
+                   and all({row['cohort'] for row in step['rows']} == {'popup', 'history'}
+                           and all(row['status'] == 1 and row['rgba'] == step['expected'] for row in step['rows'])
+                           for step in actual), actual)
         self.check('notification-service-complete-schedules', list(snapshots) == required, list(snapshots))
         self.check('notification-service-actual-native-control', result['raw'] == (1 if installed else 3), result['raw'])
         first = snapshots['file']['history'][0]
@@ -694,6 +735,12 @@ class Run:
                    for row in cold['widgets']), cold)
         self.check('notification-service-quiescence', result['interests'] == cold['interests'] == 0
                    and not result['worker'] and not cold['worker'] and not snapshots['closed']['popup'], snapshots['closed'])
+        shared = next(row['cachedImage'] for row in snapshots['clear-with-popup']['popup']
+                      if row['summary'] == 'shared-two')
+        shared_path = Path(unquote(urlsplit(shared).path))
+        self.check('notification-service-last-reference-retires-original', urlsplit(shared).scheme == 'file'
+                   and shared_path.parent.name == 'retained' and not shared_path.exists()
+                   and all(row['cachedImage'] != shared for row in persisted), dict(url=shared, retained=shared_path.exists()))
         return result
 
     def red(self):
@@ -799,9 +846,10 @@ class Run:
                         else list(COLORS[int(name[6])]) if name.startswith('frame-') else None)
             capture = output/('ack-'+str(index)+'.png')
             observed = pixel(capture) if capture.is_file() else None
-            checks.append(dict(event=row, observed=observed, expected=expected))
+            checks.append(dict(event=row, observed=observed, expected=expected, captured=capture.is_file()))
         self.check(prefix+'-acknowledgment-after-presented-ready', len(checks) >= 9
-                   and all(row['observed'] == row['expected'] and not row['event']['transitioning'] for row in checks), checks)
+                    and all(row['expected'] is not None and row['captured'] and row['event'].get('visible') is True
+                            and row['observed'] == row['expected'] and not row['event']['transitioning'] for row in checks), checks)
         self.check(prefix+'-failure-reason', all(row['reason'] for row in result['snapshots']
                    if row['name'] in ('invalid','solid-invalid')), result['snapshots'])
         self.check(prefix+'-destruction-retires-all-interests', result['interests'] == result['requests'] == 0
@@ -906,6 +954,11 @@ os.execv('/usr/bin/find', ['find', *args])
                                  IMAGE_SCAN_BASELINE='1' if self.args.baseline_source else '0'))
         stages = {row['name']:row for row in result['snapshots']}
         expected = {str(inputs/'scan-main/main.png'), *(str(inputs/'pool-simple'/name) for name in names)}
+        if self.args.baseline_source is not None:
+            actual = set(stages['union']['paths'])
+            self.check('old-wallpaper-scan-loses-part-of-the-union', list(stages) == ['union']
+                       and bool(actual) and actual < expected, stages['union'], red=True)
+            return result
         self.check('wallpaper-scan-publishes-complete-main-pool-union', set(stages['union']['paths']) == expected,
                    stages['union'])
         self.check('wallpaper-scan-browse-never-cancels-publication', set(stages['browse']['paths']) == expected
@@ -927,6 +980,13 @@ os.execv('/usr/bin/find', ['find', *args])
         return result
 
     def wallpaper_wizard(self):
+        red = self.args.case == 'wizard-red'
+        source = self.args.source
+        if red:
+            source = self.args.baseline_source
+            if source is None or source.resolve() == self.args.source.resolve():
+                raise ValueError('Wizard red requires a separate immutable pre-admission wizard source')
+        fixture = self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml'
         installed = self.command(['pacman', '-Q', 'qt6-imageformats']).returncode == 0
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
         # The real none deployment must be inapplicable, not able to modify a
@@ -958,11 +1018,11 @@ os.execv('/usr/bin/find', ['find', *args])
         thread = threading.Thread(target=server.serve_forever)
         thread.start()
         try:
-            result, output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml',
-                inputs, 'wallpaper-wizard', dict(IMAGE_WIZARD_RED='1' if self.args.case == 'wizard-red' else '0',
+            result, output = self.qt(source, fixture,
+                inputs, 'wallpaper-wizard', dict(IMAGE_WIZARD_RED='1' if red else '0',
                 IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}', NIRI_SOCKET=''))
-            if self.args.case != 'wizard-red':
-                extra, extra_output = self.qt(self.args.source, self.args.source/'Scripts/dev/fixtures/image-decoding/wallpaper-wizard.qml',
+            if not red:
+                extra, extra_output = self.qt(source, fixture,
                     inputs, 'wallpaper-wizard-extra', dict(IMAGE_WIZARD_EXTRA='1',
                     IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}', NIRI_SOCKET=''))
         finally:
@@ -971,7 +1031,7 @@ os.execv('/usr/bin/find', ['find', *args])
             server.server_close()
         (self.out/'http-requests.json').write_text(json.dumps(requests, indent=2)+'\n')
         stages = {row['name']: row for row in result['snapshots']}
-        if self.args.case == 'wizard-red':
+        if red:
             self.check('old-wizard-saves-corrupt-unaccepted-wallpaper', stages['red']['request']['status'] == 'Succeeded'
                        and stages['red']['path'] == str(inputs/'frame-1.png') and stages['red']['scale'] == 1.15,
                        result, red=True)
@@ -1069,9 +1129,11 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('setup-emits-only-validated-user-selection', result['selections'] == [str(inputs/'Still.webp')]
                    and stages['valid-intent']['selected'] == str(inputs/'Still.webp')
                    and pixel(output/'valid-intent.png') == list(COLORS[0]), result['selections'])
+        gallery_centers = [pixel(path) for path in output.glob('gallery-*.png')]
         self.check('setup-gallery-is-static-frame-zero', len(result['galleryFrames']) == 11
                    and all(row['status'] == 1 and row['result']['frames'] == 1 for row in result['galleryFrames'])
-                   and all(pixel(path) == list(COLORS[0]) for path in output.glob('gallery-*.png')), result['galleryFrames'])
+                   and gallery_centers == [list(COLORS[0])]*11,
+                   dict(rows=result['galleryFrames'], centers=gallery_centers))
         self.check('setup-destruction-retires-all-interests', result['interests'] == result['requests'] == 0 and not result['workerRunning'], result)
         return result
 
@@ -1150,9 +1212,10 @@ os.execv('/usr/bin/find', ['find', *args])
                    and {tuple(p) for p in centers} == set(COLORS), dict(consumer=result['motion'],centers=centers))
         self.check('rounded-failure-is-labelled-not-ordinary-icon', result['failure']['status'] == 3 and result['failure']['reason'], result['failure'])
         width,height,pixels = read_png(output/'failure.png')
-        warning_pixels = sum(max(abs(a-b) for a,b in zip(pixels[(y*width+x)*4:(y*width+x+1)*4],result['warningColor'])) < 8
-                             for y in range(height//2,height) for x in range(width//2,width))
-        self.check('rounded-error-warning-is-actually-presented',warning_pixels > 10,dict(pixels=warning_pixels,color=result['warningColor']))
+        badge_region = (pixels[(y*width+x)*4:(y*width+x+1)*4]
+                        for y in range(height//2,height) for x in range(width//2,width))
+        warning = red_warning_coverage(badge_region, result['warningColor'])
+        self.check('rounded-error-warning-is-actually-presented', warning > 10, dict(warningCoverage=warning))
         for name in ('fit','crop','stretch'):
             path = output/(name+'.png')
             centers = [pixel(path,x,64) for x in (16,64,112)]
@@ -1184,7 +1247,56 @@ os.execv('/usr/bin/find', ['find', *args])
         manifest = create_fixtures(inputs, self.commands)
         (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
         fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding/backdrops.qml'
-        result, output = self.qt(self.args.source, fixture, inputs, 'backdrops')
+        def with_held_request(source, name, assembled=False):
+            admitted, release, answered = (threading.Event() for _ in range(3))
+            data = (inputs / 'frame-0.png').read_bytes()
+
+            class Handler(BaseHTTPRequestHandler):
+                def do_GET(self):
+                    if self.path == '/held.png':
+                        admitted.set()
+                        if not release.wait(8):
+                            self.send_error(504)
+                            return
+                        try:
+                            self.respond(data)
+                        except (BrokenPipeError, ConnectionResetError):
+                            pass  # Retirement can close the original client socket.
+                        finally:
+                            answered.set()
+                    elif self.path == '/admitted' and admitted.wait(8):
+                        self.respond()
+                    elif self.path == '/release':
+                        release.set()
+                        if answered.wait(8):
+                            self.respond()
+                        else:
+                            self.send_error(504)
+                    else:
+                        self.send_error(404)
+
+                def respond(self, body=b''):
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+
+                def log_message(self, *_):
+                    pass
+
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                return self.qt(source, fixture, inputs, name,
+                               dict(IMAGE_HELD_SERVER=f'http://127.0.0.1:{server.server_port}'), assembled=assembled)
+            finally:
+                release.set()
+                server.shutdown()
+                thread.join()
+                server.server_close()
+
+        result, output = with_held_request(self.args.source, 'backdrops')
         def review(observed, captures, prefix):
             for name in ('backdrop', 'lock'):
                 before, failed, replacement = [stage[name] for stage in observed['stages']]
@@ -1199,6 +1311,20 @@ os.execv('/usr/bin/find', ['find', *args])
                            and next_center[1] > 80 and next_center[1] > 3*next_center[0] and next_center[1] > 2*next_center[2],
                            dict(consumer=replacement, center=next_center))
             self.check(prefix + 'hide-retires-interests', observed['interests'] == observed['requests'] == 0 and not observed['workerRunning'], observed)
+            admitted, before_release, after_release = observed['heldStages']
+            old = [source for source in admitted['sources'] if source.endswith('/held.png')]
+            self.check(prefix + 'held-request-admitted-and-retired', len(old) == 2
+                       and old[0] not in before_release['sources'] + after_release['sources'],
+                       observed['heldStages'])
+            for name in ('backdrop', 'lock'):
+                before_image = captures / ('held-before-' + name + '.png')
+                after_image = captures / ('held-after-' + name + '.png')
+                r, g, b, *_ = pixel(before_image)
+                self.check(prefix + name + '-retired-request-cannot-replace-new-pixels',
+                           admitted[name]['state'] == 'loading' and before_release[name]['state'] == 'ready'
+                           and after_release[name] == before_release[name]
+                           and b > 80 and b > 2*r and b > 2*g and read_png(before_image) == read_png(after_image),
+                           dict(admitted=admitted[name], before=before_release[name], after=after_release[name], center=[r, g, b]))
         review(result, output, 'backdrops-')
         initial, initial_output = self.qt(self.args.source, fixture, inputs, 'backdrops-initial-error', dict(IMAGE_INITIAL_BAD='1'))
         for name in ('backdrop', 'lock'):
@@ -1215,7 +1341,7 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('backdrops-locker-package-assembly', packaged.returncode == 0, dict(exit=packaged.returncode,stderr=packaged.stderr))
         lock = stage / 'etc/xdg/quickshell/atmosphera-lockscreen'
         self.check('backdrops-locker-minimal-graph', not (lock/'Services/Plugins').exists() and not (lock/'Portals').exists(),str(lock))
-        locked, locked_output = self.qt(lock, fixture, inputs, 'backdrops-locker', assembled=True)
+        locked, locked_output = with_held_request(lock, 'backdrops-locker', assembled=True)
         review(locked, locked_output, 'backdrops-installed-')
         return result
 
@@ -1483,7 +1609,8 @@ os.execv('/usr/bin/find', ['find', *args])
         private = self.work / (name + '-profile/cache/thumbnails/atmosphera-representations-v1')
         self.check('actual-clear-button-clicked', result['clicked'] and len(toasts) == 1, toasts)
         self.check('released-adapter-output-was-owner-representation', released['success']
-                   and Path(released['path']).is_relative_to(private), released)
+                   and Path(released['path']).is_relative_to(private) and probes['releasedBeforeButton'],
+                   dict(released=released, probes=probes))
         if red:
             self.check('actual-clear-button-leaves-owner-representations', toasts[0]['type'] == 'notice'
                        and probes['releasedAfterButton'] and not result['ownerClear'], dict(probes=probes, toasts=toasts), red=True)
@@ -1535,10 +1662,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def glyph_center(name):
             width, height, _ = read_png(output / (name + '.png'))
             return pixel(output / (name + '.png'), width // 2, height // 2)
-        def warning(name):
-            width, height, pixels = read_png(output / (name + '.png'))
-            return sum(near(pixels[(y * width + x) * 4:(y * width + x + 1) * 4], result['warningColor'])
-                       for y in range(height) for x in range(width))
+        def warning(name, *, background=None):
+            return warning_coverage(output / (name + '.png'), result['warningColor'], background=background)
         self.check('icon-set-registered', result['glyphCount'] == 4, result['glyphCount'])
         if red:
             self.check('theme-icon-webp-bytes-under-png-name-not-presented', apps['webp']['status'] == 3
@@ -1553,17 +1678,19 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('theme-lookup-failure-uses-ordinary-fallback', apps['missing']['status'] == 1 and not apps['missing']['failed']
                    and apps['missing']['source'].endswith('fixture-png-app.png') and near(center('app-missing'), COLORS[1])
                    and warning('app-missing') == 0, dict(consumer=apps['missing'], center=center('app-missing')))
+        coverage = warning('app-corrupt', background=output / 'app-svg.png')
         self.check('theme-decode-failure-is-labelled-fallback', apps['corrupt']['status'] == 1 and apps['corrupt']['failed']
                    and apps['corrupt']['reason'] and apps['corrupt']['source'].endswith('fixture-svg-app.svg')
-                   and near(center('app-corrupt'), COLORS[0]) and warning('app-corrupt') > 10,
-                   dict(consumer=apps['corrupt'], center=center('app-corrupt'), warning=warning('app-corrupt')))
+                   and near(center('app-corrupt'), COLORS[0]) and coverage > 10,
+                   dict(consumer=apps['corrupt'], center=center('app-corrupt'), warningCoverage=coverage))
         for kind in ('webp', 'png', 'svg'):
             self.check('icon-set-' + kind + '-mask-presented', not glyphs[kind]['failed']
                        and near(glyph_center('glyph-' + kind), (*icon, 255)) and warning('glyph-' + kind) == 0,
                        dict(consumer=glyphs[kind], center=glyph_center('glyph-' + kind)))
+        coverage = warning('glyph-corrupt')
         self.check('icon-set-failure-is-labelled', glyphs['corrupt']['failed'] and glyphs['corrupt']['reason']
-                   and not near(glyph_center('glyph-corrupt'), (*icon, 255)) and warning('glyph-corrupt') > 10,
-                   dict(consumer=glyphs['corrupt'], warning=warning('glyph-corrupt')))
+                   and not near(glyph_center('glyph-corrupt'), (*icon, 255)) and coverage > 10,
+                   dict(consumer=glyphs['corrupt'], warningCoverage=coverage))
         return result
 
     def artwork(self):
@@ -1582,6 +1709,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def count(name, color):
             width, height, pixels = read_png(output / (name + '.png'))
             return sum(near(pixels[i * 4:i * 4 + 4], color) for i in range(width * height))
+        def warning(kind):
+            return warning_coverage(output / ('icon-' + kind + '.png'), result['warningColor'])
         control = dict(consumer=result['controlCenter'], center=pixel(output / 'control-center.png'),
                        art=count('control-center', COLORS[0]))
         options = dict(consumer=result['appOptions'], art=count('app-options', COLORS[0]))
@@ -1593,16 +1722,17 @@ os.execv('/usr/bin/find', ['find', *args])
         for kind in ('webp', 'svg'):
             self.check('image-icon-' + kind + '-presented', icons[kind]['status'] == 1 and not icons[kind]['failed']
                        and near(pixel(output / ('icon-' + kind + '.png')), COLORS[0])
-                       and count('icon-' + kind, result['warningColor']) == 0,
+                       and warning(kind) == 0,
                        dict(consumer=icons[kind], center=pixel(output / ('icon-' + kind + '.png'))))
         # Quickshell's icon provider answers a missing name with its own
         # placeholder: a provider result presented in process, not a failure.
         self.check('image-icon-provider-presented-in-process', icons['provider']['status'] == 1 and not icons['provider']['failed'],
                    icons['provider'])
         for kind in ('corrupt', 'unprovided'):
+            coverage = warning(kind)
             self.check('image-icon-' + kind + '-failure-labelled', icons[kind]['status'] == 3 and icons[kind]['failed']
-                       and icons[kind]['reason'] and count('icon-' + kind, result['warningColor']) > 10,
-                       dict(consumer=icons[kind], warning=count('icon-' + kind, result['warningColor'])))
+                       and icons[kind]['reason'] and coverage > 10,
+                       dict(consumer=icons[kind], warningCoverage=coverage))
         self.check('image-icon-provider-never-reaches-cli', icons['unprovided']['code'] == 'provider-failed', icons['unprovided'])
         self.check('bar-custom-icon-webp-presented', near(control['center'], COLORS[0]) and control['art'] > 40, control)
         self.check('app-options-theme-icon-webp-presented', options['art'] > 15, options)
@@ -1619,21 +1749,34 @@ os.execv('/usr/bin/find', ['find', *args])
             raise ValueError('Launcher red requires an explicit immutable baseline source')
         result, output = self.qt(self.args.baseline_source if red else self.args.source,
                                  self.args.source / 'Scripts/dev/fixtures/image-decoding/launcher.qml', inputs, self.args.case)
+        expected = {f'{view}-{kind}.png' for view in ('list', 'grid') for kind in ('art', 'failed', 'noart')}
+        missing = sorted(name for name in expected if not (output / name).is_file())
+        self.check('launcher-captures-complete', not missing, dict(missing=missing))
         def near(actual, expected, tolerance=8):
             return max(abs(a - b) for a, b in zip(actual, expected)) <= tolerance
-        def counts(name):
+        def counts(view, kind, *, measure_badge=False):
+            name = f'{view}-{kind}'
             width, height, pixels = read_png(output / (name + '.png'))
             rows = [pixels[i * 4:i * 4 + 4] for i in range(width * height)]
+            if measure_badge:
+                # The fixed fixture places the list badge to the left of the
+                # label and the grid warning at the lower right of the art
+                # tile, above the label. Exclude subpixel text fringing.
+                xs, ys = ((range(64), range(height)) if view == 'list'
+                          else (range(64, width), range(48, 80)))
+                warning = red_warning_coverage((rows[y * width + x] for y in ys for x in xs), result['warningColor'])
+            else:
+                warning = sum(near(p, result['warningColor']) for p in rows)
             return dict(art=sum(near(p, COLORS[0]) for p in rows), icon=sum(near(p, COLORS[1]) for p in rows),
-                        warning=sum(near(p, result['warningColor']) for p in rows))
+                        warning=warning)
         self.check('launcher-rows-instantiated', result['listCount'] == result['gridCount'] == 3, result)
         for view in ('list', 'grid'):
-            failed = counts(view + '-failed')
+            failed = counts(view, 'failed', measure_badge=not red)
             if red:
                 self.check(view + '-failed-art-shows-ordinary-icon', failed['icon'] > 50 and failed['warning'] == 0,
                            failed, red=True)
                 continue
-            art, noart = counts(view + '-art'), counts(view + '-noart')
+            art, noart = counts(view, 'art'), counts(view, 'noart')
             self.check(view + '-art-presented', art['art'] > 50 and art['warning'] == 0 and art['icon'] == 0, art)
             self.check(view + '-failed-art-distinct-labelled', failed['warning'] > 10 and failed['icon'] == 0
                        and failed['art'] == 0, failed)
@@ -1684,6 +1827,19 @@ os.execv('/usr/bin/find', ['find', *args])
             return result
         def center(name, state):
             return pixel(output / (name + '.png'), int(state['x'] + state['width'] / 2), int(state['y'] + state['height'] / 2))
+        self.check('text-parser-resource-and-syntax-boundaries', all(result['parserChecks'].values()), result['parserChecks'])
+        before, after = result['retainedBefore'], result['retained']
+        self.check('text-only-update-retains-ready-image-sizes', len(after['states']) == 2
+                   and all(s['state'] == 'ready' and s['placed'] and s['naturalWidth'] > 0 for s in after['states'])
+                   and [(s['width'], s['height']) for s in before['states']] == [(s['width'], s['height']) for s in after['states']]
+                   and near(center('retained', after['states'][0]), COLORS[1])
+                   and near(center('retained', after['states'][1]), COLORS[0]), dict(before=before, after=after))
+        self.check('markdown-backgrounds-blocked-before-conversion', not fetched
+                   and result['guardedMarkdown']['imageCount'] == 0
+                   and 'markdown cell' in result['guardedMarkdown']['plain']
+                   and 'url(literal.png)' in result['guardedMarkdown']['plain']
+                   and count('guarded-markdown', COLORS[0]) == 0,
+                   dict(consumer=result['guardedMarkdown'], fetched=fetched))
         rich, markdown, failing, replaced, plain = (result[k] for k in ('rich', 'markdown', 'failing', 'replaced', 'plain'))
         slot = '\ufffc'
         self.check('rich-images-found-comment-ignored', rich['imageCount'] == 3 and rich['plain'].count(slot) == 3
@@ -1817,6 +1973,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def count(name, color, tolerance=10):
             width, height, pixels = read_png(output / (name + '.png'))
             return sum(near(pixels[i * 4:i * 4 + 4], color, tolerance) for i in range(width * height))
+        def warning(name):
+            return warning_coverage(output / (name + '.png'), result['warningColor'])
         entries = {row['name']: row for row in result['entries']}
         self.check('plugin-roots-created', all(not row['error'] for row in entries.values()),
                    {name: row['error'] for name, row in entries.items() if row['error']})
@@ -1829,8 +1987,10 @@ os.execv('/usr/bin/find', ['find', *args])
                        and any(row['state'] == 'ready' for row in shown) and count(name, color) > 50,
                        dict(images=shown, pixels=count(name, color)))
         failed = images('hermes-avatar-failed')
+        failed_warning, ready_warning = warning('hermes-avatar-failed'), warning('hermes-avatar')
         self.check('plugin-avatar-failure-labelled', any(row['state'] == 'unavailable' and row['code'] for row in failed)
-                   and count('hermes-avatar-failed', result['warningColor']) > 5, dict(images=failed))
+                   and failed_warning > 5 and ready_warning == 0,
+                   dict(images=failed, warningCoverage=failed_warning, readyWarningCoverage=ready_warning))
         sticker = images('sticker')
         frames = {tuple(pixel(path)) for path in output.glob('sticker-*.png')}
         self.check('plugin-sticker-keeps-animation', len(sticker) == 1 and sticker[0]['state'] == 'ready' and sticker[0]['animated']
@@ -1861,11 +2021,12 @@ os.execv('/usr/bin/find', ['find', *args])
             tiles = images(name, 'rounded')
             shown = [row for row in tiles if row['state'] == 'ready']
             failed = [row for row in tiles if row['state'] == 'unavailable']
+            coverage = warning(name)
             self.check('plugin-' + name + '-video-thumbnails', len(tiles) == 2 and len(shown) == 1 and len(failed) == 1
                        and '/thumbnails/' in shown[0]['source']
                        and not shown[0]['source'].endswith('.mp4') and failed[0]['code'] and failed[0]['source'] == ''
-                       and count(name, COLORS[0], 24) > 50 and count(name, result['warningColor']) > 5,
-                       dict(tiles=tiles, videos=videos, pixels=count(name, COLORS[0], 24)))
+                       and count(name, COLORS[0], 24) > 50 and coverage > 5,
+                       dict(tiles=tiles, videos=videos, pixels=count(name, COLORS[0], 24), warningCoverage=coverage))
         # One interest per producer and video; the broken video stays failed.
         self.check('plugin-video-producers-settle-honestly', videos['mpvReady'] and videos['vwSettled'] and not videos['vwReady']
                    and videos['vwFailed'] and sorted(videos['interests']) == sorted([str(inputs / 'videos/Red.mp4'), str(inputs / 'videos/Broken.mp4')] * 2), videos)
@@ -1960,8 +2121,57 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('owner-locker-standalone-consumer', locked['motion']['state'] == 'ready'
                    and locked['motion']['frameCount'] == 3 and {tuple(p) for p in centers} == set(COLORS)
                    and all(row['consumer']['state'] == 'ready' for row in locked['formats'])
-                   and locked['finalInterests'] == locked['finalRequests'] == 0 and not locked['workerRunning'], locked)
+                    and locked['finalInterests'] == locked['finalRequests'] == 0 and not locked['workerRunning'], locked)
+        self.source_admission(inputs)
         return result
+
+    def source_admission(self, inputs=None):
+        if inputs is None:
+            inputs = self.work / 'fixtures'
+            manifest = create_fixtures(inputs, self.commands)
+            (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+            def do_GET(self):
+                requests.append(self.path)
+                data = (inputs / 'frame-0.png').read_bytes() if self.path == '/valid' else b'x' * (1024 * 1024 + 1)
+                self.send_response(200)
+                if self.path != '/streamed':
+                    self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                try:
+                    for offset in range(0, len(data), 65536):
+                        self.wfile.write(data[offset:offset + 65536])
+                        self.wfile.flush()
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/source-admission.qml',
+                inputs, 'source-admission', dict(QT_IMAGEIO_MAXALLOC='1', IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}'))
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+        self.check('owner-normalized-admission-never-offers-native', all(row['origin'] == 'fallback' for row in result['candidates']
+                   if row['name'] in ('normalized', 'thumbnail')) and result['settled'].get('normalized') == result['settled'].get('thumbnail') == 'ready', result)
+        self.check('owner-synchronous-error-keeps-render-interest', result['settled'].get('synchronous') == 'ready'
+                   and result['settled'].get('synchronousOrigin') == 'fallback', result)
+        self.check('owner-remote-one-bounded-owner-request', sorted(requests) == ['/declared', '/streamed', '/valid'], requests)
+        for name in ('declared', 'streamed'):
+            row = result['settled'].get(name, {})
+            self.check('owner-source-too-large-' + name, row.get('failed') and row.get('code') == 'source-too-large' and row.get('reason'), row)
+            width, height, rgba = read_png(output / (name + '.png'))
+            self.check('owner-source-too-large-visible-badge-' + name, width == height == 96 and any(rgba[3::4]),
+                       dict(width=width, height=height, visiblePixels=sum(a > 0 for a in rgba[3::4])))
+        self.check('owner-terminal-error-publishes-details-first', len(result['terminalDetails']) == 2 and
+                   all(row['code'] == 'source-too-large' and row['reason'] for row in result['terminalDetails']), result['terminalDetails'])
+        self.check('owner-admitted-remote-presents-pixels', result['settled'].get('valid') == 'ready' and pixel(output / 'valid.png') == list(COLORS[0]), result)
+        self.check('owner-admission-retires-all-interests', result['interests'] == result['requests'] == 0 and not result['workerRunning'], result)
 
 
 def main():
@@ -2019,6 +2229,8 @@ def execute(args, profile):
             run.cache_clear()
         elif args.case == 'owner':
             run.owner()
+        elif args.case == 'source-admission':
+            run.source_admission()
         elif args.case in ('cache', 'cache-red', 'cache-read', 'cache-read-red'):
             run.cache_contract()
         elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):

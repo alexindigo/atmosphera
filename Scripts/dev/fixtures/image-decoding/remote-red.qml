@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import qs.Services.UI
-import qs.Widgets
 
 ShellRoot {
   id: root
@@ -11,10 +10,11 @@ ShellRoot {
     visible: true
     implicitWidth: 96
     implicitHeight: 64
-    NImage {
+    // This historical control must also load on shells predating NImage.
+    Image {
       id: image
       anchors.fill: parent
-      source: root.result.path || ""
+      source: root.result.path ? "file://" + root.result.path : ""
     }
   }
   Component.onCompleted: {
@@ -31,11 +31,16 @@ ShellRoot {
                                        });
   }
   Timer {
-    interval: 3000
-    running: true
+    interval: 100
+    running: root.done
+    repeat: true
     onTriggered: {
-      image.grabToImage(result => {
+      if (root.result.path && image.status !== Image.Ready && image.status !== Image.Error)
+        return;
+      stop();
+      if (!image.grabToImage(result => {
         console.log("IMAGE_GRAB|" + JSON.stringify({
+                                                     name: "remote-red",
                                                      saved: result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/remote-red.png")
                                                    }));
         console.log("IMAGE_BASELINE|" + JSON.stringify({
@@ -44,7 +49,15 @@ ShellRoot {
                                                          imageStatus: image.status
                                                        }));
         Qt.quit();
-      });
+      })) {
+        console.error("Malformed download grab rejected");
+        Qt.exit(3);
+      }
     }
+  }
+  Timer {
+    interval: 20000
+    running: true
+    onTriggered: Qt.exit(3)
   }
 }

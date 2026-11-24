@@ -2,10 +2,12 @@
 import asyncio
 import json
 import os
+from pathlib import Path
 import signal
 import sys
 
 from .cache import Cache
+from .notification_originals import NotificationOriginals
 from .process import CommandError
 from .sources import SourceError
 
@@ -16,12 +18,56 @@ class Worker:
         self.tasks, self.wanted = {}, {}
         self.retired = set()
         self.leases = {}
+        self.originals = None
+        self.notification_wanted = None
+        self.shell_pid = os.getppid()
         self.slots = asyncio.Semaphore(2)
+
+    def notifications(self, message):
+        items = message['interests']
+        self.interests(items)
+        wanted = {item['id'] for item in items if item.get('notification') is True}
+        load, rows, live = message.get('load', False), message.get('rows'), message.get('live')
+        try:
+            directory, history = message['directory'], message['history']
+            if self.originals is None:
+                self.originals = NotificationOriginals(directory, history, self.shell_pid)
+            if self.originals.directory != Path(directory) or self.originals.history != Path(history):
+                raise ValueError('Notification retention store changed')
+            result = None
+            if load or rows is not None or live is not None or wanted != self.notification_wanted:
+                result = self.originals.update(wanted=wanted, live=live, load=load, rows=rows)
+                self.notification_wanted = wanted
+        except (OSError, ValueError, KeyError, TypeError):
+            # A broken history store cannot delay unrelated image rendering.
+            # Leave prior durable/pending claims as-is and refuse new captures.
+            admitted = []
+            for item in items:
+                if item.get('notification') is not True or 'lease' in item or self.wanted.get(item['id']) == item:
+                    admitted.append(item)
+                else:
+                    self.emit(dict(id=item['id'], generation=item.get('generation'), url='', status='unavailable',
+                                   animationIntent=item.get('animationIntent'),
+                                   code='notification-retention-unavailable', reason='Notification history could not be opened'))
+            self.replace(admitted)
+            raise
+        self.replace(items)
+        return result
 
     def _release(self, key):
         fd = self.leases.pop(key, None)
         if fd is not None:
             os.close(fd)
+
+    def _restore_lease(self, key, url):
+        # Lease snapshots and clear commands share one synchronous protocol
+        # order. Restoring a held URL cannot wait for a decoder task turn.
+        try:
+            lease = self.cache.lease(dict(status='hit', url=url))
+        except (OSError, ValueError):
+            lease = None
+        if lease is not None:
+            self.leases[key] = lease
 
     def clear(self, message):
         # Synchronous on the protocol loop: a sweep completes before EOF can
@@ -38,12 +84,7 @@ class Worker:
         if 'lease' in item:
             # A settled consumer still holds this URL. Never re-render it; a
             # name already cleared simply has no lease to restore.
-            try:
-                lease = self.cache.lease(dict(status='hit', url=item['lease']))
-            except (OSError, ValueError):
-                lease = None
-            if lease is not None:
-                self.leases[key] = lease
+            self._restore_lease(key, item['lease'])
             return
         try:
             for _attempt in range(3):
@@ -51,7 +92,12 @@ class Worker:
                     result = await self.cache.render(item, inspection_slots=self.slots)
                 else:
                     async with self.slots:
-                        result = await (self.cache.render(item) if 'source' in item else self.cache.get(item['path'], item['pixels']))
+                        if item.get('notification') is True:
+                            if self.originals is None or item.get('operation') != 'retain':
+                                raise ValueError('Notification retention requires its owner')
+                            result = await self.cache.render(item, retention=self.originals)
+                        else:
+                            result = await (self.cache.render(item) if 'source' in item else self.cache.get(item['path'], item['pixels']))
                 # Lease before the URL is published: an owner clear in this or
                 # another process keeps a leased name until the interest retires.
                 try:
@@ -72,12 +118,17 @@ class Worker:
             self.emit(dict(envelope, url='', status='unavailable', code=getattr(error, 'code', 'decode-unavailable'),
                            reason=str(error) if isinstance(error, (SourceError, CommandError)) else 'Image could not be read'))
 
-    def replace(self, items):
+    @staticmethod
+    def interests(items):
         if not isinstance(items, list) or any(not isinstance(item, dict) or not item.get('id', item.get('path')) for item in items):
             raise ValueError('Invalid image interests')
         wanted = {item.get('id', item.get('path')): item for item in items}
         if len(wanted) != len(items):
             raise ValueError('Duplicate image request IDs')
+        return wanted
+
+    def replace(self, items):
+        wanted = self.interests(items)
         def same(key):
             # The lease form of a request this process already settled and
             # leased is the same interest; releasing it would open a window.
@@ -94,13 +145,18 @@ class Worker:
                 task.add_done_callback(self.retired.discard)
         self.tasks = {key: task for key, task in self.tasks.items() if same(key)}
         for key, item in wanted.items():
-            if key not in self.tasks:
+            if 'lease' in item:
+                if key not in self.leases:
+                    self._restore_lease(key, item['lease'])
+            elif key not in self.tasks:
                 self.tasks[key] = asyncio.create_task(self.request(item))
         self.wanted = wanted
 
     async def close(self):
         tasks = list(set(self.tasks.values()) | self.retired)
-        for task in tasks:
+        # Retired requests are already cancelling and may be joining a decoder
+        # supervisor. Cancelling them again can interrupt that required join.
+        for task in self.tasks.values():
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
         for key in list(self.leases):
@@ -128,6 +184,14 @@ async def serve():
                 try:
                     message = json.loads(line)
                     if isinstance(message, dict):
+                        if message.get('command') == 'notification-sync':
+                            try:
+                                rows = worker.notifications(message)
+                            except (OSError, ValueError, KeyError, TypeError):
+                                emit(dict(event='notification-sync', id=message.get('id'), ok=False))
+                            else:
+                                emit(dict(event='notification-sync', id=message.get('id'), ok=True, rows=rows))
+                            continue
                         legacy = message.get('legacy', [])
                         if (message.get('command') != 'clear' or not isinstance(message.get('id'), str)
                                 or not set(message) <= {'command', 'id', 'legacy'} or not isinstance(legacy, list)

@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import QtQuick.Window
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Notifications
 import Quickshell.Wayland
 import "../../Helpers/PortalPaths.js" as PortalPaths
@@ -22,6 +21,9 @@ Singleton {
   property int maxPopups: 5
   property int maxHistory: 100
   property string historyFile: Quickshell.env("ATMOSPHERA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
+  property bool historyLoaded: false
+  property bool historyOpening: false
+  property bool historyWritable: false
 
   // State
   property real lastSeenTs: 0
@@ -62,39 +64,58 @@ Singleton {
       property var targetNotification
       property var targetDataId
       target: targetNotification
-
+      // Capture in the signal stack; a dirty QML binding can be reevaluated
+      // only after the provider's borrowed pixels have changed or retired.
       function onSummaryChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onBodyChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onAppNameChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onDesktopEntryChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
       function onUrgencyChanged() {
-        updateNotificationFromObject(targetDataId);
-      }
-      function onAppIconChanged() {
-        updateNotificationFromObject(targetDataId);
-      }
-      function onImageChanged() {
-        updateNotificationFromObject(targetDataId);
-      }
-      function onActionsChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onExpireTimeoutChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onAppIconChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onImageChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onActionsChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
       function onTransientChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onResidentChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHasActionIconsChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHasInlineReplyChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onInlineReplyPlaceholderChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHintsChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
     }
   }
 
   function updateNotificationServer() {
-    const enabled = Settings.isLoaded && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
+    const enabled = Settings.isLoaded && historyLoaded && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
     if (enabled === Boolean(notificationServerLoader))
       return;
 
@@ -110,7 +131,7 @@ Singleton {
 
   Component.onCompleted: {
     if (Settings.isLoaded) {
-      updateNotificationServer();
+      openHistory();
     }
 
     // Load state from ShellState
@@ -140,7 +161,7 @@ Singleton {
   Connections {
     target: Settings
     function onSettingsLoaded() {
-      updateNotificationServer();
+      openHistory();
     }
     function onEffectiveSettingsChanged(section) {
       if (section === "notifications")
@@ -327,22 +348,21 @@ Singleton {
       dismissPopup(internalId);
       return;
     }
-    const changedImage = entry.data.originalImage !== data.originalImage;
     const retained = entry.data;
     data.id = internalId;
     data.timestamp = retained.timestamp;
     const index = findPopupIndex(internalId);
     data.progress = index >= 0 ? popupModel.get(index).progress : retained.progress;
-    if (!changedImage) {
-      for (const key of ["cachedImage", "imageState", "imageErrorCode", "imageErrorReason", "imageRevision", "imageFormat", "imageRepresentation"])
-        data[key] = retained[key];
-    }
     entry.data = data;
     // Persistence policy applies to the new revision, not permission to erase
     // a previously admitted record (or cancel its still-pending capture).
     const updateHistory = entry.historyWanted && shouldSaveToHistory(data, notification);
-    if (updateHistory)
-      entry.historyData = data;
+    if (updateHistory) {
+      const previousHistory = entry.historyData;
+      entry.historyData = Object.assign({}, data);
+      keepSnapshot(entry.historyData, previousHistory);
+    }
+    keepSnapshot(data, retained);
     entry.metadata.urgency = data.urgency;
     entry.metadata.duration = calculateDuration(data);
     cacheActions(entry);
@@ -350,10 +370,27 @@ Singleton {
       dismissPopup(internalId);
     if (popupState[internalId] !== entry)
       return;
+    const targets = [];
+    if (entry.popupWanted)
+      targets.push(data);
+    if (updateHistory)
+      targets.push(entry.historyData);
+    if (targets.length)
+      queueImage(entry, targets);
+    // Subscribe before releasing obsolete targets. The image owner can then
+    // share an in-flight acquisition of identical inputs, including a remote
+    // URL, without restarting the transfer or keeping the obsolete targets.
     releaseUnusedImages(entry);
-    if (changedImage && (entry.popupWanted || updateHistory))
-      queueImage(entry);
     publishEntry(entry);
+  }
+
+  function keepSnapshot(data, previous) {
+    if (data.originalImage === previous.originalImage)
+      data.imageRevision = previous.imageRevision;
+    if (!data.originalImage || previous.imageState !== "ready")
+      return;
+    for (const key of ["cachedImage", "imageState", "imageRevision", "imageFormat", "imageRepresentation", "imageContentSha256"])
+      data[key] = previous[key];
   }
 
   function cacheActions(entry) {
@@ -363,7 +400,7 @@ Singleton {
     }));
   }
 
-  function publishEntry(entry) {
+  function publishEntry(entry, imageOnly = false) {
     for (const target of [
            {
              model: popupModel,
@@ -377,11 +414,24 @@ Singleton {
       const model = target.model;
       for (var i = 0; i < model.count; ++i) {
         if (model.get(i).id === entry.data.id) {
-          model.set(i, target.data);
+          const data = target.data;
+          // A worker completion owns image roles, not a newer popup timer or
+          // action update. ListModel.set leaves unspecified roles unchanged.
+          model.set(i, imageOnly ? {
+                                     cachedImage: data.cachedImage,
+                                     imageState: data.imageState,
+                                     imageRevision: data.imageRevision,
+                                     imageContentSha256: data.imageContentSha256,
+                                     imageFormat: data.imageFormat,
+                                     imageRepresentation: data.imageRepresentation,
+                                     imageErrorCode: data.imageErrorCode,
+                                     imageErrorReason: data.imageErrorReason
+                                   } : data);
           break;
         }
       }
     }
+    syncOriginalHolders();
     if (entry.historyWanted)
       saveHistory();
   }
@@ -463,6 +513,7 @@ Singleton {
       "imageRevision": "",
       "imageFormat": "",
       "imageRepresentation": "",
+      "imageContentSha256": "",
       "imageErrorCode": "",
       "imageErrorReason": "",
       "originalId": n.originalId || n.id || 0 // Ensure originalId is passed through
@@ -485,7 +536,7 @@ Singleton {
 
     function updateNotificationFromObject(internalId) {
     const notifData = popupState[internalId];
-    if (!notifData || !notifData.notification)
+    if (!notifData?.watcher || !notifData.notification)
     return;
     const data = createData(notifData.notification);
     updatePopup(internalId, notifData.notification, data);
@@ -558,55 +609,64 @@ Singleton {
   }
 
     // Capture runs in the producer's signal stack. Only decoding and retained
-    // publication are asynchronous. Deferred insertion reads this same entry.
-    function queueImage(entry) {
-    const revision = ++entry.imageRevision;
-    entry.data.imageRevision = entry.data.id + ":" + revision;
-    entry.data.cachedImage = "";
-    entry.data.imageFormat = "";
-    entry.data.imageRepresentation = "";
-    entry.data.imageErrorCode = "";
-    entry.data.imageErrorReason = "";
-    entry.data.imageState = entry.data.originalImage ? "loading" : "idle";
+    // publication are asynchronous. Own the attempt by its target records, not
+    // their displayed revision, which may still refer to a previous snapshot.
+    function queueImage(entry, targets = [entry.data]) {
+    let revision = "";
+    function newRevision() {
+    if (!revision)
+    revision = entry.data.id + ":" + ++entry.imageRevision;
+    return revision;
+  }
+    for (const data of targets) {
+    if (!data.imageRevision)
+    data.imageRevision = newRevision();
+  }
     if (!entry.data.originalImage)
     return;
     const request = {
-    revision: entry.data.imageRevision,
+    targets: targets,
     interest: null,
     pending: true
   };
     entry.imageRequests.push(request);
-    var pending = true;
     const interest = ImageCacheService.getNotificationIcon(entry.data.originalImage, "", "", function (path, success, detail) {
-    pending = false;
-    if (popupState[entry.data.id] !== entry || !ownsImage(entry, request.revision))
-    return;
     request.interest = null;
     request.pending = false;
-    for (const data of new Set([entry.data, entry.historyData])) {
-    if (data.imageRevision !== request.revision)
+    if (popupState[entry.data.id] !== entry)
+    return;
+    for (const data of request.targets) {
+    if (!ownsImage(entry, data))
     continue;
+    if (data.imageState === "ready") {
+    // A capture attempt is not a new snapshot. The retention owner
+    // hashes the captured content independently of source and cache URLs.
+    if (!success || detail.contentSha256 === data.imageContentSha256)
+    continue;
+    data.imageRevision = newRevision();
+  }
     data.cachedImage = success ? PortalPaths.pathToUri(path).uri : "";
     data.imageState = success ? "ready" : "unavailable";
+    data.imageContentSha256 = success ? detail.contentSha256 : "";
     data.imageFormat = success ? String(detail.originalFormat || "") : "";
     data.imageRepresentation = success ? String(detail.url || "") : "";
     data.imageErrorCode = success ? "" : String(detail.code || "image-unavailable");
     data.imageErrorReason = success ? "" : String(detail.reason || "The notification image is unavailable");
   }
     releaseUnusedImages(entry);
-    publishEntry(entry);
+    publishEntry(entry, true);
   });
-    if (pending)
+    if (request.pending)
     request.interest = interest;
   }
 
-    function ownsImage(entry, revision) {
-    return (entry.popupWanted && entry.data.imageRevision === revision) || (entry.historyWanted && entry.historyData.imageRevision === revision);
+    function ownsImage(entry, data) {
+    return (entry.popupWanted && entry.data === data) || (entry.historyWanted && entry.historyData === data);
   }
 
     function releaseUnusedImages(entry) {
     entry.imageRequests = entry.imageRequests.filter(request => {
-    if (request.pending && ownsImage(entry, request.revision))
+    if (request.pending && request.targets.some(data => ownsImage(entry, data)))
     return true;
     request.interest?.cancel();
     return false;
@@ -657,21 +717,37 @@ Singleton {
   });
   }
 
-    // Persistence - History
-    FileView {
-    id: historyFileView
-    path: historyFile
-    printErrors: false
-    onLoaded: loadHistory()
-    onLoadFailed: error => {
-    if (error === 2)
-    writeAdapter();
+    // Loading atomically admits cold holders before presenting their paths.
+    function openHistory() {
+    if (historyLoaded || historyOpening)
+    return;
+    historyOpening = true;
+    ImageCacheService.openNotificationHistory(historyFile, (ok, rows) => {
+    if (ok)
+    loadHistory(rows);
+    else
+    Logger.e("Notifications", "Could not load notification history");
+    historyWritable = ok;
+    historyLoaded = true;
+    historyOpening = false;
+    updateNotificationServer();
+  });
   }
 
-    JsonAdapter {
-    id: adapter
-    property var notifications: []
+    function syncOriginalHolders(rows, callback) {
+    const paths = new Set();
+    for (const entry of Object.values(popupState)) {
+    if (entry.popupWanted && entry.data.cachedImage)
+    paths.add(entry.data.cachedImage);
+    if (entry.historyWanted && entry.historyData.cachedImage)
+    paths.add(entry.historyData.cachedImage);
   }
+    for (let i = 0; i < historyModel.count; i++) {
+    const path = historyModel.get(i).cachedImage;
+    if (path)
+    paths.add(path);
+  }
+    ImageCacheService.updateNotificationHolders(Array.from(paths).sort(), rows, callback);
   }
 
     Timer {
@@ -685,7 +761,14 @@ Singleton {
   }
 
     function performSaveHistory() {
-    try {
+    if (historyWritable)
+    syncOriginalHolders(historySnapshotForSave, ok => {
+    if (!ok)
+    Logger.e("Notifications", "Could not save notification history");
+  });
+  }
+
+    function historySnapshotForSave() {
     const items = [];
     for (var i = 0; i < historyModel.count; i++) {
     const n = historyModel.get(i);
@@ -693,17 +776,13 @@ Singleton {
     copy.timestamp = n.timestamp.getTime();
     items.push(copy);
   }
-    adapter.notifications = items;
-    historyFileView.writeAdapter();
-  } catch (e) {
-    Logger.e("Notifications", "Save history failed:", e);
-  }
+    return items;
   }
 
-    function loadHistory() {
+    function loadHistory(rows) {
     try {
     historyModel.clear();
-    for (const item of adapter.notifications || []) {
+    for (const item of rows || []) {
     const time = new Date(item.timestamp);
 
     // A cold reader never reacquires a producer-owned original. Legacy records
@@ -945,6 +1024,7 @@ Singleton {
     if (index >= 0) {
     popupModel.remove(index);
   }
+    syncOriginalHolders();
     cleanupNotification(id);
   }
 
@@ -1044,7 +1124,12 @@ Singleton {
     return false;
   }
 
-    // Clear actions after use
+    // Clear actions at the owner as well as in the published rows.
+    if (notifData) {
+    notifData.data.actionsJson = "[]";
+    notifData.historyData.actionsJson = "[]";
+    notifData.cachedActions = [];
+  }
     updateModel(popupModel, id, "actionsJson", "[]");
     updateModel(historyModel, id, "actionsJson", "[]");
     saveHistory();
@@ -1104,11 +1189,13 @@ Singleton {
     const notif = historyModel.get(i);
     if (notif.id === notificationId) {
     historyModel.remove(i);
+    syncOriginalHolders();
     saveHistory();
     cleanupNotification(notificationId);
     return true;
   }
   }
+    syncOriginalHolders();
     cleanupNotification(notificationId);
     if (pending)
     saveHistory();
@@ -1124,8 +1211,8 @@ Singleton {
   }
 
     function clearHistory() {
-    // Retained bytes are immutable and may be shared with another entry or
-    // process. Membership owns interests, never permission to unlink sources.
+    // Membership changes are inputs to the retention owner. The previous
+    // committed history still holds its bytes until this clear is saved.
     for (const id in popupState) {
     popupState[id].historyWanted = false;
     releaseUnusedImages(popupState[id]);
@@ -1133,6 +1220,7 @@ Singleton {
   }
 
     historyModel.clear();
+    syncOriginalHolders();
     saveHistory();
   }
 

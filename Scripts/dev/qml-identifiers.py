@@ -354,9 +354,11 @@ class ForeignModules:
             with open(qmldir, encoding="utf-8", errors="replace") as fh:
                 for line in fh:
                     parts = line.split()
-                    # "optional import" / "default import": the imported module's
-                    # types are what the module provides (style or window module).
-                    if parts[:1] in (["optional"], ["default"]) and parts[1:2] == ["import"]:
+                    # Static tools use the declared default, not every possible
+                    # runtime optional choice. Ordinary imports remain transitive.
+                    if parts[:2] == ["optional", "import"]:
+                        continue
+                    if parts[:2] == ["default", "import"]:
                         parts = parts[1:]
                     if not parts or parts[0] in ("module", "plugin", "classname", "typeinfo", "depends",
                                                  "designersupported", "prefer", "optional", "linktarget",

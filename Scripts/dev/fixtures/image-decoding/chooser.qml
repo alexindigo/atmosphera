@@ -16,19 +16,25 @@ ShellRoot {
   property var tiles: []
   property var failures: []
   property var frames: []
+  property int quickStart: -1
+  readonly property int quickSpan: 30
   property int initialInterests: -1
   readonly property var names: ["Still.webp", "Motion.webp", "Still.avif", "Still.heic", "Multipage.tiff", "Misleading.png", "Corrupt.webp", "Missing.webp"]
   property bool done: false
   property bool advancing: false
   function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
+    if (!item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
-    });
+    })) {
+      console.error("CHOOSER_GRAB_REJECTED|" + name);
+      Qt.exit(2);
+      return;
+    }
+    ++pending;
   }
   FileThumbnails {
     id: provider
@@ -105,12 +111,17 @@ ShellRoot {
         else
           ++root.index;
       }
-      if (root.tick % 2 === 0 && root.tick >= 20 && root.tick <= 50 && quicklook.renderer) {
+      const renderer = quicklook.renderer;
+      const ready = renderer && renderer.previewState === "ready";
+      if (ready && root.quickStart < 0)
+        root.quickStart = root.tick;
+      const elapsed = root.tick - root.quickStart;
+      if (ready && elapsed <= root.quickSpan && elapsed % 2 === 0) {
         root.frames.push({
-                           frame: quicklook.renderer.frame,
+                           frame: renderer.frame,
                            atMs: Date.now()
                          });
-        root.grab(quicklook.renderer, "quicklook-" + root.tick);
+        root.grab(renderer, "quicklook-" + root.tick);
       }
       // Capture only settled frames, not the previous source's fade.
       if (root.tick >= 12 && root.tick % 7 === 0 && !root.done && !root.advancing) {
@@ -138,10 +149,10 @@ ShellRoot {
           root.advancing = true;
         }
       }
-      if (root.done && root.tick >= 60 && !root.pending && root.admitted) {
+      if (root.done && root.quickStart >= 0 && elapsed > root.quickSpan && !root.pending && root.admitted) {
         root.quickResult = {
-          previewState: quicklook.renderer.previewState,
-          frames: quicklook.renderer.frames
+          previewState: renderer?.previewState,
+          frames: renderer?.frames
         };
         root.admitted = false;
       }

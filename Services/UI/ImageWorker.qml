@@ -20,7 +20,56 @@ Scope {
   property bool _started: false
   property bool _armed: false
   property bool _closing: false
+  property var _notificationStore: null
+  property var _notificationLive: null
+  property string _notificationLiveKey: ""
+  property var _notificationQueue: []
+  property var _notificationFlight: null
+  property string _notificationBatch: ""
   signal activity(var event)
+
+  function openNotificationHistory(directory, history, callback) {
+    _notificationStore = {
+      directory: directory,
+      history: history
+    };
+    _notificationQueue = [..._notificationQueue,
+                          {
+                            load: true,
+                            callback: callback
+                          }
+        ];
+    flush.restart();
+  }
+
+  function updateNotificationHolders(paths, rows, callback) {
+    const key = JSON.stringify(paths);
+    if (key !== _notificationLiveKey) {
+      _notificationLiveKey = key;
+      _notificationLive = paths;
+    }
+    if (rows !== undefined)
+      _notificationQueue = [..._notificationQueue.filter(command => !command.rows),
+                            {
+                              rows: rows,
+                              callback: callback
+                            }
+          ];
+    if (_notificationLive !== null || rows !== undefined)
+      flush.restart();
+  }
+
+  function _settleNotifications(reply) {
+    const flight = _notificationFlight;
+    if (!flight || flight.id !== reply.id)
+      return false;
+    _notificationFlight = null;
+    if (!reply.ok)
+      _notificationLiveKey = "";
+    flight.callback?.(reply.ok, reply.rows);
+    flush.restart();
+    return true;
+  }
 
   function acquire(request, callback) {
     // Canonical field order also prevents unrelated caller properties from
@@ -31,9 +80,11 @@ Scope {
       width: request.width,
       height: request.height,
       fit: request.fit || "contain",
+      roundedRadius: request.roundedRadius || 0,
       animationIntent: request.animationIntent || "still",
       operation: request.operation || "render",
       destinationDirectory: String(request.destinationDirectory || ""),
+      notification: request.notification === true,
       retry: !!request.retry
     };
     var key = JSON.stringify(spec);
@@ -115,6 +166,14 @@ Scope {
 
   function _fail(code, reason) {
     _ready = false;
+    const flight = _notificationFlight;
+    const queued = _notificationQueue;
+    _notificationFlight = null;
+    _notificationQueue = [];
+    _notificationLiveKey = "";
+    flight?.callback?.(false, null);
+    for (const command of queued)
+      command.callback?.(false, null);
     for (var clear of _clears.slice())
       _settleClear(clear.id, {
                      ok: false,
@@ -155,6 +214,11 @@ Scope {
     }
     if (reply.event === "protocol-error") {
       _fail("worker-protocol", "The image worker rejected its request message");
+      return;
+    }
+    if (reply.event === "notification-sync") {
+      if (typeof reply.ok !== "boolean" || !_settleNotifications(reply))
+        _fail("worker-protocol", "The image worker returned an unknown notification result");
       return;
     }
     if (reply.event === "cleared" || reply.event === "clear-failed") {
@@ -211,14 +275,17 @@ Scope {
     entry.result = reply;
     for (var callback of Object.values(entry.listeners))
       callback(reply);
-    flush.restart();
+    // The running worker already holds this interest and leases before replying.
+    // Only changes to interests, control commands and worker startup need a
+    // snapshot. A later snapshot can restore settled leases after a restart.
   }
 
   function _sync() {
+    const notificationWork = _notificationStore && (_notificationLive !== null || _notificationQueue.length);
     if (!process.running) {
-      if (!interestCount && !_clears.length)
+      if (!interestCount && !_clears.length && !notificationWork)
         return;
-      if (!_clears.length && !Object.values(_entries).some(entry => !entry.result))
+      if (!_clears.length && !notificationWork && !Object.values(_entries).some(entry => !entry.result))
         return;
       _ready = false;
       _started = false;
@@ -238,10 +305,41 @@ Scope {
           batch.push({
                        id: entry.request.id,
                        generation: entry.request.generation,
+                       notification: entry.request.notification,
                        lease: entry.result.url
                      });
       }
-      process.write(JSON.stringify(batch) + "\n");
+      if (_notificationStore) {
+        if (_notificationFlight)
+          return;
+        const batchKey = JSON.stringify(batch);
+        if (notificationWork || batchKey !== _notificationBatch) {
+          const command = _notificationQueue[0];
+          _notificationQueue = _notificationQueue.slice(1);
+          const id = String(++_sequence);
+          _notificationFlight = {
+            id: id,
+            callback: command?.callback
+          };
+          const message = Object.assign({
+                                          command: "notification-sync",
+                                          id: id,
+                                          interests: batch
+                                        }, _notificationStore);
+          if (_notificationLive !== null)
+            message.live = _notificationLive;
+          if (command?.load)
+            message.load = true;
+          if (command?.rows !== undefined)
+            message.rows = command.rows();
+          _notificationLive = null;
+          _notificationBatch = batchKey;
+          process.write(JSON.stringify(message) + "\n");
+          return;
+        }
+      } else {
+        process.write(JSON.stringify(batch) + "\n");
+      }
       // Interest changes first: a release that preceded clear() is honored.
       for (var clear of _clears.filter(item => !item.sent)) {
         clear.sent = true;
@@ -279,6 +377,7 @@ Scope {
     onExited: (code, status) => {
       root._armed = false;
       root._ready = false;
+      root._notificationBatch = "";
       if (!root._closing || code !== 0 || status !== 0)
         root._fail("worker-exit", "The image worker exited before completing its requests");
       root._closing = false;

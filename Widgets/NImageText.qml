@@ -75,6 +75,7 @@ Item {
   property var _order: []
   property var _sizes: []
   property var _states: []
+  property var _stateSources: []
   property var _geometry: []
   property real _clipHeight: -1
 
@@ -224,7 +225,7 @@ Item {
       frames: image.imageState === "ready" ? result.frames || 1 : 0
     };
     _states = states;
-    if (before.state !== states[index].state || before.naturalWidth !== states[index].naturalWidth)
+    if (before.state !== states[index].state || before.naturalWidth !== states[index].naturalWidth || before.naturalHeight !== states[index].naturalHeight)
       relayout.restart();
   }
 
@@ -236,7 +237,11 @@ Item {
   }
 
   onParsedContentChanged: {
-    _states = [];
+    // The Repeater retains its NImage at this index across text-only edits.
+    // Its ready state will not fire again. Preserve its size only for the
+    // same source; a replacement must start without the old dimensions.
+    _states = parsedContent.images.map((image, index) => _stateSources[index] === image.source ? _states[index] || {} : {});
+    _stateSources = parsedContent.images.map(image => image.source);
     relayout.restart();
   }
   onImageMaximumWidthChanged: relayout.restart()

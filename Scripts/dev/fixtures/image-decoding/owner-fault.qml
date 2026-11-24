@@ -9,7 +9,7 @@ ShellRoot {
   property string token: ""
   property var first: ({})
   property int deliveries: 0
-  property int tick: 0
+  property bool retryStarted: false
   property bool saved: false
   property var retryResult: ({})
   FloatingWindow {
@@ -45,22 +45,25 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      ++root.tick;
-      if (root.tick === 20) {
+      if (retryImage.active && !root.retryStarted && retryImage.imageState === "ready" && retryImage.status === Image.Ready) {
+        root.retryStarted = true;
         root.retryResult = {
           state: retryImage.imageState,
           result: retryImage.imageResult
         };
-        retryImage.grabToImage(result => {
+        if (!retryImage.grabToImage(result => {
           root.saved = result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/retry.png");
           console.log("IMAGE_GRAB|" + JSON.stringify({
                                                        name: "retry",
                                                        saved: root.saved
                                                      }));
           retryImage.active = false;
-        });
+        })) {
+          console.error("Owner retry grab rejected");
+          Qt.exit(3);
+        }
       }
-      if (root.tick >= 30) {
+      if (root.retryStarted && !retryImage.active && ImageCacheService.sourceInterestCount === 0 && ImageCacheService.sourceRequestCount === 0 && !ImageCacheService.sourceWorkerRunning) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          first: root.first,
                                                          deliveries: root.deliveries,

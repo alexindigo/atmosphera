@@ -6,9 +6,10 @@ import sys
 
 
 class CommandError(Exception):
-    def __init__(self, code, reason):
+    def __init__(self, code, reason, exit_code=None):
         super().__init__(reason)
         self.code = code
+        self.exit_code = exit_code
 
 
 async def command(argv, directory, timeout, *, name='command', emit=lambda event: None):
@@ -18,8 +19,8 @@ async def command(argv, directory, timeout, *, name='command', emit=lambda event
     watcher = await asyncio.create_subprocess_exec(sys.executable, '-B', str(Path(__file__).with_name('owned_command.py')),
                                                     json.dumps(spec), stdin=asyncio.subprocess.PIPE,
                                                     stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
-    emit(dict(event='command', argv=spec['argv'], watcher=watcher.pid, files=paths))
     try:
+        emit(dict(event='command', argv=spec['argv'], watcher=watcher.pid, files=paths))
         await watcher.wait()
     finally:
         # Closing the exact owner's control pipe joins its watcher/group. Never
@@ -36,5 +37,5 @@ async def command(argv, directory, timeout, *, name='command', emit=lambda event
     if result['cancelled']:
         raise asyncio.CancelledError
     if result['exit']:
-        raise CommandError('decoder-failed', 'Decoder could not read this image')
+        raise CommandError('decoder-failed', 'Decoder could not read this image', exit_code=result['exit'])
     return Path(paths['stdout'])

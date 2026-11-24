@@ -56,7 +56,13 @@ function resolve(source, baseUrl) {
     base = match[2] || "/";
   }
   var directory = base.slice(0, base.lastIndexOf("/") + 1);
-  var parts = (directory + source).split("/");
+  // Dot segments belong to the path, never to query/fragment data.
+  var suffixAt = source.search(/[?#]/);
+  var suffix = suffixAt < 0 ? "" : source.slice(suffixAt);
+  var path = suffixAt < 0 ? source : source.slice(0, suffixAt);
+  if (!path)
+    return origin + base + suffix;
+  var parts = (directory + path).split("/");
   var out = [];
   for (var i = 0; i < parts.length; ++i) {
     if (parts[i] === "..") {
@@ -66,7 +72,7 @@ function resolve(source, baseUrl) {
       out.push(parts[i]);
     }
   }
-  return origin + out.join("/");
+  return origin + out.join("/") + suffix;
 }
 
 // Attributes of one HTML start tag body (after the tag name).
@@ -146,6 +152,12 @@ function _parseRich(text, baseUrl, slotUrl) {
         out += "<img src=\"" + escapeHtml(_slot(slotUrl, images.length)) + "\" />";
         images.push(found.image);
         i = found.end;
+        continue;
+      }
+      var tag = _guardTag(text, i, slotUrl);
+      if (tag) {
+        out += tag.text;
+        i = tag.end;
         continue;
       }
     }
@@ -250,7 +262,7 @@ function _inlineTarget(text, start) {
 
 // Link reference definitions: [label]: destination "title"
 function _definitions(lines) {
-  var definitions = {};
+  var definitions = Object.create(null);
   var pattern = /^ {0,3}\[((?:[^\]\\]|\\.)+)\]:[ \t]*(?:<([^>\n]*)>|(\S+))(?:[ \t]+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|\(((?:[^)\\]|\\.)*)\)))?[ \t]*$/;
   for (var i = 0; i < lines.length; ++i) {
     if (lines[i].code)
@@ -278,32 +290,44 @@ function _lines(text) {
   var previousCode = false;
   for (var i = 0; i < lines.length; ++i) {
     var line = lines[i];
+    // Fences belong to their block-quote container. Keep the original lines
+    // for Qt, but recognize code after removing each quote marker.
+    var content = line;
+    var depth = 0;
+    var quote;
+    while ((quote = /^ {0,3}>[ \t]?/.exec(content)) !== null) {
+      content = content.slice(quote[0].length);
+      ++depth;
+    }
+    if (fence && depth !== fence.depth)
+      fence = null;
     if (fence) {
       out.push({
                  text: line,
                  code: true
                });
-      var closing = new RegExp("^ {0,3}" + fence[0] + "{" + fence.length + ",}\\s*$");
-      if (closing.test(line))
+      var closing = new RegExp("^ {0,3}" + fence.ticks[0] + "{" + fence.ticks.length + ",}\\s*$");
+      if (closing.test(content))
         fence = null;
       continue;
     }
-    var opening = /^ {0,3}(`{3,}|~{3,})/.exec(line);
-    if (opening && !(opening[1][0] === "`" && line.slice(opening[0].length).indexOf("`") >= 0)) {
-      fence = opening[1];
+    var opening = /^ {0,3}(`{3,}|~{3,})/.exec(content);
+    if (opening && !(opening[1][0] === "`" && content.slice(opening[0].length).indexOf("`") >= 0)) {
+      fence = { ticks: opening[1], depth: depth };
       out.push({
                  text: line,
                  code: true
                });
       continue;
     }
-    var indented = /^( {4}|\t)/.test(line) && line.trim() !== "" && (previousBlank || previousCode);
+    var indented = /^( {4}|\t)/.test(content) && content.trim() !== "" && (previousBlank || previousCode);
     out.push({
                text: line,
-               code: indented
+               code: indented,
+               blank: content.trim() === ""
              });
     previousCode = indented;
-    previousBlank = line.trim() === "";
+    previousBlank = content.trim() === "";
   }
   return out;
 }
@@ -333,7 +357,7 @@ function _parseMarkdown(text, baseUrl, slotUrl) {
     run = [];
   };
   for (var i = 0; i < lines.length; ++i) {
-    if (lines[i].code) {
+    if (lines[i].code || lines[i].blank) {
       flush();
       out.push(lines[i].text);
     } else {
@@ -385,6 +409,15 @@ function _markdownInline(text, definitions, baseUrl, add) {
         i = found.end;
         continue;
       }
+      // Consume the entire tag, not image-looking text inside attributes.
+      // Resource attributes are guarded here, before the Markdown converter
+      // ever receives them. Code spans and fenced blocks bypass this walk.
+      var tag = _guardTag(text, i, "");
+      if (tag) {
+        out += tag.text;
+        i = tag.end;
+        continue;
+      }
     }
     if (ch === "!" && text[i + 1] === "[") {
       var altEnd = _bracketEnd(text, i + 1);
@@ -415,7 +448,8 @@ function _markdownInline(text, definitions, baseUrl, add) {
             next = refEnd;
           }
         }
-        var definition = definitions[_label(label)];
+        var key = _label(label);
+        var definition = Object.prototype.hasOwnProperty.call(definitions, key) ? definitions[key] : null;
         if (definition) {
           out += add({
                        source: resolve(definition.destination, baseUrl),
@@ -488,17 +522,123 @@ function order(html, slotUrl) {
 // CSS background images (style attributes, <style> blocks, linked style
 // sheets) and any <img> that is not a slot. They cannot be laid over text as
 // owner-backed images, so they are not loaded; the text stays.
+function _noCssUrls(css) {
+  var out = "";
+  var i = 0;
+  while (i < css.length) {
+    if (css.startsWith("/*", i)) {
+      var comment = css.indexOf("*/", i + 2);
+      var stop = comment < 0 ? css.length : comment + 2;
+      out += css.slice(i, stop);
+      i = stop;
+      continue;
+    }
+    if (css[i] === "\"" || css[i] === "'") {
+      var end = _cssStringEnd(css, i);
+      out += css.slice(i, end);
+      i = end;
+      continue;
+    }
+    var imported = css[i] === "@";
+    var start = i + (imported ? 1 : 0);
+    var token = /^(?:[-_a-zA-Z0-9]|\\(?:[0-9a-fA-F]{1,6}[ \t\r\n\f]?|.))+/.exec(css.slice(start));
+    if (!token) {
+      out += css[i++];
+      continue;
+    }
+    var name = token[0].replace(/\\([0-9a-fA-F]{1,6})[ \t\r\n\f]?|\\(.)/g, function (_, hex, literal) {
+      var code = hex ? parseInt(hex, 16) : 0;
+      return hex ? String.fromCodePoint(code > 0 && code <= 0x10FFFF ? code : 0xFFFD) : literal;
+    }).toLowerCase();
+    var next = start + token[0].length;
+    while (/\s/.test(css[next] || "") && next < css.length)
+      ++next;
+    // Qt's CSS parser imports quoted stylesheets too, and decodes escaped
+    // function names before interpreting URLs. Guard those same tokens.
+    if ((imported && name === "import") || (name === "url" && css[next] === "(")) {
+      var terminator = imported ? ";" : ")";
+      var cursor = imported ? next : next + 1;
+      while (cursor < css.length && css[cursor] !== terminator) {
+        if (css[cursor] === "\"" || css[cursor] === "'")
+          cursor = _cssStringEnd(css, cursor);
+        else if (css[cursor] === "\\")
+          cursor += 2;
+        else
+          ++cursor;
+      }
+      out += imported ? "" : "none";
+      i = Math.min(css.length, cursor + 1);
+      continue;
+    }
+    out += css.slice(i, start + token[0].length);
+    i = start + token[0].length;
+  }
+  return out;
+}
+
+function _cssStringEnd(css, start) {
+  var quote = css[start];
+  var i = start + 1;
+  while (i < css.length) {
+    if (css[i] === "\\")
+      i += 2;
+    else if (css[i++] === quote)
+      return i;
+  }
+  return css.length;
+}
+
+// One complete HTML tag (and style body), with attribute boundaries intact.
+// Operates only on markup identified by the rich/Markdown traversal: never
+// on literal code, comments, or strings inside another attribute.
+function _guardTag(text, start, slotUrl) {
+  var end = _tagEnd(text, start);
+  if (end < 0)
+    return null;
+  var tag = text.slice(start, end);
+  var head = /^<\s*([a-zA-Z][a-zA-Z0-9]*)/.exec(tag);
+  if (!head)
+    return { text: tag, end: end };
+  var name = head[1].toLowerCase();
+  if (name === "link")
+    return { text: "", end: end };
+  if (name === "img") {
+    var src = _attributes(tag.slice(head[0].length, -1)).src || "";
+    if (!slotUrl || src.indexOf(slotUrl + "#slot-") !== 0)
+      return { text: "", end: end };
+  }
+  var body = tag.slice(head[0].length, -1);
+  var pattern = /([^\s"'>\/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+  var out = tag.slice(0, head[0].length);
+  var cursor = 0;
+  var match;
+  while ((match = pattern.exec(body)) !== null) {
+    out += body.slice(cursor, match.index);
+    var attribute = match[1].toLowerCase();
+    if (attribute === "style") {
+      var value = match[2] !== undefined ? match[2] : match[3] !== undefined ? match[3] : match[4] || "";
+      var decoded = decodeEntities(value);
+      var guarded = _noCssUrls(decoded);
+      out += guarded === decoded ? match[0] : "style=\"" + escapeHtml(guarded) + "\"";
+    } else if (attribute !== "background") {
+      out += match[0];
+    }
+    cursor = pattern.lastIndex;
+  }
+  out += body.slice(cursor) + ">";
+  if (name === "style") {
+    var closing = text.slice(end).search(/<\/style\s*>/i);
+    var stop = closing < 0 ? text.length : end + closing;
+    out += _noCssUrls(text.slice(end, stop));
+    end = stop;
+  }
+  return { text: out, end: end };
+}
+
 function withoutResourceImages(html, slotUrl) {
-  var prefix = escapeHtml(slotUrl) + "#slot-";
   var out = "";
   var i = 0;
   var dropped = 0;
-  var noUrls = function (css) {
-    return css.replace(/url\s*\([^)]*\)/gi, function () {
-      ++dropped;
-      return "none";
-    });
-  };
   while (i < html.length) {
     if (html.startsWith("<!--", i)) {
       var close = html.indexOf("-->", i + 4);
@@ -507,40 +647,16 @@ function withoutResourceImages(html, slotUrl) {
       i = stop;
       continue;
     }
-    var end = html[i] === "<" ? _tagEnd(html, i) : -1;
-    if (end < 0) {
+    var guarded = html[i] === "<" ? _guardTag(html, i, slotUrl) : null;
+    if (!guarded) {
       out += html[i];
       ++i;
       continue;
     }
-    var tag = html.slice(i, end);
-    var name = (/^<\s*([a-zA-Z][a-zA-Z0-9]*)/.exec(tag) || [])[1];
-    name = name ? name.toLowerCase() : "";
-    if (name === "img") {
-      var src = /\ssrc\s*=\s*"([^"]*)"/i.exec(tag);
-      if (!src || src[1].indexOf(prefix) !== 0) {
-        ++dropped;
-        tag = "";
-      }
-    } else if (name === "link") {
+    if (guarded.text !== html.slice(i, guarded.end))
       ++dropped;
-      tag = "";
-    } else if (name) {
-      tag = tag.replace(/(\s)background\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, function (match, space) {
-        ++dropped;
-        return space;
-      }).replace(/(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi, function (match, head, value) {
-        return head + noUrls(value);
-      });
-    }
-    out += tag;
-    i = end;
-    if (name === "style") {
-      var closing = html.slice(i).search(/<\/style\s*>/i);
-      var body = closing < 0 ? html.slice(i) : html.slice(i, i + closing);
-      out += noUrls(body);
-      i += body.length;
-    }
+    out += guarded.text;
+    i = guarded.end;
   }
   return {
     html: out,

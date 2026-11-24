@@ -18,14 +18,19 @@ ShellRoot {
   property var rows: []
   property var raw: ({})
   function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
+    if (!item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
-    });
+    })) {
+      console.error("Cache grab rejected: " + name);
+      Qt.exit(4);
+      return false;
+    }
+    ++pending;
+    return true;
   }
   FloatingWindow {
     visible: true
@@ -70,7 +75,8 @@ ShellRoot {
       }
       if (root.tick >= 12 && !root.captured && ordinary.imageState === "ready") {
         for (var i = 0; i < entries.count; ++i) {
-          if (!entries.itemAt(i).thumbnailState.imageReady && !entries.itemAt(i).previewUnavailable)
+          var candidate = entries.itemAt(i);
+          if (!candidate || (!candidate.previewUnavailable && (!candidate.thumbnailState.imageReady || candidate.thumbnailState.reveal < 1)))
             return;
         }
         root.captured = true;
@@ -78,14 +84,16 @@ ShellRoot {
           state: ordinary.imageState,
           result: ordinary.imageResult
         };
-        root.grab(ordinary, "ordinary");
+        if (!root.grab(ordinary, "ordinary"))
+          return;
         for (var j = 0; j < entries.count; ++j) {
           var entry = entries.itemAt(j);
           root.rows.push({
                            name: entry.name,
                            state: entry.thumbnailState
                          });
-          root.grab(entry, "thumbnail-" + j);
+          if (!root.grab(entry, "thumbnail-" + j))
+            return;
         }
       }
       if (root.captured && !root.pending && root.admitted)

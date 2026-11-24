@@ -369,6 +369,21 @@ ShellRoot {
     return true;
   }
   property int grabTick: -1
+  function grab(item, name) {
+    ++pending;
+    if (item.grabToImage(result => {
+      console.log("IMAGE_GRAB|" + JSON.stringify({
+                                                   name: name,
+                                                   saved: result.saveToFile(root.output + "/" + name + ".png")
+                                                 }));
+      --root.pending;
+    }))
+      return true;
+    --pending;
+    console.error("Plugin grab rejected: " + name);
+    Qt.exit(3);
+    return false;
+  }
   Timer {
     interval: 100
     running: true
@@ -380,30 +395,15 @@ ShellRoot {
         for (const row of root.created) {
           if (!row.object)
             continue;
-          ++root.pending;
-          row.object.grabToImage(result => {
-            console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                         name: row.name,
-                                                         saved: result.saveToFile(root.output + "/" + row.name + ".png")
-                                                       }));
-            --root.pending;
-          });
+          if (!root.grab(row.object, row.name))
+            return;
         }
       }
       if (root.grabTick > 0 && root.tick > root.grabTick && root.tick <= root.grabTick + 9) {
         // Motion: frames of the sticker over time.
         var sticker = root.created.find(row => row.name === "sticker");
-        if (sticker && sticker.object) {
-          var name = "sticker-" + (root.tick - root.grabTick);
-          ++root.pending;
-          sticker.object.grabToImage(result => {
-            console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                         name: name,
-                                                         saved: result.saveToFile(root.output + "/" + name + ".png")
-                                                       }));
-            --root.pending;
-          });
-        }
+        if (sticker && sticker.object && !root.grab(sticker.object, "sticker-" + (root.tick - root.grabTick)))
+          return;
       }
       if (root.grabTick > 0 && root.tick >= root.grabTick + 12 && !root.pending) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({

@@ -282,8 +282,8 @@ SmartPanel {
               anchors.fill: parent
               onStatusChanged: {
                 var result = imageResult;
-                if (status === Image.Ready && result.width > 0 && result.height > 0)
-                  albumArtItem.artAspectRatio = result.width / result.height;
+                if (status === Image.Ready && result.decodedWidth > 0 && result.decodedHeight > 0)
+                  albumArtItem.artAspectRatio = result.decodedWidth / result.decodedHeight;
               }
               radius: root.compactMode ? Style.radiusM : Style.radiusL
               imagePath: MediaService.trackArtUrl

@@ -31,8 +31,7 @@ ShellRoot {
     return null;
   }
   function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
+    if (item && item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
@@ -43,7 +42,12 @@ ShellRoot {
         root.afterCapture = null;
         Qt.callLater(next);
       }
-    });
+    })) {
+      ++pending;
+    } else {
+      console.error("Setup wallpaper grab rejected: " + name);
+      Qt.exit(3);
+    }
   }
   function snapshot(name, after) {
     var setup = loader.item;

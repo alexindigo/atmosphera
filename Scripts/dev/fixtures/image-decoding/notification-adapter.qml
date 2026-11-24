@@ -8,6 +8,7 @@ import qs.Widgets
 
 ShellRoot {
   id: root
+  property bool historyOpened: false
   property bool started: false
   property bool producerDone: false
   property int producerExit: -1
@@ -17,6 +18,21 @@ ShellRoot {
   property var cancelCallbacks: []
   property var failures: []
   property int grabs: 0
+
+  Component.onCompleted: {
+    ImageCacheService.openNotificationHistory(Quickshell.env("IMAGE_FIXTURES") + "/adapter-history.json", ok => {
+      if (ok)
+        root.historyOpened = true;
+      else
+        root.fail("Could not open the adapter's private notification history");
+    });
+  }
+
+  function fail(message) {
+    console.error("NOTIFICATION_ADAPTER|" + message);
+    Qt.exit(2);
+  }
+
   Component {
     id: resultFactory
     NImage {
@@ -29,14 +45,17 @@ ShellRoot {
         if (status === Image.Ready && !grabbed) {
           grabbed = true;
           ++root.grabs;
-          grabToImage(result => {
+          if (!grabToImage(result => {
             console.log("IMAGE_GRAB|" + JSON.stringify({
                                                          name: "adapter-" + rowIndex,
                                                          saved: result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/adapter-" + rowIndex + ".png")
                                                        }));
             active = false;
             --root.grabs;
-          });
+          })) {
+            --root.grabs;
+            root.fail("Could not start grab for row " + rowIndex);
+          }
         }
       }
     }
@@ -71,12 +90,18 @@ ShellRoot {
                           success: success,
                           detail: detail
                         });
-      if (success)
-        resultFactory.createObject(presentations, {
-                                     source: path,
-                                     rowIndex: index,
-                                     x: index * 64
-                                   });
+      if (!success) {
+        root.fail("Admission failed for row " + index + ": " + JSON.stringify(detail));
+        return;
+      }
+      // Take the consumer's hold before the adapter releases its pending
+      // ticket, just as NotificationService does when publishing an entry.
+      ImageCacheService.updateNotificationHolders(root.results.map(row => row.path));
+      resultFactory.createObject(presentations, {
+                                   source: path,
+                                   rowIndex: index,
+                                   x: index * 64
+                                 });
     });
   }
   NotificationServer {
@@ -98,6 +123,8 @@ ShellRoot {
       root.producerExit = code;
       root.producerErrors = stderr.text;
       root.producerDone = true;
+      if (code !== 0)
+        root.fail("Producer exited " + code + ": " + root.producerErrors);
     }
   }
   Timer {
@@ -105,7 +132,7 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      if (!root.started && ImageCacheService.admissionReady && raw.status !== Image.Loading) {
+      if (!root.started && root.historyOpened && ImageCacheService.admissionReady && raw.status !== Image.Loading) {
         root.started = true;
         for (const source of ["", Quickshell.env("IMAGE_FIXTURES") + "/Missing.webp", "image://qsimage/unknown", Quickshell.env("IMAGE_FIXTURES") + "/Corrupt.webp"])
           ImageCacheService.getNotificationIcon(source, "Same app", "Same summary", function (path, success, detail) {

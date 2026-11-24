@@ -6,8 +6,8 @@ import qs.Widgets
 
 ShellRoot {
   id: root
-  property int tick: 0
-  property int pending: 0
+  property bool firstReleased: false
+  property bool grabbing: false
   property var shared: ({})
   property var survivor: ({})
   property bool retiring: false
@@ -43,26 +43,6 @@ ShellRoot {
       anchors.fill: parent
       source: second.url
       active: second.active
-      onStatusChanged: {
-        if (status !== Image.Ready || root.retiring)
-          return;
-        root.survivor = {
-          ready: true,
-          result: second.result,
-          firstUrl: first.url,
-          ffmpeg: secondPicker.statistics.ffmpeg
-        };
-        ++root.pending;
-        grabToImage(result => {
-          console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                       name: "survivor",
-                                                       saved: result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/survivor.png")
-                                                     }));
-          --root.pending;
-          root.retiring = true;
-          second.active = false;
-        });
-      }
     }
   }
   Timer {
@@ -70,16 +50,38 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      ++root.tick;
-      if (root.tick === 3) {
+      if (!root.firstReleased && firstPicker.running && secondPicker.running && ImageCacheService.sourceInterestCount === 2 && ImageCacheService.sourceRequestCount === 1) {
         root.shared = {
           interests: ImageCacheService.sourceInterestCount,
           requests: ImageCacheService.sourceRequestCount
         };
+        root.firstReleased = true;
         first.active = false;
         firstPicker.enabled = false;
       }
-      if (root.retiring && !root.pending && !ImageCacheService.sourceWorkerRunning) {
+      // The image itself can acquire an interest after the thumbnail arrives.
+      // Observe the retired picker's ownership, not a global cardinality.
+      if (root.firstReleased && !root.grabbing && !firstPicker.running && secondPicker.running && image.status === Image.Ready) {
+        root.grabbing = true;
+        root.survivor = {
+          ready: true,
+          result: second.result,
+          firstUrl: first.url,
+          ffmpeg: secondPicker.statistics.ffmpeg
+        };
+        if (!image.grabToImage(result => {
+          console.log("IMAGE_GRAB|" + JSON.stringify({
+                                                       name: "survivor",
+                                                       saved: result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/survivor.png")
+                                                     }));
+          root.retiring = true;
+          second.active = false;
+        })) {
+          console.error("Picker survivor grab rejected");
+          Qt.exit(3);
+        }
+      }
+      if (root.retiring && !ImageCacheService.sourceWorkerRunning) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          shared: root.shared,
                                                          survivor: root.survivor,

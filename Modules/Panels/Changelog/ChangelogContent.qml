@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -111,7 +112,7 @@ ColumnLayout {
         Layout.fillWidth: true
         visible: releaseContent.length > 0
         text: contentRoot.colorizeHeaders(releaseContent)
-        baseUrl: "file://" + Version.changelogPath
+        baseUrl: PortalPaths.pathToUri(Version.changelogPath).uri || ""
         wrapMode: Text.WordWrap
         format: "markdown"
         color: AtmoColor.mOnSurface

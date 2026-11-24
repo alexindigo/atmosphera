@@ -63,16 +63,17 @@ def version(value):
 
 
 def directory_types(directory, lexer):
-    """Type names a QML directory import provides: its .qml files and qmldir entries."""
-    names = set(lexer.atmosphera_names(str(directory), str(directory), "local"))
+    """A directory's declared exports, or filename exports without qmldir."""
     qmldir = directory / "qmldir"
-    if qmldir.is_file():
-        for line in qmldir.read_text(errors="replace").splitlines():
-            parts = line.split()
-            if parts and parts[0] == "singleton":
-                parts = parts[1:]
-            if parts and parts[0][:1].isupper():
-                names.add(parts[0])
+    if not qmldir.is_file():
+        return set(lexer.atmosphera_names(str(directory), str(directory), "local"))
+    names = set()
+    for line in qmldir.read_text(errors="replace").splitlines():
+        parts = line.split()
+        if parts and parts[0] == "singleton":
+            parts = parts[1:]
+        if parts and parts[0][:1].isupper():
+            names.add(parts[0])
     return names
 
 
@@ -157,7 +158,10 @@ def lint_source(path, shell, lexer, api, foreign, unchecked=None):
     for module, alias, directory in imports:
         if not alias:
             accessible.update(lexer.atmosphera_names(str(shell), str(directory), module))
+    # The document's own directory also supplies private sibling types; an
+    # explicit directory import exposes only qmldir's public names when present.
     accessible.update(lexer.atmosphera_names(str(shell), str(path.parent), "local"))
+    accessible.update({name: ("type", "local") for name in directory_types(path.parent, lexer)})
     shadows = {}
     for module in lexer.file_imports(source):
         if not module.startswith("qs.") and module != "qs":

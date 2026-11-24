@@ -364,8 +364,9 @@ def activate_profile(path, require_console=False):
     profile.verify(require_console=require_console)
     profile.console = ConsoleGuard.capture(profile.console_config, profile.uid)
     profile.console.verify(require_console)
+    environment = profile.session_environment()
+    os.environ.update(environment)
     _active.set(profile)  # Only a fully verified profile can replace the active one.
-    os.environ.update(profile.session_environment())
     return profile
 
 

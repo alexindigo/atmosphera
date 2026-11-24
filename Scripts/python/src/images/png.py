@@ -35,22 +35,30 @@ def chunk(kind, data):
 
 
 def png_chunks(data):
-    if not data.startswith(PNG):
+    if data[:8] != PNG:
         raise ValueError('Invalid PNG signature')
-    offset, kinds = 8, []
+    offset, first, seen_data, data_ended = 8, True, False, False
     while offset + 12 <= len(data):
         length = struct.unpack_from('!I', data, offset)[0]
         end = offset + 12 + length
         if end > len(data):
             raise ValueError('Truncated PNG')
-        kind, content = data[offset + 4:offset + 8], data[offset + 8:end - 4]
-        if struct.unpack_from('!I', data, end - 4)[0] != zlib.crc32(kind + content):
+        kind, content = bytes(data[offset + 4:offset + 8]), data[offset + 8:end - 4]
+        if struct.unpack_from('!I', data, end - 4)[0] != zlib.crc32(content, zlib.crc32(kind)):
             raise ValueError('Invalid PNG CRC')
-        kinds.append(kind)
+        if (first and kind != b'IHDR') or (kind == b'IHDR' and (not first or length != 13)):
+            raise ValueError('Invalid PNG header')
+        if kind == b'IDAT':
+            if data_ended:
+                raise ValueError('Nonconsecutive PNG image data')
+            seen_data = True
+        elif seen_data:
+            data_ended = True
+        first = False
         yield kind, content
         offset = end
         if kind == b'IEND':
-            if content or kinds[0] != b'IHDR' or kinds.count(b'IHDR') != 1 or b'IDAT' not in kinds or offset != len(data):
+            if content or not seen_data or offset != len(data):
                 raise ValueError('Invalid PNG structure')
             return
     raise ValueError('Missing PNG end')
@@ -100,10 +108,19 @@ def validate(data, maximum=None):
                 raise ValueError('Excess PNG scanlines')
     for kind, value in parts:
         if kind == b'IDAT':
-            buffer.extend(decoder.decompress(value))
-            consume()
-    buffer.extend(decoder.flush())
-    consume()
+            while value:
+                # The declared scanlines, not compressed input size, bound every
+                # inflation allocation. One extra byte detects excess pixels.
+                remaining = (height - rows) * (stride + 1) - len(buffer)
+                try:
+                    inflated = decoder.decompress(value, min(65536, remaining + 1))
+                except zlib.error as error:
+                    raise ValueError('Invalid PNG compression') from error
+                if len(inflated) > remaining:
+                    raise ValueError('Excess PNG scanlines')
+                buffer.extend(inflated)
+                consume()
+                value = decoder.unconsumed_tail
     if not decoder.eof or decoder.unused_data or buffer or rows != height:
         raise ValueError('Incomplete PNG pixel stream')
     return dict(format='png', width=width, height=height, frames=1, animated=False, delaysMs=[], loop=None)

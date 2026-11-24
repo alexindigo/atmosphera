@@ -47,6 +47,7 @@ def main():
     sys.path.insert(0, str(args.source / 'Scripts/python/src'))
     from images.cache import Cache, iterations
     from images.content import gif
+    from images.notification_originals import NotificationOriginals, save_json
     from images.png import validate, empty_png, PNG, chunk
     from images.process import command, CommandError
     from images.sources import prepare, SourceError
@@ -78,6 +79,497 @@ def main():
 
         def request(self, source='Still.webp', **kwargs):
             return dict(source=str(fixtures / source), width=128, height=128, animationIntent='still', fit='contain', **kwargs)
+
+        async def start_publication_writer(self, number, cache_home, target):
+            # Stop the real worker after cache lookup and validation, just before
+            # publishing. No production hook or assumed decoder timing is needed.
+            worker = args.source / 'Scripts/python/image-worker.py'
+            launcher = '''
+import runpy, sys, time
+from pathlib import Path
+
+worker, target, gate, number = sys.argv[1:]
+sys.path.insert(0, str(Path(worker).parent / 'src'))
+from images import cache
+write = cache.atomic_write
+
+def synchronized_write(path, *args, **kwargs):
+    if str(path) == target or (path.parent == Path(target) and path.suffix == '.png'):
+        marker = Path(gate) / (number + '.pending')
+        marker.write_text(str(path))
+        marker.replace(Path(gate) / number)
+        deadline = time.monotonic() + 12
+        while not (Path(gate) / 'release').exists():
+            if time.monotonic() >= deadline:
+                raise TimeoutError('peer did not reach publication')
+            time.sleep(.005)
+    return write(path, *args, **kwargs)
+
+cache.atomic_write = synchronized_write
+runpy.run_path(worker, run_name='__main__')
+'''
+            return await asyncio.create_subprocess_exec(sys.executable, '-B', '-c', launcher,
+                str(worker), str(target), str(self.folder), str(number),
+                stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                env=dict(os.environ, XDG_CACHE_HOME=str(cache_home)))
+
+        async def release_publication_writers(self, workers):
+            markers = [self.folder / str(number) for number in range(len(workers))]
+            async def wait_for_markers():
+                while not all(path.exists() for path in markers):
+                    await asyncio.sleep(.005)
+            try:
+                await asyncio.wait_for(wait_for_markers(), 8)
+            except TimeoutError:
+                self.fail(f'writers at publication: {[path.name for path in markers if path.exists()]}')
+            paths = [Path(path.read_text()) for path in markers]
+            self.assertEqual(len(set(paths)), 1, paths)
+            self.assertFalse(paths[0].exists(), paths)
+            (self.folder / 'release').touch()
+            self.events.append(dict(writersAtPublication=len(paths), target=str(paths[0])))
+
+        def test_notification_pending_handoff_and_last_release(self):
+            directory = self.folder / 'retained'
+            history = self.folder / 'history.json'
+            producer = NotificationOriginals(directory, history, os.getpid())
+            collecting_worker = NotificationOriginals(directory, history, os.getppid())
+            name = 'atmosphera-' + 'a' * 64 + '.png'
+            target = directory / name
+            producer.publish('first', name, lambda: target.write_bytes(b'original'))
+            collecting_worker.update(wanted=set(), live=[])
+            self.assertEqual(target.read_bytes(), b'original')
+            # Two independently pending consumers share the same immutable name.
+            producer.publish('second', name, lambda: target.write_bytes(b'original'))
+            producer.update(wanted={'second'})
+            self.assertTrue(target.exists())
+            # Another worker for the same shell must restore pending custody.
+            restarted = NotificationOriginals(directory, history, os.getpid())
+            restarted.update(wanted={'second'})
+            restarted.update(wanted=set(), live=[target.as_uri()])
+            collecting_worker.update(live=[target.as_uri()])
+            restarted.update(live=[])
+            self.assertTrue(target.exists())
+            collecting_worker.update(live=[])
+            self.assertFalse(target.exists())
+
+        def test_notification_cold_history_holds_until_commit(self):
+            from images.storage import atomic_write as save_original
+
+            directory = self.folder / 'retained'
+            history = self.folder / 'history.json'
+            owner = NotificationOriginals(directory, history, os.getpid())
+            target = directory / ('atmosphera-' + 'b' * 64 + '.jpg')
+            target.write_bytes(b'legacy original')
+            stored = [{'cachedImage': target.as_uri()}, {'cachedImage': target.as_uri()}]
+            save_json(history, {'notifications': stored})
+            self.assertEqual(owner.update(load=True), stored)
+            owner.update(live=[], rows=stored[:1])
+            self.assertTrue(target.exists())
+            with patch('images.notification_originals.atomic_write', wraps=save_original) as writer:
+                def fail_history(path, *args, **kwargs):
+                    if path == history:
+                        raise OSError('history write interrupted')
+                    return save_original(path, *args, **kwargs)
+                writer.side_effect = fail_history
+                with self.assertRaisesRegex(OSError, 'history write interrupted'):
+                    owner.update(rows=[])
+            self.assertEqual(owner.history_rows(history), stored[:1])
+            self.assertTrue(target.exists())
+            owner.update(rows=[])
+            self.assertEqual(owner.history_rows(history), [])
+            self.assertFalse(target.exists())
+
+        async def test_atomic_write_closes_directory_when_cleanup_also_fails(self):
+            from images.storage import atomic_write
+            def descriptors():
+                rows = {}
+                for path in Path('/proc/self/fd').iterdir():
+                    try:
+                        rows[int(path.name)] = os.readlink(path)
+                    except FileNotFoundError:
+                        pass
+                return rows
+            before = descriptors()
+            leaked = set()
+            try:
+                with patch('images.storage.os.replace', side_effect=OSError('publication failed')), patch('images.storage.os.unlink', side_effect=PermissionError('cleanup failed')):
+                    with self.assertRaises(OSError):
+                        atomic_write(self.folder / 'cache/normal/result.png', empty_png(), self.folder / 'cache')
+                leaked = set(descriptors()) - set(before)
+                self.assertEqual(leaked, set())
+            finally:
+                for fd in leaked:
+                    os.close(fd)
+
+        async def test_legacy_clear_continues_after_a_concurrent_removal(self):
+            from images.storage import clear_legacy
+            directory = self.folder / 'legacy'
+            directory.mkdir()
+            for name in ('a.png', 'b.png'):
+                (directory / name).write_bytes(empty_png())
+            original = os.stat
+            def vanish(path, *args, **kwargs):
+                if path == 'a.png' and kwargs.get('dir_fd') is not None:
+                    os.unlink(path, dir_fd=kwargs['dir_fd'])
+                    raise FileNotFoundError('Concurrent clear removed entry')
+                return original(path, *args, **kwargs)
+            with patch('images.storage.os.listdir', return_value=['a.png', 'b.png']), patch('images.storage.os.stat', vanish):
+                counts = clear_legacy(directory)
+            self.assertEqual(counts['removed'], 1)
+            self.assertFalse((directory / 'b.png').exists())
+
+        async def test_animation_reuse_has_the_same_precision_as_cold_validation(self):
+            from images.content import known
+            def fractional_delays(path):
+                info = known(path)
+                if info and info['format'] == 'webp' and info['animated']:
+                    info = dict(info, delaysMs=[delay + 2 for delay in info['delaysMs']])
+                return info
+            request = dict(self.request('Motion.webp'), animationIntent='preserve')
+            with patch('images.cache.content.known', fractional_delays):
+                first = await self.cache.render(request)
+                second = await self.cache.render(request)
+            self.assertEqual(first['status'], 'generated')
+            self.assertEqual(second['status'], 'hit')
+            self.assertEqual(first['url'], second['url'])
+
+        async def test_partial_gif_decode_error_is_not_accepted_on_zero_exit(self):
+            data = bytearray((fixtures / 'Motion.gif').read_bytes())
+            position = 13 + (3 * (1 << ((data[10] & 7) + 1)) if data[10] & 128 else 0)
+            frames = []
+            while position < len(data):
+                marker = data[position]
+                position += 1
+                if marker == 0x3b:
+                    break
+                if marker == 0x21:
+                    position += 1
+                elif marker == 0x2c:
+                    flags = data[position + 8]
+                    position += 9
+                    if flags & 128:
+                        position += 3 * (1 << ((flags & 7) + 1))
+                    position += 1
+                    frames.append(position)
+                else:
+                    self.fail('Unexpected GIF fixture marker')
+                while data[position]:
+                    position += 1 + data[position]
+                position += 1
+            self.assertEqual(len(frames), 3)
+            data[frames[1] + 1:frames[1] + 3] = b'\0\0'
+            path = self.folder / 'partly-decoded.gif'
+            path.write_bytes(data)
+            info = gif(data)
+            control = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-i', str(path), '-f', 'null', '-'], capture_output=True, timeout=10)
+            self.assertEqual(control.returncode, 0, control.stderr)
+            self.assertIn(b'LZW decode failed', control.stderr)
+            with self.assertRaises((ValueError, CommandError)):
+                await self.cache.validate_output(path, self.folder, True, dict(width=info['width'], height=info['height'], fit='contain'))
+
+        async def test_http_retirement_cleans_server_when_worker_creation_fails(self):
+            servers, threads = [], []
+            server_class, thread_class = ThreadingHTTPServer, threading.Thread
+            def server(*args, **kwargs):
+                item = server_class(*args, **kwargs)
+                servers.append(item)
+                return item
+            def thread(*args, **kwargs):
+                item = thread_class(*args, **kwargs)
+                threads.append(item)
+                return item
+            try:
+                with patch('__main__.ThreadingHTTPServer', server), patch.object(threading, 'Thread', thread), patch.object(asyncio, 'create_subprocess_exec', side_effect=OSError('Worker creation failed')):
+                    with self.assertRaisesRegex(OSError, 'Worker creation failed'):
+                        await self.held_http_retirement(False)
+                self.assertTrue(servers and threads)
+                self.assertTrue(all(not item.is_alive() for item in threads))
+            finally:
+                for item in servers:
+                    item.shutdown()
+                    item.server_close()
+                for item in threads:
+                    item.join(timeout=5)
+
+        async def test_remote_source_budget_has_terminal_errors_and_no_partial_file(self):
+            size = 1024 * 1024
+            class Handler(BaseHTTPRequestHandler):
+                def log_message(self, *args):
+                    pass
+                def do_GET(self):
+                    self.send_response(200)
+                    if self.path == '/declared':
+                        self.send_header('Content-Length', str(size + 1))
+                    self.end_headers()
+                    try:
+                        for _ in range(17):
+                            self.wfile.write(b'x' * 65536)
+                            self.wfile.flush()
+                    except (BrokenPipeError, ConnectionResetError):
+                        pass
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                with environment(QT_IMAGEIO_MAXALLOC='1'):
+                    for route in ('declared', 'streamed'):
+                        replies = []
+                        worker = Worker(self.cache, replies.append)
+                        try:
+                            await asyncio.wait_for(worker.request(dict(self.request(),
+                                source=f'http://127.0.0.1:{server.server_port}/{route}', id=route)), 10)
+                            with self.subTest(route=route):
+                                self.assertEqual(len(replies), 1)
+                                self.assertEqual(replies[0]['status'], 'unavailable')
+                                self.assertEqual(replies[0]['code'], 'source-too-large', replies)
+                                self.assertIn('too large', replies[0]['reason'].lower())
+                                self.assertEqual(list(self.cache.staging.glob('.source-*')), [])
+                        finally:
+                            await worker.close()
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+            self.assertFalse(thread.is_alive())
+
+        async def test_remote_source_exact_budget_is_preserved(self):
+            payload = b'p' * (1024 * 1024)
+            class Handler(BaseHTTPRequestHandler):
+                def log_message(self, *args):
+                    pass
+                def do_GET(self):
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(payload)))
+                    self.end_headers()
+                    self.wfile.write(payload)
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                with environment(QT_IMAGEIO_MAXALLOC='1'):
+                    async with prepare(f'http://127.0.0.1:{server.server_port}/exact', self.cache.staging) as row:
+                        self.assertEqual(row['path'].stat().st_size, len(payload))
+                        self.assertEqual(row['contentSha256'], hashlib.sha256(payload).hexdigest())
+                self.assertEqual(list(self.cache.staging.glob('.source-*')), [])
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+
+        async def test_remote_declared_oversize_is_rejected_before_body_read(self):
+            from contextlib import nullcontext
+            spec = importlib.util.spec_from_file_location('image_download', args.source / 'Scripts/python/src/images/download.py')
+            download = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(download)
+            class Response:
+                status = 200
+                headers = {'Content-Length': '1048577'}
+                def geturl(self):
+                    return 'https://example.test/image'
+                def read(self, size):
+                    raise AssertionError('Declared oversize body was read')
+            class Opener:
+                def open(self, *args, **kwargs):
+                    return nullcontext(Response())
+            target = self.folder / 'download'
+            with patch.object(download, 'build_opener', return_value=Opener()), patch.object(sys, 'argv', ['download.py', 'https://example.test/image', str(target), '1048576']):
+                with self.assertRaises(download.SourceTooLarge):
+                    download.main()
+            self.assertFalse(target.exists())
+
+        async def test_source_budget_follows_qt_allocation_units(self):
+            from images.limits import source_byte_budget, QT_DEFAULT_ALLOCATION_MIB
+            for value, expected in (('1', 1), ('32', 32), ('0', QT_DEFAULT_ALLOCATION_MIB), ('bad', QT_DEFAULT_ALLOCATION_MIB)):
+                with environment(QT_IMAGEIO_MAXALLOC=value):
+                    self.assertEqual(source_byte_budget(), expected * 1024 * 1024)
+
+        async def test_remote_redirect_is_refused_before_ftp_open(self):
+            import urllib.request
+            spec = importlib.util.spec_from_file_location('image_download', args.source / 'Scripts/python/src/images/download.py')
+            download = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(download)
+            contacted = []
+            def ftp_open(handler, request):
+                contacted.append(request.full_url)
+                raise ValueError('FTP endpoint was contacted')
+            class Handler(BaseHTTPRequestHandler):
+                def log_message(self, *args):
+                    pass
+                def do_GET(self):
+                    self.send_response(302)
+                    self.send_header('Location', 'ftp://127.0.0.1/should-not-be-contacted')
+                    self.end_headers()
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                # Both old and corrected downloader interfaces are exercised.
+                extra = ['1048576'] if hasattr(download, 'SourceTooLarge') else []
+                with patch.object(sys, 'argv', ['download.py', f'http://127.0.0.1:{server.server_port}/redirect', str(self.folder / 'download'), *extra]), patch.object(urllib.request.FTPHandler, 'ftp_open', ftp_open):
+                    try:
+                        download.main()
+                    except (ValueError, OSError):
+                        pass
+                self.assertEqual(contacted, [])
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+
+        async def test_known_source_inspection_does_not_read_the_whole_file(self):
+            from images.content import known
+            for name in ('Still.webp', 'Motion.webp', 'frame-0.png', 'Motion.gif'):
+                path = fixtures / name
+                with patch.object(Path, 'read_bytes', side_effect=AssertionError('whole-file read')):
+                    row = known(path)
+                self.assertGreater(row['width'], 0)
+                self.assertGreater(row['height'], 0)
+
+        async def test_malformed_containers_emit_terminal_unavailable(self):
+            malformed = {
+                'empty-header.png': PNG + chunk(b'IHDR', b'') + chunk(b'IDAT', zlib.compress(b'')) + chunk(b'IEND', b''),
+                'short-header.png': PNG + chunk(b'IHDR', b'\0' * 8) + chunk(b'IDAT', zlib.compress(b'')) + chunk(b'IEND', b''),
+                'extension.gif': b'GIF89a' + struct.pack('<HH', 1, 1) + b'\0\0\0\x21',
+            }
+            for name, data in malformed.items():
+                path = self.folder / name
+                path.write_bytes(data)
+                replies = []
+                worker = Worker(self.cache, replies.append)
+                try:
+                    await worker.request(dict(self.request(), source=str(path), id=name))
+                    self.assertEqual(len(replies), 1, (name, replies))
+                    self.assertEqual(replies[0]['status'], 'unavailable', name)
+                    self.assertEqual(replies[0]['url'], '', name)
+                finally:
+                    await worker.close()
+
+        async def test_png_validation_errors_share_the_value_error_boundary(self):
+            header = struct.pack('!IIBBBBB', 1, 1, 8, 6, 0, 0, 0)
+            for parts in ((chunk(b'IHDR', b''), chunk(b'IDAT', zlib.compress(b''))),
+                          (chunk(b'IHDR', header), chunk(b'IDAT', b'not zlib'))):
+                with self.subTest(parts=parts), self.assertRaises(ValueError):
+                    validate(PNG + b''.join(parts) + chunk(b'IEND', b''))
+            data = zlib.compress(b'\0\x01\x02\x03\xff')
+            consecutive = PNG + chunk(b'IHDR', header) + chunk(b'IDAT', data[:3]) + chunk(b'IDAT', data[3:]) + chunk(b'IEND', b'')
+            self.assertEqual(validate(consecutive)['width'], 1)
+            broken = PNG + chunk(b'IHDR', header) + chunk(b'IDAT', data[:3]) + chunk(b'tEXt', b'k\0v') + chunk(b'IDAT', data[3:]) + chunk(b'IEND', b'')
+            with self.assertRaises(ValueError):
+                validate(broken)
+
+        async def test_png_inflation_is_bounded_by_declared_pixels(self):
+            header = struct.pack('!IIBBBBB', 1, 1, 8, 6, 0, 0, 0)
+            bomb = PNG + chunk(b'IHDR', header) + chunk(b'IDAT', zlib.compress(b'\0' * 1048576)) + chunk(b'IEND', b'')
+            original = zlib.decompressobj
+            calls = []
+            class Observed:
+                def __init__(self):
+                    self.decoder = original()
+                def decompress(self, data, max_length=0):
+                    calls.append(max_length)
+                    return self.decoder.decompress(data, max_length)
+                def __getattr__(self, key):
+                    return getattr(self.decoder, key)
+            with patch('images.png.zlib.decompressobj', Observed), self.assertRaises(ValueError):
+                validate(bomb)
+            self.assertTrue(calls)
+            self.assertTrue(all(0 < limit <= 6 for limit in calls), calls)
+
+        async def test_transient_decoder_failure_is_not_persisted(self):
+            calls = []
+            async def transient(prepared, request, info):
+                calls.append(request)
+                error = SourceError('decode-unavailable', 'Temporary decoder failure')
+                error.attempts = [dict(decoder='magick', code='timeout'), dict(decoder='ffmpeg', code='decoder-failed')]
+                raise error
+            with patch.object(self.cache, 'decode', transient):
+                for _ in range(2):
+                    with self.assertRaises(SourceError):
+                        await self.cache.render(self.request())
+            self.assertEqual(len(calls), 2)
+            self.assertEqual(list((self.cache.private / 'fail').glob('*.json')), [])
+
+        async def test_restarted_worker_restores_held_lease_before_same_read_clear(self):
+            result = await self.cache.render(self.request())
+            target = Path(result['url'].removeprefix('file://'))
+            replies = []
+            worker = Worker(self.cache, replies.append)
+            try:
+                worker.replace([dict(id='held', generation=1, lease=result['url'])])
+                reply = worker.clear(dict(id='clear'))
+                self.assertEqual(reply['event'], 'cleared')
+                self.assertTrue(target.is_file(), reply)
+                await asyncio.gather(*worker.tasks.values())
+                self.assertIn('held', worker.leases)
+            finally:
+                await worker.close()
+            worker.clear(dict(id='released'))
+            self.assertFalse(target.exists())
+
+        async def test_shutdown_joins_retired_cleanup_without_second_cancellation(self):
+            started, cleaning = asyncio.Event(), asyncio.Event()
+            finished = []
+            async def held(request):
+                started.set()
+                try:
+                    await asyncio.Event().wait()
+                finally:
+                    cleaning.set()
+                    await asyncio.sleep(.05)
+                    finished.append(True)
+            worker = Worker(self.cache, self.events.append)
+            with patch.object(self.cache, 'render', held):
+                worker.replace([dict(self.request(), id='retiring')])
+                await asyncio.wait_for(started.wait(), 5)
+                worker.replace([])
+                await asyncio.wait_for(cleaning.wait(), 5)
+                await worker.close()
+            self.assertEqual(finished, [True])
+
+        async def test_diagnostic_failure_still_joins_decoder_supervisor(self):
+            recorded = []
+            def broken(event):
+                recorded.append(event)
+                raise RuntimeError('diagnostic sink rejected event')
+            try:
+                with self.assertRaisesRegex(RuntimeError, 'diagnostic sink'):
+                    await command([sys.executable, '-c', 'import time;time.sleep(30)'], self.folder, 30, emit=broken)
+                pid = recorded[0]['watcher']
+                self.assertFalse(Path(f'/proc/{pid}').exists(), pid)
+            finally:
+                for row in recorded:
+                    try:
+                        os.kill(row['watcher'], signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass
+                await asyncio.sleep(.1)
+
+        async def test_identity_write_failure_retires_created_decoder(self):
+            marker = self.folder / 'decoder.pid'
+            spec = dict(argv=[sys.executable, '-c',
+                'import os,time,sys;from pathlib import Path;Path(sys.argv[1]).write_text(str(os.getpid()));time.sleep(30)', str(marker)],
+                stdout=str(self.folder / 'out'), stderr=str(self.folder / 'err'),
+                identity=str(self.folder / 'missing' / 'identity.json'), result=str(self.folder / 'result.json'), timeout=30)
+            process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source / 'Scripts/python/src/images/owned_command.py'),
+                json.dumps(spec), stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.PIPE)
+            try:
+                await asyncio.wait_for(process.wait(), 5)
+                self.assertNotEqual(process.returncode, 0)
+                await asyncio.sleep(.1)
+                if marker.exists():
+                    pid = int(marker.read_text())
+                    self.assertFalse(Path(f'/proc/{pid}').exists(), pid)
+            finally:
+                process.stdin.close()
+                if process.returncode is None:
+                    process.terminate()
+                    await process.wait()
+                if marker.exists():
+                    pid = int(marker.read_text())
+                    try:
+                        os.killpg(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
 
         async def test_literal_sources_data_and_file_urls(self):
             for name in ('Still.webp', 'Misleading.png', 'bracket[0]: image.webp', '-leading.webp', 'image:literal.webp', 'Space \u6d77\u5cb8.webp'):
@@ -590,15 +1082,14 @@ def main():
                         return row
             try:
                 for number in range(2):
-                    process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source / 'Scripts/python/image-worker.py'),
-                        stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                        env=dict(os.environ, XDG_CACHE_HOME=str(cache.parent)))
+                    process = await self.start_publication_writer(number, cache.parent, target)
                     workers.append(process)
                     identities.append(self.process_identity(process.pid))
                     self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
                     process.stdin.write((json.dumps([dict(self.thumbnail_request(), source=str(source),
                                                           id=str(number), generation=number)]) + '\n').encode())
                     await process.stdin.drain()
+                await self.release_publication_writers(workers)
                 pending = [asyncio.create_task(receive(process)) for process in workers]
                 observations = []
                 while not all(task.done() for task in pending):
@@ -610,6 +1101,7 @@ def main():
                 results = await asyncio.gather(*pending)
                 for result in results:
                     self.assertIn(result['status'], ('generated', 'hit'))
+                    self.assertEqual(result['thumbnailOrigin'], 'generated')
                     self.assertEqual(pixel(Path(result['url'].removeprefix('file://'))), list(COLORS[0]))
                 self.assertEqual(pixel(target), list(COLORS[0]))
                 observations.append(hashlib.sha256(target.read_bytes()).hexdigest())
@@ -947,11 +1439,12 @@ def main():
             server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
             thread = threading.Thread(target=server.serve_forever)
             thread.start()
-            process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
-                stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'cache')))
+            process = None
             identities, replies = [], []
             try:
+                process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
+                    stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                    env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'cache')))
                 self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
                 request = dict(self.request(), id='held-http', generation=1, source=f'http://127.0.0.1:{server.server_port}/held')
                 process.stdin.write((json.dumps([request])+'\n').encode())
@@ -984,15 +1477,20 @@ def main():
                 self.assertEqual(list((cache/'still').glob('*')), [])
                 self.events.append(dict(replies=replies, malformed=malformed, heldHttp=True))
             finally:
-                if process.returncode is None:
-                    process.kill()
-                    await process.wait()
-                release.set()
-                server.shutdown()
-                server.server_close()
-                thread.join()
-                if entered.is_set():
-                    self.assertTrue(returned.wait(3))
+                try:
+                    if process is not None and process.returncode is None:
+                        process.kill()
+                        await process.wait()
+                finally:
+                    release.set()
+                    try:
+                        server.shutdown()
+                    finally:
+                        server.server_close()
+                        thread.join(timeout=5)
+                    self.assertFalse(thread.is_alive())
+                    if entered.is_set():
+                        self.assertTrue(returned.wait(3))
 
         async def test_eof_retires_held_http_and_every_owned_process(self):
             await self.held_http_retirement(False)
@@ -1153,6 +1651,8 @@ def main():
 
         async def test_independent_workers_publish_same_representation_atomically(self):
             workers, identities, replies = [], [], []
+            cache_home = self.folder/'shared'
+            directory = cache_home/'thumbnails/atmosphera-representations-v1/still'
             async def receive(process):
                 while True:
                     row = json.loads(await asyncio.wait_for(process.stdout.readline(), 8))
@@ -1168,18 +1668,16 @@ def main():
                         return row
             try:
                 for number in range(2):
-                    process = await asyncio.create_subprocess_exec(sys.executable, '-B', str(args.source/'Scripts/python/image-worker.py'),
-                        stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                        env=dict(os.environ, XDG_CACHE_HOME=str(self.folder/'shared')))
+                    process = await self.start_publication_writer(number, cache_home, directory)
                     workers.append(process)
                     identities.append(self.process_identity(process.pid))
                     self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 3))['event'], 'ready')
                 for number, process in enumerate(workers):
                     process.stdin.write((json.dumps([dict(self.request('Motion.webp'), id=str(number), generation=number)])+'\n').encode())
                     await process.stdin.drain()
+                await self.release_publication_writers(workers)
                 pending = [asyncio.create_task(receive(process)) for process in workers]
                 observed = []
-                directory = self.folder/'shared/thumbnails/atmosphera-representations-v1/still'
                 while not all(task.done() for task in pending):
                     for path in directory.glob('*.png'):
                         data = path.read_bytes()
@@ -1188,8 +1686,7 @@ def main():
                     await asyncio.sleep(.001)
                 first, second = await asyncio.gather(*pending)
                 self.assertEqual(first['url'], second['url'])
-                self.assertIn(first['status'], ('generated', 'hit'))
-                self.assertIn(second['status'], ('generated', 'hit'))
+                self.assertEqual((first['status'], second['status']), ('generated', 'generated'))
                 target = Path(first['url'].removeprefix('file://'))
                 self.assertEqual(pixel(target), list(COLORS[0]))
                 validate(target.read_bytes())
@@ -1237,7 +1734,7 @@ def main():
                             stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                             env=dict(os.environ, PATH=str(shim) + ':' + os.environ['PATH'], XDG_CACHE_HOME=str(self.folder / 'cache')))
             try:
-                self.assertEqual(json.loads(await process.stdout.readline())['event'], 'ready')
+                self.assertEqual(json.loads(await asyncio.wait_for(process.stdout.readline(), 5))['event'], 'ready')
                 process.stdin.write((json.dumps([dict(self.request(), id='death', generation=1)]) + '\n').encode())
                 await process.stdin.drain()
                 for _ in range(300):

@@ -13,6 +13,8 @@ ShellRoot {
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
   property int tick: 0
   property int pendingGrabs: 0
+  property bool pngTileSampled: false
+  property bool webpTileSampled: false
   property var samples: []
   property var nativeEvents: []
   property var conversion: ({
@@ -175,13 +177,21 @@ ShellRoot {
       if (root.tick === 15) {
         root.grab(png, "raw-png");
         root.grab(webp, "raw-webp");
-        root.grab(pngTile, "chooser-png");
-        root.grab(webpTile, "chooser-webp");
         root.grab(setup, "setup-wallpaper");
+      }
+      if (!root.pngTileSampled && pngTile.thumbnailState.imageReady && pngTile.thumbnailState.reveal === 1) {
+        root.pngTileSampled = true;
+        root.grab(pngTile, "chooser-png");
+      }
+      // The historical chooser has no explicit unavailable state. The raw
+      // reader's error allows the icon control, not the PNG success control.
+      if (!root.webpTileSampled && (webpTile.thumbnailState.imageReady ? webpTile.thumbnailState.reveal === 1 : webp.status === Image.Error)) {
+        root.webpTileSampled = true;
+        root.grab(webpTile, "chooser-webp");
       }
       if ([16, 18, 20, 22, 24, 26, 28, 30].includes(root.tick) && quicklook.renderer)
         root.grab(quicklook.renderer, "quicklook-" + root.tick);
-      if (root.tick >= 40 && root.pendingGrabs === 0) {
+      if (root.tick >= 40 && root.pngTileSampled && root.webpTileSampled && root.pendingGrabs === 0) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          png: png.status,
                                                          webp: webp.status,

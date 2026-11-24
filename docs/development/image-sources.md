@@ -19,6 +19,12 @@ never replaced by an ordinary icon that looks like success.
 | `AtmoIcon` | Icon-set glyphs; SVG/image entries render their mask through `NImage`. |
 | `NImageText` | Rich text (`format: "rich"`) or Markdown (`format: "markdown"`) that can contain images. |
 
+Rounded artwork samples the owner's texture on the hardware scene graph. On
+the software scene graph, which cannot run that shader, the owner supplies a
+fitted and rounded representation keyed by physical size, fill mode and corner
+radius. Qt provider images stay in process and use the owner's existing Canvas
+renderer. Neither path captures a live scene item or opens a second source.
+
 ## Thumbnails held by plugins
 
 A plugin that needs a thumbnail file rather than a rendered item (a video
@@ -26,9 +32,19 @@ wallpaper that hands its frame to color generation, a card sorted by color)
 asks the owner directly and holds the interest while it uses the file:
 
 ```qml
-token = ImageCacheService.acquireSource({ source: path, width: 1024, height: 1024,
-  fit: "contain", animationIntent: "still", operation: "video-thumbnail" }, reply => { ... })
-ImageCacheService.releaseSource(token)
+thumbnailToken = ImageCacheService.acquireSource({ source: path, width: 1024, height: 1024,
+  fit: "contain", animationIntent: "still", operation: "video-thumbnail" }, reply => {
+    if (reply.status === "hit" || reply.status === "generated")
+      startUsingThumbnail(reply.url)
+    else
+      finishThumbnailUse()
+  })
+
+// Call after the last reader finishes, or on cancellation after stopping readers.
+function finishThumbnailUse() {
+  ImageCacheService.releaseSource(thumbnailToken)
+  thumbnailToken = null
+}
 ```
 
 The reply has `status` (`hit`, `generated` or `unavailable`), the validated
@@ -69,6 +85,19 @@ Plain `Text` and `Label` default to `AutoText`, which also lays out markup
 (and loads its images) when the string looks like HTML. Text that shows data
 sets `textFormat: Text.PlainText`.
 
+## Notification replacement
+
+On an observable replacement of an existing notification, the shell attempts
+a fresh producer-time image capture even if the URL did not change. A
+successful capture replaces the snapshot shown in popup and history; if the
+source is gone or capture fails, the previous snapshot remains.
+
+Known limitation: Quickshell reports field changes, not identical-field
+replacements. If no field changes, new pixels at a stable URL cannot be
+observed. Keeping Quickshell unchanged for this publication is an orchestrator
+decision; the user can override it. An upstream replacement event or content
+generation would supply the missing edge.
+
 ## The boundary check
 
 `Scripts/dev/image-decoding-boundary-check.py` parses the production QML/JS
@@ -79,7 +108,12 @@ built from strings, and `magick`/`ffmpeg` commands. Each must match a
 reviewed entry in `Scripts/dev/fixtures/image-decoding/consumers.json`
 (fixed packaged assets with their hashes, the owner's own renderers,
 reviewed shell-authored markup, ...). A new site, a changed asset or a
-changed exempt source fails the check. Run it in the dev container:
+changed exempt source fails the check. Fixed/finite asset entries also pin the
+complete selecting QML file in `sourceSelectionFiles`, so a sibling handler
+cannot change the source while the image node remains unchanged. Cross-file
+selection helpers retain their explicit definition pins. Inventory adoption
+requires an exact current owner site, not just a historical renderer name.
+Run it in the dev container:
 
 ```sh
 python3 -B Scripts/dev/image-decoding-boundary-check.py --source . \
@@ -144,3 +178,27 @@ all IDs in `fixtures/image-decoding/required-cases.json`, raw Qt observations,
 saved PNGs, animation frame colors and actual package receipts. Historical trees
 cannot satisfy a current cohort. Its rejection controls and real guest Linger
 lease checks are in `Scripts/dev/image-decoding-review-selftest.py`.
+
+## Source resources and fixture preservation
+
+The originating image-decoding orchestrator made these decisions, both
+overridable by the user:
+
+- Remote source bytes are bounded by the image owner's existing decode
+  allocation limit, or Qt's `QImageReader` allocation limit when the owner has
+  no separate limit. `images/limits.py` derives bytes from Qt 6's 256 MiB
+  default allocation budget and honors positive `QT_IMAGEIO_MAXALLOC` (MiB)
+  overrides. A disabled Qt allocation check retains that finite default for
+  network admission. One derived source-byte budget covers the declared
+  Content-Length and the running streamed byte count. Exceeding it is an
+  explicit `source-too-large` terminal failure; partial files are removed,
+  never silently truncated or read wholly into memory by the downloader.
+  HTTP(S) sources enter that owner before rendering; Qt is offered the
+  validated local representation, never a second unbounded network URL.
+  Container inspection uses read-only mapped views and incremental SVG root
+  parsing, not a second whole-file Python allocation.
+- Guest fixture retirement retains immutable content-addressed base objects
+  (deduplicated) and atomic complete reconstruction receipts on the guest's
+  disk workspace. Canonical source mutation and receipt-write failures must
+  not destroy reconstructable fixture bytes. This is test-harness custody,
+  not product cache policy.

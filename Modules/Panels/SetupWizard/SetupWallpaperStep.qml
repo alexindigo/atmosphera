@@ -204,9 +204,11 @@ ColumnLayout {
               borderColor: selectedWallpaper === modelData ? AtmoColor.mPrimary : AtmoColor.mOutline
               borderWidth: selectedWallpaper === modelData ? 2 : 1
               imageFillMode: Image.PreserveAspectCrop
+              fallbackIcon: "image"
+              fallbackIconSize: Style.fontSizeL
             }
 
-            // Loading/error state background
+            // Loading state; NImageRounded owns the fallback and warning on error.
             Rectangle {
               anchors.fill: parent
               color: AtmoColor.mSurfaceVariant

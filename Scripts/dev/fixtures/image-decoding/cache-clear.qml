@@ -47,14 +47,21 @@ ShellRoot {
                                 });
   }
   function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
+    if (!item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
                                                    name: name,
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
-    });
+    })) {
+      root.fail("Grab rejected: " + name);
+      return;
+    }
+    ++pending;
+  }
+  function fail(message) {
+    console.error("CACHE_CLEAR|" + message);
+    Qt.exit(2);
   }
   function state(image) {
     return {
@@ -70,6 +77,10 @@ ShellRoot {
       property string name
       running: true
       onExited: code => {
+        if (code !== 0 && code !== 1) {
+          root.fail("Probe failed: " + name + " (exit " + code + ")");
+          return;
+        }
         var probes = Object.assign({}, root.probes);
         probes[name] = code === 0;
         root.probes = probes;
@@ -148,9 +159,18 @@ ShellRoot {
       if (root.phase === 0) {
         if (!root.released || root.held.status !== Image.Ready)
           return;
+        if (!root.released.success || !root.released.path) {
+          root.fail("Released representation was not produced");
+          return;
+        }
         root.heldState = root.state(root.held);
+        root.probe("releasedBeforeButton", root.released.path);
         root.phase = 1;
       } else if (root.phase === 1) {
+        if (!root.probes.releasedBeforeButton) {
+          root.fail("Released representation missing before clear");
+          return;
+        }
         var button = root.find(settings.item, I18n.tr("panels.wallpaper.settings-clear-cache-button"));
         if (!button)
           return;
@@ -181,6 +201,12 @@ ShellRoot {
         if (!root.clearResult)
           return;
         root.probe("heldAfterRelease", root.heldState.path);
+        root.phase = 41;
+      } else if (root.phase === 41) {
+        if (root.probes.heldAfterRelease !== false) {
+          root.fail("Held representation still exists after release and clear");
+          return;
+        }
         root.held = heldComponent.createObject(again);
         root.phase = 5;
       } else if (root.phase === 5) {

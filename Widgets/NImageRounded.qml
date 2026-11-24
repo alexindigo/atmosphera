@@ -1,7 +1,5 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
-import Quickshell.Widgets
 import qs.Commons
 import qs.Services.UI
 
@@ -35,6 +33,9 @@ Item {
   readonly property var imageResult: image.imageResult
   readonly property int currentFrame: image.currentFrame
   readonly property string outputUrl: image.outputUrl
+  readonly property bool _software: GraphicsInfo.api === GraphicsInfo.Software
+  readonly property bool _presentable: !showFallback && status === Image.Ready
+  readonly property real _innerRadius: Math.max(0, radius - borderWidth)
 
   Rectangle {
     anchors.fill: parent
@@ -47,17 +48,18 @@ Item {
       id: image
       anchors.fill: parent
       anchors.margins: root.borderWidth
-      visible: false
+      visible: root._software && root._presentable
       source: root.imagePath
       sourceRevision: root.sourceRevision
       active: root.active && !!root.imagePath
       normalize: root.normalize
       animationIntent: root.animationIntent
       paused: root.paused || !root.visible || Settings.data.general.animationDisabled
-      // The rounded shader owns fit/crop. Capture the full source texture so
-      // that a second crop/letterbox cannot be applied by the shared item.
-      fillMode: Image.Stretch
-      imageTransform: "contain"
+      // The RHI shader fits and clips the texture. On software the owner
+      // renders fitted, rounded pixels before the scene graph paints them.
+      roundedRadius: root._software ? root._innerRadius : 0
+      fillMode: root._software ? root.imageFillMode : Image.Stretch
+      imageTransform: roundedRadius <= 0 ? "contain" : root.imageFillMode === Image.PreserveAspectCrop ? "cover" : root.imageFillMode === Image.PreserveAspectFit ? "contain" : "stretch"
       mipmap: true
       smooth: true
       antialiasing: true
@@ -66,13 +68,13 @@ Item {
     ShaderEffect {
       anchors.fill: parent
       anchors.margins: root.borderWidth
-      visible: !root.showFallback && root.status === Image.Ready
+      visible: !root._software && root._presentable
       property var source: image.textureItem
       property real itemWidth: width
       property real itemHeight: height
       property real sourceWidth: image.decodedSize.width
       property real sourceHeight: image.decodedSize.height
-      property real cornerRadius: Math.max(0, root.radius - root.borderWidth)
+      property real cornerRadius: root._innerRadius
       property real imageOpacity: 1.0
       property int fillMode: root.imageFillMode
 

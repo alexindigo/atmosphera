@@ -12,6 +12,7 @@ Scope {
   property string revision: ""
   property size requestedSize: Qt.size(128, 128)
   property string fit: "contain"
+  property int roundedRadius: 0
   property string animationIntent: "still"
   property bool normalize: false
   property bool thumbnail: false
@@ -35,6 +36,7 @@ Scope {
                              alive: true
                            })
   property bool _retry: false
+  property bool _offering: false
 
   function _retire() {
     if (_token)
@@ -57,25 +59,32 @@ Scope {
   }
   function _offer(url, origin, animated) {
     _native = null;
-    _candidate = {
-      url: url,
-      origin: origin,
-      animated: animated,
-      generation: _generation,
-      serial: ++_serial,
-      width: _request.width,
-      height: _request.height,
-      retry: _request.retry
-    };
+    // A synchronous Qt Error can report from candidateChanged itself. Finish
+    // publishing this immutable ticket before accepting any renderer report.
+    _offering = true;
+    try {
+      _candidate = {
+        url: url,
+        origin: origin,
+        animated: animated,
+        generation: _generation,
+        serial: ++_serial,
+        width: _request.width,
+        height: _request.height,
+        retry: _request.retry
+      };
+    } finally {
+      _offering = false;
+    }
   }
   function _unavailable(code, reason) {
-    _state = "unavailable";
     _retire();
     _candidate = null;
     _result = {
       code: code,
       reason: reason
     };
+    _state = "unavailable";
   }
   function _subscribe(operation, callback) {
     _retire();
@@ -84,7 +93,7 @@ Scope {
     _token = ImageCacheService.acquireSource(Object.assign({}, _request, {
                                                              operation: operation
                                                            }), function (reply) {
-                                                             if (lifetime.alive && root._generation === generation && root.active)
+                                                             if (lifetime.alive && root && root._generation === generation && root.active)
                                                                callback(reply);
                                                            });
   }
@@ -95,6 +104,9 @@ Scope {
       _unavailable("provider-failed", "The image provider could not supply this image");
       return;
     }
+    _render();
+  }
+  function _render() {
     _state = "loading";
     _candidate = null;
     _native = null;
@@ -131,6 +143,14 @@ Scope {
     _state = "ready";
   }
   function report(ticket, status, width, height, frames) {
+    if (_offering) {
+      var lifetime = _lifetime;
+      Qt.callLater(function () {
+        if (lifetime.alive && root)
+          root.report(ticket, status, width, height, frames);
+      });
+      return;
+    }
     if (!ticket || !_candidate || ticket.generation !== _generation || ticket.serial !== _candidate.serial || !active)
       return;
     if (status === Image.Error) {
@@ -170,6 +190,7 @@ Scope {
       width: Math.max(1, Math.ceil(requestedSize.width)),
       height: Math.max(1, Math.ceil(requestedSize.height)),
       fit: fit,
+      roundedRadius: roundedRadius,
       animationIntent: animationIntent,
       retry: _retry
     };
@@ -183,10 +204,15 @@ Scope {
       }
       url = normalized.uri;
     }
-    _offer(url, "native", false);
-    if ((normalize || thumbnail) && !source.startsWith("image://")) {
-      _fallback();
-    } else if (!source.startsWith("image://")) {
+    var provider = source.startsWith("image://");
+    // Never expose an unbounded Qt network reader or a transient native URL
+    // for requests that require normalization. The worker admits source bytes
+    // before any representation is offered to a renderer.
+    if (!provider && (normalize || thumbnail || roundedRadius > 0 || /^https?:/i.test(source))) {
+      _render();
+      return;
+    }
+    if (!provider) {
       _subscribe("inspect", function (reply) {
         if (reply.status === "unavailable") {
           // A still Qt success does not prove motion preservation. Inspect or
@@ -198,12 +224,14 @@ Scope {
         root._settle();
       });
     }
+    _offer(url, "native", false);
   }
   onSourceChanged: _schedule()
   onActiveChanged: _schedule()
   onRevisionChanged: _schedule()
   onRequestedSizeChanged: _schedule()
   onFitChanged: _schedule()
+  onRoundedRadiusChanged: _schedule()
   onAnimationIntentChanged: _schedule()
   onNormalizeChanged: _schedule()
   onThumbnailChanged: _schedule()

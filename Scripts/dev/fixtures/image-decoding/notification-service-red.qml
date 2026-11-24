@@ -19,6 +19,10 @@ ShellRoot {
   property int producerExit: -1
   property string producerErrors: ""
   property var result: ({})
+  Component.onCompleted: {
+    if (!ImageCacheService.initialized)
+      ImageCacheService.init();
+  }
   FileView {
     path: Quickshell.env("IMAGE_ICON_DIR") + "/icons.json"
     onLoaded: IconRegistry.register("fixture:atmosphera-icons", JSON.parse(text()), Quickshell.env("IMAGE_ICON_DIR"))
@@ -77,7 +81,7 @@ ShellRoot {
     repeat: true
     onTriggered: {
       ++root.tick;
-      if (!root.started && NotificationService.notificationServerLoader && ImageCacheService.admissionReady) {
+      if (!root.started && NotificationService.notificationServerLoader && ImageCacheService.initialized) {
         root.started = true;
         Settings.data.general.animationDisabled = true;
         Settings.data.notifications.respectExpireTimeout = true;

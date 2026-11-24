@@ -91,6 +91,16 @@ else:
     notify('shared-two', color=red)
     exchange('control', 'shared-remove')
     notify('overflow-trigger', color=green)
+    same_icon = root / 'same-provider.png'
+    same_icon.write_bytes((root / 'frame-0.png').read_bytes())
+    icon_url = 'image://icon/fixture-same-provider/same-provider.png?path=' + str(root).lstrip('/')
+    old = notify('same-provider-first', app_icon=icon_url)
+    new_icon = root / 'same-provider-new.png'
+    new_icon.write_bytes((root / 'frame-2.png').read_bytes())
+    new_icon.replace(same_icon)
+    notify('same-provider-replacement', replacement=old, app_icon=icon_url)
+    notify('same-provider-new', app_icon=icon_url)
+    api.CloseNotification(dbus.UInt32(old))
     exchange('control', 'clear-with-popup')
     notify('cold-provider', color=blue)
     file.write_bytes((root / 'Still.webp').read_bytes())
