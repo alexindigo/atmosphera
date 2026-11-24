@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build the shared check-tool image
-        run: docker build -t atmosphera-settings-check .devcontainer
+        run: docker build --target settings-check -t atmosphera-settings-check .devcontainer
       - name: Full settings analysis, freshness and regressions
         run: |
           mkdir -p "$RUNNER_TEMP/atmosphera-settings"
