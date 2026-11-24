@@ -495,6 +495,7 @@ ColumnLayout {
 
   // Plugin settings popup
   NPluginSettingsPopup {
+    registerPresentation: SettingsPanelService.registerEditorPresentation
     id: pluginSettingsDialog
     parent: Overlay.overlay
     showToastOnSave: true

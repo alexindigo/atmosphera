@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 ColumnLayout {
@@ -9,6 +10,7 @@ ColumnLayout {
   spacing: 0
 
   NTabBar {
+    changeAdmission: SettingsPanelService.admitPresentationChange
     id: subTabBar
     Layout.fillWidth: true
     Layout.bottomMargin: Style.marginM

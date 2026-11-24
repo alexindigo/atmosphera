@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "更改已保存，但无法确认。",
+    "editor-observation-draft-changed": "有新的编辑内容。请点击应用以保存。",
+    "check-again": "再次检查",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "操作",

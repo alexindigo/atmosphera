@@ -323,8 +323,10 @@ Item {
     // Non-exclusive panels register into a separate slot so MainScreen can still
     // render their background and blur without triggering mutual exclusion.
     const generation = root.presentationGeneration;
-    if (root.panelBehaviorReady)
-      PanelService.willOpenPanel(root);
+    if (root.panelBehaviorReady && PanelService.willOpenPanel(root) === false) {
+      root._requestedOpen = false;
+      return false;
+    }
 
     // Request native keyboard ownership before constructing content. Loading
     // can populate many result delegates; it must not precede the focus request.
@@ -334,7 +336,16 @@ Item {
     root._reconcilePresentation();
   }
 
+  // Optional injected admission belongs to the content owner. Other panels
+  // keep their existing unconditional Close behavior.
+  property var closeAdmission: null
+  function canClose() {
+    return !closeAdmission || closeAdmission();
+  }
+
   function close() {
+    if (!canClose())
+      return false;
     root._cancelPresentationWork();
     root._requestedOpen = false;
     root.presentationGeneration++;
@@ -370,6 +381,8 @@ Item {
   }
 
   function closeImmediately() {
+    if (!canClose())
+      return false;
     root._cancelPresentationWork();
     root._requestedOpen = false;
     root.closeFinalized = true;
@@ -865,8 +878,15 @@ Item {
     // can only claim it now, after their behavior bindings have settled.
     const generation = root.presentationGeneration;
     const owner = root.exclusiveOpen ? PanelService.openedPanel : PanelService.coexistingPanel;
-    if (owner !== root)
-      PanelService.willOpenPanel(root);
+    if (owner !== root && PanelService.willOpenPanel(root) === false) {
+      // A plugin's final behavior can become known only after construction.
+      // A refused late claim must not show an unowned competing surface.
+      root._cancelPresentationWork();
+      root._requestedOpen = false;
+      root.isPanelOpen = false;
+      root.isPanelVisible = false;
+      return;
+    }
     if (generation !== root.presentationGeneration || !root._requestedOpen || root.isClosing)
       return;
 

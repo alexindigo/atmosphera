@@ -4,6 +4,7 @@ Item {
   id: root
 
   property var pluginApi: null
+  readonly property bool settingsDirty: false
 
   function fxLog(phase) {
     var names = ["screen", "widgetId", "section", "sectionWidgetIndex", "sectionWidgetsCount", "widgetSettings", "widgetData", "widgetIndex"];

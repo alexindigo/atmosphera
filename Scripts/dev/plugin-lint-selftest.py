@@ -39,6 +39,37 @@ class Regression(unittest.TestCase):
     def test_current_api_passes(self):
         self.assertEqual(self.errors(), [])
 
+    def test_field_spin_submits_only_through_request_value(self):
+        for handler in ("", "onValueModified: value => root.field.set(value)",
+                        "onValueChanged: root.field.set(value)", "requestValue: null"):
+            with self.subTest(handler=handler):
+                self.write(f"""import QtQuick
+import qs.Widgets as W
+Item {{
+    id: root
+    property var field: pluginApi?.field("count")
+    property int shown: root.field?.value ?? 1
+    W.NSpinBox {{ value: root.shown; {handler} }}
+    W.NSpinBox {{ value: root.shown; requestValue: value => root.field.set(value) }}
+    W.NSpinBox {{ value: 1; onValueModified: value => console.log(value) }}
+}}
+""")
+                self.assertEqual(len(self.errors()), 1, self.errors())
+                self.assertIn(":7: field-bound spin must use NSpinBox.requestValue", self.errors()[0])
+
+    def test_field_wrapper_checks_nested_spin_without_following_value_alias(self):
+        self.write("""import QtQuick
+import qs.Widgets
+NPluginSettingsField {
+    field: parentField
+    Row {
+        NSpinBox { value: projected; onValueModified: value => submit(value) }
+    }
+}
+""")
+        self.assertEqual(len(self.errors()), 1, self.errors())
+        self.assertIn(":6: field-bound spin must use NSpinBox.requestValue", self.errors()[0])
+
     def test_digest_and_lockscreen_retired_widgets(self):
         for name in ("NIconButton", "NIcon"):
             self.write(f"import QtQuick\nimport qs.Widgets\n{name} {{}}\n")

@@ -341,6 +341,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Guhertin hatin tomarkirin, lê nehatin kontrolkirin.",
+    "editor-observation-draft-changed": "Guhertinên te yên nû hene. Ji bo tomarkirinê li Sepandinê bitikîne.",
+    "check-again": "Dîsa kontrol bike",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Çalakî",

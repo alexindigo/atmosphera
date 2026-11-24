@@ -81,7 +81,9 @@ for source in sources:
         query = f'(occur-in-time-range? (make-time "{start_str}") (make-time "{end_str}"))'
         success, raw_events = client.get_object_list_sync(query, None)
         
-        if not success or not raw_events:
+        if not success:
+            raise RuntimeError('event query failed')
+        if not raw_events:
             continue
 
         for raw_obj in raw_events:
@@ -236,7 +238,8 @@ for source in sources:
 
     except Exception as e:
         print(f"  Error for {calendar_name}: {e}", file=sys.stderr)
+        # Consumers replace covered rows, so partial snapshots are not safe.
+        sys.exit(1)
 
 all_events.sort(key=lambda x: x['start'])
 print(json.dumps(all_events, indent=4))
-

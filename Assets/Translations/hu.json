@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "A módosítások mentve, de az ellenőrzésük nem sikerült.",
+    "editor-observation-draft-changed": "Új módosítások vannak. Mentésükhöz kattintson az Alkalmaz gombra.",
+    "check-again": "Ellenőrzés újra",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Műveletek",

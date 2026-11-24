@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Ändringarna sparades, men kunde inte kontrolleras.",
+    "editor-observation-draft-changed": "Du har nya ändringar. Tryck på Verkställ för att spara dem.",
+    "check-again": "Kontrollera igen",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Åtgärder",

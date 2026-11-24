@@ -1,4 +1,14 @@
-FROM docker.io/library/archlinux:base-devel
+FROM docker.io/library/archlinux:base-devel AS settings-check
+
+# The settings gates use the Qt formatter and the pinned parser, not the
+# shell runtime or any of the compiled QML plugins.
+RUN pacman -Sy --noconfirm --needed git python python-pip qt6-declarative \
+    && pacman -Scc --noconfirm
+COPY settings-check-requirements.txt /opt/settings-check-requirements.txt
+RUN pip install --break-system-packages --no-cache-dir -r /opt/settings-check-requirements.txt
+WORKDIR /workspaces/atmosphera
+
+FROM docker.io/library/archlinux:base-devel AS devcontainer
 
 # Container identity for the dev account. The default matches the Podman
 # keep-id target; the Docker tooling path passes the invoking user's IDs

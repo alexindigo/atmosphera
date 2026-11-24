@@ -730,11 +730,8 @@ Singleton {
           dialog.destroy();
           return;
         }
-        dialog.closed.connect(() => dialog.destroy());
-        if (dialog.openPluginSettings(pluginManifest) === false) {
-          popupMenuWindow.close();
-          dialog.destroy();
-        }
+        dialog.presentationClosed.connect(() => dialog.destroy());
+        dialog.openPluginSettings(pluginManifest);
       } else {
         Logger.e("BarService", "Failed to create plugin settings dialog");
       }

@@ -80,18 +80,21 @@ ShellRoot {
       check(control !== null, "actual control: " + row[1]);
       if (typeof control.toggled === "function")
         control.toggled(row[3]);
+      else if (typeof control.submitValue === "function")
+        control.submitValue(row[3]);
       else {
         control.value = row[3];
-        if (typeof control.valueModified === "function")
-          control.valueModified(row[3]);
-        else
-          control.moved(row[3]);
+        control.moved(row[3]);
       }
       check(page[row[0]] === row[3], "control updates buffer: " + row[1]);
     }
     page.setCardColor("Text", "bg", "custom", false);
     page.setCardColor("Text", "bg", "#123456", true);
-    check(page.settingsDirty && popup.dirty, "complete local input tracked");
+    check(popup.dirty, "complete local input tracked by the settings session");
+    var apply = find(popup.contentItem, function (item) {
+      return item.text === I18n.tr("common.apply") && typeof item.clicked === "function";
+    });
+    check(apply !== null && apply.visible && apply.enabled, "Apply is visible and enabled for the pending edits");
   }
   function consumers() {
     check(panel.contentPreferredWidth === 1000 * Style.uiScaleRatio && panel.contentPreferredHeight === 600 * Style.uiScaleRatio, "actual selected panel geometry consumes preview");

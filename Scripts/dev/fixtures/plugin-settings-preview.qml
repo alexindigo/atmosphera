@@ -21,6 +21,7 @@ ShellRoot {
         property var inherited: null
         property var failureApi: null
         property var selected: null
+        property var replacement: null
         property int familyIndex: 0
         readonly property var placements: [
           {
@@ -52,6 +53,7 @@ ShellRoot {
         property var release: null
         property var held: null
         property bool stale: false
+        readonly property string staleIntent: Quickshell.env("PHA_PREVIEW_STALE_INTENT")
         property string phase: "start"
         property bool started: false
         property var afterFault: null
@@ -77,7 +79,7 @@ ShellRoot {
             throw new Error("I4_PREVIEW_ASSERT: " + phase + " " + label);
         }
         function fail(error) {
-          console.error(String(error));
+          console.error("preview phase=" + phase + " " + String(error) + "\n" + (error.stack || ""));
           if (faultBlocked && !faultProcess.running) {
             exitAfterRepair = true;
             fault("repair", function () {});
@@ -99,6 +101,10 @@ ShellRoot {
             readonly property var values: editor.values
             readonly property var previewValues: editor.previewValues
             readonly property var fields: editor.fields
+            readonly property var fieldCapture: editor.fieldCapture
+            readonly property var handle: editor.handle
+            readonly property bool writable: editor.writable
+            readonly property bool _releasePending: editor._releasePending
             signal rebased(var result)
             property Connections editorRebase: Connections {
               target: wrapper.editor
@@ -112,8 +118,20 @@ ShellRoot {
             function previewScope() {
               return editor.previewScope();
             }
+            function release() {
+              editor.release();
+            }
             function copyValue(value) {
               return editor.copyValue(value);
+            }
+            function setField(key, value) {
+              return editor.setField(key, value);
+            }
+            function stageFieldResets(keys, callback) {
+              return editor.stageFieldResets(keys, callback);
+            }
+            function publishPreview(key, value, revision) {
+              return editor.publishPreview(key, value, revision);
             }
             function discard() {
               if (!editor.discard())
@@ -143,8 +161,8 @@ ShellRoot {
           };
           Service.loadedPlugins = plugins;
           var factory = api.createSettingsEditor;
-          api.createSettingsEditor = function () {
-            var editor = factory();
+          api.createSettingsEditor = function (fieldIntent) {
+            var editor = factory(fieldIntent);
             return heldEditorFactory.createObject(root, {
                                                     editor: editor,
                                                     initialValue: editor.initialValue
@@ -385,14 +403,25 @@ ShellRoot {
               phase = "moved";
             });
           } else if (phase === "moved") {
-            // The native token can invalidate preview before the live namespace has
-            // delivered the replacement value. Observe that consumer, then assert.
-            if (first.pluginSettings.label !== "two")
+            // The original API is tied to its placement token. A replacement
+            // consumer must resolve the address again after that token retires.
+            if (first.settingsError !== "overlay-identity")
               return;
-            check(firstText.text === "two" && !preview.update({
-                                                                label: "wrong-owner"
-                                                              }) && preview.pending(), "moved/replaced row cannot receive old preview; work retained");
+            check(first.pluginSettings === null && !first.settingsReady && first.createSettingsEditor() === null, "moved API is retired");
+            check(!preview.update({
+                                    label: "wrong-owner"
+                                  }) && preview.pending(), "moved/replaced row cannot receive old preview; work retained");
             preview.close();
+            replacement = PluginInstances.apiFor("i4-preview", placement);
+            check(replacement !== null && replacement !== first, "replacement resolves a different API");
+            phase = "moved-replacement";
+          } else if (phase === "moved-replacement") {
+            if (!replacement.settingsReady) {
+              check(!replacement.settingsError, "replacement API opens: " + replacement.settingsError);
+              return;
+            }
+            check(replacementText.text === "two", "replacement runtime consumer sees only its own value");
+            console.info("I4_PREVIEW: moved replacement verified");
             var rows = [
                   {
                     id: "plugin:i4-preview",
@@ -427,7 +456,15 @@ ShellRoot {
                     widgets: rows
                   }
                 ];
-            nextFamily();
+            phase = "saving-families";
+            Settings.saveSelected([["bar", "widgets", "left"], ["bar", "screenOverrides"], ["controlCenter", "shortcuts", "left"], ["desktopWidgets", "monitorWidgets"]], function (result) {
+              try {
+                check(result.status !== "failed", "placement family setup persisted before capture");
+                nextFamily();
+              } catch (error) {
+                fail(error);
+              }
+            });
           } else if (phase === "family") {
             check(selectedText.text === "selected-family" && selected.pluginSettings.label === "first" && shared.text === "foreign", "placement consumer without shared mutation");
             var rows = familyRows().slice();
@@ -446,12 +483,22 @@ ShellRoot {
             replaceFamily([rows[1], rows[0]]);
             phase = "family-moved";
           } else if (phase === "family-moved") {
-            if (selected.pluginSettings.label !== "second")
+            if (selected.settingsError !== "overlay-identity")
               return;
-            check(selectedText.text === "second" && !preview.update({
-                                                                      label: "wrong-placement"
-                                                                    }) && preview.pending(), "all placement families fence replacement");
+            check(selected.pluginSettings === null && !selected.settingsReady && selected.createSettingsEditor() === null, "family API is retired");
+            check(!preview.update({
+                                    label: "wrong-placement"
+                                  }) && preview.pending(), "all placement families fence replacement");
             preview.close();
+            replacement = PluginInstances.apiFor("i4-preview", placements[familyIndex]);
+            check(replacement !== null && replacement !== selected, "family replacement resolves a different API");
+            phase = "family-replacement";
+          } else if (phase === "family-replacement") {
+            if (!replacement.settingsReady) {
+              check(!replacement.settingsError, "family replacement API opens: " + replacement.settingsError);
+              return;
+            }
+            check(replacementText.text === "second", "family replacement runtime consumer sees only its own value");
             familyIndex++;
             nextFamily();
           } else if (phase === "popup" && popup.opened && popup.settingsPage) {
@@ -461,8 +508,18 @@ ShellRoot {
             phase = "held";
           } else if (phase === "held" && release) {
             check(held.status === "saved" && popup.busy, "actual held saved receipt");
-            popup.settingsPage.change("newer-local");
+            // The current page contract excludes preview actions while busy,
+            // but newer local input must still survive that receipt boundary.
+            popup.settingsPage.labelText = "newer-local";
+            check(!popup.settingsPage.pluginApi.previewSettings({
+                                                                  label: "must-not-stage-while-busy"
+                                                                }), "busy preview action is refused without publishing");
             deliver();
+            phase = "held-observed";
+          } else if (phase === "held-observed" && !popup.busy) {
+            check(!popup.saveFailed, "held current write observed by consumer");
+            check(popup.settingsPage.labelText === "newer-local" && popup.dirty, "held receipt retains newer local input");
+            popup.settingsPage.change("newer-local");
             phase = "newer";
           } else if (phase === "newer") {
             check(api.pluginSettings.label === "submitted" && shared.text === "newer-local" && popup.dirty && popup.settingsPage.labelText === "newer-local", "acknowledgement preserves newer input and preview");
@@ -470,6 +527,8 @@ ShellRoot {
             phase = "newer-held";
           } else if (phase === "newer-held" && release) {
             deliver();
+            phase = "newer-observed";
+          } else if (phase === "newer-observed" && !popup.busy) {
             check(!popup.dirty && shared.text === "newer-local", "current captured preview settles");
             popup.settingsPage.change("newer-local");
             popup.applySettings();
@@ -477,23 +536,42 @@ ShellRoot {
           } else if (phase === "equal-held" && release) {
             check(held.status === "saved" && held.refreshState === "current", "explicit equal native input remains intent");
             deliver();
+            phase = "equal-observed";
+          } else if (phase === "equal-observed" && !popup.busy) {
             popup.settingsPage.stageOnSave = false;
             popup.applySettings();
             phase = "noop-held";
           } else if (phase === "noop-held" && release) {
             check(held.status === "nothing_to_save", "actual no-op receipt");
             deliver();
+            phase = "noop-observed";
+          } else if (phase === "noop-observed" && !popup.busy) {
             popup.settingsPage.stageOnSave = true;
             check(!popup.dirty && shared.text === "newer-local", "no-op acknowledges its preview");
             stale = true;
             popup.settingsPage.change("saved-stale");
+            // Submit exactly the intent under test, without a second Set in saveSettings.
+            popup.settingsPage.stageOnSave = false;
+            if (staleIntent === "set")
+              check(popup.settingsPage.pluginApi.field("label").set("direct-stale"), "newer direct field intent admitted");
+            if (staleIntent === "reset")
+              check(popup.settingsPage.pluginApi.field("label").reset(), "newer direct reset intent admitted");
+            phase = "stale-staged";
+          } else if (phase === "stale-staged") {
+            if (staleIntent === "reset" && popup.settingsPage.pluginApi.field("label").pendingIntent !== "reset")
+              return;
             popup.applySettings();
             phase = "stale-held";
           } else if (phase === "stale-held" && release) {
-            check(held.status === "saved" && held.refreshState === "stale", "actual stale receipt");
+            check(held.status === "saved" && held.refreshState === "stale", "actual stale receipt: " + held.status + "/" + held.refreshState);
             deliver();
             stale = false;
-            check(popup.saveFailed && popup.dirty && shared.text === "saved-stale", "stale keeps preview and work");
+            var replay = staleIntent === "preview";
+            check(popup.saveFailed && popup.dirty && shared.text === (replay ? "saved-stale" : "foreign-current"), "stale receipt runtime consumer: " + shared.text);
+            check(popup._editor.dirty === replay, "only the still-current preview is restaged");
+            phase = "stale-disk";
+            staleDisk.running = true;
+          } else if (phase === "stale-disk-read") {
             popup.requestClose();
             popup.confirmDiscard();
             phase = "discarded";
@@ -529,7 +607,9 @@ ShellRoot {
               phase = "failure-wait";
             });
           } else if (phase === "failure-wait" && !popup.busy) {
-            check(popup.saveFailed && popup.dirty && popup.settingsPage.labelText === "failed-local" && failedText.text === "failed-local", "actual IO failure retains input and preview");
+            check(popup.saveFailed, "actual IO publication fails");
+            check(popup.dirty && popup.settingsPage.labelText === "failed-local", "actual IO failure retains local input");
+            check(failedText.text === "failed-local", "actual IO failure retains bound runtime preview");
             phase = "failure-repairing";
             fault("repair", function () {
               failureApi.pluginSettings.label = "foreign-failed";
@@ -542,11 +622,14 @@ ShellRoot {
             popup.openPluginSettings(manifest, "settings");
             phase = "final";
           } else if (phase === "final" && popup.opened && popup.settingsPage) {
+            popup.settingsPage.stageOnSave = true;
             popup.settingsPage.change("final");
             popup.applySettings();
             phase = "final-held";
           } else if (phase === "final-held" && release) {
             deliver();
+            phase = "final-observed";
+          } else if (phase === "final-observed" && !popup.busy) {
             check(!popup.dirty && api.pluginSettings.label === "final", "final saved preferences");
             popup.requestClose();
             phase = "lifetime";
@@ -598,10 +681,18 @@ ShellRoot {
               id: selectedText
               text: root.selected && root.selected.settingsView ? root.selected.settingsView.label : ""
             }
+            Text {
+              id: replacementText
+              text: root.replacement && root.replacement.settingsView ? root.replacement.settingsView.label : ""
+            }
           }
           NPluginSettingsPopup {
             id: popup
             parent: Overlay.overlay
+            onSettingsCompleted: result => {
+              if (result?.error?.code === "settings-field-contract")
+                root.fail("I4_PREVIEW_ASSERT: selected page requires field capture");
+            }
           }
         }
         Connections {
@@ -613,15 +704,33 @@ ShellRoot {
         Component.onCompleted: start()
         function fault(mode, callback) {
           afterFault = callback;
-          faultProcess.command = ["python3", "-B", Quickshell.env("I5_DESKTOP_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode, "plugins"];
+          faultProcess.command = ["python3", "-B", Quickshell.env("PHA_PREVIEW_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
           faultProcess.running = true;
+        }
+        Process {
+          id: staleDisk
+          command: ["cat", Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/i4-preview.json"]
+          stdout: StdioCollector {}
+          onExited: code => {
+            try {
+              root.check(code === 0, "independent stale disk read");
+              var data = JSON.parse(stdout.text);
+              var expected = root.staleIntent === "set" ? "direct-stale" : "saved-stale";
+              root.check(root.staleIntent === "reset" ? !("label" in data) : data.label === expected, "durable selected intent after stale receipt");
+              root.check(data.other === "foreign-other" && data.opaque.keep === true, "stale save preserves sibling and opaque data");
+              console.info("I4_PREVIEW: saved/stale " + root.staleIntent + " runtime=" + shared.text + " disk=" + JSON.stringify(data));
+              root.phase = "stale-disk-read";
+            } catch (error) {
+              root.fail(error);
+            }
+          }
         }
         Process {
           id: faultProcess
           onExited: code => {
             try {
               root.check(code === 0, "guarded real IO fault");
-              root.faultBlocked = command[command.length - 2] === "block";
+              root.faultBlocked = command[command.length - 1] === "block";
               if (root.exitAfterRepair) {
                 Qt.exit(2);
                 return;

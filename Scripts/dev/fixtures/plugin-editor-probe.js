@@ -6,10 +6,10 @@ function observe(editor, onApply, deliver, afterApply) {
     if (!editor)
         throw new Error("editor probe requires an actual editor");
     var probe = Object.create(null);
-    ["initialValue", "values", "previewValues", "ready", "busy", "dirty", "error", "fields", "rebased", "writable"].forEach(function (key) {
+    ["initialValue", "values", "previewValues", "ready", "busy", "dirty", "error", "fields", "rebased", "writable", "closed", "handle", "fieldCapture"].forEach(function (key) {
         Object.defineProperty(probe, key, {enumerable: true, get: function () { return editor[key]; }});
     });
-    ["whenReady", "discard", "resetOverrides", "snapshot", "copyValue", "previewScope"].forEach(function (method) {
+    ["whenReady", "discard", "resetOverrides", "snapshot", "copyValue", "previewScope", "release", "setField", "unsetField", "stageFieldResets"].forEach(function (method) {
         if (typeof editor[method] === "function") {
             probe[method] = function () { return editor[method].apply(editor, arguments); };
         }

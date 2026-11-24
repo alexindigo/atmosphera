@@ -406,12 +406,9 @@ Popup {
       } else {
         Logger.w("DesktopWidgetSettingsDialog", "Plugin does not have desktop widget settings:", pluginId);
 
-        // Fallback to the plugin settings
-        if (manifest && manifest.entryPoints && manifest.entryPoints.settings) {
-          loadPluginSettings("settings", "file://" + pluginDir + "/" + manifest.entryPoints.settings + "?v=" + loadVersion, api, {});
-        } else {
-          Logger.w("DesktopWidgetSettingsDialog", "Plugin does not have settings:", pluginId);
-        }
+        // Generic settings belong to PluginSettingsSession, selected before
+        // presentation by DesktopWidgetRegistry. This live-field host cannot
+        // load one or publish a generic page on Close.
       }
 
       return;

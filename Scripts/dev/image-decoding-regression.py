@@ -905,10 +905,14 @@ class Run:
             self.check('wallpaper-gallery-'+cohort+'-honest-failure',len(failed) == 1 and failed[0]['status'] == 3
                        and failed[0]['reason'],failed)
             width,height,pixels = read_png(output/(cohort+'-failure-tile.png'))
-            warning_pixels = sum(max(abs(a-b) for a,b in zip(pixels[i:i+4],result['warningColor'])) < 8
-                                 for i in range(0,len(pixels),4))
-            self.check('wallpaper-gallery-'+cohort+'-unobscured-warning',warning_pixels > 10,
-                       dict(pixels=warning_pixels,color=result['warningColor'],width=width,height=height))
+            # The warning badge is anchored to the lower right of the preview.
+            # Exclude the filename and decorative chrome to its left, then count
+            # equivalent opaque warning pixels in the composited tile.
+            badge = (pixels[(y*width+x)*4:(y*width+x+1)*4]
+                     for y in range(height//2,height) for x in range(3*width//4,width))
+            warning = red_warning_coverage(badge, result['warningColor'])
+            self.check('wallpaper-gallery-'+cohort+'-unobscured-warning',warning > 10,
+                       dict(warningCoverage=warning,color=result['warningColor'],width=width,height=height))
         self.check('wallpaper-gallery-real-http-misleading-types',set(requests) == {'/motion.jpg','/bad.jpg','/heic.jpg'},requests)
         self.check('wallpaper-gallery-close-retires-all-interests',result['interests'] == result['requests'] == 0
                    and not result['workerRunning'],result)

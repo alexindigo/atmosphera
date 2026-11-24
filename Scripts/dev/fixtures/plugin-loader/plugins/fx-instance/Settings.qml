@@ -16,7 +16,7 @@ Item {
   function saveSettings() {
     if (!pluginApi)
       return;
-    pluginApi.pluginSettings.label = root.labelText;
+    pluginApi.field("label").set(root.labelText);
     pluginApi.saveSettings();
   }
 

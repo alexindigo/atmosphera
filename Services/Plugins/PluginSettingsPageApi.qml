@@ -1,95 +1,101 @@
 import QtQuick
-import qs.Commons
 
-// Editor-only API: preferences are local; saveSettings stages page input.
-// The popup alone invokes the selected editor's Apply and completes callbacks.
+// Only closure-bound field capabilities cross into a generic page. Neither the
+// live base API nor the native editor/namespace is an input to this component.
 QtObject {
   id: root
-  required property var base
-  required property var editor
-  property var pluginSettings: ({})
-  property var initialSettings: ({})
-  property var _preview: null
-  readonly property bool previewDirty: _preview ? _preview.pending() : false
+  required property var capability
+  readonly property string apiRole: "settings-editor"
+  readonly property string scopeKind: capability.scopeKind
+  readonly property var runtimeContext: capability.runtimeContext
+  readonly property var pluginSettings: capability.readSettings()
+  readonly property var initialSettings: capability.initialSettings()
+  readonly property bool previewDirty: capability.previewDirty()
   property bool staged: false
   property bool busy: false
   property var _callbacks: []
+  property var _observationCallbacks: []
   signal settingsCompleted(var result)
 
-  readonly property string pluginId: base ? base.pluginId : ""
-  readonly property string pluginDir: base ? base.pluginDir : ""
-  readonly property var manifest: base ? base.manifest : ({})
-  readonly property var mainInstance: base ? base.mainInstance : null
-  readonly property var barWidget: base ? base.barWidget : null
-  readonly property var desktopWidget: base ? base.desktopWidget : null
-  readonly property var launcherProvider: base ? base.launcherProvider : null
-  readonly property var controlCenterWidget: base ? base.controlCenterWidget : null
-  readonly property var panelOpenScreen: base ? base.panelOpenScreen : null
-  readonly property var ipcHandlers: base ? base.ipcHandlers : ({})
-  readonly property var pluginTranslations: base ? base.pluginTranslations : ({})
-  readonly property var pluginFallbackTranslations: base ? base.pluginFallbackTranslations : ({})
-  readonly property string currentLanguage: base ? base.currentLanguage : ""
-  readonly property int translationVersion: base ? base.translationVersion : 0
-  // State, config and explicit application actions retain their existing owners.
-  readonly property var state: base ? base.state : ({})
-  readonly property bool stateLoaded: base ? base.stateLoaded : false
-  readonly property var saveState: base ? base.saveState : null
-  readonly property var getConfig: base ? base.getConfig : null
-  readonly property var openPanel: base ? base.openPanel : null
-  readonly property var closePanel: base ? base.closePanel : null
-  readonly property var togglePanel: base ? base.togglePanel : null
-  readonly property var openLauncher: base ? base.openLauncher : null
-  readonly property var closeLauncher: base ? base.closeLauncher : null
-  readonly property var toggleLauncher: base ? base.toggleLauncher : null
-  readonly property var withCurrentScreen: base ? base.withCurrentScreen : null
-  readonly property var tr: base ? base.tr : null
-  readonly property var trp: base ? base.trp : null
-  readonly property var hasTranslation: base ? base.hasTranslation : null
+  readonly property string pluginId: capability.pluginId
+  readonly property string pluginDir: capability.pluginDir
+  readonly property var manifest: capability.manifest
+  readonly property var mainInstance: capability.mainInstance
+  readonly property var barWidget: capability.barWidget
+  readonly property var desktopWidget: capability.desktopWidget
+  readonly property var launcherProvider: capability.launcherProvider
+  readonly property var controlCenterWidget: capability.controlCenterWidget
+  readonly property var panelOpenScreen: capability.panelOpenScreen
+  readonly property var ipcHandlers: capability.ipcHandlers
+  readonly property var pluginTranslations: capability.pluginTranslations
+  readonly property var pluginFallbackTranslations: capability.pluginFallbackTranslations
+  readonly property string currentLanguage: capability.currentLanguage
+  readonly property int translationVersion: capability.translationVersion
+  // Explicit state/config/application operations retain their existing owners.
+  readonly property var state: capability.state
+  readonly property bool stateLoaded: capability.stateLoaded
+  readonly property var saveState: capability.saveState
+  readonly property var getConfig: capability.getConfig
+  readonly property var openPanel: capability.openPanel
+  readonly property var closePanel: capability.closePanel
+  readonly property var togglePanel: capability.togglePanel
+  readonly property var openLauncher: capability.openLauncher
+  readonly property var closeLauncher: capability.closeLauncher
+  readonly property var toggleLauncher: capability.toggleLauncher
+  readonly property var withCurrentScreen: capability.withCurrentScreen
+  readonly property var tr: capability.tr
+  readonly property var trp: capability.trp
+  readonly property var hasTranslation: capability.hasTranslation
 
-  function copyValue(value) { return editor.copyValue(value); }
-
+  function field(key) {
+    return capability.field(key);
+  }
+  // Reset for one multi-field control: the listed configuration leaves only.
+  function resetFields(keys) {
+    return capability.resetFields(keys);
+  }
+  function contentField(key) {
+    return capability.contentField(key);
+  }
+  function copyValue(value) {
+    return capability.copyValue(value);
+  }
   function previewSettings(patch) {
-    if (!_preview && base && typeof base.createSettingsPreview === "function")
-      _preview = base.createSettingsPreview(editor);
-    if (!_preview || !_preview.update(patch)) return false;
+    if (busy || !capability.previewSettings(patch))
+      return false;
     staged = true;
     return true;
   }
-
-  function capturePreview() { return _preview ? _preview.capture() : null; }
-
-  function refresh(value, captured) {
-    initialSettings = Settings.store.copyValue(value);
-    if (_preview) _preview.acknowledge(captured);
-  }
-
-  function releasePreview() {
-    if (_preview) _preview.close();
-    _preview = null;
-  }
-
-  Component.onDestruction: releasePreview()
-
+  // Compatibility means staging and observing completion, never ingesting a
+  // reconstructed effective snapshot or invoking native publication.
   function saveSettings(callback) {
     if (busy)
       return false;
-    staged = true;
     if (typeof callback === "function")
       _callbacks.push(callback);
     return true;
   }
-
+  function beginSubmission() {
+    _observationCallbacks = [];
+  }
+  function retryObservation() {
+    _callbacks = _observationCallbacks.concat(_callbacks);
+    _observationCallbacks = [];
+  }
   function complete(result) {
     var callbacks = _callbacks;
     _callbacks = [];
-    if (result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current")
+    // Check again does not rerun the page's staging function. Its
+    // original observers must still see the retried terminal result.
+    if (result?.error?.phase === "observation")
+      _observationCallbacks = callbacks;
+    if (result && (result.status === "saved" || result.status === "nothing_to_save" || result.status === "observed") && result.refreshState === "current")
       staged = previewDirty;
     settingsCompleted(result);
-    for (var i = 0; i < callbacks.length; i++) {
+    for (var callback of callbacks) {
       try {
-        callbacks[i](result);
+        callback(result);
       } catch (error) {
-        // One page observer must not strand the remaining detached callbacks.
         console.warn("Plugin settings page completion observer failed");
       }
     }

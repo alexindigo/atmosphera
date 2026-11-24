@@ -1,0 +1,78 @@
+{
+  "description": "Pass-2 implementation partition of the 74 required ports at 5ed97f7ab. Plans, not acceptance receipts. Largest groups first; green subgroups may commit independently.",
+  "groups": [
+    {
+      "id": "G1",
+      "pattern": "Main-owned selected request, polling and result/projection clients",
+      "members": ["assistant-panel", "claude-code-panel", "dmenu", "github-feed", "habitica", "hassio", "keybind-cheatsheet", "kubectl-ctx", "latency-monitor", "mawaqit", "model-usage", "mpris-lyric", "ntfy-notifications", "ramadan-iftar", "shell-profiles", "spotify-player", "ssh-sessions", "syncthing-status", "update-count", "weekly-calendar", "amd-gpu-monitor", "battery-monitor-plus", "battery-wireless-devices", "cloudflare-warp", "ip-monitor", "keep-awake-plus", "lyrics-fetch", "monique", "mullvad", "netbird", "noctalia-calculator", "openvpn3", "port-monitor", "privacy-indicator", "slowbongo", "tailscale", "news", "kde-connect"],
+      "reviewedNoInstance": {"dmenu": "Originating orchestrator decision 2026-11-21: no supplied placed opener, Main/Panel/Settings plus plugin-level IPC only. Preserve this historical member and its full individual IPC/session-policy and page/native obligations; do not add an opener. Manifest/registration mutations reject no-instance review. Decision recorded outside the repository in orchestrator-decision-dmenu-no-instance.md."},
+      "approach": "One Main-owned client per captured runtime context, shared by every view of that API. Keep common physical/content observation at its existing owner; select request inputs, polling, filtering, presentation and originating action arguments. Replace/fence configuration-dependent workers on source changes and retire context subscriptions. First independent subgroup G1a: battery-wireless-devices, cloudflare-warp, ip-monitor, monique, whose only Main-owned preference is observation polling; do not duplicate physical owners. Remaining query/projection subgroups retain their field-specific ownership notes below.",
+      "representatives": "G1a: cloudflare-warp (milliseconds and installed guard), battery-wireless-devices (seconds and positive fallback). Query/result: latency-monitor and github-feed. Projection/action: mullvad and privacy-indicator. Individual unusual cases: news producer handoff, kde-connect singleton device selection, spotify-player OAuth lifecycle, assistant-panel/claude-code-panel shared conversation content, mawaqit protected calendar cache, slowbongo input lifetime.",
+      "staticCheck": "For every member, check Main context-keyed factory/cache/retirement; every runtime entry and Settings completion resolves its captured context; declared configuration-to-client/request/timer/projection/action mapping; no shared Main fallback for selected policy; no operational/content migration. G1a adds exact parsed Timer, unit/default/guard/refresh-owner checks for all four, plus missing-member/shared-reader/retirement negative controls. Source fingerprints only establish freshness, not this semantic contract.",
+        "status": "G1a-G1m retain their qualified polling/query/observation/projection/request/provider/OAuth/calendar/IPC/input/profile/conversation units. G1o: Keybind Main owns context-keyed parser clients and complete nine-stage source generations, source-qualified common state cache and originating native bind writers. Both-scope native/cold files and actual Panel children, every stage replacement/retirement/destruction, real cache reuse, writer failure/Retry and finite field/entry/source controls cover the member. Dmenu remains reviewed no-instance with its individual IPC/session and page/native proof, not an invented placed route. Physical effects, broad compositor behavior and final paired acceptance are not implied."
+    },
+    {
+      "id": "G2",
+      "pattern": "Originating selected action policy over one shared physical/application effect",
+      "members": ["2-in-1-tools", "clipper", "display-settings", "ds4-colors", "hyprland-steam-overlay", "linux-wallpaperengine-controller", "monitor-layout", "mpvpaper", "music-search", "network-manager-vpn", "noctalia-supergfxctl", "nvibrant", "osk-toggle", "screen-recorder", "screen-shot-and-record", "screen-toolkit", "screencast-gif", "usb-drive-manager", "video-wallpaper"],
+      "approach": "Capture originating runtime policy/target through existing Main action and child factories; keep one real device/output/recorder/helper/content owner. Per-view browse/presentation inputs remain selected. Instance UI explicitly describes the shared effect, without dead instance controls or invented independent devices. Preserve existing native writers for action-result preferences.",
+      "representatives": "Capture tools: screen-shot-and-record and screencast-gif. Shared device/action: network-manager-vpn and ds4-colors. Individual unusual cases: 2-in-1-tools automatic sensor policy/restore writes, mpvpaper/video-wallpaper per-output automation and processes, music-search helper action/result ownership (reuse unchanged source-qualified proofs), usb-drive-manager automatic mount admission, noctalia-supergfxctl DBus lifecycle.",
+      "staticCheck": "Every public Bar/CC/Panel action edge and Main-created child receives captured selected inputs; no child falls back to Main API; writeback targets originating native API and fences retirement; physical owner remains singular; each affected instance field has a live consumer or explicit truthful shared-policy control; assert shared-effect explanation and preserve content/operational leaves. Reject omitted caller, shared-input injection and shared-writer mutations.",
+        "status": "All 19 G2 implementations select originating policy over singular effects. Steam retains one admitted typed geometry/dispatch policy through query, movement, show/focus and continuing-window stages. USB retains admitted automatic/action/completion policy over one observer; GPU retains typed context schedules and captured query/mode policy over one CLI/state/NotificationServer owner. Broad/final acceptance remains required; implementation counts are not runtime acceptance receipts."
+    },
+    {
+      "id": "G3",
+      "pattern": "One daemon, automatic session policy or synchronized content resource",
+      "members": ["agent-session-status", "clamshell", "clipboard", "hermes-agent", "niri-auto-tile", "niri-screensaver", "obs-control", "sticky-notes"],
+      "approach": "Trace which settings configure the singular server/daemon/automatic policy/content synchronization versus per-context projection. Preserve that shared lifecycle/content owner; select view/request policy where applicable and make resource-wide controls explicit in instance UI instead of admitting ineffective overrides. Do not reclassify stored configuration or migrate content.",
+      "representatives": "agent-session-status server and clipboard result projection. Individual unusual cases: clamshell inhibitor, hermes-agent managed bridge, niri-auto-tile subprocess, niri-screensaver idle owner, obs-control managed OBS, sticky-notes one synchronized notes/Gist identity. These resource contracts are not covered by a generic polling proof.",
+      "staticCheck": "Every field classified as selected presentation/request or concrete resource-wide policy with explicit UI and actual resource consumer. Check sole lifecycle owner, selected context propagation, retained operational/content schema and originating action writers. Reject dead instance fields, duplicate resource owners and shared-context view injection. Runtime each distinct lifecycle/resource contract individually.",
+      "status": "G3a implements selected managed-service/inhibitor admission for agent-session-status and clamshell. G3c adds selected Clipboard history projections and originating coalesced decode admission over one content owner. G3d adds selected OBS presentation/polling and captured action policy over one transport/status/managed-state owner. G3b Auto-Tile adds typed selected daemon/config policy with parent-death-bound Python descendants. Sticky Notes makes its one notes/Gist sync owner explicit in instance UI and retains credential/target/lifetime-fenced shared operations. Screensaver selects applied config/idle/hook/action policy over one session resource owner with captured probe and serialized writer lifetimes. Hermes Agent selects context-keyed presentation/polling and an applied connection generation over one shared chat/bridge/gateway, with pending restart until explicit session replacement. Runtime acceptance is recorded separately; broad/final acceptance remains required."
+    },
+    {
+      "id": "G4",
+      "pattern": "View registered as Main, causing last-renderer backend selection",
+      "members": ["auto-cpufreq", "battery-and-power-management", "thinkpad-fan"],
+      "approach": "Move backend/context selection to existing Main-owned domain clients, never register a particular Bar as the global Main. Panel/popup binds the originating captured runtime context; common physical observation/actions stay shared and explicit.",
+      "representatives": "auto-cpufreq and battery-and-power-management; thinkpad-fan individual if its popup action ownership differs from those representatives.",
+      "staticCheck": "Every member has no Bar-to-global-mainInstance assignment; popup/backend obtains selected client from captured API; multiple renderers share one context client and cannot replace another context; check every action/configuration mapping, no physical-owner duplication, and shared-effect UI. Reject last-renderer and shared-popup mutations.",
+      "status": "All three backend-owner implementations have real Main entries, context-keyed clients and selected popup/Bar identities independent of renderer lifetime. CPU/fan observations and effects stay common; BatterySource is device-keyed and retires old subscriptions. Finite every-field/entry/owner checks supplement actual native representative and individual lifetime outcomes. Implementation status is not runtime or broad/final acceptance."
+    },
+    {
+      "id": "G5",
+      "pattern": "Main-created window receives originating context",
+      "members": ["somnus", "wallcards"],
+      "approach": "Pass captured originating API/context into the existing Main-owned window creation/toggle method. Explicit IPC retains plugin scope; no parent/window reaches into another view to infer selection.",
+      "representatives": "wallcards; somnus individual action-target proof with inert lock/sleep endpoints only.",
+      "staticCheck": "Every placed opener passes its API/context; every Main window/Loader initialization uses that capture, never shared Main API; shared IPC explicitly supplies plugin context; window replacement/close retains originating identity. Reject missing-opener and shared-window-context mutations.",
+      "status": "G5: both Main-owned windows capture the originating API/screen, retain one presentation, unload on context retirement and keep IPC plugin-level. Native both-scope windows/card/button geometry and Wallcards runtime writer; inert Somnus action-policy proof. Broad visual/final acceptance pending."
+    },
+    {
+      "id": "G6",
+      "pattern": "Configured stateful timer/game client",
+      "members": ["pomodoro", "tamagotchi"],
+      "approach": "Separate selected configured behavior from its actual state lifetime using Main-owned context clients; preserve protected timer/game leaves and originating native writers. Do not copy/migrate shared content. Truthful shared state UI where a resource is genuinely singular.",
+      "representatives": "Both individually: Pomodoro timer/auto-start/sound and Tamagotchi game difficulty/state/lifetime are not interchangeable runtime contracts. Reuse unchanged P169 input-path proof, not as selected-timer proof.",
+      "staticCheck": "Every duration/difficulty/auto-action/presentation setting maps to selected client; every operational write retains originating writer; all Bar/Panel/Pet/Debug/Stats paths resolve the correct client; no duplicate shared state owner or protected leaf reset. Reject shared timer/game config and shared-writer mutations.",
+      "status": "G6 complete: Tamagotchi Main-owned context-keyed games retain original operational writers/int/random/30-second cadence and individual drag/drop/particles/physics/Debug/Bed proofs. Pomodoro Main-owned context-keyed timers retain int duration/session policy, phase/auto-start,1000ms tick/5000ms alarm, plugin-level IPC/legacy source and native retirement. Both members have native both-scope pages/files/cold readers and rejecting controls; Pomodoro renews all four P169 toggles by pointer/keyboard/AT-SPI. Broad visual/final acceptance remains separate."
+    },
+    {
+      "id": "G7",
+      "pattern": "Module singleton session replaced by last Panel",
+      "members": ["hermes-ssh-chat"],
+      "approach": "Use context-keyed session/target/writer ownership instead of replacing Singleton API from a Panel. Preserve terminal content, credentials and explicitly plugin-level IPC shortcuts.",
+      "representatives": "hermes-ssh-chat individually: simultaneous contexts, connection replacement, delayed result and retirement.",
+      "staticCheck": "No mutable singleton API selection; session cache keyed by captured context, all Panel/actions/writers target it, explicit shared IPC remains shared; retired sessions cannot persist delayed results. Reject last-panel replacement and shared-writer mutations.",
+      "status": "G7 selected session implementation: Main-owned context cache, originating remembered-target writer, connection-scoped callbacks, selected terminal signals/replay and retirement. Explicit shared IPC/global shortcut. Native both-scope page and individual inert SSH PTY proof; broad visual/final acceptance remains separate."
+    },
+    {
+      "id": "G8",
+      "pattern": "Selected export/presentation policy over protected shared content",
+      "members": ["todo"],
+      "approach": "Carry originating exportPath/exportFormat/exportEmptySections and remaining selected presentation/action policy into shared Main content operations. Keep task/page/counter bytes and one content owner unchanged; prior P001 protection remains valid.",
+      "representatives": "todo individually: selected export command/output and actual presentation; reuse source-qualified P001 content-protection/runtime proofs when unchanged.",
+      "staticCheck": "All Main configuration readers traced to selected caller inputs or explicit shared IPC; every export caller carries context, protected content leaves remain excluded from configuration intents/reset, no migration. Reject shared export policy and changed-content controls.",
+      "status": "Selected Panel/Desktop display and Main-captured export policy over the existing common content owner. Native both-scope filtered task Text/output/cold documents, held busy/retirement and failed-start/publication Retry, finite all-field controls and renewed P001 routes. No content migration; broad visual/final paired acceptance remains separate."
+    }
+  ]
+}

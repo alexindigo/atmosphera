@@ -21,6 +21,7 @@ ColumnLayout {
   signal buttonClicked
   signal inputTextChanged(string text)
   signal inputEditingFinished
+  signal inputEditCommitted
 
   spacing: Style.marginS
 
@@ -45,6 +46,7 @@ ColumnLayout {
       enabled: root.enabled
       onTextChanged: root.inputTextChanged(text)
       onEditingFinished: root.inputEditingFinished()
+      onEditCommitted: root.inputEditCommitted()
     }
 
     // Button

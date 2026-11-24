@@ -127,8 +127,7 @@ Item {
 
       if (action === "open-display-settings") {
         var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-        settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-        settingsPanel.open();
+        settingsPanel.openToTab(SettingsPanel.Tab.Display, -1);
       } else if (action === "widget-settings") {
         BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
       }

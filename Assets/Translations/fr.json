@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Les modifications ont été enregistrées, mais pas vérifiées.",
+    "editor-observation-draft-changed": "De nouvelles modifications sont présentes. Cliquez sur Appliquer pour les enregistrer.",
+    "check-again": "Vérifier à nouveau",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Actions",

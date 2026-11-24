@@ -40,7 +40,7 @@ def main():
             (config/'settings/bar.json').write_text('{"position":"bottom","opaque":18446744073709551615}')
             (config/'settings/plugins/shell-profiles.json').write_text('{"lastAppliedProfile":"previous","backupEnabled":true}')
             (config/'colors.json').write_text(json.dumps({key: '#123456' for key in roles}))
-            registry_bytes = b'{"version":5,"states":{"shell-profiles":{"enabled":false,"sourceUrl":null}},"sources":[],"opaque":18446744073709551615}'
+            registry_bytes = b'{"version":6,"states":{"shell-profiles":{"enabled":false,"sourceUrl":null}},"sources":[],"opaque":18446744073709551615}'
             (config/'plugins.json').write_bytes(registry_bytes)
             image = root/'wallpaper.png'
             image.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3ioAAAAASUVORK5CYII='))

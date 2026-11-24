@@ -110,7 +110,10 @@ def main():
         entry.write(template.read_text().replace('@SCENARIO@', args.scenario))
         entry.flush()
         path = str(Path(temp) / 'socket')
-        env = dict(isolated_profile(output), NIRI_SOCKET=path, QT_QPA_PLATFORM='wayland', ATMOSPHERA_LOCKSCREEN='1')
+        env = dict(isolated_profile(output), NIRI_SOCKET=path, XDG_CURRENT_DESKTOP='niri',
+                   QT_QPA_PLATFORM='wayland', ATMOSPHERA_LOCKSCREEN='1')
+        for selector in ('LABWC_PID', 'HYPRLAND_INSTANCE_SIGNATURE', 'SWAYSOCK'):
+            env.pop(selector, None)
         with socketserver.ThreadingUnixStreamServer(path, Peer) as peer:
             peer.lock = threading.Lock()
             peer.actions = []

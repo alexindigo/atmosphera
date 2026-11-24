@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Değişiklikler kaydedildi ancak kontrol edilemedi.",
+    "editor-observation-draft-changed": "Yeni düzenlemeleriniz var. Kaydetmek için Uygula'ya basın.",
+    "check-again": "Yeniden kontrol et",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Eylemler",

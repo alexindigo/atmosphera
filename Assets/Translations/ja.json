@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "変更は保存されましたが、確認できませんでした。",
+    "editor-observation-draft-changed": "新しい編集があります。「適用」で保存してください。",
+    "check-again": "もう一度確認",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "アクション",

@@ -106,6 +106,7 @@ SmartPanel {
   // Internal reference to the content (set when panel content loads)
   property var _settingsContent: null
   property int navigationGeneration: 0
+  closeAdmission: SettingsPanelService.admitPresentationChange
 
   // Override toggle to handle window mode
   function toggle(buttonItem, buttonName) {
@@ -123,6 +124,8 @@ SmartPanel {
 
   // Override open to handle window mode
   function open(buttonItem, buttonName) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     if (isWindowMode) {
       SettingsPanelService.openWindow(requestedTab);
       return;
@@ -158,6 +161,8 @@ SmartPanel {
 
   // Open to a specific tab and optionally a subtab
   function openToTab(tab, subTab, buttonItem, buttonName) {
+    if (!SettingsPanelService.admitPresentationChange())
+      return false;
     root.navigationGeneration++;
     navigationTimer.stop();
     requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;

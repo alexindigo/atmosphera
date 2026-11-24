@@ -15,6 +15,12 @@
     "settings": "Settings.qml"
   },
   "metadata": {
+    "settingsSchema": {
+      "version": 1,
+      "fields": {
+        "label": {"type": "String", "editorUsage": "configuration"}
+      }
+    },
     "defaultSettings": {
       "label": "D"
     }

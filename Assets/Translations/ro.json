@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Modificările au fost salvate, dar nu au putut fi verificate.",
+    "editor-observation-draft-changed": "Ai modificări noi. Apasă Aplică pentru a le salva.",
+    "check-again": "Verifică din nou",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Acțiuni",

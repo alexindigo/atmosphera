@@ -20,7 +20,9 @@ ColumnLayout {
     text: root.labelText
     onTextChanged: root.labelText = text
   }
-  function setLabel(value) { labelText = value; }
+  function setLabel(value) {
+    labelText = value;
+  }
   function editLabel(value) {
     labelInput.inputItem.forceActiveFocus();
     labelInput.inputItem.text = value;
@@ -28,12 +30,15 @@ ColumnLayout {
   }
   function saveSettings() {
     saves++;
-    if(stageOnSave)pluginApi.pluginSettings.label = labelText;
+    if (stageOnSave)
+      pluginApi.field("label").set(labelText);
     pluginApi.saveSettings(function (result) {
       root.completions++;
       root.lastStatus = result.status;
     });
     // Multiple staging requests still mean a single popup-owned Apply.
-    pluginApi.saveSettings(function (result) { root.completions++; });
+    pluginApi.saveSettings(function (result) {
+      root.completions++;
+    });
   }
 }

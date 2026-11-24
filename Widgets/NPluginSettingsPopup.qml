@@ -20,31 +20,50 @@ Popup {
   height: Math.min(settingsContent.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
 
-  property var currentPlugin: null
-  property var currentPluginApi: null
+  readonly property var currentPlugin: settingsSession.currentPlugin
+  readonly property var currentPluginApi: settingsSession.currentPluginApi
   // The instance api when the page edits one placed instance; null for the plugin level.
-  property var currentInstanceApi: null
-  readonly property bool isInstance: currentInstanceApi !== null
+  readonly property var currentInstanceApi: settingsSession.currentInstanceApi
+  readonly property bool isInstance: settingsSession.isInstance
   property bool showToastOnSave: false
-  readonly property bool busy: _busy
-  readonly property bool saveFailed: _failed
+  readonly property bool busy: settingsSession.busy
+  readonly property bool saveFailed: settingsSession.failed
   readonly property bool discardPending: discardDialog.visible
-  readonly property bool dirty: _failed || inputEdits.dirty || (_pageApi && _pageApi.staged) || (settingsPage && (typeof settingsPage.settingsDirty !== "boolean" || settingsPage.settingsDirty))
-  property bool _busy: false
-  property bool _failed: false
-  property var _editor: null
-  property var _pageApi: null
-  property int _inputFence: 0
-  property var _previewFence: null
-  property var _cancelOpening: null
-  property var _lifetime: ({alive: true})
+  readonly property bool dirty: settingsSession.dirty
+  readonly property var _editor: settingsSession.editor
+  readonly property var _pageApi: settingsSession.pageApi
+  property var _runtimeReadOverride: null
+  readonly property var undisplayedOverrideFields: settingsSession.fields ? settingsSession.fields.undisplayedOverrides : []
   signal settingsCompleted(var result)
-  signal presentationInvalidated
-  Component.onDestruction: {
-    _lifetime.alive = false;
-    if (_cancelOpening) _cancelOpening();
-    if (_editor) _editor.release();
+  // The adopted presentation ends even if the native Popup never opened.
+  signal presentationClosed
+  property bool _presenting: false
+
+  // Optional host-owned transition admission, injected without knowing the
+  // containing tab/window/service. The returned function releases registration.
+  property var registerPresentation: null
+  property var _releasePresentation: null
+
+  Connections {
+    target: settingsSession
+    function onEditorChanged() {
+      if (settingsSession.editor && !root._releasePresentation && root.registerPresentation) {
+        root._releasePresentation = root.registerPresentation(function () {
+          return root.requestClose();
+        });
+      } else if (!settingsSession.editor) {
+        root._unregisterPresentation();
+      }
+    }
   }
+
+  function _unregisterPresentation() {
+    var release = _releasePresentation;
+    _releasePresentation = null;
+    if (release)
+      release();
+  }
+  Component.onDestruction: _unregisterPresentation()
 
   NSettingsInputGuard {
     id: inputEdits
@@ -52,18 +71,65 @@ Popup {
     active: root.visible && !root.busy
   }
 
-  Component {
-    id: pageApiFactory
-    PluginSettingsPageApi {}
+  PluginSettingsSession {
+    id: settingsSession
+    runtimeReadOverride: root._runtimeReadOverride
+    page: root.settingsPage
+    presentationOpen: root.visible
+    inputDirty: inputEdits.dirty
+    commitInputs: function () {
+      inputEdits.commit();
+    }
+    captureInputs: function () {
+      return inputEdits.capture();
+    }
+    acknowledgeInputs: function (fence) {
+      inputEdits.acknowledge(fence);
+    }
+    resetInputs: function () {
+      inputEdits.reset();
+    }
+    onPresentRequested: {
+      root._loadPage();
+      var preferred = root.settingsPage && root.settingsPage.preferredWidth !== undefined ? root.settingsPage.preferredWidth + root.padding * 2 : 0;
+      root.width = Math.max(preferred, root._minWidth);
+      root.open();
+    }
+    onReloadRequested: {
+      resetInstanceDialog.close();
+      settingsLoader.sourceComponent = null;
+      settingsLoader.source = "";
+      inputEdits.reset();
+      root._loadPage();
+    }
+    onCloseAccepted: {
+      discardDialog.close();
+      if (root.visible)
+        root.close();
+      else
+        root._finishPresentation();
+    }
+    onDiscardRequired: discardDialog.open()
+    onSettingsCompleted: result => {
+      if (result?.error?.phase === "observation")
+        resetInstanceDialog.close();
+      root.settingsCompleted(result);
+    }
+    onOpeningFailed: {
+      if (root.showToastOnSave)
+        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
+      root._finishPresentation();
+    }
+    onSaved: {
+      if (root.showToastOnSave)
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
+    }
   }
 
   // The loaded settings page (its saveSettings() is what Apply calls).
   readonly property var settingsPage: loadedPage()
   readonly property var resetButton: resetInstanceButton
   readonly property var resetConfirmation: resetInstanceDialog
-
-  property string _settingsUrl: ""
-  property string _settingsEntryPoint: "settings"
 
   background: Rectangle {
     color: AtmoColor.mSurface
@@ -130,19 +196,76 @@ Popup {
         Layout.minimumHeight: 100
         horizontalPolicy: ScrollBar.AlwaysOff
         gradientColor: AtmoColor.mSurface
+        clip: true
 
-        Loader {
-          id: settingsLoader
-          enabled: !root.busy
+        // Both host-owned override rows and plugin content share the bounded
+        // scrolling region. Header, failure feedback and actions remain outside.
+        ColumnLayout {
           width: settingsScrollView.availableWidth
+          spacing: Style.marginM
+
+          ColumnLayout {
+            visible: root.undisplayedOverrideFields.length > 0
+            Layout.fillWidth: true
+            NText {
+              text: I18n.tr("panels.plugins.additional-overrides")
+              Layout.fillWidth: true
+            }
+            Repeater {
+              // List models carry keys, not capability methods. Inject each
+              // stable field handle from its existing owner at the delegate.
+              model: root.undisplayedOverrideFields.map(function (field) {
+                return field.key;
+              })
+              RowLayout {
+                required property var modelData
+                readonly property var field: settingsSession.fields.field(modelData)
+                Layout.fillWidth: true
+                NText {
+                  Layout.fillWidth: true
+                  // Never render values, including secrets, in the summary.
+                  text: field.key
+                }
+                NButton {
+                  text: I18n.tr("common.reset")
+                  enabled: !root.busy && field.pendingIntent !== "reset"
+                  onClicked: field.reset()
+                }
+              }
+            }
+          }
+
+          Loader {
+            id: settingsLoader
+            enabled: !root.busy
+            Layout.fillWidth: true
+          }
         }
       }
 
-      NText {
+      RowLayout {
         visible: root.saveFailed
-        text: I18n.tr("common.editor-save-failed")
-        wrapMode: Text.WordWrap
         Layout.fillWidth: true
+        spacing: Style.marginM
+
+        NText {
+          Layout.fillWidth: true
+          text: I18n.tr(settingsSession.observationError === "settings-observation-draft-changed" ? "common.editor-observation-draft-changed" : (settingsSession.observationError ? "common.editor-observation-failed" : "common.editor-save-failed"))
+          wrapMode: Text.WordWrap
+        }
+
+        Loader {
+          active: root.saveFailed && settingsSession.observationError !== ""
+          visible: active
+          sourceComponent: NButton {
+            objectName: "checkObservationButton"
+            enabled: !root.busy
+            outlined: true
+            keyboardAccessible: true
+            text: I18n.tr("common.check-again")
+            onClicked: settingsSession.retryObservation()
+          }
+        }
       }
 
       // Action buttons
@@ -261,196 +384,73 @@ Popup {
   }
 
   onClosed: {
-    if (_cancelOpening) { _cancelOpening(); _cancelOpening = null; }
+    // A native host hide or a caller using Popup.close() is not permission to
+    // destroy dirty/busy input. Only the session's admitted Close clears the
+    // editor first. Keep this exact loaded page through a refused hide.
+    if (settingsSession.editor && !settingsSession.requestClose()) {
+      var selected = settingsSession.editor;
+      Qt.callLater(function () {
+        if (settingsSession.editor === selected)
+          root.open();
+      });
+      return;
+    }
+    _finishPresentation();
+  }
+
+  function _finishPresentation() {
+    if (!_presenting)
+      return;
     resetInstanceDialog.close();
     discardDialog.close();
     // Clear both source and sourceComponent to ensure full cleanup
     settingsLoader.sourceComponent = null;
     settingsLoader.source = "";
-    if (_editor)
-      _editor.release();
-    _editor = null;
-    if (_pageApi)
-      _pageApi.destroy();
-    _pageApi = null;
-    _busy = false;
-    _failed = false;
-    currentPlugin = null;
-    inputEdits.reset();
-    currentPluginApi = null;
-    currentInstanceApi = null;
+    settingsSession.presentationClosed();
+    _presenting = false;
+    presentationClosed();
   }
 
   // Plugin level: the page edits and saves the plugin settings.
   function openPluginSettings(pluginManifest, settingsEntryPoint) {
-    return _open(pluginManifest, settingsEntryPoint, null);
+    return _openSettings(() => settingsSession.openPluginSettings(pluginManifest, settingsEntryPoint));
   }
 
   // One placed instance: the page edits the instance api's settings (plugin
   // settings with this placement's overrides on top), and Reset drops the
   // overrides. `instanceApi` comes from PluginInstances.apiFor; null when the
   // plugin is not loaded.
-  function openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint) {
-    if (!instanceApi) {
-      Logger.e("NPluginSettingsPopup", "Cannot open instance settings: no instance api for:", pluginManifest.compositeKey || pluginManifest.id);
-      if (showToastOnSave) {
-        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
-      }
-      return false;
-    }
-    return _open(pluginManifest, settingsEntryPoint, instanceApi);
+  function openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor) {
+    return _openSettings(() => settingsSession.openInstanceSettings(pluginManifest, instanceApi, settingsEntryPoint, capturedEditor));
   }
 
-  function _open(pluginManifest, settingsEntryPoint, instanceApi) {
-    // A second open must never replace an existing dirty/busy page implicitly.
-    if (visible || _busy || _editor !== null)
+  function _openSettings(select) {
+    if (_presenting)
       return false;
-    resetInstanceDialog.close();
-    currentPlugin = pluginManifest;
-
-    // Use composite key if available (for custom plugins), otherwise use manifest ID (for official plugins)
-    var pluginId = pluginManifest.compositeKey || pluginManifest.id;
-
-    currentInstanceApi = instanceApi || null;
-    currentPluginApi = instanceApi || Service.getPluginAPI(pluginId);
-    if (!currentPluginApi) {
-      Logger.e("NPluginSettingsPopup", "Cannot open settings: plugin not loaded:", pluginId);
-      if (showToastOnSave) {
-        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
-      }
-      return false;
-    }
-
-    _editor = currentPluginApi.createSettingsEditor();
-    if (!_editor)
-      return false;
-    _failed = false;
-
-    // Get plugin directory
-    inputEdits.reset();
-    var pluginDir = Registry.getPluginDir(pluginId);
-    _settingsEntryPoint = settingsEntryPoint || "settings";
-    var settingsEntry = pluginManifest.entryPoints[_settingsEntryPoint];
-    _settingsUrl = "file://" + pluginDir + "/" + settingsEntry + "?v=" + (Registry.pluginLoadVersions[pluginId] || 0);
-
-    var editor = _editor;
-    var lifetime = _lifetime;
-    _cancelOpening = editor.whenReady(function (result) {
-      if (!lifetime.alive || root._editor !== editor) return;
-      root._cancelOpening = null;
-      if (result.status === "opened") { root._openEditorPage(editor); return; }
-      root._failed = true;
-      root.settingsCompleted(result);
-      if (root.showToastOnSave)
-        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
-      editor.discard();
-      root._editor = null;
-      root.currentPlugin = null;
-      root.currentPluginApi = null;
-      root.currentInstanceApi = null;
-      // No page ever opened and no editable work remains. Release an adopted
-      // transparent host through its existing presentation lifetime contract.
-      root._failed = false;
-      root.presentationInvalidated();
-    });
-    return true;
-  }
-
-  function _openEditorPage(editor) {
-    _pageApi = pageApiFactory.createObject(root, {
-      base: currentPluginApi, editor: editor,
-      initialSettings: Settings.store.copyValue(editor.initialValue),
-      pluginSettings: editor.values
-    });
-    _loadPage();
-    var preferred = (settingsPage && settingsPage.preferredWidth !== undefined) ? settingsPage.preferredWidth + padding * 2 : 0;
-    width = Math.max(preferred, _minWidth);
-    open();
+    _presenting = true;
+    return select();
   }
 
   function _loadPage() {
-    settingsLoader.setSource(_settingsUrl, PluginLoader.initialProperties(_settingsEntryPoint, _settingsUrl, _pageApi, {}));
+    settingsLoader.setSource(settingsSession.settingsUrl, PluginLoader.initialProperties(settingsSession.settingsEntryPoint, settingsSession.settingsUrl, _pageApi, {}));
   }
 
   function loadedPage(): var {
     return settingsLoader.item;
   }
 
-  // Drops the instance overrides, then reloads the page: the page keeps its own
-  // copy of the values it was opened with and must read the plugin settings again.
+  // Remove declared configuration overrides through the selected session. The
+  // accepted receipt reloads field presentation; content and opaque data remain.
   function resetInstanceSettings() {
-    if (!currentInstanceApi || !_editor || _busy)
-      return;
-    _submit(true);
+    return settingsSession.resetInstanceSettings();
   }
 
   function applySettings() {
-    if (!_editor || _editor.writable === false || !settingsPage || _busy)
-      return;
-    inputEdits.commit();
-    // Page saveSettings is synchronous staging, never a recursive owner Apply.
-    _busy = true;
-    try {
-      if (typeof settingsPage.saveSettings === "function")
-        settingsPage.saveSettings();
-      _submit(false);
-    } catch (error) {
-      _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, false);
-    }
-  }
-
-  function _submit(reset) {
-    _inputFence = inputEdits.capture();
-    _previewFence = _pageApi.capturePreview();
-    _busy = true;
-    _pageApi.busy = true;
-    _failed = false;
-    try {
-      var completed = function (result) { root._finish(result, reset); };
-      if (reset)
-        _editor.resetOverrides(completed);
-      else
-        _editor.apply(_pageApi.pluginSettings, completed);
-    } catch (error) {
-      _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, reset);
-    }
-  }
-
-  function _finish(result, reset) {
-    var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";
-    _failed = !accepted;
-    if (accepted)
-      _pageApi.refresh(_editor.initialValue, _previewFence);
-    if (accepted && !reset)
-      inputEdits.acknowledge(_inputFence);
-    // Keep competing page actions disabled throughout receipt delivery.
-    settingsCompleted(result);
-    _pageApi.complete(result);
-    _pageApi.busy = false;
-    _busy = false;
-    if (!accepted)
-      return;
-    if (reset) {
-      resetInstanceDialog.close();
-      settingsLoader.sourceComponent = null;
-      settingsLoader.source = "";
-      // Reset replaced the entire input owner, unlike a captured Apply receipt.
-      inputEdits.reset();
-      _loadPage();
-    }
-    if (showToastOnSave)
-      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
+    return settingsSession.applySettings();
   }
 
   function requestClose() {
-    if (_busy)
-      return false;
-    inputEdits.commit();
-    if (dirty) {
-      discardDialog.open();
-      return false;
-    }
-    return confirmDiscard();
+    return !_presenting || settingsSession.requestClose();
   }
 
   function keepEditing() {
@@ -458,12 +458,6 @@ Popup {
   }
 
   function confirmDiscard() {
-    if (_busy) return false;
-    if (_cancelOpening) { _cancelOpening(); _cancelOpening = null; }
-    if (_editor && _editor.discard() === false) return false;
-    _editor = null;
-    discardDialog.close();
-    close();
-    return true;
+    return settingsSession.confirmDiscard();
   }
 }

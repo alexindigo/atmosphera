@@ -5,6 +5,7 @@ Run inside the assigned VM, with disk TMPDIR. Production plugin owners stay old.
 This proves hello-world's reviewed descriptor and exact older-version overlay,
 not coverage of the rest of the catalog or production owner integration.
 """
+from fixture_receipts import receipt_run, stage_receipt
 import argparse
 import copy
 import hashlib
@@ -124,6 +125,7 @@ def selftest(manifest, old, overlays):
     return controls
 
 
+@receipt_run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--manifest', type=Path, required=True)
@@ -187,7 +189,7 @@ def main():
         'manifestSha256':hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
         'oldManifestSha256':hashlib.sha256(args.old_manifest.read_bytes()).hexdigest(),
         'legacyUnchanged':True,'noStartupWrite':True,'unknownRawPreserved':True,'coldRestart':True}
-    (args.output/'result.json').write_text(json.dumps(summary,indent=2)+'\n')
+    stage_receipt(args.output/'result.json', summary)
     print('PLUGIN_SETTINGS_SCHEMA_REGRESSION: PASS (hello-world; 12 installed-module endpoints, 9 rejecting controls)')
 
 

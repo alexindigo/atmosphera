@@ -6,13 +6,18 @@ lexical/QML lookup and its actual receiver can supply a publishing summary.
 Unmodeled effects retain obligations and emit owner-review advisories.
 """
 import argparse
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from functools import lru_cache
 from importlib.metadata import version
 import json
+from multiprocessing import get_context
+import os
 from pathlib import Path
 import re
 import sys
+import time
+from types import MappingProxyType
 import warnings
 
 warnings.filterwarnings('ignore', message='int argument support is deprecated', category=DeprecationWarning)
@@ -74,6 +79,35 @@ class Ref:
     lineage: tuple = ()
 
 
+@dataclass(frozen=True)
+class SavedBindings:
+    """An owned immutable restore snapshot, not a cache of a mutable map."""
+    entries: tuple = field(compare=False)
+    key: frozenset = field(init=False)
+
+    def __post_init__(self):
+        entries = tuple(self.entries)
+        for name, binding in entries:
+            if (not isinstance(name, str) or not isinstance(binding, tuple) or len(binding) != 4
+                    or type(binding[0]) is not bool or type(binding[2]) is not bool):
+                raise TypeError('saved bindings require immutable named binding tuples')
+            value, scalar = binding[1], binding[3]
+            if value is not None and (not isinstance(value, Ref) or not isinstance(value.path, tuple)
+                    or not all(isinstance(part, (str, int, float, bool, type(None))) for part in value.path)
+                    or not isinstance(value.mode, str) or type(value.token) is not int
+                    or not isinstance(value.lineage, tuple) or not all(type(token) is int for token in value.lineage)):
+                raise TypeError('saved reference must contain only immutable values')
+            if scalar is not None and (not isinstance(scalar, tuple) or len(scalar) != 2
+                    or any(part is not None and type(part) is not bool for part in scalar)):
+                raise TypeError('saved scalar must be an immutable truth/nullish pair')
+        if len({name for name, _ in entries}) != len(entries):
+            raise ValueError('saved binding names must be unique')
+        object.__setattr__(self, 'entries', entries)
+        # Mapping order is irrelevant to proof equality, but restore order is
+        # retained separately. frozenset also reuses its immutable hash.
+        object.__setattr__(self, 'key', frozenset(entries))
+
+
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
@@ -89,7 +123,8 @@ class State:
 
     def fork(self):
         return State(env=self.env.copy(), dirty=self.dirty.copy(), control=self.control,
-                     escaped=self.escaped.copy(), scopes=self.scopes.copy(), locals=self.locals.copy(),
+                     escaped=self.escaped.copy(), scopes=[(saved, locals_.copy()) for saved, locals_ in self.scopes],
+                     locals=self.locals.copy(),
                      contained={token: {path: values.copy() for path, values in slots.items()}
                                 for token, slots in self.contained.items()},
                      scalars=self.scalars.copy(), owner=self.owner, this_owner=self.this_owner)
@@ -133,7 +168,11 @@ class Checker:
         self.effects = []
 
     def text(self, node):
-        return self.source[node.start_byte:node.end_byte].decode() if node else ''
+        if not node:
+            return ''
+        if node.id not in self.syntax_text:
+            self.syntax_text[node.id] = self.source[node.start_byte:node.end_byte].decode()
+        return self.syntax_text[node.id]
 
     def report(self, node, code, level='error'):
         self.issues.append({'file': self.file, 'line': max(1, node.start_point.row + 1 - self.offset),
@@ -273,15 +312,19 @@ class Checker:
         return Evaluation(state, value, truth, nullish, frozenset(members) | self.tokens(value))
 
     def parameters(self, node):
+        if node.id in self.syntax_parameters:
+            return self.syntax_parameters[node.id]
         params = child(node, 'parameters') or child(node, 'parameter')
-        if not params: return []
-        if params.type == 'identifier': return [self.text(params)]
         result = []
-        for index, parameter in enumerate(params.named_children):
-            if parameter.type == 'comment': continue
-            pattern = child(parameter, 'pattern') or parameter
-            result.append(self.text(pattern) if pattern.type == 'identifier' else '@argument' + str(index))
-        return result
+        if params and params.type == 'identifier':
+            result.append(self.text(params))
+        elif params:
+            for index, parameter in enumerate(params.named_children):
+                if parameter.type == 'comment': continue
+                pattern = child(parameter, 'pattern') or parameter
+                result.append(self.text(pattern) if pattern.type == 'identifier' else '@argument' + str(index))
+        self.syntax_parameters[node.id] = tuple(result)
+        return self.syntax_parameters[node.id]
 
     def property_key(self, owner, name):
         return '@' + str(owner) + '.' + name
@@ -626,14 +669,15 @@ class Checker:
         if state.control != other.control: state.control = ''
         frames = []
         for index in range(max(len(state.scopes), len(other.scopes))):
-            a, a_locals = state.scopes[index] if index < len(state.scopes) else ({}, set())
-            b, b_locals = other.scopes[index] if index < len(other.scopes) else ({}, set())
+            a, a_locals = state.scopes[index] if index < len(state.scopes) else (SavedBindings(()), set())
+            b, b_locals = other.scopes[index] if index < len(other.scopes) else (SavedBindings(()), set())
+            a, b = dict(a.entries), dict(b.entries)
             saved = {}
             for name in a.keys() | b.keys():
                 av = a.get(name, (False, None, False, None)); bv = b.get(name, (False, None, False, None))
                 value = self.join_value(Evaluation(None, av[1]), Evaluation(None, bv[1])).value
                 saved[name] = (av[0] or bv[0], value, av[2] or bv[2], av[3] if av[3] == bv[3] else (None, None))
-            frames.append((saved, a_locals | b_locals))
+            frames.append((SavedBindings(tuple(saved.items())), a_locals | b_locals))
         state.scopes = frames
         return state, [self.join_value(a, b) for a, b in zip(left[1], right[1])]
 
@@ -810,8 +854,14 @@ class Checker:
         context = State(env=state.env.copy() if definition.lexical else self.environments[definition.owner].copy(),
                         owner=definition.owner, this_owner=definition.owner if definition.bound else 0)
         for name in self.parameters(definition.node): context.env[name] = None
-        return set().union(*(self.tokens(self.ref(n, context)) for n in walk(child(definition.node, 'body'))
-                             if n.type in ('identifier', 'member_expression', 'subscript_expression')))
+        if definition.node.id not in self.syntax_captures:
+            self.syntax_captures[definition.node.id] = tuple(
+                n for n in walk(child(definition.node, 'body'))
+                if n.type in ('identifier', 'member_expression', 'subscript_expression'))
+        # Only the syntax is reusable. Captured values and their effects still
+        # belong to this particular lexical/environment state.
+        return set().union(*(self.tokens(self.ref(n, context))
+                             for n in self.syntax_captures[definition.node.id]))
 
     def call(self, node, state):
         fn = child(node, 'function'); method = self.method_name(fn); rows = []
@@ -902,24 +952,35 @@ class Checker:
         return self.bound(results, node)
 
     def local_names(self, node):
+        if not node: return frozenset()
+        if node.id in self.syntax_locals:
+            return self.syntax_locals[node.id]
         names = set()
-        if not node: return names
         for nested in node.named_children:
             if nested.type in FUNCTIONS: continue
             if nested.type == 'variable_declaration':
                 names.update(self.text(child(d, 'name')) for d in nested.named_children if d.type == 'variable_declarator')
             names.update(self.local_names(nested))
-        return names
+        self.syntax_locals[node.id] = frozenset(names)
+        return self.syntax_locals[node.id]
 
-    def block(self, node, states):
+    def block_declarations(self, node):
+        if node.id in self.syntax_blocks:
+            return self.syntax_blocks[node.id]
         names = set(); functions = {}
         for statement in node.named_children:
             if statement.type == 'lexical_declaration':
                 names.update(self.text(child(d, 'name')) for d in statement.named_children if d.type == 'variable_declarator')
             elif statement.type == 'function_declaration':
                 name = self.text(child(statement, 'name')); names.add(name); functions[name] = statement.id
+        self.syntax_blocks[node.id] = tuple(names), MappingProxyType(functions)
+        return self.syntax_blocks[node.id]
+
+    def block(self, node, states):
+        names, functions = self.block_declarations(node)
         for state in states:
-            saved = {name: (name in state.env, state.env.get(name), name in state.scalars, state.scalars.get(name)) for name in names}
+            saved = SavedBindings(tuple((name, (name in state.env, state.env.get(name),
+                                               name in state.scalars, state.scalars.get(name))) for name in names))
             state.scopes.append((saved, state.locals.copy()))
             for name in names:
                 state.env[name] = Ref((), 'callable', functions[name]) if name in functions else None
@@ -928,7 +989,7 @@ class Checker:
         for statement in node.named_children: results = self.statement(statement, results)
         for state in results:
             saved, state.locals = state.scopes.pop()
-            for name, (present, value, scalar_present, scalar) in saved.items():
+            for name, (present, value, scalar_present, scalar) in saved.entries:
                 if present: state.env[name] = value
                 else: state.env.pop(name, None)
                 if scalar_present: state.scalars[name] = scalar
@@ -1001,14 +1062,17 @@ class Checker:
         return ended + [value.state for value in self.expression(node, active)]
 
     def signature(self, state):
-        return (tuple(sorted(state.env.items())), tuple(sorted((key, node.id) for key, node in state.dirty.items())),
-                state.control, frozenset(state.escaped), frozenset(state.locals), tuple(sorted(state.scalars.items())),
+        # These are maps, not ordered sequences. Read every mutable field afresh,
+        # but do not repeatedly sort entries just to obtain order-free equality.
+        return (frozenset(state.env.items()), frozenset((key, node.id) for key, node in state.dirty.items()),
+                state.control, frozenset(state.escaped), frozenset(state.locals), frozenset(state.scalars.items()),
                 state.owner, state.this_owner,
-                tuple((token, tuple(sorted((path, frozenset(values)) for path, values in slots.items())))
-                      for token, slots in sorted(state.contained.items())),
-                tuple((tuple(sorted(values.items())), frozenset(locals_)) for values, locals_ in state.scopes))
+                frozenset((token, frozenset((path, frozenset(values)) for path, values in slots.items()))
+                          for token, slots in state.contained.items()),
+                tuple((values.key, frozenset(locals_)) for values, locals_ in state.scopes))
 
     def bound(self, states, node):
+        if len(states) <= 1: return states
         states = list({self.signature(state): state for state in states}.values())
         if len(states) <= 64: return states
         self.report(node, 'control-flow-limit', 'advisory'); merged = states[0].fork()
@@ -1017,6 +1081,7 @@ class Checker:
         return [merged]
 
     def bound_values(self, values, node):
+        if len(values) <= 1: return values
         values = list({(self.signature(e.state), e.value, e.truth, e.nullish, e.members): e for e in values}.values())
         if len(values) <= 64: return values
         self.report(node, 'expression-flow-limit', 'advisory')
@@ -1053,6 +1118,10 @@ class Checker:
 
     def check(self, path, text):
         self.file = str(path); self.original = text; self.offset = 0
+        # Tree-sitter identities and all syntax facts belong to one input file.
+        # None of these caches contains mutable proof-state values.
+        self.syntax_text = {}; self.syntax_parameters = {}; self.syntax_captures = {}
+        self.syntax_locals = {}; self.syntax_blocks = {}
         self.kinds = self.main_kinds.copy()
         self.kind.cache_clear()
         self.effects = []
@@ -1066,9 +1135,10 @@ class Checker:
                 if node.type == 'ERROR' or node.is_missing: self.report(node, 'parse-error')
             if len(self.issues) == before: self.report(tree.root_node, 'parse-error')
             return
+        nodes = tuple(walk(tree.root_node))
         self.scopes = {}; self.ids = {}; self.definitions = {}; self.environments = {}; self.summary_stack = set()
         self.ql_copies = {}; self.binding_copies = {}; self.binding_pass = True
-        for node in walk(tree.root_node):
+        for node in nodes:
             if node.type != 'ui_object_definition': continue
             parent = node.parent; boundary = False
             while parent and parent.id not in self.scopes:
@@ -1088,7 +1158,7 @@ class Checker:
                 key = (component, identity)
                 self.ids[key] = node.id if key not in self.ids else None
         self.store_schema_roots()
-        for node in walk(tree.root_node):
+        for node in nodes:
             if node.type not in FUNCTIONS: continue
             parent = node.parent; lexical = 0
             while parent and parent.id not in self.scopes:
@@ -1134,7 +1204,7 @@ class Checker:
             if definition.lexical and not (self.offset and parent and self.text(child(parent.node, 'name')) == '__script'):
                 continue
             self.analyze_function(definition)
-        for node in walk(tree.root_node):
+        for node in nodes:
             if node.type != 'ui_binding': continue
             value = self.unwrap(child(node, 'value'))
             if not value or value.type in FUNCTIONS | {'ui_object_definition'}: continue
@@ -1146,20 +1216,73 @@ class Checker:
                     self.finish(self.statement(value, [state]))
 
 
+_worker_metadata = None
+
+
+def initialize_file_worker(metadata):
+    global _worker_metadata
+    # Spawned workers receive schema input only, never a parser or proof state.
+    _worker_metadata = metadata
+
+
+def analyze_file(task, metadata=None):
+    file, relative, timed = task
+    started = time.perf_counter() if timed else None
+    checker = Checker(_worker_metadata if metadata is None else metadata)
+    checker.check(relative, file.read_text())
+    finished = time.perf_counter() if timed else None
+    return checker.counts, checker.issues, started, finished
+
+
+def file_results(files, root, metadata, workers, timed):
+    tasks = ((file, file.relative_to(root), timed) for file in files)
+    if workers == 1 or len(files) <= 1:
+        for task in tasks:
+            yield analyze_file(task, metadata)
+    else:
+        with ProcessPoolExecutor(max_workers=min(workers, len(files)), mp_context=get_context('spawn'),
+                                 initializer=initialize_file_worker, initargs=(metadata,)) as pool:
+            # map retires in input order even when workers finish out of order.
+            yield from pool.map(analyze_file, tasks)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--report', type=Path)
+    parser.add_argument('--timings', action='store_true', help='emit per-file progress/timing JSON to stderr')
+    parser.add_argument('--workers', type=int, default=os.cpu_count() or 1,
+                        help='file workers (default: CPU count; 1 for serial debugging)')
     parser.add_argument('paths', nargs='*', type=Path)
-    args = parser.parse_args(); checker = Checker(json.loads((args.root / 'Configs/settings-schema.json').read_text()))
+    args = parser.parse_args()
+    if args.workers < 1:
+        parser.error('--workers must be positive')
+    metadata = json.loads((args.root / 'Configs/settings-schema.json').read_text())
+    checker = Checker(metadata)
     files = set()
     for path in args.paths or [args.root]:
         path = path if path.is_absolute() else args.root / path
         files.update(p for p in (path.rglob('*') if path.is_dir() else [path]) if p.suffix in ('.qml', '.js')
                      and '.git' not in p.parts and 'node_modules' not in p.parts
                      and not p.is_relative_to(args.root / 'Scripts/dev/fixtures/settings-writes'))
-    for file in sorted(files): checker.check(file.relative_to(args.root), file.read_text())
+    scan_started = time.perf_counter() if args.timings else None
+    files = sorted(files)
+    results = file_results(files, args.root, metadata, args.workers, args.timings)
+    for index, (counts, issues, file_started, finished) in enumerate(results):
+        file = files[index]
+        relative = file.relative_to(args.root)
+        for name, count in counts.items():
+            checker.counts[name] += count
+        checker.issues.extend(issues)
+        if args.timings:
+            # Publish progress deterministically, using the actual worker times.
+            print('SETTINGS_WRITES_TIME: ' + json.dumps(dict(file=str(relative), status='started',
+                  filesCompleted=index, filesTotal=len(files), totalSeconds=file_started-scan_started)),
+                  file=sys.stderr, flush=True)
+            print('SETTINGS_WRITES_TIME: ' + json.dumps(dict(file=str(relative), status='finished',
+                  filesCompleted=index+1, filesTotal=len(files), seconds=finished-file_started,
+                  totalSeconds=finished-scan_started)), file=sys.stderr, flush=True)
     issues = list({(i['file'], i['line'], i['code'], i['level']): i for i in checker.issues}.values())
     result = {'files': len(files), 'counts': checker.counts, 'issues': issues}
     if args.report: args.report.write_text(json.dumps(result, indent=2) + '\n')

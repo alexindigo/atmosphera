@@ -1,12 +1,14 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Modules.MainScreen
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
-// Actual presentation host and settings popup. The controlled editor holds the
-// completion boundary so every close/adoption route sees the same busy state.
+// Actual host, generic page and native editor. Only a real result's delivery is
+// held; no private popup/session state is assigned and no receipt is invented.
 ShellRoot {
   id: root
   property var pending: null
@@ -22,35 +24,111 @@ ShellRoot {
   property int restorationDiscardFence: 0
   property var liveFiles: ["Bar/BarWidgetSettingsDialog.qml", "ControlCenter/ControlCenterWidgetSettingsDialog.qml", "DesktopWidgets/DesktopWidgetSettingsDialog.qml"]
   property var routes: ["close", "native-hide", "dialog", "dynamic", "context", "tray", "bar", "plugin", "desktop"]
-  property var editor: ({
-                          initialValue: {
-                            label: "saved"
-                          },
-                          discard: function () {
-                            root.discards++;
-                            return true;
-                          },
-                          apply: function (value, callback) {
-                            root.pending = callback;
-                          }
-                        })
-  property var pageApi: ({
-                           staged: false,
-                           pluginSettings: {
-                             label: "saved"
-                           },
-                           busy: false,
-                           capturePreview: function () {
-                             return 0;
-                           },
-                           refresh: function () {
-                             this.staged = false;
-                           },
-                           complete: function () {
-                             root.completions++;
-                           },
-                           destroy: function () {}
-                         })
+  property var editor: null
+  property var api: null
+  property var manifest: null
+  property bool started: false
+  readonly property bool cold: Quickshell.env("PHA_CLOSE_COLD") === "1"
+  FileView {
+    id: manifestFile
+    path: Settings.configDir + "plugins/close-fixture/manifest.json"
+    blockLoading: true
+    printErrors: false
+  }
+  function begin() {
+    if (started || !Settings.isLoaded)
+      return;
+    manifestFile.waitForJob();
+    manifest = JSON.parse(manifestFile.text());
+    Registry.installedPlugins = {
+      "close-fixture": manifest
+    };
+    Service._openSettingsOwner("close-fixture", function (owner) {
+      try {
+        check(owner !== null, "native close preference owner");
+        api = Service.createPluginAPI("close-fixture", manifest, owner, {}, {}, {});
+        Service.loadedPlugins = {
+          "close-fixture": {
+            api: api
+          }
+        };
+        if (cold) {
+          check(api.pluginSettings.label === "held-8", "separate cold native consumer");
+          console.log("POPUP_CLOSE_CONTRACT: COLD_PASS");
+          Qt.exit(0);
+          return;
+        }
+        var factory = api.createSettingsEditor;
+        api.createSettingsEditor = function (fieldIntent) {
+          var selected = factory(fieldIntent);
+          var wrapped = {
+            get ready() {
+              return selected.ready;
+            },
+            get busy() {
+              return selected.busy;
+            },
+            get dirty() {
+              return selected.dirty;
+            },
+            get closed() {
+              return selected.closed;
+            },
+            get error() {
+              return selected.error;
+            },
+            get writable() {
+              return selected.writable;
+            },
+            get fieldCapture() {
+              return selected.fieldCapture;
+            },
+            get handle() {
+              return selected.handle;
+            },
+            get _releasePending() {
+              return selected._releasePending;
+            },
+            get values() {
+              return selected.values;
+            },
+            get previewValues() {
+              return selected.previewValues;
+            },
+            get initialValue() {
+              return selected.initialValue;
+            },
+            fields: selected.fields,
+            rebased: selected.rebased,
+            whenReady: selected.whenReady,
+            previewScope: selected.previewScope,
+            copyValue: selected.copyValue,
+            release: selected.release,
+            discard: function () {
+              var accepted = selected.discard();
+              if (accepted)
+                root.discards++;
+              return accepted;
+            },
+            apply: function (value, callback) {
+              selected.apply(value, function (result) {
+                root.check(result.status === "saved" && result.refreshState === "current", "real held native receipt");
+                root.pending = function () {
+                  callback(result);
+                };
+              });
+            }
+          };
+          root.editor = wrapped;
+          return wrapped;
+        };
+        started = true;
+      } catch (error) {
+        console.error(String(error) + "\n" + (error.stack || ""));
+        Qt.exit(2);
+      }
+    });
+  }
   function check(value, label) {
     if (!value)
       throw new Error("POPUP_CLOSE_ASSERT: " + label);
@@ -62,8 +140,7 @@ ShellRoot {
       host.visible = false;
       // A cancelled pending menu attempt is not a new content presentation.
       host.requestPresentation();
-    }
-    else if (route === "dialog")
+    } else if (route === "dialog")
       host.showDialog(candidate);
     else if (route === "dynamic")
       host.showDynamicContextMenu([], 0, 0, function () {});
@@ -103,6 +180,8 @@ ShellRoot {
     NPluginSettingsPopup {
       id: popup
       parent: host.dialogParent
+      screen: host.shellScreen
+      onSettingsCompleted: root.completions++
     }
     QtObject {
       id: candidate
@@ -132,21 +211,15 @@ ShellRoot {
   }
   Timer {
     interval: 30
-    running: true
+    running: root.started
     repeat: true
     onTriggered: {
       try {
         if (root.stage === 0) {
-          popup._editor = root.editor;
-          popup._pageApi = root.pageApi;
-          host.showDialog(popup);
-          popup.open();
+          root.check(host.showDialog(popup) && popup.openPluginSettings(root.manifest), "actual generic editor opened");
           root.stage = 1;
-        } else if (root.stage === 1 && popup.opened) {
-          root.pageApi.staged = true;
-          // Reassign the page API to publish the synthetic staged flag.
-          popup._pageApi = null;
-          popup._pageApi = root.pageApi;
+        } else if (root.stage === 1 && popup.opened && popup.settingsPage) {
+          popup.settingsPage.setLabel("local-" + root.cursor);
           root.replacement(root.routes[root.cursor]);
           root.stage = 2;
         } else if (root.stage === 2) {
@@ -164,9 +237,10 @@ ShellRoot {
           root.check(host.visible && host.popupContentItem === popup && popup.visible && BarService.popupOpen, "dirty retained through " + root.routes[root.cursor]);
           root.check(popup.discardPending && root.discards === 0 && !menu.visible && !candidate.visible, "dirty confirmation without replacement " + root.routes[root.cursor]);
           popup.keepEditing();
-          root.pageApi.staged = false;
-          popup._submit(false);
-          root.check(root.pending !== null && popup.busy, "controlled receipt held");
+          popup.settingsPage.setLabel("held-" + root.cursor);
+          root.check(popup.applySettings() && popup.busy, "actual Apply admitted");
+          root.stage = 11;
+        } else if (root.stage === 11 && root.pending) {
           root.replacement(root.routes[root.cursor]);
           root.stage = 3;
         } else if (root.stage === 3) {
@@ -177,10 +251,7 @@ ShellRoot {
           root.check(root.discards === 0 && !menu.visible && !candidate.visible, "busy keeps dependencies");
           var callback = root.pending;
           root.pending = null;
-          callback({
-                     status: "saved",
-                     refreshState: "current"
-                   });
+          callback();
           root.check(!popup.busy && !popup.saveFailed && root.completions === root.cursor + 1, "held callback delivered after refused close");
           popup.confirmDiscard();
           root.stage = 4;
@@ -203,20 +274,17 @@ ShellRoot {
           } else
             root.stage = 0;
         } else if (root.stage === 8) {
-          host.showDialog(popup);
-          popup._failed = true;
-          popup.open();
+          root.check(host.showDialog(popup) && popup.openPluginSettings(root.manifest), "restoration-race native editor opened");
           root.stage = 9;
-        } else if (root.stage === 9 && popup.opened) {
+        } else if (root.stage === 9 && popup.opened && popup.settingsPage) {
+          popup.settingsPage.setLabel("unapplied-restoration");
           root.check(host.close() === false, "dirty close queues restoration");
           popup.confirmDiscard();
-          root.check(host.showDialog(popup), "same QObject adopted for a later opening");
-          popup._editor = root.editor;
+          root.check(host.showDialog(popup) && popup.openPluginSettings(root.manifest), "same QObject adopted for a later native opening");
           root.restorationDiscardFence = root.discards;
           root.stage = 10;
-        } else if (root.stage === 10) {
-          root.check(host.popupContentItem === popup && popup._editor === root.editor && root.discards === root.restorationDiscardFence,
-            "obsolete restoration cannot cancel a later opening of the same QObject");
+        } else if (root.stage === 10 && popup.opened && popup.settingsPage) {
+          root.check(host.popupContentItem === popup && popup._editor === root.editor && root.discards === root.restorationDiscardFence, "obsolete restoration cannot cancel a later opening of the same QObject");
           popup.confirmDiscard();
           root.stage = 5;
         } else if (root.stage === 5) {
@@ -253,18 +321,16 @@ ShellRoot {
           root.check(!root.liveDialog.saveBusy && !root.liveDialog.settingsDirty, "live held submission acknowledged");
           root.liveDialog.requestDiscard();
           root.check(!root.liveDialog.discardPending, "clean live dialog has no discarded work");
-          root.check(root.liveDialog.queueSettings({ invalid: Infinity }) === false,
-            "actual non-finite input refused by live session");
-          root.check(root.liveDialog.saveFailed && !root.liveDialog.settingsDirty,
-            "failed input has no pending admitted fields");
+          root.check(root.liveDialog.queueSettings({
+                                                     invalid: Infinity
+                                                   }) === false, "actual non-finite input refused by live session");
+          root.check(root.liveDialog.saveFailed && !root.liveDialog.settingsDirty, "failed input has no pending admitted fields");
           root.liveDialog.requestDiscard();
           root.check(root.liveDialog.discardPending, "failed-without-dirty input opens Discard confirmation");
           root.liveDialog.keepEditing();
-          root.check(!root.liveDialog.discardPending && root.liveDialog.saveFailed && root.liveDialog.visible,
-            "Keep Editing preserves failed input and dialog");
+          root.check(!root.liveDialog.discardPending && root.liveDialog.saveFailed && root.liveDialog.visible, "Keep Editing preserves failed input and dialog");
           root.liveDialog.requestDiscard();
-          root.check(root.liveDialog.confirmDiscard() && !root.liveDialog.saveFailed,
-            "confirmed Discard clears failed input");
+          root.check(root.liveDialog.confirmDiscard() && !root.liveDialog.saveFailed, "confirmed Discard clears failed input");
           root.check(!host.visible && !root.liveDialog.visible, "confirmed live discard closes host");
           root.liveDialog.destroy();
           root.liveDialog = null;
@@ -282,11 +348,18 @@ ShellRoot {
     }
   }
   Timer {
-    interval: 15000
+    interval: 90000
     running: true
     onTriggered: {
       console.error("POPUP_CLOSE_ASSERT: watchdog " + root.stage + "/" + root.cursor);
       Qt.exit(2);
     }
   }
+  Connections {
+    target: Settings
+    function onSettingsLoaded() {
+      root.begin();
+    }
+  }
+  Component.onCompleted: begin()
 }

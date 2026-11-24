@@ -23,6 +23,32 @@ RowLayout {
   Layout.fillWidth: true
   spacing: Style.marginM
 
+  // Keyboard and assistive activation emit the same toggled intent as a click.
+  function activate() {
+    if (root.enabled)
+      root.toggled(!root.checked);
+  }
+  activeFocusOnTab: enabled
+  Keys.onSpacePressed: event => {
+    root.activate();
+    event.accepted = true;
+  }
+  Keys.onReturnPressed: event => {
+    root.activate();
+    event.accepted = true;
+  }
+  Keys.onEnterPressed: event => {
+    root.activate();
+    event.accepted = true;
+  }
+  Accessible.role: Accessible.CheckBox
+  Accessible.name: root.label
+  Accessible.description: root.description
+  Accessible.checkable: true
+  Accessible.checked: root.checked
+  Accessible.onPressAction: root.activate()
+  Accessible.onToggleAction: root.activate()
+
   readonly property bool isValueChanged: (defaultValue !== undefined) && (checked !== defaultValue)
   readonly property string indicatorTooltip: defaultValue !== undefined ? I18n.tr("panels.indicator.default-value", {
                                                                                     "value": typeof defaultValue === "boolean" ? (defaultValue ? "true" : "false") : String(defaultValue)
@@ -49,8 +75,8 @@ RowLayout {
     implicitHeight: Math.round(root.baseSize * .5) * 2
     radius: Math.min(Style.iRadiusL, height / 2)
     color: root.checked ? AtmoColor.mPrimary : AtmoColor.mSurface
-    border.color: AtmoColor.mOutline
-    border.width: Style.borderS
+    border.color: root.activeFocus ? AtmoColor.mPrimary : AtmoColor.mOutline
+    border.width: root.activeFocus ? Style.borderM : Style.borderS
 
     Behavior on color {
       ColorAnimation {
@@ -100,11 +126,7 @@ RowLayout {
         hovering = false;
         root.exited();
       }
-      onClicked: {
-        if (!enabled)
-          return;
-        root.toggled(!root.checked);
-      }
+      onClicked: root.activate()
     }
   }
 }

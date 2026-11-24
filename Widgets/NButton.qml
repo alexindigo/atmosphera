@@ -19,6 +19,7 @@ Item {
   property int fontWeight: Style.fontWeightSemiBold
   property real iconSize: Style.fontSizeL
   property bool outlined: false
+  property bool keyboardAccessible: false
   property int horizontalAlignment: Qt.AlignHCenter
   property real buttonRadius: Style.iRadiusS
 
@@ -49,6 +50,26 @@ Item {
   implicitHeight: bg.implicitHeight + 2 * Style.borderS
 
   opacity: enabled ? 1.0 : 0.6
+  activeFocusOnTab: keyboardAccessible && visible && enabled
+  Accessible.role: keyboardAccessible ? Accessible.Button : Accessible.NoRole
+  Accessible.name: keyboardAccessible ? root.text : ""
+  Accessible.onPressAction: {
+    if (root.keyboardAccessible)
+      root.activate();
+  }
+  Keys.enabled: keyboardAccessible && visible && enabled
+  Keys.onPressed: event => {
+    if ([Qt.Key_Space, Qt.Key_Return, Qt.Key_Enter].indexOf(event.key) === -1)
+      return;
+    event.accepted = true;
+    if (!event.isAutoRepeat)
+      root.activate();
+  }
+
+  function activate() {
+    if (visible && enabled)
+      clicked();
+  }
 
   Rectangle {
     id: bg
@@ -67,10 +88,12 @@ Item {
       return root.outlined ? "transparent" : root.backgroundColor;
     }
 
-    border.width: root.outlined ? Style.borderS : 0
+    border.width: root.keyboardAccessible && root.activeFocus && root.visible && root.enabled ? Style.borderM : (root.outlined ? Style.borderS : 0)
     border.color: {
       if (!root.enabled)
         return AtmoColor.mOutline;
+      if (root.keyboardAccessible && root.activeFocus)
+        return AtmoColor.mPrimary;
       if (root.hovered)
         return root.hoverColor;
       return root.outlined ? root.backgroundColor : "transparent";
@@ -165,7 +188,7 @@ Item {
           TooltipService.hide();
         }
         if (mouse.button === Qt.LeftButton) {
-          root.clicked();
+          root.activate();
         } else if (mouse.button == Qt.RightButton) {
           root.rightClicked();
         } else if (mouse.button == Qt.MiddleButton) {

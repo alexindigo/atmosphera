@@ -389,6 +389,9 @@
     }
   },
   "common": {
+    "editor-observation-failed": "Đã lưu thay đổi nhưng không thể kiểm tra.",
+    "editor-observation-draft-changed": "Bạn có chỉnh sửa mới. Nhấn Áp dụng để lưu.",
+    "check-again": "Kiểm tra lại",
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Hành động",

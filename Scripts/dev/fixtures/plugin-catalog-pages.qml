@@ -4,12 +4,12 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import "../../../Helpers/SettingsValues.js" as SettingsValues
+import "plugin-editor-probe.js" as EditorProbe
 import qs.Commons
 import qs.Services
 import qs.Services.Plugins
 import qs.Services.System
 import qs.Widgets
-import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -50,15 +50,30 @@ ShellRoot {
     blockLoading: true
     printErrors: false
   }
-  FileView { id: rawPreferences; blockLoading: true; printErrors: false }
+  FileView {
+    id: rawPreferences
+    blockLoading: true
+    printErrors: false
+  }
   function rawUnknown(pluginId) {
     rawPreferences.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + pluginId + ".json";
-    rawPreferences.reload(); rawPreferences.waitForJob();
+    rawPreferences.reload();
+    rawPreferences.waitForJob();
     var raw = JSON.parse(rawPreferences.text());
     check(raw.opaque.keep, "raw unknown preference retained: " + pluginId);
     if (pluginId === "video-wallpaper") {
-      check(SettingsValues.equal(raw["offline.keep"], {volume: 0.25, opaque: {keep: true}}), "historical top-level monitor raw record unchanged");
-      check(SettingsValues.equal(raw.monitors["offline.keep"], {volume: 0.25, opaque: {keep: true}}), "declared monitor map retains historical offline record");
+      check(SettingsValues.equal(raw["offline.keep"], {
+                                   volume: 0.25,
+                                   opaque: {
+                                     keep: true
+                                   }
+                                 }), "historical top-level monitor raw record unchanged");
+      check(SettingsValues.equal(raw.monitors["offline.keep"], {
+                                   volume: 0.25,
+                                   opaque: {
+                                     keep: true
+                                   }
+                                 }), "declared monitor map retains historical offline record");
     }
   }
 
@@ -95,11 +110,14 @@ ShellRoot {
 
   function changedBuffer(value, copier) {
     if (value !== null && typeof value === "object") {
-      if (SettingsValues.sequence(value)) return Array.from(value).concat(value.length ? [value[0]] : ["i4-dirty"]);
+      if (SettingsValues.sequence(value))
+        return Array.from(value).concat(value.length ? [value[0]] : ["i4-dirty"]);
       var copy = copier(value);
       var keys = Object.keys(copy);
-      if (keys.length) copy[keys[0]] = changedBuffer(copy[keys[0]], copier);
-      else copy["i4-dirty"] = true;
+      if (keys.length)
+        copy[keys[0]] = changedBuffer(copy[keys[0]], copier);
+      else
+        copy["i4-dirty"] = true;
       return copy;
     }
     return typeof value === "boolean" ? !value : typeof value === "number" ? value + 1 : value + "-dirty";
@@ -325,7 +343,11 @@ ShellRoot {
     }
     openingItem = item;
     openingDone = done;
-    var seed = Object.assign({}, item.scenario?.seed || {}, {opaque: {keep: true}});
+    var seed = Object.assign({}, item.scenario?.seed || {}, {
+                               opaque: {
+                                 keep: true
+                               }
+                             });
     seedWriter.command = ["python3", "-B", Quickshell.env("I5_PLUGIN_SEED"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), item.manifest.id, JSON.stringify(seed)];
     seedWriter.running = true;
   }
@@ -334,8 +356,12 @@ ShellRoot {
       try {
         root.check(owner !== null, "actual native owner opened: " + item.manifest.id);
         root.registerOpened(item, owner);
-        if (typeof done === "function") done();
-      } catch (error) { console.error(String(error)); Qt.exit(2); }
+        if (typeof done === "function")
+          done();
+      } catch (error) {
+        console.error(String(error));
+        Qt.exit(2);
+      }
     });
   }
   function registerOpened(item, owner) {
@@ -351,17 +377,20 @@ ShellRoot {
     if (manifest.id === "catwalk")
       createMain(api);
     var original = api.createSettingsEditor;
-    api.createSettingsEditor = function () {
-      var editor = original();
+    api.createSettingsEditor = function (fieldIntent) {
+      var editor = original(fieldIntent);
       root.selectedEditor = editor;
       return EditorProbe.observe(editor, function () {
         root.applies++;
         root.submittedDirty = editor.dirty;
       }, function (result, callback) {
         root.held = result;
-        root.release = function () { callback(result); };
+        root.release = function () {
+          callback(result);
+        };
       }, function () {
-        if (root.makeStale) root.api.pluginSettings.message = "foreign-live";
+        if (root.makeStale)
+          root.api.pluginSettings.message = "foreign-live";
       });
     };
   }
@@ -384,7 +413,9 @@ ShellRoot {
     manifest = item.manifest;
     api = Service.getPluginAPI("catwalk");
     if (!api) {
-      register(item, function () { root.openMainInstance(); });
+      register(item, function () {
+        root.openMainInstance();
+      });
       return;
     }
     var rows = mainOnly ? [] : Settings.data.bar.widgets.left.slice();
@@ -463,10 +494,12 @@ ShellRoot {
 
   function verifyInstanceConsumers() {
     check(restartInstance && !restartInstance.settingsError, "native restarted instance owner");
-    if (!restartInstance.settingsReady) return;
+    if (!restartInstance.settingsReady)
+      return;
     if (restartMainInstance) {
       check(!restartMainInstance.settingsError, "native restarted selected Main owner");
-      if (!restartMainInstance.settingsReady) return;
+      if (!restartMainInstance.settingsReady)
+        return;
       var cat = Service.getPluginAPI("catwalk");
       check(cat.mainInstance.minimumThreshold === 10 && cat.mainInstance.hideBackground, "restarted shared Main consumer");
       check(restartMainInstance.pluginSettings.minimumThreshold === 18 && restartMainInstance.pluginSettings.hideBackground === false, "restarted selected instance consumer");
@@ -514,7 +547,8 @@ ShellRoot {
 
   function drive() {
     if (verifyOnly) {
-      if (phase === "verify-instances") verifyInstanceConsumers();
+      if (phase === "verify-instances")
+        verifyInstanceConsumers();
       return;
     }
     if (phase === "start")
@@ -525,8 +559,7 @@ ShellRoot {
       check(typeof p.settingsDirty === "boolean", "actual page declares buffered dirtiness");
       check(!popup.dirty && applies === index * 2, "constructor does not stage preferences");
       checkValues(p, item.scenario?.initialDisplay, "existing constructor display policy");
-      checkValues(manifest.id === "video-wallpaper" ? api.pluginSettings.monitors : api.pluginSettings,
-                  item.scenario?.seed, "constructor leaves admitted preferences unchanged");
+      checkValues(manifest.id === "video-wallpaper" ? api.pluginSettings.monitors : api.pluginSettings, item.scenario?.seed, "constructor leaves admitted preferences unchanged");
       for (var i = 0; i < item.buffers.length; i++) {
         var field = item.buffers[i];
         var before = p[field];
@@ -657,7 +690,10 @@ ShellRoot {
           root.check(result.status === "nothing_to_save" && result.refreshState === "current", "actual clean native no-op");
           console.log("I5_CATALOG_NATIVE_NOOP", root.manifest.id, result.status, result.refreshState);
           root.phase = "second-receipt-consumer";
-        } catch (error) { console.error(String(error)); Qt.exit(2); }
+        } catch (error) {
+          console.error(String(error));
+          Qt.exit(2);
+        }
       });
     } else if (phase === "second-receipt-consumer") {
       checkValues(api.pluginSettings, item.scenario?.secondExpected || item.scenario?.expected, "second receipt compound consumer");
@@ -721,9 +757,9 @@ ShellRoot {
       register({
                  manifest: failure
                }, function () {
-        popup.openPluginSettings(root.manifest, "settings");
-        root.phase = "failure";
-      });
+                 popup.openPluginSettings(root.manifest, "settings");
+                 root.phase = "failure";
+               });
     } else if (phase === "failure" && popup.opened && p) {
       p.valueMessage = "failed-local";
       console.log("I4_CATALOG_PENDING", manifest.id);
@@ -820,7 +856,10 @@ ShellRoot {
         root.openingItem = null;
         root.openingDone = null;
         root.openOwner(item, done);
-      } catch (error) { console.error(String(error)); Qt.exit(2); }
+      } catch (error) {
+        console.error(String(error));
+        Qt.exit(2);
+      }
     }
   }
   Process {

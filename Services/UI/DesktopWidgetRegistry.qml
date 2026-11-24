@@ -405,9 +405,11 @@ Singleton {
     // Capture before any presentation refusal: insert-and-open callers also
     // need their row's cleanup owner when they did not inject an editor.
     var editor = capturedEditor || (widgetId && screen ? root.createWidgetSettingsEditor(screen.name, widgetIndex) : null);
+    var editorReleased = false;
     function releaseEditor(value) {
-      if (!value)
+      if (!value || editorReleased)
         return;
+      editorReleased = true;
       try {
         if (typeof onCloseCallback === "function")
           onCloseCallback(screen, widgetIndex, widgetId, value);
@@ -430,11 +432,26 @@ Singleton {
     }
 
     var hasSettings = false;
+    var genericManifest = null;
+    var genericApi = null;
+    var genericEditor = null;
     if (root.isPluginWidget(widgetId)) {
       var pluginId = widgetId.replace("plugin:", "");
       var manifest = Registry.getPluginManifest(pluginId);
       if (manifest && manifest.entryPoints && (manifest.entryPoints.desktopWidgetSettings || manifest.entryPoints.settings)) {
         hasSettings = true;
+        if (!manifest.entryPoints.desktopWidgetSettings) {
+          genericManifest = manifest;
+          genericApi = PluginInstances.apiFor(pluginId, {
+                                                kind: "desktop",
+                                                screenName: screen.name,
+                                                index: widgetIndex
+                                              });
+          // Native selection begins before component loading or any callback.
+          genericEditor = genericApi ? genericApi.createSettingsEditor(true) : null;
+          if (!genericEditor)
+            return refused(editor);
+        }
       }
     } else {
       hasSettings = root.widgetSettingsMap[widgetId] !== undefined;
@@ -447,19 +464,26 @@ Singleton {
 
     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
     if (!popupMenuWindow) {
+      if (genericEditor)
+        genericEditor.release();
       Logger.e("DesktopWidgetRegistry", "No popup menu window found for screen");
       return refused(editor);
     }
 
-    if (popupMenuWindow.close() === false)
+    if (popupMenuWindow.close() === false) {
+      if (genericEditor)
+        genericEditor.release();
       return refused(editor);
+    }
     var generation = popupMenuWindow.requestPresentation();
 
     root._settingsOpening = true;
-    var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
+    var component = Qt.createComponent(Quickshell.shellDir + (genericManifest ? "/Widgets/NPluginSettingsPopup.qml" : "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml"));
 
     function instantiateAndOpen() {
-      var dialogProps = {
+      var dialogProps = genericManifest ? {
+                                            screen: screen
+                                          } : {
         "widgetIndex": widgetIndex,
         "widgetData": editor.initialValue,
         "settingsEditor": editor,
@@ -467,7 +491,7 @@ Singleton {
         "sectionId": screen.name,
         "screen": screen
       };
-      if (anchorX !== undefined && anchorX >= 0) {
+      if (!genericManifest && anchorX !== undefined && anchorX >= 0) {
         dialogProps.anchorX = anchorX;
         dialogProps.anchorY = anchorY !== undefined ? anchorY : 0;
         dialogProps.anchorW = anchorW !== undefined ? anchorW : 0;
@@ -478,21 +502,31 @@ Singleton {
 
       if (dialog) {
         if (popupMenuWindow.showDialog(dialog, generation) === false) {
+          if (genericEditor)
+            genericEditor.release();
           dialog.destroy();
           refused(editor);
           return;
         }
         root.currentSettingsDialog = dialog;
-        dialog.closed.connect(() => {
+        function finish() {
           if (root.currentSettingsDialog === dialog) {
             root.currentSettingsDialog = null;
           }
           dialog.destroy();
 
           releaseEditor(editor);
-        });
-        dialog.open();
+        }
+        if (genericManifest) {
+          dialog.presentationClosed.connect(finish);
+          dialog.openInstanceSettings(genericManifest, genericApi, "settings", genericEditor);
+        } else {
+          dialog.closed.connect(finish);
+          dialog.open();
+        }
       } else {
+        if (genericEditor)
+          genericEditor.release();
         refused(editor);
         Logger.e("DesktopWidgetRegistry", "Failed to create widget settings dialog");
       }
@@ -501,6 +535,8 @@ Singleton {
     if (component.status === Component.Ready) {
       instantiateAndOpen();
     } else if (component.status === Component.Error) {
+      if (genericEditor)
+        genericEditor.release();
       root._settingsOpening = false;
       refused(editor);
       Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
@@ -509,6 +545,8 @@ Singleton {
         if (component.status === Component.Ready) {
           instantiateAndOpen();
         } else if (component.status === Component.Error) {
+          if (genericEditor)
+            genericEditor.release();
           root._settingsOpening = false;
           refused(editor);
           Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());

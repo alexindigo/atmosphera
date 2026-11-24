@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "fields": {"label": {"type": "String", "editorUsage": "configuration"}},
+  "pages": {
+    "plugin-preview-page.qml": ["change"],
+    "plugin-settings-session-page.qml": [],
+    "plugin-settings-lifetime-page.qml": ["change"]
+  }
+}

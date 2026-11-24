@@ -22,19 +22,39 @@ ShellRoot {
         property bool started: false
         property bool automationSeen: false
         property bool mpvVolumeObserved: false
+        property bool mpvAdmissionLogged: false
         property var mpvClampReceipt: null
         property int oldWallpaperSignals: 0
         property double startupDeadline: 0
         property var thumbnailControl: ({
                                           calls: 0
                                         })
-        readonly property string name: Quickshell.screens[0].name
+        readonly property string name: Quickshell.env("I5_VIDEO_SCREEN")
         readonly property string mode: Quickshell.env("I5_VIDEO_MODE")
         readonly property string directory: Settings.configDir + "plugins/video-wallpaper"
         readonly property var manifest: JSON.parse(Quickshell.env("I5_VIDEO_MANIFEST"))
+        QtObject {
+          id: runtimeActions
+          function registerRuntime(runtimeApi) {
+            return runtimeApi.settingsContext.current();
+          }
+          function activatePolicy(context) {
+            return context.current();
+          }
+          function admitRuntime(runtimeApi) {
+            return runtimeApi.settingsContext.current() ? runtimeApi : null;
+          }
+        }
         Component {
           id: pageApiFactory
-          PluginSettingsPageApi {}
+          PluginSettingsSession {
+            commitInputs: function () {}
+            captureInputs: function () {
+              return 0;
+            }
+            acknowledgeInputs: function (fence) {}
+            resetInputs: function () {}
+          }
         }
         function check(ok, label) {
           if (!ok)
@@ -66,22 +86,12 @@ ShellRoot {
             try {
               check(owner !== null, "native video owner opens");
               api = Service.createPluginAPI("video-wallpaper", manifest, owner, {}, {}, {});
+              api.mainInstance = runtimeActions;
               var loaded = Object.assign({}, Service.loadedPlugins);
               loaded["video-wallpaper"] = {
                 api: api
               };
               Service.loadedPlugins = loaded;
-              var nativeSave = api.saveSettings;
-              api.saveSettings = function (callback) {
-                return nativeSave(function (result) {
-                  root.lastReceipt = result;
-                  root.receipts++;
-                  if (root.phase === "mpv-clamp")
-                    root.mpvClampReceipt = result;
-                  if (typeof callback === "function")
-                    callback(result);
-                });
-              };
               if (mode === "cold") {
                 check(record(name).currentWallpaper === "settings-choice" && record("__proto__").volume === 0.625, "cold consumers see saved choices");
                 pass();
@@ -195,13 +205,25 @@ ShellRoot {
                                           });
               items.ipc = component("main/IPC.qml", {
                                       pluginApi: api,
+                                      admitRuntime: function (runtimeApi) {
+                                        return runtimeApi.settingsContext.current() ? runtimeApi : null;
+                                      },
                                       random: function () {},
                                       clear: function () {},
                                       setWallpaper: items.functions.setWallpaper
                                     });
               items.tools = component("common/ToolRow.qml", {
                                         pluginApi: api,
-                                        screenName: name
+                                        screenName: name,
+                                        randomAction: function () {
+                                          items.functions.random(name, api);
+                                        },
+                                        clearAction: function () {
+                                          items.functions.clear(name, api);
+                                        },
+                                        settingWriter: function (key, value) {
+                                          items.ipc.saveMonitorProperty(key, value, name);
+                                        }
                                       });
               items.bar = component("BarWidget.qml", {
                                       pluginApi: api,
@@ -368,6 +390,18 @@ ShellRoot {
             return;
           }
           if (phase === "mpv-await") {
+            if (!mpvAdmissionLogged) {
+              mpvAdmissionLogged = true;
+              console.log("I5_VIDEO_MPV_ADMISSION " + JSON.stringify({
+                                                                       name: name,
+                                                                       enabled: items.mpv.wallpaperEnabled,
+                                                                       current: api.settingsContext.current(),
+                                                                       selected: items.mpv.currentWallpaper,
+                                                                       socket: items.mpv.mpvSocketScreen,
+                                                                       available: items.mpv.mpvpaperExists,
+                                                                       command: items.mpv.buildMpvCommand()
+                                                                     }));
+            }
             if (!mpvObserve.connected) {
               mpvObserve.connected = true;
               return;
@@ -439,21 +473,19 @@ ShellRoot {
           } else if (phase === "timer") {
             check(record(name).volume === 0.875 && record("caller-mutated") === undefined, "timer captured target before caller mutation");
             check(items.timer._pending === null && !items.timer.failed, "timer acknowledged and cleared captured work");
-            var editor = api.createSettingsEditor();
-            check(editor && editor.ready, "selected native draft");
-            var pageApi = pageApiFactory.createObject(root, {
-                                                        base: api,
-                                                        editor: editor,
-                                                        pluginSettings: editor.values,
-                                                        initialSettings: editor.initialValue
-                                                      });
-            items.page = component("Settings.qml", {
-                                     pluginApi: pageApi
-                                   });
-            items.page.currentWallpaper = "settings-choice";
-            items.page.saveSettings();
-            phase = "settings";
-            editor.apply(editor.values, function (result) {
+            var session = pageApiFactory.createObject(root);
+            items.settingsSession = session;
+            phase = "settings-opening";
+            session.presentRequested.connect(function () {
+              items.page = component("Settings.qml", {
+                                       pluginApi: session.pageApi
+                                     });
+              session.page = items.page;
+              items.page.saveMonitorProperty("currentWallpaper", "settings-choice");
+              phase = "settings";
+              session.applySettings();
+            });
+            session.settingsCompleted.connect(function (result) {
               try {
                 check(result.status === "saved" && result.refreshState === "current", "Settings actual draft Apply receipt");
                 check(record(name).currentWallpaper === "settings-choice" && items.panel.currentWallpaper === "settings-choice", "Settings to runtime consumer");
@@ -469,6 +501,7 @@ ShellRoot {
                 Qt.exit(2);
               }
             });
+            check(session.openPluginSettings(manifest), "selected field-only settings session");
           }
         }
         Component.onCompleted: begin()
@@ -494,6 +527,17 @@ ShellRoot {
           target: Settings
           function onSettingsLoaded() {
             root.begin();
+          }
+        }
+        Connections {
+          target: Service
+          function onPluginSettingsCompleted(pluginId, result) {
+            if (pluginId !== "video-wallpaper")
+              return;
+            root.lastReceipt = result;
+            root.receipts++;
+            if (root.phase === "mpv-clamp")
+              root.mpvClampReceipt = result;
           }
         }
         FileView {

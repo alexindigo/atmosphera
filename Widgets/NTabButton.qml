@@ -15,6 +15,7 @@ Rectangle {
   property var tooltipText
   property bool checked: false
   property int tabIndex: 0
+  property var selectTab: null
   property real pointSize: Style.fontSizeM
   property bool isFirst: false
   property bool isLast: false
@@ -119,11 +120,10 @@ Rectangle {
       }
     }
     onClicked: {
-      root.clicked();
-      // Update parent NTabBar's currentIndex
-      if (root.parent && root.parent.parent && root.parent.parent.currentIndex !== undefined) {
-        root.parent.parent.currentIndex = root.tabIndex;
-      }
+      if (root.selectTab)
+        root.selectTab(root.tabIndex, function () { root.clicked(); });
+      else
+        root.clicked();
     }
   }
 }

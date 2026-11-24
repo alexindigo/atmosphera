@@ -40,29 +40,35 @@ NBox {
     return duration === 86400 && isAtMidnight;
   }
 
+  function requestVisibleEvents() {
+    if (visible) {
+      const first = new Date(calendarYear, calendarMonth, 1);
+      const end = new Date(calendarYear, calendarMonth + 1, 1);
+      first.setDate(first.getDate() - 30);
+      end.setDate(end.getDate() + 30);
+      CalendarService.setEventRange(root, first, end);
+    } else {
+      CalendarService.clearEventRange(root);
+    }
+  }
+
+  onCalendarMonthChanged: Qt.callLater(root.requestVisibleEvents)
+  onCalendarYearChanged: Qt.callLater(root.requestVisibleEvents)
+  onVisibleChanged: Qt.callLater(root.requestVisibleEvents)
+  Component.onCompleted: requestVisibleEvents()
+  Component.onDestruction: CalendarService.clearEventRange(root)
+
   // Navigation functions
   function navigateToPreviousMonth() {
     let newDate = new Date(root.calendarYear, root.calendarMonth - 1, 1);
     root.calendarYear = newDate.getFullYear();
     root.calendarMonth = newDate.getMonth();
-    const now = new Date();
-    const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
-    const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
-    const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
-    const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
-    CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
   }
 
   function navigateToNextMonth() {
     let newDate = new Date(root.calendarYear, root.calendarMonth + 1, 1);
     root.calendarYear = newDate.getFullYear();
     root.calendarMonth = newDate.getMonth();
-    const now = new Date();
-    const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
-    const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
-    const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
-    const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
-    CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
   }
 
   // Wheel handler for month navigation
@@ -119,7 +125,6 @@ NBox {
         onClicked: {
           root.calendarMonth = root.now.getMonth();
           root.calendarYear = root.now.getFullYear();
-          CalendarService.loadEvents();
         }
       }
 

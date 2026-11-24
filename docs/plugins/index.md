@@ -61,8 +61,10 @@ your-plugin/
 ## Plugin API
 
 Every plugin component receives a `pluginApi` object. A bar, control-center or
-desktop widget receives the api of its **instance** (see [Instances](#instances));
-Main, launcher providers and the plugin settings page receive the plugin api.
+desktop widget receives the runtime API of its **instance** (see
+[Instances](#instances)); Main and launcher providers use the plugin runtime API.
+A generic settings page receives a distinct selected editor API: plugin scope
+from Settings -> Plugins, instance scope from a placed widget's Settings route.
 
 ### What each entry point receives
 
@@ -93,7 +95,7 @@ same table is the source of truth in `Services/Plugins/PluginContract.js`.
 - A name the root neither declares nor inherits is never set, and nothing is
   logged. Do not reference such a name without declaring it.
 
-### Members of `pluginApi`
+### Members of the runtime `pluginApi`
 
 **Identity and manifest**
 - **`pluginId`** — Unique plugin identifier
@@ -104,6 +106,35 @@ same table is the source of truth in `Services/Plugins/PluginContract.js`.
 - **`pluginSettings`** — Plugin settings object (read/write, then call `saveSettings()`).
   In an instance api this is the plugin settings with the instance's overrides on top.
 - **`saveSettings()`** — Persist `pluginSettings` to disk
+
+### Generic settings page API
+
+The generic page has `apiRole: "settings-editor"` and immutable `scopeKind`
+(`plugin` or `instance`). Its `pluginSettings`/`initialSettings` are read-only
+presentation copies, never live writers. Obtain `pluginApi.field("message")`
+for a declared configuration leaf; read its `value`, and call `set(value)` only
+from the control's explicit user event or committed input. Wrap the control in
+`NPluginSettingsField` with that handle for inherited/override/pending state and
+Reset. Compound preferences remain atomic top-level leaves.
+
+Page `saveSettings()` commits buffered field intents only. The injected
+`pluginApi.saveSettings(callback)` registers completion; it never publishes or
+collects an effective snapshot. The shell session owns Apply and persistence.
+Only `saved`/`nothing_to_save` plus `refreshState: current` acknowledge success;
+failed/stale results retain local work. `settingsCompleted` precedes callbacks.
+
+Field Reset stages removal to reveal the inherited/native lower level. Whole
+instance configuration Reset removes declared configuration overrides, retaining
+legacy content/operational/opaque siblings. Shared content commands may use
+`contentField(key)` only in plugin scope; ordinary configuration Apply never
+collects content. Explicit state/config/application actions retain their own
+owners and are not undone by Cancel. Runtime API injection is rejected before
+generic page construction. External pages must adopt the field contract.
+
+See [editor ownership](../development/plugin-settings-editors.md) and
+[field capabilities](../development/plugin-settings-field-capabilities.md).
+
+### Other runtime API members
 
 **Shared state** (see [Shared state](#shared-state))
 - **`state`** — Plugin-wide object, the same for every instance
@@ -263,9 +294,11 @@ call `launcher.updateResults()` remain supported.
 - **Saving.** `saveSettings()` from a placed widget stores only the values that differ
   from the plugin settings, in that widget's instance. It never changes the plugin
   settings. `resetSettings()` on the instance api removes all of its overrides.
-- **Settings page.** Settings → Plugins edits the plugin level. The gear on a plugin
+- **Settings page.** Settings -> Plugins edits the plugin level. The gear on a plugin
   entry in the bar, control-center or desktop widget settings opens the same settings
-  page for that instance, with a "Reset to plugin settings" button.
+  page for that captured instance. Runtime desktop Settings selects the same owner.
+  Only explicit field intents become sparse overrides. "Reset instance
+  configuration" removes declared configuration overrides, not legacy content.
 - **Panels.** `openPanel()` and `togglePanel()` on a widget's `pluginApi` open the panel
   with that instance's api, so the panel sees that instance's settings.
 

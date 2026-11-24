@@ -153,8 +153,7 @@ ShellRoot {
                   var time = root.spin(popup.contentItem);
                   root.check(time.from === 1 && !time.enabled && time.value === 75, "popup off shows remembered positive spin");
                   root.toggle(popup.contentItem).toggled(true);
-                  time.value = 91;
-                  time.valueModified(91);
+                  time.submitValue(91);
                   root.toggle(popup.contentItem).toggled(false);
                   root.toggle(popup.contentItem).toggled(true);
                   root.check(time.value === 91 && popup.timeoutValue === 91, "popup restores edited timeout");
@@ -180,8 +179,7 @@ ShellRoot {
                 check(!control.checked && !time.enabled && time.value === Settings.getDefaultValue("idle." + keys[i]), "initial off displays schema default");
                 control.toggled(true);
                 check(Settings.data.idle[keys[i]] === Settings.getDefaultValue("idle." + keys[i]), "enable restores schema default");
-                time.value = 37 + i;
-                time.valueModified(time.value);
+                time.submitValue(37 + i);
                 check(Settings.data.idle[keys[i]] === 37 + i, "spin edits real timeout");
                 control.toggled(false);
                 check(Settings.data.idle[keys[i]] === 0 && !time.enabled && time.value === 37 + i, "off writes zero and remembers display");

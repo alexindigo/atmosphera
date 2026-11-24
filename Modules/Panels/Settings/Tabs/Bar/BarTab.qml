@@ -216,6 +216,7 @@ ColumnLayout {
   }
 
   NTabBar {
+    changeAdmission: SettingsPanelService.admitPresentationChange
     id: subTabBar
     Layout.fillWidth: true
     Layout.bottomMargin: Style.marginM
@@ -292,6 +293,7 @@ ColumnLayout {
   }
 
   NPluginSettingsPopup {
+    registerPresentation: SettingsPanelService.registerEditorPresentation
     id: pluginSettingsDialog
     parent: Overlay.overlay
     showToastOnSave: false

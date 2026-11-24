@@ -14,6 +14,7 @@ Rectangle {
   property real margins: 0
   property real tabHeight: Style.baseWidgetSize
   property bool distributeEvenly: false
+  property var changeAdmission: null
   default property alias content: tabRow.children
 
   onDistributeEvenlyChanged: _applyDistribution()
@@ -30,6 +31,8 @@ Rectangle {
     var lastVisible = -1;
     for (var i = 0; i < len; i++) {
       var child = kids[i];
+      if ("selectTab" in child)
+        child.selectTab = function (index, activated) { return root.requestIndex(index, activated); };
       // Only consider items that have isFirst/isLast (actual tab buttons, not Repeaters)
       if (child.visible && "isFirst" in child) {
         if (firstVisible === -1)
@@ -63,6 +66,16 @@ Rectangle {
       child.Layout.fillWidth = true;
       child.Layout.preferredWidth = 1;
     }
+  }
+
+  function requestIndex(index, activated) {
+    if (index !== currentIndex && changeAdmission && !changeAdmission())
+      return false;
+    // Keep the existing clicked-before-index-change signal ordering.
+    if (typeof activated === "function")
+      activated();
+    currentIndex = index;
+    return true;
   }
 
   // Styling

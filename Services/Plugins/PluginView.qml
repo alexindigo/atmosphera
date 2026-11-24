@@ -46,7 +46,14 @@ Item {
       loader.sourceComponent = null;
       return;
     }
-    var props = PluginLoader.initialProperties(entryPoint, url, api, context);
+    var props;
+    try {
+      props = PluginLoader.initialProperties(entryPoint, url, api, context);
+    } catch (error) {
+      loader.sourceComponent = null;
+      _fail(String(error));
+      return;
+    }
     _initial = props;
     loader.setSource(url, props);
   }
@@ -64,14 +71,20 @@ Item {
 
   // Input handlers only act after creation; the first load is the one in
   // Component.onCompleted, so initial bindings never trigger extra loads.
-  onUrlChanged: if (_ready) _reload()
-  onApiChanged: if (_ready) _reload()
-  onApiReadyChanged: if (_ready) _reload()
-  onEntryPointChanged: if (_ready) _reload()
-  onActiveChanged: if (_ready) _reload()
+  onUrlChanged: if (_ready)
+                  _reload()
+  onApiChanged: if (_ready)
+                  _reload()
+  onApiReadyChanged: if (_ready)
+                       _reload()
+  onEntryPointChanged: if (_ready)
+                         _reload()
+  onActiveChanged: if (_ready)
+                     _reload()
 
   // Context values change without reloading; only names the item has apply.
-  onContextChanged: if (_ready) PluginLoader.applyLateContext(loader.item, entryPoint, context, {})
+  onContextChanged: if (_ready)
+                      PluginLoader.applyLateContext(loader.item, entryPoint, context, {})
 
   Component.onCompleted: {
     _ready = true;
