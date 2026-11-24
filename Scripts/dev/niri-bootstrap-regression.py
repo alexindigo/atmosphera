@@ -34,10 +34,21 @@ QtObject {
 REQUESTS = """pragma Singleton
 import QtQml
 QtObject {
+  id: root
+  // Reuse a compiled reply type and keep the mock singleton as its owner.
+  property Component replyComponent: Component {
+    id: replyType
+    QtObject {
+      property bool isError: false
+      property var value
+      property var error: ({message: "scripted failure"})
+      signal finished()
+    }
+  }
   property var pending: []
   property var counts: ({})
   function request(domain) {
-    const reply = Qt.createQmlObject('import QtQml; QtObject { property bool isError: false; property var value; property var error: ({message: "scripted failure"}); signal finished() }', this);
+    const reply = replyType.createObject(root);
     pending.push({domain: domain, reply: reply});
     counts[domain] = (counts[domain] || 0) + 1;
     return reply;
