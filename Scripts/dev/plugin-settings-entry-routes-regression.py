@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Bar/monitor/Control Center section-editor routes, native files and cold readers. Guest only."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixture_cold_observation import read_cold_observation, write_cold_observation
 import argparse
 from copy import deepcopy
 import fcntl
@@ -18,6 +19,7 @@ SPEC = importlib.util.spec_from_file_location('route_runner', Path(__file__).wit
 runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 ROUTES = ('global-bar', 'monitor-bar', 'monitor-inherited', 'control-left', 'control-right')
+COLD_REJECTED = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'ENTRY_ROUTE_ASSERT:')
 
 
 def cold_boundary_from_environment(boundary):
@@ -36,14 +38,13 @@ def cold_boundary_from_environment(boundary):
                              extra_env=dict(PHA_ROUTE_COLD='1', PHA_ROUTE_BOUNDARY=boundary), timeout=45)
     route = os.environ['PHA_ROUTE']
     if 'PLUGIN_SETTINGS_ENTRY_ROUTES: COLD_PASS ' + route + ' ' + boundary not in text or any(
-            marker in text for marker in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'ENTRY_ROUTE_ASSERT:')):
+            marker in text for marker in COLD_REJECTED):
         raise RuntimeError('intermediate cold route consumer failed: ' + route + '/' + boundary)
     after = {str(p.relative_to(case / 'config')): hashlib.sha256(p.read_bytes()).hexdigest()
              for p in (case / 'config').rglob('*.json')}
     if before != after:
         raise RuntimeError('intermediate route cold reader changed configuration')
-    stage_receipt(output / 'result.json', dict(status='PASS', route=route, boundary=boundary,
-        independentEngine=True, configurationHashesUnchanged=before))
+    write_cold_observation(output, dict(route=route, boundary=boundary), before, after)
 
 
 def seed(case, source, route, screen):
@@ -167,8 +168,12 @@ def run(args, profile, route):
                          for p in (case / 'config').rglob('*.json')}:
         raise RuntimeError('cold route consumer changed configuration')
     for phase in ('edited', 'whole-reset', 'retry'):
-        if json.loads((cold_boundaries / phase / 'result.json').read_text()).get('status') != 'PASS':
-            raise RuntimeError('missing intermediate route cold consumer: ' + phase)
+        output = cold_boundaries / phase
+        identity = dict(route=route, boundary=phase)
+        hashes = read_cold_observation(output, identity, 'PLUGIN_SETTINGS_ENTRY_ROUTES: COLD_PASS ' + route + ' ' + phase,
+                                      COLD_REJECTED)
+        stage_receipt(output / 'result.json', dict(status='PASS', **identity,
+            independentEngine=True, configurationHashesUnchanged=hashes))
     result = dict(id=route, status='PASS', actualSectionEditor=True, actualTabSignalRoute=True,
         scope='captured placement', controlSignals=True, physicalInput=False, catalogMainProof=False,
         independentPersistedBoundaries=len(expected), realIoFailureAndSameEditorRetry=True,

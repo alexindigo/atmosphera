@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Typed field intents, native Reset/equal omission and cold inheritance. Guest only."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixture_cold_observation import read_cold_observation, write_cold_observation
 import argparse
 from copy import deepcopy
 import fcntl
@@ -19,6 +20,8 @@ runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
 FAMILIES = ('shared', 'global-bar', 'monitor-bar', 'control-center', 'desktop')
 KEYS = ('flag', 'amount', 'label', 'optionalLabel', 'items', 'record')
+COLD_REJECTED = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected',
+                 'is not installed', 'VALUES_ASSERT:')
 
 
 def cold_boundary_from_environment(boundary):
@@ -39,16 +42,13 @@ def cold_boundary_from_environment(boundary):
         installed=True, extra_env=dict(PHA_VALUES_COLD='1', PHA_VALUES_BOUNDARY=boundary), timeout=45)
     family = os.environ['PHA_VALUES_FAMILY']
     if ('PLUGIN_SETTINGS_VALUES: COLD_PASS ' + family + ' ' + boundary not in text
-            or any(marker in text for marker in ('TypeError:', 'ReferenceError:', 'SyntaxError:',
-                                                'Binding loop detected', 'is not installed', 'VALUES_ASSERT:'))):
+            or any(marker in text for marker in COLD_REJECTED)):
         raise RuntimeError('typed cold boundary consumer failed: ' + family + '/' + boundary)
     after = {str(p.relative_to(case / 'config')): hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted((case / 'config').rglob('*.json'))}
     if before != after:
         raise RuntimeError('typed cold reader published or changed configuration')
-    stage_receipt(output / 'result.json', dict(status='PASS', family=family, boundary=boundary,
-        independentEngine=True, noPageOrReceipt=True, configurationHashesUnchanged=before,
-        observed='four bound native runtime Text consumers; absent optional distinct from empty'))
+    write_cold_observation(output, dict(family=family, boundary=boundary), before, after)
 
 
 def seed(case, source, family):
@@ -143,9 +143,13 @@ def run(args, profile, install, family):
     if 'PLUGIN_SETTINGS_VALUES: COLD_PASS ' + family not in text or any(marker in text for marker in bad):
         raise RuntimeError('separate cold typed runtime consumer failed: ' + family)
     for boundary in ('edited', 'reset'):
-        result = json.loads((cold_boundaries / boundary / 'result.json').read_text())
-        if result.get('status') != 'PASS' or result.get('family') != family or result.get('boundary') != boundary:
-            raise RuntimeError('missing typed intermediate cold boundary: ' + family + '/' + boundary)
+        output = cold_boundaries / boundary
+        identity = dict(family=family, boundary=boundary)
+        hashes = read_cold_observation(output, identity, 'PLUGIN_SETTINGS_VALUES: COLD_PASS ' + family + ' ' + boundary,
+                                      COLD_REJECTED)
+        stage_receipt(output / 'result.json', dict(status='PASS', **identity,
+            independentEngine=True, noPageOrReceipt=True, configurationHashesUnchanged=hashes,
+            observed='four bound native runtime Text consumers; absent optional distinct from empty'))
     result = dict(id=family, status='PASS', seconds=round(time.monotonic() - started, 3),
         typedValues=['false', 'integer-zero', 'empty-string', 'absent-optional-vs-empty', 'atomic-list', 'atomic-record'],
         nativeFieldReset=True, nativeEqualOmission=family != 'shared', untouchedInheritance=True,
