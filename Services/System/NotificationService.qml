@@ -23,7 +23,13 @@ Singleton {
   property string historyFile: Quickshell.env("ATMOSPHERA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
   property bool historyLoaded: false
   property bool historyOpening: false
-  property bool historyWritable: false
+  property bool historyStartupComplete: false
+  property bool historyClearedBeforeLoad: false
+  property real historyRevision: 0
+  property real historySavedRevision: 0
+  property bool historySaving: false
+  property int historyOpenFailures: 0
+  property int historySaveFailures: 0
 
   // State
   property real lastSeenTs: 0
@@ -115,7 +121,7 @@ Singleton {
   }
 
   function updateNotificationServer() {
-    const enabled = Settings.isLoaded && historyLoaded && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
+    const enabled = Settings.isLoaded && historyStartupComplete && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
     if (enabled === Boolean(notificationServerLoader))
       return;
 
@@ -717,21 +723,44 @@ Singleton {
   });
   }
 
+    function historyRetryDelay(failures) {
+    return Math.min(30000, 250 * Math.pow(2, failures - 1));
+  }
+
     // Loading atomically admits cold holders before presenting their paths.
+    // The first attempt gates D-Bus admission; later retries do not.
     function openHistory() {
-    if (historyLoaded || historyOpening)
+    if (historyLoaded || historyOpening || historyOpenRetry.running)
     return;
     historyOpening = true;
     ImageCacheService.openNotificationHistory(historyFile, (ok, rows) => {
-    if (ok)
+    if (ok) {
+    // Live rows created during an outage stay first. A clear also covers
+    // rows that were not readable when the user cleared the model.
+    if (!historyClearedBeforeLoad)
     loadHistory(rows);
-    else
-    Logger.e("Notifications", "Could not load notification history");
-    historyWritable = ok;
+    historyClearedBeforeLoad = false;
     historyLoaded = true;
+    if (historyRevision !== historySavedRevision)
+    scheduleHistorySave();
+    else
+    syncOriginalHolders();
+  } else {
+    if (!historyOpenFailures)
+    Logger.e("Notifications", "Could not load notification history; will retry");
+    historyOpenFailures = Math.min(8, historyOpenFailures + 1);
+    historyOpenRetry.interval = historyRetryDelay(historyOpenFailures);
+    historyOpenRetry.restart();
+  }
     historyOpening = false;
+    historyStartupComplete = true;
     updateNotificationServer();
   });
+  }
+
+    Timer {
+    id: historyOpenRetry
+    onTriggered: root.openHistory()
   }
 
     function syncOriginalHolders(rows, callback) {
@@ -752,19 +781,38 @@ Singleton {
 
     Timer {
     id: saveTimer
-    interval: 200
-    onTriggered: performSaveHistory()
+    onTriggered: root.performSaveHistory()
   }
 
     function saveHistory() {
+    ++historyRevision;
+    if (historyLoaded && !historySaving && !historySaveFailures)
+    scheduleHistorySave();
+  }
+
+    function scheduleHistorySave() {
+    saveTimer.interval = historySaveFailures ? historyRetryDelay(historySaveFailures) : 200;
     saveTimer.restart();
   }
 
     function performSaveHistory() {
-    if (historyWritable)
-    syncOriginalHolders(historySnapshotForSave, ok => {
-    if (!ok)
-    Logger.e("Notifications", "Could not save notification history");
+    if (!historyLoaded || historySaving || historyRevision === historySavedRevision)
+    return;
+    historySaving = true;
+    const revision = historyRevision;
+    const rows = historySnapshotForSave();
+    syncOriginalHolders(() => rows, ok => {
+    historySaving = false;
+    if (ok) {
+    historySavedRevision = revision;
+    historySaveFailures = 0;
+  } else {
+    if (!historySaveFailures)
+    Logger.e("Notifications", "Could not save notification history; will retry");
+    historySaveFailures = Math.min(8, historySaveFailures + 1);
+  }
+    if (historyRevision !== historySavedRevision)
+    scheduleHistorySave();
   });
   }
 
@@ -781,8 +829,10 @@ Singleton {
 
     function loadHistory(rows) {
     try {
-    historyModel.clear();
+    const merging = historyRevision !== historySavedRevision;
     for (const item of rows || []) {
+    if (merging && historyModel.count >= maxHistory)
+    break;
     const time = new Date(item.timestamp);
 
     // A cold reader never reacquires a producer-owned original. Legacy records
@@ -1213,6 +1263,8 @@ Singleton {
     function clearHistory() {
     // Membership changes are inputs to the retention owner. The previous
     // committed history still holds its bytes until this clear is saved.
+    if (!historyLoaded)
+    historyClearedBeforeLoad = true;
     for (const id in popupState) {
     popupState[id].historyWanted = false;
     releaseUnusedImages(popupState[id]);
