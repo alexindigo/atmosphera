@@ -475,6 +475,23 @@ runpy.run_path(worker, run_name='__main__')
             self.assertTrue(calls)
             self.assertTrue(all(0 < limit <= 6 for limit in calls), calls)
 
+        async def test_png_does_not_feed_a_terminal_decoder(self):
+            class TerminalDecoder:
+                eof = False
+                unused_data = b''
+                unconsumed_tail = b''
+
+                def decompress(self, _data, _limit):
+                    if self.eof:
+                        raise AssertionError('PNG called decompress after EOF')
+                    self.eof = True
+                    self.unused_data = b'unused'
+                    self.unconsumed_tail = b'stale'
+                    return b'\0\0\0\0\0'
+
+            with patch('images.png.zlib.decompressobj', TerminalDecoder), self.assertRaises(ValueError):
+                validate(empty_png())
+
         async def test_transient_decoder_failure_is_not_persisted(self):
             calls = []
             async def transient(prepared, request, info):

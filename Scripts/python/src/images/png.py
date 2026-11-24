@@ -109,6 +109,8 @@ def validate(data, maximum=None):
     for kind, value in parts:
         if kind == b'IDAT':
             while value:
+                if decoder.eof:
+                    raise ValueError('Unexpected data after PNG pixel stream')
                 # The declared scanlines, not compressed input size, bound every
                 # inflation allocation. One extra byte detects excess pixels.
                 remaining = (height - rows) * (stride + 1) - len(buffer)
@@ -120,8 +122,12 @@ def validate(data, maximum=None):
                     raise ValueError('Excess PNG scanlines')
                 buffer.extend(inflated)
                 consume()
+                if decoder.eof:
+                    if decoder.unused_data or decoder.unconsumed_tail:
+                        raise ValueError('Unexpected data after PNG pixel stream')
+                    break
                 value = decoder.unconsumed_tail
-    if not decoder.eof or decoder.unused_data or buffer or rows != height:
+    if not decoder.eof or buffer or rows != height:
         raise ValueError('Incomplete PNG pixel stream')
     return dict(format='png', width=width, height=height, frames=1, animated=False, delaysMs=[], loop=None)
 
