@@ -8,6 +8,22 @@ trap 'rm -rf -- "$work"' EXIT
 mkdir "$work/tmp"
 export TMPDIR="$work/tmp"
 
+# Generated IPC sources can use more than two cores, but keep cold builds
+# bounded on smaller development machines and memory-limited builders.
+jobs=$(nproc)
+memory_jobs=$(awk '/^MemTotal:/ { print int($2 / 1048576); exit }' /proc/meminfo)
+if [[ -r /sys/fs/cgroup/memory.max ]]; then
+    read -r memory_limit < /sys/fs/cgroup/memory.max
+    if [[ $memory_limit != max ]]; then
+        limit_jobs=$((memory_limit / 1073741824))
+        (( memory_jobs <= limit_jobs )) || memory_jobs=$limit_jobs
+    fi
+fi
+(( jobs <= 4 )) || jobs=4
+(( jobs <= memory_jobs )) || jobs=$memory_jobs
+(( jobs >= 1 )) || jobs=1
+printf 'Building QML dependencies with up to %s parallel jobs\n' "$jobs"
+
 install_module() {
     local repo=$1 version=$2 checksum=$3
     local source="$work/$repo" archive="$work/$repo.tar.gz"
@@ -20,7 +36,7 @@ install_module() {
     cmake -S "$source" -B "$source/build" -G Ninja \
         -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST_MODE=OFF \
         -DCMAKE_SKIP_RPATH=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
-    cmake --build "$source/build" --parallel 2
+    cmake --build "$source/build" --parallel "$jobs"
     cmake --install "$source/build"
 }
 
