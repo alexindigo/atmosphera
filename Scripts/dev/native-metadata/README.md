@@ -8,10 +8,10 @@ universe for ordinary `qmllint.sh`. Other installed modules remain unchanged.
 An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
-`dependencies/configqml-054` contains the **unmodified registrar outputs** for
-ConfigQml 0.5.4, regenerated inside `atmosphera-plugin-settings-host-and-assets`
+`dependencies/configqml-055` contains the **unmodified registrar outputs** for
+ConfigQml 0.5.5, regenerated inside `atmosphera-plugin-settings-host-and-assets`
 on ark.home with Qt 6.12.0 and the signed historical Qt 6.11.2 SDK packages.
-The published release source is `9d9ca0f37bdcb864c1747f65635cc555ae1f38d3`.
+The published release source is `09dfa03ff3c1af0ee655b1be97d7585b97c95477`.
 The release archive matches the install recipe's pinned checksum and identifies
 that Git commit. The Qt 6.12.0 output is byte-identical to the metadata installed
 by building the release archive. Both manifests identify the same release source.
@@ -36,7 +36,7 @@ or installing libraries. In the assigned VM, with disk-backed TMPDIR:
 ```sh
 python3 -B Scripts/dev/configqml-metadata-generate.py \
   --source "$IMMUTABLE_CONFIGQML_SOURCE" --qt "$SDK/usr/lib/qt6" \
-  --reference Scripts/dev/native-metadata/dependencies/configqml-054 \
+  --reference Scripts/dev/native-metadata/dependencies/configqml-055 \
   --output "$WORKSPACE/generated-configqml"
 LD_LIBRARY_PATH="$SDK/usr/lib" python3 -B Scripts/dev/qml-native-metadata-selftest.py \
   --sdk "$SDK/usr/lib/qt6" -k configqml_fallback

@@ -1,14 +1,14 @@
 { lib, stdenv, cmake, ninja, qt6, fetchFromGitHub, configqmlSrc ? fetchFromGitHub {
     owner = "alexindigo";
     repo = "configqml";
-    # Published release source: 9d9ca0f37bdcb864c1747f65635cc555ae1f38d3.
-    rev = "v0.5.4";
-    hash = "sha256-nPyUNznOVzY1M8m7gkcNlqVvSDLXoSCzfbJXdDTRweo=";
+    # Published release source: 09dfa03ff3c1af0ee655b1be97d7585b97c95477.
+    rev = "v0.5.5";
+    hash = "sha256-NQSFMsfQM26n8iPXjZY1oksV8CdR2WKxKFHST/T9HxA=";
   }
 }:
 stdenv.mkDerivation {
   pname = "qt6-configqml";
-  version = "0.5.4";
+  version = "0.5.5";
   # Avoid callPackage auto-injecting nixpkgs.src instead of this pinned source.
   src = configqmlSrc;
   nativeBuildInputs = [ cmake ninja qt6.wrapQtAppsHook ];

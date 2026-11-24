@@ -109,7 +109,7 @@ The native editor captures base and owning-leaf generations. A changed capture,
 same-ID replacement, reorder, base change or owner loss cannot retarget it to a
 new placement. A closed/conflicted editor cannot recapture an index to recover.
 
-ConfigQml >=0.5.4 is required. Package, Nix and devcontainer pins select the
+ConfigQml >=0.5.5 is required. Package, Nix and devcontainer pins select the
 release with selected-session batch staging and retained Apply settlement as
 well as untouched-overlay preservation, native staged draft Reset, selected
 publication and retained QML notification when an optional leaf becomes absent.
@@ -1190,8 +1190,7 @@ pages/native documents/nonpublishing cold readers, actual originating native
 writes and individual config/probe/retirement lifetimes. Original shared-reader
 and omitted-origin controls reject the wrong idle policy. Canonical runtime
 Quit/Toggle and concurrent hook saves require the native completion correction
-in ConfigQml acbb404; the intended released dependency floor is 0.5.4, not a
-claim that it is already released. All compositor/screensaver/reload endpoints
+included in the released ConfigQml 0.5.5 floor. All compositor/screensaver/reload endpoints
 are inert; these are not physical, broad visual/translation or final proofs.
 
 ## Hermes Agent finite CLI ownership prerequisite
@@ -1302,7 +1301,7 @@ inherits, so it equals the shared value) and the page show the unconfirmed
 value; overridden placements and files stay persisted, and the receipt is
 failed/not-refreshed with the same page/editor retained. Retry publishes and
 all readers agree on the saved value. Discard instead abandons exactly that
-admitted Apply (ConfigQml `draft.abandonApply`, then the draft is dropped): every
+admitted Apply (`ConfigPrimitives.forStore(draft).abandonApply`, then the draft is dropped): every
 reader returns to the saved value and no file is written. Losing the
 presentation without an explicit Discard never abandons. The witness waits for
 each consistent state and checks it at the plugin runtime, the inherited

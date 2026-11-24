@@ -1,3 +1,4 @@
+import ConfigQml 1.0
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -281,7 +282,8 @@ ShellRoot {
     check(Date.now() - since < 18000, phase === "row-reset" || phase === "color-first-reset" ? "actual row Reset removes selected overrides" : "finite native phase: " + phase);
     if (phase === "runtime" && selected.settingsReady && sibling.settingsReady && inherited.settingsReady) {
       var reader = (scope === "instance" ? selected : api).settingsReadOwner;
-      check(typeof reader?.readProjection?.synchronize === "function", "selected reader lacks ConfigQml readProjection.synchronize; load the qualified native module");
+      var primitives = ConfigPrimitives.forOverlay(reader) || ConfigPrimitives.forStore(reader);
+      check(typeof primitives?.readProjection?.synchronize === "function", "selected reader lacks ConfigQml readProjection.synchronize; load the qualified native module");
       input.waitForJob();
       var data = JSON.parse(input.text());
       edits = data.edits;

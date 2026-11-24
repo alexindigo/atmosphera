@@ -12,7 +12,8 @@ or confirmed discard. Busy excludes competing actions. See
 
 Writer success is not acknowledgment by a separate runtime reader. The session
 waits for ConfigQml's `readProjection.synchronize(write.observation, callback)` on
-the selected API's actual native reader before either completion signal or any
+the selected API's actual native reader, through `ConfigPrimitives.forStore`
+for a store or scope and `ConfigPrimitives.forOverlay` for an overlay, before either completion signal or any
 registered save callback. Successful results include the native immutable
 `runtimeRead.snapshot`; observation does not certify external daemon activation.
 The session stays busy across both acknowledgments. Saved-but-unobserved failure
@@ -29,10 +30,8 @@ and loaded child, records each signal/callback with file and line, and rejects
 host bypass/tokenless-refresh/lifetime/preview/Retry controls. That transport
 inventory does not claim acceptance of every plugin's domain behavior.
 
-The observation contract requires ConfigQml's generic-primitives implementation,
-intended for 0.5.4. Until that release is published, qualification records the
-exact signed native candidate and loaded prefix; no unreleased tag or checksum
-is implied by the version floor.
+The observation contract requires ConfigQml 0.5.5. Its adapters keep the new
+members off legacy QML owners, so those members cannot shadow enclosing IDs.
 
 ## Historical pre-cutover save transport
 

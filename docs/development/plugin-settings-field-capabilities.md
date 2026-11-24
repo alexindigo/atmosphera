@@ -137,7 +137,7 @@ not catalog runtime effects. The catalog page regression separately exercises
 each manifest entry and Settings child in both scopes through its actual page
 signal, native Apply/Reset and independent files; it does not construct Main.
 The focused selected-client and Pomodoro input gates provide their additional
-real-input/runtime-consumer proof. ConfigQml >=0.5.4 is required, including
+real-input/runtime-consumer proof. ConfigQml >=0.5.5 is required, including
 selected-session batch staging and retained bound-value notification when
 native Reset removes an optional leaf.
 

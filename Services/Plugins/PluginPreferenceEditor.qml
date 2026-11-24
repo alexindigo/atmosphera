@@ -1,3 +1,4 @@
+import ConfigQml 1.0
 import QtQuick
 import qs.Commons
 
@@ -249,14 +250,16 @@ QtObject {
     if (busy)
       return false;
     var nativeHandle = handle;
-    if (nativeHandle && _failedApply && typeof nativeHandle.abandonApply === "function") {
+    // Overlay editors do not admit the retained shared-store Apply.
+    var store = nativeHandle && _failedApply && !ConfigPrimitives.forOverlay(nativeHandle) ? ConfigPrimitives.forStore(nativeHandle) : null;
+    if (store) {
       // Discard after a failed Apply returns every reader to the saved values:
       // abandon exactly that admitted Apply, then drop the staged edits. The
       // native draft stays alive until its single result.
       _failedApply = false;
       _cancelOpening();
       closed = true;
-      nativeHandle.abandonApply(function (result) {
+      store.abandonApply(function (result) {
         if (result.status !== "abandoned" && result.error?.code !== "apply-not-pending")
           Logger.w("PluginPreferenceEditor", "Discard could not abandon the failed Apply:", result.error?.code || result.status);
         nativeHandle.detach();

@@ -31,7 +31,9 @@ ANCHORS = {
         'if (!_preview.pending() && _preview.close()) _preview = null',
         'reader: _runtimeReadOwner',
         'if (_preview && _preview.pending())',
-        'pending.reader.readProjection.synchronize(receipt.write.observation, function (read)',
+        'ConfigPrimitives.forOverlay(reader) || ConfigPrimitives.forStore(reader)',
+        'primitives.readProjection.synchronize(observation, complete)',
+        'synchronizeRuntimeRead(pending.reader, receipt.write.observation, function (read)',
         'if (!lifetime.alive || root._observation !== pending) return',
         'if (!root._hasCurrentRuntime() || root._runtimeReadOwner !== pending.reader) { root._observationFailed(pending, "settings-runtime-owner"); return; }',
         'if (read.status !== "observed") { root._observationFailed(pending, read.error?.code || "settings-runtime-observation"); return; }',
@@ -117,7 +119,7 @@ def main():
     if args.selftest:
         mutations = [
             ('PluginSettingsSession.qml', 'root._observe(result, reset)', 'root._finish(result, reset)', 'writer-only-completion'),
-            ('PluginSettingsSession.qml', 'synchronize(receipt.write.observation,', 'synchronize(undefined,', 'tokenless-refresh'),
+            ('PluginSettingsSession.qml', 'synchronizeRuntimeRead(pending.reader, receipt.write.observation,', 'synchronizeRuntimeRead(pending.reader, undefined,', 'tokenless-refresh'),
             ('PluginSettingsSession.qml', '!_preview.pending() && _preview.close()', '_preview.close()', 'discard-newer-preview'),
             ('PluginSettingsSession.qml', '_preview.acknowledge(_previewFence)', '_preview.acknowledge(null)', 'wrong-preview-fence'),
             ('PluginSettingsSession.qml', '!lifetime.alive || root._observation !== pending', 'root._observation !== pending', 'dead-session-callback'),

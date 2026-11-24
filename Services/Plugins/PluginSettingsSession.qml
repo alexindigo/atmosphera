@@ -1,3 +1,4 @@
+import ConfigQml 1.0
 import QtQuick
 import "PluginSettingsRead.js" as Read
 import qs.Commons
@@ -14,6 +15,7 @@ QtObject {
   required property var captureInputs
   required property var acknowledgeInputs
   required property var resetInputs
+  property var runtimeReadOverride: null
   property var currentPlugin: null
   property var currentPluginApi: null
   property var currentInstanceApi: null
@@ -69,6 +71,13 @@ QtObject {
 
   function _hasCurrentRuntime() {
     return !!currentPluginApi && currentPluginApi.settingsContext.current();
+  }
+
+  function synchronizeRuntimeRead(reader, observation, complete) {
+    if (runtimeReadOverride)
+      return runtimeReadOverride(reader, observation, complete);
+    var primitives = ConfigPrimitives.forOverlay(reader) || ConfigPrimitives.forStore(reader);
+    return primitives.readProjection.synchronize(observation, complete);
   }
 
   function openPluginSettings(manifest, entryPoint) {
@@ -346,7 +355,7 @@ QtObject {
     }
     var lifetime = _lifetime;
     try {
-      pending.reader.readProjection.synchronize(receipt.write.observation, function (read) {
+      synchronizeRuntimeRead(pending.reader, receipt.write.observation, function (read) {
         if (!lifetime.alive || root._observation !== pending)
           return;
         // Registration is mutable in place. A cached QML binding does not

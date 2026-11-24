@@ -18,7 +18,7 @@ The callback-only `Settings.saveImmediate(callback)` is retained unchanged for
 older plugin consumers; new shell per-edit callers use the explicitly named
 selected operation rather than overloading that compatibility entry point.
 
-This integration requires configqml >=0.5.4. The package floor and
+This integration requires ConfigQml >=0.5.5. The package floor and
 Nix/devcontainer pins select the released batch staging and retained Apply
 settlement contracts, as well as native staged draft Reset, untouched-overlay
 preservation, `saveSelected` and retained QML notification when a previously

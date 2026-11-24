@@ -1,4 +1,5 @@
 // Actual popup, field-only page, native editors and real persistence.
+import ConfigQml 1.0
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -155,59 +156,52 @@ ShellRoot {
           settingsDirty: false
         };
         session.fields.field("label").set("probe-written");
-        var reader = originalApi.settingsReadOwner;
         // Hold delivery at the host boundary after actual native observation.
         // The native editor also holds retirement open during this call stack.
-        session.currentPluginApi = {
-          settingsContext: originalApi.settingsContext,
-          settingsReadOwner: {
-            readProjection: {
-              synchronize: function (observation, complete) {
-                reader.readProjection.synchronize(observation, function (read) {
-                  try {
-                    check(read.status === "observed" && originalApi.settingsReady, "actual native receipt from a ready registration");
-                    Service.loadPlugin(key, null, function (cached) {
-                      try {
-                        expect(cached.status === "failed" && cached.error?.code === "plugin-load-cancelled", "cached callback accepted a retired registration");
-                        check(session.confirmDiscard(), "failed observation can be discarded");
-                        session.destroy();
-                      } catch (error) {
-                        fail(error);
-                      }
-                    });
-                    Service.unloadPlugin(key, true, function (unloaded) {
-                      try {
-                        check(unloaded.status !== "failed", "retirement settles after editor release");
-                        Service.loadPlugin(key, null, function (first) {
-                          try {
-                            check(first.status === "loaded" && Service.getPluginAPI(key) !== originalApi, "first callback receives the registered replacement");
-                            Service.unloadPlugin(key, true);
-                          } catch (error) {
-                            fail(error);
-                          }
-                        });
-                        Service.loadPlugin(key, null, function (second) {
-                          try {
-                            expect(second.status === "failed" && second.error?.code === "plugin-load-cancelled", "coalesced callback accepted a registration retired by its sibling");
-                            finish();
-                          } catch (error) {
-                            fail(error);
-                          }
-                        });
-                      } catch (error) {
-                        fail(error);
-                      }
-                    });
-                    check(Service.getPluginAPI(key) === null && originalApi.settingsReady, "registration retires while the native owner is still ready");
-                    complete(read);
-                    expect(effects.join(",") === "settings-runtime-owner", "retired observation delivered " + effects.join(","));
-                  } catch (error) {
-                    fail(error);
-                  }
-                });
-              }
+        session.runtimeReadOverride = function (reader, observation, complete) {
+          var primitives = ConfigPrimitives.forStore(reader);
+          return primitives.readProjection.synchronize(observation, function (read) {
+            try {
+              check(read.status === "observed" && originalApi.settingsReady, "actual native receipt from a ready registration");
+              Service.loadPlugin(key, null, function (cached) {
+                try {
+                  expect(cached.status === "failed" && cached.error?.code === "plugin-load-cancelled", "cached callback accepted a retired registration");
+                  check(session.confirmDiscard(), "failed observation can be discarded");
+                  session.destroy();
+                } catch (error) {
+                  fail(error);
+                }
+              });
+              Service.unloadPlugin(key, true, function (unloaded) {
+                try {
+                  check(unloaded.status !== "failed", "retirement settles after editor release");
+                  Service.loadPlugin(key, null, function (first) {
+                    try {
+                      check(first.status === "loaded" && Service.getPluginAPI(key) !== originalApi, "first callback receives the registered replacement");
+                      Service.unloadPlugin(key, true);
+                    } catch (error) {
+                      fail(error);
+                    }
+                  });
+                  Service.loadPlugin(key, null, function (second) {
+                    try {
+                      expect(second.status === "failed" && second.error?.code === "plugin-load-cancelled", "coalesced callback accepted a registration retired by its sibling");
+                      finish();
+                    } catch (error) {
+                      fail(error);
+                    }
+                  });
+                } catch (error) {
+                  fail(error);
+                }
+              });
+              check(Service.getPluginAPI(key) === null && originalApi.settingsReady, "registration retires while the native owner is still ready");
+              complete(read);
+              expect(effects.join(",") === "settings-runtime-owner", "retired observation delivered " + effects.join(","));
+            } catch (error) {
+              fail(error);
             }
-          }
+          });
         };
         Qt.callLater(function () {
           try {

@@ -32,6 +32,7 @@ Popup {
   readonly property bool dirty: settingsSession.dirty
   readonly property var _editor: settingsSession.editor
   readonly property var _pageApi: settingsSession.pageApi
+  property var _runtimeReadOverride: null
   readonly property var undisplayedOverrideFields: settingsSession.fields ? settingsSession.fields.undisplayedOverrides : []
   signal settingsCompleted(var result)
   // The adopted presentation ends even if the native Popup never opened.
@@ -72,6 +73,7 @@ Popup {
 
   PluginSettingsSession {
     id: settingsSession
+    runtimeReadOverride: root._runtimeReadOverride
     page: root.settingsPage
     presentationOpen: root.visible
     inputDirty: inputEdits.dirty

@@ -1,3 +1,4 @@
+import ConfigQml 1.0
 import QtQuick
 import QtQuick.Controls
 import QtTest
@@ -81,52 +82,25 @@ ShellRoot {
       phase = "reader";
     });
   }
-  function wrap(reader) {
-    nativeReader = reader;
-    // Controlled collaborator wraps the exact real reader. It holds only the
-    // acquisition request, never fabricates successful native observation.
-    return {
-      get ready() {
-        return reader.ready;
-      },
-      get error() {
-        return reader.error || "";
-      },
-      get values() {
-        return reader.values;
-      },
-      get placementToken() {
-        return reader.placementToken;
-      },
-      info: function (path) {
-        return reader.info(path);
-      },
-      draft: function () {
-        return reader.draft();
-      },
-      scope: function (path, writable) {
-        return reader.scope(path, writable);
-      },
-      readProjection: {
-        synchronize: function (after, callback) {
-          reads++;
-          check(!held, "one acquisition at a time");
-          held = function (failed) {
-            held = null;
-            if (failed)
-              callback({
-                         status: "failed",
-                         error: {
-                           code: "controlled-read-failure"
-                         }
-                       });
-            else
-              reader.readProjection.synchronize(after, callback);
-          };
-          return "controlled-held-request";
-        }
+  function holdRead(reader, after, callback) {
+    // Hold only acquisition. Every success still comes from the exact real reader.
+    reads++;
+    check(!held, "one acquisition at a time");
+    held = function (failed) {
+      held = null;
+      if (failed)
+        callback({
+                   status: "failed",
+                   error: {
+                     code: "controlled-read-failure"
+                   }
+                 });
+      else {
+        var primitives = ConfigPrimitives.forOverlay(reader) || ConfigPrimitives.forStore(reader);
+        primitives.readProjection.synchronize(after, callback);
       }
     };
+    return "controlled-held-request";
   }
   QtObject {
     id: testPage
@@ -152,6 +126,7 @@ ShellRoot {
     id: sessionFactory
     PluginSettingsSession {
       page: testPage
+      runtimeReadOverride: root.holdRead
       commitInputs: function () {}
       captureInputs: function () {
         return 0;
@@ -188,6 +163,7 @@ ShellRoot {
       NPluginSettingsPopup {
         id: popup
         parent: Overlay.overlay
+        _runtimeReadOverride: root.holdRead
         onSettingsCompleted: result => {
           root.signals++;
           root.last = result;
@@ -279,11 +255,7 @@ ShellRoot {
   }
   function drive() {
     if (phase === "reader" && selected && selected.settingsReady && (scenario !== "inherited-preview" || !placed || instance._inheritedPreview?.ready)) {
-      var wrapped = wrap(placed ? instance.runtime : api.settingsHandle);
-      if (placed)
-        instance.runtime = wrapped;
-      else
-        api.settingsOwner.settingsScope = wrapped;
+      nativeReader = placed ? instance.runtime : api.settingsHandle;
       if (scenario === "popup-check") {
         hostWindow = windowFactory.createObject(root);
         check(hostWindow && (placed ? hostWindow.popup.openInstanceSettings(manifest, instance) : hostWindow.popup.openPluginSettings(manifest)), "open real selected popup");
