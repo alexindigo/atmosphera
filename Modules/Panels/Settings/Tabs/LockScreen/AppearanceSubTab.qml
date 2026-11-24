@@ -63,6 +63,7 @@ ColumnLayout {
     }
 
     Text {
+      textFormat: Text.PlainText
       Layout.fillWidth: true
       objectName: "externalCommandStatus"
       text: {
@@ -86,6 +87,7 @@ ColumnLayout {
     }
 
     Text {
+      textFormat: Text.PlainText
       Layout.fillWidth: true
       text: I18n.tr("panels.lock-screen.behavior-command-note")
       color: AtmoColor.mOnSurfaceVariant

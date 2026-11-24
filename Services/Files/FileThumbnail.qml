@@ -11,6 +11,7 @@ Scope {
   property real pixels: 128
   property string stamp: ""
   readonly property string url: active ? (provider.urls[path] || "") : ""
+  readonly property var result: active ? (provider.results[path] || null) : null
   property int _token: 0
   function _sync() {
     if (_token)

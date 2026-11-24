@@ -73,6 +73,7 @@ DraggableDesktopWidget {
       }
 
       Text {
+        textFormat: Text.PlainText
         Layout.alignment: Qt.AlignHCenter
         Layout.fillWidth: true
         visible: root.showLabel

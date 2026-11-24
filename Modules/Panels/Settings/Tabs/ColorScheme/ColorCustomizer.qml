@@ -164,6 +164,7 @@ Popup {
             }
 
             Text {
+              textFormat: Text.PlainText
               text: colorKey
               color: AtmoColor.mOnSurfaceVariant
               font.pointSize: Style.fontSizeXS

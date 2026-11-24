@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Real-key visible-tile, latency and second-open shared-cache regression."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -43,8 +44,41 @@ def main():
     shim = fixtures / "bin"
     shim.mkdir()
     decoder_log = fixtures / "ffmpeg.jsonl"
-    (shim / "ffmpeg").write_text('#!/usr/bin/python3\nimport os,sys,json,time\n'
-                                f'with open({str(decoder_log)!r}, "a") as f: f.write(json.dumps({{"time":time.monotonic(),"pid":os.getpid(),"argv":sys.argv}})+"\\n")\n'
+    filling_observed = fixtures / "filling-observed"
+    gate_timeout = 15
+    worker_timeout = gate_timeout + 10
+    # Both the frame coroutine and its owned decoder share Cache.timeout.
+    # Extend it only in this fixture's worker, not for ordinary python3 calls
+    # or production. The FFmpeg gate below still has its own shorter deadline.
+    (shim / "python3").write_text('''#!/usr/bin/python3 -u
+import functools
+import os
+from pathlib import Path
+import runpy
+import sys
+
+args = sys.argv[1:]
+if len(args) != 3 or args[:2] != ["-B", "-u"] or not args[2].endswith("/Scripts/python/image-worker.py"):
+    os.execv("/usr/bin/python3", ["python3", *args])
+
+worker = Path(args[2]).resolve(strict=True)
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(worker.parent / "src"))
+from images import worker as image_worker
+
+image_worker.Cache = functools.partial(image_worker.Cache, timeout=''' + str(worker_timeout) + ''')
+sys.argv = [str(worker)]
+runpy.run_path(str(worker), run_name="__main__")
+''')
+    (shim / "python3").chmod(0o755)
+    (shim / "ffmpeg").write_text('#!/usr/bin/python3\nimport os,sys,json,time,fcntl\nfrom pathlib import Path\n'
+                                f'with open({str(decoder_log)!r}, "a+") as f:\n'
+                                ' fcntl.flock(f,fcntl.LOCK_EX)\n f.seek(0)\n ordinal=sum(1 for line in f if "image2pipe" in json.loads(line)["argv"])+1\n f.seek(0,2)\n'
+                                ' f.write(json.dumps({"time":time.monotonic(),"pid":os.getpid(),"argv":sys.argv})+"\\n")\n f.flush()\n'
+                                f'if "image2pipe" in sys.argv and ordinal > 2:\n deadline=time.monotonic()+{gate_timeout}\n'
+                                f' while not Path({str(filling_observed)!r}).exists():\n'
+                                '  if time.monotonic() >= deadline: sys.exit("Fixture thumbnail gate timed out")\n'
+                                '  time.sleep(.01)\n'
                                 'os.execv("/usr/bin/ffmpeg", ["ffmpeg", *sys.argv[1:]])\n')
     (shim / "ffmpeg").chmod(0o755)
     cache = runtime / "profile/cache"
@@ -103,6 +137,10 @@ def main():
         key(102)
         wait(lambda s: any(t["ready"] for t in s["thumbnails"]["tiles"]) and any(not t["ready"] and not t["path"].endswith("00 Corrupt.mp4") for t in s["thumbnails"]["tiles"]))
         capture("F7-filling")
+        # Observe the existing progressive-loading assertion before admitting
+        # the rest of this fixture's decoders. Fast machines must not make the
+        # required intermediate state disappear between two IPC observations.
+        filling_observed.touch()
         # Native key -> selection -> GridView scroll; measured end to end while
         # the worker is active, not just time spent writing an evdev event.
         for code in (106, 106, 106, 108, 108, 108, 108, 105):
@@ -128,8 +166,14 @@ def main():
             wait(visible_ready)
         key(107)
         wait(visible_ready)
-        cache_entries = list((cache / "thumbnails/large").glob("*.png")) + list((cache / "thumbnails/normal").glob("*.png"))
-        check("all-30-video-frames-cached", len(cache_entries) == 30, len(cache_entries))
+        # The harness first opens Fieldwork, which can legitimately populate
+        # this shared cache. Match the exact fixture URIs and require one
+        # positive thumbnail per clip, not 30 arbitrary PNGs in the cache.
+        expected = {hashlib.md5(path.as_uri().encode(), usedforsecurity=False).hexdigest() + ".png": path.name
+                    for path in videos.glob("Coast *.mp4")}
+        hits = {name: sum((cache / "thumbnails" / bucket / key).is_file() for bucket in ("normal", "large"))
+                for key, name in expected.items()}
+        check("all-30-video-frames-cached", len(hits) == 30 and all(n == 1 for n in hits.values()), hits)
         key(1)
         wait(lambda s: s["settled"])
         before_reopen = len(launches())
@@ -166,6 +210,7 @@ def main():
         failure = repr(error)
         raise
     finally:
+        filling_observed.touch()
         if harness.poll() is None:
             try:
                 ipc("quit"); harness.wait(timeout=15)

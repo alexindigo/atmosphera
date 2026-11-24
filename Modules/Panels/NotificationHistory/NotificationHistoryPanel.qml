@@ -852,12 +852,12 @@ SmartPanel {
                         spacing: Style.marginM
 
                         // Icon
-                        NImageRounded {
+                        NNotificationImage {
                           anchors.verticalCenter: notificationDelegate.isExpanded ? undefined : parent.verticalCenter
                           width: notificationDelegate.iconSize
                           height: notificationDelegate.iconSize
                           radius: Math.min(Style.radiusL, width / 2)
-                          imagePath: model.cachedImage || model.originalImage || ""
+                          notification: model
                           borderColor: "transparent"
                           borderWidth: 0
                           fallbackIcon: "bell"
@@ -908,26 +908,26 @@ SmartPanel {
                           }
 
                           // Summary
-                          NText {
+                          NImageText {
                             id: summaryText
                             width: parent.width
                             text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.summaryMarkdown || I18n.tr("common.no-summary")) : (model.summary || I18n.tr("common.no-summary"))
                             pointSize: Style.fontSizeM
                             color: AtmoColor.mOnSurface
-                            textFormat: notificationDelegate.notificationTextFormat
+                            format: notificationDelegate.notificationTextFormat === Text.MarkdownText ? "markdown" : "styled"
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 2
                             elide: Text.ElideRight
                           }
 
                           // Body
-                          NText {
+                          NImageText {
                             id: bodyText
                             width: parent.width
                             text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.bodyMarkdown || "") : (model.body || "")
                             pointSize: Style.fontSizeS
                             color: AtmoColor.mOnSurfaceVariant
-                            textFormat: notificationDelegate.notificationTextFormat
+                            format: notificationDelegate.notificationTextFormat === Text.MarkdownText ? "markdown" : "styled"
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 3
                             elide: Text.ElideRight

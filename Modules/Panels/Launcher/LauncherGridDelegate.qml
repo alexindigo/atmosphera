@@ -85,9 +85,12 @@ Item {
           active: !!row.isImage
           sourceComponent: NImageRounded {
             id: gridRowImage
-            // A failed image falls back to the icon, declaratively: a kept delegate
-            // follows its row instead of a state written once at creation.
-            visible: !row.displayString && status !== Image.Error
+            // A requested image stays in place when it fails: a broken-image icon
+            // with the labelled warning, never the ordinary icon posing as success.
+            // A row without art (empty image URL) shows its ordinary icon instead.
+            // Declarative, so a kept delegate follows its row.
+            visible: !row.displayString && status !== Image.Null
+            fallbackIcon: "photo-off"
             radius: Style.radiusM
 
             // A provider-wide imageRevision, or itemImageChanged(identity) for
@@ -134,7 +137,7 @@ Item {
           anchors.fill: parent
           anchors.margins: Style.marginXS
 
-          visible: (!row.isImage && !row.displayString) || (!!row.isImage && gridBadge.imageStatus === Image.Error)
+          visible: (!row.isImage && !row.displayString) || (!!row.isImage && gridBadge.imageStatus === Image.Null)
           active: visible
 
           sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && row.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent

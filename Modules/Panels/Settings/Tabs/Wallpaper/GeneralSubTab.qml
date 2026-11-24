@@ -203,8 +203,13 @@ ColumnLayout {
       text: I18n.tr("panels.wallpaper.settings-clear-cache-button")
       outlined: true
       onClicked: {
-        ImageCacheService.clearLarge();
-        ToastService.showNotice(I18n.tr("panels.wallpaper.settings-clear-cache-toast"));
+        // Report what the owner actually did, after it did it.
+        ImageCacheService.clearRepresentations(function (result) {
+          if (result.ok)
+            ToastService.showNotice(I18n.tr("panels.wallpaper.settings-clear-cache-toast"));
+          else
+            ToastService.showError(I18n.tr("panels.wallpaper.settings-clear-cache-label"), result.reason);
+        });
       }
     }
   }

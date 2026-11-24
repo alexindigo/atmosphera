@@ -62,7 +62,73 @@ def version(value):
     return tuple(map(int, value.split(".")))
 
 
-def lint_source(path, shell, lexer, api, foreign):
+def directory_types(directory, lexer):
+    """A directory's declared exports, or filename exports without qmldir."""
+    qmldir = directory / "qmldir"
+    if not qmldir.is_file():
+        return set(lexer.atmosphera_names(str(directory), str(directory), "local"))
+    names = set()
+    for line in qmldir.read_text(errors="replace").splitlines():
+        parts = line.split()
+        if parts and parts[0] == "singleton":
+            parts = parts[1:]
+        if parts and parts[0][:1].isupper():
+            names.add(parts[0])
+    return names
+
+
+def object_types(tokens):
+    """Unqualified names instantiated as QML objects: `Name {` and `Name on prop {`."""
+    for index, token in enumerate(tokens):
+        if not token.text[:1].isupper() or (token.prev_char == "." and not token.spread):
+            continue
+        if token.prev_token is not None and token.prev_token.text == "enum":
+            continue  # enum declaration, not an object
+        if token.next_char == "{":
+            yield token
+        elif (index + 2 < len(tokens) and tokens[index + 1].text == "on"
+              and tokens[index + 1].prev_token is token and tokens[index + 2].next_char == "{"):
+            yield token
+
+
+def unresolved_types(path, source, masked, tokens, shell, lexer, foreign, accessible):
+    """Object types that none of the file's imports provide at this shell.
+
+    A plugin naming a shell type the paired shell no longer has does not load;
+    this reports it statically. Returns (findings, missing foreign modules); a
+    file importing a module absent from the lint environment is not judged.
+    """
+    known = set(accessible)
+    missing = []
+    for module in lexer.file_imports(source):
+        if module == "qs" or module.startswith("qs."):
+            continue
+        if not Path(foreign.qml_dir, *module.split(".")).is_dir():
+            missing.append(module)
+        known.update(foreign.exports(module))
+    for match in re.finditer(r'^\s*import\s+"([^"]+)"\s*(as\s+\w+)?\s*;?\s*$', masked_imports(source, lexer), re.M):
+        target, alias = match.groups()
+        directory = (path.parent / target)
+        if not alias and directory.is_dir():
+            known.update(directory_types(directory, lexer))
+    known.update(re.findall(r"\bcomponent\s+([A-Z][\w$]*)\s*:", masked))
+    if missing:
+        return [], missing
+    return [t for t in object_types(tokens) if t.text not in known], []
+
+
+def masked_imports(source, lexer):
+    """Source with comments blanked and strings kept (import declarations)."""
+    text = list(source)
+    for kind, start, end in lexer.lex(source)[1]:
+        if kind == "comment":
+            for i in range(start, end):
+                if text[i] != "\n":
+                    text[i] = " "
+    return "".join(text)
+
+
+def lint_source(path, shell, lexer, api, foreign, unchecked=None):
     source = path.read_text()
     masked = code_only(source, lexer)
     tokens, spans = lexer.lex(source)
@@ -92,7 +158,10 @@ def lint_source(path, shell, lexer, api, foreign):
     for module, alias, directory in imports:
         if not alias:
             accessible.update(lexer.atmosphera_names(str(shell), str(directory), module))
+    # The document's own directory also supplies private sibling types; an
+    # explicit directory import exposes only qmldir's public names when present.
     accessible.update(lexer.atmosphera_names(str(shell), str(path.parent), "local"))
+    accessible.update({name: ("type", "local") for name in directory_types(path.parent, lexer)})
     shadows = {}
     for module in lexer.file_imports(source):
         if not module.startswith("qs.") and module != "qs":
@@ -122,10 +191,18 @@ def lint_source(path, shell, lexer, api, foreign):
                 directory = aliases[name]
                 if not (directory / (retired + ".qml")).exists():
                     error(token.start, f"retired widget {name}.{retired}; use {name}.{RETIRED[retired]}")
+    if path.suffix == ".qml":
+        findings, missing = unresolved_types(path, source, masked, tokens, shell, lexer, foreign, accessible)
+        for token in findings:
+            if token.text in RETIRED and RETIRED[token.text] in accessible:
+                continue  # reported above as a retired widget
+            error(token.start, f"unknown type {token.text}: no import provides it at this shell")
+        if missing and unchecked is not None:
+            unchecked.append((path, missing))
     return errors
 
 
-def lint(root, shell=SHELL_ROOT, changes=None, qml_dir="/usr/lib/qt6/qml", paths=None, catalog=None):
+def lint(root, shell=SHELL_ROOT, changes=None, qml_dir="/usr/lib/qt6/qml", paths=None, catalog=None, unchecked=None):
     lexer = load_lexer(shell)
     foreign = lexer.ForeignModules(qml_dir)
     api = {name: root_members(shell / f"Commons/{name}.qml", lexer)
@@ -169,7 +246,7 @@ def lint(root, shell=SHELL_ROOT, changes=None, qml_dir="/usr/lib/qt6/qml", paths
                 errors.append(f"{file}: symlink source is not supported by the lint snapshot")
                 continue
             if paths is None or file.relative_to(root).as_posix() in paths:
-                errors.extend(lint_source(file, shell, lexer, api, foreign))
+                errors.extend(lint_source(file, shell, lexer, api, foreign, unchecked))
             uses_palette |= any(t.text == "AtmoColor" and (t.prev_char != "." or t.spread)
                                 for t in lexer.lex(file.read_text())[0])
         minimum = version(manifest.get("minAtmospheraVersion"))
@@ -253,10 +330,14 @@ def main():
     try:
         changes = (changes_from_snapshot(args.root, args.base_root) if args.base_root is not None else
                    changes_from_git(args.root, args.base_ref) if args.base_ref is not None else None)
-        errors = lint(args.root.resolve(), changes=changes, qml_dir=args.qml_dir, catalog=args.catalog)
+        unchecked = []
+        errors = lint(args.root.resolve(), changes=changes, qml_dir=args.qml_dir, catalog=args.catalog,
+                      unchecked=unchecked)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(f"plugin lint: configuration/input error: {exc}")
         return 2
+    for path, modules in unchecked:
+        print(f"{path}: types not checked, module not installed here: {', '.join(modules)}")
     for error in errors:
         print(error)
     print(f"plugin compatibility: {len(errors)} problem(s)")

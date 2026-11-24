@@ -256,8 +256,11 @@ SmartPanel {
           Item {
             id: albumArtItem
             readonly property real compactArtSize: Math.round(110 * Style.uiScaleRatio)
-            readonly property bool artSizeKnown: artSizeProbe.status === Image.Ready && artSizeProbe.sourceSize.width > 0 && artSizeProbe.sourceSize.height > 0
-            readonly property real artAspectRatio: artSizeKnown ? artSizeProbe.sourceSize.width / artSizeProbe.sourceSize.height : 1
+            // Aspect of the art the shared owner actually presented. Kept while
+            // a resize re-requests the same art, reset when the track changes.
+            property real artAspectRatio: 1
+            readonly property string artUrl: MediaService.trackArtUrl
+            onArtUrlChanged: artAspectRatio = 1
             // Non-compact: height from width÷aspect so grid implicit height does not depend on panel height (no layout loop).
             readonly property real artBoxW: root.compactMode ? compactArtSize : Math.max(parent.width, 1)
             readonly property real artBoxH: root.compactMode ? compactArtSize : (artBoxW / Math.max(artAspectRatio, 0.001))
@@ -275,15 +278,13 @@ SmartPanel {
             Layout.alignment: Qt.AlignHCenter
             visible: root.showAlbumArt
 
-            Image {
-              id: artSizeProbe
-              visible: false
-              asynchronous: true
-              source: MediaService.trackArtUrl
-            }
-
             NImageRounded {
               anchors.fill: parent
+              onStatusChanged: {
+                var result = imageResult;
+                if (status === Image.Ready && result.decodedWidth > 0 && result.decodedHeight > 0)
+                  albumArtItem.artAspectRatio = result.decodedWidth / result.decodedHeight;
+              }
               radius: root.compactMode ? Style.radiusM : Style.radiusL
               imagePath: MediaService.trackArtUrl
               imageFillMode: Image.PreserveAspectCrop
