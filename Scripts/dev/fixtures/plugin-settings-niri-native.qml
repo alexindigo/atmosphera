@@ -172,7 +172,7 @@ ShellRoot {
       control.value = input.editValue;
       control.moved();
     } else
-      control.valueModified(input.editValue);
+      control.submitValue(input.editValue);
     check(popup._pageApi.field(field).value === input.editValue, "actual field intent");
     for (const key of Object.keys(api.manifest.metadata.settingsSchema.fields))
       if (key !== field)

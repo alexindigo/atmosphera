@@ -350,7 +350,7 @@ ShellRoot {
           var groupInput = control("settings.group.label");
           groupInput.text = "synthetic-team";
           groupInput.editCommitted();
-          control("settings.refreshInterval.label").valueModified(90);
+          control("settings.refreshInterval.label").submitValue(90);
         }
         apply("selected-applied");
       } else {

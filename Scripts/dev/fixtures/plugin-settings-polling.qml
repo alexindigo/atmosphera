@@ -208,11 +208,12 @@ ShellRoot {
   function edit() {
     var control = find(popup.settingsPage, child => child.objectName === "settings-range-editRefreshInterval");
     check(control, "actual polling control");
-    control.value = editValue;
     if (wireless)
-      control.valueModified(editValue);
-    else
+      control.submitValue(editValue);
+    else {
+      control.value = editValue;
       control.moved();
+    }
     check(popup._pageApi.field("refreshInterval").value === editValue, "real control stages interval intent");
     for (var key of Object.keys(api.manifest.metadata.settingsSchema.fields))
       if (key !== "refreshInterval")

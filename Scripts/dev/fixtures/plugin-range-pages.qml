@@ -75,10 +75,12 @@ ShellRoot {
   }
   function move(page, descriptor, value) {
     var input = control(page, descriptor.field);
+    if (descriptor.type === "NSpinBox") {
+      input.submitValue(value);
+      return;
+    }
     input.value = value;
-    if (descriptor.type === "NSpinBox")
-      input.valueModified(input.value);
-    else if (descriptor.type === "NValueSlider")
+    if (descriptor.type === "NValueSlider")
       input.moved(input.value);
     else
       input.moved();

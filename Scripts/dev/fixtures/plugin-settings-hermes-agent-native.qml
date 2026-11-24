@@ -217,7 +217,7 @@ ShellRoot {
       popup.settingsPage.showAdvanced = true;
       const control = find(popup.settingsPage, item => item.objectName === "settings-range-valueBridgePort");
       check(control, "actual pending connection input");
-      control.valueModified(Number(Quickshell.env("PHA_HERMES_PROBE_PORT")));
+      control.submitValue(Number(Quickshell.env("PHA_HERMES_PROBE_PORT")));
       apply("pending-applied");
     } else if (phase === "pending-applied" && accepted())
       probe("edited", "pending-policy");
@@ -236,7 +236,7 @@ ShellRoot {
       popup.settingsPage.showAdvanced = true;
       const control = find(popup.settingsPage, item => item.objectName === "settings-range-valueBridgePort");
       check(control, "actual draft port control");
-      control.valueModified(Number(Quickshell.env("PHA_HERMES_PROBE_PORT")));
+      control.submitValue(Number(Quickshell.env("PHA_HERMES_PROBE_PORT")));
       popup.settingsPage.testConnection();
       phase = "probe-held";
     } else if (phase === "probe-held") {
@@ -245,7 +245,7 @@ ShellRoot {
       if (!requestLog.text().includes('"peer": "selected"'))
         return;
       const control = find(popup.settingsPage, item => item.objectName === "settings-range-valueBridgePort");
-      control.valueModified(api.pluginSettings.bridgePort);
+      control.submitValue(api.pluginSettings.bridgePort);
       phase = "probe-replaced";
     } else if (phase === "probe-replaced" && Date.now() - since > 100) {
       release.setText("release");
@@ -254,7 +254,7 @@ ShellRoot {
       check(popup.settingsPage.testResult === "", "obsolete draft probe result fenced");
       check(main.connection === connectionBefore && !main.pendingRestart, "draft probe never selects live owner");
       const control = find(popup.settingsPage, item => item.objectName === "settings-range-valueBridgePort");
-      control.valueModified(Number(Quickshell.env("PHA_HERMES_PROBE_PORT")));
+      control.submitValue(Number(Quickshell.env("PHA_HERMES_PROBE_PORT")));
       popup.settingsPage.testConnection();
       phase = "probe-success";
     } else if (phase === "probe-success" && popup.settingsPage.testResult === popup.settingsPage.pluginApi.tr("settings.testSuccess")) {

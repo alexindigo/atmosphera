@@ -114,7 +114,7 @@ ShellRoot {
     return find(popup.settingsPage, item => item.objectName === "music-download-action-feedback" && item.visible && item.text.length > 0 && item.text === popup.settingsPage.downloadActionFeedback) !== null && main.downloadSettingsResult?.errorCode === code;
   }
   function clickLimit(value) {
-    input.valueModified(value);
+    input.submitValue(value);
     check(popup.settingsPage.editDownloadCacheMaxMb === value, "actual limit input signal");
     limitButton.clicked();
   }
@@ -183,7 +183,7 @@ ShellRoot {
       phase = "page";
     } else if (phase === "page" && popup.opened && popup.settingsPage) {
       check(!popup.dirty && !popup._editor.dirty, "opening creates no preference intent");
-      input = find(popup.settingsPage, item => item.to === 500000 && typeof item.valueModified === "function");
+      input = find(popup.settingsPage, item => item.to === 500000 && typeof item.submitValue === "function");
       limitButton = find(popup.settingsPage, item => item.text === api.tr("settings.cache.apply") && typeof item.clicked === "function");
       folderButton = find(popup.settingsPage, item => item.text === api.tr("settings.downloads.applyFolder") && typeof item.clicked === "function");
       check(input && limitButton && folderButton, "actual action controls");
@@ -196,7 +196,7 @@ ShellRoot {
         return;
       }
       savedPage = popup.settingsPage;
-      input.valueModified(1);
+      input.submitValue(1);
       check(main.downloadCacheMaxMb === 64 && !main.providerBusy && !popup.dirty, "buffered helper limit is not a preference Apply/action");
       lockHolder.command = ["python3", "-B", Quickshell.env("PHA_MUSIC_LOCK")];
       lockHolder.running = true;

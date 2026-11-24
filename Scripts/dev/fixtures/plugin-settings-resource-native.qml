@@ -175,7 +175,7 @@ ShellRoot {
     check(control, "actual configuration control");
     const value = JSON.parse(input.text()).editValue;
     if (field === "port")
-      control.valueModified(value);
+      control.submitValue(value);
     else {
       control.text = value;
       control.editCommitted();

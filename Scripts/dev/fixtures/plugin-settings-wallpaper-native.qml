@@ -192,10 +192,10 @@ ShellRoot {
     phase = next;
   }
   function edit() {
-    const control = find(popup.settingsPage, item => item.label === api.tr(lwe ? "settings.defaultFps.label" : "settings.profile.label") && (lwe ? item.valueModified !== undefined : item.selected !== undefined));
+    const control = find(popup.settingsPage, item => item.label === api.tr(lwe ? "settings.defaultFps.label" : "settings.profile.label") && (lwe ? typeof item.submitValue === "function" : item.selected !== undefined));
     check(control, "actual preference control");
     if (lwe)
-      control.valueModified(29);
+      control.submitValue(29);
     else
       control.selected("fast");
     check(popup._pageApi.field(field).value === (lwe ? 29 : "fast"), "actual control intent");

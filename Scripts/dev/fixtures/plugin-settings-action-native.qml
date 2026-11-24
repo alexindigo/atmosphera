@@ -198,9 +198,9 @@ ShellRoot {
       return;
     }
     if (nv) {
-      var spin = find(popup.settingsPage, item => item.to === 1023 && item.valueModified !== undefined);
+      var spin = find(popup.settingsPage, item => item.to === 1023 && typeof item.submitValue === "function");
       check(spin, "actual vibrance spinbox");
-      spin.valueModified(640);
+      spin.submitValue(640);
       check(popup._pageApi.field(field).value === 640, "actual vibrance intent");
       return;
     }

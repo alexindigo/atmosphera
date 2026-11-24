@@ -155,7 +155,7 @@ ShellRoot {
       return "textButton";
     if (typeof item.editCommitted === "function" && item.text !== undefined)
       return "text";
-    if (typeof item.valueModified === "function" && item.value !== undefined)
+    if (typeof item.submitValue === "function" && item.value !== undefined)
       return "spin";
     if (typeof item.moved === "function" && item.value !== undefined && item.from !== undefined)
       return "slider";
@@ -235,11 +235,12 @@ ShellRoot {
     }
     var step = control.stepSize > 0 ? control.stepSize : 1;
     var next = control.value + step <= control.to ? control.value + step : control.value - step;
-    control.value = next;
     if (type === "spin")
-      control.valueModified(next);
-    else
+      control.submitValue(next);
+    else {
+      control.value = next;
       control.moved(next);
+    }
     return type;
   }
   function begin() {

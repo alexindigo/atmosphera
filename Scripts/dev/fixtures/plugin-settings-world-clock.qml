@@ -192,10 +192,10 @@ ShellRoot {
     phase = next;
   }
   function edit() {
-    var spin = find(popup.settingsPage, child => child.suffix === " s" && child.valueModified !== undefined);
+    var spin = find(popup.settingsPage, child => child.suffix === " s" && typeof child.submitValue === "function");
     var format = find(popup.settingsPage, child => child.selected !== undefined && child.currentKey === popup.settingsPage.timeFormat);
     check(spin && format, "actual seconds SpinBox and time format combo");
-    spin.valueModified(1);
+    spin.submitValue(1);
     format.selected("HH:mm:ss");
     check(popup._pageApi.field("rotationInterval").value === 1000 && popup._pageApi.field("timeFormat").value === "HH:mm:ss", "explicit finite intents and seconds conversion");
   }

@@ -35,7 +35,7 @@ Column {
       from: -10
       to: 10
       value: root.amountField.value
-      onValueModified: value => root.amountField.set(value)
+      requestValue: value => root.amountField.set(value)
     }
   }
   NPluginSettingsField {

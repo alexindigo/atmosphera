@@ -168,9 +168,9 @@ ShellRoot {
     phase = after;
   }
   function edit() {
-    const control = find(popup.settingsPage, item => item.from === 20 && item.to === 500 && typeof item.valueModified === "function");
+    const control = find(popup.settingsPage, item => item.from === 20 && item.to === 500 && typeof item.submitValue === "function");
     check(control, "actual history SpinBox");
-    control.valueModified(JSON.parse(input.text()).editValue);
+    control.submitValue(JSON.parse(input.text()).editValue);
     check(popup._pageApi.field(field).value === JSON.parse(input.text()).editValue, "actual field intent");
     for (const key of Object.keys(api.manifest.metadata.settingsSchema.fields))
       if (key !== field)

@@ -178,8 +178,7 @@ ShellRoot {
     input.editCommitted();
     var width = find(popup.settingsPage, item => item.objectName === "settings-range-editPanelWidth");
     check(width, "actual width control");
-    width.value = 700;
-    width.valueModified(700);
+    width.submitValue(700);
   }
   function apply(next) {
     receipt = null;

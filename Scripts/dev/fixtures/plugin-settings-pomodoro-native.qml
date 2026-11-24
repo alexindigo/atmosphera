@@ -177,7 +177,7 @@ ShellRoot {
       var names = ["editWorkDuration", "editShortBreakDuration", "editLongBreakDuration", "editSessionsBeforeLongBreak"];
       var input = find(popup.settingsPage, item => item.objectName === "settings-range-" + names[i]);
       check(input, "actual duration/session control " + keys[i]);
-      input.valueModified(edits[i]);
+      input.submitValue(edits[i]);
     }
       var labels = [api.tr("settings.auto-start-breaks"), api.tr("settings.auto-start-work"), api.tr("settings.compact-mode"), "Play Alarm Sound"];
       for (var j = 0; j < labels.length; ++j) {

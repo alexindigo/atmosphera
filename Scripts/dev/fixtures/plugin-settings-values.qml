@@ -142,7 +142,7 @@ function open(next) {
 function edit() {
   var page = popup.settingsPage;
   page.flagControl.toggled(false);
-  page.amountControl.valueModified(0);
+  page.amountControl.submitValue(0);
   page.labelControl.text = "";
   page.labelControl.editCommitted();
   page.optionalControl.text = "";

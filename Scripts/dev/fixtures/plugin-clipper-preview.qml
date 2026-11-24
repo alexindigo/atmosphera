@@ -80,12 +80,11 @@ ShellRoot {
       check(control !== null, "actual control: " + row[1]);
       if (typeof control.toggled === "function")
         control.toggled(row[3]);
+      else if (typeof control.submitValue === "function")
+        control.submitValue(row[3]);
       else {
         control.value = row[3];
-        if (typeof control.valueModified === "function")
-          control.valueModified(row[3]);
-        else
-          control.moved(row[3]);
+        control.moved(row[3]);
       }
       check(page[row[0]] === row[3], "control updates buffer: " + row[1]);
     }
