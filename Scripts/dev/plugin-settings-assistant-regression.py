@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Real scoped Assistant controls, native documents and common-content consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixture_evidence import require
 import argparse
 from copy import deepcopy
 import fcntl
@@ -38,7 +39,8 @@ def run(args, profile, scope):
             'child': ('AiChatView.qml', 'text: model', 'text: "wrong rendered model"', 'actual model child Text'),
             'response': ('MessageBubble.qml', 'text: message.content', 'text: "wrong rendered response"', 'actual assistant response child Text'),
         }[args.control]
-        path = dest/name; text = path.read_text(); assert text.count(old) == 1
+        path = dest/name; text = path.read_text()
+        require(text.count(old) == 1, name+' Assistant mutation anchor')
         path.write_text(text.replace(old, new))
     endpoint = case/'bin/curl'
     endpoint.write_text('''#!/usr/bin/env python3
@@ -106,7 +108,7 @@ else:print(json.dumps([[['google-reply']]]))
     if scope == 'instance':
         rows = [json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
         payloads = [json.loads(a[a.index('-d')+1]) for a in rows if '-d' in a and 'messages' in json.loads(a[a.index('-d')+1])]
-        assert any(p['model'] == 'selected-model' and p['temperature'] == 0 for p in payloads), 'selected actual literal request'
+        require(any(p['model'] == 'selected-model' and p['temperature'] == 0 for p in payloads), 'selected actual literal request')
     result = dict(status='PASS', scope=scope, independentBoundaries=sorted(expected), coldReaders=['edited', 'reset', 'following'], physicalProof=False, completePlanAcceptance=False)
     stage_receipt(out/'result.json', result); runner.remove_completed_installs(case, out); return result
 

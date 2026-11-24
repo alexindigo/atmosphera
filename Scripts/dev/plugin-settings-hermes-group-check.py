@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 import re
+from fixture_evidence import require
 
 spec=importlib.util.spec_from_file_location('hermes_syntax',Path(__file__).with_name('plugin-settings-polling-check.py'))
 syntax=importlib.util.module_from_spec(spec);spec.loader.exec_module(syntax)
@@ -100,19 +101,19 @@ ANCHORS={
 
 def check(sources,manifest,words):
     fields=manifest['metadata']['settingsSchema']['fields']
-    assert set(fields)==set(FIELDS)|{'configured'}
-    assert fields['configured']['editorUsage']=='operational'
-    assert all(fields[key]['editorUsage']=='configuration' for key in FIELDS)
-    assert manifest['entryPoints']==dict(main='Main.qml',barWidget='BarWidget.qml',panel='Panel.qml',launcherProvider='LauncherProvider.qml',settings='Settings.qml')
+    require(set(fields)==set(FIELDS)|{'configured'}, 'Hermes settings fields')
+    require(fields['configured']['editorUsage']=='operational', 'Hermes configured flag is operational')
+    require(all(fields[key]['editorUsage']=='configuration' for key in FIELDS), 'Hermes configuration usage')
+    require(manifest['entryPoints']==dict(main='Main.qml',barWidget='BarWidget.qml',panel='Panel.qml',launcherProvider='LauncherProvider.qml',settings='Settings.qml'), 'Hermes entry points')
     code={name:syntax.compact(text)[0] for name,text in sources.items()}
     for key,(name,anchor) in FIELDS.items():
         syntax.require(code[name],anchor,key+': selected field')
         syntax.require(code['Settings.qml'],'pluginApi?.field("'+key+'")',key+': page field')
     for name,anchors in ANCHORS.items():
         for anchor in anchors:syntax.require(code[name],anchor,name+': '+anchor)
-    assert sum(len(re.findall(r'\bProcess\s*\{',value)) for value in code.values())==1,'single managed bridge Process'
-    assert not re.search(r'\bsetPinnedPanelRequested\s*\(',code['Settings.qml']),'page cannot borrow shared pin API'
-    assert all(words['settings'][key] for key in ('sharedEffect','pendingRestart'))
+    require(sum(len(re.findall(r'\bProcess\s*\{',value)) for value in code.values())==1, 'single managed bridge Process')
+    require(not re.search(r'\bsetPinnedPanelRequested\s*\(',code['Settings.qml']), 'page cannot borrow shared pin API')
+    require(all(words['settings'][key] for key in ('sharedEffect','pendingRestart')), 'Hermes shared effect and restart explanations')
     return dict(configuration=sorted(FIELDS),protected=['configured'],managedOwner='HermesConnection.qml',sharedChatOwner='Main.qml')
 
 
@@ -138,7 +139,7 @@ def main():
             candidate=deepcopy(sources)
             tokens=re.findall(r'"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27|[^\s]',old)
             candidate[name],count=re.subn(r'\s*'.join(re.escape(token) for token in tokens),lambda _:new,candidate[name],count=1)
-            assert count==1,label
+            require(count==1, label+' mutation anchor')
             try:check(candidate,manifest,words)
             except (ValueError,AssertionError):controls.append(label)
             else:raise AssertionError('Hermes control escaped '+label)

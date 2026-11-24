@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Finite real Assistant lifetimes with synthetic responses (no external calls)."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixture_evidence import require
 import argparse
 from contextlib import contextmanager
 from copy import deepcopy
@@ -117,26 +118,30 @@ if held:
         rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()] if (case/'requests.jsonl').exists() else []
         for row in rows:
             stat=Path('/proc')/str(row['pid'])/'stat'
-            assert not stat.exists() or stat.read_text().split(') ',1)[1].split()[19]!=row['start'],'control endpoint survived engine'
-        assert {name:json.loads((case/'config'/name).read_text()) for name in docs}==docs,'control native documents'
+            require(not stat.exists() or stat.read_text().split(') ',1)[1].split()[19]!=row['start'], 'control endpoint survived engine')
+        require({name:json.loads((case/'config'/name).read_text()) for name in docs}==docs, 'control native documents')
         stage_receipt(out/'result.json',dict(status='PASS',control=args.control,rejectedAt=wanted,requests=rows,completePlanAcceptance=False))
         runner.remove_completed_installs(case,out);return
     if wanted:raise RuntimeError('Assistant runtime control escaped: '+args.control)
-    assert 'ASSISTANT_LIFETIME: PASS '+mode in text and not any(s in text for s in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), text[-3000:]
+    require('ASSISTANT_LIFETIME: PASS '+mode in text and not any(s in text for s in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), 'Assistant lifetime verdict missing or invalid: '+text[-3000:])
     expected=deepcopy(docs)
     if mode == 'native-retired':expected['settings/bar.json']['widgets']['left']=expected['settings/bar.json']['widgets']['left'][1:]
-    assert {name:json.loads((case/'config'/name).read_text()) for name in docs}==expected, 'complete independent native documents'
+    require({name:json.loads((case/'config'/name).read_text()) for name in docs}==expected, 'complete independent native documents')
     rows=[json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()] if (case/'requests.jsonl').exists() else []
     for row in rows:
         p=Path('/proc')/str(row['pid'])/'stat'
-        assert not p.exists() or p.read_text().split(') ',1)[1].split()[19]!=row['start'], 'endpoint survived engine'
+        require(not p.exists() or p.read_text().split(') ',1)[1].split()[19]!=row['start'], 'endpoint survived engine')
     if mode in ('chat','edit'):
-        assert len(rows)==(3 if mode=='edit' else 1)
+        require(len(rows)==(3 if mode=='edit' else 1), 'Assistant request count')
         for row in rows:
-            a=row['argv'];payload=json.loads(a[a.index('-d')+1]);assert payload['model']=='selected-model' and payload['temperature']==0 and a[-1]=='http://inert.invalid/selected'
-    if mode=='gemini':assert 'selected-gemini' in rows[0]['argv'][-1] and 'synthetic-key' in rows[0]['argv'][-1]
-    if mode=='environment':assert 'selected-gemini' in rows[0]['argv'][-1] and 'synthetic-environment' in rows[0]['argv'][-1] and 'synthetic-key' not in rows[0]['argv'][-1]
-    if mode=='translation-environment':assert 'Authorization: DeepL-Auth-Key synthetic-environment:fx' in rows[0]['argv']
+            a=row['argv'];payload=json.loads(a[a.index('-d')+1])
+            require(payload['model']=='selected-model' and payload['temperature']==0 and a[-1]=='http://inert.invalid/selected', 'Assistant captured selected request policy')
+    if mode=='gemini':
+        require('selected-gemini' in rows[0]['argv'][-1] and 'synthetic-key' in rows[0]['argv'][-1], 'Assistant Gemini request policy')
+    if mode=='environment':
+        require('selected-gemini' in rows[0]['argv'][-1] and 'synthetic-environment' in rows[0]['argv'][-1] and 'synthetic-key' not in rows[0]['argv'][-1], 'Assistant Gemini environment policy')
+    if mode=='translation-environment':
+        require('Authorization: DeepL-Auth-Key synthetic-environment:fx' in rows[0]['argv'], 'Assistant translation environment policy')
     if mode == 'cache':
         saved = json.loads((case/'cache/plugins/assistant-panel/state.json').read_text())
         if ([(m['role'], m['content']) for m in saved['messages']] != [('user', 'last')]

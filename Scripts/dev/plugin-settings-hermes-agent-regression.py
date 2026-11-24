@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Hermes connection/session generations against isolated HTTP peers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixture_evidence import require
 import argparse
 import fcntl
 import hashlib
@@ -106,28 +107,28 @@ os.execv('/usr/bin/python3',['python3',*sys.argv[1:]])
 
 def prove_peers(args, profile, scenario, case, out, install, product, ports):
         text = runner.run_fixture(profile, install, case, out, args.source/'Scripts/dev/fixtures/plugin-settings-hermes.qml', extra_env=dict(PHA_HERMES_CASE=str(case), PHA_HERMES_SCENARIO=scenario, PHA_HERMES_PLUGIN=str(product), PHA_HERMES_PORTS=json.dumps(ports), HOME=str(case/'home'),PATH=str(case/'bin')+':'+os.environ['PATH']), extra_lint=tuple(sorted(product.rglob('*.qml'))), timeout=90)
-        assert 'HERMES_CONTRACT: PASS '+scenario in text
-        assert not any(word in text for word in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), text
+        require('HERMES_CONTRACT: PASS '+scenario in text, 'Hermes runtime verdict missing: '+scenario)
+        require(not any(word in text for word in ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected')), text)
         rows = [json.loads(line) for line in (case/'requests.jsonl').read_text().splitlines()]
         shutil.copy2(case/'requests.jsonl', out/'requests.jsonl')
         if scenario == 'model':
             model = [row for row in rows if row['path'] == '/model']
-            assert model and model[-1]['body'] == dict(provider='selected-provider', model='selected-model', persist=False)
-            assert model[-1]['peer'] == 'shared' and model[-1]['token'] == 'shared-token'
+            require(model and model[-1]['body'] == dict(provider='selected-provider', model='selected-model', persist=False), 'Hermes selected model request body')
+            require(model[-1]['peer'] == 'shared' and model[-1]['token'] == 'shared-token', 'Hermes shared model peer and token')
         if scenario=='model-retire':
             model=[row for row in rows if row['path']=='/model']
-            assert [row['body']['model'] for row in model]==['older-model','latest-model']
+            require([row['body']['model'] for row in model]==['older-model','latest-model'], 'Hermes retirement request order')
         if scenario in ('pending', 'held-source', 'local'):
             creates = [row for row in rows if row['path'] == '/session/create']
-            assert len(creates) == 1 and creates[0]['peer'] == 'selected' and creates[0]['token'] == 'selected-token'
+            require(len(creates) == 1 and creates[0]['peer'] == 'selected' and creates[0]['token'] == 'selected-token', 'Hermes selected session request')
         if scenario == 'held-retire':
-            assert len([row for row in rows if row['path'] == '/sessions']) == 1
+            require(len([row for row in rows if row['path'] == '/sessions']) == 1, 'Hermes retired sessions request count')
         if scenario == 'boundary-retire':
-            assert [(row['peer'], row['path']) for row in rows if row['path'] in ('/session/create', '/prompt')] == [('shared', '/session/create'), ('shared', '/prompt')]
+            require([(row['peer'], row['path']) for row in rows if row['path'] in ('/session/create', '/prompt')] == [('shared', '/session/create'), ('shared', '/prompt')], 'Hermes boundary retirement request destinations')
         if scenario=='failed-start':
             starts=[json.loads(line) for line in (case/'starts.jsonl').read_text().splitlines()]
-            assert len(starts)==2 and starts[0]==starts[1]
-            assert starts[0][-6:]==['--state-file',str(case/'local-state/state.json'),'--hermes-home',str(case/'hermes-home'),'--hermes-command','inert-not-invoked']
+            require(len(starts)==2 and starts[0]==starts[1], 'Hermes identical restart attempts')
+            require(starts[0][-6:]==['--state-file',str(case/'local-state/state.json'),'--hermes-home',str(case/'hermes-home'),'--hermes-command','inert-not-invoked'], 'Hermes restart command')
             shutil.copy2(case/'starts.jsonl',out/'starts.jsonl')
         stage_receipt(out/'result.json', dict(status='PASS', scenario=scenario, requestRows=len(rows), physicalProof=False))
 
@@ -139,7 +140,7 @@ def assert_no_survivors(case):
         try:command=(path/'cmdline').read_bytes()
         except (FileNotFoundError,ProcessLookupError,PermissionError):continue
         if b'hermes_bridge.py' in command and os.fsencode(str(case)) in command:survivors.append(path.name)
-    assert not survivors,('owned actual helper survived',survivors)
+    require(not survivors, ('owned actual helper survived',survivors))
 
 
 @receipt_run

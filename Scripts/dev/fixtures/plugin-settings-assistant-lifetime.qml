@@ -113,6 +113,8 @@ ShellRoot {
                                                                                     }, function () {
                                                                                       return root.cfg;
                                                                                     }, function () {
+                                                                                      return root.cfg;
+                                                                                    }, function () {
                                                                                       return root.alive;
                                                                                     });
       var client = main.settingsConsumerFor(context);

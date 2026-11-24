@@ -4,6 +4,7 @@ import argparse
 import importlib.util
 import json
 from pathlib import Path
+from fixture_evidence import require
 spec=importlib.util.spec_from_file_location('assistant_syntax',Path(__file__).with_name('plugin-settings-polling-check.py'))
 syntax=importlib.util.module_from_spec(spec);spec.loader.exec_module(syntax)
 CONFIG=['ai','translator','maxHistoryLength','attachmentStyle','panelDetached','panelHeightRatio','panelPosition','panelWidth','scale']
@@ -56,16 +57,18 @@ ANCHORS={
 
 def check(sources,manifest,dictionaries):
     code={name:syntax.compact(text)[0] for name,text in sources.items()}
-    fields=manifest['metadata']['settingsSchema']['fields'];assert set(fields)==set(CONFIG)
+    fields=manifest['metadata']['settingsSchema']['fields']
+    require(set(fields)==set(CONFIG), 'Assistant configuration fields')
     for key in CONFIG:
-        assert fields[key]['editorUsage']=='configuration'
+        require(fields[key]['editorUsage']=='configuration', key+' configuration usage')
         syntax.require(code['Settings.qml'],'pluginApi?.field("'+key+'")',key+' intent')
     for name,anchors in ANCHORS.items():
         for anchor in anchors:syntax.require(code[name],anchor,name+': '+anchor)
-    assert 'messages' not in code['AssistantSettingsClient.qml'], 'one common conversation, no client content store'
-    assert code['Main.qml'].count(syntax.squash('requestFactory.createObject(root, {policy: policy, curlArgs: command.args'))==2,'one owned worker per chat/translation admission'
-    assert 'mainInstance' not in code['Settings.qml'],'Settings has no request capability'
-    for name,value in dictionaries.items():assert value['settings']['sharedContent']==dictionaries['en.json']['settings']['sharedContent'],name+' explicit fallback'
+    require('messages' not in code['AssistantSettingsClient.qml'], 'one common conversation, no client content store')
+    require(code['Main.qml'].count(syntax.squash('requestFactory.createObject(root, {policy: policy, curlArgs: command.args'))==2, 'one owned worker per chat/translation admission')
+    require('mainInstance' not in code['Settings.qml'], 'Settings has no request capability')
+    for name,value in dictionaries.items():
+        require(value['settings']['sharedContent']==dictionaries['en.json']['settings']['sharedContent'], name+' explicit fallback')
     return dict(configuration=CONFIG,legacyAiMembers=['model','maxHistoryLength'],contentOwner='one Main/cache',runtimeAcceptance=False)
 
 
@@ -94,7 +97,7 @@ def main():
       ('Panel.qml','mainInstance.saveState(pluginApi?.settingsContext)','mainInstance.saveState()','content-origin')]
     if a.selftest:
         for name,old,new,label in mutations:
-            assert old in sources[name],label
+            require(old in sources[name], label+' mutation anchor')
             changed=dict(sources);changed[name]=sources[name].replace(old,new)
             try:check(changed,m,d)
             except (AssertionError,ValueError) as error:controls.append(dict(control=label,rejectedAt=str(error)))

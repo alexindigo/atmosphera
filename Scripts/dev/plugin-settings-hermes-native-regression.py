@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Hermes pages/native documents/cold readers and model HTTP consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixture_evidence import require
 import argparse
 from copy import deepcopy
 import fcntl
@@ -10,6 +11,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+from fixture_resources import FixtureResources
 from guest_profile import activate_profile, profile_argument
 
 spec = importlib.util.spec_from_file_location('hermes_life', Path(__file__).with_name('plugin-settings-hermes-agent-regression.py'))
@@ -19,6 +21,13 @@ runner = life.runner
 
 @receipt_run
 def run(args, profile, scope):
+    with FixtureResources() as resources:
+        completed = run_with_peers(args, profile, scope, resources)
+    if completed is not None:
+        runner.remove_completed_installs(*completed)
+
+
+def run_with_peers(args, profile, scope, resources):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
     for name in ('config/settings/plugins', 'cache', 'state', 'home'):
@@ -29,7 +38,8 @@ def run(args, profile, scope):
     shutil.copytree(product, case/'config/plugins/hermes-agent')
     if args.omit_origin:
         path=case/'config/plugins/hermes-agent/Settings.qml';text=path.read_text()
-        old='applySettings(root.pluginApi.runtimeContext, trim)';assert text.count(old)==1
+        old='applySettings(root.pluginApi.runtimeContext, trim)'
+        require(text.count(old)==1, 'Hermes native origin mutation anchor')
         path.write_text(text.replace(old,'applySettings(undefined, trim)'))
     if args.original_page:
         shutil.copy2(args.original_page,case/'config/plugins/hermes-agent/Settings.qml')
@@ -39,8 +49,8 @@ def run(args, profile, scope):
     # file, which is not a publication by a retired Hermes detection request.
     runner.write_json(case/'config/colors.json',dict(mPrimary='#0a84ff',mOnPrimary='#ffffff',mSecondary='#bf5af2',mOnSecondary='#ffffff',mTertiary='#30d158',mOnTertiary='#ffffff',mStandout='#f88349',mOnStandout='#571f00',mError='#ff453a',mOnError='#ffffff',mSurface='#1e1e1e',mOnSurface='#f5f5f7',mSurfaceVariant='#2c2c2e',mOnSurfaceVariant='#98989d',mOutline='#3a3a3c',mShadow='#000000',mHover='#0a84ff',mOnHover='#ffffff'))
     (case/'requests.jsonl').write_text('')
-    peer, thread = life.peer(case, 'shared'); port = peer.server_address[1]
-    probe_peer, probe_thread = life.peer(case, 'selected') if args.scenario in ('probe','pending') else (None,None)
+    peer = life.peer(resources, case, 'shared'); port = peer.server_address[1]
+    probe_peer = life.peer(resources, case, 'selected') if args.scenario in ('probe','pending') else None
     if args.scenario=='probe':(case/'hold').write_text('hold');(case/'hold-health').write_text('hold')
     manifest = json.loads((product/'manifest.json').read_text())
     manifest['metadata']['defaultSettings'].update(clientOnlyMode=True, bridgePort=port, defaultModel='default-model')
@@ -84,46 +94,49 @@ def run(args, profile, scope):
             except RuntimeError:
                 if not (args.omit_origin or args.original_page):raise
                 text=(part/'runtime.log').read_text()
-                assert (part/'runtime.exit').read_text().strip()=='2'
+                require((part/'runtime.exit').read_text().strip()=='2', 'Hermes control exit status')
                 wanted='instance/edit/consumer: finite phase' if args.omit_origin else 'runtime detected model cannot mask selected field'
-                assert 'HERMES_NATIVE_ASSERT:' in text and wanted in text,text
-                assert not any(term in text for term in ('TypeError:','ReferenceError:','SyntaxError:')),text
+                require('HERMES_NATIVE_ASSERT:' in text and wanted in text, text)
+                require(not any(term in text for term in ('TypeError:','ReferenceError:','SyntaxError:')), text)
                 boundaries=['initial','discarded','edited'] if args.omit_origin else ['initial']
-                for name in boundaries:assert json.loads((out/'persisted'/(name+'.json')).read_text())==dict(status='PASS',values=expected[name])
+                for name in boundaries:
+                    require(json.loads((out/'persisted'/(name+'.json')).read_text())==dict(status='PASS',values=expected[name]), 'Hermes control persisted '+name)
                 shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
                 stage_receipt(out/'result.json',dict(status='PASS',kind='omitted-origin-control' if args.omit_origin else 'original-page-red',rejectedAt=wanted,failedEngineRetained=True,documents=boundaries))
                 return
-            assert not (args.omit_origin or args.original_page),'Hermes negative control escaped'
-            assert 'HERMES_NATIVE: PASS '+scope+' '+mode in text
-            assert not any(term in text for term in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')),text
+            require(not (args.omit_origin or args.original_page), 'Hermes negative control escaped')
+            require('HERMES_NATIVE: PASS '+scope+' '+mode in text, 'Hermes native verdict missing: '+scope+' '+mode)
+            require(not any(term in text for term in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')), text)
             after=hashes();runner.write_json(part/'configuration-hashes.json',dict(before=before,after=after))
             if args.scenario!='native':
-                if args.scenario in ('detect-retire','probe'):assert before==after,'retired detection or draft probe published'
+                if args.scenario in ('detect-retire','probe'):
+                    require(before==after, 'retired detection or draft probe published')
                 continue
-            if mode=='cold':assert before==after,'cold reader published'
+            if mode=='cold':require(before==after, 'cold reader published')
             name=boundary or {'edit':'edited','reset':'reset','follow':'following'}[mode]
             values=dict(manifest['metadata']['defaultSettings'],**expected[name]['shared'])
             if scope=='instance':values.update(expected[name]['bar']['widgets']['left'][0]['instanceSettings'])
             observed=json.loads(text.split('HERMES_NATIVE_CONSUMER ')[1].splitlines()[0])
-            assert observed['model']==values['defaultModel'] and observed['rendered'] and observed['selectedClientIdentity'],observed
+            require(observed['model']==values['defaultModel'] and observed['rendered'] and observed['selectedClientIdentity'], observed)
             runner.write_json(part/'consumer.json',dict(status='PASS',expected=values['defaultModel'],observed=observed))
-        for boundary,values in expected.items():assert json.loads((out/'persisted'/(boundary+'.json')).read_text())==dict(status='PASS',values=values)
+        for boundary,values in expected.items():
+            require(json.loads((out/'persisted'/(boundary+'.json')).read_text())==dict(status='PASS',values=values), 'Hermes persisted '+boundary)
         shutil.copy2(case/'requests.jsonl',out/'requests.jsonl')
         rows=[json.loads(line) for line in (out/'requests.jsonl').read_text().splitlines()]
-        assert all(row['token']=='native-token' for row in rows if row['path']=='/model')
-        if args.scenario=='native':assert {'selected-model','following-model'} <= {row['body']['model'] for row in rows if row['path']=='/model'}
-        elif args.scenario.startswith('detect'):assert len([row for row in rows if row['path']=='/detect'])==1
-        elif args.scenario=='probe':assert len([row for row in rows if row['peer']=='selected' and row['path']=='/health'])==2
+        require(all(row['token']=='native-token' for row in rows if row['path']=='/model'), 'Hermes native model request token')
+        if args.scenario=='native':
+            require({'selected-model','following-model'} <= {row['body']['model'] for row in rows if row['path']=='/model'}, 'Hermes selected and following model requests')
+        elif args.scenario.startswith('detect'):
+            require(len([row for row in rows if row['path']=='/detect'])==1, 'Hermes detection request count')
+        elif args.scenario=='probe':
+            require(len([row for row in rows if row['peer']=='selected' and row['path']=='/health'])==2, 'Hermes selected health probes')
         else:
             creates=[row for row in rows if row['path']=='/session/create']
-            assert len(creates)==1 and creates[0]['peer']=='selected' and creates[0]['token']=='native-token'
+            require(len(creates)==1 and creates[0]['peer']=='selected' and creates[0]['token']=='native-token', 'Hermes native selected session')
         stage_receipt(out/'result.json',dict(status='PASS',scope=scope,scenario=args.scenario,engines=len(modes),documents=list(expected),coldReaders=['edited','reset','following'] if args.scenario=='native' else [],httpRows=len(rows)))
     finally:
         (case/'release').write_text('release')
-        peer.done.set();peer.shutdown();peer.server_close();thread.join(timeout=5);assert not thread.is_alive()
-        if probe_peer:
-            probe_peer.done.set();probe_peer.shutdown();probe_peer.server_close();probe_thread.join(timeout=5);assert not probe_thread.is_alive()
-    runner.remove_completed_installs(case,out)
+    return case, out
 
 
 @receipt_run
