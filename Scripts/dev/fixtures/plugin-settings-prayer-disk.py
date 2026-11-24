@@ -7,6 +7,8 @@ from pathlib import Path
 import sys
 import time
 
+from json_evidence import json_matches
+
 case, output, boundary = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
 seed = json.loads((case / 'input.json').read_text())
 expected = dict(shared=deepcopy(seed['shared']), bar=deepcopy(seed['bar']))
@@ -19,7 +21,7 @@ if boundary == 'selected':
 deadline = time.monotonic() + 7
 while True:
     actual = dict(shared=json.loads((case / 'config/settings/plugins/mawaqit.json').read_text()), bar=json.loads((case / 'config/settings/bar.json').read_text()))
-    if actual == expected: break
+    if json_matches(actual, expected): break
     if time.monotonic() >= deadline: raise SystemExit('PRAYER_DISK ' + boundary + ': ' + repr((actual, expected)))
     time.sleep(0.05)
 (output / (boundary + '.json')).write_text(json.dumps(dict(status='PASS', values=actual), indent=2) + '\n')

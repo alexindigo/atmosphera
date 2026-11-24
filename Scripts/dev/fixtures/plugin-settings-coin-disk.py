@@ -6,6 +6,8 @@ from pathlib import Path
 import sys
 import time
 
+from json_evidence import json_matches
+
 case, output, boundary = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
 expected = json.loads((case / 'expectations.json').read_text())
 if boundary.startswith('operation-'):
@@ -26,7 +28,7 @@ deadline = time.monotonic() + 8
 while True:
     actual = dict(shared=json.loads((case / 'config/settings/plugins/coin-flip.json').read_text()),
                   bar=json.loads((case / 'config/settings/bar.json').read_text()))
-    if actual == values:
+    if json_matches(actual, values):
         break
     if not boundary.startswith('operation-') or time.monotonic() >= deadline:
         raise SystemExit('COIN_DISK ' + boundary + ': ' + repr((actual, values)))

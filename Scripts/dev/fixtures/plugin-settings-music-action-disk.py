@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 import sys
 
+from json_evidence import require_json_match
+
 root = Path(os.environ['PHA_MUSIC_CASE'])
 out = Path(os.environ['PHA_MUSIC_OUTPUT'])
 phase = sys.argv[1]
@@ -14,8 +16,7 @@ folder = 'old music' if phase in ('pending', 'busy', 'applied') else 'new music'
 expected = dict(activeProvider='youtube', sortBy='date', downloadDirectory=str(root / folder), downloadCacheMaxMb=limit)
 path = root / 'helper/settings.json'
 actual = json.loads(path.read_text())
-if actual != expected:
-    raise AssertionError('Music actual helper mismatch at ' + phase + ': ' + json.dumps(actual))
+require_json_match(actual, expected, 'Music actual helper mismatch at ' + phase)
 with (out / 'persisted' / (phase + '.json')).open('x') as stream:
     json.dump(dict(status='PASS', phase=phase, values=actual, sha256=hashlib.sha256(path.read_bytes()).hexdigest()), stream, indent=2)
 print('MUSIC_ACTION_DISK: PASS ' + phase, flush=True)
