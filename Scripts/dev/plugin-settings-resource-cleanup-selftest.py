@@ -4,6 +4,7 @@ from contextlib import ExitStack
 import importlib.util
 from io import BytesIO
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -205,6 +206,35 @@ class CleanupTests(unittest.TestCase):
                 self.assertEqual(events, ['terminate', 'wait', ('stop-exact', 101)] if capture_fails else
                                  ['start-worker', 'terminate', 'wait', ('stop-exact', 101), 'join-worker'])
                 self.assertTrue(all(log.closed for log in logs))
+
+    def test_hermes_main_discovers_child_on_witness_failure(self):
+        driver = load('plugin-settings-hermes-child-regression')
+        for failure in (RuntimeError('injected Main runtime failure'), None):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                case = Path(tmp)
+                cli = case / 'hermes-cli'
+                cli.write_text(driver.CLI)
+                cli.chmod(0o755)
+                records = []
+                with subprocess.Popen([cli, '-z', 'inert-held-oneshot'],
+                                      env=dict(HERMES_CLI_CASE=tmp)) as proc:
+                    try:
+                        child = driver.wait_for(lambda: driver.load_record(case/'child.json'), 'inert CLI readiness')
+
+                        def launch():
+                            if failure is not None:
+                                raise failure
+                            return 'witness stopped before its PASS marker'
+
+                        with self.assertRaises(RuntimeError if failure else AssertionError) as raised:
+                            driver.run_main_witness(launch, case, cli, records)
+                        if failure is not None:
+                            self.assertIs(raised.exception, failure)
+                        self.assertFalse(driver.alive(child), 'Main witness left its exact synthetic child running')
+                        self.assertEqual(records, [child, child['parent']])
+                    finally:
+                        if proc.poll() is None:
+                            proc.kill()
 
     def test_hermes_pty_wait_failure_drains_pipes_and_exact_child(self):
         driver = load('plugin-settings-hermes-helper-regression')

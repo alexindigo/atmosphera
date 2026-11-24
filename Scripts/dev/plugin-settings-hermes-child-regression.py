@@ -59,6 +59,48 @@ def load_record(path):
         return None
 
 
+def stop_exact_child(child, cli):
+    if child and alive(child):
+        try:
+            command = (Path('/proc') / str(child['pid']) / 'cmdline').read_bytes().split(b'\0')
+        except FileNotFoundError:
+            return
+        if not alive(child):
+            return
+        if os.fsencode(str(cli)) not in command:
+            raise AssertionError('refusing to stop a process other than the exact synthetic CLI')
+        try:
+            os.kill(child['pid'], signal.SIGTERM)
+        except ProcessLookupError:
+            return
+        wait_for(lambda: not alive(child), 'exact synthetic cleanup')
+
+
+def run_main_witness(launch, case, cli, records):
+    child = None
+
+    def discover():
+        nonlocal child
+        if child is None:
+            child = load_record(case / 'child.json')
+            if child is not None:
+                records.extend([child, child['parent']])
+        return child
+
+    def cleanup():
+        stop_exact_child(discover(), cli)
+
+    with FixtureResources() as resources:
+        resources.defer(cleanup)
+        text = launch()
+        assert 'HERMES_MAIN_DESTROYED: PASS' in text
+        child = discover()
+        assert child and child['argv'] == ['-z', 'inert-held-oneshot']
+        wait_for(lambda: not alive(child['parent']), 'actual Main helper quiescence')
+        wait_for(lambda: not alive(child), 'actual Main CLI quiescence')
+        return text, child
+
+
 def request(port, token, path):
     body = json.dumps({'text': 'literal prompt ; $(not-a-shell) "quoted"'}).encode()
     req = urllib.request.Request(f'http://127.0.0.1:{port}{path}', body,
@@ -132,20 +174,12 @@ def main():
         replies = []
         failures = []
 
-        def stop_exact_child():
-            owned_child = child or load_record(case / 'child.json')
-            if owned_child and alive(owned_child):
-                cmd = (Path('/proc') / str(owned_child['pid']) / 'cmdline').read_bytes().split(b'\0')
-                assert os.fsencode(str(cli)) in cmd, cmd
-                os.kill(owned_child['pid'], signal.SIGTERM)
-                wait_for(lambda: not alive(owned_child), 'exact synthetic cleanup')
-
         with FixtureResources() as resources:
             stdout = resources.open(case / 'server.stdout', 'w')
             stderr = resources.open(case / 'server.stderr', 'w')
             workers = FixtureResources()
             resources.defer(workers.close)
-            resources.defer(stop_exact_child)
+            resources.defer(lambda: stop_exact_child(child or load_record(case / 'child.json'), cli))
             # The failing control must see its unbound descendant survive
             # owner death. Never terminate that descendant before the oracle.
             server = resources.spawn_direct([sys.executable, '-B', str(script), '--port', str(port),
@@ -296,28 +330,27 @@ print('EXPECTED_MISSING_EXECUTABLE')
                 peer.bind(('127.0.0.1', 0))
                 port = peer.getsockname()[1]
             old_lint_failed = False
-            try:
-                text = runner.run_fixture(profile, install, case, out,
-                    args.source / 'Scripts/dev/fixtures/plugin-settings-hermes-child.qml',
-                    extra_env=dict(PHA_HERMES_CHILD_CASE=str(case), HERMES_CLI_CASE=str(case),
-                                   PHA_HERMES_CHILD_PORT=str(port),
-                                   PHA_HERMES_CHILD_PLUGIN=str(helper.parent.parent), HOME=str(case / 'home')),
-                    extra_lint=tuple(sorted(helper.parent.parent.rglob('*.qml'))), timeout=60)
-            except RuntimeError as error:
-                if str(error) != 'fixture lint failed in the actual qs/native universe; see lint.log':
-                    raise
-                assert (out / 'runtime.exit').read_text().strip() == '0'
-                lint = (out / 'lint.log').read_text()
-                assert 'Property "state" already exists in base type "QQuickItem"' in lint
-                assert 'Member "contentHeight" not found' in lint and 'qmllint: FAILED' in lint
-                text = (out / 'runtime.log').read_text()
-                old_lint_failed = True
-            assert 'HERMES_MAIN_DESTROYED: PASS' in text
-            child = load_record(case / 'child.json')
-            assert child and child['argv'] == ['-z', 'inert-held-oneshot']
-            records.extend([child, child['parent']])
-            wait_for(lambda: not alive(child['parent']), 'actual Main helper quiescence')
-            wait_for(lambda: not alive(child), 'actual Main CLI quiescence')
+
+            def launch():
+                nonlocal old_lint_failed
+                try:
+                    return runner.run_fixture(profile, install, case, out,
+                        args.source / 'Scripts/dev/fixtures/plugin-settings-hermes-child.qml',
+                        extra_env=dict(PHA_HERMES_CHILD_CASE=str(case), HERMES_CLI_CASE=str(case),
+                                       PHA_HERMES_CHILD_PORT=str(port),
+                                       PHA_HERMES_CHILD_PLUGIN=str(helper.parent.parent), HOME=str(case / 'home')),
+                        extra_lint=tuple(sorted(helper.parent.parent.rglob('*.qml'))), timeout=60)
+                except RuntimeError as error:
+                    if str(error) != 'fixture lint failed in the actual qs/native universe; see lint.log':
+                        raise
+                    assert (out / 'runtime.exit').read_text().strip() == '0'
+                    lint = (out / 'lint.log').read_text()
+                    assert 'Property "state" already exists in base type "QQuickItem"' in lint
+                    assert 'Member "contentHeight" not found' in lint and 'qmllint: FAILED' in lint
+                    old_lint_failed = True
+                    return (out / 'runtime.log').read_text()
+
+            text, child = run_main_witness(launch, case, cli, records)
             write(out / 'outcome.json', dict(status='PASS', child=child,
                 originalQmlLintStillFailed=old_lint_failed,
                 originalDiagnostics=[line for line in text.splitlines()
