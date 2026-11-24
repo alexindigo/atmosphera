@@ -170,6 +170,9 @@ Scope {
     const queued = _notificationQueue;
     _notificationFlight = null;
     _notificationQueue = [];
+    // The failed attempt owns its pending snapshot too. Only a new holder
+    // update (including an explicit retry with the same paths) can re-arm it.
+    _notificationLive = null;
     _notificationLiveKey = "";
     flight?.callback?.(false, null);
     for (const command of queued)
