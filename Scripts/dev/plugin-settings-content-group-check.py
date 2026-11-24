@@ -32,7 +32,8 @@ POLICY={
  'music-search/Panel.qml':['pluginApi.pluginSettings.previewPaneWidth = rawWidth','pluginApi.saveSettings()'],
  'music-search/Settings.qml':['setYtPlayerClient(key)','setDownloadDirectory(target)','setDownloadCacheMaxMb(target)']}
 EFFECTS={'clipper/Main.qml':dict(Process=15,IpcHandler=1),'clipper/SelectionContextMenu.qml':dict(Process=1),'music-search/Main.qml':dict(Process=14,IpcHandler=1),'music-search/Panel.qml':dict(Process=1),'music-search/LauncherProvider.qml':dict(Process=1),'music-search/MusicPreview.qml':dict(Process=1)}
-ORIGIN={'playEntry','playUrl','startQueue','skipQueue','autoplaySavedTracks','playPlaylist','playQueueEntryNow','queuePlaylist'}
+ORIGIN = dict(playEntry=2, playUrl=3, startQueue=1, skipQueue=1, autoplaySavedTracks=2,
+              playPlaylist=3, playQueueEntryNow=2, queuePlaylist=3)
 
 
 def check(sources,manifests,dictionaries):
@@ -61,12 +62,16 @@ def check(sources,manifests,dictionaries):
         if dict(effects)!=EFFECTS.get(name,{}):raise ValueError(name+': unreviewed physical/helper owner '+repr(dict(effects)))
         if name in ('music-search/LauncherProvider.qml','music-search/MusicPreview.qml') and re.search(r'mainInstance\?\.(?:show\w+|preview\w+)',code):raise ValueError(name+': shared presentation reader')
         if name in ('music-search/Panel.qml','music-search/LauncherProvider.qml'):
-            calls=list(re.finditer(r'mainInstance\?\.('+ '|'.join(sorted(ORIGIN))+r')\(([^;\n]*)',sources[name]))
+            calls = [(method, args) for receiver, method, args in syntax.member_calls(sources[name], trees[name], ORIGIN)
+                     if receiver in ('mainInstance', 'root.mainInstance')]
             if len(calls)!=(10 if name.endswith('/Panel.qml') else 16):raise ValueError(name+': reviewed action callers changed')
-            for match in calls:
-                if 'settingsContext' not in match.group(2):raise ValueError(name+': omitted origin '+match.group(1))
+            for method, args in calls:
+                if len(args) != ORIGIN[method] or args[-1] != 'root.pluginApi.settingsContext':
+                    raise ValueError(name+': omitted origin '+method)
         if name=='clipper/Panel.qml':
-            if code.count('triggerAutoPaste(root.pluginApi.settingsView?.autoPasteDelay,root.pluginApi.settingsContext)')!=4:raise ValueError('Clipper: every paste caller must supply origin')
+            calls = [args for _, _, args in syntax.member_calls(sources[name], trees[name], {'triggerAutoPaste'})]
+            if calls != [('root.pluginApi.settingsView?.autoPasteDelay', 'root.pluginApi.settingsContext')] * 4:
+                raise ValueError('Clipper: every paste caller must supply origin')
         if name.startswith('music-search/') and 'saveSettings(' in code and name not in ('music-search/Settings.qml','music-search/Panel.qml'):raise ValueError(name+': helper gained native preference writer')
     return rows
 
@@ -77,10 +82,12 @@ def main():
     for member in FIELDS:
         manifests[member]=json.loads((args.plugins/member/'manifest.json').read_text())
         dictionaries[member]={path.name:json.loads(path.read_text()) for path in (args.plugins/member/'i18n').glob('*.json')}
-        sources.update({str(path.relative_to(args.plugins)):path.read_text() for path in (args.plugins/member).rglob('*.qml')})
+        sources.update(syntax.qml_sources(args.plugins, member))
     rows=check(sources,manifests,dictionaries);controls=[]
     if args.selftest:
         mutations=[('clipper/Main.qml','settings.enableTodoIntegration','pluginApi.settingsView.enableTodoIntegration','shared-todo-admission'),('clipper/Main.qml','root.selectionPolicy = policy','root.selectionPolicy = null','lost-selection-policy'),('clipper/Main.qml','root.todoSelectorPolicy?.context?.current()','true','retired-new-page'),('clipper/Main.qml','root.pastePolicy?.context?.current() && root.wtypeAvailable','root.wtypeAvailable','retired-paste'),('clipper/Main.qml','todoApi.pluginSettings.todos = todos','pluginApi.pluginSettings.todos = todos','wrong-content-writer'),('clipper/Panel.qml','root.pluginApi.settingsView?.autoPasteDelay, root.pluginApi.settingsContext','root.pluginApi.settingsView?.autoPasteDelay','omitted-paste-origin'),('clipper/ClipboardCard.qml','undefined, root.todoPolicy','root.pluginApi.settingsContext','recaptured-card-policy'),('music-search/Main.qml','entry: copyEntry(entry)','entry: entry','aliased-track'),('music-search/Main.qml','policy.autoSaveMp3AfterPlayback) {','root.autoSaveMp3AfterPlayback) {','shared-playback-policy'),('music-search/Main.qml','root.launchQueueEntry(root.queueEntries[0], undefined, root.queuePolicy)','root.launchQueueEntry(root.queueEntries[0])','queue-recapture'),('music-search/Main.qml','root.startQueue(undefined, root.autoplayPolicy)','root.startQueue()','saved-autoplay-recapture'),('music-search/Main.qml','!root.queueBatchPolicy?.context?.current()','false','retired-batch'),('music-search/Panel.qml','playEntry(normalized, root.pluginApi.settingsContext)','playEntry(normalized)','omitted-panel-origin'),('music-search/LauncherProvider.qml','cfg.showUploaderMetadata','mainInstance?.showUploaderMetadata','shared-launcher-presentation'),('music-search/MusicPreview.qml','cfg.showUploaderMetadata','detailCacheOwner?.mainInstance?.showUploaderMetadata','shared-preview-presentation'),('music-search/Main.qml','property var pluginApi: null','property var pluginApi: null\n Process {}','duplicate-helper-owner')]
+        mutations.append(('music-search/Panel.qml', 'playEntry(normalized, root.pluginApi.settingsContext)',
+                          'playEntry(normalized, fake("settingsContext"))', 'string-is-not-origin'))
         for name,old,new,label in mutations:
             if old not in sources[name]:raise RuntimeError('stale content control '+label)
             changed=dict(sources);changed[name]=changed[name].replace(old,new)

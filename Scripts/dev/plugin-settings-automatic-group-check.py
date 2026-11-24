@@ -5,7 +5,6 @@ from collections import Counter
 import importlib.util
 import json
 from pathlib import Path
-import re
 
 spec=importlib.util.spec_from_file_location('automatic_syntax',Path(__file__).with_name('plugin-settings-polling-check.py'))
 syntax=importlib.util.module_from_spec(spec);spec.loader.exec_module(syntax)
@@ -54,7 +53,10 @@ POLICY={
  '_backend.retire()','if (!_backend.quiescent) return',
  'backendLoader.setSource(source, {settingsContext: request.context, wvkbdBin: request.binary})',
  '_pendingToggle === _request && _request?.context?.current() && _loadedRequest === _request',
- 'autoDetect.running = false','_backend?.retire()'],
+ 'autoDetect.running = false','_backend?.retire()',
+ 'passiveBus.running = false', 'passiveGsettings.running = false',
+ 'busOk: Qt.binding(function () { return root._squeekboardBusOk; })',
+ 'gsettingsOk: Qt.binding(function () { return root._squeekboardGsettingsOk; })'],
  'osk-toggle/OskSettingsClient.qml':[
  'readonly property bool current: settingsContext.current()',
  'readonly property var cfg: current ? settingsContext.settingsView : ({})',
@@ -62,7 +64,7 @@ POLICY={
  'binaryCheck.command = ["which", binary.trim().split(/\\s+/)[0]]',
  'root._binaryTarget !== root.binary','if (!root.current) return',
  'if (current && available) requestToggle()','if (current) requestRecheck()',
- 'binaryCheck.running = false','busCheck.running = false','gsettingsCheck.running = false','retire(root)'],
+ 'binaryCheck.running = false','retire(root)'],
  'osk-toggle/WvkbdBackend.qml':[
  'property string wvkbdBin: "wvkbd-mobintl"','property var settingsContext: null',
  'readonly property bool current: !root._retired && (settingsContext?.current() ?? false)',
@@ -85,7 +87,7 @@ POLICY={
  'if (available) settingsConsumer?.toggleKeyboard()'],
  'osk-toggle/Settings.qml':['recheckState(pluginApi.runtimeContext)']}
 EFFECTS={'2-in-1-tools/Main.qml':dict(Process=11),'2-in-1-tools/Settings.qml':dict(Process=1),
- 'osk-toggle/Main.qml':dict(Process=1,Loader=1),'osk-toggle/OskSettingsClient.qml':dict(Process=3),
+ 'osk-toggle/Main.qml':dict(Process=3,Loader=1),'osk-toggle/OskSettingsClient.qml':dict(Process=1),
  'osk-toggle/WvkbdBackend.qml':dict(Process=4),'osk-toggle/SqueekboardBackend.qml':dict(Process=5)}
 
 
@@ -112,15 +114,13 @@ def check(sources,manifests,dictionaries):
     wanted={'BarWidget.qml':dict(buttonUsesManualRotate=4,buttonIconName=2,buttonVisible=1,buttonEnabled=1,buttonTooltip=1,activatePrimaryButton=2,cycleTransform=1,refreshTransform=3),
             'ControlCenterWidget.qml':dict(buttonIconName=1,buttonVisible=1,buttonEnabled=1,buttonTooltip=1,activatePrimaryButton=1,refreshTransform=2)}
     for name,counts in wanted.items():
-        calls=list(re.finditer(r'backend\?\.(\w+)\(([^()]*)\)',codes['2-in-1-tools/'+name]))
-        calls=[match for match in calls if match[1] in counts]
-        if dict(Counter(match[1] for match in calls))!=counts or any('pluginApi?.settingsContext' not in match[2] for match in calls): raise ValueError(name+': omitted or unreviewed origin')
+        path = '2-in-1-tools/' + name
+        calls = [(method, args) for receiver, method, args in syntax.member_calls(sources[path], trees[path], counts) if receiver == 'backend']
+        if dict(Counter(method for method, _ in calls)) != counts or any(args.count('pluginApi?.settingsContext') != 1 for _, args in calls): raise ValueError(name+': omitted or unreviewed origin')
     for name,code in codes.items():
-        raw=sources[name].encode();effects=Counter()
-        for node in syntax.walk(trees[name].root_node):
-            if node.type!='ui_object_definition': continue
-            match=re.match(rb'(Process|Socket|Loader|IpcHandler|MediaPlayer|Video)\s*\{',raw[node.start_byte:node.end_byte].lstrip())
-            if match: effects[match[1].decode()]+=1
+        effects = Counter(kind for kind in syntax.object_types(sources[name], trees[name])
+                          if kind in {'Process', 'Socket', 'Loader', 'IpcHandler', 'MediaPlayer', 'Video'})
+        effects.update('execDetached' for _ in syntax.member_calls(sources[name], trees[name], {'execDetached'}))
         if dict(effects)!=EFFECTS.get(name,{}): raise ValueError(name+': unreviewed physical owner '+repr(dict(effects)))
         if name.startswith('osk-toggle/') and 'pluginSettings[' in code: raise ValueError(name+': new native writer')
         if name.endswith('Backend.qml') and 'pluginApi' in code: raise ValueError(name+': backend acquired implicit shared API')
@@ -133,7 +133,7 @@ def main():
     for member in FIELDS:
         manifests[member]=json.loads((args.plugins/member/'manifest.json').read_text())
         dictionaries[member]={p.name:json.loads(p.read_text()) for p in (args.plugins/member/'i18n').glob('*.json')}
-        sources.update({str(p.relative_to(args.plugins)):p.read_text() for p in (args.plugins/member).rglob('*.qml')})
+        sources.update(syntax.qml_sources(args.plugins, member))
     rows=check(sources,manifests,dictionaries);controls=[]
     if args.selftest:
         mutations=[
@@ -158,7 +158,8 @@ def main():
          ('osk-toggle/SqueekboardBackend.qml','if (root.current) squeekboardMonitor.running = true','squeekboardMonitor.running = true','retired-monitor-restart'),
          ('osk-toggle/Main.qml','_pendingToggle === _request && _request?.context?.current()','_pendingToggle !== null','retired-toggle'),
          ('osk-toggle/Settings.qml','recheckState(pluginApi.runtimeContext)','recheckState()','shared-settings-recheck'),
-         ('osk-toggle/Main.qml','property var pluginApi: null','property var pluginApi: null\n Loader {}','duplicate-backend-owner')]
+         ('osk-toggle/Main.qml','property var pluginApi: null','property var pluginApi: null\n Loader {}','duplicate-backend-owner'),
+         ('osk-toggle/Main.qml','passiveBus.running = false','passiveBus.running = false; Quickshell.execDetached(["true"])','detached-process-owner')]
         for name,old,new,label in mutations:
             if old not in sources[name]: raise RuntimeError('stale automatic control '+label)
             changed=dict(sources);changed[name]=changed[name].replace(old,new)

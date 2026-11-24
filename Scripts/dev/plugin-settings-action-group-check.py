@@ -43,8 +43,8 @@ ANCHORS = {
         'onTriggered: root.refresh()',
         'command: ["nmcli", "-t", "-f", "NAME,TYPE,STATE,UUID", "connection", "show"]',
     ],
-    'network-manager-vpn/Panel.qml': ['main.disconnectFrom(modelData.uuid, pluginApi.settingsContext)', 'main.connectTo(modelData.uuid, pluginApi.settingsContext)'],
-    'network-manager-vpn/Settings.qml': ['main.removeConnection(root.pendingDeleteUuid, pluginApi.runtimeContext)'],
+    'network-manager-vpn/Panel.qml': ['function requestConnection(uuid, connect) { const context = pluginApi?.settingsContext; const result = connect ? main?.connectTo(uuid, context) : main?.disconnectFrom(uuid, context)', 'onButtonClicked: root.requestConnection(modelData.uuid, false)', 'onButtonClicked: root.requestConnection(modelData.uuid, true)'],
+    'network-manager-vpn/Settings.qml': ['main?.removeConnection(pendingDeleteUuid, pluginApi?.runtimeContext)'],
     'network-manager-vpn/BarWidget.qml': ['root.pluginSettings.displayMode', 'root.pluginSettings.connectedColor', 'root.pluginSettings.disconnectedColor', 'pluginApi.openPanel(root.screen, root)'],
     'network-manager-vpn/ControlCenterWidget.qml': ['pluginSettings.connectedColor', 'pluginSettings.disconnectedColor', 'onClicked: pluginApi?.togglePanel(screen, this)'],
 }
@@ -128,26 +128,25 @@ def check(sources, manifests, dictionaries):
         if name == 'network-manager-vpn': entries.update(panel='Panel.qml', controlCenterWidget='ControlCenterWidget.qml')
         if manifests[name]['entryPoints'] != entries:
             raise ValueError(name + ': unreviewed runtime entry mapping')
-        codes = {path: syntax.compact(text)[0] for path, text in sources.items() if path.startswith(name + '/')}
+        parsed = {path: syntax.compact(text) for path, text in sources.items() if path.startswith(name + '/')}
+        codes = {path: unit[0] for path, unit in parsed.items()}
         main = codes[name + '/Main.qml']
-        tree = syntax.compact(sources[name + '/Main.qml'])[1]
+        owner = name + '/Main.qml'
         # Exactly the reviewed singular owner: GIF checker, VPN list and five
         # public command processes. A per-view physical owner fails this bound.
-        types = [sources[name + '/Main.qml'].encode()[node.start_byte:node.end_byte].decode() for node in syntax.walk(tree.root_node) if node.type == 'ui_object_definition']
-        processes = sum(bool(re.match(r'Process\s*\{', value)) for value in types)
+        processes = syntax.object_types(sources[owner], parsed[owner][1]).count('Process')
         expected_processes = {'screencast-gif':1,'network-manager-vpn':6,'ds4-colors':4,'nvibrant':0}[name]
         if processes != expected_processes:
             raise ValueError(name + ': sole reviewed physical process owner changed')
         # Count every reviewed plugin component, not only Main. A second
         # physical owner in a Bar/page/helper cannot hide behind Main's count.
-        for path,code in codes.items():
-            if path==name+'/Main.qml':continue
-            raw=sources[path].encode();parsed=syntax.compact(sources[path])[1]
-            if any(node.type=='ui_object_definition' and re.match(rb'Process\s*\{',raw[node.start_byte:node.end_byte]) for node in syntax.walk(parsed.root_node)) or 'execDetached(' in code:
+        for path, (_, tree) in parsed.items():
+            detached = sum(1 for _ in syntax.member_calls(sources[path], tree, {'execDetached'}))
+            if path == owner:
+                if detached != int(name in ('screencast-gif', 'nvibrant')):
+                    raise ValueError(name+': unreviewed detached effect owner')
+            elif 'Process' in syntax.object_types(sources[path], tree) or detached:
                 raise ValueError(name+': physical effect outside Main: '+path)
-        expected_detached=1 if name in ('screencast-gif','nvibrant') else 0
-        if main.count('execDetached(')!=expected_detached:
-            raise ValueError(name+': unreviewed detached effect owner')
         if name in ('screencast-gif','network-manager-vpn') and 'pluginSettings' in main:
             raise ValueError(name + ': shared namespace reader/writer in selected action owner')
         settings = codes[name + '/Settings.qml']
@@ -164,15 +163,15 @@ def check(sources, manifests, dictionaries):
         # claim. Added/omitted call sites or shared-context injections reject.
         for method in (('trigger',) if name == 'screencast-gif' else ('connectTo', 'disconnectFrom', 'removeConnection')):
             calls = []
-            for path, code in codes.items():
-                for match in re.finditer(r'(?:\?\.|\.)' + method + r'\(([^()]*)\)', code):
-                    calls.append((path, match.group(1)))
-            expected = [('screencast-gif/Main.qml', 'root.pluginApi?.settingsContext'), ('screencast-gif/BarWidget.qml', 'pluginApi.settingsContext')] if name == 'screencast-gif' else [('network-manager-vpn/' + ('Settings.qml' if method == 'removeConnection' else 'Panel.qml'), 'root.pendingDeleteUuid,pluginApi.runtimeContext' if method == 'removeConnection' else 'modelData.uuid,pluginApi.settingsContext')]
-            if sorted(calls) != sorted(expected):
+            for path, (_, tree) in parsed.items():
+                for _, _, args in syntax.member_calls(sources[path], tree, {method}):
+                    calls.append((path, args))
+            expected = [('screencast-gif/Main.qml', 'root.pluginApi?.settingsContext'), ('screencast-gif/BarWidget.qml', 'pluginApi.settingsContext')] if name == 'screencast-gif' else [('network-manager-vpn/' + ('Settings.qml' if method == 'removeConnection' else 'Panel.qml'), 'pendingDeleteUuid,pluginApi?.runtimeContext' if method == 'removeConnection' else 'uuid,context')]
+            if sorted(calls) != sorted((path, tuple(args.split(','))) for path, args in expected):
                 raise ValueError(name + ': unreviewed/missing originating caller: ' + method)
         if name == 'network-manager-vpn':
             for method, proc in [('connectTo', '_connectProc'), ('disconnectFrom', '_disconnectProc'), ('removeConnection', '_removeProc')]:
-                require(main, 'function ' + method + '(uuid, context) { const policy = capturePolicy(context); if (!policy || ' + proc + '.running) return false; ' + proc + '.actionPolicy = policy;', name + ': captured policy admission: ' + method)
+                require(main, 'function ' + method + '(uuid, context) { const policy = capturePolicy(context); if (!policy) return "stale"; if (' + proc + '.running) return "busy"; ' + proc + '.actionPolicy = policy;', name + ': captured policy admission: ' + method)
             if main.count('propertyvaractionPolicy:null') != 3 or main.count('actionPolicy?.toast?.') != 6:
                 raise ValueError(name + ': every completion uses its admitted action policy')
         rows.append(dict(plugin=name, fields=sorted(fields), processOwners=processes, entries=manifests[name]['entryPoints']))
@@ -190,14 +189,15 @@ def main():
     for name in MEMBERS:
         manifests[name]=json.loads((args.plugins/name/'manifest.json').read_text())
         dictionaries[name]={p.name:json.loads(p.read_text()) for p in (args.plugins/name/'i18n').glob('*.json')}
-        sources.update({name+'/'+p.name:p.read_text() for p in (args.plugins/name).glob('*.qml')})
+        sources.update(syntax.qml_sources(args.plugins, name))
     rows=check(sources,manifests,dictionaries);controls=[]
     if args.selftest:
         mutations=[('screencast-gif/BarWidget.qml','trigger(pluginApi.settingsContext)','trigger()','omitted-capture-caller'),
+                   ('screencast-gif/BarWidget.qml','trigger(pluginApi.settingsContext)','trigger(pluginApi.settingsContext); mainInstance?.trigger(wrongContext())','nested-argument-caller'),
                    ('screencast-gif/Main.qml','const cfg = context.settingsView','const cfg = pluginApi.settingsView','shared-capture-input'),
                    ('screencast-gif/Main.qml','!context?.current()','!context','retired-capture-admission'),
-                   ('network-manager-vpn/Panel.qml','connectTo(modelData.uuid, pluginApi.settingsContext)','connectTo(modelData.uuid)','omitted-vpn-caller'),
-                   ('network-manager-vpn/Settings.qml','removeConnection(root.pendingDeleteUuid, pluginApi.runtimeContext)','removeConnection(root.pendingDeleteUuid)','omitted-page-action'),
+                   ('network-manager-vpn/Panel.qml','connectTo(uuid, context)','connectTo(uuid)','omitted-vpn-caller'),
+                   ('network-manager-vpn/Settings.qml','removeConnection(pendingDeleteUuid, pluginApi?.runtimeContext)','removeConnection(pendingDeleteUuid)','omitted-page-action'),
                    ('network-manager-vpn/Main.qml','context.settingsView.disableToastNotifications','pluginApi.settingsView.disableToastNotifications','shared-vpn-policy'),
                    ('network-manager-vpn/Main.qml','_connectProc.actionPolicy = policy','_connectProc.actionPolicy = null','uncaptured-vpn-completion'),
                    ('network-manager-vpn/Main.qml','!context?.current()','!context','retired-vpn-admission'),

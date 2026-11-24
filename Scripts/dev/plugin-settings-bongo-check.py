@@ -4,7 +4,6 @@ import argparse
 import importlib.util
 import json
 from pathlib import Path
-import re
 
 spec = importlib.util.spec_from_file_location('bongo_syntax', Path(__file__).with_name('plugin-settings-polling-check.py'))
 syntax = importlib.util.module_from_spec(spec); spec.loader.exec_module(syntax)
@@ -51,9 +50,19 @@ def main():
         changes += [('Main.qml', 'root._settingsConsumers.delete(context)', 'context', 'retirement'), ('Main.qml', 'client.inputDevices.indexOf(device) < 0', 'false', 'source-filter'), ('Main.qml', 'monitor.stop()', 'monitor', 'source-stop'), ('Main.qml', 'if (_deviceMonitors.has(device)) continue;', 'if (false) continue;', 'duplicate-observer'), ('BarWidget.qml', 'settingsConsumerFor(pluginApi.settingsContext)', 'settingsConsumerFor(mainInstance.pluginApi.settingsContext)', 'shared-bar'), ('BarWidget.qml', 'pluginApi?.pluginSettings?.widthPadding ?? 0.2', 'mainInstance?.pluginApi?.pluginSettings?.widthPadding ?? 0.2', 'shared-width'), ('BongoDeviceMonitor.qml', 'deviceCheckProc.running = false', 'deviceCheckProc.running = true', 'held-check'), ('BongoDeviceMonitor.qml', 'if (!root.active || !data.includes("EV_KEY")) return;', 'if (!data.includes("EV_KEY")) return;', 'late-input'), ('BongoSettingsClient.qml', 'timer.stop()', 'timer', 'pending-animation'), ('Main.qml', 'if (pluginApi && !_spectrumRegistered)', 'if (pluginApi)', 'spectrum-duplicate')]
         for path, old, new, label in changes:
             if sources[path].count(old) != 1: raise RuntimeError('stale Bongo control: ' + label)
+            anchors = [anchor for anchor in ANCHORS[path] if syntax.squash(old) in syntax.squash(anchor)]
+            expected = {path + ': Bongo ownership: ' + anchor for anchor in anchors}
+            if label.startswith('shared-') and path == 'BongoSettingsClient.qml':
+                expected.add('missing selected Bongo field: ' + label.removeprefix('shared-'))
+            if label == 'shared-width':
+                expected.add('direct originating width padding owner')
+            if not expected: raise RuntimeError('Bongo control has no expected diagnostic: ' + label)
             changed = dict(sources); changed[path] = sources[path].replace(old, new)
             try: check(changed, manifest, dictionaries)
-            except ValueError as error: controls.append(dict(control=label, rejectedAt=str(error)))
+            except ValueError as error:
+                if str(error) not in expected:
+                    raise RuntimeError('Bongo control rejected for the wrong reason: ' + label) from error
+                controls.append(dict(control=label, rejectedAt=str(error)))
             else: raise RuntimeError('Bongo control escaped: ' + label)
     args.report.write_text(json.dumps(dict(status='PASS', member=row, controls=controls, runtimeAcceptance=False), indent=2) + '\n')
     print('PLUGIN_SETTINGS_BONGO_CHECK: PASS (11 leaves, %d controls)' % len(controls))

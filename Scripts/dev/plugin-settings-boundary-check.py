@@ -27,6 +27,24 @@ MUTATORS = {'push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fil
 NATIVE = {'createSettingsEditor', 'openOverlay', 'settingsHandle', 'settingsOwner', 'resetOverrides', 'saveSelected',
           'getPluginAPI', 'createPluginAPI', 'apiFor'}
 EMPTY = frozenset()
+JS_DIRECTIVE = re.compile(r'^([ \t]*)\.(pragma|import)\b([^\n]*)', re.M)
+
+
+def js_body(text):
+    # Qt's JS file header syntax is not part of the JS grammar. Keep line
+    # numbers intact, but inventory local imports before masking the header.
+    imports = []
+
+    def mask(match):
+        if match[2] == 'import':
+            local = re.fullmatch(r'''\s*(["'])(.*?)\1\s+as\s+([A-Za-z_]\w*)\s*;?\s*(?://.*)?''', match[3])
+            if local:
+                imports.append((local[2], local[3]))
+            elif match[3].lstrip().startswith(('"', "'")):
+                raise RuntimeError('unresolved local JavaScript directive: ' + match[3].strip())
+        return ' ' * len(match[0])
+
+    return JS_DIRECTIVE.sub(mask, text), imports
 
 
 def walk(node):
@@ -76,6 +94,8 @@ class Pages:
         self.signal_handlers = {}
         self.edges = {}
         self.record_members = {}
+        self.record_sources = {}
+        self.string_facts = {}
         self.fixture_inputs = fixture_inputs
         self.frame = {}
         self.active_getters = set()
@@ -117,8 +137,9 @@ class Pages:
             return
         original = path.read_text()
         offset = 0
+        script_imports = []
         if path.suffix == '.js':
-            original = re.sub(r'^\s*\.(?:pragma|import)\b[^\n]*', lambda match: ' ' * len(match[0]), original, flags=re.M)
+            original, script_imports = js_body(original)
             original = 'import QtQml\nQtObject { function __script() {\n' + original + '\n} }\n'
             offset = 2
         source = original.encode()
@@ -133,6 +154,10 @@ class Pages:
             return
         directories = {'': [path.parent]}
         dependencies = set()
+        for imported, alias in script_imports:
+            target = (path.parent / imported).resolve()
+            dependencies.add(target)
+            self.imports[(path, alias)] = target
         for node in walk(tree.root_node):
             if node.type != 'ui_import':
                 continue
@@ -269,6 +294,71 @@ class Pages:
             return {self.text(child(node, 'property'))}
         return self.keyset(child(node, 'index')) or set()
 
+    def concatenate(self, node, left, right):
+        # The domain must stay finite even for a loop such as key += suffix
+        # feeding a computed API lookup. Do not truncate to a guessed key set.
+        facts = self.string_facts.setdefault(node.id, set())
+        result = set()
+        for a in left:
+            for b in right:
+                value = a + b
+                facts.add(value)
+                if len(facts) > 128 or len(value) > 1024:
+                    raise RuntimeError('unbounded-string-facts')
+                result.add(value)
+        return result
+
+    def record_value(self, identity, props, seen=frozenset()):
+        if identity in seen:
+            return EMPTY
+        seen = seen | {identity}
+        record = self.byid[identity]
+        result = set()
+        for pair in record.named_children:
+            if pair.type == 'pair' and self.text(child(pair, 'key')).strip('"\'') in props:
+                result.update(self.value(child(pair, 'value')))
+        for prop in props:
+            result.update(self.record_members.get(identity, {}).get(prop, EMPTY))
+        for source in self.record_sources.get(identity, EMPTY):
+            if source[0] == 'record':
+                result.update(self.record_value(source[1], props, seen))
+            elif source[0] == 'read':
+                # Object.assign copies the container, not nested values.
+                result.add(source)
+        return frozenset(result)
+
+    def explicit_member_copy(self, node):
+        # A directly preceding overwrite of this exact computed member by a
+        # new local container supersedes the inherited member at this use.
+        base, index = child(node, 'object'), child(node, 'index')
+        if node.type != 'subscript_expression' or not base or not index or base.type != 'identifier' or index.type != 'identifier':
+            return None
+        statement = node
+        while statement.parent and statement.parent.type not in FUNCTIONS | {'statement_block'}:
+            statement = statement.parent
+        if not statement.parent or statement.parent.type != 'statement_block' or statement.type != 'expression_statement':
+            return None
+        prev = statement.prev_named_sibling
+        if not prev or prev.type != 'expression_statement':
+            return None
+        assignment = self.unwrap(prev)
+        if assignment.type != 'assignment_expression':
+            return None
+        left = child(assignment, 'left')
+        if left.type != 'subscript_expression' or self.text(left) != self.text(node):
+            return None
+        for name in ('object', 'index'):
+            a, b = child(left, name), child(node, name)
+            if not self.lookup(a, self.text(a)) or self.lookup(a, self.text(a)) != self.lookup(b, self.text(b)):
+                return None
+        # Only the reviewed simple use form: copy immediately before assigning
+        # a nested leaf. No intervening callee or rebinding of the index/base.
+        outer = child(self.unwrap(statement), 'left')
+        if not outer or child(outer, 'object') != node:
+            return None
+        right = self.value(child(assignment, 'right'))
+        return right if right and all(fact[0] == 'record' for fact in right) else None
+
     def keyset(self, node, seen=frozenset()):
         node = self.unwrap(node)
         if not node or node.id in seen:
@@ -282,7 +372,7 @@ class Pages:
             return left | right if left is not None and right is not None else None
         if node.type == 'binary_expression' and self.text(child(node, 'operator')) == '+':
             left, right = self.keyset(child(node, 'left'), seen), self.keyset(child(node, 'right'), seen)
-            return {a + b for a in left for b in right} if left is not None and right is not None else None
+            return self.concatenate(node, left, right) if left is not None and right is not None else None
         if node.type == 'identifier':
             declaration = self.lookup(node, self.text(node))
             if declaration and child(declaration, 'value'):
@@ -305,6 +395,9 @@ class Pages:
         if node.type == 'object':
             return frozenset({('record', node.id)})
         if node.type in ('member_expression', 'subscript_expression'):
+            local = self.explicit_member_copy(node)
+            if local is not None:
+                return local
             base = self.value(child(node, 'object'))
             props = self.property(node)
             result = set()
@@ -319,12 +412,7 @@ class Pages:
                         if prop == 'pluginApi':
                             result.add(('api',))
                 elif item[0] == 'record':
-                    record = self.byid[item[1]]
-                    for pair in record.named_children:
-                        if pair.type == 'pair' and self.text(child(pair, 'key')).strip('"\'') in props:
-                            result.update(self.value(child(pair, 'value')))
-                    for prop in props:
-                        result.update(self.record_members.get(item[1], {}).get(prop, EMPTY))
+                    result.update(self.record_value(item[1], props))
                 elif item[0] == 'read':
                     if props & MUTATORS:
                         result.add(('read-mutator',))
@@ -367,13 +455,13 @@ class Pages:
                     # A finite includes guard is a checked domain, not an
                     # invented field schema or a broad computed-key waiver.
                     if keys is None and arguments:
-                        keys = self.guarded_keys(node, self.text(arguments[0]))
+                        keys = self.guarded_keys(node, arguments[0])
                     result.update(('handle', 'content' if item[1] == 'contentField' else 'configuration', key) for key in keys or ())
                 if item[0] in ('read-mutator', 'intent-method') and function.type in ('member_expression', 'subscript_expression') and self.property(function) == {'bind'}:
                     result.add(item)
-            if self.text(function) == 'Object.assign' and values and all(value[0] == 'record' for value in values[0]):
+            if ('builtin', 'Object.assign') in functions and values:
                 return values[0]
-            if self.text(function) in ('Object.assign', 'JSON.parse'):
+            if self.text(function) == 'JSON.parse':
                 return EMPTY
             if self.text(function) == 'Object.getOwnPropertyDescriptor' and values and any(value[0] == 'read' for value in values[0]):
                 return frozenset({('read-descriptor',)})
@@ -385,8 +473,9 @@ class Pages:
             if operator in ('||', '&&', '??'):
                 return self.value(child(node, 'left')) | self.value(child(node, 'right'))
             if operator == '+':
-                return frozenset(('string', left[1] + right[1]) for left in self.value(child(node, 'left'))
-                                 for right in self.value(child(node, 'right')) if left[0] == right[0] == 'string')
+                left = [fact[1] for fact in self.value(child(node, 'left')) if fact[0] == 'string']
+                right = [fact[1] for fact in self.value(child(node, 'right')) if fact[0] == 'string']
+                return frozenset(('string', value) for value in self.concatenate(node, left, right))
             return EMPTY
         if node.type == 'array':
             return union(self.value(part) for part in node.named_children)
@@ -460,21 +549,54 @@ class Pages:
             (value[0] == 'api-method' and value[1] in ('previewSettings', 'resetFields'))
             for value in self.value(child(node, 'function')))
 
-    def guarded_keys(self, node, name):
-        parent = node.parent
-        while parent and parent.type not in FUNCTIONS:
-            if parent.type == 'if_statement' and child(parent, 'consequence') and node.start_byte >= child(parent, 'consequence').start_byte:
-                for call in walk(child(parent, 'condition')):
-                    if call.type != 'call_expression':
-                        continue
-                    fn = child(call, 'function')
-                    args = child(call, 'arguments')
-                    if fn and fn.type == 'member_expression' and self.text(child(fn, 'property')) == 'includes' and args and \
-                       len(args.named_children) == 1 and self.text(args.named_children[0]) == name:
-                        array = child(fn, 'object')
-                        if array.type == 'array' and all(part.type == 'string' for part in array.named_children):
-                            return {self.literal(part) for part in array.named_children}
-            parent = parent.parent
+    def required_conditions(self, node):
+        """Positive predicates implied by containing branches, not descendants of a test."""
+        def atoms(expression, positive):
+            expression = self.unwrap(expression)
+            if not expression:
+                return
+            operator = self.text(child(expression, 'operator'))
+            if expression.type == 'unary_expression' and operator == '!':
+                yield from atoms(child(expression, 'argument'), not positive)
+            elif expression.type == 'binary_expression' and operator == ('&&' if positive else '||'):
+                for side in ('left', 'right'):
+                    yield from atoms(child(expression, side), positive)
+            elif positive:
+                yield expression
+
+        current = node
+        while current.parent and current.parent.type not in FUNCTIONS:
+            parent = current.parent
+            if parent.type in ('if_statement', 'ternary_expression'):
+                if current == child(parent, 'consequence'):
+                    yield from atoms(child(parent, 'condition'), True)
+                elif current == child(parent, 'alternative'):
+                    yield from atoms(child(parent, 'condition'), False)
+            # tree-sitter wraps the alternative in an else_clause.
+            if current.type == 'else_clause' and parent.type == 'if_statement' and current != child(parent, 'alternative'):
+                yield from atoms(child(parent, 'condition'), False)
+            current = parent
+
+    def guarded_keys(self, node, argument):
+        argument = self.unwrap(argument)
+        if argument.type != 'identifier':
+            return set()
+        declaration = self.lookup(argument, self.text(argument))
+        if not declaration:
+            return set()
+        for call in self.required_conditions(node):
+            fn = child(call, 'function')
+            args = child(call, 'arguments')
+            if not fn or fn.type != 'member_expression' or self.text(child(fn, 'property')) != 'includes':
+                continue
+            items = [self.unwrap(arg) for arg in args.named_children if arg.type != 'comment']
+            if len(items) != 1 or items[0].type != 'identifier' or self.lookup(items[0], self.text(items[0])) != declaration:
+                continue
+            array = child(fn, 'object')
+            if array.type == 'array':
+                keys = {self.literal(part) for part in array.named_children if part.type != 'comment'}
+                if None not in keys:
+                    return keys
         return set()
 
     def add(self, declaration, values):
@@ -533,6 +655,13 @@ class Pages:
                     functions = self.calls(node)
                     args = child(node, 'arguments')
                     values = [self.value(argument) for argument in args.named_children] if args else []
+                    if ('builtin', 'Object.assign') in functions and values:
+                        for target in values[0]:
+                            if target[0] == 'record':
+                                old = self.record_sources.get(target[1], EMPTY)
+                                new = old | union(values[1:])
+                                self.record_sources[target[1]] = new
+                                changed |= old != new
                     for item in functions:
                         if item[0] != 'function':
                             continue
@@ -631,9 +760,17 @@ class Pages:
         # entry points. Constructors are a distinct origin, not an event alias.
         origins = {}
         for node in nodes:
+            if node.type == 'ui_property':
+                origins.setdefault(node.id, set()).add('construction')
             if node.type == 'ui_binding':
                 name = self.text(child(node, 'name'))
                 origin = 'construction' if name == 'Component.onCompleted' else 'event:' + name if name.startswith('on') else None
+                owner = self.byid.get(self.scope(node))
+                if name == 'requestValue' and self.text(child(owner, 'type_name')).split('.')[-1] == 'NSpinBox':
+                    origins.setdefault(node.id, set()).add('construction')
+                    for value in self.value(child(node, 'value')):
+                        if value[0] == 'function':
+                            origins.setdefault(value[1], set()).add('event:requestValue')
                 if origin:
                     origins.setdefault(node.id, set()).add(origin)
                     for value in self.value(child(node, 'value')):
@@ -688,16 +825,12 @@ class Pages:
                     edited.add(declaration.id)
             if edited != buffers:
                 return False
-            current = call.parent
             expected = compact(self.unit(expression), expression)
-            while current and current.type not in FUNCTIONS:
-                if current.type == 'if_statement' and child(current, 'consequence') and call.start_byte >= child(current, 'consequence').start_byte:
-                    for condition in walk(child(current, 'condition')):
-                        if compact(self.unit(condition), self.unwrap(condition)) == expected:
-                            return True
-                        if condition.type == 'identifier' and self.lookup(condition, self.text(condition)) == dirty:
-                            return True
-                current = current.parent
+            for condition in self.required_conditions(call):
+                if compact(self.unit(condition), condition) == expected:
+                    return True
+                if condition.type == 'identifier' and self.lookup(condition, self.text(condition)) == dirty:
+                    return True
             return False
 
         for node in nodes:
@@ -745,6 +878,9 @@ def selftest():
         'assignment-helper-alias': ('onClicked: { const write=Object.assign; write(pluginApi.pluginSettings, {message:"bad"}); }', 'page-readonly-helper-write'),
         'delete': ('onClicked: delete pluginApi.pluginSettings.items[0];', 'page-readonly-delete'),
         'unknown-key': ('onClicked: pluginApi.field(text).set("bad");', 'unresolved-field-key'),
+        'membership-required': ('function use(key) { if (["message"].includes(key) && enabled) pluginApi.field(key).set("ok"); } onClicked: use(text);', None),
+        'membership-optional': ('function use(key) { if (["message"].includes(key) || enabled) pluginApi.field(key).set("bad"); } onClicked: use(text);', 'unresolved-field-key'),
+        'membership-else': ('function use(key) { if (["message"].includes(key)) {} else { pluginApi.field(key).set("bad"); } } onClicked: use(text);', 'unresolved-field-key'),
         'partly-unknown-key': ('onClicked: pluginApi.field(enabled ? "message" : text).set("bad");', 'unresolved-field-key'),
         'undeclared': ('onClicked: pluginApi.field("missing").set("bad");', 'undeclared-field-usage:missing'),
         'content-config': ('onClicked: pluginApi.field("todos").set([]);', 'undeclared-field-usage:todos'),
@@ -752,11 +888,15 @@ def selftest():
         'shared-content-command': ('onClicked: pluginApi.contentField("todos").set([]);', None),
         'implicit-content-save': ('function saveSettings() { pluginApi.contentField("todos").set([]); }', 'configuration-apply-collects-content'),
         'buffered-content-input': ('property bool pending:false; readonly property bool settingsDirty:pending; onTextEdited: pending=true; function saveSettings() { if(pending) pluginApi.contentField("todos").set([]); }', None),
+        'buffer-bypassed': ('property bool pending:false; readonly property bool settingsDirty:pending; onTextEdited: pending=true; function saveSettings() { if(pending || enabled) pluginApi.contentField("todos").set([]); }', 'configuration-apply-collects-content'),
         'runtime-acquisition': ('onClicked: Service.getPluginAPI("foreign");', 'page-native-capability'),
         'second-owner': ('PluginSettingsSession {}', 'page-creates-preference-owner'),
         'native': ('onClicked: pluginApi.createSettingsEditor(true);', 'page-native-capability'),
         'constructor': ('Component.onCompleted: pluginApi.field("message").set("bad");', 'construction-call-reaches-field-intent'),
         'constructor-helper': ('function edit() { pluginApi.field("message").set("bad"); } Component.onCompleted: edit();', 'construction-call-reaches-field-intent'),
+        'property-constructor-helper': ('function edit() { pluginApi.field("message").set("bad"); } property var eager: edit(); onClicked: edit();', 'construction-call-reaches-field-intent'),
+        'shallow-copy': ('onClicked: { const local=Object.assign({}, { rows: pluginApi.pluginSettings.items }); local.rows.push({}); }', 'page-readonly-mutator'),
+        'shallow-copy-alias': ('onClicked: { const copy=Object.assign; const local=copy({}, pluginApi.pluginSettings); local.items.push({}); }', 'page-readonly-mutator'),
         'reset-content': ('onClicked: pluginApi.resetFields(["todos"]);', 'undeclared-field-usage:todos'),
         'preview-content': ('onClicked: pluginApi.previewSettings({todos: []});', 'undeclared-field-usage:todos'),
         'preview-computed-content': ('onClicked: { const next={}; const key="todos"; next[key]=[]; pluginApi.previewSettings(next); }', 'undeclared-field-usage:todos'),
@@ -788,6 +928,26 @@ def selftest():
         if not any(row['file'] == 'Child.qml' and row['code'] == 'page-readonly-mutator' for row in pages.report()['issues']):
             raise RuntimeError('loaded child writer escaped the page graph')
         results.append(dict(id='loaded-child', status='PASS', expected='page-readonly-mutator'))
+        (root / 'Page.qml').write_text('import QtQuick\nimport "Bridge.js" as Bridge\nItem { property var pluginApi; onClicked: Bridge.forward(pluginApi) }\n')
+        (root / 'Bridge.js').write_text('.pragma library\n.import "Writer.js" as Writer\nfunction forward(api) { Writer.mutate(api); }\n')
+        (root / 'Writer.js').write_text('function mutate(api) { api.pluginSettings.items.push({}); }\n')
+        pages = Pages(root, fields)
+        pages.load(root / 'Page.qml')
+        pages.solve()
+        if not any(row['file'] == 'Writer.js' and row['code'] == 'page-readonly-mutator' for row in pages.report()['issues']):
+            raise RuntimeError('local JS import writer escaped the page graph')
+        results.append(dict(id='imported-script-writer', status='PASS', expected='page-readonly-mutator'))
+        (root / 'Page.qml').write_text(prefix + 'onClicked: { let key="x"; key=key+"x"; } }\n')
+        pages = Pages(root, fields)
+        pages.load(root / 'Page.qml')
+        try:
+            pages.solve()
+        except RuntimeError as error:
+            if str(error) != 'unbounded-string-facts':
+                raise
+        else:
+            raise RuntimeError('recursive key growth escaped the string budget')
+        results.append(dict(id='recursive-string-domain', status='PASS', expected='unbounded-string-facts'))
     return results
 
 
@@ -795,7 +955,7 @@ def parsed(path, text=None):
     text = path.read_text() if text is None else text
     offset = 0
     if path.suffix == '.js':
-        text = re.sub(r'^\s*\.(?:pragma|import)\b[^\n]*', lambda match: ' ' * len(match[0]), text, flags=re.M)
+        text, _ = js_body(text)
         text = 'import QtQml\nQtObject { function __script() {\n' + text + '\n} }\n'
         offset = 2
     source = text.encode()
@@ -840,23 +1000,49 @@ def shell_boundary(source, overrides=None):
     def guarded(unit, method):
         body = child(method, 'body')
         first = next((node for node in body.named_children if node.type != 'comment'), None)
+        consequence = child(first, 'consequence')
         return first and first.type == 'if_statement' and compact(unit, child(first, 'condition')) == '(!PluginContract.acceptsApi(entryPoint,api))' and \
-            any(node.type == 'throw_statement' for node in walk(child(first, 'consequence'))) and \
+            exits(consequence, 'throw_statement') and \
             contains(unit, method, 'props={"pluginApi":api}') and \
             [compact(unit, node) for node in walk(method) if node.type == 'return_statement'] == ['returnprops;']
 
-    def initial_call(unit, fn, target, expected):
+    def statements(block):
+        return [node for node in block.named_children if node.type != 'comment'] if block else []
+
+    def exits(body, kind):
+        return body and (body.type == kind or body.type == 'statement_block'
+                         and any(node.type == kind for node in statements(body)))
+
+    def admitted_construction(unit, fn, target, admission, call_method, construction, same_try):
+        # This checker recognizes the two reviewed finite control shapes. A
+        # matching call hidden under a branch is not a proof of dominance.
+        body = child(fn, 'body')
+        attempts = [node for node in statements(body) if node.type == 'try_statement']
+        sites = [node for node in walk(fn) if node.type == 'call_expression' and
+                 unit.text(child(child(node, 'function'), 'property')) == call_method]
+        if len(attempts) != 1 or len(sites) != 1 or compact(unit, sites[0]) != construction:
+            return False
+        attempt, site = attempts[0], sites[0]
+        protected = statements(child(attempt, 'body'))
+        if not protected or compact(unit, protected[0]).rstrip(';') != target + '=' + admission:
+            return False
+        if not exits(child(child(attempt, 'handler'), 'body'), 'return_statement') or child(attempt, 'finalizer'):
+            return False
         assignments = [node for node in walk(fn) if node.type == 'assignment_expression' and compact(unit, child(node, 'left')) == target]
-        return len(assignments) == 1 and compact(unit, child(assignments[0], 'right')) == expected
+        if len(assignments) != 1:
+            return False
+        if same_try:
+            return len(protected) == 2 and compact(unit, protected[1]).rstrip(';') == 'instance=' + construction
+        following = statements(body)[statements(body).index(attempt) + 1:]
+        return len(protected) == 1 and [compact(unit, part).rstrip(';') for part in following] == ['_initial=' + target, construction]
 
     require(paths[0], 'initialProperties', guarded, 'generic-role-not-admitted-before-properties')
-    require(paths[0], 'createObject', lambda unit, fn: initial_call(unit, fn, 'initial', 'initialProperties(entryPoint,component.url,api,context)') and
-            [compact(unit, call) for call in walk(fn) if call.type == 'call_expression' and
-             unit.text(child(child(call, 'function'), 'property')) == 'createObject'] == ['component.createObject(parent,initial)'], 'direct-construction-bypasses-admission')
-    require(paths[2], '_reload', lambda unit, fn: initial_call(unit, fn, 'props', 'PluginLoader.initialProperties(entryPoint,url,api,context)') and
-            [compact(unit, call) for call in walk(fn) if call.type == 'call_expression' and
-             unit.text(child(child(call, 'function'), 'property')) == 'setSource'] == ['loader.setSource(url,props)'] and any(node.type == 'catch_clause' and
-            any(part.type == 'return_statement' for part in walk(node)) for node in walk(fn)), 'view-construction-bypasses-admission')
+    require(paths[0], 'createObject', lambda unit, fn: admitted_construction(unit, fn, 'initial',
+            'initialProperties(entryPoint,component.url,api,context)', 'createObject', 'component.createObject(parent,initial)', True),
+            'direct-construction-bypasses-admission')
+    require(paths[2], '_reload', lambda unit, fn: admitted_construction(unit, fn, 'props',
+            'PluginLoader.initialProperties(entryPoint,url,api,context)', 'setSource', 'loader.setSource(url,props)', False),
+            'view-construction-bypasses-admission')
     require(paths[1], 'apiRole', lambda unit, fn: contains(unit, fn, 'entryPoint==="settings"?"settings-editor":"runtime"'), 'generic-role-declaration')
     require(paths[1], 'acceptsApi', lambda unit, fn: [compact(unit, node) for node in walk(fn) if node.type == 'return_statement'] ==
             ['returnapiRole(entryPoint)!=="settings-editor"||(api!==null&&api!==undefined&&api.apiRole==="settings-editor"&&typeofapi.field==="function"&&typeofapi.contentField==="function");'], 'generic-capability-role-check')
@@ -902,6 +1088,7 @@ def shell_controls(source):
     cases = [
         ('role', 'Services/Plugins/PluginLoader.qml', 'if (!PluginContract.acceptsApi(entryPoint, api))', 'if (false)', 'generic-role-not-admitted-before-properties'),
         ('direct', 'Services/Plugins/PluginLoader.qml', 'initialProperties(entryPoint, component.url, api, context)', '({pluginApi: api})', 'direct-construction-bypasses-admission'),
+        ('direct-conditional', 'Services/Plugins/PluginLoader.qml', 'initial = initialProperties(entryPoint, component.url, api, context);', 'if (false) initial = initialProperties(entryPoint, component.url, api, context);', 'direct-construction-bypasses-admission'),
         ('view', 'Services/Plugins/PluginView.qml', 'PluginLoader.initialProperties(entryPoint, url, api, context)', '({pluginApi: api})', 'view-construction-bypasses-admission'),
         ('popup', 'Widgets/NPluginSettingsPopup.qml', 'settingsSession.settingsUrl, _pageApi, {}', 'settingsSession.settingsUrl, currentPluginApi, {}', 'popup-construction-bypasses-selected-page-api'),
         ('apply', 'Services/Plugins/PluginSettingsSession.qml', 'editor.apply(editor.values, completed)', 'editor.apply(pageApi.pluginSettings, completed)', 'generic-apply-values-identity'),

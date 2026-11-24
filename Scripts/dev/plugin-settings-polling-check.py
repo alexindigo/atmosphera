@@ -32,17 +32,43 @@ def walk(node):
         yield from walk(child)
 
 
+def tokens(node, data):
+    if 'comment' in node.type: return []
+    if not node.children: return [data[node.start_byte:node.end_byte].decode()]
+    return [value for part in node.children for value in tokens(part, data)]
+
+
+def member_calls(source, tree, methods):
+    """Yield complete argument expressions from direct member call sites."""
+    data = source.encode()
+    for node in walk(tree.root_node):
+        if node.type != 'call_expression': continue
+        callee = node.child_by_field_name('function')
+        if callee.type != 'member_expression': continue
+        name = ''.join(tokens(callee.child_by_field_name('property'), data))
+        if name not in methods: continue
+        receiver = ''.join(tokens(callee.child_by_field_name('object'), data))
+        args = node.child_by_field_name('arguments')
+        yield receiver, name, tuple(''.join(tokens(arg, data)) for arg in args.named_children if 'comment' not in arg.type)
+
+
+def object_types(source, tree):
+    data = source.encode()
+    return [''.join(tokens(node.child_by_field_name('type_name'), data)).split('.')[-1]
+            for node in walk(tree.root_node) if node.type == 'ui_object_definition']
+
+
+def qml_sources(catalog, member):
+    return {str(path.relative_to(catalog)): path.read_text() for path in sorted((catalog / member).rglob('*.qml'))}
+
+
 def compact(source):
     data = source.encode(); tree = PARSER.parse(data)
     if tree.root_node.has_error:
         raise ValueError('unparsed QML consumer')
-    def leaves(node):
-        if 'comment' in node.type: return []
-        if not node.children: return [data[node.start_byte:node.end_byte].decode()]
-        return [value for child in node.children for value in leaves(child)]
     # qmlformat removes optional QML-binding semicolons. Parsing establishes
     # statement structure first; the finite expression contract ignores them.
-    return ''.join(value for value in leaves(tree.root_node) if value != ';'), tree
+    return ''.join(value for value in tokens(tree.root_node, data) if value != ';'), tree
 
 
 def squash(source):

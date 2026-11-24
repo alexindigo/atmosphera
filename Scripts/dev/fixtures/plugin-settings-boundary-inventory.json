@@ -294,7 +294,8 @@
     "latency-monitor": {
       "entry": "Settings.qml",
       "files": [
-        "Settings.qml"
+        "Settings.qml",
+        "ThresholdPolicy.js"
       ]
     },
     "launcher-pass": {

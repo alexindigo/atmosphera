@@ -105,13 +105,15 @@ def check(sources,manifest,words):
     require(fields['configured']['editorUsage']=='operational', 'Hermes configured flag is operational')
     require(all(fields[key]['editorUsage']=='configuration' for key in FIELDS), 'Hermes configuration usage')
     require(manifest['entryPoints']==dict(main='Main.qml',barWidget='BarWidget.qml',panel='Panel.qml',launcherProvider='LauncherProvider.qml',settings='Settings.qml'), 'Hermes entry points')
-    code={name:syntax.compact(text)[0] for name,text in sources.items()}
+    units = {name: syntax.compact(text) for name, text in sources.items()}
+    code = {name: unit[0] for name, unit in units.items()}
     for key,(name,anchor) in FIELDS.items():
         syntax.require(code[name],anchor,key+': selected field')
         syntax.require(code['Settings.qml'],'pluginApi?.field("'+key+'")',key+': page field')
     for name,anchors in ANCHORS.items():
         for anchor in anchors:syntax.require(code[name],anchor,name+': '+anchor)
-    require(sum(len(re.findall(r'\bProcess\s*\{',value)) for value in code.values())==1, 'single managed bridge Process')
+    owners = [name for name, (_, tree) in units.items() for kind in syntax.object_types(sources[name], tree) if kind == 'Process']
+    require(owners == ['HermesConnection.qml'], 'single managed bridge Process')
     require(not re.search(r'\bsetPinnedPanelRequested\s*\(',code['Settings.qml']), 'page cannot borrow shared pin API')
     require(all(words['settings'][key] for key in ('sharedEffect','pendingRestart')), 'Hermes shared effect and restart explanations')
     return dict(configuration=sorted(FIELDS),protected=['configured'],managedOwner='HermesConnection.qml',sharedChatOwner='Main.qml')
@@ -121,7 +123,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--plugins',type=Path,required=True);parser.add_argument('--report',type=Path,required=True);parser.add_argument('--selftest',action='store_true')
     args=parser.parse_args();root=args.plugins/'hermes-agent'
-    sources={name:(root/name).read_text() for name in ANCHORS}
+    sources = {str(Path(name).relative_to(root.name)): text for name, text in syntax.qml_sources(args.plugins, root.name).items()}
     manifest=json.loads((root/'manifest.json').read_text());words=json.loads((root/'i18n/en.json').read_text())
     member=check(sources,manifest,words);controls=[]
     if args.selftest:
@@ -143,6 +145,12 @@ def main():
             try:check(candidate,manifest,words)
             except (ValueError,AssertionError):controls.append(label)
             else:raise AssertionError('Hermes control escaped '+label)
+        candidate = dict(sources, **{'nested/SecondOwner.qml': 'import Quickshell.Io\nProcess {}\n'})
+        try:check(candidate,manifest,words)
+        except AssertionError as error:
+            require(str(error) == 'single managed bridge Process', 'Hermes nested owner rejected for the wrong reason')
+            controls.append('nested-process-owner')
+        else:raise RuntimeError('Hermes nested process owner escaped')
     args.report.parent.mkdir(parents=True,exist_ok=True)
     args.report.write_text(json.dumps(dict(status='PASS',member=member,controls=controls,generalJavaScriptProof=False),indent=2)+'\n')
     print('HERMES_GROUP: PASS '+str(len(controls))+' controls')
