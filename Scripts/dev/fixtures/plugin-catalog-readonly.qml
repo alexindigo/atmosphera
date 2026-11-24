@@ -3,10 +3,10 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "plugin-editor-probe.js" as EditorProbe
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
-import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -37,19 +37,25 @@ ShellRoot {
         try {
           root.check(owner !== null, "actual native preference owner opened");
           root.register(owner);
-        } catch (error) { console.error(String(error)); Qt.exit(2); }
+        } catch (error) {
+          console.error(String(error));
+          Qt.exit(2);
+        }
       });
-    } else register({});
+    } else
+      register({});
   }
   function register(owner) {
     api = Service.createPluginAPI(manifest.id, manifest, owner, {}, {}, {});
     var factory = api.createSettingsEditor;
-    api.createSettingsEditor = function () {
-      var editor = factory();
+    api.createSettingsEditor = function (fieldIntent) {
+      var editor = factory(fieldIntent);
       if (typeof api.settingsReady === "boolean") {
         root.check(editor && editor.ready && editor.writable === false && editor.fields.length === 0, "native informational session has no writable selection");
       }
-      return EditorProbe.observe(editor, function () { root.applies++; });
+      return EditorProbe.observe(editor, function () {
+        root.applies++;
+      });
     };
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded[manifest.id] = {
@@ -61,7 +67,8 @@ ShellRoot {
   function drive() {
     if (phase === "waiting-api") {
       check(!api.settingsOwner || api.settingsOwner.status !== "Error", "native owner open: " + (api.settingsOwner ? api.settingsOwner.error : ""));
-      if (typeof api.settingsReady === "boolean" && !api.settingsReady) return;
+      if (typeof api.settingsReady === "boolean" && !api.settingsReady)
+        return;
       popup.openPluginSettings(manifest, "settings");
       phase = "opened";
     } else if (phase === "opened" && popup.opened && popup.settingsPage && popup.settingsPage.implicitHeight > 0) {

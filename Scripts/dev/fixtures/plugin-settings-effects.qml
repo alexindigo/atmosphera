@@ -3,10 +3,10 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "plugin-editor-probe.js" as EditorProbe
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
-import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -28,7 +28,11 @@ ShellRoot {
     blockLoading: true
     printErrors: false
   }
-  FileView { id: rawPreferences; blockLoading: true; printErrors: false }
+  FileView {
+    id: rawPreferences
+    blockLoading: true
+    printErrors: false
+  }
   function rawUnknown() {
     rawPreferences.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + cases[index].manifest.id + ".json";
     rawPreferences.reload();
@@ -74,8 +78,13 @@ ShellRoot {
     var item = cases[index];
     phase = "waiting-owner";
     Service._openSettingsOwner(item.manifest.id, function (owner) {
-      try { root.check(owner !== null, "native preference owner opened"); root.register(item, owner); }
-      catch (error) { console.error(String(error)); root.finish(2); }
+      try {
+        root.check(owner !== null, "native preference owner opened");
+        root.register(item, owner);
+      } catch (error) {
+        console.error(String(error));
+        root.finish(2);
+      }
     });
   }
   function register(item, owner) {
@@ -93,13 +102,15 @@ ShellRoot {
     check(main !== null, "actual Main created");
     api.mainInstance = main;
     var factory = api.createSettingsEditor;
-    api.createSettingsEditor = function () {
-      var editor = factory();
+    api.createSettingsEditor = function (fieldIntent) {
+      var editor = factory(fieldIntent);
       root.selectedEditor = editor;
       return EditorProbe.observe(editor, function () {}, function (result, callback) {
         console.log("I4_EFFECT_RECEIPT", item.manifest.id, root.phase, JSON.stringify(result));
         root.held = result;
-        root.release = function () { callback(result); };
+        root.release = function () {
+          callback(result);
+        };
       }, function () {
         if (root.makeStale) {
           // A newer real input, not replacement of the readonly namespace.
@@ -208,7 +219,10 @@ ShellRoot {
         try {
           root.check(result.status === "nothing_to_save" && result.refreshState === "current", "actual clean native no-op");
           root.phase = "noop-consumer";
-        } catch (error) { console.error(String(error)); root.finish(2); }
+        } catch (error) {
+          console.error(String(error));
+          root.finish(2);
+        }
       });
     } else if (phase === "noop-consumer" && consumed(item.savedValue)) {
       check(main._i4EffectCount === baseline + 2, "one no-op action");

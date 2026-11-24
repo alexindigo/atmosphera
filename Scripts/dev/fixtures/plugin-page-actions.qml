@@ -3,10 +3,10 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "plugin-editor-probe.js" as EditorProbe
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
-import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -33,10 +33,15 @@ ShellRoot {
     blockLoading: true
     printErrors: false
   }
-  FileView { id: rawPreferences; blockLoading: true; printErrors: false }
+  FileView {
+    id: rawPreferences
+    blockLoading: true
+    printErrors: false
+  }
   function rawUnknown() {
     rawPreferences.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + cases[index].plugin + ".json";
-    rawPreferences.reload(); rawPreferences.waitForJob();
+    rawPreferences.reload();
+    rawPreferences.waitForJob();
     var value = JSON.parse(rawPreferences.text());
     check(value.opaque.keep && (!verifyOnly || value.foreign === true), "actual raw unknown data retained");
   }
@@ -44,7 +49,8 @@ ShellRoot {
     var result = Object.create(null);
     for (var key of api.settingsOwner.store.settingsKeys) {
       var value = api.pluginSettings[key];
-      if (value !== undefined) result[key] = Settings.store.copyValue(value);
+      if (value !== undefined)
+        result[key] = Settings.store.copyValue(value);
     }
     return result;
   }
@@ -64,42 +70,77 @@ ShellRoot {
     property int settingsVersion: 0
     onSettingsVersionChanged: {
       root.record();
-      if (root.actualMain) root.actualMain.settingsVersion++;
+      if (root.actualMain)
+        root.actualMain.settingsVersion++;
     }
     function refresh() {
       root.record();
       if (root.actualMain) {
-        if (root.cases[root.index].plugin === "battery-threshold") root.actualMain.service.refresh();
-        else root.actualMain.refresh();
+        if (root.cases[root.index].plugin === "battery-threshold")
+          root.actualMain.service.refresh();
+        else
+          root.actualMain.refresh();
       }
     }
     function refreshNow() {
       root.record();
-      if (root.actualMain) root.actualMain.refreshNow();
+      if (root.actualMain)
+        root.actualMain.refreshNow();
     }
     function applyColors() {
       root.record();
-      if (root.actualMain) root.actualMain.applyColors();
+      if (root.actualMain)
+        root.actualMain.applyColors();
     }
     function startGetNumUpdates() {
       root.record();
-      if (root.actualMain) root.actualMain.startGetNumUpdates();
+      if (root.actualMain)
+        root.actualMain.startGetNumUpdates();
     }
     function restartDaemon() {
       root.record();
-      if (root.actualMain) root.actualMain.restartDaemon();
+      if (root.actualMain)
+        root.actualMain.restartDaemon();
     }
-    function setPinnedPanelRequested(value) { root.record(); root.actualMain.setPinnedPanelRequested(value); }
-    function setModel(provider, model, persist) { root.record(); root.actualMain.setModel(provider, model, persist); }
-    function refreshWallpaperCache(force, toast) { root.record(); root.actualMain.refreshWallpaperCache(force, toast); }
-    function hasAnyConfiguredWallpaper() { return root.actualMain.hasAnyConfiguredWallpaper(); }
-    function reload() { root.record(); root.actualMain.reload(); }
-    function manualSync() { root.record(); root.actualMain.manualSync(); }
-    function requestPoll(force) { root.record(); root.actualMain.requestPoll(force); }
-    function stateLabel(code) { return root.actualMain.stateLabel(code); }
-    function sourceLabel(code) { return root.actualMain.sourceLabel(code); }
-    function statusSummary() { return root.actualMain.statusSummary(); }
-    function statusColor(code) { return root.actualMain.statusColor(code); }
+    function setPinnedPanelRequested(value) {
+      root.record();
+      root.actualMain.setPinnedPanelRequested(value);
+    }
+    function setModel(provider, model, persist) {
+      root.record();
+      root.actualMain.setModel(provider, model, persist);
+    }
+    function refreshWallpaperCache(force, toast) {
+      root.record();
+      root.actualMain.refreshWallpaperCache(force, toast);
+    }
+    function hasAnyConfiguredWallpaper() {
+      return root.actualMain.hasAnyConfiguredWallpaper();
+    }
+    function reload() {
+      root.record();
+      root.actualMain.reload();
+    }
+    function manualSync() {
+      root.record();
+      root.actualMain.manualSync();
+    }
+    function requestPoll(force) {
+      root.record();
+      root.actualMain.requestPoll(force);
+    }
+    function stateLabel(code) {
+      return root.actualMain.stateLabel(code);
+    }
+    function sourceLabel(code) {
+      return root.actualMain.sourceLabel(code);
+    }
+    function statusSummary() {
+      return root.actualMain.statusSummary();
+    }
+    function statusColor(code) {
+      return root.actualMain.statusColor(code);
+    }
   }
   function check(ok, label) {
     if (!ok)
@@ -115,8 +156,10 @@ ShellRoot {
     consumed = preferenceSnapshot();
   }
   function other(value) {
-    if (cases[index].retryValue !== undefined) return cases[index].retryValue;
-    if (cases[index].plugin === "update-count") return "printf 9";
+    if (cases[index].retryValue !== undefined)
+      return cases[index].retryValue;
+    if (cases[index].plugin === "update-count")
+      return "printf 9";
     return typeof value === "boolean" ? !value : typeof value === "number" ? value + 1 : value === "#ff0000" ? "#00ff00" : value + "-newer";
   }
   function openNext() {
@@ -130,14 +173,19 @@ ShellRoot {
     closes = 0;
     consumed = null;
     var seed = {
-                                    opaque: {
-                                      keep: true
-                                    }
-                                  };
+      opaque: {
+        keep: true
+      }
+    };
     seed = Object.assign(seed, row.seed || {});
-    if (row.plugin === "air-quality") { seed.useNoctaliaLocation = false; seed.customLongitude = ""; }
-    if (row.plugin === "battery-threshold") seed.batteryDevice = "/sys/class/power_supply/BAT0";
-    if (row.plugin === "niri-auto-tile") seed.enabled = false;
+    if (row.plugin === "air-quality") {
+      seed.useNoctaliaLocation = false;
+      seed.customLongitude = "";
+    }
+    if (row.plugin === "battery-threshold")
+      seed.batteryDevice = "/sys/class/power_supply/BAT0";
+    if (row.plugin === "niri-auto-tile")
+      seed.enabled = false;
     if (row.plugin === "hermes-agent") {
       seed.hermesHome = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/hermes";
       seed.stateFile = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/hermes-state.json";
@@ -145,7 +193,10 @@ ShellRoot {
     if (row.plugin === "linux-wallpaperengine-controller") {
       check(Quickshell.screens.length > 0, "actual wallpaper screen available");
       seed.screens = {};
-      for (var screen of Quickshell.screens) seed.screens[screen.name] = {path: "/fixture/wallpaper"};
+      for (var screen of Quickshell.screens)
+        seed.screens[screen.name] = {
+          path: "/fixture/wallpaper"
+        };
     }
     phase = "seeding";
     seedWriter.command = ["python3", "-B", Quickshell.env("I5_PLUGIN_SEED"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), row.plugin, JSON.stringify(seed)];
@@ -156,7 +207,9 @@ ShellRoot {
     if (row.plugin !== "weather-indicator") {
       var component = Qt.createComponent("file://" + Registry.getPluginDir(row.plugin) + "/Main.qml");
       check(component.status === Component.Ready, "actual Main ready: " + component.errorString());
-      actualMain = component.createObject(root, {pluginApi: api});
+      actualMain = component.createObject(root, {
+                                            pluginApi: api
+                                          });
       check(actualMain !== null, "actual Main created");
     }
     api.mainInstance = collaborator;
@@ -174,14 +227,17 @@ ShellRoot {
     };
     Service.loadedPlugins = loaded;
     var factory = api.createSettingsEditor;
-    api.createSettingsEditor = function () {
-      var editor = factory();
+    api.createSettingsEditor = function (fieldIntent) {
+      var editor = factory(fieldIntent);
       root.selectedEditor = editor;
       return EditorProbe.observe(editor, function () {}, function (result, callback) {
         root.held = result;
-        root.release = function () { callback(result); };
+        root.release = function () {
+          callback(result);
+        };
       }, function () {
-        if (root.stale) root.api.pluginSettings[row.key] = row.finalValue;
+        if (root.stale)
+          root.api.pluginSettings[row.key] = row.finalValue;
       });
     };
     popup.openPluginSettings(row.manifest, "settings");
@@ -246,21 +302,32 @@ ShellRoot {
 
   function settled(value) {
     var name = cases[index].plugin;
-    if (name === "arch-updater") return !actualMain.refreshing && actualMain.updates.length === 1 && actualMain.updates[0].name === (value === cases[index].retryValue ? "retryPkg" : "currentPkg");
-    if (name === "hermes-agent") return actualMain.state.summary.model.name === String(value).trim() && actualMain.state.summary.model.provider === "fixture-provider" && actualMain.pinnedPanelRequested === api.pluginSettings.panelPinned;
-    if (name === "linux-wallpaperengine-controller") return actualMain.defaultFps === value && actualMain.cachedWallpaperItems.length === 0 && !actualMain.wallpapersFolderAccessible;
-    if (name === "sticky-notes") return actualMain.lastSyncOk && actualMain.lastSyncMessage === "fixture:" + value && !actualMain.syncInProgress;
-    if (name === "syncthing-status") return !actualMain.busy && actualMain.resolvedUrl === value && actualMain.configuredDevices === 2 && actualMain.monitoredFolders === 1;
-    if (name === "air-quality") return actualMain.cfg.customLatitude === value && !actualMain.loading && actualMain.errorMessage === "";
-    if (name === "amd-gpu-monitor") return actualMain.available && actualMain.deviceIndex === value && actualMain.gpuUse === value * 10 + 7;
-    if (name === "battery-threshold") return actualMain.service.thresholdFile === value + "/charge_control_end_threshold";
+    if (name === "arch-updater")
+      return !actualMain.refreshing && actualMain.updates.length === 1 && actualMain.updates[0].name === (value === cases[index].retryValue ? "retryPkg" : "currentPkg");
+    if (name === "hermes-agent")
+      return actualMain.state.summary.model.name === String(value).trim() && actualMain.state.summary.model.provider === "fixture-provider" && actualMain.pinnedPanelRequested === api.pluginSettings.panelPinned;
+    if (name === "linux-wallpaperengine-controller")
+      return actualMain.defaultFps === value && actualMain.cachedWallpaperItems.length === 0 && !actualMain.wallpapersFolderAccessible;
+    if (name === "sticky-notes")
+      return actualMain.lastSyncOk && actualMain.lastSyncMessage === "fixture:" + value && !actualMain.syncInProgress;
+    if (name === "syncthing-status")
+      return !actualMain.busy && actualMain.resolvedUrl === value && actualMain.configuredDevices === 2 && actualMain.monitoredFolders === 1;
+    if (name === "air-quality")
+      return actualMain.cfg.customLatitude === value && !actualMain.loading && actualMain.errorMessage === "";
+    if (name === "amd-gpu-monitor")
+      return actualMain.available && actualMain.deviceIndex === value && actualMain.gpuUse === value * 10 + 7;
+    if (name === "battery-threshold")
+      return actualMain.service.thresholdFile === value + "/charge_control_end_threshold";
     if (name === "ds4-colors") {
       var color = Qt.color(value);
       return actualMain.currentR === Math.round(color.r * 255) && actualMain.currentG === Math.round(color.g * 255) && actualMain.currentB === Math.round(color.b * 255);
     }
-    if (name === "pomodoro") return actualMain.workDuration === value * 60;
-    if (name === "niri-auto-tile") return actualMain.pendingRestart && actualMain.perWorkspace === value && (actualMain.daemonProcess.command.indexOf("--per-workspace") >= 0) === value;
-    if (name === "update-count") return actualMain.updateCount === (value === "printf 9" ? 9 : 7);
+    if (name === "pomodoro")
+      return actualMain.workDuration === value * 60;
+    if (name === "niri-auto-tile")
+      return actualMain.pendingRestart && actualMain.perWorkspace === value && (actualMain.daemonProcess.command.indexOf("--per-workspace") >= 0) === value;
+    if (name === "update-count")
+      return actualMain.updateCount === (value === "printf 9" ? 9 : 7);
     return closes > 0 && consumed[cases[index].key] === value;
   }
   function fault(mode) {
@@ -299,7 +366,11 @@ ShellRoot {
       check(consumed[row.key] === row.finalValue && page[row.field] === other(row.finalValue) && popup.dirty, "action sees accepted owner; newer local input retained");
       phase = "saved-consumer";
     } else if (phase === "saved-consumer" && settled(row.finalValue)) {
-      page[row.field] = row.finalValue; stage(); stage(); popup.applySettings(); phase = "noop";
+      page[row.field] = row.finalValue;
+      stage();
+      stage();
+      popup.applySettings();
+      phase = "noop";
     } else if (phase === "noop" && release) {
       check(held.status === "saved" && held.refreshState === "current", "real equal-choice receipt");
       deliver();
@@ -310,10 +381,14 @@ ShellRoot {
         try {
           root.check(result.status === "nothing_to_save" && result.refreshState === "current", "real clean native no-op receipt");
           root.phase = "noop-consumer";
-        } catch (error) { console.error(String(error)); root.finish(2); }
+        } catch (error) {
+          console.error(String(error));
+          root.finish(2);
+        }
       });
     } else if (phase === "noop-consumer" && settled(row.finalValue)) {
-      phase = "blocking"; fault("block");
+      phase = "blocking";
+      fault("block");
     } else if (phase === "blocked") {
       page[row.field] = other(row.finalValue);
       stage();
@@ -337,9 +412,15 @@ ShellRoot {
       check(calls === before + expectedCalls(1) && closes === beforeClose + expectedCloses(1) && consumed[row.key] === other(row.finalValue), "one retained action sees Retry input");
       phase = "retry-consumer";
     } else if (phase === "retry-consumer" && settled(other(row.finalValue))) {
-      stale = true; page[row.field] = row.finalValue; stage(); stage(); phase = "foreign"; fault("foreign-root");
+      stale = true;
+      page[row.field] = row.finalValue;
+      stage();
+      stage();
+      phase = "foreign";
+      fault("foreign-root");
     } else if (phase === "stale-submit") {
-      popup.applySettings(); phase = "stale";
+      popup.applySettings();
+      phase = "stale";
     } else if (phase === "stale" && release) {
       check(held.status === "saved" && held.refreshState === "stale", "real stale completion");
       var before = calls, beforeClose = closes;
@@ -352,7 +433,10 @@ ShellRoot {
     } else if (phase === "done" && !popup.visible && !popup.currentPlugin) {
       console.log("I4_PAGE_ACTION", row.plugin, "PASS");
       api.mainInstance = null;
-      if (actualMain) { actualMain.destroy(); actualMain = null; }
+      if (actualMain) {
+        actualMain.destroy();
+        actualMain = null;
+      }
       index++;
       openNext();
     }
@@ -375,10 +459,18 @@ ShellRoot {
         root.phase = "waiting-owner";
         var row = root.cases[root.index];
         Service._openSettingsOwner(row.plugin, function (owner) {
-          try { root.check(owner !== null, "actual native preference owner opened"); root.register(row, owner); }
-          catch (error) { console.error(String(error)); root.finish(2); }
+          try {
+            root.check(owner !== null, "actual native preference owner opened");
+            root.register(row, owner);
+          } catch (error) {
+            console.error(String(error));
+            root.finish(2);
+          }
         });
-      } catch (error) { console.error(String(error)); root.finish(2); }
+      } catch (error) {
+        console.error(String(error));
+        root.finish(2);
+      }
     }
   }
   FloatingWindow {
