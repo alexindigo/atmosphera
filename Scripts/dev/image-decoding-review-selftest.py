@@ -42,6 +42,8 @@ def main():
         (endpoint / (name + '.png')).write_bytes(colored_png(color))
         grabs.append(dict(name=name, saved=True))
     (endpoint / 'qt.log').write_text('IMAGE_BASELINE|' + json.dumps(consumer) + '\n' + ''.join('IMAGE_GRAB|' + json.dumps(r) + '\n' for r in grabs))
+    locker = fixture / 'owner-locker'
+    shutil.copytree(endpoint, locker)
     checks = []
 
     def check(name, action, refused=False):
@@ -59,7 +61,16 @@ def main():
         print('CASE ' + name + ': PASS', flush=True)
 
     check('review-valid-independent-endpoint', lambda: inspect(fixture, ['required'], expected, 'absent'))
+    (locker / 'consumer.json').rename(locker / 'consumer.missing')
+    check('review-rejects-missing-owner-locker', lambda: inspect(fixture, ['required'], expected, 'absent'), True)
+    (locker / 'consumer.missing').rename(locker / 'consumer.json')
     log_text = (endpoint / 'qt.log').read_text()
+    for key in ('motion', 'formats'):
+        incomplete = {name: value for name, value in consumer.items() if name != key}
+        (endpoint / 'consumer.json').write_text(json.dumps(incomplete))
+        (endpoint / 'qt.log').write_text(log_text.replace(json.dumps(consumer), json.dumps(incomplete)))
+        check('review-rejects-owner-without-' + key, lambda: inspect(fixture, ['required'], expected, 'absent'), True)
+    (endpoint / 'consumer.json').write_text(json.dumps(consumer))
     (endpoint / 'qt.log').write_text(log_text.replace('"name": "format-0"', '"name": "format-0.png"'))
     check('review-accepts-exact-filename-schema', lambda: inspect(fixture, ['required'], expected, 'absent'))
     (endpoint / 'format-0.png.png').write_bytes(colored_png(COLORS[0]))
@@ -102,7 +113,7 @@ def main():
               and Path(address.removeprefix('unix:path=')).is_relative_to(profile.runtime_base)))
     lease_root = out / 'lease'
     lease_root.mkdir()
-    lease_profile = SimpleNamespace(journal_base=lease_root, uid=profile.uid)
+    lease_profile = SimpleNamespace(home=profile.home, journal_base=lease_root, uid=profile.uid)
     original = subprocess.run(['loginctl', 'show-user', str(profile.uid), '-p', 'Linger', '--value'],
                               capture_output=True, text=True, check=True).stdout.strip()
     units = [('image-decoding-review-a', out / 'a'), ('image-decoding-review-b', out / 'b')]

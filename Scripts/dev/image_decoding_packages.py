@@ -48,9 +48,16 @@ def snapshot(run):
         stream = proc.stdin
         files = []
         for mark, (name, row) in enumerate(manifest['files'].items(), 1):
-            data = (root / name).read_bytes() if row['type'] == 'file' else os.fsencode(row['target'])
+            if row['type'] == 'file':
+                data = (root / name).read_bytes()
+                mode = '100755' if row['mode'] & 0o111 else '100644'
+            elif row['type'] == 'link':
+                data = os.fsencode(row['target'])
+                mode = '120000'
+            else:
+                # Directories stay in the source receipt, but Git only stores leaves.
+                continue
             stream.write(f'blob\nmark :{mark}\ndata {len(data)}\n'.encode() + data + b'\n')
-            mode = '120000' if row['type'] == 'link' else '100755' if row['mode'] & 0o111 else '100644'
             files.append(f'M {mode} :{mark} {json.dumps(name, ensure_ascii=False)}\n')
         message = b'Image package source fixture\n'
         stream.write(f'commit refs/heads/main\ncommitter Image fixture <fixture@example.invalid> {int(time.time())} +0000\ndata {len(message)}\n'.encode()

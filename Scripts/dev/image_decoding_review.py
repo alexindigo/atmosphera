@@ -6,6 +6,12 @@ from pathlib import Path
 from image_decoding_fixtures import COLORS, pixel, read_png
 
 
+OWNER_ENDPOINTS = {
+    'owner': ('owner', 'owner-locker'),
+    'packaging': ('aur-shell', 'aur-locker', 'nix-shell', 'nix-locker'),
+}
+
+
 def load(path):
     return json.loads(Path(path).read_text())
 
@@ -15,7 +21,7 @@ def require(condition, message):
         raise AssertionError(message)
 
 
-def endpoint(directory, lane):
+def endpoint(directory, lane, *, owner=False):
     """Reconstruct the endpoint from its raw Qt log, not the driver's verdict."""
     consumer = load(directory / 'consumer.json')
     process = load(directory / 'process.json')
@@ -43,7 +49,10 @@ def endpoint(directory, lane):
         width, height, _pixels = read_png(path)
         frames[path.name] = dict(sha256=hashlib.sha256(path.read_bytes()).hexdigest(), width=width, height=height,
                                  center=pixel(path))
-    if 'formats' in consumer and 'motion' in consumer:
+    if owner:
+        require({'formats', 'motion', 'raw', 'workerRunning', 'finalInterests', 'finalRequests'} <= consumer.keys()
+                and isinstance(consumer['formats'], list) and consumer['formats'],
+                'Incomplete owner endpoint: ' + str(directory))
         require(consumer['raw'] == (1 if lane == 'present' else 3), 'Raw codec control mismatch')
         for index, row in enumerate(consumer['formats']):
             require(row['consumer']['state'] == 'ready', 'Format endpoint unavailable: ' + row['name'])
@@ -84,9 +93,9 @@ def packages(directory):
     for codec in ('WEBP', 'HEIC', 'AVIF', 'PNG', 'GIF'):
         rows = [line.split() for line in tools.splitlines() if line.split() and line.split()[0].rstrip('*') == codec]
         require(rows and ('r' if codec in ('WEBP', 'HEIC', 'AVIF') else 'w') in rows[0][2], 'Missing container delegate: ' + codec)
-    require({p.parent.name for p in directory.rglob('consumer.json')} == {'aur-shell', 'aur-locker', 'nix-shell', 'nix-locker'},
-            'Incomplete installed consumer matrix')
-    return dict(closure=closure, requiredConsumers=['aur-shell', 'aur-locker', 'nix-shell', 'nix-locker'])
+    require({p.parent.relative_to(directory).as_posix() for p in directory.rglob('consumer.json')} == set(OWNER_ENDPOINTS['packaging']),
+             'Incomplete installed consumer matrix')
+    return dict(closure=closure, requiredConsumers=list(OWNER_ENDPOINTS['packaging']))
 
 
 def inspect(directory, contract, expected, lane):
@@ -97,7 +106,10 @@ def inspect(directory, contract, expected, lane):
     require(len(rows) == len({r['id'] for r in rows}) and {r['id'] for r in rows} == set(contract),
             'Missing or unexpected case IDs: ' + str(directory))
     require(all(row['result'] == 'PASS' for row in rows), 'Nonpassing required case: ' + str(directory))
-    endpoints = [endpoint(path.parent, lane) for path in sorted(directory.rglob('consumer.json'))]
+    owner_dirs = {directory / name for name in OWNER_ENDPOINTS.get(report['case'], ())}
+    observed_dirs = {path.parent for path in directory.rglob('consumer.json')}
+    require(owner_dirs <= observed_dirs, 'Missing required owner endpoint: ' + str(directory))
+    endpoints = [endpoint(path, lane, owner=path in owner_dirs) for path in sorted(observed_dirs)]
     require(endpoints, 'No saved consumer endpoints: ' + str(directory))
     result = dict(path=str(directory), case=report['case'], qtWebp=lane, checks=len(rows), endpoints=endpoints)
     if report['case'] == 'packaging':

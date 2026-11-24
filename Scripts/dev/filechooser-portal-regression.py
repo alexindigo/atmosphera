@@ -186,14 +186,8 @@ def main():
     p.add_argument("--label", required=True)
     profile_argument(p)
     a = p.parse_args()
-    r = Run(a.source, a.label)
-    try:
+    with Run.session(a.source, a.label) as r:
         r.start(); suite(r); r.finish()
-    except Exception as error:
-        r.failure = repr(error)
-        raise
-    finally:
-        r.close()
     return 0
 
 

@@ -17,8 +17,7 @@ def main():
     p.add_argument("--label", required=True)
     profile_argument(p)
     a = p.parse_args()
-    r = Run(a.source, a.label)
-    try:
+    with Run.session(a.source, a.label) as r:
         r.start()
         r.ipc("settingsOpen")
         r.wait(lambda s: len(s["requests"]) == 1 and s["requests"][0]["status"] == "ready")
@@ -53,11 +52,6 @@ def main():
             order.append({"call": i, "matches": matches})
         r.check("Response-watch-before-every-OpenFile", all(x["matches"] and max(x["matches"]) < x["call"] for x in order), order)
         r.finish()
-    except Exception as error:
-        r.failure = repr(error)
-        raise
-    finally:
-        r.close()
     return 0
 
 

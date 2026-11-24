@@ -13,6 +13,7 @@ from image_decoding_evidence import source_manifest
 
 
 LONG_CASES = {'all', 'plugins', 'packaging', 'shell', 'chooser-wallpaper'}
+TERMINAL = {'inactive', 'failed'}
 
 
 def write(path, value):
@@ -33,10 +34,21 @@ def in_owned_job():
         line.rstrip().endswith('/' + unit + '.service') for line in Path('/proc/self/cgroup').read_text().splitlines())
 
 
-def linger_lease(profile, unit, control, acquire):
+def account_state(profile):
+    # Profiles verify the real UID/home. Unlike a journal or the login runtime
+    # directory, this location is shared by all profiles and survives logout.
+    root = profile.home / '.local/state/atmosphera-image-decoding'
+    root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if root != root.resolve() or root.stat().st_uid != profile.uid or root.stat().st_mode & 0o077:
+        raise ProfileBlocked('private account state required for image jobs')
+    return root
+
+
+def linger_lease(profile, unit, control, acquire, *, missing_ok=False):
     """The last owned job restores the one original Linger value."""
-    lock = profile.journal_base / '.image-decoding-linger.lock'
-    state = profile.journal_base / '.image-decoding-linger.json'
+    root = account_state(profile)
+    lock = root / 'linger.lock'
+    state = root / 'linger.json'
     with lock.open('a') as stream:
         fcntl.flock(stream, fcntl.LOCK_EX)
         data = json.loads(state.read_text()) if state.exists() else None
@@ -56,6 +68,8 @@ def linger_lease(profile, unit, control, acquire):
             if data['original'] == 'no':
                 subprocess.run(['sudo', '-n', 'loginctl', 'enable-linger', str(profile.uid)], check=True, timeout=15)
             return data['original']
+        if missing_ok and (data is None or unit not in data['owners']):
+            return None
         if data is None or data['owners'].get(unit) != str(control):
             raise ProfileBlocked('missing matching Linger lease')
         del data['owners'][unit]
@@ -66,6 +80,39 @@ def linger_lease(profile, unit, control, acquire):
                 subprocess.run(['sudo', '-n', 'loginctl', 'disable-linger', str(profile.uid)], check=True, timeout=15)
             state.unlink()
         return data['original']
+
+
+def active_state(unit):
+    return subprocess.run(['systemctl', '--user', 'show', unit, '-p', 'ActiveState', '--value'],
+                          capture_output=True, text=True, check=True, timeout=15).stdout.strip()
+
+
+def launch_job(args, profile, unit, control):
+    argv = ['systemd-run', '--user', '--unit=' + unit, '--property=KillMode=control-group',
+            '--property=WorkingDirectory=' + str(args.source),
+            '--property=StandardOutput=append:' + str(control / 'job.log'), '--property=StandardError=inherit',
+            '--setenv=TMPDIR=' + os.environ['TMPDIR'], '--setenv=QML_DISABLE_DISK_CACHE=1',
+            '--setenv=ATMOSPHERA_IMAGE_JOB=' + unit, sys.executable, '-B', str(Path(sys.argv[0]).resolve()),
+            *sys.argv[1:], '--job-control', str(control)]
+    try:
+        linger = linger_lease(profile, unit, control, True)
+        write(control / 'supervisor.json', dict(unit=unit, originalLinger=linger))
+        launch = subprocess.run(argv, capture_output=True, text=True, timeout=30)
+        (control / 'launch.log').write_text(launch.stdout + launch.stderr)
+        if launch.returncode:
+            raise RuntimeError('could not launch owned image job: ' + launch.stderr)
+    except (OSError, subprocess.SubprocessError, RuntimeError) as error:
+        # A failed client is not proof the manager declined the unit. When the
+        # manager cannot confirm terminal state, keep the lease for reattachment.
+        (control / 'launch-error.log').write_text(repr(error) + '\n')
+        if (control / 'exit.json').exists():
+            return
+        if active_state(unit) not in TERMINAL:
+            return
+        if (control / 'exit.json').exists():
+            return
+        linger_lease(profile, unit, control, False, missing_ok=True)
+        raise
 
 
 def supervise(args, profile):
@@ -83,36 +130,26 @@ def supervise(args, profile):
             raise ProfileBlocked('canonical owned job paths required')
     contract = identity(args, profile)
     unit = 'image-decoding-' + hashlib.sha256(str(args.output).encode()).hexdigest()[:16]
-    if control.exists():
-        if json.loads((control / 'contract.json').read_text()) != contract:
-            raise ProfileBlocked('existing job has different inputs; retain it and use a fresh output')
-        print('Joining ' + unit + ' at ' + str(control), flush=True)
-    else:
-        if args.output.exists() or args.work_root.exists():
-            raise ProfileBlocked('fresh output/work required before job launch')
-        control.mkdir(parents=True, mode=0o700)
-        write(control / 'contract.json', contract)
-        linger = linger_lease(profile, unit, control, True)
-        write(control / 'supervisor.json', dict(unit=unit, originalLinger=linger))
-        argv = ['systemd-run', '--user', '--unit=' + unit, '--property=KillMode=control-group',
-                '--property=WorkingDirectory=' + str(args.source),
-                '--property=StandardOutput=append:' + str(control / 'job.log'), '--property=StandardError=inherit',
-                '--setenv=TMPDIR=' + os.environ['TMPDIR'], '--setenv=QML_DISABLE_DISK_CACHE=1',
-                '--setenv=ATMOSPHERA_IMAGE_JOB=' + unit, sys.executable, '-B', str(Path(sys.argv[0]).resolve()),
-                *sys.argv[1:], '--job-control', str(control)]
-        launch = subprocess.run(argv, capture_output=True, text=True, timeout=30)
-        (control / 'launch.log').write_text(launch.stdout + launch.stderr)
-        if launch.returncode:
-            linger_lease(profile, unit, control, False)
-            raise RuntimeError('could not launch owned image job: ' + launch.stderr)
+    with (account_state(profile) / (unit + '.lock')).open('a') as admission:
+        fcntl.flock(admission, fcntl.LOCK_EX)
+        if control.exists():
+            saved = control / 'contract.json'
+            if not saved.is_file() or json.loads(saved.read_text()) != contract:
+                raise ProfileBlocked('existing job has no matching contract; retain it and use a fresh output')
+            print('Joining ' + unit + ' at ' + str(control), flush=True)
+        else:
+            if args.output.exists() or args.work_root.exists():
+                raise ProfileBlocked('fresh output/work required before job launch')
+            control.mkdir(parents=True, mode=0o700)
+            write(control / 'contract.json', contract)
+            launch_job(args, profile, unit, control)
     last = None
     while not (control / 'exit.json').exists():
-        observed = subprocess.run(['systemctl', '--user', 'show', unit, '-p', 'ActiveState', '--value'],
-                                  capture_output=True, text=True, check=True, timeout=15).stdout.strip()
-        if observed in ('inactive', 'failed'):
+        if active_state(unit) in TERMINAL:
             # Re-read after the unit state; an orderly exit writes its receipt
             # before the service becomes inactive.
             if not (control / 'exit.json').exists():
+                linger_lease(profile, unit, control, False, missing_ok=True)
                 raise RuntimeError('owned image job ended without an exit receipt: ' + str(control))
         captured = control / 'identity.json'
         if captured.exists() and not (control / 'exit.json').exists():
@@ -123,9 +160,17 @@ def supervise(args, profile):
                 cgroup = (Path('/proc') / str(process.pid) / 'cgroup').read_text()
             except (OSError, ProcessLookupError):
                 if not (control / 'exit.json').exists():
+                    if active_state(unit) in TERMINAL:
+                        continue  # Reconcile through the terminal-unit path above.
+                    if (control / 'exit.json').exists():
+                        break
                     raise ProfileBlocked('owned worker disappeared without exit evidence')
             else:
-                if actual != process or cgroup != saved['cgroup']:
+                if (actual != process or cgroup != saved['cgroup']) and not (control / 'exit.json').exists():
+                    if active_state(unit) in TERMINAL:
+                        continue
+                    if (control / 'exit.json').exists():
+                        break
                     raise ProfileBlocked('owned worker identity/cgroup changed')
         status = args.output / 'status.json'
         if status.exists():
