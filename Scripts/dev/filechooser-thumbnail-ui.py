@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Real-key visible-tile, latency and second-open shared-cache regression."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -136,8 +137,14 @@ def main():
             wait(visible_ready)
         key(107)
         wait(visible_ready)
-        cache_entries = list((cache / "thumbnails/large").glob("*.png")) + list((cache / "thumbnails/normal").glob("*.png"))
-        check("all-30-video-frames-cached", len(cache_entries) == 30, len(cache_entries))
+        # The harness first opens Fieldwork, which can legitimately populate
+        # this shared cache. Match the exact fixture URIs and require one
+        # positive thumbnail per clip, not 30 arbitrary PNGs in the cache.
+        expected = {hashlib.md5(path.as_uri().encode(), usedforsecurity=False).hexdigest() + ".png": path.name
+                    for path in videos.glob("Coast *.mp4")}
+        hits = {name: sum((cache / "thumbnails" / bucket / key).is_file() for bucket in ("normal", "large"))
+                for key, name in expected.items()}
+        check("all-30-video-frames-cached", len(hits) == 30 and all(n == 1 for n in hits.values()), hits)
         key(1)
         wait(lambda s: s["settled"])
         before_reopen = len(launches())
