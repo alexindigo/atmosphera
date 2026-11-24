@@ -18,7 +18,7 @@ LEGACY={'arch-updater':{'boldVer':'legacy declaration, no current reader/control
 ANCHORS={
     'air-quality': ['JSON.stringify([cfg.dataSource, cfg.aqicnToken, cfg.useNoctaliaLocation, cfg.customLatitude, cfg.customLongitude, cfg.aqiScale, cfg.refreshInterval, Settings.data.location?.weatherEnabled, Settings.data.location?.name, _weather?.latitude, _weather?.longitude])','configuration: cfg','location: Object.freeze({'],
     'github-contributions':['JSON.stringify([username, token, cfg.refreshInterval])','configuration: cfg','(cfg.username ?? "").trim()','(cfg.token ?? "").trim()'],
-    'arch-updater':['JSON.stringify([systemCmd, aurCmd, flatpak, noctalia, refreshInterval])','configuration: Object.freeze({','actionSettings: root.actionSettings','systemCmd: systemCmd','aurCmd: aurCmd','flatpak: flatpak','noctalia: noctalia','refreshInterval: refreshInterval','toast: cfg.toast','updateCmd: cfg.updateCmd','aurHomepageCmd: cfg.aurHomepageCmd']}
+    'arch-updater':['JSON.stringify([systemCmd, aurCmd, flatpak, noctalia, refreshInterval])','configuration: Object.freeze({','actionSettings: root.actionSettings','systemCmd: systemCmd','aurCmd: aurCmd','flatpak: flatpak','noctalia: noctalia','refreshInterval: refreshInterval','toast: cfg.toast','aurHomepageCmd: cfg.aurHomepageCmd']}
 def require(code,anchor,label):syntax.require(code,anchor,label+': '+anchor)
 def check(sources,manifests):
     rows=[]
@@ -29,6 +29,10 @@ def check(sources,manifests):
         for anchor in ['property var _settingsConsumers: new Map()','if (!context || !context.current()) return null','if (_settingsConsumers.has(context)) return _settingsConsumers.get(context)','settingsContext: context','root._settingsConsumers.delete(context)','retired.destroy()','_settingsConsumers.set(context, client)']:require(main,anchor,plugin+' Main')
         for anchor in ['readonly property bool current: settingsContext.current()','readonly property var cfg: current ? settingsContext.settingsView : ({})','var old = _worker; _worker = null; old.active = false; old.destroy()','_retireWorker(); if (!current) return','on_QueryIdentityChanged: _replaceQuery()','if (!current && _constructed) { _retireWorker(); retire(root); }','Component.onDestruction: _retireWorker()']:require(client,anchor,plugin+' client')
         for anchor in ANCHORS[plugin]:require(client,anchor,plugin+' query identity')
+        if plugin == 'arch-updater':
+            require(client, 'function update() { if (!current) return false; return admitUpdate(cfg.updateCmd || defaults.updateCmd || "", actionSettings().toast); }', plugin+' action admission')
+            require(main, 'admitUpdate: function (command, toast) { return root._admitUpdate(context, command, toast); }', plugin+' action owner')
+            require(main, 'function _admitUpdate(context, command, toast) { if (!context.current() || !command) return false;', plugin+' action context fence')
         require(worker,'required property var configuration',plugin+' worker')
         require(worker,'running: root.active',plugin+' worker timer')
         require(worker,'if (!root.active) return',plugin+' result fence')
@@ -65,5 +69,12 @@ def main():
                 try:check(mutated,manifests)
                 except ValueError as error:controls.append(dict(plugin=plugin,control=label,rejectedAt=str(error)))
                 else:raise RuntimeError('worker matrix parsed control escaped '+plugin+'/'+label)
+        for name,old,new,label in [('ArchUpdaterSettingsClient.qml','admitUpdate(cfg.updateCmd','admitUpdate(defaults.updateCmd','shared-update-command'),('Main.qml','_admitUpdate(context, command, toast);','_admitUpdate(pluginApi.settingsContext, command, toast);','shared-action-owner')]:
+            changed={k:dict(v) for k,v in sources.items()}
+            assert changed['arch-updater'][name].count(old)==1,label
+            changed['arch-updater'][name]=changed['arch-updater'][name].replace(old,new)
+            try:check(changed,manifests)
+            except ValueError as error:controls.append(dict(plugin='arch-updater',control=label,rejectedAt=str(error)))
+            else:raise RuntimeError('worker matrix parsed control escaped arch-updater/'+label)
     a.report.write_text(json.dumps(dict(status='PASS',members=rows,controls=controls,runtimeAcceptance=False),indent=2)+'\n');print('WORKER_MATRIX_CHECK: PASS (%d members, %d fields, %d controls)'%(len(rows),sum(len(r['fields']) for r in rows),len(controls)))
 if __name__=='__main__':main()

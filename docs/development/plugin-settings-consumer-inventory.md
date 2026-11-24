@@ -204,7 +204,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 4 | `agent-session-status/server.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `dc2173ba179f8166cbe99bfcfe992050e88a0901d388f27345b559d401c0daa4`.
+Runtime-source/manifest fingerprint: `c4d470081bc953ac99ff221fc9ac36e9f044bb0cc060b0c61183a005b8201e96`.
 
 ## air-quality
 
@@ -240,7 +240,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 6 | `amd-gpu-monitor/Panel.qml` | `iconColor`:29; `showDcefclk`:113,382,415,423; `showFanSpeed`:346; `showFclk`:109,380,401,423; `showGpuUse`:258; `showMclk`:107,379,394,423; `showPower`:363; `showSclk`:105,378,387,423; `showSocclk`:111,381,408,423; `showTempEdge`:87,282,297; `showTempJunction`:85,275,297; `showTempMemory`:89,289,297; `showVram`:137,314,317,324,329,440; `showVramActivity`:142,321,324,329,440 | 17, 20 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `3323b3d037b6f10145b5b673734aff7159058b9aefe800c1a5da20628b4fe010`.
+Runtime-source/manifest fingerprint: `1d7efe59da631661f472f2a36332e8d657e82a1909c0590ef90a5c2366e92942`.
 
 ## arch-updater
 
@@ -392,7 +392,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 | 3 | `battery-wireless-devices/scripts/scan.py` | No literal field edge | 19 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `f67f2e50fdcefcf1bfe768c2679cab57876a1249a65473397fea23b5e9256f0b`.
+Runtime-source/manifest fingerprint: `c7cbf381df84aa84c1fbfce5654f11eaa91d6345dcfada967d731e77a965d106`.
 
 ## caffeinate
 
@@ -474,7 +474,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 6 | `claude-code-panel/Panel.qml` | `attachmentStyle`:22; `panelDetached`:21; `panelHeightRatio`:37; `panelPosition`:20; `panelWidth`:36; `scale`:40 | 16, 17, 20, 21, 22, 36, 37, 40, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `6db80d39c51ce309a5155c34323c7a805ff3b497a586d5f9af6a4c12647bbabf`.
+Runtime-source/manifest fingerprint: `3f19958881336b41e4df824a61e648afab1847d273d9b1fbd2f3f9051d728a8d`.
 
 ## clipboard
 
@@ -491,7 +491,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 5 | `clipboard/Panel.qml` | `density`:96; `showImagePreviews`:94 | 36, 94, 96, 115, 128, 275, 305, 310, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `91c29e5863ab298ce32514a252e7011ae750afcf482b1e7858a10106f331b80f`.
+Runtime-source/manifest fingerprint: `e5cabba12673d81205c9ec36f635bc738dfbcf245e6d036f50f4fce8aff1d805`.
 
 ## clipper
 
@@ -513,7 +513,7 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 10 | `clipper/TodoPageSelector.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `5b2d1887e463b1951be8626bd211ca449cfffbbf87c8b9e4cd13022e568f650b`.
+Runtime-source/manifest fingerprint: `ec41aff8be2488c749caedd2953062c679856ae250e2925839a253f68cc5b867`.
 
 ## cloudflare-warp
 
@@ -720,7 +720,7 @@ Entries: `barWidget=BarWidget.qml`; `desktopWidget=DesktopWidget.qml`; `main=Mai
 | 6 | `git-companion/Panel.qml` | `platform`:25 | 16, 17, 24, 29, 30 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `67dbe966f94e2eebe955cc95ea09eb501351612aee48d44f08c72ead3e0f10f6`.
+Runtime-source/manifest fingerprint: `8879404a447c5c888f6c48574eb2fc6f5a7d9d538b3738bbf21a7e4f61e98680`.
 
 ## github-contributions
 
@@ -827,7 +827,7 @@ Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `ma
 | 2 | `hermes-agent/HermesClient.qml` | `bridgePort`:14; `clientOnlyMode`:13; `hideWhenIdle`:15; `launcherPrefix`:18; `panelPinned`:16; `showToolActivity`:17; `statusPollIntervalSec`:12 | 3, 6, 10, 11 |
 | 3 | `hermes-agent/HermesConnection.qml` | No literal field edge | No namespace/Main reference |
 | 4 | `hermes-agent/LauncherProvider.qml` | No literal field edge | 13, 14, 17, 18, 43, 44, 56, 70, ... |
-| 5 | `hermes-agent/Main.qml` | `autoStartBridge`:67; `autoStartGateway`:68; `bridgeHost`:62; `bridgeTokenManual`:66; `configured`:156,165; `defaultModel`:69,163; `defaultProvider`:69,164; `hermesCommand`:65,162; `hermesHome`:64,161; `panelPinned`:235,239,279; `stateFile`:63 | 8, 38, 43, 50, 56, 58, 59, 143, ... |
+| 5 | `hermes-agent/Main.qml` | `autoStartBridge`:67; `autoStartGateway`:68; `bridgeHost`:62; `bridgeTokenManual`:66; `configured`:162,171; `defaultModel`:69,169; `defaultProvider`:69,170; `hermesCommand`:65,168; `hermesHome`:64,167; `panelPinned`:241,245,285; `stateFile`:63 | 8, 38, 43, 50, 56, 58, 59, 149, ... |
 | 6 | `hermes-agent/Panel.qml` | `defaultModel`:40; `defaultProvider`:39; `panelPinned`:95 | 14, 15, 18, 19, 20, 88, 93, 95, ... |
 | 7 | `hermes-agent/PinnedPanelWindow.qml` | No literal field edge | No namespace/Main reference |
 | 8 | `hermes-agent/components/ApprovalCard.qml` | No literal field edge | No namespace/Main reference |
@@ -839,7 +839,7 @@ Entries: `barWidget=BarWidget.qml`; `launcherProvider=LauncherProvider.qml`; `ma
 | 14 | `hermes-agent/scripts/hermes_bridge.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `fa1f80c614b82d0cc0f65c9f0a93859cb3e5a57bfce50d278a4eba6c2b6b306c`.
+Runtime-source/manifest fingerprint: `afd697b67eb215b5e95c3b27b611fe1ed529a74556ce07cb319fcd80fee9371d`.
 
 ## hermes-ssh-chat
 
@@ -851,8 +851,8 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `hermes-ssh-chat/BarWidget.qml` | No literal field edge | 14, 15 |
 | 2 | `hermes-ssh-chat/HermesConnection.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `hermes-ssh-chat/HermesSession.qml` | `autoConnectOnStartup`:10,50; `host`:10,44,52,55,77; `port`:10,44,55,77; `rememberLastTarget`:76; `terminalCols`:10,55,85,96; `terminalRows`:10,55,85,96; `user`:10,44,52,55,77 | 6, 8, 9, 38, 77 |
-| 4 | `hermes-ssh-chat/Main.qml` | `toggleShortcutName`:25 | 12, 16, 23, 24 |
+| 3 | `hermes-ssh-chat/HermesSession.qml` | `autoConnectOnStartup`:11,50; `host`:11,44,52,55,77; `port`:11,44,55,77; `rememberLastTarget`:76; `terminalCols`:11,55,83,93; `terminalRows`:11,55,83,93; `user`:11,44,52,55,77 | 6, 9, 10, 38, 77 |
+| 4 | `hermes-ssh-chat/Main.qml` | `toggleShortcutName`:29 | 13, 17, 27, 28 |
 | 5 | `hermes-ssh-chat/Panel.qml` | `host`:21,50; `panelHeight`:17; `panelWidth`:16; `port`:22,51; `terminalCols`:25,53; `terminalFontSize`:27,55; `terminalRows`:26,54; `user`:23,52 | 12, 13, 19, 20, 47, 49 |
 | 6 | `hermes-ssh-chat/TerminalView.qml` | No literal field edge | No namespace/Main reference |
 | 7 | `hermes-ssh-chat/helpers/hermes_ssh_bridge.py` | No literal field edge | No namespace/Main reference |
@@ -864,7 +864,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `showBarText` | `hermes-ssh-chat/BarWidget.qml:25` | Cross-file dynamic helper Local.HermesSession.setting(key) reads singleton API at HermesSession.qml:52-55; part of required session-context port. |
-Runtime-source/manifest fingerprint: `ce825759c0d5315f09cab90638e07080de992eb41ca66903e93e53430b7f59e0`.
+Runtime-source/manifest fingerprint: `0773f8dcd2341641d14b7a197fb66fccbb7ddcb431eb8c9ec35288973621b1a8`.
 
 ## hyprland-steam-overlay
 
@@ -887,7 +887,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | --- | --- | --- | --- |
 | 1 | `autoLaunchSteam,enableChatNotifications` | `hyprland-steam-overlay/Settings.qml:9` | Settings-only leaves; no runtime behavior reader in this catalog version. |
 | 2 | `gapSize,topMarginPercent,windowHeightPercent,friendsWidthPercent,mainWidthPercent,chatWidthPercent,useCustomLayout` | `hyprland-steam-overlay/OverlayPolicy.qml:12` | Captured effective values cross the original QML int/real/bool boundary once per admitted overlay session; Main retains this policy through query, move/show/focus and continuing-window dispatch. |
-Runtime-source/manifest fingerprint: `0a217fea0b795beaf8ea750f6f89ebd81185cdb352adeb7f20a57df1a6bc5881`.
+Runtime-source/manifest fingerprint: `7deb659a608b332fbbb71ee445a06724825110c661a3e469f7234c9ca9007ec0`.
 
 ## hyprland-visual-editor
 
@@ -975,7 +975,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `hideIfNoDeviceConnected` | `kde-connect/BarWidget.qml:33` | Bar reads a Main property absent from Main.qml rather than the declared setting. Required selected presentation correction alongside selected-device port, not an unused-field exemption. |
-Runtime-source/manifest fingerprint: `88d5169b09638cb240a54f90a36e40d07ba9481f1758b7ba8e67e04176013ae4`.
+Runtime-source/manifest fingerprint: `f02d92233b81bcfa4effc37fdcdf5eb251107dbf59c8d0107870748b2fa51d0e`.
 
 ## keep-awake-plus
 
@@ -991,7 +991,7 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 4 | `keep-awake-plus/Panel.qml` | No literal field edge | 13, 15, 23, 24, 28, 30, 31, 39, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `f2638eb7ac76134763257b928b4343c27505105e361188852c6d9a679e0897ea`.
+Runtime-source/manifest fingerprint: `5774253511f40fc4f09665d9dd7ffeba0187141abb04ecb71a65effe890cd5a3`.
 
 ## keybind-cheatsheet
 
@@ -1006,9 +1006,9 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 3 | `keybind-cheatsheet/ColorPill.qml` | No literal field edge | No namespace/Main reference |
 | 4 | `keybind-cheatsheet/Main.qml` | `bindOverrides`:38,49 | 13, 17, 18, 30, 35, 37, 38, 49 |
 | 5 | `keybind-cheatsheet/MangoParser.js` | No literal field edge | No namespace/Main reference |
-| 6 | `keybind-cheatsheet/Panel.qml` | `autoHeight`:23; `columnCount`:24; `descriptionTextColor`:148; `keyColorAlt`:135; `keyColorCtrl`:142; `keyColorDefault`:144; `keyColorMod2`:166; `keyColorMod3`:167; `keyColorMod5`:168; `keyColorMouse`:139; `keyColorNumeric`:138; `keyColorPrint`:137; `keyColorShift`:143; `keyColorSuper`:141; `keyColorXF86`:136; `keyLabelColor`:145; `keyLabelMod2`:172; `keyLabelMod3`:173; `keyLabelMod5`:174; `keyTextAlt`:155; `keyTextCtrl`:153; `keyTextDefault`:160; `keyTextMod2`:169; `keyTextMod3`:170; `keyTextMod5`:171; `keyTextMouse`:159; `keyTextNumeric`:158; `keyTextPrint`:157; `keyTextShift`:154; `keyTextSuper`:152; `keyTextXF86`:156; `splitLargeWorkspaceCategory`:177; `windowHeight`:22; `windowWidth`:21; `workspaceSplitThreshold`:178 | 17, 18, 26, 180, 551, 555 |
-| 7 | `keybind-cheatsheet/ParserClient.qml` | `bindOverrides`:15; `hyprlandConfigPath`:15; `hyprlandLuaConfigPath`:15; `hyprlandParserMode`:15; `mangoConfigPath`:15; `mergeSequentialBinds`:15; `modKeyVariable`:15; `niriConfigPath`:15; `showUndescribedBinds`:15 | 6, 11, 12, 62 |
-| 8 | `keybind-cheatsheet/ParserGeneration.qml` | `bindOverrides`:817; `hyprlandConfigPath`:138; `hyprlandLuaConfigPath`:139; `hyprlandParserMode`:141; `mangoConfigPath`:157; `mergeSequentialBinds`:504,890,1115; `modKeyVariable`:1016; `niriConfigPath`:155; `showUndescribedBinds`:818,1018 | No namespace/Main reference |
+| 6 | `keybind-cheatsheet/Panel.qml` | `autoHeight`:23; `columnCount`:24; `descriptionTextColor`:144; `keyColorAlt`:131; `keyColorCtrl`:138; `keyColorDefault`:140; `keyColorMod2`:162; `keyColorMod3`:163; `keyColorMod5`:164; `keyColorMouse`:135; `keyColorNumeric`:134; `keyColorPrint`:133; `keyColorShift`:139; `keyColorSuper`:137; `keyColorXF86`:132; `keyLabelColor`:141; `keyLabelMod2`:168; `keyLabelMod3`:169; `keyLabelMod5`:170; `keyTextAlt`:151; `keyTextCtrl`:149; `keyTextDefault`:156; `keyTextMod2`:165; `keyTextMod3`:166; `keyTextMod5`:167; `keyTextMouse`:155; `keyTextNumeric`:154; `keyTextPrint`:153; `keyTextShift`:150; `keyTextSuper`:148; `keyTextXF86`:152; `splitLargeWorkspaceCategory`:173; `windowHeight`:22; `windowWidth`:21; `workspaceSplitThreshold`:174 | 17, 18, 26, 176, 556, 560 |
+| 7 | `keybind-cheatsheet/ParserClient.qml` | `bindOverrides`:15; `hyprlandConfigPath`:15; `hyprlandLuaConfigPath`:15; `hyprlandParserMode`:15; `mangoConfigPath`:15; `mergeSequentialBinds`:15; `modKeyVariable`:15; `niriConfigPath`:15; `showUndescribedBinds`:15 | 6, 11, 12, 84 |
+| 8 | `keybind-cheatsheet/ParserGeneration.qml` | `bindOverrides`:823; `hyprlandConfigPath`:136; `hyprlandLuaConfigPath`:137; `hyprlandParserMode`:139; `mangoConfigPath`:155; `mergeSequentialBinds`:504,896,1117; `modKeyVariable`:1018; `niriConfigPath`:153; `showUndescribedBinds`:824,1020 | No namespace/Main reference |
 | 9 | `keybind-cheatsheet/ParserProcess.qml` | No literal field edge | No namespace/Main reference |
 | 10 | `keybind-cheatsheet/PreviewBadge.qml` | No literal field edge | No namespace/Main reference |
 
@@ -1019,7 +1019,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `cheatsheetData,detectedCompositor` | `keybind-cheatsheet/manifest.json:35` | Protected legacy operational preference leaves remain stored and unmodified. Current Main/ParserClient use the existing state owner for source-qualified cache data, never assign an identity to unqualified preference cache bytes or migrate content. |
-Runtime-source/manifest fingerprint: `5a4852875d01cea08141e01cec516a006a4b1d3eebe6effa8a46cded79fc70a4`.
+Runtime-source/manifest fingerprint: `4948a464785ee5b0928d73e314bdf90dfdc4add3d14901d595235c8c2220dd41`.
 
 ## kubectl-ctx
 
@@ -1052,12 +1052,13 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `latency-monitor/BarWidget.qml` | No literal field edge | 25, 26, 27, 28, 29, 30, 31, 61, ... |
 | 2 | `latency-monitor/Host.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `latency-monitor/LatencySettingsClient.qml` | `animations`:23; `barHost`:19; `colorCritical`:22; `colorGood`:20; `colorWarning`:21; `hosts`:25; `intervalSeconds`:15; `showHostName`:18; `thresholdGood`:16; `thresholdWarning`:17 | 7, 9, 12, 13 |
+| 3 | `latency-monitor/LatencySettingsClient.qml` | `animations`:24; `barHost`:20; `colorCritical`:23; `colorGood`:21; `colorWarning`:22; `hosts`:26; `intervalSeconds`:16; `showHostName`:19; `thresholdGood`:17; `thresholdWarning`:18 | 8, 10, 13, 14 |
 | 4 | `latency-monitor/Main.qml` | No literal field edge | 8, 13, 23 |
 | 5 | `latency-monitor/Panel.qml` | No literal field edge | 28, 29, 30, 31, 48, 50, 52, 302, ... |
+| 6 | `latency-monitor/ThresholdPolicy.js` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `dc5da8f2e02406eddd7b458a74faccf5b585282906fbe39748cc60e9fd3c5c84`.
+Runtime-source/manifest fingerprint: `18034c325666eee0b70c5cb394a6184383857bc5beaee435048a1b512f1e94cf`.
 
 ## launcher-pass
 
@@ -1083,9 +1084,9 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `linux-wallpaperengine-controller/BarWidget.qml` | `iconColor`:22 | 19, 20, 21, 43, 46, 49, 71, 72, ... |
 | 2 | `linux-wallpaperengine-controller/Main.qml` | `autoApplyOnStartup`:308; `defaultAudioReactiveEffects`:302,474,565; `defaultClamp`:87,290,348; `defaultDisableMouse`:304,482,571; `defaultDisableParallax`:305,486,574; `defaultFps`:85,291; `defaultFullscreenPauseOnlyActive`:307; `defaultMuted`:301,470,562; `defaultNoAutomute`:303,478,568; `defaultNoFullscreenPause`:306; `defaultScaling`:88,289,347; `defaultVolume`:294,465,559; `lastKnownGoodScreens`:139,140,221,234; `panelLastSelectedPath`:165,168; `runtimeRecoveryPending`:147,148,199,203,222,241,273; `screens`:135,136,240,342,413,447,448,451,456,459,508,509,512,542,543,546,548,551,657,769; `wallpaperColorScreenshots`:151,152,161; `wallpaperProperties`:89,143,144,395,404,658; `wallpaperScanCacheMinutes`:311 | 28, 36, 38, 42, 45, 51, 52, 55, ... |
-| 3 | `linux-wallpaperengine-controller/Panel.qml` | `applyWallpaperColorsOnApply`:51,682; `badgeEnabled`:72; `badgeOrder`:71; `defaultAudioReactiveEffects`:456; `defaultClamp`:453; `defaultDisableMouse`:457; `defaultDisableParallax`:458; `defaultMuted`:455; `defaultNoAutomute`:502; `defaultVolume`:454; `enableExtraPropertiesEditor`:115; `panelPageSize`:64; `showSidebarDescription`:74; `wallpapersFolder`:38 | 25, 26, 27, 28, 52, 224, 225, 329, ... |
+| 3 | `linux-wallpaperengine-controller/Panel.qml` | `applyWallpaperColorsOnApply`:51,683; `badgeEnabled`:72; `badgeOrder`:71; `defaultAudioReactiveEffects`:457; `defaultClamp`:454; `defaultDisableMouse`:458; `defaultDisableParallax`:459; `defaultMuted`:456; `defaultNoAutomute`:503; `defaultVolume`:455; `enableExtraPropertiesEditor`:115; `panelPageSize`:64; `showSidebarDescription`:74; `wallpapersFolder`:38 | 25, 26, 27, 28, 52, 224, 225, 329, ... |
 | 4 | `linux-wallpaperengine-controller/WallpaperCatalog.qml` | `wallpaperScanCacheMinutes`:18; `wallpapersFolder`:16 | 11, 13, 14, 15 |
-| 5 | `linux-wallpaperengine-controller/WallpaperColorManager.qml` | `wallpaperColorScreenshots`:74,79,126 | 74, 79, 126 |
+| 5 | `linux-wallpaperengine-controller/WallpaperColorManager.qml` | `wallpaperColorScreenshots`:74,79,125 | 74, 79, 125 |
 | 6 | `linux-wallpaperengine-controller/components/panel/PanelDropdowns.qml` | No literal field edge | No namespace/Main reference |
 | 7 | `linux-wallpaperengine-controller/components/panel/PanelHeader.qml` | No literal field edge | 11, 197, 205, 214, 215, 217 |
 | 8 | `linux-wallpaperengine-controller/components/panel/RuntimeErrorBanner.qml` | No literal field edge | 13, 20, 21, 28, 94, 101, 117 |
@@ -1118,7 +1119,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 35 | `linux-wallpaperengine-controller/scripts/update-noctalia-wallpapers-cache.sh` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `33960c54bdef89e2d6826921082944dc3d48c6cc6b2c182774b895262541a632`.
+Runtime-source/manifest fingerprint: `6e73fba56478e8649f349deb2dbf36fc41490b5b5655de23e0c90d85c0225473`.
 
 ## lyrics-fetch
 
@@ -1144,14 +1145,14 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | --- | --- | --- | --- |
 | 1 | `mawaqit/BarWidget.qml` | `activeColor`:36; `dynamicIcon`:33; `hidePrayerName`:30; `iconColor`:35; `showCountdown`:28; `showElapsed`:29; `textColor`:34; `widgetIcon`:32 | 25, 26, 40, 41, 42, 43, 44, 45, ... |
 | 2 | `mawaqit/CalendarCache.qml` | No literal field edge | No namespace/Main reference |
-| 3 | `mawaqit/Main.qml` | `_cacheCity`:60; `_cacheCountry`:60; `_cacheData`:52,59,68; `_cacheFajrAngle`:63; `_cacheIshaAngle`:63; `_cacheMethod`:61; `_cacheSavedAt`:62; `_cacheSchool`:61 | 10, 13, 17, 48, 52, 58, 68 |
+| 3 | `mawaqit/Main.qml` | `_cacheCity`:61; `_cacheCountry`:61; `_cacheData`:53,60,69; `_cacheFajrAngle`:64; `_cacheIshaAngle`:64; `_cacheMethod`:62; `_cacheSavedAt`:63; `_cacheSchool`:62 | 10, 13, 17, 48, 51, 53, 59, 69 |
 | 4 | `mawaqit/MawaqitSettingsClient.qml` | `azanFile`:83; `city`:68; `country`:69; `fajrAngle`:86; `hijriDayOffset`:84; `ishaAngle`:87; `method`:70; `playAzan`:82; `school`:80; `showElapsed`:85; `showNotifications`:81; `tune`:72; `tuneAsr`:75; `tuneDhuhr`:74; `tuneFajr`:73; `tuneIsha`:77; `tuneMaghrib`:76 | 8, 12, 65, 66, 200 |
 | 5 | `mawaqit/Panel.qml` | `weekStartDay`:64; `widgetIcon`:35 | 32, 33, 35, 36, 39, 40, 41, 42, ... |
 | 6 | `mawaqit/calendar-cache.py` | No literal field edge | No namespace/Main reference |
 | 7 | `mawaqit/test_calendar_cache.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `ba752b17fd35699b9794c4fe558c3f5ee4e330d08fbb60a905311f839e74b042`.
+Runtime-source/manifest fingerprint: `2d76b9884ab03e092d52f09d6d3d920b1a55adb5afbf45e074ffc1eb456ee0d8`.
 
 ## mimeapp-gui
 
@@ -1211,7 +1212,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 11 | `model-usage/providers/Zen.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `8e65fb019c5885dfc1a2ca1cced5e1c249b473f5b39a160a1ec4b53f1e51e13e`.
+Runtime-source/manifest fingerprint: `8465b727f8f881d17bf4bb3eafa0b6eecabf13e5797447333712362953978c55`.
 
 ## monique
 
@@ -1293,16 +1294,16 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `mpvpaper/BarWidget.qml` | `active`:22; `isMuted`:30; `isPlaying`:26 | 13, 14, 22, 26, 30, 80, 83, 86, ... |
-| 2 | `mpvpaper/Main.qml` | `active`:56,317,321; `automation`:60; `automationMode`:64; `automationTime`:68; `currentWallpaper`:72,138,187,310; `fillMode`:102; `hardwareAcceleration`:76,385,389; `isMuted`:80,351,357,363; `isPlaying`:84,188,332,338,344; `mpvSocket`:88; `oldWallpapers`:93; `profile`:97; `thumbCacheReady`:108; `volume`:112,370,374,378; `wallpapersFolder`:116,138,153 | 21, 23, 26, 29, 37, 38, 40, 46, ... |
+| 2 | `mpvpaper/Main.qml` | `active`:56,321,325; `automation`:60; `automationMode`:64; `automationTime`:68; `currentWallpaper`:72,138,189,314; `fillMode`:102; `hardwareAcceleration`:76,389,393; `isMuted`:80,355,361,367; `isPlaying`:84,190,336,342,348; `mpvSocket`:88; `oldWallpapers`:93; `profile`:97; `thumbCacheReady`:108; `volume`:112,374,378,382; `wallpapersFolder`:116,138,153 | 21, 23, 26, 29, 37, 38, 40, 46, ... |
 | 3 | `mpvpaper/Panel.qml` | `active`:31; `currentWallpaper`:40; `wallpapersFolder`:35 | 19, 20, 28, 31, 35, 36, 40, 96, ... |
 | 4 | `mpvpaper/common/ToolRow.qml` | `isMuted`:18; `isPlaying`:14 | 14, 18 |
 | 5 | `mpvpaper/main/Automation.qml` | No literal field edge | No namespace/Main reference |
 | 6 | `mpvpaper/main/InnerService.qml` | `oldWallpapers`:41 | 41 |
-| 7 | `mpvpaper/main/Mpvpaper.qml` | `volume`:230 | 12, 22, 72, 73, 97, 114, 139, 229, ... |
-| 8 | `mpvpaper/main/Thumbnails.qml` | `thumbCacheReady`:31,38,93 | 31, 38, 93 |
+| 7 | `mpvpaper/main/Mpvpaper.qml` | `volume`:228 | 12, 22, 70, 71, 79, 97, 132, 227, ... |
+| 8 | `mpvpaper/main/Thumbnails.qml` | `thumbCacheReady`:33,40,106 | 18, 33, 40, 72, 106 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `f1c60eeab34e055061f8eff585e843cfc2d29d05a443d792ca7bdaad79ac26f8`.
+Runtime-source/manifest fingerprint: `ab1e32dd137930d016d1c048a0a23f08a1128526bfb50c3d7b3b54e5d5c7d072`.
 
 ## mullvad
 
@@ -1319,7 +1320,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 5 | `mullvad/Panel.qml` | No literal field edge | 14, 48, 49, 50, 172 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `a46e6007f6918cfb69d806bf9c4ebca827ffc22320a3a71bf49bb368c6e005c5`.
+Runtime-source/manifest fingerprint: `0fd0bf81feb67c97098e0f8a1cf14899361d5086a2d268f8b8a5c2f4396323ac`.
 
 ## music-search
 
@@ -1357,7 +1358,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `ytPlayerClient` | `music-search/lib/config.sh:107` | Explicit helper settings owner reads jq key from shared SETTINGS_FILE; Settings exposes Main helper action, not generic field intent. Explain shared helper state; preserve any legacy preference bytes without treating them as helper authority. |
-Runtime-source/manifest fingerprint: `1216b36fee836e491c4b7474cde497238c2233ba54daf3d937ac5804601bfd35`.
+Runtime-source/manifest fingerprint: `1dfeec4fcb60470f75e309c8259d6da7fb4c9eadd90ec3a6688d22a956ea7c17`.
 
 ## netbird
 
@@ -1401,11 +1402,11 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 1 | `network-manager-vpn/BarWidget.qml` | `connectedColor`:27; `disconnectedColor`:28; `displayMode`:26 | 18, 19, 26, 27, 28, 29, 30, 31, ... |
 | 2 | `network-manager-vpn/ControlCenterWidget.qml` | `connectedColor`:14; `disconnectedColor`:15 | 10, 11, 12, 13, 14, 15 |
 | 3 | `network-manager-vpn/Main.qml` | `disableToastNotifications`:18 | 14, 18 |
-| 4 | `network-manager-vpn/Panel.qml` | No literal field edge | 16, 25, 72, 133, 174, 225 |
+| 4 | `network-manager-vpn/Panel.qml` | No literal field edge | 16, 25, 32, 87, 232 |
 | 5 | `network-manager-vpn/VpnListItem.qml` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `e2892975295f0d87bd2d2f55a9ba9e89860c2e2b5c36748591e6f99acd69b634`.
+Runtime-source/manifest fingerprint: `250bb5bf041a34ec8c70b62ae6db2b293e39b282e61a5eb0d5e188c16d6bd0ab`.
 
 ## news
 
@@ -1421,7 +1422,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 4 | `news/Panel.qml` | No literal field edge | 19, 66, 92, 113, 139, 175, 211, 216, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `9ce09a6dd7f515deea194b2aa92b4d28e99bd1587e941b0aa546a39332f2f8af`.
+Runtime-source/manifest fingerprint: `52a14c05faae158a8282efdd600318e427302532973f23cf558d08ef9fd7b862`.
 
 ## niri-animation-picker
 
@@ -1447,7 +1448,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `niri-auto-tile/BarWidget.qml` | `enabled`:22; `maxVisible`:23 | 20, 21, 22, 23, 108, 109, 110 |
-| 2 | `niri-auto-tile/Main.qml` | `debounceMs`:19,55; `enabled`:14,128,173; `maxEventsPerSecond`:20,56; `maxVisible`:15,54,131,148; `onlyAtMax`:17,58,142; `perWorkspace`:16,57,141,148; `workspaceMaxVisible`:18,59,137,139,147 | 11, 13, 42, 49, 53, 118, 119, 121, ... |
+| 2 | `niri-auto-tile/Main.qml` | `debounceMs`:19,54; `enabled`:14,124,169; `maxEventsPerSecond`:20,55; `maxVisible`:15,53,127,144; `onlyAtMax`:17,57,138; `perWorkspace`:16,56,137,144; `workspaceMaxVisible`:18,58,133,135,143 | 11, 13, 41, 48, 52, 114, 115, 117, ... |
 | 3 | `niri-auto-tile/Panel.qml` | `enabled`:20; `maxVisible`:22; `perWorkspace`:21 | 18, 19, 20, 21, 22, 27, 28, 58, ... |
 | 4 | `niri-auto-tile/auto-tile.py` | No literal field edge | No namespace/Main reference |
 
@@ -1458,7 +1459,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `language` | `niri-auto-tile/manifest.json:1` | Declared legacy language choice has no runtime reader in this catalog version; preserve it, no feature implementation implied. |
-Runtime-source/manifest fingerprint: `c50d4f775c23af9653dce76a6836e8bd78c154482f3313f78fc7c8393ce02f21`.
+Runtime-source/manifest fingerprint: `3a036a40c54834162e59592eed93755ea6e7f880eda24db8b079182dd5465f37`.
 
 ## niri-screensaver
 
@@ -1468,8 +1469,8 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
-| 1 | `niri-screensaver/BarWidget.qml` | `enabled`:125,143,179,180 | 35, 36, 85, 90, 111, 112, 113, 114, ... |
-| 2 | `niri-screensaver/Main.qml` | `enabled`:303,304; `killCommand`:122,243; `launcherCommand`:113 | 1, 30, 32, 46, 57, 110, 113, 119, ... |
+| 1 | `niri-screensaver/BarWidget.qml` | `enabled`:127,146,182,183 | 35, 36, 86, 92, 113, 114, 115, 116, ... |
+| 2 | `niri-screensaver/Main.qml` | `enabled`:300,301; `killCommand`:123; `launcherCommand`:114 | 1, 31, 33, 47, 58, 111, 114, 120, ... |
 
 Declared leaves without a literal runtime namespace edge: `batteryMinPercent` (configuration), `clockDuration` (configuration), `clockFont` (configuration), `clockFormat` (configuration), `cursorHide` (configuration), `cursorWarp` (configuration), `dismissOnKey` (configuration), `excludeEffects` (configuration), `fadeInEffect` (configuration), `fadeOutEffect` (configuration), `frameRate` (configuration), `idleSeconds` (configuration), `includeEffects` (configuration), `logoDir` (configuration), `logoPath` (configuration), `multiMonitorMode` (configuration), `nowPlayingDuration` (configuration), `randomLogo` (configuration), `showClock` (configuration), `showNowPlaying` (configuration).
 
@@ -1478,7 +1479,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `batteryMinPercent,clockDuration,clockFont,clockFormat,cursorHide,cursorWarp,dismissOnKey,excludeEffects,fadeInEffect,fadeOutEffect,frameRate,idleSeconds,includeEffects,logoDir,logoPath,multiMonitorMode,nowPlayingDuration,randomLogo,showClock,showNowPlaying` | `niri-screensaver/Main.qml:136` | Main captures the selected policy.values at 95, passes them to _renderShellConfig(s) at 196 and _syncIdleEntry(s) at 97/208; these injected-parameter readers consume all named leaves. The finite 23-field contract and individual native/config/lifetime gates cover these non-namespace edges. |
-Runtime-source/manifest fingerprint: `6a88fe7d8795e154278d2fc1cfed72a9d6a015db3925391547bee6287285a196`.
+Runtime-source/manifest fingerprint: `7b00cac28c29011fff857b1022a48eb5eab35de3d474238e1158aa9a73240f31`.
 
 ## niri-windows-map
 
@@ -1515,7 +1516,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 5 | `noctalia-calculator/Panel.qml` | No literal field edge | 19 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `a604f607166998fedd075946572b0e9c9b274512758fe22ebfef1af1f0f7804e`.
+Runtime-source/manifest fingerprint: `48f12948b71e743b32248bf1abeb3d426f4b119d5db37b5c19b7a5ab39e72d06`.
 
 ## noctalia-supergfxctl
 
@@ -1528,11 +1529,11 @@ Entries: `barWidget=src/Bar.qml`; `controlCenterWidget=src/ControlCenter.qml`; `
 | 1 | `noctalia-supergfxctl/src/Bar.qml` | No literal field edge | 30, 31 |
 | 2 | `noctalia-supergfxctl/src/ControlCenter.qml` | No literal field edge | 30, 31 |
 | 3 | `noctalia-supergfxctl/src/GpuSettingsClient.qml` | `debug`:15; `supergfxctl`:14 | 6, 12, 13 |
-| 4 | `noctalia-supergfxctl/src/Main.qml` | `debug`:50,232,238,244; `rogcc`:55; `supergfxctl`:62 | 40, 46, 47, 48, 54, 55, 61, 62, ... |
+| 4 | `noctalia-supergfxctl/src/Main.qml` | `debug`:49,230,236,242; `rogcc`:54; `supergfxctl`:61 | 45, 46, 47, 53, 54, 60, 61, 75, ... |
 | 5 | `noctalia-supergfxctl/src/Panel.qml` | No literal field edge | 23, 24, 57, 176, 272, 275, 278, 286, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `972ceb80db0af211b509761be3d47942462b8a7d22f0bb7a55d44fa241830755`.
+Runtime-source/manifest fingerprint: `f08edfebc3a34bf122ede5348cfbf9855282bd978cc4fa8857ee2b8a52d66403`.
 
 ## not-just-text
 
@@ -1575,12 +1576,12 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `ntfy-notifications/BarWidget.qml` | No literal field edge | 24, 26, 48, 50 |
-| 2 | `ntfy-notifications/Main.qml` | `readMessageIds`:28,37 | 11, 15, 21, 28, 34, 37 |
+| 2 | `ntfy-notifications/Main.qml` | `readMessageIds`:28,39 | 11, 15, 21, 28, 35, 39 |
 | 3 | `ntfy-notifications/NtfySettingsClient.qml` | `authMethod`:15; `authPassword`:18; `authToken`:16; `authUsername`:17; `enableToasts`:20; `maxMessages`:21; `pollInterval`:19; `serverUrl`:13; `topics`:14 | 6, 10, 11, 12 |
 | 4 | `ntfy-notifications/Panel.qml` | No literal field edge | 19, 21, 22, 23, 24, 108, 117, 298, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `149c7e768f7b85be68f639235e65c3bb145acf693a80b71f57c194fa3ba68151`.
+Runtime-source/manifest fingerprint: `56f5c3e69d663cfc19254e253eea3ba12d38a6e31e699007da5ad8191860bb4c`.
 
 ## nvibrant
 
@@ -1594,7 +1595,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 | 2 | `nvibrant/Main.qml` | `displayIndex`:16,34; `enabled`:13,46,48; `vibranceValue`:14,47 | 10, 11, 31, 34, 42, 45, 48 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `9fd5539d29800a9daffd299a404d98bddeaf49b76ade05bd9e5b089a458c8d61`.
+Runtime-source/manifest fingerprint: `1a44313ebf780fec5200954173ede5749b090b2f163a4ece26dd73478a6c69cc`.
 
 ## nvidia-optimus
 
@@ -1645,7 +1646,7 @@ Entries: `barWidget=BarWidget.qml`; `controlCenterWidget=ControlCenterWidget.qml
 | 9 | `obs-control/lib/Ui.js` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `03bee8d32621547c6566a921cdd523e2e0a2233dc0ee5e12d673410dfd0d97c5`.
+Runtime-source/manifest fingerprint: `68d41f0f586a5c9b2e058fc194cba1448c49e31ffbf641c3475953530e1d6720`.
 
 ## obsidian-provider
 
@@ -1689,13 +1690,13 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `settings=Settings.qml`.
 | # | Component | Declared-field literal edges | Context/Main evidence |
 | --- | --- | --- | --- |
 | 1 | `osk-toggle/BarWidget.qml` | `disableHoverIcon`:23; `hideWhenUnavailable`:22 | 16, 17, 18, 21, 22, 23 |
-| 2 | `osk-toggle/Main.qml` | `backend`:14; `wvkbdBin`:15 | 11, 13, 38, 42, 83, 96, 129, 135 |
+| 2 | `osk-toggle/Main.qml` | `backend`:14; `wvkbdBin`:15 | 11, 13, 79, 83, 128, 141, 174, 180 |
 | 3 | `osk-toggle/OskSettingsClient.qml` | `backend`:17; `wvkbdBin`:18 | 7, 15, 16 |
 | 4 | `osk-toggle/SqueekboardBackend.qml` | No literal field edge | 8, 13 |
 | 5 | `osk-toggle/WvkbdBackend.qml` | No literal field edge | 8, 13 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `9fc18f9e84b6b7bea04a99e31f144ba28bace69238cb3c05c1df20064f08638a`.
+Runtime-source/manifest fingerprint: `32a0bd2148d1807aab16c209730f1b58a1a5c6a3f208225df89fd26871b12969`.
 
 ## parallax-wallpaper
 
@@ -1747,7 +1748,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 4 | `pomodoro/TimerClient.qml` | `autoStartBreaks`:46; `autoStartWork`:47; `compactMode`:48; `longBreakDuration`:44; `playSound`:41; `sessionsBeforeLongBreak`:45; `shortBreakDuration`:43; `workDuration`:42 | 9, 13, 14 |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `9275b171e84327e14c4dcb8103d5729e5478d9213d3ee8a73ff06980bb07ce53`.
+Runtime-source/manifest fingerprint: `2675aa93c1b87ea4d9df48de6d8f1b001f6f7cd885044c9ebdf4d14853d3b47c`.
 
 ## port-monitor
 
@@ -1780,7 +1781,7 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 5 | `privacy-indicator/Projection.js` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `c43d2b2cc460e7d5285c55c6493cd16bb1b983688b5a27adb48f158f6a47cb93`.
+Runtime-source/manifest fingerprint: `b8c4e6ad059d193637103133d8018d84844a5f9dbf302bcd9b3629b6f362c553`.
 
 ## ramadan-iftar
 
@@ -1811,7 +1812,7 @@ Entries: `barWidget=BarWidget.qml`; `panel=Panel.qml`; `settings=Settings.qml`.
 | 2 | `rss-feed/Panel.qml` | `feeds`:24; `markAsReadOnClick`:28; `maxItemsPerFeed`:26; `readItems`:29,47,290,313,330,354; `showOnlyUnread`:27; `updateInterval`:25 | 21, 22, 45, 46, 310, 311, 313, 351, ... |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `d579cde43335a7888eba787b02f271beefef189e8020e362530d3d4fd13e4321`.
+Runtime-source/manifest fingerprint: `e9419d2ec161e9ebcd2244d892a6ad9188a0b24d5b48c713ed81396927f64e43`.
 
 ## saved-desktop-widgets
 
@@ -2081,7 +2082,7 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `callbackPort` | `spotify-player/SpotifySettingsClient.qml:98` | Runtime authorization captures the applied raw port and preserves its existing QML int presentation for the redirect/listener. Settings stages this field only; Main-owned client uses callback_server.py. Scoped action/token publication has its own inert native/cold/lifetime gate. |
-Runtime-source/manifest fingerprint: `7215e950b2d6ea8e15889267c44ce2f0510cb623df8ab594fcca409737f34ee1`.
+Runtime-source/manifest fingerprint: `477c182975538e17702475ee12dccb91a4305001798bd1ccd1bc6471cee9df43`.
 
 ## squeekboard-toggle
 
@@ -2475,4 +2476,4 @@ Hand-reviewed dynamic/action/unused edges (`plugin-settings-consumer-manual.tsv`
 | # | Fields | Source | Classification |
 | --- | --- | --- | --- |
 | 1 | `showDate` | `world-clock/manifest.json:1` | Declared but no supported runtime reader; retained P023/P088/P107/P128 qualifications and no showDate feature claim. |
-Runtime-source/manifest fingerprint: `9a8cfd58a93edb0cf060aaede408797439742f9d151fd790619b15ce837bb4e3`.
+Runtime-source/manifest fingerprint: `cc608bcc6efb0d2db0e3abb34a9e7816e8893917ab6d5a2b48bef287b498236a`.

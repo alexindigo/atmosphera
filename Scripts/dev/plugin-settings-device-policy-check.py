@@ -38,7 +38,7 @@ CLIENTS = dict(zip(FIELDS, ('GpuSettingsClient.qml', 'BatterySettingsClient.qml'
 ANCHORS = {
     'amd-gpu-monitor/Main.qml': ['_observations.set(index, {observer: observer, clients: new Set()})', 'entry.clients.add(client)', 'entry.clients.delete(client)', 'if (entry.clients.size === 0)', '_observations.delete(index)', 'entry.observer.destroy()'],
     'amd-gpu-monitor/GpuSettingsClient.qml': ['Math.floor(cfg.deviceIndex)', 'releaseObservation(_capturedIndex, root)', 'observation = acquireObservation(_capturedIndex, root)', 'old.unregisterPoller(_consumerId)', 'onDeviceIndexChanged: selectObservation()', 'release(); retire(root)', 'Component.onDestruction: release()'],
-    'amd-gpu-monitor/GpuObservation.qml': ['required property int deviceIndex', 'String(deviceIndex)', 'onStreamFinished: root.parseRocmOutput(text)', 'running: root.shouldPoll && !rocmProcess.running', 'triggeredOnStart: true'],
+    'amd-gpu-monitor/GpuObservation.qml': ['required property int deviceIndex', 'String(deviceIndex)', 'onStreamFinished: root.parseRocmOutput(text)', 'readonly property bool shouldPoll: Object.keys(_consumers).length > 0', 'running: root.shouldPoll', 'triggeredOnStart: true', 'onTriggered: root.refreshNow()', 'function refreshNow() { if (!rocmProcess.running) rocmProcess.running = true; }'],
     'amd-gpu-monitor/Settings.qml': ['settingsConsumerFor(pluginApi.runtimeContext)', 'result.refreshState !== "current"', 'root.mainInstance?.refreshNow()'],
     'battery-monitor-plus/Main.qml': ['deviceNativePath: path', '_observations.set(path, {observer: observer, clients: new Set()})', 'entry.clients.delete(client)', 'if (entry.clients.size === 0)', '_observations.delete(path)', 'entry.observer.destroy()', 'retired.releaseObservationLease()'],
     'battery-monitor-plus/BatterySettingsClient.qml': ['readonly property int refreshIntervalSeconds: Math.max(1, cfg.refreshIntervalSeconds ?? defaults.refreshIntervalSeconds ?? 5)', 'sourceInterval: refreshIntervalSeconds', 'intervalScale: 1000', 'requestRefresh: function() { observation?.scanSysfs(); }', 'releaseObservation(_capturedPath, root)', 'observation = acquireObservation(_capturedPath, root)', 'onDeviceNativePathChanged: selectObservation()'],
@@ -117,6 +117,8 @@ def main():
                           (name + '/Main.qml', 'root._settingsConsumers.delete(context)', '/* retained */', 'missing-retirement'),
                           (name + '/' + CLIENTS[name], 'settingsContext.settingsView', 'observation.pluginApi.pluginSettings', 'shared-client-read')]
         mutations += [('amd-gpu-monitor/Main.qml', 'entry.observer.destroy()', 'entry.observer', 'retained-gpu-observer'),
+                      ('amd-gpu-monitor/GpuObservation.qml', 'running: root.shouldPoll', 'running: true', 'unowned-gpu-poll'),
+                      ('amd-gpu-monitor/GpuObservation.qml', 'if (!rocmProcess.running)', 'if (true)', 'overlapping-gpu-refresh'),
                       ('battery-monitor-plus/BatteryObservation.qml', 'if (direct > 0 || !aggregateSelection) return direct', 'if (direct > 0) return direct', 'foreign-battery-fallback'),
                       ('netbird/Main.qml', 'pingProcess.running = false', 'pingProcess.running = true', 'retained-last-ping'),
                       ('openvpn3/OpenvpnSettingsClient.qml', 'observation.connectTo(path, showNotifications)', 'observation.connectTo(path)', 'lost-originating-notification'),

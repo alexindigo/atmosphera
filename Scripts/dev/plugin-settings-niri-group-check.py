@@ -20,7 +20,9 @@ ANCHORS={
   'context = context || pluginApi?.settingsContext','if (retired || !context?.current()) return false','selectedContext = context',
   'context = context || selectedContext || pluginApi?.settingsContext','admittedMaxVisible = values.maxVisible ?? 4','admittedDebounceMs = values.debounceMs ?? 300','admittedMaxEvents = values.maxEventsPerSecond ?? 20',
   'policy.generation === generation && policy.context === policyContext && policy.context.current()',
-  'const policy = pendingLaunch || capturePolicy()','pendingLaunch = capturePolicy()','activePolicy = policy',
+  'const policy = capturePolicy(); if (!current(policy)) return; activePolicy = policy',
+  'generation++; restartTimer.stop(); queuedConfig = null; configWriter.running = false',
+  'stopDaemon(); restartTimer.restart(); return true',
   '"--max-visible", String(policy.maxVisible)','String(policy.debounceMs / 1000.0)','String(policy.maxEventsPerSecond)',
   'policy.onlyAtMax ? "--only-at-max" : "--no-only-at-max"','policy.workspaceConfig',
   'generation++','queuedConfig = null','configWriter.running = false','daemonProcess.signal(15)',
@@ -107,8 +109,12 @@ def check(sources,manifests,dictionaries):
     if child.index('os.getppid()')<child.index('prctl(1,'):raise ValueError('race check precedes binding')
     text=sources['niri-auto-tile/auto-tile.py']
     if 'action=argparse.BooleanOptionalAction, default=None' not in text or 'ONLY_AT_MAX = args.only_at_max' not in text:raise ValueError('explicit false CLI policy')
-    if 'if generation is not None and generation != _config_generation:' not in text or '_config_generation += 1' not in text:raise ValueError('retired Python redistribution generation')
-    for name in ('_redistribute_workspace','redistribute'):
+    action=ast.get_source_segment(text,functions['niri_action'])
+    if 'if _stopping or (generation is not None and generation != _config_generation):\n        return' not in action or '_config_generation += 1' not in text:raise ValueError('retired Python redistribution generation')
+    for name,callee,entry in [('redistribute','_redistribute_focused','with _focus_lock:\n        if not _stopping:'),('reload_config','_reload_config_focused','with _focus_lock:')]:
+        body=ast.get_source_segment(text,functions[name])
+        if entry not in body or callee+'()' not in body:raise ValueError('unserialized Python operation '+name)
+    for name in ('_redistribute_workspace','_redistribute_focused'):
         calls=[node for node in ast.walk(functions[name]) if isinstance(node,ast.Call) and isinstance(node.func,ast.Name) and node.func.id=='niri_action']
         if not calls or any(not any(key.arg=='generation' and isinstance(key.value,ast.Name) and key.value.id=='generation' for key in node.keywords) for node in calls):raise ValueError('unfenced redistribution effect '+name)
     return rows
@@ -129,7 +135,8 @@ def main():
          ('niri-auto-tile/Main.qml','policyContext.settingsView','pluginApi.settingsView','shared-tile-reader'),
          ('niri-auto-tile/Main.qml','property int maxVisible','property real maxVisible','tile-int-domain'),
          ('niri-auto-tile/Main.qml','String(policy.debounceMs / 1000.0)','String(policy.debounceMs)','tile-debounce-units'),
-         ('niri-auto-tile/Main.qml','const policy = pendingLaunch || capturePolicy()','const policy = capturePolicy()','mutable-pending-launch'),
+         ('niri-auto-tile/Main.qml','const policy = capturePolicy();','const policy = activePolicy;','stale-pending-launch'),
+         ('niri-auto-tile/Main.qml','if (!current(policy)) return;','if (!policy) return;','unfenced-launch'),
          ('niri-auto-tile/Main.qml','runtimeApi.saveSettings()','pluginApi.saveSettings()','shared-tile-writer'),
          ('niri-auto-tile/Main.qml','root.current(policy) && root.daemonProcess.running','root.daemonProcess.running','retired-config-signal'),
          ('niri-auto-tile/Panel.qml','setMaxVisible(count, pluginApi)','setMaxVisible(count)','omitted-panel-writer'),
@@ -138,7 +145,8 @@ def main():
          ('niri-auto-tile/auto-tile.py','os.getppid() != parent_pid','False','missing-parent-race-check'),
          ('niri-auto-tile/auto-tile.py','prctl(1, signal.SIGKILL, 0, 0, 0) != 0','False','missing-parent-binding'),
          ('niri-auto-tile/auto-tile.py','action=argparse.BooleanOptionalAction, default=None','action="store_true"','false-cli-dead-setting'),
-         ('niri-auto-tile/auto-tile.py','if generation is not None and generation != _config_generation:','if False:','retired-python-effect'),
+         ('niri-auto-tile/auto-tile.py','if _stopping or (generation is not None and generation != _config_generation):','if _stopping:','retired-python-effect'),
+         ('niri-auto-tile/auto-tile.py','niri_action("center-visible-columns", generation=generation)\n    elif','niri_action("center-visible-columns")\n    elif','unfenced-focus-restore'),
          ('niri-auto-tile/Main.qml','admittedMaxVisible = values.maxVisible ?? 4','admittedMaxVisible = maxVisible','stale-admission-binding'),
          ('niri-screensaver/Main.qml','policyContext.settingsView','pluginApi.settingsView','shared-screensaver-reader'),
          ('niri-screensaver/Main.qml','_renderShellConfig(policy.values)','_renderShellConfig(cfg)','mutable-config-writer'),
