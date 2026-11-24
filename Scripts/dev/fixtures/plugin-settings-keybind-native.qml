@@ -201,9 +201,9 @@ ShellRoot {
         check(control, "actual combo " + key);
         control.selected(String(value));
       } else if (key === "workspaceSplitThreshold") {
-        control = find(wrapper, item => item.valueModified !== undefined);
+        control = find(wrapper, item => typeof item.submitValue === "function");
         check(control, "actual spinbox");
-        control.valueModified(value);
+        control.submitValue(value);
       } else {
         control = find(wrapper, item => item.editCommitted !== undefined);
         check(control, "actual input " + key);
