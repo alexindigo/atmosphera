@@ -39,7 +39,7 @@ def main():
         if not Path(os.environ['XDG_RUNTIME_DIR'], os.environ['WAYLAND_DISPLAY']).is_socket():
             parser.error('the fixture needs the guest Wayland session')
     output, runtime = workspace / 'evidence' / args.label, workspace / 'runtime' / args.label
-    output.mkdir()
+    output.mkdir(parents=True)
     tree = runtime / 'tree'
     shutil.copytree(args.source, tree, symlinks=True)
     shell = tree / 'shell.qml'

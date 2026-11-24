@@ -204,9 +204,10 @@ order of support depth.
 
 ### Niri
 
-- **IPC module:** `qt6-niriqml>=0.3.0` (built from source in step 2 of the
-  manual install; AUR: `qt6-niriqml`). It provides workspaces, windows, focus,
-  overview and session config handoff. Detection is automatic via
+- **IPC requirements:** niri 26.04 or newer and `qt6-niriqml>=0.3.0` (built
+  from source in step 2 of the manual install; AUR: `qt6-niriqml`). The module
+  provides workspaces, windows, focus, overview and session config handoff.
+  Detection is automatic via
   `NIRI_SOCKET`. It is optional for the shell but required by `atmosphera-niri`;
   without a supported version, niri IPC views stay empty and config handoff
   is unavailable.

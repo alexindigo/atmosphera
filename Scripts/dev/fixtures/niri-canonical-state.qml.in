@@ -121,7 +121,7 @@ ShellRoot {
         publish(next, [ws(hi, 1, "Left", "0")], "0", hi);
         eq(b.windows[0].layout.posInScrollingLayout, [4, 1]);
       });
-      run("stable IDs guard actions and insert waits for successful move", b => {
+      run("stable IDs guard actions and insert waits for confirmed membership", b => {
         publish([win(hi, lo, ["1", "1"])], [ws(lo, 1, "Left", hi), ws("0", 2, "Left", null)], hi, lo);
         NiriActions.calls = [];
         b.switchToWorkspace({id: lo, idx: 5});
@@ -140,6 +140,8 @@ ShellRoot {
         b.moveWindowToWorkspace(hi, "0", done, 1);
         eq(NiriActions.calls.slice(2), [["moveWindowToWorkspace", hi, {Id: "0"}, false], ["moveWindowToWorkspace", hi, {Id: "0"}, false]]);
         NiriRequests.deliver("moveWindowToWorkspace", null, false);
+        eq(NiriActions.calls.length, 4);
+        NiriRequests.deliver("windows", [win(hi, "0", ["1", "1"])]);
         eq(NiriActions.calls[4], ["moveWorkspaceToIndex", "1", {Id: "0"}]);
         eq(completions, [false, false]);
         NiriRequests.deliver("moveWorkspaceToIndex", null, false);

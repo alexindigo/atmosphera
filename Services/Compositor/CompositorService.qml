@@ -54,6 +54,7 @@ Singleton {
   property var _snapshot: Object.freeze({
                                           ready: false,
                                           revision: 0,
+                                          overviewActive: false,
                                           windows: Object.freeze([]),
                                           workspaces: Object.freeze([]),
                                           focusedWindowId: null,
@@ -61,13 +62,12 @@ Singleton {
                                         })
   // niri IPC view. Observe snapshotChanged for a complete, replace-only read.
   readonly property var snapshot: _snapshot
+  // Derive the legacy signal from the public snapshot, before consumers connect.
+  readonly property bool overviewActive: snapshot.overviewActive
 
   // Display scale data
   property var displayScales: ({})
   property bool displayScalesLoaded: false
-
-  // Overview state (Niri-specific, defaults to false for other compositors)
-  property bool overviewActive: false
 
   // Global workspaces flag (workspaces shared across all outputs)
   // True for LabWC (stacking compositor), false for tiling WMs with per-output workspaces
@@ -271,16 +271,6 @@ Singleton {
       reconcileWindows();
     }
 
-    // Overview state (Niri-specific)
-    if (backend.overviewActiveChanged) {
-      backend.overviewActiveChanged.connect(() => {
-        overviewActive = backend.overviewActive;
-      });
-    }
-
-    if (backend.overviewActive !== undefined) {
-      overviewActive = backend.overviewActive;
-    }
     if (backend.globalWorkspaces !== undefined) {
       globalWorkspaces = backend.globalWorkspaces;
     }
@@ -378,12 +368,14 @@ Singleton {
     }
     const changes = reconcileWindows(true);
     const ready = backend.ready;
+    const nextOverview = ready && backend.overviewActive;
     const current = getCurrentWorkspace();
     const focusedWorkspaceId = current?.id === backend.focusedWorkspaceId ? backend.focusedWorkspaceId : null;
-    if (ready !== snapshot.ready || focusedWorkspaceId !== snapshot.focusedWorkspaceId || workspaceChanged || changes.listChanged || changes.focusChanged) {
+    if (ready !== snapshot.ready || nextOverview !== snapshot.overviewActive || focusedWorkspaceId !== snapshot.focusedWorkspaceId || workspaceChanged || changes.listChanged || changes.focusChanged) {
       _snapshot = Object.freeze({
                                   ready: ready,
                                   revision: snapshot.revision + 1,
+                                  overviewActive: nextOverview,
                                   windows: ready ? immutableCopy(backend.windows.map(row => Object.assign({}, row, {
                                                                                                             isFocused: row.id === _focus.id
                                                                                                           }))) : Object.freeze([]),

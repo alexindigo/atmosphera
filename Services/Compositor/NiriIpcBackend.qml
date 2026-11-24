@@ -144,12 +144,13 @@ Item {
     const nextFocus = streamReady ? NiriState.focusedWindowId ?? null : null;
     const focusChanged = focusedWindowId !== nextFocus;
     const nextWorkspaceFocus = streamReady ? NiriState.focusedWorkspaceId ?? null : null;
-    const publicationChanged = workspacesChanged || windowsChanged || focusChanged || focusedWorkspaceId !== nextWorkspaceFocus || ready !== streamReady;
+    const nextOverview = streamReady && NiriState.overviewOpen;
+    const publicationChanged = workspacesChanged || windowsChanged || focusChanged || focusedWorkspaceId !== nextWorkspaceFocus || overviewActive !== nextOverview || ready !== streamReady;
     if (windowsChanged)
       windows = sorted;
     focusedWindowId = nextFocus;
     focusedWorkspaceId = nextWorkspaceFocus;
-    overviewActive = streamReady && NiriState.overviewOpen;
+    overviewActive = nextOverview;
     updateKeyboardLayouts(streamReady ? NiriState.keyboardLayouts : null);
     ready = streamReady;
 
@@ -205,16 +206,15 @@ Item {
       return;
     outputRetry.stop();
     const generation = ++_outputGeneration;
-    NiriReply.observe(_pendingReplies, NiriRequests.outputs(), reply => {
-      if (generation !== root._outputGeneration || !NiriConnection.isConnected)
+    const current = () => generation === root._outputGeneration && NiriConnection.isConnected;
+    request("Outputs query", () => NiriRequests.outputs(), (ok, error, value) => {
+      if (!current())
         return;
-      if (reply.isError) {
-        Logger.w("NiriIpcBackend", "Outputs query failed:", reply.error.message);
+      if (!ok)
         outputRetry.start();
-      } else {
-        root.applyOutputs(reply.value);
-      }
-    });
+      else
+        root.applyOutputs(value);
+    }, current);
   }
 
   function initialize() {
@@ -260,17 +260,23 @@ Item {
   }
   Component.onDestruction: NiriReply.cancel(_pendingReplies)
 
-  function handleAction(name, send, completed) {
+  // An operation that derives actions from stream state keeps one guard for
+  // every step, even if a request socket survives an event-stream reconnect.
+  function currentStateGuard() {
+    const generation = _peerGeneration;
+    return () => root.ready && NiriConnection.isConnected && generation === root._peerGeneration;
+  }
+
+  function request(name, send, completed, current) {
     function fail(message) {
       Logger.w("NiriIpcBackend", name + " failed:", message);
       if (completed)
         completed(false, message);
     }
-    if (!stateApiAvailable || !NiriConnection.isConnected) {
+    if (!stateApiAvailable || (current && !current())) {
       fail("IPC unavailable");
       return;
     }
-    const generation = _peerGeneration;
     let reply;
     try {
       reply = send();
@@ -279,14 +285,18 @@ Item {
       return;
     }
     if (!NiriReply.observe(_pendingReplies, reply, result => {
-      if (generation !== root._peerGeneration)
-        fail("IPC peer changed");
+      if (current && !current())
+        fail("IPC state retired");
       else if (result.isError)
         fail(result.error.message);
       else if (completed)
-        completed(true, "");
+        completed(true, "", result.value);
     }))
       fail("IPC returned no reply");
+  }
+
+  function handleAction(name, send, completed) {
+    request(name, send, completed, currentStateGuard());
   }
 
   function workspaceForId(id) {
@@ -320,7 +330,7 @@ Item {
   }
 
   // An insert moves into a live empty workspace first. Never reorder on a
-  // rejected move, across connection generations, or if the target vanished.
+  // rejected move, across stream generations, or on an unconfirmed move.
   function moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex) {
     const done = typeof completed === "function" ? completed : () => {};
     const window = windowForId(windowId);
@@ -333,17 +343,24 @@ Item {
     const reference = {
       Id: workspaceId
     };
-    handleAction("moveWindowToWorkspace", () => NiriActions.moveWindowToWorkspace(windowId, reference, false), (ok, error) => {
+    const current = currentStateGuard();
+    request("moveWindowToWorkspace", () => NiriActions.moveWindowToWorkspace(windowId, reference, false), (ok, error) => {
       if (!ok || !insert) {
         done(ok, error);
         return;
       }
-      if (!workspaceForId(workspaceId)) {
-        done(false, "Workspace vanished before reorder");
-        return;
-      }
-      handleAction("moveWorkspaceToIndex", () => NiriActions.moveWorkspaceToIndex(String(insertAtIndex), reference), done);
-    });
+      root.request("Confirm insert membership", () => NiriRequests.windows(), (ok, error, rows) => {
+        if (!ok) {
+          done(false, error);
+          return;
+        }
+        if (!root.workspaceForId(workspaceId) || !Array.from(rows).some(win => win.id === windowId && win.workspaceId === workspaceId)) {
+          done(false, "Window did not reach the target workspace");
+          return;
+        }
+        root.request("moveWorkspaceToIndex", () => NiriActions.moveWorkspaceToIndex(String(insertAtIndex), reference), done, current);
+      }, current);
+    }, current);
   }
   function turnOffMonitors() {
     handleAction("turnOffMonitors", () => NiriActions.sendAction({
@@ -373,7 +390,8 @@ Item {
     return null;
   }
   function spawn(command) {
-    handleAction("spawn", () => NiriActions.spawn(command));
+    // This action uses no stream state. NiriQml owns endpoint cancellation.
+    request("spawn", () => NiriActions.spawn(command));
   }
 
   // Handled acknowledges processing, not motion. Compare a before/after query
@@ -387,6 +405,7 @@ Item {
       return;
     }
     _edgeNavigationBusy = true;
+    const current = currentStateGuard();
     let finished = false;
     function finish(outcome) {
       if (finished)
@@ -398,29 +417,24 @@ Item {
                   outcome
                 });
     }
-    function receive(reply, consume) {
-      if (!NiriReply.observe(root._pendingReplies, reply, result => {
-        if (result.isError) {
-          Logger.w("NiriIpcBackend", "Edge navigation failed:", result.error.message);
+    function receive(send, consume) {
+      root.request("Edge navigation", send, (ok, error, value) => {
+        if (!ok) {
           finish("error");
-        } else {
-          try {
-            if (root.ready)
-              consume(result.value);
-            else
-              finish("error");
-          } catch (error) {
-            Logger.w("NiriIpcBackend", "Edge navigation failed:", error);
-            finish("error");
-          }
+          return;
         }
-      }))
-        finish("error");
+        try {
+          consume(value);
+        } catch (error) {
+          Logger.w("NiriIpcBackend", "Edge navigation failed:", error);
+          finish("error");
+        }
+      }, current);
     }
     function snapshot(consume) {
-      receive(NiriRequests.workspaces(), workspaceList => {
+      receive(() => NiriRequests.workspaces(), workspaceList => {
         const rows = Array.from(workspaceList, root.extractWorkspace);
-        receive(NiriRequests.windows(), windowList => consume(rows, Array.from(windowList, root.extractWindow)));
+        receive(() => NiriRequests.windows(), windowList => consume(rows, Array.from(windowList, root.extractWindow)));
       });
     }
     function navigate() {
@@ -438,26 +452,21 @@ Item {
         };
         const action = {};
         action[actions[edge]] = {};
-        receive(NiriActions.sendAction(action), () => {
+        receive(() => NiriActions.sendAction(action), () => {
           snapshot((afterWorkspaces, afterWindows) => finish(EdgeNavigation.outcome(target, afterWorkspaces, afterWindows)));
         });
       });
     }
-    try {
-      receive(NiriRequests.workspaces(), workspaceList => {
-        const focused = Array.from(workspaceList).find(ws => ws.isFocused);
-        if (focused?.output === output)
-          navigate();
-        else
-          receive(NiriActions.sendAction({
-                                           FocusMonitor: {
-                                             output: output
-                                           }
-                                         }), navigate);
-      });
-    } catch (error) {
-      Logger.w("NiriIpcBackend", "Edge navigation failed:", error);
-      finish("error");
-    }
+    receive(() => NiriRequests.workspaces(), workspaceList => {
+      const focused = Array.from(workspaceList).find(ws => ws.isFocused);
+      if (focused?.output === output)
+        navigate();
+      else
+        receive(() => NiriActions.sendAction({
+                                               FocusMonitor: {
+                                                 output: output
+                                               }
+                                             }), navigate);
+    });
   }
 }

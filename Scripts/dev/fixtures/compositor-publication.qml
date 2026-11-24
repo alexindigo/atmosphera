@@ -34,6 +34,7 @@ ShellRoot {
     property var windows: []
     property var focusedWindowId: null
     property var focusedWorkspaceId: null
+    property bool overviewActive: false
     property bool ready: false
     signal statePublished
     signal workspaceChanged
@@ -94,7 +95,7 @@ ShellRoot {
       const current = CompositorService.getCurrentWorkspace();
       root.publications.push({
                                snapshot: s,
-                               coherent: s.focusedWindowId === CompositorService.focusedWindowId && s.focusedWorkspaceId === (current?.id ?? null) && s.windows.length === CompositorService.windows.count && s.workspaces.length === CompositorService.workspaces.count
+                               coherent: s.focusedWindowId === CompositorService.focusedWindowId && s.focusedWorkspaceId === (current?.id ?? null) && s.windows.length === CompositorService.windows.count && s.workspaces.length === CompositorService.workspaces.count && s.overviewActive === CompositorService.overviewActive
                              });
     }
     function onWindowListChanged() {
@@ -280,6 +281,12 @@ ShellRoot {
     niri.statePublished();
     const full = CompositorService["snapshot"];
     niri.statePublished();
+    niri.overviewActive = true;
+    niri.statePublished();
+    const opened = CompositorService["snapshot"];
+    niri.overviewActive = false;
+    niri.statePublished();
+    const closed = CompositorService["snapshot"];
     niri.ready = false;
     niri.focusedWorkspaceId = null;
     niri.focusedWindowId = null;
@@ -290,10 +297,12 @@ ShellRoot {
     niri.windows = [];
     niri.statePublished();
     const reset = CompositorService["snapshot"];
+    const overviewPublished = unseen.overviewActive === false && full.overviewActive === false && opened.overviewActive === true && closed.overviewActive === false && reset.overviewActive === false && opened.revision === full.revision + 1 && closed.revision === opened.revision + 1;
     const passed = unseen?.ready === false && empty?.ready === true && empty.workspaces.length === 0 && empty.windows.length === 0 && full?.ready === true && full.focusedWorkspaceId === "0" && full.workspaces[0].id === "0" && full.focusedWindowId === "9007199254740993" && full.windows[0].id === "9007199254740992" && full.windows[1].isFocused && reset?.ready
-          === false && reset.workspaces.length === 0 && reset.windows.length === 0 && reset.focusedWindowId === null && reset.focusedWorkspaceId === null && empty.revision === unseen.revision + 1 && full.revision === empty.revision + 1 && reset.revision === full.revision + 1 && publications.length === 3 && publications.every(p => p.coherent);
+          === false && reset.workspaces.length === 0 && reset.windows.length === 0 && reset.focusedWindowId === null && reset.focusedWorkspaceId === null && empty.revision === unseen.revision + 1 && full.revision === empty.revision + 1 && reset.revision === closed.revision + 1 && publications.length === 5 && publications.every(p => p.coherent)
+          && overviewPublished;
     return {
-      name: "coherent replace-only snapshots, including ready-empty and disconnect",
+      name: "coherent replace-only snapshots, including ready-empty, overview and disconnect",
       passed: passed,
       settled: passed,
       records: publications.map(p => ({
