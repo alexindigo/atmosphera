@@ -50,6 +50,17 @@ Singleton {
                           "title": ""
                         })
   property var _publishedWindows: null
+  property var _publishedWorkspaceSource: null
+  property var _snapshot: Object.freeze({
+                                          ready: false,
+                                          revision: 0,
+                                          windows: Object.freeze([]),
+                                          workspaces: Object.freeze([]),
+                                          focusedWindowId: null,
+                                          focusedWorkspaceId: null
+                                        })
+  // niri IPC view. Observe snapshotChanged for a complete, replace-only read.
+  readonly property var snapshot: _snapshot
 
   // Display scale data
   property var displayScales: ({})
@@ -245,17 +256,20 @@ Singleton {
     if (!backend)
       return;
 
-    // Connect backend signals to facade signals
-    backend.workspaceChanged.connect(() => {
-      // Sync workspaces when they change
+    if (backend.statePublished) {
+      backend.statePublished.connect(() => publishNiriState());
+      publishNiriState();
+    } else {
+      backend.workspaceChanged.connect(() => {
+        syncWorkspaces();
+        workspaceChanged();
+      });
+      // Either notification may arrive first; each reconciles the window view.
+      backend.activeWindowChanged.connect(() => reconcileWindows());
+      backend.windowListChanged.connect(() => reconcileWindows());
       syncWorkspaces();
-      // Forward the signal
-      workspaceChanged();
-    });
-
-    // Either notification may arrive first; each reconciles the full snapshot.
-    backend.activeWindowChanged.connect(() => reconcileWindows());
-    backend.windowListChanged.connect(() => reconcileWindows());
+      reconcileWindows();
+    }
 
     // Overview state (Niri-specific)
     if (backend.overviewActiveChanged) {
@@ -264,9 +278,6 @@ Singleton {
       });
     }
 
-    // Initial sync
-    syncWorkspaces();
-    reconcileWindows();
     if (backend.overviewActive !== undefined) {
       overviewActive = backend.overviewActive;
     }
@@ -275,17 +286,17 @@ Singleton {
     }
   }
 
-  function syncWorkspaces() {
+  function syncWorkspaces(deferSignal) {
     workspaces.clear();
     const ws = backend.workspaces;
     for (var i = 0; i < ws.count; i++) {
       workspaces.append(ws.get(i));
     }
-    // Emit signal to notify listeners that workspace list has been updated
-    workspacesChanged();
+    if (!deferSignal)
+      workspacesChanged();
   }
 
-  function reconcileWindows() {
+  function reconcileWindows(deferSignals) {
     if (!backend)
       return;
     const rows = backend.windows || [];
@@ -331,11 +342,63 @@ Singleton {
       };
     }
 
-    // Notify only once every view above describes the same state.
+    if (deferSignals)
+      return {
+        listChanged,
+        focusChanged
+      };
+    notifyWindowChanges(listChanged, focusChanged);
+  }
+
+  function notifyWindowChanges(listChanged, focusChanged) {
     if (listChanged)
       windowListChanged();
     if (focusChanged)
       activeWindowChanged();
+  }
+
+  function immutableCopy(value) {
+    if (Array.isArray(value))
+      return Object.freeze(value.map(immutableCopy));
+    if (value !== null && typeof value === "object") {
+      const copy = {};
+      for (const key of Object.keys(value))
+        copy[key] = immutableCopy(value[key]);
+      return Object.freeze(copy);
+    }
+    return value;
+  }
+
+  function publishNiriState() {
+    const source = backend.workspaces;
+    const workspaceChanged = source !== _publishedWorkspaceSource;
+    if (workspaceChanged) {
+      _publishedWorkspaceSource = source;
+      syncWorkspaces(true);
+    }
+    const changes = reconcileWindows(true);
+    const ready = backend.ready;
+    const current = getCurrentWorkspace();
+    const focusedWorkspaceId = current?.id === backend.focusedWorkspaceId ? backend.focusedWorkspaceId : null;
+    if (ready !== snapshot.ready || focusedWorkspaceId !== snapshot.focusedWorkspaceId || workspaceChanged || changes.listChanged || changes.focusChanged) {
+      _snapshot = Object.freeze({
+                                  ready: ready,
+                                  revision: snapshot.revision + 1,
+                                  windows: ready ? immutableCopy(backend.windows.map(row => Object.assign({}, row, {
+                                                                                                            isFocused: row.id === _focus.id
+                                                                                                          }))) : Object.freeze([]),
+                                  workspaces: ready ? immutableCopy(Array.from({
+                                                                                 length: source.count
+                                                                               }, (_, i) => source.get(i))) : Object.freeze([]),
+                                  focusedWindowId: ready ? _focus.id : null,
+                                  focusedWorkspaceId: ready ? focusedWorkspaceId : null
+                                });
+    }
+    if (workspaceChanged) {
+      workspacesChanged();
+      root.workspaceChanged();
+    }
+    notifyWindowChanges(changes.listChanged, changes.focusChanged);
   }
 
   function focusIdAt(index) {
@@ -491,6 +554,15 @@ Singleton {
     } else {
       Logger.w("Compositor", "No backend available for window closing");
     }
+  }
+
+  // Stable niri IDs; completion is (success, error). With a 1-based insert
+  // index, success means both the move and the subsequent reorder succeeded.
+  function moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex) {
+    if (niriBackend)
+      niriBackend.moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex);
+    else if (typeof completed === "function")
+      completed(false, "Niri IPC unavailable");
   }
 
   // Spawn command

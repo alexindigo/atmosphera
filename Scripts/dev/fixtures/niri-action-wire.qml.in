@@ -1,0 +1,34 @@
+import QtQuick
+import Quickshell
+import qs.Services.Compositor
+
+ShellRoot {
+  id: root
+  property string mode: "waiting"
+  Timer {
+    interval: 20
+    repeat: true
+    running: true
+    onTriggered: {
+      const snapshot = CompositorService.snapshot;
+      if (root.mode !== "waiting" || !snapshot.ready || snapshot.windows.length !== 2 || snapshot.workspaces.length !== 2)
+        return;
+      root.mode = "actions";
+      const hi = "9007199254740993";
+      CompositorService.focusWindow({id: "9007199254740992"}); // absent
+      CompositorService.focusWindow({id: hi});
+      CompositorService.closeWindow({id: "0"});
+      CompositorService.switchToWorkspace({id: "0", idx: 99});
+      CompositorService.moveWindowToWorkspace(hi, "0", (ok, error) => {
+        if (ok || !error) {
+          Qt.exit(2);
+          return;
+        }
+        CompositorService.moveWindowToWorkspace(hi, "0", (ok, error) => {
+          console.info("NIRI_ACTION_WIRE_RESULT|" + ok + "|" + error);
+          Qt.exit(ok ? 0 : 3);
+        }, 1);
+      }, 1);
+    }
+  }
+}

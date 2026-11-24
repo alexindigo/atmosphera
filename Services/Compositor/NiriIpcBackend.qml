@@ -32,11 +32,13 @@ Item {
   signal activeWindowChanged
   signal windowListChanged
   signal displayScalesChanged
+  signal statePublished
 
   property var outputCache: ({})
   property var workspaceCache: ({})
   property var _pendingReplies: new Map()
   property int _outputGeneration: 0
+  property int _peerGeneration: 0
   property bool _edgeNavigationBusy: false
 
   Timer {
@@ -141,14 +143,18 @@ Item {
     const windowsChanged = JSON.stringify(windows) !== JSON.stringify(sorted);
     const nextFocus = streamReady ? NiriState.focusedWindowId ?? null : null;
     const focusChanged = focusedWindowId !== nextFocus;
+    const nextWorkspaceFocus = streamReady ? NiriState.focusedWorkspaceId ?? null : null;
+    const publicationChanged = workspacesChanged || windowsChanged || focusChanged || focusedWorkspaceId !== nextWorkspaceFocus || ready !== streamReady;
     if (windowsChanged)
       windows = sorted;
     focusedWindowId = nextFocus;
-    focusedWorkspaceId = streamReady ? NiriState.focusedWorkspaceId ?? null : null;
+    focusedWorkspaceId = nextWorkspaceFocus;
     overviewActive = streamReady && NiriState.overviewOpen;
     updateKeyboardLayouts(streamReady ? NiriState.keyboardLayouts : null);
     ready = streamReady;
 
+    if (publicationChanged)
+      statePublished();
     if (workspacesChanged)
       workspaceChanged();
     if (windowsChanged)
@@ -238,6 +244,7 @@ Item {
   Connections {
     target: root.stateApiAvailable ? NiriConnection : null
     function onConnectedChanged() {
+      root._peerGeneration++;
       root._outputGeneration++;
       outputRetry.stop();
       root.outputCache = ({});
@@ -253,27 +260,48 @@ Item {
   }
   Component.onDestruction: NiriReply.cancel(_pendingReplies)
 
-  function handleAction(name, send) {
-    if (!stateApiAvailable || !NiriConnection.isConnected)
-      return;
-    try {
-      NiriReply.observe(_pendingReplies, send(), reply => {
-        if (reply.isError)
-          Logger.w("NiriIpcBackend", name + " failed:", reply.error.message);
-      });
-    } catch (error) {
-      Logger.e("NiriIpcBackend", name + " failed:", error);
+  function handleAction(name, send, completed) {
+    function fail(message) {
+      Logger.w("NiriIpcBackend", name + " failed:", message);
+      if (completed)
+        completed(false, message);
     }
+    if (!stateApiAvailable || !NiriConnection.isConnected) {
+      fail("IPC unavailable");
+      return;
+    }
+    const generation = _peerGeneration;
+    let reply;
+    try {
+      reply = send();
+    } catch (error) {
+      fail(String(error));
+      return;
+    }
+    if (!NiriReply.observe(_pendingReplies, reply, result => {
+      if (generation !== root._peerGeneration)
+        fail("IPC peer changed");
+      else if (result.isError)
+        fail(result.error.message);
+      else if (completed)
+        completed(true, "");
+    }))
+      fail("IPC returned no reply");
+  }
+
+  function workspaceForId(id) {
+    return ready && typeof id === "string" ? _workspaceRows.find(row => row.id === id) ?? null : null;
+  }
+
+  function windowForId(id) {
+    return ready && typeof id === "string" ? windows.find(row => row.id === id) ?? null : null;
   }
 
   function switchToWorkspace(workspace) {
-    handleAction("switchToWorkspace", () => NiriActions.sendAction({
-                                                                     FocusWorkspace: {
-                                                                       reference: {
-                                                                         Index: workspace.idx
-                                                                       }
-                                                                     }
-                                                                   }));
+    if (workspaceForId(workspace?.id))
+      handleAction("switchToWorkspace", () => NiriActions.focusWorkspace({
+                                                                           Id: workspace.id
+                                                                         }));
   }
   function scrollWorkspaceContent(direction) {
     handleAction("scrollWorkspaceContent", () => NiriActions.sendAction(direction < 0 ? {
@@ -283,12 +311,39 @@ Item {
                                                                         }));
   }
   function focusWindow(win) {
-    if (win?.id != null)
+    if (windowForId(win?.id))
       handleAction("focusWindow", () => NiriActions.focusWindow(win.id));
   }
   function closeWindow(win) {
-    if (win?.id != null)
+    if (windowForId(win?.id))
       handleAction("closeWindow", () => NiriActions.closeWindow(win.id));
+  }
+
+  // An insert moves into a live empty workspace first. Never reorder on a
+  // rejected move, across connection generations, or if the target vanished.
+  function moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex) {
+    const done = typeof completed === "function" ? completed : () => {};
+    const window = windowForId(windowId);
+    const workspace = workspaceForId(workspaceId);
+    const insert = insertAtIndex != null;
+    if (!window || !workspace || window.workspaceId === workspaceId || (insert && (workspace.isOccupied || !Number.isSafeInteger(insertAtIndex) || insertAtIndex < 1))) {
+      done(false, "Invalid or stale move target");
+      return;
+    }
+    const reference = {
+      Id: workspaceId
+    };
+    handleAction("moveWindowToWorkspace", () => NiriActions.moveWindowToWorkspace(windowId, reference, false), (ok, error) => {
+      if (!ok || !insert) {
+        done(ok, error);
+        return;
+      }
+      if (!workspaceForId(workspaceId)) {
+        done(false, "Workspace vanished before reorder");
+        return;
+      }
+      handleAction("moveWorkspaceToIndex", () => NiriActions.moveWorkspaceToIndex(String(insertAtIndex), reference), done);
+    });
   }
   function turnOffMonitors() {
     handleAction("turnOffMonitors", () => NiriActions.sendAction({

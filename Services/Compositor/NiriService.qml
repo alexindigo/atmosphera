@@ -16,6 +16,8 @@ Item {
   readonly property var workspaces: available ? loader.item.workspaces : _emptyModel
   readonly property var windows: available ? loader.item.windows : []
   readonly property var focusedWindowId: available ? loader.item.focusedWindowId : null
+  readonly property var focusedWorkspaceId: available ? loader.item.focusedWorkspaceId : null
+  readonly property bool ready: available && loader.item.ready
 
   readonly property bool overviewActive: available ? loader.item.overviewActive : false
   readonly property var keyboardLayouts: available ? loader.item.keyboardLayouts : []
@@ -24,6 +26,7 @@ Item {
   signal activeWindowChanged
   signal windowListChanged
   signal displayScalesChanged
+  signal statePublished
 
   readonly property var outputCache: available ? loader.item.outputCache : ({})
   readonly property var workspaceCache: available ? loader.item.workspaceCache : ({})
@@ -35,6 +38,7 @@ Item {
     onLoaded: {
       // Forward inner backend signals
       if (item.stateApiAvailable) {
+        item.statePublished.connect(() => root.statePublished());
         item.workspaceChanged.connect(function () {
           root.workspaceChanged();
         });
@@ -123,6 +127,13 @@ Item {
   function closeWindow(window) {
     if (available)
       loader.item.closeWindow(window);
+  }
+
+  function moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex) {
+    if (available)
+      loader.item.moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex);
+    else if (typeof completed === "function")
+      completed(false, "Niri IPC unavailable");
   }
 
   function turnOffMonitors() {

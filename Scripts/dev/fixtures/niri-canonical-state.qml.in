@@ -121,6 +121,30 @@ ShellRoot {
         publish(next, [ws(hi, 1, "Left", "0")], "0", hi);
         eq(b.windows[0].layout.posInScrollingLayout, [4, 1]);
       });
+      run("stable IDs guard actions and insert waits for successful move", b => {
+        publish([win(hi, lo, ["1", "1"])], [ws(lo, 1, "Left", hi), ws("0", 2, "Left", null)], hi, lo);
+        NiriActions.calls = [];
+        b.switchToWorkspace({id: lo, idx: 5});
+        b.switchToWorkspace({id: "1", idx: 1});
+        b.focusWindow({id: 9007199254740992});
+        b.focusWindow({id: hi});
+        b.closeWindow({id: lo});
+        eq(NiriActions.calls, [["focusWorkspace", {Id: lo}], ["focusWindow", hi]]);
+        const completions = [];
+        const done = (ok, error) => completions.push(ok);
+        b.moveWindowToWorkspace(hi, lo, done, 1);
+        b.moveWindowToWorkspace(hi, "0", done, 1);
+        eq(completions, [false]);
+        NiriRequests.deliver("moveWindowToWorkspace", null, true);
+        eq(completions, [false, false]);
+        b.moveWindowToWorkspace(hi, "0", done, 1);
+        eq(NiriActions.calls.slice(2), [["moveWindowToWorkspace", hi, {Id: "0"}, false], ["moveWindowToWorkspace", hi, {Id: "0"}, false]]);
+        NiriRequests.deliver("moveWindowToWorkspace", null, false);
+        eq(NiriActions.calls[4], ["moveWorkspaceToIndex", "1", {Id: "0"}]);
+        eq(completions, [false, false]);
+        NiriRequests.deliver("moveWorkspaceToIndex", null, false);
+        eq(completions, [false, false, true]);
+      });
       run("null mode differs from mode zero and transform is its wire name", b => {
         const modes = [{refreshRate: 75000}];
         NiriRequests.deliver("outputs", {Null: {logical: null, physicalSize: null, modes, currentMode: null},

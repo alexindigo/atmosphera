@@ -136,7 +136,20 @@ def main():
     write('Niri/NiriState.qml', STATE)
     write('Niri/NiriRequests.qml', REQUESTS)
     write('Niri/NiriConnection.qml', 'pragma Singleton\nimport QtQml\nQtObject { property bool isConnected: true; property var peerInfo: null; signal connectedChanged(); onIsConnectedChanged: connectedChanged() }\n')
-    write('Niri/NiriActions.qml', 'pragma Singleton\nimport QtQml\nQtObject { function sendAction(action) { return NiriRequests.request(Object.keys(action)[0]); } }\n')
+    write('Niri/NiriActions.qml', '''pragma Singleton
+import QtQml
+QtObject {
+  property var calls: []
+  function action(name, args) { calls.push([name, ...args]); return NiriRequests.request(name); }
+  function sendAction(action) { return actionReply(action); }
+  function actionReply(payload) { return action(Object.keys(payload)[0], [payload]); }
+  function focusWindow(id) { return action("focusWindow", [id]); }
+  function closeWindow(id) { return action("closeWindow", [id]); }
+  function focusWorkspace(ref) { return action("focusWorkspace", [ref]); }
+  function moveWindowToWorkspace(id, ref, focus) { return action("moveWindowToWorkspace", [id, ref, focus]); }
+  function moveWorkspaceToIndex(idx, ref) { return action("moveWorkspaceToIndex", [idx, ref]); }
+}
+''')
     write('Niri/qmldir', '\n'.join(['module Niri'] + [f'singleton {name} 1.0 {name}.qml' for name in ['NiriEvents', 'NiriState', 'NiriRequests', 'NiriConnection', 'NiriActions']]) + '\n')
     write('shell.qml', (Path(__file__).parent / 'fixtures/niri-canonical-state.qml.in').read_text())
     env = dict(os.environ, QT_QPA_PLATFORM='offscreen', QML_IMPORT_PATH=str(tree), QML2_IMPORT_PATH=str(tree))
@@ -146,7 +159,7 @@ def main():
     lines = [line.split('BOOTSTRAP_RESULT|', 1)[1] for line in (output / 'shell.log').read_text().splitlines() if 'BOOTSTRAP_RESULT|' in line]
     cases = json.loads(lines[-1]) if lines else []
     widget_case = workspace_widget(source, output)
-    passed = (result.returncode == 0 and len(cases) == 12
+    passed = (result.returncode == 0 and len(cases) == 13
               and all(c['passed'] for c in cases) and widget_case['passed'])
     cases.append(widget_case)
     for case in cases:
