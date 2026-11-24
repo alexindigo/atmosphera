@@ -61,9 +61,14 @@ def main():
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
-    output = result.stdout.strip()
+    if result.stderr:
+        sys.stderr.write(result.stderr)
+    if result.returncode:
+        sys.exit(result.returncode if result.returncode > 0 else 128 - result.returncode)
 
-    for line in output.split('\n'):
+    for line in result.stdout.splitlines():
+        if not line.strip():
+            continue
         day_events = json.loads(line)
         print(json.dumps([convert_event(e, khal_format) for e in day_events]))
 

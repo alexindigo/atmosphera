@@ -38,7 +38,9 @@ Process {
                       checkForStartFailure(_complete)
   onExited: (code, status) => {
     const error = errors.text.trim();
-    if (code !== 0 || status !== 0 || error) {
+    // Providers signal incomplete snapshots with a failed exit. Stderr may
+    // contain progress or warnings even when the snapshot is complete.
+    if (code !== 0 || status !== 0) {
       finish([], error || `Calendar provider exited (${code}, ${status})`);
       return;
     }
