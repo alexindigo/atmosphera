@@ -7,9 +7,11 @@ import os
 from pathlib import Path
 import sys
 
+from fixture_paths import require_owned_path
+
 config, expectations, phase, output = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4])
-assert config == config.resolve() and config.is_relative_to(Path(os.environ['PHA_WORK_BASE']))
-assert output == output.resolve() and output.is_relative_to(Path(os.environ['PHA_OUTPUT_BASE']))
+require_owned_path(config, Path(os.environ['PHA_WORK_BASE']), 'Values config')
+require_owned_path(output, Path(os.environ['PHA_OUTPUT_BASE']), 'Values output')
 expected = json.loads(expectations.read_text())[phase]
 shared_path = config / 'settings/plugins/values-fixture.json'
 shared = json.loads(shared_path.read_text())

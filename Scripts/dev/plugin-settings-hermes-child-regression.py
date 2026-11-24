@@ -21,6 +21,7 @@ import urllib.error
 import urllib.request
 
 from fixture_resources import FixtureResources
+from fixtures.fixture_paths import require_owned_path
 from guest_profile import activate_profile
 
 
@@ -91,8 +92,11 @@ def main():
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
     profile.prepare_roots()
-    assert args.work_root.is_relative_to(profile.work_base)
-    assert args.output.is_relative_to(profile.journal_base)
+    try:
+        require_owned_path(args.work_root, profile.work_base, 'Hermes work root')
+        require_owned_path(args.output, profile.journal_base, 'Hermes journal root')
+    except ValueError as exc:
+        parser.error(str(exc))
     args.work_root.mkdir()
     args.output.mkdir()
     helper = args.plugins / 'hermes-agent/scripts/hermes_bridge.py'

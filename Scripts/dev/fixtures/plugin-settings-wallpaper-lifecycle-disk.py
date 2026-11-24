@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import sys
 
+from fixture_paths import require_owned_path
 from json_evidence import require_json_match
 
 case,output,boundary=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
@@ -21,8 +22,9 @@ for screen,row in expected['shared'].get('wallpaperColorScreenshots',{}).items()
         raise RuntimeError(f'{boundary}: expected one capture request, got {len(captures)}')
     observed=normalized['shared']['wallpaperColorScreenshots'][screen]
     path = observed['path']
-    if type(path) is not str or path != captures[0]['argv'][0] or not Path(path).is_relative_to(case/'cache'):
+    if type(path) is not str or path != captures[0]['argv'][0]:
         raise RuntimeError(f'{boundary}: unexpected capture path {path!r}')
+    require_owned_path(Path(path), case/'cache', f'{boundary}: capture path')
     timestamp = observed['updatedAt']
     if type(timestamp) not in (int, float) or not timestamp >= info['startedAt']:
         raise RuntimeError(f'{boundary}: unexpected capture timestamp {timestamp!r}')
