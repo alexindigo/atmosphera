@@ -115,7 +115,7 @@ sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-i
   wlr-randr cliphist wlsunset udisks2
 
 # QML helper libs from the AUR (or build from source)
-yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.1' qt6-xdgiconqml-git qt6-niriqml qt6-mangowcqml
+yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.1' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
 ```
 
 `qt6-imageformats` supplies WebP file-chooser previews. Optionally install
@@ -130,7 +130,7 @@ cannot enable system services. Without UDisks2, folders and favorites still work
 **2. Build and install the niri IPC module (niri sessions, from source)**
 
 ```bash
-git clone https://github.com/alexindigo/niriqml.git
+git clone --branch v0.3.0 --depth 1 https://github.com/alexindigo/niriqml.git
 cd niriqml
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
@@ -201,10 +201,12 @@ order of support depth.
 
 ### Niri
 
-- **IPC module:** `qt6-niriqml` (built from source in step 2 of the manual
-  install; AUR: `qt6-niriqml`). Provides workspaces, windows, focus, and
-  overview state over niri's socket. Detection is automatic via
-  `NIRI_SOCKET`.
+- **IPC module:** `qt6-niriqml>=0.3.0` (built from source in step 2 of the
+  manual install; AUR: `qt6-niriqml`). It provides workspaces, windows, focus,
+  overview and session config handoff. Detection is automatic via
+  `NIRI_SOCKET`. It is optional for the shell but required by `atmosphera-niri`;
+  without a supported version, niri IPC views stay empty and config handoff
+  is unavailable.
 - **Session wiring:** run the bundled setup script once:
   ```bash
   atmosphera setup niri

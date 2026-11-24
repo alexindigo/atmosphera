@@ -100,7 +100,6 @@ Singleton {
 
   function detectCompositor() {
     const hyprlandSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE");
-    const niriSocket = Quickshell.env("NIRI_SOCKET");
     const swaySock = Quickshell.env("SWAYSOCK");
     const currentDesktop = Quickshell.env("XDG_CURRENT_DESKTOP");
     const labwcPid = Quickshell.env("LABWC_PID");
@@ -124,7 +123,7 @@ Singleton {
       isExtWorkspace = false;
       backendLoader.sourceComponent = labwcComponent;
       Logger.i("CompositorService", "Detected LabWC with PID: " + labwcPid);
-    } else if (niriSocket && niriSocket.length > 0) {
+    } else if (NiriIpcStatus.isNiriSession) {
       isHyprland = false;
       isNiri = true;
       isSway = false;
@@ -655,7 +654,8 @@ Singleton {
 
   Connections {
     target: LockOwnerService
-    function onSuspendReady() { root.suspend(); }
+    function onSuspendReady() {
+      root.suspend();
+    }
   }
-
 }

@@ -1,0 +1,202 @@
+import QtQuick
+import Quickshell
+import Niri 1.0
+import "Services/Compositor"
+
+ShellRoot {
+  id: test
+  property var results: []
+  property var queue: []
+  readonly property string lo: "9007199254740992"
+  readonly property string hi: "9007199254740993"
+  Component { id: backend; NiriIpcBackend {} }
+  Component { id: handoff; NiriSessionIpc {} }
+
+  function eq(actual, expected) {
+    if (JSON.stringify(actual) !== JSON.stringify(expected))
+      throw new Error("actual=" + JSON.stringify(actual) + " expected=" + JSON.stringify(expected));
+  }
+  function win(id, workspace, ordinal) {
+    return {id, workspaceId: workspace, title: null, appId: null, pid: null,
+      layout: {posInScrollingLayout: ordinal, tilePosInWorkspaceView: null}};
+  }
+  function ws(id, idx, output, active) {
+    return {id, idx, output, name: null, activeWindowId: active, isActive: true, isFocused: idx === 1, isUrgent: false};
+  }
+  function publish(windows, workspaces, windowId, workspaceId, keyboard, overview) {
+    NiriState.publish(true, windows, workspaces, windowId, workspaceId, keyboard ?? null, overview ?? false);
+  }
+  function start() {
+    NiriRequests.reset();
+    NiriConnection.isConnected = true;
+    NiriConnection.peerInfo = null;
+    NiriState.publish(false, [], [], null, null, null, false);
+  }
+  function run(name, body, beforeArm) {
+    queue.push({name, body, beforeArm});
+  }
+  function next() {
+    if (!queue.length) {
+      console.info("BOOTSTRAP_RESULT|" + JSON.stringify(results));
+      Qt.quit();
+      return;
+    }
+    const {name, body, beforeArm} = queue.shift();
+    start();
+    if (beforeArm) beforeArm();
+    const b = backend.createObject(test);
+    function finish(error) {
+      results.push(error ? {name, passed: false, error: String(error)} : {name, passed: true});
+      b.destroy();
+      Qt.callLater(test.next);
+    }
+    try {
+      const result = body(b);
+      if (result && typeof result.then === "function") result.then(() => finish(null), finish);
+      else finish(null);
+    } catch (error) {
+      finish(error);
+    }
+  }
+  function until(predicate) {
+    return new Promise((resolve, reject) => {
+      const start = Date.now();
+      const timer = Qt.createQmlObject('import QtQml; Timer { interval: 15; repeat: true }', test);
+      timer.triggered.connect(() => {
+        const done = predicate();
+        if (done || Date.now() - start > 1800) {
+          timer.destroy();
+          if (done) resolve(); else reject(new Error("retry did not settle"));
+        }
+      });
+      timer.start();
+    });
+  }
+
+  Timer {
+    interval: 15
+    running: true
+    onTriggered: {
+      run("no competing seeds", b => {
+        eq(Object.keys(NiriRequests.counts), ["outputs"]);
+      });
+      run("socket alone is not ready, empty stream is ready", b => {
+        eq(b.ready, false);
+        publish([], [], null, null);
+        eq([b.ready, b.windows, b.workspaces.count, b.keyboardLayouts, b.keyboardLayoutIndex], [true, [], 0, [], -1]);
+      });
+      run("late load reads current state without another event", b => {
+        eq([b.focusedWindowId, b.workspaces.get(0).id, b.keyboardLayoutIndex, b.overviewActive],
+          ["0", hi, 1, true]);
+      }, () => publish([win("0", hi, ["2", "1"])], [ws(hi, 1, "Left", "0")], "0", hi,
+          {names: ["English", "German"], currentIdx: 1}, true));
+      run("exact tie order and joins above the JS-safe limit", b => {
+        const records = [win(hi, hi, ["1", "1"]), win(lo, hi, ["1", "1"]), win("0", hi, ["1", "1"])];
+        // Old backend consumes the old event; the canonical backend ignores it.
+        for (const order of [records, [records[1], records[0], records[2]], records.slice().reverse()]) {
+          NiriEvents.windowsChanged(order);
+          publish(order, [ws(hi, 1, "Left", "0")], "0", hi);
+          eq(b.windows.map(w => [w.id, w.workspaceId]), [["0",hi], [lo,hi], [hi,hi]]);
+        }
+      });
+      run("optional IDs stay null, zero focus and occupancy are present", b => {
+        const windows = [win("0", "0", ["1", "1"]), win(hi, null, null)];
+        const workspaces = [ws("0", 1, "Left", "0"), ws(lo, 2, null, null)];
+        NiriEvents.windowsChanged(windows);
+        NiriEvents.workspacesChanged(workspaces);
+        NiriEvents.windowFocusChanged(0);
+        publish(windows, workspaces, "0", "0");
+        const orphan = b.windows.find(w => w.id === hi);
+        eq([orphan.workspaceId, orphan.pid, orphan.title, orphan.appId], [null, null, "", ""]);
+        eq([b.focusedWindowId, b.workspaces.get(0).activeWindowId, b.workspaces.get(0).isOccupied,
+          b.workspaces.get(1).activeWindowId, b.workspaces.get(1).isOccupied], ["0", "0", true, null, false]);
+      });
+      run("typed layout ordinals are checked and ordinary layout deltas project", b => {
+        const windows = [win("0", hi, ["3", "2"]), win(hi, hi, [hi, "1"]), win(lo, hi, null)];
+        NiriEvents.windowsChanged(windows);
+        publish(windows, [ws(hi, 1, "Left", "0")], "0", hi);
+        eq(b.windows.map(w => w.layout.posInScrollingLayout), [[3, 2], [], []]);
+        const next = [win("0", hi, ["4", "1"])];
+        NiriEvents.windowLayoutsChanged([{id: "0", layout: next[0].layout}]);
+        publish(next, [ws(hi, 1, "Left", "0")], "0", hi);
+        eq(b.windows[0].layout.posInScrollingLayout, [4, 1]);
+      });
+      run("null mode differs from mode zero and transform is its wire name", b => {
+        const modes = [{refreshRate: 75000}];
+        NiriRequests.deliver("outputs", {Null: {logical: null, physicalSize: null, modes, currentMode: null},
+          Present: {logical: {transform:{wireName:"90"}}, physicalSize:[30,40], modes, currentMode:"0"}});
+        eq([b.outputCache.Null.refresh_rate, b.outputCache.Present.refresh_rate, b.outputCache.Present.transform], [0, 75000, "90"]);
+      });
+      run("reverse output replies cannot displace current order", b => {
+        publish([win("0", "0", ["1","1"]), win(hi, hi, ["1","1"])],
+          [ws("0", 1, "Right", "0"), ws(hi, 2, "Left", null)], "0", "0");
+        b.bootstrap();
+        NiriRequests.deliver("outputs", {Left:{logical:{x:0}}, Right:{logical:{x:1000}}}, false, true);
+        const rows = b.windows;
+        NiriRequests.deliver("outputs", {Stale:{logical:{x:500}}});
+        eq(Object.keys(b.outputCache).sort(), ["Left", "Right"]);
+        eq(b.windows.map(w => [w.id, w.output]), [[hi,"Left"],["0","Right"]]);
+        eq(rows === b.windows, true);
+      });
+      run("current output failure retries", b => {
+        NiriRequests.deliver("outputs", {}, true);
+        return until(() => NiriRequests.counts.outputs === 2).then(() => {
+          NiriRequests.deliver("outputs", {Left:{logical:{scale:2}}});
+          eq(b.outputCache.Left.scale, 2);
+          b.bootstrap();
+          NiriRequests.deliver("outputs", {Left:{logical:{scale:3}}}, false);
+          eq(b.outputCache.Left.scale, 3);
+        });
+      });
+      run("disconnect clears state and late old output cannot hydrate reconnect", b => {
+        publish([win("0", "0", ["1","1"])], [ws("0", 1, "Old", "0")], "0", "0",
+          {names:["Old"],currentIdx:0}, true);
+        NiriConnection.isConnected = false;
+        NiriState.publish(false, [], [], null, null, null, false);
+        eq([b.ready, b.windows, b.workspaces.count, b.focusedWindowId, b.keyboardLayouts, b.overviewActive],
+          [false, [], 0, null, [], false]);
+        NiriConnection.isConnected = true;
+        NiriRequests.deliver("outputs", {Old:{logical:{scale:4}}});
+        NiriRequests.deliver("outputs", {New:{logical:{scale:2}}});
+        publish([win(hi, hi, ["2","1"])], [ws(hi, 1, "New", hi)], hi, hi);
+        eq([b.ready, b.windows[0].output, b.focusedWindowId, Object.keys(b.outputCache)], [true, "New", hi, ["New"]]);
+      });
+      run("handoff requires fresh peer metadata, not merely an open socket", b => {
+        const session = handoff.createObject(test);
+        try {
+          const attempts = [];
+          session.activate("/test/config.kdl", ok => attempts.push(ok));
+          eq([NiriRequests.counts.LoadConfigFile ?? 0, attempts], [0, [false]]);
+          NiriConnection.peerInfo = {pid: 42, credentialsAvailable: true};
+          eq(session.peerPid, 42);
+          session.activate("/test/config.kdl", ok => attempts.push(ok));
+          NiriRequests.deliver("LoadConfigFile", "Handled");
+          eq(attempts, [false, true]);
+          NiriConnection.isConnected = false;
+          eq(session.peerPid, -1);
+        } finally {
+          session.destroy();
+        }
+      });
+      run("uncorrelated reload and retired peer reply cannot complete handoff", b => {
+        NiriConnection.peerInfo = {pid: 42, credentialsAvailable: true};
+        const session = handoff.createObject(test);
+        try {
+          const attempts = [];
+          session.activate("/test/config.kdl", (ok, error) => attempts.push(ok));
+          NiriEvents.configLoaded(false);
+          eq(attempts, []);
+          NiriConnection.isConnected = false;
+          NiriConnection.peerInfo = null;
+          NiriConnection.isConnected = true;
+          NiriConnection.peerInfo = {pid: 43, credentialsAvailable: true};
+          NiriRequests.deliver("LoadConfigFile", "Handled");
+          eq([attempts, NiriRequests.counts.LoadConfigFile], [[false], 1]);
+        } finally {
+          session.destroy();
+        }
+      });
+      test.next();
+    }
+  }
+}

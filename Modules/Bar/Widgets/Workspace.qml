@@ -117,7 +117,8 @@ Item {
   property int windowRevision: 0
 
   property ListModel localWorkspaces: ListModel {}
-  property int lastFocusedWorkspaceId: -1
+  // Keep the facade's ID type: niri uses exact strings, not JS numbers.
+  property var lastFocusedWorkspaceId: null
   property real masterProgress: 0.0
   property bool effectsActive: false
   property color effectColor: AtmoColor.mPrimary
@@ -129,7 +130,7 @@ Item {
   property int wheelAccumulatedDelta: 0
   property bool wheelCooldown: false
 
-  signal workspaceChanged(int workspaceId, color accentColor)
+  signal workspaceChanged(var workspaceId, color accentColor)
 
   property bool isHovered: false
 
@@ -407,14 +408,15 @@ Item {
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
-        if (root.lastFocusedWorkspaceId !== -1 && root.lastFocusedWorkspaceId !== ws.id) {
+        if (root.lastFocusedWorkspaceId !== null && root.lastFocusedWorkspaceId !== ws.id) {
           root.triggerUnifiedWave();
         }
         root.lastFocusedWorkspaceId = ws.id;
         root.workspaceChanged(ws.id, AtmoColor.mPrimary);
-        break;
+        return;
       }
     }
+    root.lastFocusedWorkspaceId = null;
   }
 
   SequentialAnimation {

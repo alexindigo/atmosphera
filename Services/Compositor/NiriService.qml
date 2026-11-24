@@ -6,12 +6,10 @@ import qs.Services.Keyboard
 Item {
   id: root
 
-  readonly property bool available: loader.status === Loader.Ready
+  readonly property bool available: loader.status === Loader.Ready && loader.item.stateApiAvailable
   readonly property bool moduleMissing: loader.status === Loader.Error
 
-  property bool _toastShown: false
-
-  property int floatingWindowPosition: Number.MAX_SAFE_INTEGER
+  readonly property real floatingWindowPosition: Number.MAX_SAFE_INTEGER
 
   property var _emptyModel: ListModel {}
 
@@ -36,7 +34,7 @@ Item {
     source: "NiriIpcBackend.qml"
     onLoaded: {
       // Forward inner backend signals
-      if (item) {
+      if (item.stateApiAvailable) {
         item.workspaceChanged.connect(function () {
           root.workspaceChanged();
         });
@@ -49,11 +47,12 @@ Item {
         item.displayScalesChanged.connect(function () {
           root.displayScalesChanged();
         });
-      }
+      } else
+        NiriIpcStatus.reportUnavailable();
     }
     onStatusChanged: {
       if (status === Loader.Error) {
-        Logger.w("NiriService", "Niri IPC unavailable — install qt6-niriqml for full niri support");
+        NiriIpcStatus.reportUnavailable();
       }
     }
   }

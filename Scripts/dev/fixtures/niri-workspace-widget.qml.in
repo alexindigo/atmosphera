@@ -1,0 +1,33 @@
+import QtQuick
+import Quickshell
+import "Modules/Bar/Widgets" as BarWidgets
+
+ShellRoot {
+  id: root
+
+  property var seenIds: []
+
+  BarWidgets.Workspace {
+    id: widget
+    visible: false
+    widgetId: "Workspace"
+    onWorkspaceChanged: (workspaceId, accentColor) => root.seenIds.push(workspaceId)
+  }
+
+  Component.onCompleted: {
+    const ids = ["9007199254740992", "9007199254740993", "0"];
+    const recorded = [];
+    for (const id of ids) {
+      widget.localWorkspaces.clear();
+      widget.localWorkspaces.append({id: id, isFocused: true});
+      widget.updateWorkspaceFocus();
+      recorded.push(widget.lastFocusedWorkspaceId);
+    }
+    widget.localWorkspaces.clear();
+    widget.updateWorkspaceFocus();
+    const absent = widget.lastFocusedWorkspaceId;
+    const passed = JSON.stringify(root.seenIds) === JSON.stringify(ids) && JSON.stringify(recorded) === JSON.stringify(ids) && absent === null;
+    console.info("WORKSPACE_WIDGET_RESULT|" + JSON.stringify({passed, seenIds: root.seenIds, recorded, absent}));
+    Qt.callLater(Qt.quit);
+  }
+}

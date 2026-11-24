@@ -25,6 +25,7 @@ Helpers/ColorsConvert.js
 Helpers/LockerLifecycle.js
 Helpers/LockerSettingsInput.js
 Helpers/NiriEdgeNavigation.js
+Helpers/NiriReply.js
 Helpers/OwnedProcess.js
 Helpers/OwnedProcessChild.qml
 Helpers/QtObj2JS.js
@@ -46,6 +47,7 @@ Services/Compositor/LabwcService.qml
 Services/Compositor/MangoService.qml
 Services/Compositor/MangoServiceBackend.qml
 Services/Compositor/NiriIpcBackend.qml
+Services/Compositor/NiriIpcStatus.qml
 Services/Compositor/NiriService.qml
 Services/Compositor/SwayService.qml
 Services/Compositor/ToplevelIds.qml
