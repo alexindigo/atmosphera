@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Portals
 import qs.Services.UI
@@ -14,26 +15,53 @@ ColumnLayout {
   property string selectedDirectory: ""
   property string selectedWallpaper: ""
   property string previewCachedPath: ""
+  property string _selectionRequest: ""
+  readonly property string previewState: previewRequest.imageState
+  readonly property string errorReason: previewRequest.errorReason
 
   signal directoryChanged(string directory)
   signal wallpaperChanged(string wallpaper)
 
   onSelectedWallpaperChanged: {
-    if (!selectedWallpaper) {
+    _selectionRequest = "";
+    if (!selectedWallpaper)
       previewCachedPath = "";
-      return;
-    }
-    if (ImageCacheService.initialized) {
-      ImageCacheService.getLarge(selectedWallpaper, Screen.width, Screen.height, function (path, success) {
-        if (root)
-          root.previewCachedPath = success ? path : selectedWallpaper;
-      });
-    } else {
-      previewCachedPath = selectedWallpaper;
-    }
   }
 
   spacing: Style.marginL
+
+  // Preview requests have this step's lifetime, not the singleton's lifetime.
+  // A failed candidate keeps the last validated preview and user selection.
+  function selectWallpaper(path) {
+    var sameSource = previewRequest.source === path;
+    _selectionRequest = path;
+    if (sameSource)
+      previewRequest.retry();
+  }
+  function _settlePreview() {
+    if (previewRequest.status !== Image.Ready)
+      return;
+    var resolved = PortalPaths.uriToPath(previewRequest.outputUrl);
+    if (!resolved.ok)
+      return;
+    previewCachedPath = resolved.path;
+    if (_selectionRequest && previewRequest.source === _selectionRequest) {
+      var path = _selectionRequest;
+      selectedWallpaper = path;
+      _selectionRequest = "";
+      wallpaperChanged(path);
+    }
+  }
+  NImage {
+    id: previewRequest
+    visible: false
+    source: root._selectionRequest || root.selectedWallpaper
+    active: root.visible && !!source
+    animationIntent: "still"
+    normalize: true
+    sourceSize: Qt.size(Math.max(1, Screen.width * Screen.devicePixelRatio), Math.max(1, Screen.height * Screen.devicePixelRatio))
+    onStatusChanged: Qt.callLater(root._settlePreview)
+  }
 
   // Large preview area
   Rectangle {
@@ -52,6 +80,29 @@ ColumnLayout {
       borderColor: previewCachedPath !== "" ? AtmoColor.mPrimary : AtmoColor.mOutline
       borderWidth: previewCachedPath !== "" ? 2 : 1
       imageFillMode: Image.PreserveAspectCrop
+      animationIntent: "still"
+      active: root.visible
+    }
+
+    AtmoIcon {
+      id: previewWarning
+      objectName: "wallpaperPreviewWarning"
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      anchors.margins: Style.marginS
+      visible: root.previewState === "unavailable"
+      icon: Icon.warning
+      color: AtmoColor.mError
+      Accessible.name: I18n.tr("widgets.file-picker.preview-unavailable")
+      Accessible.description: root.errorReason
+      HoverHandler {
+        onHoveredChanged: {
+          if (hovered)
+            TooltipService.show(previewWarning, I18n.tr("widgets.file-picker.preview-unavailable") + ": " + root.errorReason);
+          else
+            TooltipService.hide();
+        }
+      }
     }
 
     ColumnLayout {
@@ -137,39 +188,32 @@ ColumnLayout {
             readonly property int baseWidth: 120
             readonly property int baseHeight: 80
             readonly property int thumbRadius: Style.radiusM
-            property string cachedPath: ""
 
             Layout.preferredWidth: baseWidth
             Layout.preferredHeight: baseHeight
 
-            Component.onCompleted: {
-              if (ImageCacheService.initialized) {
-                ImageCacheService.getThumbnail(modelData, function (path, success) {
-                  if (thumbDelegate)
-                    thumbDelegate.cachedPath = success ? path : modelData;
-                });
-              } else {
-                cachedPath = modelData;
-              }
-            }
-
-            // Rounded thumbnail using NImageRounded with caching
+            // Static, lifetime-bound shared thumbnail; recognition is not success.
             NImageRounded {
               id: thumbImage
               anchors.fill: parent
-              imagePath: thumbDelegate.cachedPath
+              imagePath: modelData
+              animationIntent: "still"
+              normalize: true
+              active: root.visible
               radius: thumbDelegate.thumbRadius
               borderColor: selectedWallpaper === modelData ? AtmoColor.mPrimary : AtmoColor.mOutline
               borderWidth: selectedWallpaper === modelData ? 2 : 1
               imageFillMode: Image.PreserveAspectCrop
+              fallbackIcon: "image"
+              fallbackIconSize: Style.fontSizeL
             }
 
-            // Loading/error state background
+            // Loading state; NImageRounded owns the fallback and warning on error.
             Rectangle {
               anchors.fill: parent
               color: AtmoColor.mSurfaceVariant
               radius: thumbDelegate.thumbRadius
-              visible: thumbImage.status === Image.Loading || thumbImage.status === Image.Error || thumbDelegate.cachedPath === ""
+              visible: thumbImage.status === Image.Loading
 
               AtmoIcon {
                 icon: Icon.image
@@ -181,7 +225,7 @@ ColumnLayout {
 
             NBusyIndicator {
               anchors.centerIn: parent
-              visible: thumbImage.status === Image.Loading || thumbDelegate.cachedPath === ""
+              visible: thumbImage.status === Image.Loading
               running: visible
               size: 18
             }
@@ -224,8 +268,7 @@ ColumnLayout {
 
             TapHandler {
               onTapped: {
-                selectedWallpaper = modelData;
-                wallpaperChanged(modelData);
+                root.selectWallpaper(modelData);
               }
             }
           }

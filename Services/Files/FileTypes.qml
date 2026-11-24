@@ -3,9 +3,10 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.Commons
+import "../../Helpers/ImageTypes.js" as ImageTypes
 import "FileIconColors.js" as IconColors
 import "FileSaveNames.js" as SaveNames
+import qs.Commons
 
 Singleton {
   id: root
@@ -25,22 +26,39 @@ Singleton {
   readonly property color restRole: AtmoColor.mTertiary
   readonly property color archiveRole: AtmoColor.mStandout
   // The approved light audio mark needs the deeper end of the media tones.
-  readonly property var groups: ({media: ["audio", "video", "image"], text: ["text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data"], rest: ["executable", "disk", "font", "unknown"], archives: ["zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive"]})
+  readonly property var groups: ({
+                                   media: ["audio", "video", "image"],
+                                   text: ["text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data"],
+                                   rest: ["executable", "disk", "font", "unknown"],
+                                   archives: ["zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive"]
+                                 })
   readonly property var extensions: ({
-    image: "png jpg jpeg gif webp bmp svg avif tif tiff ico heic jxl",
-    video: "mp4 mkv webm mov avi m4v mpeg mpg",
-    audio: "mp3 flac wav ogg opus m4a aac aiff",
-    text: "txt log rst", markdown: "md markdown mdx", pdf: "pdf",
-    document: "odt doc docx pages rtf", spreadsheet: "csv tsv ods xls xlsx xlsm",
-    presentation: "odp ppt pptx key", ebook: "epub mobi azw azw3 cbz cbr",
-    web: "html htm css scss sass less",
-    code: "js ts jsx tsx qml py c cpp cc cxx h hpp rs go java kt kts swift rb php lua sql vue svelte",
-    data: "json jsonc yaml yml toml ini conf cfg xml env properties lock",
-    executable: "sh bash zsh fish exe appimage run bat cmd ps1 desktop",
-    disk: "iso img qcow2 vhd vhdx vdi dmg", font: "otf ttf woff woff2",
-    zip: "zip", tar: "tar", gzip: "gz tgz", xz: "xz txz", bzip: "bz2 tbz2", zstd: "zst", sevenzip: "7z", rar: "rar",
-    archive: "lz lzma lz4 br cab deb rpm"
-  })
+                                       image: ImageTypes.extensions,
+                                       video: "mp4 mkv webm mov avi m4v mpeg mpg",
+                                       audio: "mp3 flac wav ogg opus m4a aac aiff",
+                                       text: "txt log rst",
+                                       markdown: "md markdown mdx",
+                                       pdf: "pdf",
+                                       document: "odt doc docx pages rtf",
+                                       spreadsheet: "csv tsv ods xls xlsx xlsm",
+                                       presentation: "odp ppt pptx key",
+                                       ebook: "epub mobi azw azw3 cbz cbr",
+                                       web: "html htm css scss sass less",
+                                       code: "js ts jsx tsx qml py c cpp cc cxx h hpp rs go java kt kts swift rb php lua sql vue svelte",
+                                       data: "json jsonc yaml yml toml ini conf cfg xml env properties lock",
+                                       executable: "sh bash zsh fish exe appimage run bat cmd ps1 desktop",
+                                       disk: "iso img qcow2 vhd vhdx vdi dmg",
+                                       font: "otf ttf woff woff2",
+                                       zip: "zip",
+                                       tar: "tar",
+                                       gzip: "gz tgz",
+                                       xz: "xz txz",
+                                       bzip: "bz2 tbz2",
+                                       zstd: "zst",
+                                       sevenzip: "7z",
+                                       rar: "rar",
+                                       archive: "lz lzma lz4 br cab deb rpm"
+                                     })
   property var _mounts: []
   FileView {
     id: mountInfo
@@ -48,30 +66,45 @@ Singleton {
     printErrors: false
     onLoaded: root._mounts = root.parseMounts(text())
   }
-  Timer { interval: 10000; repeat: true; running: true; onTriggered: mountInfo.reload() }
+  Timer {
+    interval: 10000
+    repeat: true
+    running: true
+    onTriggered: mountInfo.reload()
+  }
 
   function fileType(name) {
     var lower = name.toLowerCase();
-    if ([".env", ".gitconfig", ".editorconfig"].includes(lower)) return "data";
-    if (["makefile", "dockerfile", "cmakelists.txt"].includes(lower)) return "code";
-    if (["readme", "license", "changelog"].includes(lower)) return "text";
+    if ([".env", ".gitconfig", ".editorconfig"].includes(lower))
+      return "data";
+    if (["makefile", "dockerfile", "cmakelists.txt"].includes(lower))
+      return "code";
+    if (["readme", "license", "changelog"].includes(lower))
+      return "text";
     var ext = extension(name);
     for (var type of Object.keys(extensions))
-      if (extensions[type].split(" ").includes(ext)) return type;
+      if (extensions[type].split(" ").includes(ext))
+        return type;
     return "unknown";
   }
   function group(type) {
     for (var key of Object.keys(groups))
-      if (groups[key].includes(type)) return key;
+      if (groups[key].includes(type))
+        return key;
     return "rest";
   }
-  function isHidden(name) { return name.startsWith("."); }
+  function isHidden(name) {
+    return name.startsWith(".");
+  }
   function parseMounts(text) {
     return text.split("\n").filter(line => line.includes(" - ")).map(line => {
       var halves = line.split(" - "), fields = halves[0].split(" ");
       var path = fields[4].replace(/\\([0-7]{3})/g, (_, octal) => String.fromCharCode(parseInt(octal, 8)));
       var fs = halves[1].split(" ")[0];
-      return {path: path, network: /^(cifs|smb3?|nfs4?|sshfs|sftp|davfs2?|webdav|fuse\.(sshfs|rclone|gvfsd-fuse))$/.test(fs)};
+      return {
+        path: path,
+        network: /^(cifs|smb3?|nfs4?|sshfs|sftp|davfs2?|webdav|fuse\.(sshfs|rclone|gvfsd-fuse))$/.test(fs)
+      };
     });
   }
   function folderKind(path, mounts, xdg) {
@@ -80,18 +113,31 @@ Singleton {
     path = path.length > 1 ? path.replace(/\/+$/, "") : path;
     var covering = null;
     for (var mount of mounts)
-      if ((path === mount.path || path.startsWith(mount.path === "/" ? "/" : mount.path + "/")) && (!covering || mount.path.length > covering.path.length)) covering = mount;
-    if (covering && covering.network) return "network";
+      if ((path === mount.path || path.startsWith(mount.path === "/" ? "/" : mount.path + "/")) && (!covering || mount.path.length > covering.path.length))
+        covering = mount;
+    if (covering && covering.network)
+      return "network";
     for (var key of Object.keys(xdg))
-      if (path === xdg[key]) return key.toLowerCase();
+      if (path === xdg[key])
+        return key.toLowerCase();
     return "ordinary";
   }
   function artwork(name, directory, path) {
     var type = directory ? "folder" : fileType(name);
-    return {type: type, group: directory ? "folder" : group(type), folder: directory ? folderKind(path) : "", hidden: isHidden(name)};
+    return {
+      type: type,
+      group: directory ? "folder" : group(type),
+      folder: directory ? folderKind(path) : "",
+      hidden: isHidden(name)
+    };
   }
   function iconColors(descriptor) {
-    var role = descriptor.type === "folder" ? (descriptor.folder === "network" ? networkRole : folderRole) : ({media: mediaRole, text: textRole, rest: restRole, archives: archiveRole})[descriptor.group];
+    var role = descriptor.type === "folder" ? (descriptor.folder === "network" ? networkRole : folderRole) : ({
+                                                                                                                media: mediaRole,
+                                                                                                                text: textRole,
+                                                                                                                rest: restRole,
+                                                                                                                archives: archiveRole
+                                                                                                              })[descriptor.group];
     var types = groups[descriptor.group] || ["folder"];
     return IconColors.palette(role, Math.max(0, types.indexOf(descriptor.type)), types.length);
   }
@@ -107,7 +153,11 @@ Singleton {
           continue;
         var fields = line.split(":");
         if (fields.length >= 3)
-          entries.push({mime: fields[1], pattern: fields[2], sensitive: fields[3] === "cs"});
+          entries.push({
+                         mime: fields[1],
+                         pattern: fields[2],
+                         sensitive: fields[3] === "cs"
+                       });
       }
       root._mimeGlobs = entries;
       root.filtersChanged();
@@ -162,9 +212,10 @@ Singleton {
 
   function previewKind(name) {
     var ext = extension(name);
+    // Retain the legacy kind spelling for callers, not as a decoder choice.
     if (["gif", "webp"].includes(ext))
       return "animatedImage";
-    if (["png", "jpg", "jpeg", "bmp", "svg", "avif", "tif", "tiff", "ico"].includes(ext))
+    if (ImageTypes.recognizes(ext))
       return "image";
     if (["mp4", "mkv", "webm", "mov", "avi", "m4v", "mpeg"].includes(ext))
       return "video";
@@ -181,7 +232,14 @@ Singleton {
     if (directory)
       return "filepicker-folder";
     var kind = previewKind(name);
-    return ({image: "filepicker-photo", animatedImage: "filepicker-photo", video: "filepicker-video", audio: "filepicker-music", text: "filepicker-file-text", pdf: "filepicker-text"})[kind] || "filepicker-file";
+    return ({
+              image: "filepicker-photo",
+              animatedImage: "filepicker-photo",
+              video: "filepicker-video",
+              audio: "filepicker-music",
+              text: "filepicker-file-text",
+              pdf: "filepicker-text"
+            })[kind] || "filepicker-file";
   }
 
   function matchesGlob(name, pattern, sensitive) {

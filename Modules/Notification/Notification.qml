@@ -638,12 +638,12 @@ Variants {
                   Layout.topMargin: Style.marginM
                   Layout.bottomMargin: Style.marginM
 
-                  NImageRounded {
+                  NNotificationImage {
                     Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
                     Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                     Layout.alignment: Qt.AlignVCenter
                     radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
-                    imagePath: model.originalImage || ""
+                    notification: model
                     borderColor: "transparent"
                     borderWidth: 0
                     fallbackIcon: "bell"
@@ -687,12 +687,12 @@ Variants {
                       }
                     }
 
-                    NText {
+                    NImageText {
                       text: model.summary || I18n.tr("common.no-summary")
                       pointSize: Style.fontSizeM
-                      font.weight: Style.fontWeightMedium
+                      fontWeight: Style.fontWeightMedium
                       color: AtmoColor.mOnSurface
-                      textFormat: Text.StyledText
+                      format: "styled"
                       wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                       maximumLineCount: 3
                       elide: Text.ElideRight
@@ -701,11 +701,11 @@ Variants {
                       Layout.rightMargin: Style.marginM
                     }
 
-                    NText {
+                    NImageText {
                       text: model.body || ""
                       pointSize: Style.fontSizeM
                       color: AtmoColor.mOnSurface
-                      textFormat: Text.StyledText
+                      format: "styled"
                       wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
                       maximumLineCount: 5
@@ -785,12 +785,12 @@ Variants {
                 anchors.margins: Style.marginM
                 spacing: Style.marginS
 
-                NImageRounded {
+                NNotificationImage {
                   Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)
                   Layout.preferredHeight: Math.round(24 * Style.uiScaleRatio)
                   Layout.alignment: Qt.AlignVCenter
                   radius: Style.radiusXS
-                  imagePath: model.originalImage || ""
+                  notification: model
                   borderColor: "transparent"
                   borderWidth: 0
                   fallbackIcon: "bell"
@@ -801,24 +801,24 @@ Variants {
                   Layout.fillWidth: true
                   spacing: Style.marginXS
 
-                  NText {
+                  NImageText {
                     text: model.summary || I18n.tr("common.no-summary")
                     pointSize: Style.fontSizeM
-                    font.weight: Style.fontWeightMedium
+                    fontWeight: Style.fontWeightMedium
                     color: AtmoColor.mOnSurface
-                    textFormat: Text.StyledText
+                    format: "styled"
                     maximumLineCount: 1
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                   }
 
-                  NText {
+                  NImageText {
                     visible: model.body && model.body.length > 0
                     Layout.fillWidth: true
                     text: model.body || ""
                     pointSize: Style.fontSizeS
                     color: AtmoColor.mOnSurfaceVariant
-                    textFormat: Text.StyledText
+                    format: "styled"
                     wrapMode: Text.Wrap
                     maximumLineCount: 2
                     elide: Text.ElideRight

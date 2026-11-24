@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
-import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
@@ -116,7 +115,7 @@ AtmoIconButton {
   }
   onMiddleClicked: PanelService.toggleLauncher(screen)
 
-  IconImage {
+  NImageIcon {
     id: customOrDistroLogo
     anchors.centerIn: parent
     width: root.buttonSize * 0.8
@@ -130,7 +129,6 @@ AtmoIconButton {
     }
     visible: source !== ""
     smooth: true
-    asynchronous: true
     layer.enabled: (enableColorization) && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
       property color targetColor: !hovering ? iconColor : AtmoColor.mOnHover

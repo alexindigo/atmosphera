@@ -202,9 +202,10 @@ Entries: `barWidget=BarWidget.qml`; `main=Main.qml`; `panel=Panel.qml`; `setting
 | 2 | `agent-session-status/Main.qml` | `bindAddress`:33; `pollIntervalSec`:42; `port`:32; `token`:34 | 13, 29, 31, 37, 41, 42, 51, 223 |
 | 3 | `agent-session-status/Panel.qml` | No literal field edge | 14, 15, 75, 76, 87, 93, 101, 119, ... |
 | 4 | `agent-session-status/server.py` | No literal field edge | No namespace/Main reference |
+| 5 | `agent-session-status/test_server.py` | No literal field edge | No namespace/Main reference |
 
 Declared leaves without a literal runtime namespace edge: None.
-Runtime-source/manifest fingerprint: `c4d470081bc953ac99ff221fc9ac36e9f044bb0cc060b0c61183a005b8201e96`.
+Runtime-source/manifest fingerprint: `4178893edfbb04f782fc302046a9025c44c90545149889f1e8ee145ec5eddb3e`.
 
 ## air-quality
 

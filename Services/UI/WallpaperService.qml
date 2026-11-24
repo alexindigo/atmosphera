@@ -3,11 +3,11 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/WallpaperSelection.js" as WallpaperSelection
 import qs.Commons
 import qs.Services.Power
 import qs.Services.Theming
 import qs.Services.UI
-import "../../Helpers/WallpaperSelection.js" as WallpaperSelection
 
 Singleton {
   id: root
@@ -30,8 +30,15 @@ Singleton {
   // Cache for current wallpapers - can be updated directly since we use signals for notifications
   property var currentWallpapers: ({})
 
-  // Track current alphabetical index for each screen
-  property var alphabeticalIndices: ({})
+  // A selection is intent until the shared still renderer acknowledges Ready.
+  // Reservations are per screen and appearance; unrelated selections coexist.
+  property var _wallpaperChanges: ({})
+  property var _wallpaperReservations: ({})
+  property int _wallpaperChangeSerial: 0
+  signal wallpaperChangeFailed(string screenName, string path, string reason)
+
+  // Last attempted path, not an index into a list that can be replaced.
+  property var _alphabeticalPaths: ({})
 
   // Track used wallpapers for random mode (persisted across reboots)
   property var usedRandomWallpapers: ({})
@@ -149,11 +156,10 @@ Singleton {
       root.restartRandomWallpaperTimer();
     }
     function onWallpaperChangeModeChanged() {
-      // Reset alphabetical indices when mode changes
-      root.alphabeticalIndices = {};
+      root._alphabeticalPaths = {};
       if (Settings.data.wallpaper.automationEnabled) {
         root.restartRandomWallpaperTimer();
-        root.setNextWallpaper();
+        root.setNextWallpaper(true);
       }
     }
     function onViewModeChanged() {
@@ -166,6 +172,7 @@ Singleton {
     }
     function onUseSolidColorChanged() {
       if (Settings.data.wallpaper.useSolidColor) {
+        root._cancelWallpaperChanges();
         var solidPath = root.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
         for (var i = 0; i < Quickshell.screens.length; i++) {
           root.wallpaperChanged(Quickshell.screens[i].name, solidPath);
@@ -179,6 +186,7 @@ Singleton {
     }
     function onSolidColorChanged() {
       if (Settings.data.wallpaper.useSolidColor) {
+        root._cancelWallpaperChanges();
         var solidPath = root.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
         for (var i = 0; i < Quickshell.screens.length; i++) {
           root.wallpaperChanged(Quickshell.screens[i].name, solidPath);
@@ -189,6 +197,7 @@ Singleton {
       root.refreshWallpapersList();
     }
     function onLinkLightAndDarkWallpapersChanged() {
+      root._cancelWallpaperChanges();
       if (Settings.data.wallpaper.linkLightAndDarkWallpapers) {
         root.wallpaperSelectionAppearance = Settings.data.colorSchemes.darkMode ? "dark" : "light";
         root._syncWallpaperSlotsWhenLinking();
@@ -347,6 +356,7 @@ Singleton {
   }
 
   function setSolidColor(colorString) {
+    _cancelWallpaperChanges();
     Settings.data.wallpaper.solidColor = String(colorString);
     Settings.data.wallpaper.useSolidColor = true;
   }
@@ -590,28 +600,205 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function changeWallpaper(path, screenName, appearanceSlot) {
-    // Turn off solid color mode when selecting a wallpaper
-    if (Settings.data.wallpaper.useSolidColor) {
-      Settings.data.wallpaper.useSolidColor = false;
+  function changeWallpaper(path, screenName, appearanceSlot, onComplete, retentionDirectory, onSettled, automatic) {
+    if (!path) {
+      _rejectWallpaperChange(onSettled, "empty-source");
+      return null;
     }
-
     var slot = _defaultAppearanceSlotForChange(appearanceSlot);
-
-    // Save current favorite color schemes before switching away.
-    // This must happen before applyFavoriteTheme (called by the UI)
-    // overwrites the settings that _createFavoriteEntry reads.
-    _saveOutgoingFavorites(path, screenName, slot);
-
+    var names = new Set();
     if (screenName !== undefined) {
-      _setWallpaper(screenName, path, slot);
+      names.add(screenName);
     } else {
-      var allScreenNames = new Set(Object.keys(currentWallpapers));
+      Object.keys(currentWallpapers).forEach(name => names.add(name));
       for (var i = 0; i < Quickshell.screens.length; i++) {
-        allScreenNames.add(Quickshell.screens[i].name);
+        names.add(Quickshell.screens[i].name);
       }
-      allScreenNames.forEach(name => _setWallpaper(name, path, slot));
     }
+    if (!names.size) {
+      _rejectWallpaperChange(onSettled, "no-target");
+      return null;
+    }
+    var ticket = {
+      id: String(++_wallpaperChangeSerial),
+      automatic: automatic === true,
+      path: String(path),
+      slot: slot,
+      slots: Settings.data.wallpaper.linkLightAndDarkWallpapers ? ["light", "dark"] : [slot],
+      targets: Array.from(names),
+      request: null,
+      completed: onComplete,
+      settled: onSettled,
+      cancel: function () {
+        root.cancelWallpaperChange(ticket);
+      }
+    };
+    _wallpaperChanges[ticket.id] = ticket;
+    ticket.targets.forEach(function (name) {
+      ticket.slots.forEach(function (appearance) {
+        root._wallpaperReservations[JSON.stringify([name, appearance])] = ticket.id;
+      });
+    });
+    Object.keys(_wallpaperChanges).forEach(function (id) {
+      var previous = root._wallpaperChanges[id];
+      if (!root._wallpaperChangeTargets(previous).length)
+        root.cancelWallpaperChange(previous, "superseded");
+    });
+    // A settlement observer can admit newer intent while this sweep is running.
+    // A retired ticket must never start a new, now-unowned decoder interest.
+    if (_wallpaperChanges[ticket.id] !== ticket)
+      return ticket;
+    var width = 1;
+    var height = 1;
+    for (var j = 0; j < Quickshell.screens.length; ++j) {
+      var screen = Quickshell.screens[j];
+      if (names.has(screen.name)) {
+        width = Math.max(width, screen.width * screen.devicePixelRatio);
+        height = Math.max(height, screen.height * screen.devicePixelRatio);
+      }
+    }
+    if (isSolidColorPath(ticket.path)) {
+      // callLater coalesces the same function; independent tickets must each settle.
+      Qt.callLater(() => root._completeWallpaperChange(ticket, ticket.path, true, {
+                                                         format: "solid"
+                                                       }));
+    } else if (retentionDirectory) {
+      ticket.request = ImageCacheService.retainImage(ticket.path, retentionDirectory, width, height, function (output, success, detail) {
+        root._completeWallpaperChange(ticket, output, success, detail);
+      });
+    } else {
+      ticket.request = ImageCacheService.requestImage(ticket.path, width, height, "contain", function (output, success, detail) {
+        root._completeWallpaperChange(ticket, output, success, detail);
+      });
+    }
+    return ticket;
+  }
+
+  function _wallpaperChangeTargets(ticket) {
+    if (!ticket || _wallpaperChanges[ticket.id] !== ticket)
+      return [];
+    return ticket.targets.filter(function (name) {
+      return ticket.slots.every(function (slot) {
+        return root._wallpaperReservations[JSON.stringify([name, slot])] === ticket.id;
+      });
+    });
+  }
+
+  function _rejectWallpaperChange(callback, code) {
+    if (typeof callback === "function")
+      Qt.callLater(callback, {
+                     state: "unavailable",
+                     names: [],
+                     targets: [],
+                     detail: {
+                       code: code
+                     }
+                   });
+  }
+
+  function _settleWallpaperChange(ticket, state, names, detail) {
+    var callback = ticket.settled;
+    ticket.settled = null;
+    if (typeof callback === "function") {
+      try {
+        callback({
+                   state: state,
+                   names: names.slice(),
+                   targets: ticket.targets.slice(),
+                   detail: detail || {}
+                 });
+      } catch (error) {
+        Logger.e("Wallpaper", "Wallpaper settlement callback failed");
+      }
+    }
+  }
+
+  function _releaseWallpaperChange(ticket) {
+    if (!ticket || _wallpaperChanges[ticket.id] !== ticket)
+      return false;
+    delete _wallpaperChanges[ticket.id];
+    ticket.targets.forEach(function (name) {
+      ticket.slots.forEach(function (slot) {
+        var key = JSON.stringify([name, slot]);
+        if (root._wallpaperReservations[key] === ticket.id)
+          delete root._wallpaperReservations[key];
+      });
+    });
+    if (ticket.request)
+      ticket.request.cancel();
+    ticket.request = null;
+    return true;
+  }
+
+  function cancelWallpaperChange(ticket, reason) {
+    if (_releaseWallpaperChange(ticket))
+      _settleWallpaperChange(ticket, "cancelled", [], {
+                               code: reason || "cancelled"
+                             });
+  }
+
+  function _cancelWallpaperChanges() {
+    Object.keys(_wallpaperChanges).forEach(id => root.cancelWallpaperChange(root._wallpaperChanges[id], "superseded"));
+  }
+
+  function _completeWallpaperChange(ticket, output, success, detail) {
+    if (_wallpaperChanges[ticket.id] !== ticket)
+      return;
+    var names = _wallpaperChangeTargets(ticket);
+    // The callback renderer has already retired itself. Do not cancel it again.
+    ticket.request = null;
+    _releaseWallpaperChange(ticket);
+    if (!names.length) {
+      _settleWallpaperChange(ticket, "cancelled", [], {
+                               code: "superseded"
+                             });
+      return;
+    }
+    if (!success || !output) {
+      var reason = detail && detail.reason ? detail.reason : "The wallpaper could not be displayed";
+      names.forEach(name => root.wallpaperChangeFailed(name, ticket.path, reason));
+      Logger.w("Wallpaper", reason);
+      ToastService.showError(I18n.tr("widgets.file-picker.preview-unavailable"), reason);
+      try {
+        if (ticket.completed)
+          ticket.completed(false, names, detail);
+      } finally {
+        _settleWallpaperChange(ticket, "unavailable", names, detail);
+      }
+      return;
+    }
+    if (detail && detail.originalPath)
+      ticket.path = detail.originalPath;
+    names.forEach(name => root._saveOutgoingFavorites(ticket.path, name, ticket.slot));
+    if (Settings.data.wallpaper.useSolidColor)
+      Settings.data.wallpaper.useSolidColor = false;
+    names.forEach(name => root._setWallpaper(name, ticket.path, ticket.slot));
+    try {
+      if (ticket.completed)
+        ticket.completed(true, names, detail);
+    } finally {
+      _settleWallpaperChange(ticket, "ready", names, detail);
+    }
+  }
+
+  // UI selection applies its favorite theme only to an accepted color monitor.
+  // Automation/IPC keep their existing changeWallpaper policy.
+  function selectWallpaper(path, screenName, appearanceSlot) {
+    var slot = _defaultAppearanceSlotForChange(appearanceSlot);
+    return changeWallpaper(path, screenName, slot, function (success, names) {
+      if (success)
+        names.forEach(name => root.applyFavoriteTheme(path, name, slot));
+    });
+  }
+
+  function selectRemoteWallpaper(source, directory, screenName, appearanceSlot, onComplete) {
+    var slot = _defaultAppearanceSlotForChange(appearanceSlot);
+    return changeWallpaper(source, screenName, slot, function (success, names, detail) {
+      if (success)
+        names.forEach(name => root.applyFavoriteTheme(detail.originalPath, name, slot));
+      if (onComplete)
+        onComplete(success, names, detail);
+    }, directory);
   }
 
   // -------------------------------------------------------------------
@@ -783,7 +970,7 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function setRandomWallpaper(screen) {
+  function setRandomWallpaper(screen, automatic) {
     Logger.d("Wallpaper", "setRandomWallpaper");
 
     if (Settings.data.wallpaper.enableMultiMonitorDirectories) {
@@ -795,7 +982,7 @@ Singleton {
 
           if (wallpaperList.length > 0) {
             var randomPath = _pickUnusedRandom(screenName, wallpaperList);
-            changeWallpaper(randomPath, screenName);
+            _changeRotatingWallpaper(randomPath, screenName, automatic);
           }
         }
       } else {
@@ -803,7 +990,7 @@ Singleton {
         var wallpaperList = getWallpapersList(screen);
         if (wallpaperList.length > 0) {
           var randomPath = _pickUnusedRandom(screen, wallpaperList);
-          changeWallpaper(randomPath, screen);
+          _changeRotatingWallpaper(randomPath, screen, automatic);
         }
       }
     } else {
@@ -812,7 +999,7 @@ Singleton {
       var wallpaperList = getWallpapersList(Screen.name);
       if (wallpaperList.length > 0) {
         var randomPath = _pickUnusedRandom("all", wallpaperList);
-        changeWallpaper(randomPath, screen);
+        _changeRotatingWallpaper(randomPath, screen, automatic);
       }
     }
   }
@@ -864,55 +1051,36 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  function setAlphabeticalWallpaper() {
+  function _changeRotatingWallpaper(path, screen, automatic) {
+    if (automatic !== true || Settings.data.wallpaper.automationEnabled)
+      changeWallpaper(path, screen, undefined, undefined, undefined, undefined, automatic);
+  }
+
+  function _advanceAlphabeticalWallpaper(listScreen, changeScreen, automatic) {
+    var list = getWallpapersList(listScreen);
+    if (!list.length)
+      return;
+    var key = changeScreen === undefined ? "all" : changeScreen;
+    var lastPath = _alphabeticalPaths[key];
+    var index = lastPath === undefined ? -1 : list.indexOf(lastPath);
+    if (index < 0)
+      index = Math.max(0, list.indexOf(getWallpaper(listScreen) || ""));
+    var nextPath = list[(index + 1) % list.length];
+    // Advance on attempt as well as success so decoder errors cannot stall rotation.
+    _alphabeticalPaths[key] = nextPath;
+    _changeRotatingWallpaper(nextPath, changeScreen, automatic);
+  }
+
+  function setAlphabeticalWallpaper(automatic) {
     Logger.d("Wallpaper", "setAlphabeticalWallpaper");
 
     if (Settings.data.wallpaper.enableMultiMonitorDirectories) {
-      // Pick next alphabetical wallpaper per screen
       for (var i = 0; i < Quickshell.screens.length; i++) {
         var screenName = Quickshell.screens[i].name;
-        var wallpaperList = getWallpapersList(screenName);
-
-        if (wallpaperList.length > 0) {
-          // Get or initialize index for this screen
-          if (alphabeticalIndices[screenName] === undefined) {
-            // Find current wallpaper in list to set initial index
-            var currentWallpaper = getWallpaper(screenName) || "";
-            var foundIndex = wallpaperList.indexOf(currentWallpaper);
-            alphabeticalIndices[screenName] = (foundIndex >= 0) ? foundIndex : 0;
-          }
-
-          // Get next index (wrap around)
-          var currentIndex = alphabeticalIndices[screenName];
-          var nextIndex = (currentIndex + 1) % wallpaperList.length;
-          alphabeticalIndices[screenName] = nextIndex;
-
-          var nextPath = wallpaperList[nextIndex];
-          changeWallpaper(nextPath, screenName);
-        }
+        _advanceAlphabeticalWallpaper(screenName, screenName, automatic);
       }
-    } else {
-      // Pick next alphabetical wallpaper common to all screens
-      var wallpaperList = getWallpapersList(Screen.name);
-      if (wallpaperList.length > 0) {
-        // Use primary screen name as key for single directory mode
-        var key = "all";
-        if (alphabeticalIndices[key] === undefined) {
-          // Find current wallpaper in list to set initial index
-          var currentWallpaper = getWallpaper(Screen.name) || "";
-          var foundIndex = wallpaperList.indexOf(currentWallpaper);
-          alphabeticalIndices[key] = (foundIndex >= 0) ? foundIndex : 0;
-        }
-
-        // Get next index (wrap around)
-        var currentIndex = alphabeticalIndices[key];
-        var nextIndex = (currentIndex + 1) % wallpaperList.length;
-        alphabeticalIndices[key] = nextIndex;
-
-        var nextPath = wallpaperList[nextIndex];
-        changeWallpaper(nextPath, undefined);
-      }
-    }
+    } else
+      _advanceAlphabeticalWallpaper(Screen.name, undefined, automatic);
   }
 
   // -------------------------------------------------------------------
@@ -920,17 +1088,23 @@ Singleton {
     Logger.d("Wallpaper", "toggleRandomWallpaper");
     if (Settings.data.wallpaper.automationEnabled) {
       restartRandomWallpaperTimer();
-      setNextWallpaper();
+      setNextWallpaper(true);
+    } else {
+      Object.keys(_wallpaperChanges).forEach(id => {
+        var ticket = root._wallpaperChanges[id];
+        if (ticket && ticket.automatic)
+          root.cancelWallpaperChange(ticket, "automation-disabled");
+      });
     }
   }
 
   // -------------------------------------------------------------------
-  function setNextWallpaper() {
+  function setNextWallpaper(automatic) {
     var mode = Settings.data.wallpaper.wallpaperChangeMode || "random";
     if (mode === "alphabetical") {
-      setAlphabeticalWallpaper();
+      setAlphabeticalWallpaper(automatic);
     } else {
-      setRandomWallpaper();
+      setRandomWallpaper(undefined, automatic);
     }
   }
 
@@ -1043,27 +1217,17 @@ Singleton {
   }
 
   function _scanForDirectories(directory, callback) {
-    var findArgs = ["find", "-L", directory, "-maxdepth", "1", "-mindepth", "1", "-type", "d"];
-
-    var processString = `
-    import QtQuick
-    import Quickshell.Io
-    Process {
-      id: process
-      command: ${JSON.stringify(findArgs)}
-      stdout: StdioCollector {}
-      stderr: StdioCollector {}
-    }
-    `;
-
-    var processObject = Qt.createQmlObject(processString, root, "DirScan");
+    var findArgs = ["find", "-L", directory, "-maxdepth", "1", "-mindepth", "1", "-type", "d", "-print0"];
+    var processObject = directoryScanComponent.createObject(root, {
+                                                              command: findArgs
+                                                            });
 
     processObject.exited.connect(function (exitCode) {
       var dirs = [];
       if (exitCode === 0) {
-        var lines = processObject.stdout.text.split('\n');
+        var lines = processObject.stdout.text.split('\0');
         for (var i = 0; i < lines.length; i++) {
-          var line = lines[i].trim();
+          var line = lines[i];
           if (line !== '') {
             var showHidden = Settings.data.wallpaper.showHiddenFiles;
             var name = line.split('/').pop();
@@ -1081,15 +1245,67 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
-  property var _pendingPoolScans: ({}) // { screenName: { count: N, paths: [] } }
+  // Publication belongs to a captured refresh group, never an individual find.
+  // Browse-only callers own independent processes and cannot retire this group.
+  property var _wallpaperListScans: ({})
+
+  Component {
+    id: directoryScanComponent
+    Process {
+      stdout: StdioCollector {}
+      stderr: StdioCollector {}
+    }
+  }
+
+  function _retireWallpaperListScan(screenName) {
+    var scan = _wallpaperListScans[screenName];
+    if (!scan)
+      return;
+    delete _wallpaperListScans[screenName];
+    --scanningCount;
+    scan.jobs.forEach(job => job.cancel());
+  }
+
+  function _publishWallpaperList(screenName, files) {
+    wallpaperLists[screenName] = files;
+    wallpaperListChanged(screenName, files.length);
+  }
+
+  function _startWallpaperListScan(screenName, directories) {
+    _retireWallpaperListScan(screenName);
+    var scan = {
+      pending: directories.length,
+      results: [],
+      jobs: []
+    };
+    _wallpaperListScans[screenName] = scan;
+    ++scanningCount;
+    directories.forEach(function (directory, index) {
+      var job = root._scanDirectoryInternal(screenName, directory.path, directory.recursive, false, function (files) {
+        if (root._wallpaperListScans[screenName] !== scan)
+          return;
+        scan.results[index] = files;
+        if (--scan.pending)
+          return;
+        delete root._wallpaperListScans[screenName];
+        --root.scanningCount;
+        // Main directory first, followed by each pool's existing sort order.
+        var merged = [];
+        var seen = new Set();
+        scan.results.forEach(paths => paths.forEach(function (path) {
+          if (!seen.has(path)) {
+            seen.add(path);
+            merged.push(path);
+          }
+        }));
+        root._publishWallpaperList(screenName, merged);
+      });
+      if (job)
+        scan.jobs.push(job);
+    });
+  }
 
   function refreshWallpapersList() {
-    // Wait for imageMagickAvailable to be correctly set for ImageCacheService.imageFilters
-    if (!ImageCacheService.initialized) {
-      Qt.callLater(refreshWallpapersList);
-      return;
-    }
-
     if (typeof WallpaperProviderRegistry === "undefined") {
       // Services not ready yet, retry
       Qt.callLater(refreshWallpapersList);
@@ -1098,69 +1314,30 @@ Singleton {
 
     var mode = Settings.data.wallpaper.viewMode;
     Logger.d("Wallpaper", "refreshWallpapersList", "viewMode:", mode);
-    scanningCount = 0;
+    Object.keys(_wallpaperListScans).forEach(name => root._retireWallpaperListScan(name));
 
     for (var i = 0; i < Quickshell.screens.length; i++) {
       var screenName = Quickshell.screens[i].name;
-      root._pendingPoolScans[screenName] = {
-        count: 0,
-        paths: []
-      };
-
-      // Scan user folder according to view mode
-      if (mode === "recursive") {
-        scanDirectoryRecursive(screenName, getMonitorDirectory(screenName));
-      } else if (mode === "browse") {
-        _scanDirectoryInternal(screenName, getCurrentBrowsePath(screenName), false, true, null);
-      } else {
-        _scanDirectoryInternal(screenName, getMonitorDirectory(screenName), false, true, null);
-      }
+      var directories = [
+            {
+              path: mode === "browse" ? getCurrentBrowsePath(screenName) : getMonitorDirectory(screenName),
+              recursive: mode === "recursive"
+            }
+          ];
 
       // Scan active pack pools
       var activePools = WallpaperProviderRegistry.getActivePools(screenName);
       for (var p = 0; p < activePools.length; p++) {
         var pool = activePools[p];
         if (pool.source === "plugin") {
-          root._pendingPoolScans[screenName].count++;
-          root._scanPoolDir(screenName, pool.dir);
+          directories.push({
+                             path: pool.dir,
+                             recursive: false
+                           });
         }
       }
+      _startWallpaperListScan(screenName, directories);
     }
-  }
-
-  function _scanPoolDir(screenName, poolDir) {
-    var proc = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["find", "' + poolDir + '", "-maxdepth", "1", "-mindepth", "1", "-type", "f", "-iname", "*.jpg", "-o", "-iname", "*.png", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.webp"]; stdout: StdioCollector {} }', root, "PoolScan_" + screenName);
-    proc.exited.connect(function () {
-      var output = proc.stdout.text.trim();
-      var state = root._pendingPoolScans[screenName];
-      if (state) {
-        if (output) {
-          var lines = output.split('\n');
-          for (var i = 0; i < lines.length; i++) {
-            var p = lines[i].trim();
-            if (p && state.paths.indexOf(p) === -1) {
-              state.paths.push(p);
-            }
-          }
-        }
-        state.count--;
-        if (state.count <= 0) {
-          // Union with existing wallpaperLists for this screen
-          var existing = wallpaperLists[screenName] || [];
-          var merged = existing.slice();
-          for (var j = 0; j < state.paths.length; j++) {
-            if (merged.indexOf(state.paths[j]) === -1) {
-              merged.push(state.paths[j]);
-            }
-          }
-          wallpaperLists[screenName] = merged;
-          wallpaperListChanged(screenName, merged.length);
-          delete root._pendingPoolScans[screenName];
-        }
-      }
-      proc.destroy();
-    });
-    proc.running = true;
   }
 
   // Internal scan function
@@ -1168,29 +1345,21 @@ Singleton {
   // updateList: whether to update wallpaperLists and emit signal
   // callback: optional callback with files array
   function _scanDirectoryInternal(screenName, directory, recursive, updateList, callback) {
+    if (updateList) {
+      _startWallpaperListScan(screenName, [
+                                {
+                                  path: directory,
+                                  recursive: recursive
+                                }
+                              ]);
+      return null;
+    }
     if (!directory || directory === "") {
       Logger.w("Wallpaper", "Empty directory for", screenName);
-      if (updateList) {
-        wallpaperLists[screenName] = [];
-        wallpaperListChanged(screenName, 0);
-      }
       if (callback)
         callback([]);
-      return;
+      return null;
     }
-
-    // Cancel any existing scan for this screen
-    if (recursiveProcesses[screenName]) {
-      Logger.d("Wallpaper", "Cancelling existing scan for", screenName);
-      recursiveProcesses[screenName].running = false;
-      recursiveProcesses[screenName].destroy();
-      delete recursiveProcesses[screenName];
-      if (updateList)
-        scanningCount--;
-    }
-
-    if (updateList)
-      scanningCount++;
     Logger.i("Wallpaper", "Starting scan for", screenName, "in", directory, "recursive:", recursive);
 
     // Build find command args dynamically from ImageCacheService filters
@@ -1212,39 +1381,32 @@ Singleton {
     }
     findArgs.push(")");
     // Add printf to get modification time
-    findArgs.push("-printf", "%T@|%p\\n");
-
-    // Create Process component inline
-    var processString = `
-    import QtQuick
-    import Quickshell.Io
-    Process {
-      id: process
-      command: ${JSON.stringify(findArgs)}
-      stdout: StdioCollector {}
-      stderr: StdioCollector {}
-    }
-    `;
-
-    var processObject = Qt.createQmlObject(processString, root, "Scan_" + screenName);
-
-    // Store reference to avoid garbage collection
-    if (updateList) {
-      recursiveProcesses[screenName] = processObject;
-    }
+    findArgs.push("-printf", "%T@|%p\\0");
+    var processObject = directoryScanComponent.createObject(root, {
+                                                              command: findArgs
+                                                            });
+    var ticket = {
+      process: processObject,
+      cancel: function () {
+        if (!ticket.process)
+          return;
+        ticket.process.exited.disconnect(handler);
+        ticket.process.running = false;
+        ticket.process.destroy();
+        ticket.process = null;
+      }
+    };
 
     var handler = function (exitCode) {
-      if (updateList)
-        scanningCount--;
       Logger.d("Wallpaper", "Process exited with code", exitCode, "for", screenName);
 
       var files = [];
       if (exitCode === 0) {
-        var lines = processObject.stdout.text.split('\n');
+        var lines = processObject.stdout.text.split('\0');
         var parsedFiles = [];
 
         for (var i = 0; i < lines.length; i++) {
-          var line = lines[i].trim();
+          var line = lines[i];
           if (line !== '') {
             var parts = line.split('|');
             if (parts.length >= 2) { // Handle potential extra pipes in filename by joining rest
@@ -1302,36 +1464,12 @@ Singleton {
 
         // Map back to string array
         files = parsedFiles.map(f => f.path);
-
-        if (updateList) {
-          wallpaperLists[screenName] = files;
-
-          // Reset alphabetical indices when list changes
-          if (alphabeticalIndices[screenName] !== undefined) {
-            var currentWallpaper = getWallpaper(screenName) || "";
-            var foundIndex = files.indexOf(currentWallpaper);
-            alphabeticalIndices[screenName] = (foundIndex >= 0) ? foundIndex : 0;
-          }
-
-          Logger.i("Wallpaper", "Scan completed for", screenName, "found", files.length, "files");
-          wallpaperListChanged(screenName, files.length);
-        }
       } else {
         Logger.w("Wallpaper", "Scan failed for", screenName, "exit code:", exitCode, "(directory might not exist)");
-        if (updateList) {
-          wallpaperLists[screenName] = [];
-          if (alphabeticalIndices[screenName] !== undefined) {
-            alphabeticalIndices[screenName] = 0;
-          }
-          wallpaperListChanged(screenName, 0);
-        }
       }
 
       // Clean up
-      if (updateList) {
-        delete recursiveProcesses[screenName];
-      }
-
+      ticket.process = null;
       if (callback)
         callback(files);
       processObject.destroy();
@@ -1340,10 +1478,8 @@ Singleton {
     processObject.exited.connect(handler);
     Logger.d("Wallpaper", "Starting process for", screenName);
     processObject.running = true;
+    return ticket;
   }
-
-  // Process instances for scanning (one per screen)
-  property var recursiveProcesses: ({})
 
   // -------------------------------------------------------------------
   function scanDirectoryRecursive(screenName, directory) {
@@ -1460,71 +1596,60 @@ Singleton {
     } else {
       slot = _normalizeAppearanceSlot(root.wallpaperSelectionAppearance);
     }
-    var favorites = Settings.data.wallpaper.favorites.slice();
-    var anyIdx = _findAnyFavoriteIndexForPath(path);
-    var applyWallpaperForSlot = false;
+    var index = _findAnyFavoriteIndexForPath(path);
+    var entry = index === _favoriteNotFound ? null : Settings.data.wallpaper.favorites[index];
+    var selectsWallpaper = !entry || (Settings.data.wallpaper.linkLightAndDarkWallpapers && _favoriteAppearanceSlot(entry) !== slot);
+    if (!selectsWallpaper) {
+      _removeFavorite(path, index);
+      return null;
+    }
+    var scr = Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : (screenName || (Quickshell.screens.length ? Quickshell.screens[0].name : undefined));
+    return changeWallpaper(path, scr, slot, function (success, names) {
+      if (!success)
+        return;
+      root._commitFavorite(path, slot);
+      names.forEach(name => root.applyFavoriteTheme(path, name, slot));
+    });
+  }
 
-    if (anyIdx !== _favoriteNotFound) {
-      var existingSlot = _favoriteAppearanceSlot(favorites[anyIdx]);
-      if (existingSlot === slot) {
-        favorites.splice(anyIdx, 1);
-        Logger.d("Wallpaper", "Removed favorite:", path, slot);
-        if (favoriteSchemeDebounceTimer.pendingPath === path && favoriteSchemeDebounceTimer.pendingSlot === slot) {
-          favoriteSchemeDebounceTimer.stop();
-          favoriteSchemeDebounceTimer.pendingPath = "";
-          favoriteSchemeDebounceTimer.pendingSlot = "";
-        }
-        if (root.pendingFavoriteSchemeRefresh && root.pendingFavoriteSchemeRefresh.path === path && root.pendingFavoriteSchemeRefresh.slot === slot) {
-          root.pendingFavoriteSchemeRefresh = null;
-        }
-      } else if (Settings.data.wallpaper.linkLightAndDarkWallpapers) {
-        favorites[anyIdx] = _createFavoriteEntry(path, slot);
-        Logger.d("Wallpaper", "Moved favorite to other appearance:", path, slot);
-        root.scheduleFavoriteSchemeSnapshot(path, slot);
-        applyWallpaperForSlot = true;
-        if (root.pendingFavoriteSchemeRefresh && root.pendingFavoriteSchemeRefresh.path === path) {
-          root.pendingFavoriteSchemeRefresh = {
-            "path": path,
-            "slot": slot
-          };
-        }
-      } else {
-        // Separate light/dark wallpapers: star is remove-only (no sun/moon hint for "move" vs unfavorite).
-        favorites.splice(anyIdx, 1);
-        Logger.d("Wallpaper", "Removed favorite (star on other appearance tab, separate wallpapers):", path);
-        if (favoriteSchemeDebounceTimer.pendingPath === path) {
-          favoriteSchemeDebounceTimer.stop();
-          favoriteSchemeDebounceTimer.pendingPath = "";
-          favoriteSchemeDebounceTimer.pendingSlot = "";
-        }
-        if (root.pendingFavoriteSchemeRefresh && root.pendingFavoriteSchemeRefresh.path === path) {
-          root.pendingFavoriteSchemeRefresh = null;
-        }
-      }
-    } else {
+  function _removeFavorite(path, index) {
+    var favorites = Settings.data.wallpaper.favorites.slice();
+    favorites.splice(index, 1);
+    Logger.d("Wallpaper", "Removed favorite:", path);
+    if (favoriteSchemeDebounceTimer.pendingPath === path) {
+      favoriteSchemeDebounceTimer.stop();
+      favoriteSchemeDebounceTimer.pendingPath = "";
+      favoriteSchemeDebounceTimer.pendingSlot = "";
+    }
+    if (root.pendingFavoriteSchemeRefresh && root.pendingFavoriteSchemeRefresh.path === path)
+      root.pendingFavoriteSchemeRefresh = null;
+    _publishFavorites(favorites, path);
+  }
+
+  function _commitFavorite(path, slot) {
+    var favorites = Settings.data.wallpaper.favorites.slice();
+    var index = _findAnyFavoriteIndexForPath(path);
+    if (index !== _favoriteNotFound && _favoriteAppearanceSlot(favorites[index]) === slot)
+      return;
+    if (index === _favoriteNotFound) {
       favorites.push(_createFavoriteEntry(path, slot));
       Logger.d("Wallpaper", "Added favorite:", path, slot);
-      root.scheduleFavoriteSchemeSnapshot(path, slot);
-      applyWallpaperForSlot = true;
+    } else {
+      favorites[index] = _createFavoriteEntry(path, slot);
+      Logger.d("Wallpaper", "Moved favorite to other appearance:", path, slot);
+      if (root.pendingFavoriteSchemeRefresh && root.pendingFavoriteSchemeRefresh.path === path)
+        root.pendingFavoriteSchemeRefresh = {
+          path: path,
+          slot: slot
+        };
     }
+    root.scheduleFavoriteSchemeSnapshot(path, slot);
+    _publishFavorites(favorites, path);
+  }
 
+  function _publishFavorites(favorites, path) {
     Settings.data.wallpaper.favorites = favorites;
     root.favoritesRevision++;
-
-    if (applyWallpaperForSlot) {
-      var scr;
-      if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-        scr = undefined;
-      } else if (screenName !== undefined && screenName !== null && screenName !== "") {
-        scr = screenName;
-      } else if (Quickshell.screens.length > 0) {
-        scr = Quickshell.screens[0].name;
-      } else {
-        scr = undefined;
-      }
-      root.changeWallpaper(path, scr, slot);
-      root.applyFavoriteTheme(path, scr, slot);
-    }
 
     favoritesChanged(path);
   }
@@ -1660,7 +1785,7 @@ Singleton {
     interval: Settings.data.wallpaper.randomIntervalSec * 1000
     running: Settings.data.wallpaper.automationEnabled && !PowerProfileService.atmospheraPerformanceMode
     repeat: true
-    onTriggered: setNextWallpaper()
+    onTriggered: setNextWallpaper(true)
     triggeredOnStart: false
   }
 

@@ -170,7 +170,10 @@ ColumnLayout {
       if (iconName === cmd) {
         root.valueIconSource = _mergedIcons[j].path;
         root.valueIconType = "icons";
-        save({iconSource: root.valueIconSource, iconType: root.valueIconType});
+        save({
+               iconSource: root.valueIconSource,
+               iconType: root.valueIconType
+             });
         return;
       }
     }
@@ -218,7 +221,10 @@ ColumnLayout {
         if (root.valueParams.length === 0 || root.valueParams[root.valueParams.length - 1] !== "")
           root.valueParams.push("");
         rebuildParamsModel();
-        save({appId: root.valueAppId, params: paramsValue()});
+        save({
+               appId: root.valueAppId,
+               params: paramsValue()
+             });
       }
     }
   }
@@ -243,7 +249,10 @@ ColumnLayout {
       root.valueAppId = k;
       root.valueParams = TerminalRegistry.defaultRunArgs(k);
       rebuildParamsModel();
-      save({appId: root.valueAppId, params: paramsValue()});
+      save({
+             appId: root.valueAppId,
+             params: paramsValue()
+           });
     }
   }
 
@@ -276,7 +285,10 @@ ColumnLayout {
       if (root.valueParams.length === 0 || root.valueParams[root.valueParams.length - 1] !== "")
         root.valueParams.push("");
       rebuildParamsModel();
-      save({appId: root.valueAppId, params: paramsValue()});
+      save({
+             appId: root.valueAppId,
+             params: paramsValue()
+           });
     }
   }
 
@@ -314,7 +326,9 @@ ColumnLayout {
         text: model.value
         onTextEdited: {
           paramsModel.setProperty(index, "value", text);
-          save({params: paramsValue()});
+          save({
+                 params: paramsValue()
+               });
           root.tryAutoIconForCommand();
         }
       }
@@ -324,7 +338,9 @@ ColumnLayout {
         tooltipText: I18n.tr("common.remove")
         onClicked: {
           paramsModel.remove(index);
-          save({params: paramsValue()});
+          save({
+                 params: paramsValue()
+               });
         }
       }
     }
@@ -359,7 +375,10 @@ ColumnLayout {
       onClicked: {
         root.valueIconType = "auto";
         root.valueIconSource = "";
-        save({iconType: root.valueIconType, iconSource: root.valueIconSource});
+        save({
+               iconType: root.valueIconType,
+               iconSource: root.valueIconSource
+             });
       }
     }
 
@@ -480,7 +499,10 @@ ColumnLayout {
             onDoubleClicked: {
               root.valueIconSource = modelData.path;
               root.valueIconType = "icons";
-              root.save({iconSource: root.valueIconSource, iconType: root.valueIconType});
+              root.save({
+                          iconSource: root.valueIconSource,
+                          iconType: root.valueIconType
+                        });
               iconsPicker.close();
             }
           }
@@ -489,14 +511,12 @@ ColumnLayout {
             anchors.fill: parent
             anchors.margins: Style.marginS
 
-            Image {
+            NImageIcon {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: Math.min(grid.cellWidth - Style.marginS * 2, 48)
               Layout.preferredHeight: 32
-              source: "file://" + modelData.path
-              fillMode: Image.PreserveAspectFit
+              source: modelData.path
               smooth: true
-              asynchronous: true
               sourceSize: Qt.size(48, 48)
             }
 
@@ -534,7 +554,10 @@ ColumnLayout {
             if (iconsPicker._selectedPath) {
               root.valueIconSource = iconsPicker._selectedPath;
               root.valueIconType = "icons";
-              root.save({iconSource: root.valueIconSource, iconType: root.valueIconType});
+              root.save({
+                          iconSource: root.valueIconSource,
+                          iconType: root.valueIconType
+                        });
             }
             iconsPicker.close();
           }
@@ -552,7 +575,10 @@ ColumnLayout {
       if (paths && paths.length > 0) {
         root.valueIconSource = paths[0];
         root.valueIconType = "file";
-        save({iconSource: root.valueIconSource, iconType: root.valueIconType});
+        save({
+               iconSource: root.valueIconSource,
+               iconType: root.valueIconType
+             });
       }
     }
   }
@@ -566,7 +592,9 @@ ColumnLayout {
     text: root.valueCustomLabel
     onTextEdited: {
       root.valueCustomLabel = text;
-      save({customLabel: root.valueCustomLabel});
+      save({
+             customLabel: root.valueCustomLabel
+           });
     }
   }
 
@@ -578,7 +606,9 @@ ColumnLayout {
     checked: root.valueShowLabel
     onToggled: c => {
       root.valueShowLabel = c;
-      save({showLabel: root.valueShowLabel});
+      save({
+             showLabel: root.valueShowLabel
+           });
     }
   }
 
@@ -588,7 +618,9 @@ ColumnLayout {
     checked: root.valueSingleClick
     onToggled: c => {
       root.valueSingleClick = c;
-      save({singleClick: root.valueSingleClick});
+      save({
+             singleClick: root.valueSingleClick
+           });
     }
   }
 
@@ -598,7 +630,9 @@ ColumnLayout {
     checked: root.valueShowBg
     onToggled: c => {
       root.valueShowBg = c;
-      save({showBackground: root.valueShowBg});
+      save({
+             showBackground: root.valueShowBg
+           });
     }
   }
 
@@ -608,7 +642,9 @@ ColumnLayout {
     checked: root.valueRounded
     onToggled: c => {
       root.valueRounded = c;
-      save({roundedCorners: root.valueRounded});
+      save({
+             roundedCorners: root.valueRounded
+           });
     }
   }
 
@@ -637,7 +673,9 @@ ColumnLayout {
         text: model.key
         onTextEdited: {
           envVarsModel.setProperty(index, "key", text);
-          save({environmentVars: envVarsValue()});
+          save({
+                 environmentVars: envVarsValue()
+               });
         }
       }
 
@@ -647,7 +685,9 @@ ColumnLayout {
         text: model.value
         onTextEdited: {
           envVarsModel.setProperty(index, "value", text);
-          save({environmentVars: envVarsValue()});
+          save({
+                 environmentVars: envVarsValue()
+               });
         }
       }
 
@@ -656,7 +696,9 @@ ColumnLayout {
         tooltipText: I18n.tr("common.remove")
         onClicked: {
           envVarsModel.remove(index);
-          save({environmentVars: envVarsValue()});
+          save({
+                 environmentVars: envVarsValue()
+               });
         }
       }
     }
@@ -680,21 +722,27 @@ ColumnLayout {
     blendStrengthDefault: Settings.data.desktopWidgets.iconBlendStrength
     onBlendStrengthEdited: v => {
       root.valueBlendStrength = v;
-      save({blendStrength: root.valueBlendStrength});
+      save({
+             blendStrength: root.valueBlendStrength
+           });
     }
 
     hueAdjustment: root.valueHueAdjustment
     hueAdjustmentDefault: Settings.data.desktopWidgets.iconHueAdjustment
     onHueAdjustmentEdited: v => {
       root.valueHueAdjustment = v;
-      save({hueAdjustment: root.valueHueAdjustment});
+      save({
+             hueAdjustment: root.valueHueAdjustment
+           });
     }
 
     contentPadding: root.valueContentPadding
     contentPaddingDefault: Settings.data.desktopWidgets.widgetContentPadding
     onContentPaddingEdited: v => {
       root.valueContentPadding = v;
-      save({contentPadding: root.valueContentPadding});
+      save({
+             contentPadding: root.valueContentPadding
+           });
     }
   }
 

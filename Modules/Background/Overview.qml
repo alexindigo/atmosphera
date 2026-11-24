@@ -6,6 +6,7 @@ import qs.Commons
 import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
+import qs.Widgets
 
 Loader {
   active: CompositorService.isNiri && Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled && (!PowerProfileService.atmospheraPerformanceMode || !Settings.data.atmospheraPerformance.disableWallpaper)
@@ -90,16 +91,14 @@ Loader {
       }
 
       // Image background with GPU-based blur
-      Image {
+      NImageBackdrop {
         id: bgImage
         anchors.fill: parent
         visible: !isSolidColor
         fillMode: Image.PreserveAspectCrop
-        source: preprocessedWallpaper || wallpaper
+        source: isSolidColor ? "" : preprocessedWallpaper
+        active: !isSolidColor
         smooth: true
-        mipmap: false
-        cache: true // Shares texture with Background's currentWallpaper
-        asynchronous: true
 
         layer.enabled: Settings.data.wallpaper.overviewBlur > 0 && !PowerProfileService.atmospheraPerformanceMode
         layer.smooth: false

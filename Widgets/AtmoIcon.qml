@@ -1,13 +1,13 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Effects
-import QtQuick.Layouts
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
 
 // Renders an icon from the shell's icon sets (IconRegistry).
-// Font-glyph entries render as text; SVG entries render as a colored
-// rectangle shaped by the SVG alpha mask.
+// Font-glyph entries render as text; SVG entries render in the tint color
+// with the alpha of the admitted image.
 //
 // Root is an Item (not Text) so implicitWidth is bindable: SVG entries have
 // no text, so a Text root would report implicitWidth 0 and collapse in
@@ -29,7 +29,7 @@ Item {
 
   readonly property var _resolved: {
     if (typeof icon === "string") {
-      var entry = IconRegistry.resolved[icon];
+      const entry = IconRegistry.resolved[icon];
       if (entry === undefined) {
         // An empty name is an unset icon, not a missing one: same fallback,
         // no warning (it was logged once per instance, e.g. per launcher row).
@@ -50,6 +50,7 @@ Item {
 
   Text {
     id: textItem
+    textFormat: Text.PlainText
     anchors.centerIn: parent
     text: root._resolved && root._resolved.char ? root._resolved.char : ""
     font.family: root._resolved && root._resolved.fontFamily ? root._resolved.fontFamily : Icons.fontFamily
@@ -59,36 +60,38 @@ Item {
     horizontalAlignment: Text.AlignHCenter
   }
 
-  // SVG path — colored Rectangle shaped by SVG alpha mask
-  Item {
-    id: svgContainer
+  // Icon-set files (including user icon sets) are decoded by the shared image
+  // owner. A set file that cannot be displayed is a labelled failure.
+  readonly property NImage maskImage: mask.item as NImage
+  readonly property bool failed: maskImage?.imageState === "unavailable"
+  readonly property string errorReason: failed ? maskImage.errorReason : ""
+  Accessible.description: errorReason
+
+  Loader {
+    id: mask
     anchors.centerIn: parent
     width: root.implicitHeight
     height: root.implicitHeight
-    visible: root._resolved?.type === "svg"
-
-    Rectangle {
-      anchors.fill: parent
-      color: root.color
-    }
-
-    layer.enabled: root._resolved?.type === "svg"
-    layer.effect: MultiEffect {
-      maskEnabled: true
-      maskThresholdMin: 0.5
-      maskSpreadAtMin: 0.5
-      maskSource: ShaderEffectSource {
-        hideSource: true
-        sourceItem: Image {
-          width: svgContainer.width
-          height: svgContainer.height
-          source: root._resolved?.source ?? ""
-          fillMode: Image.PreserveAspectFit
-          smooth: true
-          sourceSize.width: svgContainer.width * Screen.devicePixelRatio
-          sourceSize.height: svgContainer.height * Screen.devicePixelRatio
-        }
+    active: root.visible && root._resolved?.type === "svg"
+    sourceComponent: NImage {
+      source: root._resolved?.source ?? ""
+      alphaMaskTint: root.color
+      onImageStateChanged: {
+        if (imageState === "unavailable")
+          Logger.w("AtmoIcon", "Icon file", source, "could not be displayed:", errorReason);
       }
     }
+  }
+
+  // Drawn without another icon lookup: the failure must not recurse.
+  Rectangle {
+    anchors.centerIn: parent
+    width: Math.max(2, root.implicitHeight * 0.7)
+    height: width
+    visible: root.failed
+    radius: width / 4
+    color: "transparent"
+    border.width: Math.max(1, width / 8)
+    border.color: AtmoColor.mError
   }
 }

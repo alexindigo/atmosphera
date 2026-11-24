@@ -678,6 +678,7 @@ SmartPanel {
           // Wallhaven wallpapers
           WallhavenView {
             id: wallhavenView
+            targetScreenName: Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : (panelContent.currentScreen ? panelContent.currentScreen.name : undefined)
           }
         }
       }
@@ -932,8 +933,7 @@ SmartPanel {
         WallpaperService.setBrowsePath(targetScreen.name, path);
       } else {
         var screen = Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : targetScreen.name;
-        WallpaperService.changeWallpaper(path, screen, WallpaperService.wallpaperSelectionAppearance);
-        WallpaperService.applyFavoriteTheme(path, screen, WallpaperService.wallpaperSelectionAppearance);
+        WallpaperService.selectWallpaper(path, screen, WallpaperService.wallpaperSelectionAppearance);
       }
     }
 
@@ -1160,20 +1160,8 @@ SmartPanel {
               return !isDirectory && WallpaperService.isFavorite(wallpaperPath);
             }
             property string filename: model.name ?? wallpaperPath.split('/').pop()
-            property string cachedPath: ""
 
             spacing: Style.marginXS
-
-            Component.onCompleted: {
-              if (!isDirectory && ImageCacheService.initialized) {
-                ImageCacheService.getThumbnail(wallpaperPath, function (path, success) {
-                  if (wallpaperItem)
-                    wallpaperItem.cachedPath = success ? path : wallpaperPath;
-                });
-              } else if (!isDirectory) {
-                cachedPath = wallpaperPath;
-              }
-            }
 
             Item {
               id: imageContainer
@@ -1215,7 +1203,11 @@ SmartPanel {
                 anchors.top: parent.top
                 height: imageContainer.imageHeight
                 visible: !wallpaperItem.isDirectory
-                imagePath: wallpaperItem.cachedPath
+                imagePath: wallpaperItem.isDirectory ? "" : wallpaperItem.wallpaperPath
+                active: root.isPanelOpen && !root.isClosing && !Settings.data.wallpaper.useWallhaven && !wallpaperItem.isDirectory
+                normalize: true
+                animationIntent: "still"
+                fallbackIcon: "image"
                 radius: Style.radiusM
                 borderColor: {
                   if (wallpaperItem.isSelected) {
@@ -1230,17 +1222,20 @@ SmartPanel {
                 imageFillMode: Image.PreserveAspectCrop
               }
 
-              // Loading/error state background (for non-directories)
+              // The shared image owns its error glyph/reason. Keep this backing
+              // surface behind it so an ordinary placeholder cannot hide failure.
               Rectangle {
+                z: -1
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
                 height: imageContainer.imageHeight
                 color: AtmoColor.mSurfaceVariant
                 radius: Style.radiusM
-                visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === "")
+                visible: !wallpaperItem.isDirectory && img.status !== Image.Ready
 
                 AtmoIcon {
+                  visible: img.status !== Image.Error
                   icon: Icon.image
                   pointSize: Style.fontSizeL
                   color: AtmoColor.mOnSurfaceVariant
@@ -1249,9 +1244,8 @@ SmartPanel {
               }
 
               NBusyIndicator {
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: (imageContainer.imageHeight - height) / 2
-                visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || wallpaperItem.cachedPath === "")
+                anchors.centerIn: img
+                visible: !wallpaperItem.isDirectory && img.status === Image.Loading
                 running: visible
                 size: 18
               }
@@ -1424,6 +1418,7 @@ SmartPanel {
                 height: imageContainer.imageHeight
                 color: AtmoColor.mSurface
                 radius: Style.radiusM
+                visible: wallpaperItem.isDirectory || img.status === Image.Ready
                 opacity: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? 0 : 0.3
                 Behavior on opacity {
                   NumberAnimation {
@@ -1514,6 +1509,7 @@ SmartPanel {
   // Component for Wallhaven wallpapers view
   component WallhavenView: Item {
     id: wallhavenViewRoot
+    property var targetScreenName
     property alias gridView: wallhavenGridView
     property alias pageInput: pageInput
 
@@ -1669,6 +1665,10 @@ SmartPanel {
                   anchors.top: parent.top
                   height: imageContainer.imageHeight
                   imagePath: wallhavenItem.thumbnailUrl
+                  active: root.isPanelOpen && !root.isClosing && Settings.data.wallpaper.useWallhaven
+                  normalize: true
+                  animationIntent: "still"
+                  fallbackIcon: "image"
                   radius: Style.radiusM
                   borderColor: {
                     if (wallhavenGridView.currentIndex === index) {
@@ -1680,8 +1680,9 @@ SmartPanel {
                   imageFillMode: Image.PreserveAspectCrop
                 }
 
-                // Loading/error state background
+                // The renderer's failure indication stays above this backing.
                 Rectangle {
+                  z: -1
                   anchors.left: parent.left
                   anchors.right: parent.right
                   anchors.top: parent.top
@@ -1691,6 +1692,7 @@ SmartPanel {
                   visible: img.status === Image.Loading || img.status === Image.Error || wallhavenItem.thumbnailUrl === ""
 
                   AtmoIcon {
+                    visible: img.status !== Image.Error
                     icon: Icon.image
                     pointSize: Style.fontSizeL
                     color: AtmoColor.mOnSurfaceVariant
@@ -1699,8 +1701,7 @@ SmartPanel {
                 }
 
                 NBusyIndicator {
-                  anchors.horizontalCenter: parent.horizontalCenter
-                  y: (imageContainer.imageHeight - height) / 2
+                  anchors.centerIn: img
                   visible: img.status === Image.Loading
                   running: visible
                   size: 18
@@ -1713,6 +1714,7 @@ SmartPanel {
                   height: imageContainer.imageHeight
                   color: AtmoColor.mSurface
                   radius: Style.radiusM
+                  visible: img.status === Image.Ready
                   opacity: (hoverHandler.hovered || wallhavenGridView.currentIndex === index) ? 0 : 0.3
                   Behavior on opacity {
                     NumberAnimation {
@@ -1952,18 +1954,12 @@ SmartPanel {
     // -------------------------------
     function wallhavenDownloadAndApply(wallpaper, targetScreen) {
       if (typeof WallhavenService !== "undefined") {
-        WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
-          if (success) {
-            var whScreen = Settings.data.wallpaper.setWallpaperOnAllMonitors ? undefined : Quickshell.screens[currentScreenIndex].name;
-            if (!Settings.data.wallpaper.setWallpaperOnAllMonitors && currentScreenIndex < Quickshell.screens.length) {
-              WallpaperService.changeWallpaper(localPath, Quickshell.screens[currentScreenIndex].name, WallpaperService.wallpaperSelectionAppearance);
-            } else {
-              WallpaperService.changeWallpaper(localPath, undefined, WallpaperService.wallpaperSelectionAppearance);
-            }
-            WallpaperService.applyFavoriteTheme(localPath, whScreen, WallpaperService.wallpaperSelectionAppearance);
-          }
-        });
+        var screenName = targetScreen === undefined ? targetScreenName : targetScreen;
+        // Reserve captured targets/appearance before asynchronous download. New
+        // local, remote or solid intent retires this same owner-held ticket.
+        return WallhavenService.selectWallpaper(wallpaper, screenName, WallpaperService.wallpaperSelectionAppearance);
       }
+      return null;
     }
   }
 }

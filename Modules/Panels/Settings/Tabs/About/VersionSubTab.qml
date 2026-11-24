@@ -360,16 +360,11 @@ ColumnLayout {
     Layout.alignment: Qt.AlignHCenter
     spacing: Style.marginXL
 
-    // Atmosphera logo
-    Image {
-      source: "../../../../../Assets/atmosphera.svg"
-      width: 96 * Style.uiScaleRatio
-      height: width
-      fillMode: Image.PreserveAspectFit
-      sourceSize.width: width
-      sourceSize.height: height
-      mipmap: true
-      smooth: true
+    // Atmosphera logo: the brand glyph shipped in the shell's icon set
+    AtmoIcon {
+      icon: Icon.atmosphera
+      pointSize: 72
+      color: AtmoColor.mPrimary
       Layout.alignment: Qt.AlignBottom
       rotation: Settings.isDebug ? 180 : 0
 

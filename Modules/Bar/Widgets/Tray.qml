@@ -4,7 +4,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
-import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Services.UI
@@ -457,14 +456,12 @@ Item {
           y: Style.pixelAlignCenter(parent.height, height)
         }
 
-        IconImage {
+        NImageIcon {
           id: trayIcon
           width: iconSize
           height: iconSize
           x: Style.pixelAlignCenter(parent.width, width)
           y: Style.pixelAlignCenter(parent.height, height)
-          asynchronous: true
-          backer.fillMode: Image.PreserveAspectFit
 
           source: {
             let icon = modelData?.icon || "";
@@ -482,8 +479,7 @@ Item {
             }
             return icon;
           }
-          opacity: status === Image.Ready ? 1 : 0
-
+          // NImageIcon owns both image readiness and the unavailable badge.
           layer.enabled: widgetSettings.colorizeIcons !== false
           layer.effect: ShaderEffect {
             property color targetColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mOnSurface : AtmoColor.mSurfaceVariant

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Services
 import qs.Widgets
@@ -107,13 +108,13 @@ ColumnLayout {
       width: releaseScrollView.availableWidth
       spacing: Style.marginM
 
-      NText {
+      NImageText {
         Layout.fillWidth: true
         visible: releaseContent.length > 0
         text: contentRoot.colorizeHeaders(releaseContent)
+        baseUrl: PortalPaths.pathToUri(Version.changelogPath).uri || ""
         wrapMode: Text.WordWrap
-        elide: Text.ElideNone
-        textFormat: Text.MarkdownText
+        format: "markdown"
         color: AtmoColor.mOnSurface
       }
 
