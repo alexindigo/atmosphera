@@ -33,6 +33,8 @@ Variants {
       property bool _animateCandidate: false
       property string _displayedPath: ""
       property var _acknowledgment: null
+      property var _presentationConnection: null
+      readonly property var _presentationWindow: shaderLoader.Window.window
       readonly property var currentWallpaper: _front === 0 ? firstWallpaper : secondWallpaper
       readonly property var nextWallpaper: _front === 0 ? secondWallpaper : firstWallpaper
 
@@ -80,8 +82,10 @@ Variants {
       property vector4d solidColor2: Qt.vector4d(_solidColor2.r, _solidColor2.g, _solidColor2.b, 1.0)
 
       Component.onCompleted: setWallpaperInitial()
+      on_PresentationWindowChanged: _bindPresentation()
 
       Component.onDestruction: {
+        _clearAcknowledgment();
         transitionAnimation.stop();
         startupTransitionTimer.stop();
         debounceTimer.stop();
@@ -91,15 +95,46 @@ Variants {
         firstWallpaper.source = secondWallpaper.source = "";
       }
 
-      Connections {
-        target: shaderLoader.Window.window
-        function onFrameSwapped() {
-          var acknowledgment = root._acknowledgment;
-          if (!acknowledgment || acknowledgment.generation !== root._generation || root.transitioning || root._pending >= 0)
-            return;
-          root._acknowledgment = null;
-          WallpaperService.wallpaperProcessingComplete(modelData.name, acknowledgment.path, acknowledgment.output);
+      function _unbindPresentation() {
+        const fence = _presentationConnection;
+        _presentationConnection = null;
+        if (fence?.window) {
+          fence.window.afterSynchronizing.disconnect(fence.sync);
+          fence.window.frameSwapped.disconnect(fence.swap);
         }
+      }
+
+      function _clearAcknowledgment() {
+        _acknowledgment = null;
+        _unbindPresentation();
+      }
+
+      function _bindPresentation() {
+        _unbindPresentation();
+        const acknowledgment = _acknowledgment;
+        const window = _presentationWindow;
+        if (!acknowledgment || !window)
+          return;
+        let synchronized = false;
+        const fence = {
+          window: window,
+          sync: () => {
+            synchronized = true;
+          },
+          swap: () => {
+            if (!synchronized || root._presentationConnection !== fence || acknowledgment.generation !== root._generation)
+              return;
+            root._clearAcknowledgment();
+            WallpaperService.wallpaperProcessingComplete(modelData.name, acknowledgment.path, acknowledgment.output);
+          }
+        };
+        _presentationConnection = fence;
+        // Subscribe after promotion, so any sync we observe includes the
+        // promoted wallpaper. An older in-flight swap can arrive first, but
+        // its render thread posts it before the new frame's sync notification.
+        window.afterSynchronizing.connect(fence.sync);
+        window.frameSwapped.connect(fence.swap);
+        window.update();
       }
 
       Connections {
@@ -446,7 +481,7 @@ Variants {
         if (!originalPath)
           return;
         ++_generation;
-        _acknowledgment = null;
+        _clearAcknowledgment();
         startupTransitionTimer.stop();
         debounceTimer.stop();
         if (transitioning) {
@@ -544,8 +579,7 @@ Variants {
             path: path,
             output: output
           };
-          if (shaderLoader.Window.window)
-            shaderLoader.Window.window.update();
+          _bindPresentation();
         }
       }
 

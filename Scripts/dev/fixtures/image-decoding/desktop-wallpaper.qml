@@ -150,8 +150,8 @@ ShellRoot {
                               transitioning: root.desktop().transitioning,
                               visible: root.desktop().visible
                             });
-      // Keep the grab on the signal edge: deferring until a later frame could
-      // conceal an acknowledgment that preceded the new wallpaper.
+      // Verify the acknowledged wallpaper's pixels separately. A grab is
+      // asynchronous and does not identify the buffer that triggered the signal.
       if (!root.redControl && root.desktop().visible)
         root.grab(root.visual(root.desktop()), "ack-" + index);
     }
