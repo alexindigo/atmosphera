@@ -6,18 +6,18 @@ import qs.Services.Keyboard
 Item {
   id: root
 
-  readonly property bool available: loader.status === Loader.Ready
+  readonly property bool available: loader.status === Loader.Ready && loader.item.stateApiAvailable
   readonly property bool moduleMissing: loader.status === Loader.Error
 
-  property bool _toastShown: false
-
-  property int floatingWindowPosition: Number.MAX_SAFE_INTEGER
+  readonly property real floatingWindowPosition: Number.MAX_SAFE_INTEGER
 
   property var _emptyModel: ListModel {}
 
   readonly property var workspaces: available ? loader.item.workspaces : _emptyModel
   readonly property var windows: available ? loader.item.windows : []
   readonly property var focusedWindowId: available ? loader.item.focusedWindowId : null
+  readonly property var focusedWorkspaceId: available ? loader.item.focusedWorkspaceId : null
+  readonly property bool ready: available && loader.item.ready
 
   readonly property bool overviewActive: available ? loader.item.overviewActive : false
   readonly property var keyboardLayouts: available ? loader.item.keyboardLayouts : []
@@ -26,6 +26,7 @@ Item {
   signal activeWindowChanged
   signal windowListChanged
   signal displayScalesChanged
+  signal statePublished
 
   readonly property var outputCache: available ? loader.item.outputCache : ({})
   readonly property var workspaceCache: available ? loader.item.workspaceCache : ({})
@@ -36,7 +37,8 @@ Item {
     source: "NiriIpcBackend.qml"
     onLoaded: {
       // Forward inner backend signals
-      if (item) {
+      if (item.stateApiAvailable) {
+        item.statePublished.connect(() => root.statePublished());
         item.workspaceChanged.connect(function () {
           root.workspaceChanged();
         });
@@ -49,11 +51,12 @@ Item {
         item.displayScalesChanged.connect(function () {
           root.displayScalesChanged();
         });
-      }
+      } else
+        NiriIpcStatus.reportUnavailable();
     }
     onStatusChanged: {
       if (status === Loader.Error) {
-        Logger.w("NiriService", "Niri IPC unavailable — install qt6-niriqml for full niri support");
+        NiriIpcStatus.reportUnavailable();
       }
     }
   }
@@ -124,6 +127,13 @@ Item {
   function closeWindow(window) {
     if (available)
       loader.item.closeWindow(window);
+  }
+
+  function moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex) {
+    if (available)
+      loader.item.moveWindowToWorkspace(windowId, workspaceId, completed, insertAtIndex);
+    else if (typeof completed === "function")
+      completed(false, "Niri IPC unavailable");
   }
 
   function turnOffMonitors() {

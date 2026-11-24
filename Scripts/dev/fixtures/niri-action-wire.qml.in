@@ -1,0 +1,102 @@
+import Niri 1.0
+import QtQuick
+import Quickshell
+import qs.Services.Compositor
+
+ShellRoot {
+  id: root
+  property string mode: "waiting"
+  readonly property string scenario: "@SCENARIO@"
+  property var initialSnapshot: null
+  property var observations: []
+  property int edgeCompletions: 0
+
+  function finish(ok, detail) {
+    console.info("NIRI_ACTION_WIRE_RESULT|" + ok + "|" + detail);
+    Qt.exit(ok ? 0 : 3);
+  }
+
+  Connections {
+    target: CompositorService
+    function onSnapshotChanged() {
+      if (root.scenario !== "overview" || root.mode !== "observe")
+        return;
+      const snapshot = CompositorService.snapshot;
+      root.observations.push([snapshot.ready, snapshot.overviewActive, snapshot.revision, CompositorService.overviewActive]);
+      if (snapshot.ready)
+        return;
+      const initial = root.initialSnapshot;
+      const expected = [[true, true], [true, false], [true, true], [false, false]];
+      root.finish(initial.overviewActive === false && root.observations.length === expected.length &&
+                  root.observations.every((row, i) => row[0] === expected[i][0] && row[1] === expected[i][1] &&
+                                           row[2] === initial.revision + i + 1 && row[3] === row[1]), JSON.stringify(root.observations));
+    }
+  }
+
+  Timer {
+    interval: 20
+    repeat: true
+    running: true
+    onTriggered: {
+      const snapshot = CompositorService.snapshot;
+      const backend = CompositorService.niriBackend;
+      if (root.mode === "observe" && root.scenario === "spawn" && !snapshot.ready && !NiriConnection.isConnected) {
+        root.mode = "spawning";
+        CompositorService.focusWindow({id: "9007199254740993"});
+        backend.scrollWorkspaceContent(1);
+        CompositorService.spawn(["fixture-spawn"]);
+        return;
+      }
+      if (root.mode === "spawning" && snapshot.ready) {
+        root.finish(true, "request sent between stream generations");
+        return;
+      }
+      if (root.mode === "observe" && root.scenario === "edge" && !snapshot.ready) {
+        root.mode = "retired";
+        return;
+      }
+      if (root.mode === "retired" && snapshot.ready) {
+        root.mode = "releasing";
+        NiriRequests.windows();
+        return;
+      }
+      if (root.mode !== "waiting" || !snapshot.ready || snapshot.windows.length !== 2 || snapshot.workspaces.length !== 2)
+        return;
+      if (root.scenario !== "actions") {
+        root.initialSnapshot = snapshot;
+        root.mode = "observe";
+        if (root.scenario !== "edge") {
+          NiriRequests.workspaces();
+          return;
+        }
+        backend.navigateEdge("Retired-Output", "top", 1, result => {
+          root.edgeCompletions++;
+          backend.navigateEdge("Virtual-1", "top", 2, next => {
+            root.finish(result.requestId === 1 && result.outcome === "error" && root.edgeCompletions === 1 &&
+                        next.requestId === 2 && next.outcome === "boundary", JSON.stringify([result, next]));
+          });
+        });
+        return;
+      }
+      root.mode = "actions";
+      const hi = "9007199254740993";
+      CompositorService.focusWindow({id: "9007199254740992"}); // absent
+      CompositorService.focusWindow({id: hi});
+      CompositorService.closeWindow({id: "0"});
+      CompositorService.switchToWorkspace({id: "0", idx: 99});
+      CompositorService.moveWindowToWorkspace(hi, "0", (ok, error) => {
+        if (ok || !error) {
+          Qt.exit(2);
+          return;
+        }
+        CompositorService.moveWindowToWorkspace(hi, "0", (ok, error) => {
+          if (ok || !error) {
+            root.finish(false, "Handled without membership");
+            return;
+          }
+          CompositorService.moveWindowToWorkspace(hi, "0", (ok, error) => root.finish(ok, error), 1);
+        }, 1);
+      }, 1);
+    }
+  }
+}

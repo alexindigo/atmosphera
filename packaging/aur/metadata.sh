@@ -25,7 +25,7 @@ optdepends=(
   'wlsunset: For supporting NightLight'
   'power-profiles-daemon: For power profile management'
   'ddcutil: For external display brightness control'
-  'qt6-niriqml: niri IPC integration (workspaces, windows, session config)'
+  'qt6-niriqml>=0.3.0: niri IPC integration (workspaces, windows, session config)'
   'qt6-mangowcqml: mangowc IPC integration (workspaces, windows, session config)'
   'keyd: hardware-level keyboard remapping (bindings environments)'
   'xremap-niri-bin: session-level app-scoped keymaps (macos bindings)'
