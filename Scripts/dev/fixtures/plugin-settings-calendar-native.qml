@@ -31,13 +31,15 @@ ShellRoot {
   property bool availabilityChecked: false
   QtObject {
     id: provider
-    function loadEvents(ahead, behind) {
+    function loadEvents(ahead, behind, complete) {
       root.requestedRanges = root.requestedRanges.concat([
                                                            {
                                                              ahead: ahead,
                                                              behind: behind
                                                            }
                                                          ]);
+      if (complete)
+        complete(CalendarService.events, "");
     }
     function loadCalendars() {
     }
@@ -377,9 +379,10 @@ ShellRoot {
         starts.push(first.getTime());
         ends.push(last.getTime());
       }
+      var leases = typeof CalendarService["setEventRange"] === "function";
       var expected = {
-        ahead: Math.max(0, Math.ceil((Math.max(...ends) - now) / 86400000)),
-        behind: Math.max(0, Math.ceil((now - Math.min(...starts)) / 86400000))
+        ahead: Math.max(leases ? 31 : 0, Math.ceil((Math.max(...ends) - now) / 86400000)),
+        behind: Math.max(leases ? 14 : 0, Math.ceil((now - Math.min(...starts)) / 86400000))
       };
       check(requestedRanges.length > 0 && JSON.stringify(requestedRanges[requestedRanges.length - 1]) === JSON.stringify(expected), "one provider receives union of active selected ranges");
       check(presentations[1].panel.mainInstance.eventsModel.count === 0 && presentations[0].panel.mainInstance.eventsModel.count > 0, "selected navigation changes only its event projection");

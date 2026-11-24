@@ -20,19 +20,12 @@ Singleton {
   function loadCalendars() {
     listCalendarsProcess.running = true;
   }
-  function loadEvents(daysAhead = 31, daysBehind = 14) {
-    CalendarService.loading = true;
-    CalendarService.lastError = "";
-
+  function loadEvents(daysAhead, daysBehind, complete) {
     const now = new Date();
     const startDate = new Date(now.getTime() - (daysBehind * 24 * 60 * 60 * 1000));
     const endDate = new Date(now.getTime() + (daysAhead * 24 * 60 * 60 * 1000));
 
-    loadEventsProcess.startTime = Math.floor(startDate.getTime() / 1000);
-    loadEventsProcess.endTime = Math.floor(endDate.getTime() / 1000);
-    loadEventsProcess.running = true;
-
-    Logger.d("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`);
+    loadEventsProcess.start(["python3", root.calendarEventsScript, String(Math.floor(startDate.getTime() / 1000)), String(Math.ceil(endDate.getTime() / 1000))], complete);
   }
 
   // Process to check for evolution-data-server libraries
@@ -84,7 +77,7 @@ Singleton {
 
           // Auto-load events after discovering calendars
           if (result.length > 0) {
-            loadEvents();
+            CalendarService.loadEvents();
           }
         } catch (e) {
           Logger.d("Calendar", "Failed to parse calendars: " + e);
@@ -104,45 +97,8 @@ Singleton {
   }
 
   // Process to load events
-  Process {
+  EventQuery {
     id: loadEventsProcess
-    running: false
-    property int startTime: 0
-    property int endTime: 0
-
-    command: ["python3", root.calendarEventsScript, startTime.toString(), endTime.toString()]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        CalendarService.loading = false;
-
-        try {
-          const events = JSON.parse(text.trim());
-          CalendarService.setEvents(events);
-          Logger.d("Calendar", `Loaded ${events.length} events(s)`);
-        } catch (e) {
-          Logger.d("Calendar", "Failed to parse events: " + e);
-          CalendarService.lastError = "Failed to parse events";
-          // Fall back to cached events
-          CalendarService.loadCachedEvents();
-          Logger.d("Calendar", "Using cached events");
-        }
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        CalendarService.loading = false;
-
-        if (text.trim()) {
-          Logger.d("Calendar", "Load events error: " + text);
-          CalendarService.lastError = text.trim();
-
-          // Fall back to cached events
-          CalendarService.loadCachedEvents();
-          Logger.d("Calendar", "Using cached events");
-        }
-      }
-    }
+    parseEvents: text => JSON.parse(text)
   }
 }

@@ -17,18 +17,10 @@ Singleton {
   function loadCalendars() {
     listCalendarsProcess.running = true;
   }
-  function loadEvents(daysAhead = 31, daysBehind = 14) {
-    CalendarService.loading = true;
-    CalendarService.lastError = "";
-
+  function loadEvents(daysAhead, daysBehind, complete) {
     const now = new Date();
     const startDate = new Date(now.getTime() - (daysBehind * 24 * 60 * 60 * 1000));
-
-    loadEventsProcess.startTime = formatDateYMD(startDate);
-    loadEventsProcess.duration = `${daysAhead + daysBehind}d`;
-    loadEventsProcess.running = true;
-
-    Logger.d("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${loadEventsProcess.startTime}  ${loadEventsProcess.duration}`);
+    loadEventsProcess.start(["python3", root.khalEventsScript, formatDateYMD(startDate), `${daysAhead + daysBehind + 1}d`], complete);
   }
 
   // Process to check for khal installation
@@ -38,8 +30,8 @@ Singleton {
     command: ["sh", "-c", "command -v khal >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1"]
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        CalendarService.available = true;
         CalendarService.dataProvider = CalendarService.dataProvider || root;
+        CalendarService.available = true;
       }
 
       if (CalendarService.available) {
@@ -68,7 +60,7 @@ Singleton {
 
           // Auto-load events after discovering calendars
           if (calendars.length > 0) {
-            loadEvents();
+            CalendarService.loadEvents();
           }
         } catch (e) {
           Logger.d("Calendar", "Failed to parse calendars: " + e);
@@ -88,45 +80,9 @@ Singleton {
   }
 
   // Process to load events
-  Process {
+  EventQuery {
     id: loadEventsProcess
-    running: false
-    property string startTime: ""
-    property string duration: ""
-
-    command: ["python3", root.khalEventsScript, startTime, duration]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        CalendarService.loading = false;
-
-        try {
-          const events = parseEvents(text.trim());
-          CalendarService.setEvents(events);
-          Logger.d("Calendar", `Loaded ${events.length} events(s)`);
-        } catch (e) {
-          Logger.d("Calendar", "Failed to parse events: " + e);
-          CalendarService.lastError = "Failed to parse events";
-          // Fall back to cached events
-          CalendarService.loadCachedEvents();
-          Logger.d("Calendar", "Using cached events");
-        }
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        CalendarService.loading = false;
-
-        if (text.trim()) {
-          Logger.d("Calendar", "Load events error: " + text);
-          CalendarService.lastError = text.trim();
-          // Fall back to cached events
-          CalendarService.loadCachedEvents();
-          Logger.d("Calendar", "Using cached events");
-        }
-      }
-    }
+    parseEvents: text => root.parseEvents(text)
   }
 
   function parseEvents(text) {
