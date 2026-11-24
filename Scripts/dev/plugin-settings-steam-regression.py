@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Steam overlay processes against inert compositor/launch endpoints."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -104,7 +105,7 @@ def main():
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
         # These fixture installs read shell inputs only; generated entry/tooling
         # files are new paths. Keep immutable source files linked under inode pressure.
-        install=args.work_root/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+        install=args.work_root/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
         seed(args.work_root,args.plugins)
         stage={'retire-query':'detect','retire-all-query':'detect-all','retire-move-all':'move-all','retire-move':'move','retire-show':'show','retire-focus':'focus','retire-focus-exec':'focus-exec','retire-new':'new','retire-new-move':'new-move'}.get(args.case)
         if stage:(args.work_root/('hold-'+stage)).touch()

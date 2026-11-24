@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Steam page/native files and originating Bar geometry, both scopes."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -26,7 +27,7 @@ def hashes(case):
 @receipt_run
 def run(args,profile,scope):
     case,out=args.work_root/scope,args.output/scope;case.mkdir();out.mkdir();(out/'persisted').mkdir()
-    install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+    install=case/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     steam.seed(case,args.original_plugins or args.plugins)
     if args.omit_origin:
         bar=case/'config/plugins/hyprland-steam-overlay/BarWidget.qml'

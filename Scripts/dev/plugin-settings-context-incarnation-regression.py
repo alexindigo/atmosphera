@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Actual native placement incarnation/read/action admission across all families."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
 import hashlib
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
 
@@ -58,7 +58,7 @@ def main():
                 for name, data in documents.items(): runner.write_json(case / 'config' / name, data)
                 shutil.copy2(args.source / 'Assets/ColorScheme/MacOS/MacOS.json', case / 'config/colors.json')
                 install = case / 'install'
-                shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+                shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
                 text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-context-incarnation.qml',
                     extra_env=dict(PHA_INCARNATION_FAMILY=family, PHA_INCARNATION_CHANGE=change, PHA_INCARNATION_ORIGINAL='1' if args.original else '0'),
                     extra_lint=tuple(install / name for name in inputs[:4] if name.endswith('.qml')), timeout=90)

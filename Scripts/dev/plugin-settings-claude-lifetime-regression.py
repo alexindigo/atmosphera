@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual ACP generations, manual permissions and originating native writers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -20,7 +21,7 @@ MODES=('prompt','queued','handshake','replace','native-retired','destroyed','per
 @receipt_run
 def run(args,profile,mode):
     case,out=args.work_root/mode,args.output/mode;case.mkdir();out.mkdir()
-    install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+    install=case/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     for part in ('config/settings/plugins','cache/plugins/claude-code-panel','state','bin','home','shared','selected','sibling','replacement'):(case/part).mkdir(parents=True)
     dest=case/'config/plugins/claude-code-panel';shutil.copytree(args.plugins/'claude-code-panel',dest)
     wanted=None

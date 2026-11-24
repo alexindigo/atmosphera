@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual G4 backend/renderer lifetimes, confined to an explicit guest profile."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -20,6 +21,12 @@ ENDPOINT = '''#!/usr/bin/python3
 import fcntl,json,os,sys,time
 from pathlib import Path
 b=Path(os.environ['PHA_BACKEND_CASE']);name=Path(sys.argv[0]).name;argv=sys.argv[1:]
+hardware=b.resolve()/'hardware'
+def hardware_file(path):
+ target=Path(path).resolve(strict=True)
+ if not target.is_relative_to(hardware) or not target.is_file():
+  raise SystemExit('endpoint write outside fixture hardware: '+str(target))
+ return target
 start=(Path('/proc')/str(os.getpid())/'stat').read_text().split(') ',1)[1].split()[19]
 with (b/'requests.jsonl').open('a') as f:
  fcntl.flock(f,fcntl.LOCK_EX);f.write(json.dumps(dict(name=name,argv=argv,pid=os.getpid(),start=start))+'\\n');f.flush()
@@ -39,8 +46,7 @@ elif name=='sh':
  if command.startswith('for d in '):print('BAT0')
  elif command.startswith('for f in '):print('auto' if 'turbo-override' in command else (b/'force').read_text() if (b/'force').exists() else 'default')
  elif command.startswith('echo '):
-  left,right=command.split(' > ');target=Path(right)
-  assert target.is_relative_to(b/'hardware') and target.is_file()
+  left,right=command.split(' > ');target=hardware_file(right)
   value=left.removeprefix('echo ')
   if os.environ.get('PHA_BACKEND_VARIANT')=='actions' and value in ('level 7','95'):
    while True:time.sleep(.02)
@@ -53,7 +59,7 @@ elif name=='pkexec':
    while True:time.sleep(.02)
   if argv[1].startswith('--force='):
    mode=argv[1].split('=',1)[1];(b/'force').write_text(mode)
-   (b/'hardware/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor').write_text(mode+'\\n')
+   hardware_file(hardware/'sys/devices/system/cpu/cpu0/cpufreq/scaling_governor').write_text(mode+'\\n')
 else:raise SystemExit('unreviewed endpoint')
 '''
 
@@ -99,7 +105,7 @@ def run(args, profile, plugin):
     case, out = args.work_root/plugin, args.output/plugin
     case.mkdir(); out.mkdir()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     product = seed(case, args.source, args.plugins, plugin)
     hw = case/'hardware'
     shared = dict(refreshInterval=9000, compactMode=False, colorAuto='#112233', colorizeByStatus=True,

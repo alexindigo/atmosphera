@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Hold actual startup observations while an originating Steam request is admitted."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -27,7 +28,7 @@ def main():
         if path!=path.resolve() or path==parent or not path.is_relative_to(parent):parser.error('fresh owned guest roots required')
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);args.work_root.mkdir();args.output.mkdir()
-        install=args.work_root/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+        install=args.work_root/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
         steam.seed(args.work_root,args.plugins)
         endpoint=steam.ENDPOINT.replace("if name=='hyprctl':", "if name=='hyprctl':\n if args in (['monitors','-j'],['dispatch','hl.dsp.no_op()']):\n  while not (b/'release-probes').exists():time.sleep(.02)")
         for path in (args.work_root/'bin').iterdir():path.write_text(endpoint)

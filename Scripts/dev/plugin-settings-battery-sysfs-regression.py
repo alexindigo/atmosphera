@@ -23,15 +23,21 @@ def main():
     case, out = args.work_root, args.output
     case.mkdir(); out.mkdir()
     helper = args.plugins / 'battery-monitor-plus/scripts/read_battery_sysfs.sh'
-    launcher = case / 'namespace.sh'
-    launcher.write_text('#!/bin/sh\nset -eu\nmount --bind "$1" /sys/class/power_supply\nexport TMPDIR="$2"\nexec sh "$3" "$4"\n')
+    # Privilege owns only the private mount. Never interpret fixture or plugin
+    # source until the namespace child is back to the invoking tester's IDs.
+    launcher = ('/usr/bin/mount --bind -- "$1" /sys/class/power_supply\n'
+                'export TMPDIR="$2"\n'
+                'exec /usr/bin/setpriv --reuid="$3" --regid="$4" --clear-groups --no-new-privs '
+                '-- /usr/bin/sh "$5" "$6"')
     rows = []
 
     def run(name, selection, fixtures, expected):
         source = case / name; source.mkdir()
         for relative, value in fixtures.items():
             path = source / relative; path.parent.mkdir(parents=True, exist_ok=True); path.write_text(str(value) + '\n')
-        command = ['sudo', '-n', 'unshare', '--mount', '--propagation', 'private', '--', 'sh', str(launcher), str(source), os.environ['TMPDIR'], str(helper), selection]
+        command = ['sudo', '-n', '/usr/bin/unshare', '--mount', '--propagation', 'private', '--',
+                   '/usr/bin/sh', '-ec', launcher, 'namespace', str(source), os.environ['TMPDIR'],
+                   str(os.getuid()), str(os.getgid()), str(helper), selection]
         # TMPDIR is set by the strict connector and inside the namespace launcher.
         result = subprocess.run(command, capture_output=True, text=True, timeout=15)
         (out / (name + '.stdout')).write_text(result.stdout); (out / (name + '.stderr')).write_text(result.stderr)
@@ -40,18 +46,24 @@ def main():
         mismatch = {key: dict(expected=value, observed=data.get(key)) for key, value in expected.items()
                     if key not in data or not json_matches(data[key], value)}
         rows.append(dict(name=name, selection=selection, expected=expected, observed=data, mismatch=mismatch))
-        if mismatch:
-            if not args.expect_selection_red: raise RuntimeError('selected helper mismatch: ' + repr(rows[-1]))
+        if args.expect_selection_red:
+            # The characterized old helper aggregated BAT1 and BAT10 despite
+            # the explicit BAT10 selector. A broken schema or other mismatch
+            # is not a reproduction of that selection failure.
+            if name != 'exact-name' or set(mismatch) != {'source', 'capacity'} or not json_matches(
+                    {key: data[key] for key in mismatch}, {'source': 'BAT1,BAT10', 'capacity': 57}):
+                raise RuntimeError('expected exact-name selection failure: ' + repr(rows[-1]))
             stage_receipt(out / 'result.json', dict(status='PASS', kind='helper-selection-red', rejectedAt=name, rows=rows, helperSha256=hashlib.sha256(helper.read_bytes()).hexdigest()))
-            print('BATTERY_SYSFS: SELECTION_RED'); return False
-        return True
+            print('BATTERY_SYSFS: SELECTION_RED')
+        elif mismatch:
+            raise RuntimeError('selected helper mismatch: ' + repr(rows[-1]))
 
     common = {'BAT1/type': 'Battery', 'BAT1/status': 'Discharging', 'BAT1/capacity': 25, 'BAT1/energy_now': 20000000, 'BAT1/energy_full': 40000000,
               'BAT10/type': 'Battery', 'BAT10/status': 'Charging', 'BAT10/capacity': 90, 'BAT10/power_now': 99000000,
               'AC/type': 'Mains', 'AC/online': 1, 'AC/power_now': 50000000}
-    if not run('exact-name', 'BAT10', common, dict(ok=True, source='BAT10', capacity=90, powerWatts=99)): return
-    if not run('explicit-no-foreign-supply', 'BAT1', common, dict(ok=True, source='BAT1', capacity=25, powerWatts=-1, timeToEmpty=0)): return
-    if args.expect_selection_red: raise RuntimeError('helper selection red did not reproduce')
+    run('exact-name', 'BAT10', common, dict(ok=True, source='BAT10', capacity=90, powerWatts=99))
+    if args.expect_selection_red: return
+    run('explicit-no-foreign-supply', 'BAT1', common, dict(ok=True, source='BAT1', capacity=25, powerWatts=-1, timeToEmpty=0))
     variants = [
         ('direct-power', {'BAT1/power_now': 7000000}, 7),
         ('current-voltage', {'BAT1/current_now': 1000000, 'BAT1/voltage_now': 12000000}, 12),

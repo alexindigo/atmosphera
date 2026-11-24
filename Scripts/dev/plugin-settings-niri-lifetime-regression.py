@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Unusual niri daemon/config/probe lifetimes with literal inert endpoints."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -82,7 +83,7 @@ def main():
                 path=case/'bin'/name;path.write_text(endpoint);path.chmod(0o755)
             if args.scenario in ('screensaver-probe','screensaver-retire'):(case/'hold-probe').touch()
             if args.scenario=='screensaver-config':(case/'hold-config').touch()
-            install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+            install=case/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
             text=runner.run_fixture(profile,install,case,out,args.source/'Scripts/dev/fixtures/plugin-settings-niri-lifetime.qml',extra_env=dict(PHA_NIRI_CASE=str(case),PHA_NIRI_SCENARIO=args.scenario,HOME=str(case/'home'),XDG_CONFIG_HOME=str(case/'external-config'),PATH=str(case/'bin')+':'+os.environ['PATH']),extra_lint=tuple(sorted((case/'config/plugins'/plugin).glob('*.qml'))),timeout=60)
             assert 'NIRI_LIFETIME: PASS '+args.scenario in text
             assert not any(word in text for word in ('TypeError:','ReferenceError:','SyntaxError:','Binding loop detected')),text

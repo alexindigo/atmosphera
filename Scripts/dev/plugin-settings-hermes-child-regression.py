@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 
 import argparse
 import hashlib
@@ -321,7 +322,7 @@ print('EXPECTED_MISSING_EXECUTABLE')
             cli.write_text(CLI)
             cli.chmod(0o755)
             install = case / 'install'
-            shutil.copytree(args.source, install, copy_function=os.link,
+            shutil.copytree(args.source, install, copy_function=link_or_copy,
                             ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
             spec = importlib.util.spec_from_file_location('hermes_fixture_runner', args.source / 'Scripts/dev/plugin-settings-host-assets-regression.py')
             runner = importlib.util.module_from_spec(spec)

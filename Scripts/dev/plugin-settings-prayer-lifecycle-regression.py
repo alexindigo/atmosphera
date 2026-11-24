@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Prayer week/fallback/retry/countdown and original native cache/effect owners."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from datetime import datetime, timezone
 import fcntl
@@ -35,7 +36,7 @@ def main():
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock, FixtureResources() as resources:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); case, out = args.work_root, args.output; case.mkdir(); out.mkdir(); (out / 'persisted').mkdir()
         for part in ('config/settings/plugins', 'cache', 'state', 'home', 'bin'): (case / part).mkdir(parents=True)
-        install = case / 'install'; shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
+        install = case / 'install'; shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
         dest = case / 'config/plugins/mawaqit'; shutil.copytree(args.plugins / 'mawaqit', dest)
         if args.negative_control:
             path = dest / 'Main.qml'; text = path.read_text(); old = 'client === settingsConsumer && pluginApi.settingsContext.current()'

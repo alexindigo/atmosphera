@@ -46,8 +46,9 @@ ANCHORS={
   'queuedConfig = policy','if (writeConfigProcess.running) return','policy.generation !== generation || policy.context !== policyContext || !policy.context.current()',
   '_renderShellConfig(policy.values)','writeConfigProcess.policy = policy','root.configDir, root.configFile',
   'timeout: parseInt(s.idleSeconds) || 300','command: s.launcherCommand || root.defaultLauncherCommand','resumeCommand: s.killCommand || root.defaultKillCommand',
-  'if (lockNow === "" || lockNow === killCmd || (ownedHook && lockNow === ownedHook))','ownedHook && unlockNow === ownedHook','ownedHook = s.enabled ? killCmd : ""',
-  'var killCmd = ownedHook','if (killCmd && Settings.data.hooks.screenLock === killCmd)','if (killCmd && Settings.data.hooks.screenUnlock === killCmd)',
+  'const current = hooks[slot] || ""','if ((owned && current === owned) || (desired && !current)) { hooks[slot] = desired; return desired }',
+  'ownedLockHook = _syncHookSlot("screenLock", ownedLockHook, command)','ownedUnlockHook = _syncHookSlot("screenUnlock", ownedUnlockHook, command)',
+  '_syncHookSlots(s.enabled ? (s.killCommand || root.defaultKillCommand) : "")','_syncHookSlots("")',
   'writeConfigProcess.running = false','_removeRegistration()','retired = true','queuedConfig = null',
  ],
  'niri-screensaver/BarWidget.qml':[
@@ -115,11 +116,11 @@ def check(sources,manifests,dictionaries):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--plugins',type=Path,required=True);parser.add_argument('--report',type=Path,required=True);parser.add_argument('--selftest',action='store_true');parser.add_argument('--plugin',choices=tuple(FIELDS),action='append',help='Qualify only named independently delivered members; default: both');args=parser.parse_args()
-    sources={name+'/'+path.name:path.read_text() for name in FIELDS for path in (args.plugins/name).glob('*.qml')};sources['niri-auto-tile/auto-tile.py']=(args.plugins/'niri-auto-tile/auto-tile.py').read_text()
-    manifests={name:json.loads((args.plugins/name/'manifest.json').read_text()) for name in FIELDS};dictionaries={name:{path.name:json.loads(path.read_text()) for path in (args.plugins/name/'i18n').glob('*.json')} for name in FIELDS}
-    if args.plugin:
-        sources={path:text for path,text in sources.items() if path.split('/')[0] in args.plugin}
-        manifests={name:value for name,value in manifests.items() if name in args.plugin};dictionaries={name:value for name,value in dictionaries.items() if name in args.plugin}
+    selected = tuple(name for name in FIELDS if not args.plugin or name in args.plugin)
+    sources={name+'/'+path.name:path.read_text() for name in selected for path in (args.plugins/name).glob('*.qml')}
+    if 'niri-auto-tile' in selected:
+        sources['niri-auto-tile/auto-tile.py']=(args.plugins/'niri-auto-tile/auto-tile.py').read_text()
+    manifests={name:json.loads((args.plugins/name/'manifest.json').read_text()) for name in selected};dictionaries={name:{path.name:json.loads(path.read_text()) for path in (args.plugins/name/'i18n').glob('*.json')} for name in selected}
     rows=check(sources,manifests,dictionaries);controls=[]
     if args.selftest:
         mutations=[
@@ -142,7 +143,8 @@ def main():
          ('niri-screensaver/Main.qml','policyContext.settingsView','pluginApi.settingsView','shared-screensaver-reader'),
          ('niri-screensaver/Main.qml','_renderShellConfig(policy.values)','_renderShellConfig(cfg)','mutable-config-writer'),
          ('niri-screensaver/Main.qml','policy.context !== policyContext || !policy.context.current()','policy.context !== policyContext','retired-shell-config'),
-         ('niri-screensaver/Main.qml','if (lockNow === "" || lockNow === killCmd || (ownedHook && lockNow === ownedHook))','if (true)','manual-hook-clobber'),
+         ('niri-screensaver/Main.qml','if ((owned && current === owned) || (desired && !current))','if (true)','manual-hook-clobber'),
+         ('niri-screensaver/Main.qml','_syncHookSlot("screenUnlock", ownedUnlockHook, command)','_syncHookSlot("screenUnlock", ownedLockHook, command)','borrowed-hook-slot-owner'),
          ('niri-screensaver/BarWidget.qml','if (!admitted?.context?.current()) return','if (!admitted) return','retired-probe-continuation'),
          ('niri-screensaver/BarWidget.qml','launchProc.command = admitted.launch','launchProc.command = root.mainInstance._launcherArgv()','mutable-probe-command'),
          ('niri-screensaver/Settings.qml','_launcherArgv(root.pluginApi.runtimeContext)','_launcherArgv()','shared-settings-action'),

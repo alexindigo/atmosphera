@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Clipboard typed projections, shared content and originating decode lifetime."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -49,7 +50,7 @@ def main():
     for path,parent in ((args.work_root,profile.work_base),(args.output,profile.journal_base)):assert path==path.resolve() and path!=parent and path.is_relative_to(parent)
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);case=args.work_root;out=args.output;case.mkdir();out.mkdir()
-        install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+        install=case/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
         product=clip.seed(case,args.plugins)
         shutil.copy2(args.source/'Assets/ColorScheme/MacOS/MacOS.json',case/'config/colors.json')
         for name in ('head','cliphist','bash'):

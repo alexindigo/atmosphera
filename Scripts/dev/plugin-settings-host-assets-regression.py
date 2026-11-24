@@ -8,15 +8,16 @@ partial characterization can never produce RED_CONTROLS or overall PASS.
 """
 from fixture_receipts import receipt_run, stage_receipt
 import argparse
-import contextlib
 import fcntl
 import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import time
+import uuid
 
 from fixture_resources import FixtureResources
 from guest_profile import ProcessIdentity, activate_profile, profile_argument
@@ -622,21 +623,42 @@ def final_steps(args, case):
     return steps
 
 
-def step_leftovers(markers):
-    """Processes of this user, other than this runner, still naming a step root."""
+def retire_step_children(token):
+    """Stop only same-user processes inheriting this step's launch token."""
+    marker = b'PHA_REGISTRY_STEP=' + token.encode('ascii')
     found = []
     for entry in Path('/proc').iterdir():
         if not entry.name.isdigit() or int(entry.name) == os.getpid():
             continue
         try:
-            if entry.stat().st_uid != os.getuid():
-                continue
-            text = (entry / 'cmdline').read_bytes() + b'\0' + (entry / 'environ').read_bytes()
-        except OSError:
+            pidfd = os.pidfd_open(int(entry.name))
+        except ProcessLookupError:
             continue
-        if any(marker.encode() in text for marker in markers):
-            found.append(ProcessIdentity.read(int(entry.name)).record())
+        try:
+            if entry.stat().st_uid != os.getuid() or marker not in (entry / 'environ').read_bytes().split(b'\0'):
+                continue
+            identity = ProcessIdentity.read(int(entry.name))
+            if identity.uid != os.getuid():
+                continue
+            signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+            found.append(identity.record())
+        except (FileNotFoundError, ProcessLookupError, PermissionError):
+            continue
+        finally:
+            os.close(pidfd)
     return found
+
+
+def runtime_in_use(roots):
+    """Read-only veto: a live process still uses a generated runtime root."""
+    markers = {b'XDG_RUNTIME_DIR=' + os.fsencode(path) for path in roots}
+    for entry in Path('/proc').glob('[0-9]*'):
+        try:
+            if entry.stat().st_uid == os.getuid() and markers.intersection((entry / 'environ').read_bytes().split(b'\0')):
+                return True
+        except (FileNotFoundError, ProcessLookupError, PermissionError):
+            continue
+    return False
 
 
 def retire_step_runtime(profile, before, keep):
@@ -647,13 +669,13 @@ def retire_step_runtime(profile, before, keep):
     """
     created = [path for path in sorted(set(profile.runtime_base.iterdir()) - before)
                if path.is_dir() and not path.is_symlink() and path.resolve().parent == profile.runtime_base.resolve()]
-    if not created or step_leftovers([str(path) for path in created]):
+    if not created or runtime_in_use(created):
         return
     preserve_and_remove_runtime_roots(created, keep)
 
 
 def retire_fixture_runtime(runtime, qmlls, keep):
-    if step_leftovers([str(runtime)]):
+    if runtime_in_use([runtime]):
         raise RuntimeError('fixture runtime still has live processes; retained for diagnosis')
     # ProbeFiles replaces the sentinel with a symlink into this launch's VFS.
     # Restore the sentinel so the next cold launch requests its own universe.
@@ -708,16 +730,16 @@ def run_registry_case(args, profile, case, cases, record):
         log_path = args.output / case / (name.replace(':', '-') + '.log')
         runtime_before = set(profile.runtime_base.iterdir())
         started = time.monotonic()
+        token = uuid.uuid4().hex
         try:
             with log_path.open('w') as log, FixtureResources() as resources:
-                process = resources.spawn(argv, cwd=cwd, stdout=log, stderr=subprocess.STDOUT, timeout=30)
+                process = resources.spawn(argv, cwd=cwd, stdout=log, stderr=subprocess.STDOUT, timeout=30,
+                                          env=dict(os.environ, PHA_REGISTRY_STEP=token))
                 code = process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             code = 'timeout:' + str(process.returncode)
-        leftovers = step_leftovers([str(args.work_root / case / name.replace(':', '-')), str(args.output / case / name.replace(':', '-'))])
-        for item in leftovers:
-            with contextlib.suppress(ProcessLookupError):
-                os.kill(item['pid'], 9)
+        finally:
+            leftovers = retire_step_children(token)
         status = 'PASS' if code == 0 and not leftovers else 'FAIL'
         retire_step_runtime(profile, runtime_before, args.output / case / (name.replace(':', '-') + '-runtime-logs'))
         if status == 'PASS' and (args.work_root / case / name.replace(':', '-')).is_dir():
@@ -734,7 +756,7 @@ def run_registry_case(args, profile, case, cases, record):
 
 def final_main(args, profile):
     """Ordered registry cases. Drivers take the per-run lock; this owns its own."""
-    selected = [case for case in FINAL_CASES if case != 'red' or args.baseline_source] if args.case == 'all' else [args.case]
+    selected = FINAL_CASES if args.case == 'all' else (args.case,)
     with (profile.work_base / '.plugin-settings-final.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         args.work_root.mkdir(exist_ok=False)
@@ -795,8 +817,8 @@ def main():
     for path, parent in ((args.work_root, profile.work_base), (args.output, profile.journal_base)):
         if path != path.resolve() or not path.is_relative_to(parent) or path == parent:
             parser.error('fresh work/output children must belong to the verified profile roots')
-    if args.case == 'red' and (args.baseline_source is None or args.baseline_plugins is None):
-        parser.error('red requires explicit baseline trees')
+    if args.case in ('all', 'red') and not all(path and path.is_dir() for path in (args.baseline_source, args.baseline_plugins)):
+        parser.error(args.case + ' requires explicit baseline trees')
     if args.finding and args.case != 'red':
         parser.error('--finding is only valid for red characterization')
     if args.case in ('input', 'todo', 'red', 'catalog', 'all'):

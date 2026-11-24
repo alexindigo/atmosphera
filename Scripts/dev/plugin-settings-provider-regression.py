@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Provider-chain native representative; original reds follow native publication."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -28,7 +29,7 @@ def run(args, profile, scope):
     for part in ('config/settings/plugins', 'cache', 'state', 'home', 'bin'):
         (case / part).mkdir(parents=True)
     install = case / 'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
     dest = case / 'config/plugins/github-feed'; shutil.copytree(args.plugins / 'github-feed', dest)
     endpoint = case / 'bin/curl'; shutil.copy2(args.source / 'Scripts/dev/fixtures/plugin-settings-provider-endpoint.py', endpoint); endpoint.chmod(0o755)
     requests = case / 'requests.jsonl'; requests.write_text('')

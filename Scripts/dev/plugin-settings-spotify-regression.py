@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Selected Spotify native pages and inert runtime OAuth/action continuations."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -43,7 +44,7 @@ def run_with_endpoint(args, profile, scope, resources):
     for part in ('config/settings/plugins', 'cache', 'state', 'home', 'bin'):
         (case / part).mkdir(parents=True)
     install = case / 'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
     dest = case / 'config/plugins/spotify-player'; shutil.copytree(args.plugins / 'spotify-player', dest)
     with socket.socket() as port_socket:
         port_socket.bind(('127.0.0.1', 0)); port = port_socket.getsockname()[1]

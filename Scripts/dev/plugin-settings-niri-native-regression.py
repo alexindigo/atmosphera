@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual scoped Niri policy pages/native files and inert resource consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -47,7 +48,7 @@ def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     for name in ('config/settings/plugins', 'cache', 'state', 'home', 'bin'):(case/name).mkdir(parents=True)
     product = (args.original_plugins or args.plugins)/args.plugin
     shutil.copytree(product, case/'config/plugins'/args.plugin)

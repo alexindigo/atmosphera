@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual G4 pages, independent native documents and cold rendered consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 from fixtures.json_evidence import require_json_match
 import argparse
 from copy import deepcopy
@@ -24,7 +25,7 @@ def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     plugin = args.plugin
     product = backend.seed(case, args.source, args.plugins, plugin)
     if args.shared_popup:

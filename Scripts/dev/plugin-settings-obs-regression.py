@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual OBS native page/Bar/CC/Panel consumers against a loopback protocol."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -116,7 +117,7 @@ def run(args, profile, scope):
 
 def run_with_endpoint(args, profile, scope, resources):
     case,out=args.work_root/scope,args.output/scope; case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
-    install=case/'install'; shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+    install=case/'install'; shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     product=seed(case,args.original_plugins or args.plugins)
     if args.shared_reader:
         for name in ('BarWidget.qml','Panel.qml','ControlCenterWidget.qml','components/ObsButton.qml'):

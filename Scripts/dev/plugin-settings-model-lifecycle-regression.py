@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Six provider IO/lease lifetimes in synthetic HOME with inert HTTP origins."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from datetime import datetime
 import fcntl
@@ -37,7 +38,7 @@ def main():
     with (profile.work_base / '.plugin-settings-host-assets.lock').open('a+') as lock, FixtureResources() as resources:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); case, out = args.work_root, args.output; case.mkdir(); out.mkdir()
         for part in ('config', 'cache', 'state', 'home', 'bin'): (case / part).mkdir()
-        install = case / 'install'; shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
+        install = case / 'install'; shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
         dest = case / 'plugin'; shutil.copytree(args.plugins / 'model-usage', dest)
         if args.negative_control:
             path = dest / 'providers/Codex.qml'; text = path.read_text()

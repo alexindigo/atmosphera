@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Scoped Claude pages/native documents and inert ACP wire consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -26,7 +27,7 @@ def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     for part in ('config/settings/plugins', 'cache', 'state', 'bin', 'home', 'shared', 'selected', 'sibling', 'following'):
         (case/part).mkdir(parents=True)
     dest = case/'config/plugins/claude-code-panel'

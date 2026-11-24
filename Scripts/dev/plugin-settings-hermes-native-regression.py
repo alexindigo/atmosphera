@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Hermes pages/native documents/cold readers and model HTTP consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 from fixture_evidence import require
 import argparse
 from copy import deepcopy
@@ -8,7 +9,6 @@ import fcntl
 import hashlib
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
 from fixture_resources import FixtureResources
@@ -33,7 +33,7 @@ def run_with_peers(args, profile, scope, resources):
     for name in ('config/settings/plugins', 'cache', 'state', 'home'):
         (case/name).mkdir(parents=True)
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     product = args.plugins/'hermes-agent'
     shutil.copytree(product, case/'config/plugins/hermes-agent')
     if args.omit_origin:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Real Sticky Notes pages/native owners and controlled Gist operation lifetime."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -8,7 +9,6 @@ import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
 import time
@@ -34,7 +34,7 @@ def run_with_endpoint(args, profile, scope, mode, resources):
     for name in ('config/settings/plugins', 'home', 'cache', 'state'):
         (case/name).mkdir(parents=True)
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     product = (args.original_plugins or args.plugins)/'sticky-notes'
     runner.write_json(out/'sources.json', {str(p.relative_to(product)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(product.rglob('*')) if p.is_file()})
     plugin = case/'config/plugins/sticky-notes'

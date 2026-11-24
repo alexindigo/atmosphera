@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual Hermes connection/session generations against isolated HTTP peers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 from fixture_evidence import require
 import argparse
 import fcntl
@@ -76,7 +77,7 @@ def run_with_peers(args, profile, scenario, resources):
     if scenario == 'boundary-retire':
         (case/'hold').touch(); (case/'hold-create').touch()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     resources.defer(assert_no_survivors, case)
     shared = FixtureResources()
     resources.defer(shared.close)

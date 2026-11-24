@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Selected session writer/read acknowledgment contract, named guest only."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
 from guest_profile import activate_profile, profile_argument
@@ -39,7 +39,7 @@ def main():
         case.mkdir()
         out.mkdir()
         install = case / 'install'
-        shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+        shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
         if args.bypass_observation:
             target = install / 'Services/Plugins/PluginSettingsSession.qml'
             original = target.read_text()

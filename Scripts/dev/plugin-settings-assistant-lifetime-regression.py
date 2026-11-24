@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Finite real Assistant lifetimes with synthetic responses (no external calls)."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 from fixture_evidence import require
 import argparse
 from contextlib import contextmanager
@@ -58,7 +59,7 @@ def run(args, profile, mode):
     case, out = args.work_root/mode, args.output/mode
     case.mkdir(); out.mkdir()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     for part in ('config/settings/plugins', 'cache/plugins/assistant-panel', 'state', 'bin'):
         (case/part).mkdir(parents=True)
     dest = case/'config/plugins/assistant-panel'; shutil.copytree(args.plugins/'assistant-panel', dest)

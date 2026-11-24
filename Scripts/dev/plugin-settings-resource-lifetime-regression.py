@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Individual managed-service and inhibitor lifetimes against inert endpoints."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -58,7 +59,7 @@ def main():
     with (profile.work_base/'.plugin-settings-host-assets.lock').open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB); args.work_root.mkdir(); args.output.mkdir()
         install = args.work_root/'install'
-        shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+        shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
         resource.seed(args.work_root, args.plugins)
         shutil.copytree(args.plugins/'clamshell', args.work_root/'config/plugins/clamshell')
         for name in ('systemd-inhibit', 'niri', 'which'):

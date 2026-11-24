@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Retained actual shared/placement context callbacks after API destruction."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
 import importlib.util
-import os
 from pathlib import Path
 import shutil
 
@@ -54,7 +54,7 @@ def main():
             shutil.copy2(args.source / 'Assets/ColorScheme/MacOS/MacOS.json', case / 'config/colors.json')
             before = hashes(case / 'config')
             install = case / 'install'
-            shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+            shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
             text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-context-lifetime.qml',
                 extra_env=dict(PHA_CONTEXT_SCOPE=scope, PHA_CONTEXT_ORIGINAL='1' if args.original else '0'),
                 extra_lint=tuple(install / name for name in inputs[:3]), timeout=60)

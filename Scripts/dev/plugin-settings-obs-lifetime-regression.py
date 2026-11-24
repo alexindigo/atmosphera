@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """OBS action admission, protocol stages, retained Toast and origin lifetimes."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -26,7 +27,7 @@ def run(args,profile,scenario):
 
 def run_with_endpoint(args,profile,scenario,resources):
     case,out=args.work_root/scenario,args.output/scenario;case.mkdir();out.mkdir()
-    install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+    install=case/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     product=obs.seed(case,args.plugins);shutil.copy2(args.source/'Assets/ColorScheme/MacOS/MacOS.json',case/'config/colors.json')
     if scenario=='auto-active':runner.write_json(case/'obs-state.json',dict(recording=True,replay=False,streaming=False,camera=True))
     if args.control:

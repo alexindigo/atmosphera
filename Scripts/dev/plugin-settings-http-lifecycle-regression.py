@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Individual source/chain/read/cache/action lifetimes; native matrix is separate."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 import fcntl
 import hashlib
@@ -34,7 +35,7 @@ def run_with_endpoint(args, profile, plugin, resources):
     for part in ('config', 'cache', 'state', 'home', 'bin'):
         (case / part).mkdir()
     install = case / 'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
     dest = case / ('config/plugins/' + plugin) if plugin == 'habitica' else case / 'plugin'
     shutil.copytree(args.plugins / plugin, dest)
     requests = case / 'requests.jsonl'; requests.write_text(''); lock = threading.Lock()

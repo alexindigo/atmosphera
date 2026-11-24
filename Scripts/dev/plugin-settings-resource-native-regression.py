@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Selected Agent service admission through actual pages, native files and Bar."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -81,7 +82,7 @@ def run(args, profile, scope):
     case, out = args.work_root/scope, args.output/scope
     case.mkdir(); out.mkdir(); (out/'persisted').mkdir()
     install = case/'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
     seed(case, args.original_plugins or args.plugins)
     plugin = args.plugin
     field = 'port' if plugin == 'agent-session-status' else 'inhibitorWho'

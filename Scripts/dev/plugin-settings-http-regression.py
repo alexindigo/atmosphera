@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Selected HTTP results: real pages/native documents and final Bar/Panel children."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -8,7 +9,6 @@ import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
 import threading
@@ -56,7 +56,7 @@ def run_with_endpoint(args, profile, plugin, scope, resources):
     server = resources.serve(ThreadingHTTPServer(('127.0.0.1', 0), Endpoint), daemon=True)
     base_url = 'http://127.0.0.1:' + str(server.server_address[1])
     install = case / 'install'
-    shutil.copytree(args.source, install, copy_function=os.link, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
+    shutil.copytree(args.source, install, copy_function=link_or_copy, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '.qmlls.ini'))
     for part in ('config/settings/plugins', 'cache', 'state', 'home'):
         (case / part).mkdir(parents=True)
     dest = case / ('config/plugins/' + plugin); shutil.copytree(args.plugins / plugin, dest)

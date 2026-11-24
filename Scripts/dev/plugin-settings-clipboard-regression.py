@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Actual clipboard pages, complete native documents and cold Panel consumers."""
 from fixture_receipts import receipt_run, stage_receipt
+from fixtures.source_delivery import link_or_copy
 import argparse
 from copy import deepcopy
 import fcntl
@@ -58,7 +59,7 @@ def seed(case, plugins):
 @receipt_run
 def run(args, profile, scope):
     case,out=args.work_root/scope,args.output/scope;case.mkdir();out.mkdir();(out/'persisted').mkdir()
-    install=case/'install';shutil.copytree(args.source,install,copy_function=os.link,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
+    install=case/'install';shutil.copytree(args.source,install,copy_function=link_or_copy,ignore=shutil.ignore_patterns('.git','.envrc','__pycache__'))
     product=seed(case,args.original_plugins or args.plugins)
     if args.shared_reader:
         path=product/'Panel.qml';text=path.read_text()
