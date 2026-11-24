@@ -1199,7 +1199,56 @@ os.execv('/usr/bin/find', ['find', *args])
         manifest = create_fixtures(inputs, self.commands)
         (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
         fixture = self.args.source / 'Scripts/dev/fixtures/image-decoding/backdrops.qml'
-        result, output = self.qt(self.args.source, fixture, inputs, 'backdrops')
+        def with_held_request(source, name, assembled=False):
+            admitted, release, answered = (threading.Event() for _ in range(3))
+            data = (inputs / 'frame-0.png').read_bytes()
+
+            class Handler(BaseHTTPRequestHandler):
+                def do_GET(self):
+                    if self.path == '/held.png':
+                        admitted.set()
+                        if not release.wait(8):
+                            self.send_error(504)
+                            return
+                        try:
+                            self.respond(data)
+                        except (BrokenPipeError, ConnectionResetError):
+                            pass  # Retirement can close the original client socket.
+                        finally:
+                            answered.set()
+                    elif self.path == '/admitted' and admitted.wait(8):
+                        self.respond()
+                    elif self.path == '/release':
+                        release.set()
+                        if answered.wait(8):
+                            self.respond()
+                        else:
+                            self.send_error(504)
+                    else:
+                        self.send_error(404)
+
+                def respond(self, body=b''):
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+
+                def log_message(self, *_):
+                    pass
+
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                return self.qt(source, fixture, inputs, name,
+                               dict(IMAGE_HELD_SERVER=f'http://127.0.0.1:{server.server_port}'), assembled=assembled)
+            finally:
+                release.set()
+                server.shutdown()
+                thread.join()
+                server.server_close()
+
+        result, output = with_held_request(self.args.source, 'backdrops')
         def review(observed, captures, prefix):
             for name in ('backdrop', 'lock'):
                 before, failed, replacement = [stage[name] for stage in observed['stages']]
@@ -1214,6 +1263,20 @@ os.execv('/usr/bin/find', ['find', *args])
                            and next_center[1] > 80 and next_center[1] > 3*next_center[0] and next_center[1] > 2*next_center[2],
                            dict(consumer=replacement, center=next_center))
             self.check(prefix + 'hide-retires-interests', observed['interests'] == observed['requests'] == 0 and not observed['workerRunning'], observed)
+            admitted, before_release, after_release = observed['heldStages']
+            old = [source for source in admitted['sources'] if source.endswith('/held.png')]
+            self.check(prefix + 'held-request-admitted-and-retired', len(old) == 2
+                       and old[0] not in before_release['sources'] + after_release['sources'],
+                       observed['heldStages'])
+            for name in ('backdrop', 'lock'):
+                before_image = captures / ('held-before-' + name + '.png')
+                after_image = captures / ('held-after-' + name + '.png')
+                r, g, b, *_ = pixel(before_image)
+                self.check(prefix + name + '-retired-request-cannot-replace-new-pixels',
+                           admitted[name]['state'] == 'loading' and before_release[name]['state'] == 'ready'
+                           and after_release[name] == before_release[name]
+                           and b > 80 and b > 2*r and b > 2*g and read_png(before_image) == read_png(after_image),
+                           dict(admitted=admitted[name], before=before_release[name], after=after_release[name], center=[r, g, b]))
         review(result, output, 'backdrops-')
         initial, initial_output = self.qt(self.args.source, fixture, inputs, 'backdrops-initial-error', dict(IMAGE_INITIAL_BAD='1'))
         for name in ('backdrop', 'lock'):
@@ -1230,7 +1293,7 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('backdrops-locker-package-assembly', packaged.returncode == 0, dict(exit=packaged.returncode,stderr=packaged.stderr))
         lock = stage / 'etc/xdg/quickshell/atmosphera-lockscreen'
         self.check('backdrops-locker-minimal-graph', not (lock/'Services/Plugins').exists() and not (lock/'Portals').exists(),str(lock))
-        locked, locked_output = self.qt(lock, fixture, inputs, 'backdrops-locker', assembled=True)
+        locked, locked_output = with_held_request(lock, 'backdrops-locker', assembled=True)
         review(locked, locked_output, 'backdrops-installed-')
         return result
 

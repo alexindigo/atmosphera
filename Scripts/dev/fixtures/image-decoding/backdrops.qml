@@ -9,10 +9,13 @@ ShellRoot {
   id: root
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
+  readonly property string heldServer: Quickshell.env("IMAGE_HELD_SERVER")
   property int tick: 0
   property int pending: 0
   property var stages: []
   property bool done: false
+  property string heldStep: "idle"
+  property var heldStages: []
 
   QtObject {
     id: provider
@@ -55,6 +58,52 @@ ShellRoot {
                 });
     grab(backdrop, name + "-backdrop");
     grab(lock, name + "-lock");
+  }
+  function heldControl(path, next) {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState !== XMLHttpRequest.DONE)
+        return;
+      if (xhr.status !== 200) {
+        Qt.exit(4);
+        return;
+      }
+      root.heldStep = next;
+    };
+    xhr.open("GET", heldServer + path);
+    xhr.send();
+  }
+  function observeHeld(name) {
+    heldStages.push({
+                      name: name,
+                      backdrop: observe(backdrop),
+                      lock: observe(lock),
+                      sources: ImageCacheService.sourceInterestSources()
+                    });
+  }
+  function advanceHeld() {
+    if (heldStep === "idle") {
+      heldStep = "waiting";
+      provider.replace(heldServer + "/held.png");
+      heldControl("/admitted", "admitted");
+    } else if (heldStep === "admitted" && backdrop.imageState === "loading" && lock.imageState === "loading") {
+      observeHeld("admitted");
+      heldStep = "replacing";
+      provider.replace(inputs + "/frame-2.png");
+    } else if (heldStep === "replacing" && backdrop.imageState === "ready" && lock.imageState === "ready" && !ImageCacheService.sourceInterestSources().includes(heldServer + "/held.png")) {
+      observeHeld("before-release");
+      heldStep = "capturing";
+      grab(backdrop, "held-before-backdrop");
+      grab(lock, "held-before-lock");
+    } else if (heldStep === "capturing" && !pending) {
+      heldStep = "releasing";
+      heldControl("/release", "released");
+    } else if (heldStep === "released") {
+      observeHeld("after-release");
+      heldStep = "done";
+      grab(backdrop, "held-after-backdrop");
+      grab(lock, "held-after-lock");
+    }
   }
   FloatingWindow {
     id: window
@@ -109,6 +158,10 @@ ShellRoot {
       if (root.tick === 80) {
         root.capture("replacement");
       }
+      if (root.tick > 80 && !root.pending && root.heldServer && root.heldStep !== "done") {
+        root.advanceHeld();
+        return;
+      }
       if (root.tick > 80 && !root.pending) {
         backdrop.visible = false;
         lock.visible = false;
@@ -116,6 +169,7 @@ ShellRoot {
       if (root.tick >= 90 && !root.pending && !ImageCacheService.sourceWorkerRunning) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          stages: root.stages,
+                                                         heldStages: root.heldStages,
                                                          interests: ImageCacheService.sourceInterestCount,
                                                          requests: ImageCacheService.sourceRequestCount,
                                                          workerRunning: ImageCacheService.sourceWorkerRunning,
@@ -129,6 +183,9 @@ ShellRoot {
   Timer {
     interval: 20000
     running: true
-    onTriggered: Qt.exit(3)
+    onTriggered: {
+      console.log("IMAGE_TIMEOUT|" + root.heldStep + "|" + JSON.stringify(root.heldStages));
+      Qt.exit(3);
+    }
   }
 }
