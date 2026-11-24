@@ -23,11 +23,12 @@ from pathlib import Path
 b=Path(os.environ['PHA_WALLPAPER_CASE']); name=Path(sys.argv[0]).name; args=sys.argv[1:]
 if name=='endpoint.py':name=args.pop(0)
 held=name=='scan-wallpapers.sh' and args[0].endswith('/held-source')
+playback=name=='linux-wallpaperengine' and '--screen-root' in args and '--bg' in args and '--screenshot' not in args
 if held:signal.signal(signal.SIGTERM,signal.SIG_IGN)
 start=(Path('/proc')/str(os.getpid())/'stat').read_text().split(') ',1)[1].split()[19]
 def record(event):
  with (b/'requests.jsonl').open('a') as stream:
-  fcntl.flock(stream,fcntl.LOCK_EX);stream.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start,event=event))+'\\n');stream.flush()
+  fcntl.flock(stream,fcntl.LOCK_EX);stream.write(json.dumps(dict(endpoint=name,argv=args,pid=os.getpid(),start=start,event=event,playback=playback))+'\\n');stream.flush()
 record('admitted')
 if name=='scan-wallpapers.sh':
  if held:
@@ -37,7 +38,7 @@ if name=='scan-wallpapers.sh':
    time.sleep(.02)
  print(args[0]+'/controlled\\tControlled',flush=True)
  if held:record('emitted')
-if name=='linux-wallpaperengine':
+if playback:
  end=time.monotonic()+25
  while not (b/'release-engine').exists():
   if (b/'fail-engine').exists():

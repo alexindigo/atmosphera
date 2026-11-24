@@ -135,6 +135,22 @@ def run_fixture(profile, install, case, output, fixture, installed=False, extra_
         return run_fixture_and_lint(profile, install, target, output, env, extra_lint, timeout)
 
 
+QML_DIAGNOSTICS = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'RangeError:',
+                   'URIError:', 'EvalError:', 'Error:', 'Binding loop detected', 'is not installed')
+
+
+def expected_fixture_rejection(output, marker, message):
+    """Only a clean engine exit with the exact intended assertion counts."""
+    log, code = output / 'runtime.log', output / 'runtime.exit'
+    if not log.is_file() or not code.is_file() or code.read_text().strip() != '2':
+        return False
+    lines = log.read_text().splitlines()
+    assertions = [line for line in lines if marker in line]
+    return (len(assertions) == 1 and f'Error: {marker}' in assertions[0]
+            and assertions[0].endswith(': ' + message)
+            and not any(item in line for line in lines if line != assertions[0] for item in QML_DIAGNOSTICS))
+
+
 def run_fixture_and_lint(profile, install, target, output, env, extra_lint, timeout):
     try:
         with (output / 'runtime.log').open('w') as log, FixtureResources() as resources:

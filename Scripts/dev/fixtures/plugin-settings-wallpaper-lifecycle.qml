@@ -64,6 +64,9 @@ ShellRoot {
     const all = String(requests.text()).trim().split("\n").filter(line => line).map(line => JSON.parse(line));
     return name ? all.filter(row => row.endpoint === name && row.event === "admitted") : all;
   }
+  function playbackRows() {
+    return rows("linux-wallpaperengine").filter(row => row.playback === true);
+  }
   function probe(boundary, next) {
     afterDisk = next;
     phase = "disk";
@@ -165,8 +168,8 @@ ShellRoot {
         api.saveSettings();
         phase = "color";
       }
-    } else if (phase === "engine" && rows("linux-wallpaperengine").length) {
-      const command = rows("linux-wallpaperengine")[0].argv;
+    } else if (phase === "engine" && playbackRows().length) {
+      const command = playbackRows()[0].argv;
       check(command[command.indexOf("--fps") + 1] === "29", "admitted selected engine fps");
       api.pluginSettings.screens = {
         [screenName]: {
@@ -187,8 +190,8 @@ ShellRoot {
       control.command = ["touch", base + "/fail-engine"];
       control.running = true;
       phase = "recovery";
-    } else if (phase === "recovery" && rows("linux-wallpaperengine").length === 2) {
-      const command = rows("linux-wallpaperengine")[1].argv;
+    } else if (phase === "recovery" && playbackRows().length === 2) {
+      const command = playbackRows()[1].argv;
       check(command[command.indexOf("--fps") + 1] === "29" && command.includes(base + "/original-wallpaper"), "real failed process recovers original origin/options/layout");
       check(main.enginePolicy.context === context, "recovery retains admitted runtime context");
       settle("recovered-disk");

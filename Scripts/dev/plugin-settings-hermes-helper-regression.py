@@ -46,6 +46,39 @@ def check(ok, message):
     if not ok: raise AssertionError(message)
 
 
+def await_connection(stream, deadline, logs):
+    """Read complete NDJSON frames without blocking on a partial frame."""
+    fd = stream.fileno()
+    os.set_blocking(fd, False)
+    pending = b''
+    connected = False
+    pty_output = ''
+    with selectors.DefaultSelector() as selector:
+        selector.register(fd, selectors.EVENT_READ)
+        while (remaining := deadline - time.monotonic()) > 0:
+            if not selector.select(remaining):
+                break
+            try:
+                chunk = os.read(fd, 65536)
+            except BlockingIOError:
+                continue
+            if not chunk:
+                break
+            *lines, pending = (pending + chunk).split(b'\n')
+            for line in lines:
+                if time.monotonic() >= deadline:
+                    return False
+                row = json.loads(line)
+                logs.append(row)
+                if row.get('type') == 'output':
+                    pty_output += row['text']
+                elif row.get('type') == 'status' and row.get('status') == 'connected':
+                    connected = True
+                if connected and 'INERT_REMOTE_PTY_OUTPUT' in pty_output:
+                    return True
+    return False
+
+
 def cleanup(row):
     if active(row):
         check(os.getpgid(row['pid']) == row['pgid'] == row['pid'], 'owned inert child identity changed')
@@ -105,17 +138,7 @@ def characterize(args, helper, mode, case, env, resources, result):
             result.update(status='PASS', helperExit=proc.returncode, sshNeverExecuted=True)
             return result
         proc.stdin.write((json.dumps(dict(type='connect', host='inert.invalid', port=2222, user='synthetic-user', password='', rows=32, cols=80)) + '\n').encode()); proc.stdin.flush()
-        selector = selectors.DefaultSelector()
-        resources.defer(selector.close)
-        selector.register(proc.stdout, selectors.EVENT_READ)
-        deadline = time.monotonic() + 10; connected = False
-        while time.monotonic() < deadline:
-            if not selector.select(0.1): continue
-            line = proc.stdout.readline()
-            if not line: break
-            row = json.loads(line); logs.append(row)
-            if row.get('status') == 'connected': connected = True; break
-        selector.close()
+        connected = await_connection(proc.stdout, time.monotonic() + 10, logs)
         check(connected and (case / 'child.json').is_file(), 'actual inert SSH PTY output and connected status')
         child = json.loads((case / 'child.json').read_text())
         check(active(child) and child['pgid'] == child['pid'] and child['argv'] == SSH_ARGV, 'actual SSH child/group/literal auth argv')

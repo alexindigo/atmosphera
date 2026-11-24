@@ -78,8 +78,7 @@ def run(args, profile, scope):
                 extra_env=dict(env, PHA_HELLO_MODE=mode, PHA_HELLO_BOUNDARY=boundary), timeout=100,
                 extra_lint=tuple(sorted((case / 'config/plugins/hello-world').glob('*.qml'))))
         except RuntimeError:
-            log, code = output / 'runtime.log', output / 'runtime.exit'
-            if not expected_rejection or not log.is_file() or not code.is_file() or code.read_text().strip() != '2' or expected_rejection not in log.read_text():
+            if not expected_rejection or not runner.expected_fixture_rejection(output, 'HELLO_ASSERT:', expected_rejection):
                 raise
             result = dict(status='PASS', kind='rejecting-control', control=args.negative_control,
                           rejectedAt=expected_rejection, productionCoverage=False)

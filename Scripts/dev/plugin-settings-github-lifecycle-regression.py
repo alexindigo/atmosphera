@@ -57,9 +57,8 @@ def main():
         try:
             text = runner.run_fixture(profile, install, case, out, args.source / 'Scripts/dev/fixtures/plugin-settings-github-lifecycle.qml', extra_env=env, extra_lint=tuple(sorted(dest.rglob('*.qml'))), timeout=90)
         except RuntimeError:
-            text = (out / 'runtime.log').read_text() if (out / 'runtime.log').is_file() else ''
             wanted = 'one common notification across equal-source contexts'
-            if not args.notification_control or wanted not in text or (out / 'runtime.exit').read_text().strip() != '2': raise
+            if not args.notification_control or not runner.expected_fixture_rejection(out, 'GITHUB_LIFECYCLE_ASSERT:', wanted): raise
             runner.write_json(out / 'requests.json', [json.loads(line) for line in requests.read_text().splitlines()])
             runner.write_json(out / 'effects.json', [json.loads(line) for line in effects.read_text().splitlines()])
             stage_receipt(out / 'result.json', dict(status='PASS', kind='rejecting-control', rejectedAt=wanted, completePlanAcceptance=False))
