@@ -6,10 +6,8 @@ import fcntl
 import hashlib
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
-import subprocess
 
 from guest_profile import activate_profile, profile_argument
 
@@ -64,29 +62,17 @@ def main():
         fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-session.qml'
         fault = args.source / 'Scripts/dev/fixtures/plugin-settings-session-fault.py'
         env = dict(PHA_SESSION_FAULT=str(fault), PHA_WORK_BASE=str(profile.work_base))
+        targets = [install / 'Widgets/NPluginSettingsPopup.qml']
+        if (install / 'Services/Plugins/PluginSettingsSession.qml').exists():
+            targets.append(install / 'Services/Plugins/PluginSettingsSession.qml')
+        targets.extend(case / 'config/plugins/session-fixture' / name for name in ('Page.qml', 'Legacy.qml'))
         try:
-            text = runner.run_fixture(profile, install, case, out, fixture, extra_env=env)
+            text = runner.run_fixture(profile, install, case, out, fixture, extra_env=env, extra_lint=targets)
             if any('PLUGIN_SETTINGS_SESSION: ' + marker not in text for marker in ('PASS', 'QUARANTINE_PRESERVED', 'RETIRED_REGISTRATION_REFUSED')):
                 raise RuntimeError('actual session marker missing')
             bad = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')
             if any(marker in text for marker in bad):
                 raise RuntimeError('actual session runtime diagnostics; see runtime.log')
-            runtime = Path(text.split('Saving logs to "', 1)[1].split('/quickshell/', 1)[0])
-            if not runtime.is_relative_to(profile.runtime_base):
-                raise RuntimeError('runtime tooling path is outside the verified profile')
-            vfs = list((runtime / 'quickshell/vfs').iterdir())
-            if len(vfs) != 1:
-                raise RuntimeError('actual native lint universe missing or ambiguous')
-            targets = [install / 'Widgets/NPluginSettingsPopup.qml']
-            if (install / 'Services/Plugins/PluginSettingsSession.qml').exists():
-                targets.append(install / 'Services/Plugins/PluginSettingsSession.qml')
-            targets.extend(case / 'config/plugins/session-fixture' / name for name in ('Page.qml', 'Legacy.qml'))
-            lint = subprocess.run(['bash', str(install / 'Scripts/dev/qmllint.sh'), *map(str, targets)],
-                                  cwd=install, env=dict(os.environ, QS_VFS=str(vfs[0])),
-                                  text=True, capture_output=True, timeout=180)
-            (out / 'session-lint.log').write_text(lint.stdout + lint.stderr)
-            if lint.returncode != 0:
-                raise RuntimeError('session/popup/page native-universe lint failed')
             shared = json.loads((case / 'config/settings/plugins/session-fixture.json').read_text())
             row = json.loads((case / 'config/settings/bar.json').read_text())['widgets']['left'][0]
             if shared != dict(label='final', opaque=dict(keep=True)) or row != dict(id='plugin:session-fixture', tag='keep'):

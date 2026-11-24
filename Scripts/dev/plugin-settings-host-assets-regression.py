@@ -123,6 +123,8 @@ def run_fixture(profile, install, case, output, fixture, installed=False, extra_
     # private disk runtime while fitting Quickshell's variable-length instance ID.
     runtime_env = profile.child_environment('')
     runtime = Path(runtime_env['XDG_RUNTIME_DIR'])
+    if not runtime.is_relative_to(profile.runtime_base) or runtime == profile.runtime_base:
+        raise RuntimeError('fixture runtime is outside the verified profile')
     env = dict(os.environ, **runtime_env)
     env.update(ATMOSPHERA_CONFIG_DIR=str(case / 'config'),
                ATMOSPHERA_SETTINGS_FILE=str(case / 'config/settings.json'),

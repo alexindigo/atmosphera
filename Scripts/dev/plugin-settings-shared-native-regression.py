@@ -5,10 +5,8 @@ import argparse
 import fcntl
 import importlib.util
 import json
-import os
 from pathlib import Path
 import shutil
-import subprocess
 
 from guest_profile import activate_profile, profile_argument
 
@@ -45,21 +43,12 @@ def main():
         shutil.copytree(args.source, install, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__'))
         fixture = args.source / 'Scripts/dev/fixtures/plugin-settings-shared-native.qml'
         bad = ('TypeError:', 'ReferenceError:', 'SyntaxError:', 'Binding loop detected', 'is not installed')
-        text = runner.run_fixture(profile, install, case, out, fixture)
+        targets = [install / 'Services/Plugins' / name for name in ('Service.qml', 'PluginInstanceApi.qml', 'PluginSettingsFields.qml')]
+        text = runner.run_fixture(profile, install, case, out, fixture, extra_lint=targets)
         if 'PLUGIN_SETTINGS_SHARED_NATIVE: PASS' not in text or any(item in text for item in bad):
             raise RuntimeError('native field/runtime endpoint or diagnostics')
         if json.loads(shared.read_text()) != dict(hideBackground=True, opaque=dict(keep=True)):
             raise RuntimeError('native Reset touched unrelated or opaque fields')
-        runtime = Path(text.split('Saving logs to "', 1)[1].split('/quickshell/', 1)[0])
-        universes = list((runtime / 'quickshell/vfs').iterdir())
-        if len(universes) != 1 or not runtime.is_relative_to(profile.runtime_base):
-            raise RuntimeError('actual native lint universe missing or outside the task')
-        targets = [install / 'Services/Plugins' / name for name in ('Service.qml', 'PluginInstanceApi.qml', 'PluginSettingsFields.qml')]
-        lint = subprocess.run(['bash', str(install / 'Scripts/dev/qmllint.sh'), *map(str, targets)], cwd=install,
-            env=dict(os.environ, QS_VFS=str(universes[0])), capture_output=True, text=True, timeout=180)
-        (out / 'modules-lint.log').write_text(lint.stdout + lint.stderr)
-        if lint.returncode != 0:
-            raise RuntimeError('native-universe module lint')
         cold = out / 'cold'
         cold.mkdir()
         text = runner.run_fixture(profile, install, case, cold, fixture, extra_env=dict(PHA_SHARED_NATIVE_COLD='1'))
