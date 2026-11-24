@@ -4,13 +4,17 @@ import Quickshell
 import qs.Commons
 import qs.Services.Power
 import qs.Services.UI
+import qs.Widgets
 
 Item {
   id: root
   anchors.fill: parent
 
   // Cached wallpaper path - exposed for parent components
-  property string resolvedWallpaperPath: ""
+  readonly property string resolvedWallpaperPath: lockBgImage.outputUrl
+  readonly property string imageState: lockBgImage.imageState
+  readonly property string errorReason: lockBgImage.errorReason
+  property string requestedWallpaperPath: ""
   property color tintColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mSurface : AtmoColor.mOnSurface
 
   required property var screen
@@ -45,7 +49,7 @@ Item {
 
     // Check for solid color mode first
     if (Settings.data.wallpaper.useSolidColor) {
-      resolvedWallpaperPath = "";
+      requestedWallpaperPath = "";
       return;
     }
 
@@ -55,39 +59,17 @@ Item {
 
     const originalPath = wallpaperProvider.getWallpaper(screen.name) || "";
     if (originalPath === "") {
-      resolvedWallpaperPath = "";
+      requestedWallpaperPath = "";
       return;
     }
 
     // Handle solid color paths
     if (wallpaperProvider.isSolidColorPath(originalPath)) {
-      resolvedWallpaperPath = "";
+      requestedWallpaperPath = "";
       return;
     }
 
-    if (!ImageCacheService || !ImageCacheService.initialized) {
-      // Fallback to original if services not ready
-      resolvedWallpaperPath = originalPath;
-      return;
-    }
-
-    const compositorScale = displayScale;
-    const targetWidth = Math.round(width * compositorScale);
-    const targetHeight = Math.round(height * compositorScale);
-    if (targetWidth <= 0 || targetHeight <= 0) {
-      return;
-    }
-
-    // Don't set resolvedWallpaperPath until cache is ready
-    // This prevents loading the original huge image
-    ImageCacheService.getLarge(originalPath, targetWidth, targetHeight, function (cachedPath, success) {
-      if (success) {
-        resolvedWallpaperPath = cachedPath;
-      } else {
-        // Only fall back to original if caching failed
-        resolvedWallpaperPath = originalPath;
-      }
-    });
+    requestedWallpaperPath = originalPath;
   }
 
   // Background - solid color or black fallback
@@ -96,16 +78,21 @@ Item {
     color: Settings.data.wallpaper.useSolidColor ? Settings.data.wallpaper.solidColor : "#000000"
   }
 
-  Image {
+  NImageBackdrop {
     id: lockBgImage
     visible: source !== "" && Settings.data.wallpaper.enabled && !Settings.data.wallpaper.useSolidColor && (!PowerProfileService.atmospheraPerformanceMode || !Settings.data.atmospheraPerformance.disableWallpaper)
     anchors.fill: parent
     fillMode: Image.PreserveAspectCrop
-    source: resolvedWallpaperPath
-    cache: false
+    source: root.requestedWallpaperPath
+    normalize: !Settings.data.wallpaper.useOriginalImages
+    sourceSize: Qt.size(Math.max(1, Math.round(width * root.displayScale)), Math.max(1, Math.round(height * root.displayScale)))
+    active: visible
     smooth: true
-    mipmap: false
     antialiasing: true
+    onImageStateChanged: {
+      if (imageState === "unavailable")
+        Logger.w("LockWallpaper", errorReason);
+    }
 
     layer.enabled: Settings.data.general.lockScreenBlur > 0 && !PowerProfileService.atmospheraPerformanceMode
     layer.smooth: false

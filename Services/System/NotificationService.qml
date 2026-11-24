@@ -3,9 +3,9 @@ pragma Singleton
 import QtQuick
 import QtQuick.Window
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Notifications
 import Quickshell.Wayland
+import "../../Helpers/PortalPaths.js" as PortalPaths
 import "../../Helpers/sha256.js" as Checksum
 import qs.Commons
 import qs.Services.Compositor
@@ -21,6 +21,15 @@ Singleton {
   property int maxPopups: 5
   property int maxHistory: 100
   property string historyFile: Quickshell.env("ATMOSPHERA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
+  property bool historyLoaded: false
+  property bool historyOpening: false
+  property bool historyStartupComplete: false
+  property bool historyClearedBeforeLoad: false
+  property real historyRevision: 0
+  property real historySavedRevision: 0
+  property bool historySaving: false
+  property int historyOpenFailures: 0
+  property int historySaveFailures: 0
 
   // State
   property real lastSeenTs: 0
@@ -32,8 +41,11 @@ Singleton {
   property ListModel historyModel: ListModel {}
 
   // Internal state
-  property var popupState: ({}) // Maps internal ID to {notification, watcher, cachedActions, metadata}
+  // One entry owns both deferred model memberships and its immutable image
+  // revision. The producer object is mutable and is never the image snapshot.
+  property var popupState: ({})
   property var quickshellIdToInternalId: ({})
+  property int admissionSerial: 0
 
   // Rate limiting for notification sounds (minimum 100ms between sounds)
   property var lastSoundTime: 0
@@ -58,33 +70,58 @@ Singleton {
       property var targetNotification
       property var targetDataId
       target: targetNotification
-
+      // Capture in the signal stack; a dirty QML binding can be reevaluated
+      // only after the provider's borrowed pixels have changed or retired.
       function onSummaryChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onBodyChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onAppNameChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onDesktopEntryChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
       function onUrgencyChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onExpireTimeoutChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
       function onAppIconChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onImageChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
       }
       function onActionsChanged() {
-        updateNotificationFromObject(targetDataId);
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onTransientChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onResidentChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHasActionIconsChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHasInlineReplyChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onInlineReplyPlaceholderChanged() {
+        root.updateNotificationFromObject(targetDataId);
+      }
+      function onHintsChanged() {
+        root.updateNotificationFromObject(targetDataId);
       }
     }
   }
 
   function updateNotificationServer() {
-    const enabled = Settings.isLoaded && Settings.data.notifications.enabled !== false;
+    const enabled = Settings.isLoaded && historyStartupComplete && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
     if (enabled === Boolean(notificationServerLoader))
       return;
 
@@ -100,7 +137,7 @@ Singleton {
 
   Component.onCompleted: {
     if (Settings.isLoaded) {
-      updateNotificationServer();
+      openHistory();
     }
 
     // Load state from ShellState
@@ -121,9 +158,16 @@ Singleton {
   }
 
   Connections {
+    target: ImageCacheService
+    function onAdmissionReadyChanged() {
+      updateNotificationServer();
+    }
+  }
+
+  Connections {
     target: Settings
     function onSettingsLoaded() {
-      updateNotificationServer();
+      openHistory();
     }
     function onEffectiveSettingsChanged(section) {
       if (section === "notifications")
@@ -144,36 +188,66 @@ Singleton {
   function handleNotification(notification) {
     const quickshellId = notification.id;
     const data = createData(notification);
-
     const ruleAction = NotificationRulesService.evaluate(data.appName, data.summary, data.body);
     if (ruleAction === "block")
       return;
-    if (ruleAction === "hide") {
-      trySaveToHistory(data, notification);
+    const history = shouldSaveToHistory(data, notification);
+    const popup = ruleAction !== "hide" && !root.doNotDisturb && !PowerProfileService.atmospheraPerformanceMode;
+    if (!history && !popup)
       return;
-    }
-
-    trySaveToHistory(data, notification);
-
-    if (root.doNotDisturb || PowerProfileService.atmospheraPerformanceMode)
-      return;
-
-    // Check if this is a replacement notification
     const existingInternalId = quickshellIdToInternalId[quickshellId];
     if (existingInternalId && popupState[existingInternalId]) {
       updatePopup(existingInternalId, notification, data);
       return;
     }
-
-    // Check for duplicate content
-    const duplicateId = findDuplicateNotification(data);
-    if (duplicateId) {
-      removePopup(duplicateId);
+    const entry = {
+      data: data,
+      historyData: data,
+      notification: notification,
+      watcher: null,
+      cachedActions: [],
+      popupWanted: popup,
+      historyWanted: history,
+      imageRequests: [],
+      imageRevision: 0,
+      metadata: {
+        originalId: data.originalId,
+        timestamp: data.timestamp.getTime(),
+        duration: calculateDuration(data),
+        urgency: data.urgency,
+        paused: false,
+        pauseTime: 0
+      }
+    };
+    popupState[data.id] = entry;
+    quickshellIdToInternalId[quickshellId] = data.id;
+    entry.watcher = notificationWatcherComponent.createObject(root, {
+                                                                targetNotification: notification,
+                                                                targetDataId: data.id
+                                                              });
+    cacheActions(entry);
+    entry.onClosed = function () {
+      // The native object is destroyed after this signal. History and its
+      // capture keep their own lifetime, never a dangling native reference.
+      entry.notification = null;
+      entry.cachedActions = [];
+      entry.watcher?.destroy();
+      entry.watcher = null;
+      delete quickshellIdToInternalId[quickshellId];
+      dismissPopup(data.id);
+    };
+    notification.closed.connect(entry.onClosed);
+    notification.tracked = true;
+    queueImage(entry);
+    if (history)
+      addToHistory(entry);
+    if (popup) {
+      const duplicateId = findDuplicateNotification(data);
+      if (duplicateId)
+        removePopup(duplicateId);
+      addPopup(entry);
     }
-
-    // Add new notification
-    addPopup(quickshellId, notification, data);
-    if (ruleAction !== "mute")
+    if (popup && ruleAction !== "mute")
       playNotificationSound(data.urgency, data.appName);
   }
 
@@ -272,117 +346,117 @@ Singleton {
   }
 
   function updatePopup(internalId, notification, data) {
-    const index = findPopupIndex(internalId);
-    if (index < 0)
+    const entry = popupState[internalId];
+    if (!entry)
       return;
-    const existing = popupModel.get(index);
-    const oldTimestamp = existing.timestamp;
-    const oldProgress = existing.progress;
-
-    // Update properties (keeping original timestamp and progress)
-    popupModel.setProperty(index, "summary", data.summary);
-    popupModel.setProperty(index, "summaryMarkdown", data.summaryMarkdown);
-    popupModel.setProperty(index, "body", data.body);
-    popupModel.setProperty(index, "bodyMarkdown", data.bodyMarkdown);
-    popupModel.setProperty(index, "appName", data.appName);
-    popupModel.setProperty(index, "urgency", data.urgency);
-    popupModel.setProperty(index, "expireTimeout", data.expireTimeout);
-    popupModel.setProperty(index, "originalImage", data.originalImage);
-    popupModel.setProperty(index, "cachedImage", data.cachedImage);
-    popupModel.setProperty(index, "actionsJson", data.actionsJson);
-    popupModel.setProperty(index, "timestamp", oldTimestamp);
-    popupModel.setProperty(index, "progress", oldProgress);
-
-    // Update stored notification object
-    const notifData = popupState[internalId];
-    notifData.notification = notification;
-
-    // Deep copy actions to preserve them even if QML object clears list
-    var safeActions = [];
-    if (notification.actions) {
-      for (var i = 0; i < notification.actions.length; i++) {
-        safeActions.push({
-                           "identifier": notification.actions[i].identifier,
-                           "actionObject": notification.actions[i]
-                         });
-      }
-    }
-    notifData.cachedActions = safeActions;
-    notifData.metadata.originalId = data.originalId;
-
-    notification.tracked = true;
-
-    function onClosed() {
+    const rule = NotificationRulesService.evaluate(data.appName, data.summary, data.body);
+    if (rule === "block") {
       dismissPopup(internalId);
+      return;
     }
-    notification.closed.connect(onClosed);
-    notifData.onClosed = onClosed;
-
-    // Update metadata
-    notifData.metadata.urgency = data.urgency;
-    notifData.metadata.duration = calculateDuration(data);
+    const retained = entry.data;
+    data.id = internalId;
+    data.timestamp = retained.timestamp;
+    const index = findPopupIndex(internalId);
+    data.progress = index >= 0 ? popupModel.get(index).progress : retained.progress;
+    entry.data = data;
+    // Persistence policy applies to the new revision, not permission to erase
+    // a previously admitted record (or cancel its still-pending capture).
+    const updateHistory = entry.historyWanted && shouldSaveToHistory(data, notification);
+    if (updateHistory) {
+      const previousHistory = entry.historyData;
+      entry.historyData = Object.assign({}, data);
+      keepSnapshot(entry.historyData, previousHistory);
+    }
+    keepSnapshot(data, retained);
+    entry.metadata.urgency = data.urgency;
+    entry.metadata.duration = calculateDuration(data);
+    cacheActions(entry);
+    if (rule === "hide" || root.doNotDisturb || PowerProfileService.atmospheraPerformanceMode)
+      dismissPopup(internalId);
+    if (popupState[internalId] !== entry)
+      return;
+    const targets = [];
+    if (entry.popupWanted)
+      targets.push(data);
+    if (updateHistory)
+      targets.push(entry.historyData);
+    if (targets.length)
+      queueImage(entry, targets);
+    // Subscribe before releasing obsolete targets. The image owner can then
+    // share an in-flight acquisition of identical inputs, including a remote
+    // URL, without restarting the transfer or keeping the obsolete targets.
+    releaseUnusedImages(entry);
+    publishEntry(entry);
   }
 
-  function addPopup(quickshellId, notification, data) {
-    // Map IDs
-    quickshellIdToInternalId[quickshellId] = data.id;
+  function keepSnapshot(data, previous) {
+    if (data.originalImage === previous.originalImage)
+      data.imageRevision = previous.imageRevision;
+    if (!data.originalImage || previous.imageState !== "ready")
+      return;
+    for (const key of ["cachedImage", "imageState", "imageRevision", "imageFormat", "imageRepresentation", "imageContentSha256"])
+      data[key] = previous[key];
+  }
 
-    // Create watcher
-    const watcher = notificationWatcherComponent.createObject(root, {
-                                                                "targetNotification": notification,
-                                                                "targetDataId": data.id
-                                                              });
+  function cacheActions(entry) {
+    entry.cachedActions = (entry.notification?.actions || []).map(action => ({
+      identifier: action.identifier,
+      actionObject: action
+    }));
+  }
 
-    // Deep copy actions
-    var safeActions = [];
-    if (notification.actions) {
-      for (var i = 0; i < notification.actions.length; i++) {
-        safeActions.push({
-                           "identifier": notification.actions[i].identifier,
-                           "actionObject": notification.actions[i]
-                         });
+  function publishEntry(entry, imageOnly = false) {
+    for (const target of [
+           {
+             model: popupModel,
+             data: entry.data
+           },
+           {
+             model: historyModel,
+             data: entry.historyData
+           }
+         ]) {
+      const model = target.model;
+      for (var i = 0; i < model.count; ++i) {
+        if (model.get(i).id === entry.data.id) {
+          const data = target.data;
+          // A worker completion owns image roles, not a newer popup timer or
+          // action update. ListModel.set leaves unspecified roles unchanged.
+          model.set(i, imageOnly ? {
+                                     cachedImage: data.cachedImage,
+                                     imageState: data.imageState,
+                                     imageRevision: data.imageRevision,
+                                     imageContentSha256: data.imageContentSha256,
+                                     imageFormat: data.imageFormat,
+                                     imageRepresentation: data.imageRepresentation,
+                                     imageErrorCode: data.imageErrorCode,
+                                     imageErrorReason: data.imageErrorReason
+                                   } : data);
+          break;
+        }
       }
     }
+    syncOriginalHolders();
+    if (entry.historyWanted)
+      saveHistory();
+  }
 
-    // Store notification data
-    popupState[data.id] = {
-      "notification": notification,
-      "watcher": watcher,
-      "cachedActions": safeActions // Cache actions
-                       ,
-      "metadata": {
-        "originalId": data.originalId // Store original ID
-                      ,
-        "timestamp": data.timestamp.getTime(),
-        "duration": calculateDuration(data),
-        "urgency": data.urgency,
-        "paused": false,
-        "pauseTime": 0
-      }
-    };
-
-    notification.tracked = true;
-
-    function onClosed() {
-      dismissPopup(data.id);
-    }
-    notification.closed.connect(onClosed);
-    popupState[data.id].onClosed = onClosed;
-
+  function addPopup(entry) {
     // Defer list insertion to prevent re-entrant QML incubation crash.
     // Direct insert triggers Repeater.modelUpdated synchronously, which
     // incubates delegates whose signal handlers can re-enter the V4 engine
     // and crash in QV4::Object::insertMember.
     Qt.callLater(() => {
-      popupModel.insert(0, data);
+      if (popupState[entry.data.id] !== entry || !entry.popupWanted)
+        return;
+      popupModel.insert(0, entry.data);
 
       // Remove overflow
       while (popupModel.count > maxPopups) {
         const last = popupModel.get(popupModel.count - 1);
         // Overflow only removes from ACTIVE view, but keeps it for history
-        popupState[last.id]?.notification?.dismiss(); // Visually dismiss
-        popupModel.remove(popupModel.count - 1);
-        // DO NOT call cleanupNotification here, we want to keep it for history actions
+        dismissPopup(last.id);
       }
     });
   }
@@ -419,12 +493,13 @@ Singleton {
                                                 "summary": n.summary,
                                                 "body": n.body,
                                                 "app": n.appName,
-                                                "time": time.getTime()
+                                                "time": time.getTime(),
+                                                "serial": ++root.admissionSerial
                                               }));
 
-    const image = n.image || getIcon(n.appIcon);
-    const imageId = generateImageId(n, image);
-    queueImage(image, n.appName || "", n.summary || "", id);
+    const appIcon = String(n.appIcon || "");
+    const arbitraryIcon = appIcon.startsWith("/") || /^(file:|https?:|data:|image:\/\/)/.test(appIcon);
+    const image = String(n.image || (arbitraryIcon ? appIcon : ""));
 
     return {
       "id": id,
@@ -438,8 +513,15 @@ Singleton {
       "timestamp": time,
       "progress": 1.0,
       "originalImage": image,
-      "cachedImage": image  // Start with original, update when cached
-                     ,
+      "cachedImage": "",
+      "iconName": arbitraryIcon ? "" : appIcon,
+      "imageState": image ? "loading" : "idle",
+      "imageRevision": "",
+      "imageFormat": "",
+      "imageRepresentation": "",
+      "imageContentSha256": "",
+      "imageErrorCode": "",
+      "imageErrorReason": "",
       "originalId": n.originalId || n.id || 0 // Ensure originalId is passed through
                     ,
       "actionsJson": JSON.stringify((n.actions || []).map(a => ({
@@ -460,44 +542,32 @@ Singleton {
 
     function updateNotificationFromObject(internalId) {
     const notifData = popupState[internalId];
-    if (!notifData)
-    return;
-    const index = findPopupIndex(internalId);
-    if (index < 0)
+    if (!notifData?.watcher || !notifData.notification)
     return;
     const data = createData(notifData.notification);
-    const existing = popupModel.get(index);
-
-    // Update properties (keeping timestamp and progress)
-    popupModel.setProperty(index, "summary", data.summary);
-    popupModel.setProperty(index, "summaryMarkdown", data.summaryMarkdown);
-    popupModel.setProperty(index, "body", data.body);
-    popupModel.setProperty(index, "bodyMarkdown", data.bodyMarkdown);
-    popupModel.setProperty(index, "appName", data.appName);
-    popupModel.setProperty(index, "urgency", data.urgency);
-    popupModel.setProperty(index, "expireTimeout", data.expireTimeout);
-    popupModel.setProperty(index, "originalImage", data.originalImage);
-    popupModel.setProperty(index, "cachedImage", data.cachedImage);
-    popupModel.setProperty(index, "actionsJson", data.actionsJson);
-
-    // Update metadata
-    notifData.metadata.urgency = data.urgency;
-    notifData.metadata.duration = calculateDuration(data);
+    updatePopup(internalId, notifData.notification, data);
   }
 
     function removePopup(id) {
-    const index = findPopupIndex(id);
-    if (index >= 0) {
-    popupModel.remove(index);
-  }
-    cleanupNotification(id);
+    dismissPopup(id);
   }
 
     function cleanupNotification(id) {
     const notifData = popupState[id];
     if (notifData) {
+    if (notifData.popupWanted || notifData.historyWanted)
+    return;
+    for (const request of notifData.imageRequests)
+    request.interest?.cancel();
+    notifData.imageRequests = [];
+    if (notifData.notification && notifData.onClosed) {
+    try {
+    notifData.notification.closed.disconnect(notifData.onClosed);
+  } catch (e) {}
+  }
     notifData.watcher?.destroy();
     delete popupState[id];
+    notifData.notification?.dismiss();
   }
 
     // Clean up quickshell ID mapping
@@ -544,30 +614,69 @@ Singleton {
   }
   }
 
-    // Image handling
-    function queueImage(path, appName, summary, notificationId) {
-    if (!path || !notificationId)
-    return;
-
-    // Cache image:// URIs and temporary file paths (e.g. /tmp/ from Chromium)
-    const filePath = path.startsWith("file://") ? path.substring(7) : path;
-    const isImageUri = path.startsWith("image://");
-    const isTempFile = (path.startsWith("/") || path.startsWith("file://")) && filePath.startsWith("/tmp/");
-
-    if (!isImageUri && !isTempFile)
-    return;
-
-    ImageCacheService.getNotificationIcon(path, appName, summary, function (cachedPath, success) {
-    if (success && cachedPath) {
-    updateImagePath(notificationId, "file://" + cachedPath);
+    // Capture runs in the producer's signal stack. Only decoding and retained
+    // publication are asynchronous. Own the attempt by its target records, not
+    // their displayed revision, which may still refer to a previous snapshot.
+    function queueImage(entry, targets = [entry.data]) {
+    let revision = "";
+    function newRevision() {
+    if (!revision)
+    revision = entry.data.id + ":" + ++entry.imageRevision;
+    return revision;
   }
+    for (const data of targets) {
+    if (!data.imageRevision)
+    data.imageRevision = newRevision();
+  }
+    if (!entry.data.originalImage)
+    return;
+    const request = {
+    targets: targets,
+    interest: null,
+    pending: true
+  };
+    entry.imageRequests.push(request);
+    const interest = ImageCacheService.getNotificationIcon(entry.data.originalImage, "", "", function (path, success, detail) {
+    request.interest = null;
+    request.pending = false;
+    if (popupState[entry.data.id] !== entry)
+    return;
+    for (const data of request.targets) {
+    if (!ownsImage(entry, data))
+    continue;
+    if (data.imageState === "ready") {
+    // A capture attempt is not a new snapshot. The retention owner
+    // hashes the captured content independently of source and cache URLs.
+    if (!success || detail.contentSha256 === data.imageContentSha256)
+    continue;
+    data.imageRevision = newRevision();
+  }
+    data.cachedImage = success ? PortalPaths.pathToUri(path).uri : "";
+    data.imageState = success ? "ready" : "unavailable";
+    data.imageContentSha256 = success ? detail.contentSha256 : "";
+    data.imageFormat = success ? String(detail.originalFormat || "") : "";
+    data.imageRepresentation = success ? String(detail.url || "") : "";
+    data.imageErrorCode = success ? "" : String(detail.code || "image-unavailable");
+    data.imageErrorReason = success ? "" : String(detail.reason || "The notification image is unavailable");
+  }
+    releaseUnusedImages(entry);
+    publishEntry(entry, true);
   });
+    if (request.pending)
+    request.interest = interest;
   }
 
-    function updateImagePath(notificationId, path) {
-    updateModel(popupModel, notificationId, "cachedImage", path);
-    updateModel(historyModel, notificationId, "cachedImage", path);
-    saveHistory();
+    function ownsImage(entry, data) {
+    return (entry.popupWanted && entry.data === data) || (entry.historyWanted && entry.historyData === data);
+  }
+
+    function releaseUnusedImages(entry) {
+    entry.imageRequests = entry.imageRequests.filter(request => {
+    if (request.pending && request.targets.some(data => ownsImage(entry, data)))
+    return true;
+    request.interest?.cancel();
+    return false;
+  });
   }
 
     function updateModel(model, notificationId, prop, value) {
@@ -580,9 +689,9 @@ Singleton {
   }
 
     // History management
-    function trySaveToHistory(data, notification) {
+    function shouldSaveToHistory(data, notification) {
     if (notification.transient)
-    return;
+    return false;
     const s = Settings.data.notifications?.saveToHistory;
     if (s) {
     let ok = true;
@@ -592,61 +701,122 @@ Singleton {
     ok = s.normal !== false;
     else if (data.urgency === 2)
     ok = s.critical !== false;
-    if (ok)
-    addToHistory(data);
+    return ok;
   } else {
-    addToHistory(data);
+    return true;
   }
   }
 
-    function addToHistory(data) {
+    function addToHistory(entry) {
     // Defer list insertion to prevent re-entrant QML incubation crash.
     // See addPopup for full explanation.
     Qt.callLater(() => {
-    historyModel.insert(0, data);
+    if (popupState[entry.data.id] !== entry || !entry.historyWanted)
+    return;
+    historyModel.insert(0, entry.historyData);
 
     while (historyModel.count > maxHistory) {
     const old = historyModel.get(historyModel.count - 1);
-    // Only delete cached images that are in our cache directory
-    const cachedPath = old.cachedImage ? old.cachedImage.replace(/^file:\/\//, "") : "";
-    if (cachedPath && cachedPath.startsWith(ImageCacheService.notificationsDir)) {
-    Quickshell.execDetached(["rm", "-f", cachedPath]);
-  }
-    historyModel.remove(historyModel.count - 1);
+    removeFromHistory(old.id);
   }
     saveHistory();
   });
   }
 
-    // Persistence - History
-    FileView {
-    id: historyFileView
-    path: historyFile
-    printErrors: false
-    onLoaded: loadHistory()
-    onLoadFailed: error => {
-    if (error === 2)
-    writeAdapter();
+    function historyRetryDelay(failures) {
+    return Math.min(30000, 250 * Math.pow(2, failures - 1));
   }
 
-    JsonAdapter {
-    id: adapter
-    property var notifications: []
+    // Loading atomically admits cold holders before presenting their paths.
+    // The first attempt gates D-Bus admission; later retries do not.
+    function openHistory() {
+    if (historyLoaded || historyOpening || historyOpenRetry.running)
+    return;
+    historyOpening = true;
+    ImageCacheService.openNotificationHistory(historyFile, (ok, rows) => {
+    if (ok) {
+    // Live rows created during an outage stay first. A clear also covers
+    // rows that were not readable when the user cleared the model.
+    if (!historyClearedBeforeLoad)
+    loadHistory(rows);
+    historyClearedBeforeLoad = false;
+    historyLoaded = true;
+    if (historyRevision !== historySavedRevision)
+    scheduleHistorySave();
+    else
+    syncOriginalHolders();
+  } else {
+    if (!historyOpenFailures)
+    Logger.e("Notifications", "Could not load notification history; will retry");
+    historyOpenFailures = Math.min(8, historyOpenFailures + 1);
+    historyOpenRetry.interval = historyRetryDelay(historyOpenFailures);
+    historyOpenRetry.restart();
   }
+    historyOpening = false;
+    historyStartupComplete = true;
+    updateNotificationServer();
+  });
+  }
+
+    Timer {
+    id: historyOpenRetry
+    onTriggered: root.openHistory()
+  }
+
+    function syncOriginalHolders(rows, callback) {
+    const paths = new Set();
+    for (const entry of Object.values(popupState)) {
+    if (entry.popupWanted && entry.data.cachedImage)
+    paths.add(entry.data.cachedImage);
+    if (entry.historyWanted && entry.historyData.cachedImage)
+    paths.add(entry.historyData.cachedImage);
+  }
+    for (let i = 0; i < historyModel.count; i++) {
+    const path = historyModel.get(i).cachedImage;
+    if (path)
+    paths.add(path);
+  }
+    ImageCacheService.updateNotificationHolders(Array.from(paths).sort(), rows, callback);
   }
 
     Timer {
     id: saveTimer
-    interval: 200
-    onTriggered: performSaveHistory()
+    onTriggered: root.performSaveHistory()
   }
 
     function saveHistory() {
+    ++historyRevision;
+    if (historyLoaded && !historySaving && !historySaveFailures)
+    scheduleHistorySave();
+  }
+
+    function scheduleHistorySave() {
+    saveTimer.interval = historySaveFailures ? historyRetryDelay(historySaveFailures) : 200;
     saveTimer.restart();
   }
 
     function performSaveHistory() {
-    try {
+    if (!historyLoaded || historySaving || historyRevision === historySavedRevision)
+    return;
+    historySaving = true;
+    const revision = historyRevision;
+    const rows = historySnapshotForSave();
+    syncOriginalHolders(() => rows, ok => {
+    historySaving = false;
+    if (ok) {
+    historySavedRevision = revision;
+    historySaveFailures = 0;
+  } else {
+    if (!historySaveFailures)
+    Logger.e("Notifications", "Could not save notification history; will retry");
+    historySaveFailures = Math.min(8, historySaveFailures + 1);
+  }
+    if (historyRevision !== historySavedRevision)
+    scheduleHistorySave();
+  });
+  }
+
+    function historySnapshotForSave() {
     const items = [];
     for (var i = 0; i < historyModel.count; i++) {
     const n = historyModel.get(i);
@@ -654,24 +824,22 @@ Singleton {
     copy.timestamp = n.timestamp.getTime();
     items.push(copy);
   }
-    adapter.notifications = items;
-    historyFileView.writeAdapter();
-  } catch (e) {
-    Logger.e("Notifications", "Save history failed:", e);
-  }
+    return items;
   }
 
-    function loadHistory() {
+    function loadHistory(rows) {
     try {
-    historyModel.clear();
-    for (const item of adapter.notifications || []) {
+    const merging = historyRevision !== historySavedRevision;
+    for (const item of rows || []) {
+    if (merging && historyModel.count >= maxHistory)
+    break;
     const time = new Date(item.timestamp);
 
-    // Use the cached image if it exists and starts with file://, otherwise use originalImage
-    let cachedImage = item.cachedImage || "";
-    if (!cachedImage || (!cachedImage.startsWith("file://") && !cachedImage.startsWith("/"))) {
-    cachedImage = item.originalImage || "";
-  }
+    // A cold reader never reacquires a producer-owned original. Legacy records
+    // without retained bytes are explicit unavailable images, not false success.
+    const cachedImage = String(item.cachedImage || "");
+    const retained = cachedImage && (cachedImage.startsWith("file://") || cachedImage.startsWith("/")) && (item.imageState === "ready" || cachedImage !== item.originalImage);
+    const requested = !!item.originalImage && (item.imageState !== undefined || /^(\/|file:|https?:|data:|image:\/\/)/.test(item.originalImage));
 
     historyModel.append({
     "id": item.id || "",
@@ -683,7 +851,14 @@ Singleton {
     "urgency": item.urgency < 0 || item.urgency > 2 ? 1 : item.urgency,
     "timestamp": time,
     "originalImage": item.originalImage || "",
-    "cachedImage": cachedImage,
+    "cachedImage": retained ? cachedImage : "",
+    "iconName": item.iconName || (!requested ? "" : (!/^(\/|file:|https?:|data:|image:\/\/)/.test(item.originalImage) ? item.originalImage : "")),
+    "imageState": retained ? "ready" : requested ? "unavailable" : "idle",
+    "imageRevision": item.imageRevision || "",
+    "imageFormat": item.imageFormat || "",
+    "imageRepresentation": item.imageRepresentation || "",
+    "imageErrorCode": retained || !requested ? "" : item.imageErrorCode || "retained-image-missing",
+    "imageErrorReason": retained || !requested ? "" : item.imageErrorReason || "The notification image was not retained",
     "actionsJson": item.actionsJson || "[]",
     "originalId": item.originalId || 0
   });
@@ -871,17 +1046,6 @@ Singleton {
     return sanitizeMarkdown(text);
   }
 
-    function generateImageId(notification, image) {
-    if (image && image.startsWith("image://")) {
-    if (image.startsWith("image://qsimage/")) {
-    const key = (notification.appName || "") + "|" + (notification.summary || "");
-    return Checksum.sha256(key);
-  }
-    return Checksum.sha256(image);
-  }
-    return "";
-  }
-
     function pauseTimeout(id) {
     const notifData = popupState[id];
     if (notifData && !notifData.metadata.paused) {
@@ -901,10 +1065,17 @@ Singleton {
     // Dismiss a popup notification (e.g. clicked close, swipe, or overflow).
     // Removes from popup list but KEEPS data for history.
     function dismissPopup(id) {
+    const entry = popupState[id];
+    if (entry)
+    entry.popupWanted = false;
+    if (entry)
+    releaseUnusedImages(entry);
     const index = findPopupIndex(id);
     if (index >= 0) {
     popupModel.remove(index);
   }
+    syncOriginalHolders();
+    cleanupNotification(id);
   }
 
     function dismissOldestPopup() {
@@ -916,12 +1087,9 @@ Singleton {
 
     function dismissAllPopups() {
     for (const id in popupState) {
-    popupState[id].notification?.dismiss();
-    popupState[id].watcher?.destroy();
+    dismissPopup(id);
   }
     popupModel.clear();
-    popupState = {};
-    quickshellIdToInternalId = {};
   }
 
     function invokeActionAndSuppressClose(id, actionId) {
@@ -1006,7 +1174,12 @@ Singleton {
     return false;
   }
 
-    // Clear actions after use
+    // Clear actions at the owner as well as in the published rows.
+    if (notifData) {
+    notifData.data.actionsJson = "[]";
+    notifData.historyData.actionsJson = "[]";
+    notifData.cachedActions = [];
+  }
     updateModel(popupModel, id, "actionsJson", "[]");
     updateModel(historyModel, id, "actionsJson", "[]");
     saveHistory();
@@ -1056,45 +1229,50 @@ Singleton {
   }
 
     function removeFromHistory(notificationId) {
+    const entry = popupState[notificationId];
+    const pending = !!entry?.historyWanted;
+    if (entry)
+    entry.historyWanted = false;
+    if (entry)
+    releaseUnusedImages(entry);
     for (var i = 0; i < historyModel.count; i++) {
     const notif = historyModel.get(i);
     if (notif.id === notificationId) {
-    // Only delete cached images that are in our cache directory
-    const cachedPath = notif.cachedImage ? notif.cachedImage.replace(/^file:\/\//, "") : "";
-    if (cachedPath && cachedPath.startsWith(ImageCacheService.notificationsDir)) {
-    Quickshell.execDetached(["rm", "-f", cachedPath]);
-  }
     historyModel.remove(i);
+    syncOriginalHolders();
     saveHistory();
+    cleanupNotification(notificationId);
     return true;
   }
   }
-    return false;
+    syncOriginalHolders();
+    cleanupNotification(notificationId);
+    if (pending)
+    saveHistory();
+    return pending;
   }
 
     function removeOldestHistory() {
     if (historyModel.count > 0) {
     const oldest = historyModel.get(historyModel.count - 1);
-    // Only delete cached images that are in our cache directory
-    const cachedPath = oldest.cachedImage ? oldest.cachedImage.replace(/^file:\/\//, "") : "";
-    if (cachedPath && cachedPath.startsWith(ImageCacheService.notificationsDir)) {
-    Quickshell.execDetached(["rm", "-f", cachedPath]);
-  }
-    historyModel.remove(historyModel.count - 1);
-    saveHistory();
-    return true;
+    return removeFromHistory(oldest.id);
   }
     return false;
   }
 
     function clearHistory() {
-    try {
-    Quickshell.execDetached(["sh", "-c", `rm -rf "${ImageCacheService.notificationsDir}"*`]);
-  } catch (e) {
-    Logger.e("Notifications", "Failed to clear cache directory:", e);
+    // Membership changes are inputs to the retention owner. The previous
+    // committed history still holds its bytes until this clear is saved.
+    if (!historyLoaded)
+    historyClearedBeforeLoad = true;
+    for (const id in popupState) {
+    popupState[id].historyWanted = false;
+    releaseUnusedImages(popupState[id]);
+    cleanupNotification(id);
   }
 
     historyModel.clear();
+    syncOriginalHolders();
     saveHistory();
   }
 

@@ -30,7 +30,6 @@ NBox {
     if (root.needsSpectrum) {
       SpectrumService.registerComponent("mediacard");
     }
-    updateCachedWallpaper();
   }
 
   Component.onDestruction: {
@@ -38,41 +37,17 @@ NBox {
   }
 
   property string wallpaper: WallpaperService.getWallpaper(screen.name)
-  property string cachedWallpaper: ""
+  // The shared image owner produces the small cropped background
+  // representation; the card never decodes or retries the original itself.
+  readonly property string backgroundWallpaper: Settings.data.wallpaper.enabled && !Settings.data.wallpaper.useSolidColor && !WallpaperService.isSolidColorPath(wallpaper) ? wallpaper : ""
 
   // External state management
   Connections {
     target: WallpaperService
     function onWallpaperChanged(screenName, path) {
-      if (screenName === screen.name) {
+      if (screenName === screen.name)
         wallpaper = path;
-        updateCachedWallpaper();
-      }
     }
-  }
-
-  function updateCachedWallpaper() {
-    // Handle solid color mode - no wallpaper to cache
-    if (Settings.data.wallpaper.useSolidColor || WallpaperService.isSolidColorPath(wallpaper)) {
-      cachedWallpaper = "";
-      return;
-    }
-
-    if (!wallpaper) {
-      cachedWallpaper = "";
-      return;
-    }
-
-    if (!ImageCacheService.initialized) {
-      cachedWallpaper = wallpaper;
-      return;
-    }
-
-    ImageCacheService.getThumbnail(wallpaper, function (cachedPath, success) {
-      if (!root)
-        return;
-      cachedWallpaper = success ? cachedPath : wallpaper;
-    });
   }
 
   // Wrapper - rounded rect clipper
@@ -101,12 +76,15 @@ NBox {
     }
 
     // Background image that covers everything
-    Image {
+    NImage {
       id: bgImage
       readonly property int dim: Math.round(256 * Style.uiScaleRatio)
       anchors.fill: parent
-      visible: source.toString() !== ""
-      source: MediaService.trackArtUrl || (Settings.data.wallpaper.enabled && !Settings.data.wallpaper.useSolidColor ? root.cachedWallpaper : "")
+      visible: source !== ""
+      source: MediaService.trackArtUrl || root.backgroundWallpaper
+      // Wallpapers use the owner's cached cropped representation, as the
+      // former thumbnail path did; track art is tried natively first.
+      normalize: !MediaService.trackArtUrl
       sourceSize: Qt.size(dim, dim)
       fillMode: Image.PreserveAspectCrop
       layer.enabled: true

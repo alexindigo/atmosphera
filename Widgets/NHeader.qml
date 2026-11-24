@@ -23,12 +23,23 @@ ColumnLayout {
   }
 
   NText {
-    text: root.description
+    text: root.enableDescriptionRichText ? "" : root.description
     pointSize: Style.fontSizeM
     color: AtmoColor.mOnSurfaceVariant
     wrapMode: Text.WordWrap
     Layout.fillWidth: true
-    visible: root.description !== ""
-    richTextEnabled: root.enableDescriptionRichText
+    visible: !root.enableDescriptionRichText && root.description !== ""
+  }
+
+  // Rich descriptions (for example from a plugin) present their images
+  // through the shared owner.
+  NImageText {
+    text: root.enableDescriptionRichText ? root.description : ""
+    format: "rich"
+    pointSize: Style.fontSizeM
+    color: AtmoColor.mOnSurfaceVariant
+    wrapMode: Text.WordWrap
+    Layout.fillWidth: true
+    visible: root.enableDescriptionRichText && root.description !== ""
   }
 }

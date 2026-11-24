@@ -52,7 +52,7 @@ Rectangle {
   border.color: AtmoColor.mPrimary
   Accessible.role: Accessible.ListItem
   Accessible.name: name
-  Accessible.description: directory ? I18n.tr("widgets.file-picker.folder") : FileTypes.formatSize(bytes)
+  Accessible.description: (directory ? I18n.tr("widgets.file-picker.folder") : FileTypes.formatSize(bytes)) + (thumbnailState.unavailable ? "; " + I18n.tr("widgets.file-picker.preview-unavailable") + ": " + thumbnailState.errorReason : "")
   Accessible.focusable: true
   Accessible.selectable: selectable
   Accessible.selected: selected

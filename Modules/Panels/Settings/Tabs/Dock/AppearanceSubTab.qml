@@ -393,14 +393,12 @@ ColumnLayout {
         border.color: AtmoColor.mOutline
         border.width: Style.borderS
 
-        Image {
+        NImageIcon {
           anchors.centerIn: parent
           width: parent.width * 0.62
           height: width
           source: HostService.osLogo
-          fillMode: Image.PreserveAspectFit
           smooth: true
-          asynchronous: true
           layer.enabled: visible
           layer.effect: ShaderEffect {
             property color targetColor: root.launcherPreviewColor

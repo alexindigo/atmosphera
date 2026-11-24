@@ -91,6 +91,8 @@ Scope {
           Text {
             Layout.fillWidth: true
             text: lockAuth.showFailure ? lockAuth.errorMessage : lockAuth.infoMessage
+            // Messages come from the authentication stack: show them as text.
+            textFormat: Text.PlainText
             color: lockAuth.showFailure ? "#ffaaaa" : "white"
             font.pixelSize: 14
             horizontalAlignment: Text.AlignHCenter

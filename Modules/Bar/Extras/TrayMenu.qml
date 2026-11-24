@@ -537,12 +537,11 @@ PopupWindow {
                 wrapMode: Text.WordWrap
               }
 
-              Image {
+              NImageIcon {
                 Layout.preferredWidth: Style.marginL
                 Layout.preferredHeight: Style.marginL
                 source: modelData?.icon ?? ""
                 visible: (modelData?.icon ?? "") !== ""
-                fillMode: Image.PreserveAspectFit
               }
 
               AtmoIcon {

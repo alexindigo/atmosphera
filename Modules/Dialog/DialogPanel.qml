@@ -145,12 +145,16 @@ PanelWindow {
         anchors.margins: Style.marginL
         spacing: Style.marginM
 
-        Text {
+        // The question comes from an outside caller (IPC): light markup,
+        // images through the shared owner.
+        NImageText {
           text: root.dialogQuestion
+          format: "styled"
           wrapMode: Text.WordWrap
           Layout.fillWidth: true
           color: AtmoColor.mOnSurface
-          font.pointSize: Style.fontSizeL
+          pointSize: Style.fontSizeL
+          applyUiScale: false
         }
 
         FocusScope {
@@ -186,6 +190,7 @@ PanelWindow {
                 spacing: 2
 
                 Text {
+                  textFormat: Text.PlainText
                   text: modelData.label || ""
                   color: AtmoColor.mOnSurfaceVariant
                   font.pointSize: Style.fontSizeXS

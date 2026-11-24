@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
-import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.UI
@@ -185,12 +184,10 @@ SmartPanel {
           width: root.cellSize
           height: root.cellSize
 
-          IconImage {
+          NImageIcon {
             id: trayIcon
             readonly property var presentationIdentity: modelData
             anchors.fill: parent
-            asynchronous: true
-            backer.fillMode: Image.PreserveAspectFit
             source: {
               let icon = modelData?.icon || "";
               if (!icon)

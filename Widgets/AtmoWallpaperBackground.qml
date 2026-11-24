@@ -11,7 +11,10 @@ Item {
   property var wallpaperProvider: WallpaperService
   readonly property real displayScale: screen?.devicePixelRatio ?? 1
   onDisplayScaleChanged: Qt.callLater(requestCachedWallpaper)
-  property string resolvedWallpaperPath: ""
+  readonly property string resolvedWallpaperPath: bgImage.outputUrl
+  readonly property string imageState: bgImage.imageState
+  readonly property string errorReason: bgImage.errorReason
+  property string requestedWallpaperPath: ""
   property color fallbackColor: AtmoColor.mSurface
 
   Component.onCompleted: {
@@ -63,36 +66,22 @@ Item {
     }
 
     if (Settings.data.wallpaper.useSolidColor) {
-      resolvedWallpaperPath = "";
+      requestedWallpaperPath = "";
       return;
     }
 
     var originalPath = wallpaperProvider.getWallpaper(screen.name) || "";
     if (originalPath === "") {
-      resolvedWallpaperPath = "";
+      requestedWallpaperPath = "";
       return;
     }
 
     if (wallpaperProvider.isSolidColorPath(originalPath)) {
-      resolvedWallpaperPath = "";
+      requestedWallpaperPath = "";
       return;
     }
 
-    if (!ImageCacheService || !ImageCacheService.initialized) {
-      resolvedWallpaperPath = originalPath;
-      return;
-    }
-
-    var compositorScale = displayScale;
-    var targetWidth = Math.round(width * compositorScale);
-    var targetHeight = Math.round(height * compositorScale);
-    if (targetWidth <= 0 || targetHeight <= 0) {
-      return;
-    }
-
-    ImageCacheService.getLarge(originalPath, targetWidth, targetHeight, function (cachedPath, success) {
-      resolvedWallpaperPath = success ? cachedPath : originalPath;
-    });
+    requestedWallpaperPath = originalPath;
   }
 
   Rectangle {
@@ -100,14 +89,19 @@ Item {
     color: Settings.data.wallpaper.useSolidColor ? Settings.data.wallpaper.solidColor : root.fallbackColor
   }
 
-  Image {
+  NImageBackdrop {
     id: bgImage
     visible: bgImage.source !== "" && Settings.data.wallpaper.enabled && !Settings.data.wallpaper.useSolidColor && (!PowerProfileService.atmospheraPerformanceMode || !Settings.data.atmospheraPerformance.disableWallpaper)
     anchors.fill: parent
     fillMode: Image.PreserveAspectCrop
-    source: resolvedWallpaperPath
-    cache: false
+    source: root.requestedWallpaperPath
+    normalize: !Settings.data.wallpaper.useOriginalImages
+    sourceSize: Qt.size(Math.max(1, Math.round(width * root.displayScale)), Math.max(1, Math.round(height * root.displayScale)))
+    active: visible
     smooth: true
-    mipmap: false
+    onImageStateChanged: {
+      if (imageState === "unavailable")
+        Logger.w("Wallpaper", errorReason);
+    }
   }
 }

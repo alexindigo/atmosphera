@@ -84,51 +84,54 @@ NBox {
           anchors.fill: parent
           active: !!row.isImage
           sourceComponent: NImageRounded {
-          id: rowImage
-          // A failed image falls back to the icon, declaratively: a kept delegate
-          // follows its row instead of a state written once at creation.
-          visible: !row.displayString && status !== Image.Error
-          radius: Style.radiusXS
-          borderColor: AtmoColor.mOnSurface
-          borderWidth: Style.borderM
-          imageFillMode: Image.PreserveAspectCrop
+            id: rowImage
+            // A requested image stays in place when it fails: a broken-image icon
+            // with the labelled warning, never the ordinary icon posing as success.
+            // A row without art (empty image URL) shows its ordinary icon instead.
+            // Declarative, so a kept delegate follows its row.
+            visible: !row.displayString && status !== Image.Null
+            fallbackIcon: "photo-off"
+            radius: Style.radiusXS
+            borderColor: AtmoColor.mOnSurface
+            borderWidth: Style.borderM
+            imageFillMode: Image.PreserveAspectCrop
 
-          // A provider-wide imageRevision, or itemImageChanged(identity) for
-          // this row's item alone, makes its image a binding input again.
-          readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
-          property int itemRevision: 0
-          Connections {
-            target: row.provider || null
-            ignoreUnknownSignals: true
-            function onItemImageChanged(identity) {
-              const own = LauncherSelection.identity(row);
-              if (own && String(own.value) === String(identity))
-                rowImage.itemRevision++;
+            // A provider-wide imageRevision, or itemImageChanged(identity) for
+            // this row's item alone, makes its image a binding input again.
+            readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
+            property int itemRevision: 0
+            Connections {
+              target: row.provider || null
+              ignoreUnknownSignals: true
+              function onItemImageChanged(identity) {
+                const own = LauncherSelection.identity(row);
+                if (own && String(own.value) === String(identity))
+                  rowImage.itemRevision++;
+              }
             }
-          }
 
-          imagePath: imageUrlForRevision(_rev, itemRevision)
+            imagePath: imageUrlForRevision(_rev, itemRevision)
 
-          function imageUrlForRevision(revision, itemRevision) {
-            var provider = row.provider;
-            if (provider && provider.getImageUrl) {
-              return provider.getImageUrl(row);
+            function imageUrlForRevision(revision, itemRevision) {
+              var provider = row.provider;
+              if (provider && provider.getImageUrl) {
+                return provider.getImageUrl(row);
+              }
+              return "";
             }
-            return "";
-          }
 
-          Rectangle {
-            anchors.fill: parent
-            visible: parent.status === Image.Loading
-            color: AtmoColor.mSurfaceVariant
+            Rectangle {
+              anchors.fill: parent
+              visible: parent.status === Image.Loading
+              color: AtmoColor.mSurfaceVariant
 
-            BusyIndicator {
-              anchors.centerIn: parent
-              running: true
-              width: Style.baseWidgetSize * 0.5
-              height: width
+              BusyIndicator {
+                anchors.centerIn: parent
+                running: true
+                width: Style.baseWidgetSize * 0.5
+                height: width
+              }
             }
-          }
           }
         }
 
@@ -147,7 +150,7 @@ NBox {
           anchors.fill: parent
           anchors.margins: Style.marginXS
 
-          visible: (!row.isImage && !row.displayString && !row.colorHex) || (!!row.isImage && badge.imageStatus === Image.Error)
+          visible: (!row.isImage && !row.displayString && !row.colorHex) || (!!row.isImage && badge.imageStatus === Image.Null)
           active: visible
 
           sourceComponent: Component {
@@ -190,28 +193,28 @@ NBox {
 
         // Image type indicator overlay
         Loader {
-          active: !!row.isImage && badge.imageShown
+          active: !!row.isImage && badge.imageShown && badge.imageStatus !== Image.Error
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
           sourceComponent: Rectangle {
-          width: formatLabel.width + Style.marginXS
-          height: formatLabel.height + Style.marginXXS
-          color: AtmoColor.mSurfaceVariant
-          radius: Style.radiusXXS
-          NText {
-            id: formatLabel
-            anchors.centerIn: parent
-            text: {
-              if (!row.isImage)
-                return "";
-              const desc = row.description || "";
-              const parts = desc.split(" \u2022 ");
-              return parts[0] || "IMG";
+            width: formatLabel.width + Style.marginXS
+            height: formatLabel.height + Style.marginXXS
+            color: AtmoColor.mSurfaceVariant
+            radius: Style.radiusXXS
+            NText {
+              id: formatLabel
+              anchors.centerIn: parent
+              text: {
+                if (!row.isImage)
+                  return "";
+                const desc = row.description || "";
+                const parts = desc.split(" \u2022 ");
+                return parts[0] || "IMG";
+              }
+              pointSize: Style.fontSizeXXS
+              color: AtmoColor.mOnSurfaceVariant
             }
-            pointSize: Style.fontSizeXXS
-            color: AtmoColor.mOnSurfaceVariant
-          }
           }
         }
 
@@ -222,16 +225,16 @@ NBox {
           anchors.right: parent.right
           anchors.margins: 2
           sourceComponent: Rectangle {
-          width: height
-          height: Style.fontSizeM + Style.marginXS
-          color: AtmoColor.mSurfaceVariant
-          radius: Style.radiusXXS
-          AtmoIcon {
-            anchors.centerIn: parent
-            icon: row.badgeIcon || ""
-            pointSize: Style.fontSizeS
-            color: AtmoColor.mOnSurfaceVariant
-          }
+            width: height
+            height: Style.fontSizeM + Style.marginXS
+            color: AtmoColor.mSurfaceVariant
+            radius: Style.radiusXXS
+            AtmoIcon {
+              anchors.centerIn: parent
+              icon: row.badgeIcon || ""
+              pointSize: Style.fontSizeS
+              color: AtmoColor.mOnSurfaceVariant
+            }
           }
         }
       }
