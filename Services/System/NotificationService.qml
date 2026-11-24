@@ -400,7 +400,7 @@ Singleton {
     }));
   }
 
-  function publishEntry(entry) {
+  function publishEntry(entry, imageOnly = false) {
     for (const target of [
            {
              model: popupModel,
@@ -414,7 +414,19 @@ Singleton {
       const model = target.model;
       for (var i = 0; i < model.count; ++i) {
         if (model.get(i).id === entry.data.id) {
-          model.set(i, target.data);
+          const data = target.data;
+          // A worker completion owns image roles, not a newer popup timer or
+          // action update. ListModel.set leaves unspecified roles unchanged.
+          model.set(i, imageOnly ? {
+                                     cachedImage: data.cachedImage,
+                                     imageState: data.imageState,
+                                     imageRevision: data.imageRevision,
+                                     imageContentSha256: data.imageContentSha256,
+                                     imageFormat: data.imageFormat,
+                                     imageRepresentation: data.imageRepresentation,
+                                     imageErrorCode: data.imageErrorCode,
+                                     imageErrorReason: data.imageErrorReason
+                                   } : data);
           break;
         }
       }
@@ -642,7 +654,7 @@ Singleton {
     data.imageErrorReason = success ? "" : String(detail.reason || "The notification image is unavailable");
   }
     releaseUnusedImages(entry);
-    publishEntry(entry);
+    publishEntry(entry, true);
   });
     if (request.pending)
     request.interest = interest;
@@ -1112,7 +1124,12 @@ Singleton {
     return false;
   }
 
-    // Clear actions after use
+    // Clear actions at the owner as well as in the published rows.
+    if (notifData) {
+    notifData.data.actionsJson = "[]";
+    notifData.historyData.actionsJson = "[]";
+    notifData.cachedActions = [];
+  }
     updateModel(popupModel, id, "actionsJson", "[]");
     updateModel(historyModel, id, "actionsJson", "[]");
     saveHistory();
