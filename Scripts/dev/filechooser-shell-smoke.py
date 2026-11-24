@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Cold-load the actual shell tree in the checked private guest session."""
 import argparse
-from contextlib import ExitStack
 import json
 import os
 from pathlib import Path
@@ -25,8 +24,7 @@ def main():
     # Match the existing full-UI allocator profile under the same MemoryHigh;
     # retained/huge pages must not turn the quit timer into reclaim thrashing.
     enter(resource_subject=True)
-    with ExitStack() as cleanup:
-        run = Run(args.source, args.label, runtime_cleanup=cleanup)
+    with Run.session(args.source, args.label, collect=False) as run:
         return cold_load(run, args.lint)
 
 
@@ -39,11 +37,7 @@ def cold_load(run, lint):
     owner.write_text(inject_probe(owner.read_text(),
         'Timer { interval: 8000; running: true; onTriggered: Qt.quit() }'))
     process = run.launch(["timeout", "--kill-after=5", "90", "qs", "-p", entry], "cold-load.log")
-    try:
-        process.wait()
-    finally:
-        for log in run.logs:
-            log.close()
+    process.wait()
     log = (run.output / "cold-load.log").read_text()
     errors = [line for line in log.splitlines() if re.search(
         r"TypeError|ReferenceError|Cannot assign|Failed to load configuration|is not installed", line)]

@@ -1,0 +1,64 @@
+name: Image decoding
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  consumers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        qt-webp: [present, absent]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: shell
+      - name: Read paired plugin revision
+        run: echo "PLUGINS_REF=$(cat shell/.github/image-decoding-plugins-ref)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: alexindigo/atmosphera-plugins
+          ref: ${{ env.PLUGINS_REF }}
+          persist-credentials: false
+          path: plugins
+      - name: Build image tools and pinned headless compositor
+        run: |
+          docker build --memory=2g --memory-swap=2g --cpu-period=100000 --cpu-quota=200000 \
+            --tag atmosphera-image-tools shell/.devcontainer
+          docker build --memory=2g --memory-swap=2g --cpu-period=100000 --cpu-quota=200000 \
+            --build-arg BASE_IMAGE=atmosphera-image-tools \
+            --build-arg QT_WEBP=${{ matrix.qt-webp }} \
+            --tag atmosphera-image-ci --file shell/.devcontainer/image-decoding.Dockerfile shell/.devcontainer
+      - name: Real headless Wayland consumers, boundary controls and workers
+        run: |
+          sudo install -d -o 1000 -g 1000 "$RUNNER_TEMP/image-decoding"
+          docker run --rm --hostname image-decoding-ci-${{ matrix.qt-webp }} \
+            --memory=2g --memory-swap=2g --pids-limit=2048 --cpus=2 --network=none \
+            --env TMPDIR=/home/dev/image-decoding/tmp \
+            --volume "$RUNNER_TEMP/image-decoding:/home/dev/image-decoding:rw" \
+            --volume "$PWD/shell:/home/dev/image-decoding/shell:ro" \
+            --volume "$PWD/plugins:/home/dev/image-decoding/plugins:ro" \
+            atmosphera-image-ci python3 -B /home/dev/image-decoding/shell/Scripts/dev/image-decoding-ci.py \
+            --workspace /home/dev/image-decoding --engine docker \
+            --qt-webp ${{ matrix.qt-webp }} --label ${{ matrix.qt-webp }}
+      - name: Make generated evidence readable by the runner
+        if: always()
+        run: |
+          if [ -d "$RUNNER_TEMP/image-decoding/artifacts" ]; then
+            sudo chown -R "$(id -u):$(id -g)" "$RUNNER_TEMP/image-decoding/artifacts"
+          fi
+      - name: Retain exact consumer, frame and compositor evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-decoding-${{ matrix.qt-webp }}
+          path: ${{ runner.temp }}/image-decoding/artifacts
+          if-no-files-found: error

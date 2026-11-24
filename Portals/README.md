@@ -156,7 +156,9 @@ response, method error and service loss settle the operation only once.
 `PortalFilePicker` keeps its existing properties, `open()` / `openFilePicker()`,
 `close()`, `accepted(paths)` and `cancelled()` interface.
 
-Quick look supports WebP through required `qt6-imageformats`. Optional
+Quick look shows images Qt decodes natively (`qt6-imageformats` adds WebP and
+more) and falls back to ImageMagick/FFmpeg conversion for everything else,
+keeping animation. Optional
 `qt6-webengine` supplies QtPdf for PDF preview; without it PDFs show file info.
 
 ## Served interface: Inhibit

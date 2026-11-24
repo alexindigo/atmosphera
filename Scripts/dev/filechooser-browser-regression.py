@@ -25,7 +25,11 @@ def main():
     parser.add_argument("--browser", choices=("firefox", "chromium"), required=True)
     profile_argument(parser)
     args = parser.parse_args()
-    run = Run(args.source, args.label)
+    with Run.session(args.source, args.label) as run:
+        return suite(args, run)
+
+
+def suite(args, run):
     events = []
     payload = args.browser + " portal download consumer\n"
     upload = args.browser + " actual upload " + args.label + "\n"
@@ -269,7 +273,6 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
         browser.terminate(); browser.wait(timeout=15)
         run.finish()
     except Exception as error:
-        run.failure = repr(error)
         if isinstance(error, subprocess.CalledProcessError):
             (run.output / "failed-command.log").write_text(str(error.stdout) + str(error.stderr))
         raise
@@ -279,7 +282,6 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
         (run.output / "browser-task-samples.json").write_text(json.dumps(resource_samples, indent=2))
         server.shutdown(); server.server_close(); thread.join(timeout=5)
         (run.output / "browser-events.json").write_text(json.dumps(events, indent=2))
-        run.close()
     return 0
 
 

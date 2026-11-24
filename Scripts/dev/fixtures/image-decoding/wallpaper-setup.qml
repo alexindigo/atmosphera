@@ -11,7 +11,6 @@ ShellRoot {
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
   property int tick: 0
   property int phase: 0
-  property int phaseStarted: 0
   property int pending: 0
   property var snapshots: []
   property var selections: []
@@ -38,6 +37,11 @@ ShellRoot {
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
+      if (!root.pending && root.afterCapture) {
+        var next = root.afterCapture;
+        root.afterCapture = null;
+        Qt.callLater(next);
+      }
     })) {
       ++pending;
     } else {
@@ -96,55 +100,59 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      ++root.tick;
-      if (root.afterCapture) {
-        if (root.pending)
-          return;
-        var next = root.afterCapture;
-        root.afterCapture = null;
-        next();
-        ++root.phase;
-        root.phaseStarted = root.tick;
+      if (root.pending || root.afterCapture)
         return;
-      }
-      var elapsed = root.tick - root.phaseStarted;
-      if (root.phase === 0 && elapsed >= 20) {
+      ++root.tick;
+      var setup = loader.item;
+      if (!setup && root.phase < 7)
+        return;
+      var image = setup ? root.find(setup, item => "imagePath" in item && item.width > 300) : null;
+      var presented = setup && setup.previewState === "ready" && setup.previewCachedPath !== "" && image && image.status === Image.Ready;
+      var failed = setup && setup.previewState === "unavailable" && image && image.status === Image.Ready;
+      if (root.phase === 0 && presented) {
+        root.phase = 1;
         root.snapshot("before", function () {
           loader.item.selectedWallpaper = root.inputs + "/Corrupt.webp";
         });
-      } else if (root.phase === 1 && elapsed >= 20) {
+      } else if (root.phase === 1 && failed) {
+        root.phase = 2;
         root.snapshot("failed", function () {
           loader.item.selectedWallpaper = root.inputs + "/frame-2.png";
           loader.item.selectedWallpaper = root.inputs + "/frame-1.png";
         });
-      } else if (root.phase === 2 && elapsed >= 20) {
+      } else if (root.phase === 2 && presented && setup.previewCachedPath !== root.snapshots[0].cached) {
+        root.phase = 3;
         root.snapshot("latest", function () {
           if (loader.item.selectWallpaper)
             loader.item.selectWallpaper(root.inputs + "/Corrupt.webp");
         });
-      } else if (root.phase === 3 && elapsed >= 20) {
+      } else if (root.phase === 3 && failed) {
+        root.phase = 4;
         root.snapshot("invalid-intent", function () {
           if (loader.item.selectWallpaper)
             loader.item.selectWallpaper(root.inputs + "/Still.webp");
         });
-      } else if (root.phase === 4 && elapsed >= 20) {
+      } else if (root.phase === 4 && presented && setup.previewCachedPath !== root.snapshots[2].cached && root.selections.length > 0) {
+        root.phase = 5;
         root.snapshot("valid-intent", function () {
           loader.item.filteredWallpapers = [root.inputs + "/Motion.webp", root.inputs + "/Corrupt.webp"];
         });
-      } else if (root.phase === 5 && elapsed >= 15 && elapsed <= 25) {
+      } else if (root.phase === 5) {
         var thumb = root.find(loader.item, item => "imagePath" in item && item.imagePath.endsWith("Motion.webp") && item.width < 300);
-        if (thumb) {
+        if (thumb && thumb.status === Image.Ready) {
           root.galleryFrames.push({
                                     status: thumb.status,
                                     result: thumb.imageResult
                                   });
-          root.grab(thumb, "gallery-" + root.tick);
+          root.grab(thumb, "gallery-" + (114 + root.galleryFrames.length));
+          if (root.galleryFrames.length === 11)
+            root.phase = 6;
         }
-      } else if (root.phase === 5 && elapsed >= 30 && !root.pending) {
+      } else if (root.phase === 6) {
         loader.active = false;
-        ++root.phase;
-        root.phaseStarted = root.tick;
-      } else if (root.phase === 6 && elapsed >= 15 && !loader.item) {
+        root.phase = 7;
+        root.tick = 0;
+      } else if (root.phase === 7 && root.tick >= 15 && !ImageCacheService.sourceInterestCount && !ImageCacheService.sourceRequestCount && !ImageCacheService.sourceWorkerRunning) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          snapshots: root.snapshots,
                                                          selections: root.selections,
@@ -161,6 +169,14 @@ ShellRoot {
   Timer {
     interval: 22000
     running: true
-    onTriggered: Qt.exit(3)
+    onTriggered: {
+      console.log("IMAGE_TIMEOUT|" + JSON.stringify({
+                                                      phase: root.phase,
+                                                      tick: root.tick,
+                                                      pending: root.pending,
+                                                      state: loader.item ? loader.item.previewState : "destroyed"
+                                                    }));
+      Qt.exit(3);
+    }
   }
 }
