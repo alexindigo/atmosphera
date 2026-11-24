@@ -118,7 +118,7 @@ def main():
     parser.add_argument('--engine', choices=('podman', 'docker'), required=True)
     parser.add_argument('--qt-webp', choices=('present', 'absent'), required=True)
     parser.add_argument('--label', required=True)
-    parser.add_argument('--cohort', choices=('all', 'lifetime', 'profile', 'owner', 'chooser', 'boundary', 'worker'), default='all')
+    parser.add_argument('--cohort', choices=('all', 'ownership', 'lifetime', 'profile', 'owner', 'chooser', 'boundary', 'worker'), default='all')
     args = parser.parse_args()
     workspace = args.workspace
     marker = Path('/run/.containerenv' if args.engine == 'podman' else '/.dockerenv')
@@ -190,6 +190,8 @@ def run(args, workspace, admitted):
     profile_path = admitted.path
     source, plugins = workspace / 'shell', workspace / 'plugins'
     commands = {
+        'ownership': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-ci-selftest.py'),
+                      '--guest-profile', str(profile_path), '--output', str(admitted.journal_base / ('ownership-' + args.label))],
         'lifetime': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-ci-lifetime-selftest.py'),
                      '--guest-profile', str(profile_path), '--output', str(admitted.journal_base / ('lifetime-' + args.label))],
         'profile': [sys.executable, '-B', str(source / 'Scripts/dev/guest-profile-modes-selftest.py'),
@@ -210,7 +212,7 @@ def run(args, workspace, admitted):
                           '--work-root', str(admitted.work_base / (case + '-' + args.label)),
                           '--output', str(admitted.journal_base / (case + '-' + args.label))]
     rows = []
-    for name in ('lifetime', 'profile', 'owner', 'chooser', 'boundary', 'worker') if args.cohort == 'all' else (args.cohort,):
+    for name in ('ownership', 'lifetime', 'profile', 'owner', 'chooser', 'boundary', 'worker') if args.cohort == 'all' else (args.cohort,):
         result = run_cohort(commands[name], admitted.journal_base / (name + '-' + args.label + '.log'),
                             seconds=COHORT_SECONDS, grace=TERMINATE_GRACE)
         rows.append(dict(cohort=name, argv=commands[name], **result))

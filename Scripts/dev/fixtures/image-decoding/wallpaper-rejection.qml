@@ -9,14 +9,14 @@ ShellRoot {
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
   readonly property string monitor: Quickshell.screens[0].name
-  property int tick: 0
+  property int phase: 0
   property int pending: 0
   property bool started: false
   property var events: []
   property var notices: []
   property var completions: []
   property var callbacks: []
-  function grab(name) {
+  function grab(name, afterCapture) {
     ++pending;
     backdrop.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
@@ -24,6 +24,8 @@ ShellRoot {
                                                    saved: result.saveToFile(root.output + "/" + name + ".png")
                                                  }));
       --root.pending;
+      if (afterCapture)
+        afterCapture();
     });
   }
   FloatingWindow {
@@ -34,6 +36,7 @@ ShellRoot {
     AtmoWallpaperBackground {
       id: backdrop
       screen: Quickshell.screens[0]
+      fallbackColor: "#000000"
     }
   }
   Connections {
@@ -82,20 +85,26 @@ ShellRoot {
         WallpaperService.currentWallpapers = seed;
         backdrop.requestCachedWallpaper();
       }
-      ++root.tick;
-      if (root.tick === 10) {
-        root.grab("before");
-        WallpaperService.changeWallpaper(root.inputs + "/Motion.webp", root.monitor, "light", (success, names, detail) => root.callbacks.push({
-                                                                                                                                                success: success,
-                                                                                                                                                detail: detail
-                                                                                                                                              }));
-      } else if (root.tick === 30) {
+      if (root.phase === 0 && backdrop.imageState === "ready" && !root.pending) {
+        root.phase = 1;
+        root.grab("before", function () {
+          WallpaperService.changeWallpaper(root.inputs + "/Motion.webp", root.monitor, "light", (success, names, detail) => root.callbacks.push({
+                                                                                                                                                  success: success,
+                                                                                                                                                  detail: detail
+                                                                                                                                                }));
+          root.phase = 2;
+        });
+      } else if (root.phase === 2 && root.callbacks.length === 1) {
+        root.phase = 3;
         WallpaperService.toggleFavorite(root.inputs + "/Still.webp", "light", root.monitor);
-      } else if (root.tick === 50) {
-        root.grab("after");
-      } else if (root.tick === 60) {
-        backdrop.requestedWallpaperPath = "";
-      } else if (root.tick >= 70 && !root.pending) {
+      } else if (root.phase === 3 && root.notices.length === 2 && !root.pending) {
+        root.phase = 4;
+        root.grab("after", function () {
+          backdrop.requestedWallpaperPath = "";
+          root.phase = 5;
+        });
+      } else if (root.phase === 5 && !root.pending && ImageCacheService.sourceInterestCount === 0 && ImageCacheService.sourceRequestCount === 0 && !ImageCacheService.sourceWorkerRunning) {
+        root.phase = 6;
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          path: WallpaperService.getWallpaper(root.monitor),
                                                          events: root.events,
@@ -114,6 +123,17 @@ ShellRoot {
   Timer {
     interval: 20000
     running: true
-    onTriggered: Qt.exit(3)
+    onTriggered: {
+      console.log("IMAGE_TIMEOUT|" + JSON.stringify({
+                                                      phase: root.phase,
+                                                      callbacks: root.callbacks.length,
+                                                      notices: root.notices.length,
+                                                      imageState: backdrop.imageState,
+                                                      interests: ImageCacheService.sourceInterestCount,
+                                                      requests: ImageCacheService.sourceRequestCount,
+                                                      worker: ImageCacheService.sourceWorkerRunning
+                                                    }));
+      Qt.exit(3);
+    }
   }
 }

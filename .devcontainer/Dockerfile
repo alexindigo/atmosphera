@@ -7,7 +7,8 @@ ARG DEV_UID=1000
 ARG DEV_GID=1000
 
 RUN pacman -Sy --noconfirm --needed \
-    quickshell qt6-declarative qt6-tools qt6-multimedia \
+    quickshell qt6-declarative qt6-tools qt6-multimedia qt6-imageformats \
+    imagemagick ffmpeg libwebp libheif \
     cmake ninja pkgconf libpipewire \
     python python-pip \
     git shellcheck shfmt \

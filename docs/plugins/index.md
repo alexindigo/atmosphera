@@ -149,6 +149,20 @@ Lock screen components receive additional properties from the shell:
 - **`qs.Services.System`** — `AudioService`, `BatteryService`, `NetworkService`
 - **`qs.Widgets`** — `NButton`, `NIcon`, `NText`, `NTextInput`, etc.
 
+### Images
+
+Show images that can come from outside your plugin (user files, downloads,
+covers, avatars, thumbnails) with the shell's image widgets instead of
+`Image`/`AnimatedImage`/`IconImage`: `NImage`, `NImageRounded`, `NImageIcon`,
+and `NImageText` for rich text or Markdown that may contain images. They
+render natively when Qt can (WebP needs `qt6-imageformats`) and otherwise
+show a validated PNG or animated GIF decoded by ImageMagick/FFmpeg; a failure
+is labelled, not silent. Do not run your own `magick`/`ffmpeg` conversions:
+ask `ImageCacheService` for thumbnails. `Text` that shows data sets
+`textFormat: Text.PlainText`. Fixed images shipped with the plugin may use
+`Image` directly. The shell's image boundary check lists every other use.
+Details: [image sources](../development/image-sources.md).
+
 ### Declaring actions
 
 An optional manifest `actions` list describes user-facing operations exposed by

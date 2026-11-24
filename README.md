@@ -118,7 +118,10 @@ sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-i
 yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.1' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
 ```
 
-`qt6-imageformats` supplies WebP file-chooser previews. Optionally install
+Images Qt can decode natively (with `qt6-imageformats`: WebP, TIFF and
+more) render directly; anything else, or WebP when the Qt plugin is missing,
+is decoded by ImageMagick (with `libwebp`/`libheif` for WebP, HEIC and AVIF)
+or FFmpeg into a validated PNG or animated GIF. Optionally install
 `qt6-webengine` for PDF preview in the file chooser; without it, PDFs show file
 information. Nix includes `qt6.qtimageformats`; enable `pdfPreviewSupport` in
 `nix/package.nix` to include `qt6.qtwebengine` for PDF previews.
