@@ -286,10 +286,10 @@
    "path": "Services/Plugins/Service.qml",
    "rule": "dynamic-qml",
    "node": "createQmlObject",
-   "nodeSha256": "e8fc1cfb7a44542edcaeaf7c77e1abeb1b7ea3c2ba5fbd6aecf8d07514ae55a5",
-   "line": 1757,
+   "nodeSha256": "77a4d129fbfce24090ac320c34a2ed48eb0c0755b8f280a59e5e1c888ec57fd8",
+   "line": 1906,
    "constructor": "\"PluginAPI_\" + pluginId",
-   "expressionSha256": "134f6bfed35b5f724e39d7b7226498c00b47449a82fe533e3cc246f6d12e6eba",
+   "expressionSha256": "c7948cc198e7bae577249b0ade9eaea93328b1b2ca025a50c1dbd247d4e77fe3",
    "disposition": "reviewed-construction",
    "reason": "generated QML with interpolated values: injection class parked by the user, tracked in todos/command-injection-findings.md"
   },
