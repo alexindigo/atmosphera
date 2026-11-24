@@ -1,5 +1,67 @@
 # Changelog
 
+## [0.11.0] - 2026-11-24
+
+### 2026-11-24
+
+**Upgrade notes**
+
+Update to ConfigQml 0.5.5 or newer before upgrading Atmosphera. Avoid ConfigQml
+0.5.4 because it has a lock-screen regression. On niri, update to NiriQml 0.3.0
+or newer to keep workspace, window, and session controls working. Plugins that
+adopt the new settings, image, or niri interfaces must set
+`minAtmospheraVersion` to `0.11.0`; update the shell before installing those
+plugin updates.
+
+- Raise the ConfigQml minimum to 0.5.5 (`f8120ada8`)
+- Switch niri integration to NiriQml 0.3 (`e0e15c407`)
+- Host the new plugin settings and image interfaces (`dd18ef2d0`)
+
+**Fix**
+
+Plugin settings and widget settings now keep edits tied to the selected
+instance. Unsaved edits stay available if a save fails, and saving one instance
+does not overwrite inherited values or settings for another. On niri, workspace,
+window, focus, and overview displays stay in sync, and moves report whether
+niri accepted them. Thumbnail color sampling uses the same preview shown in the
+shell.
+
+- Keep plugin and widget settings tied to the selected instance (#33, `dd18ef2d0`)
+- Keep niri state in sync and report move results (#36, `e0e15c407`)
+- Sample colors from the decoded thumbnail (#37, `cae66502b`)
+
+### 2026-11-23
+
+**Fix**
+
+WebP, HEIF/AVIF, and other supported images preview more reliably in wallpapers,
+the file chooser, and plugins. An alternate decoder can open supported images
+when Qt cannot, and animated previews keep moving. Invalid images show a failure
+instead of a blank preview, and wallpaper changes report success only after the
+new image appears.
+
+- Make image previews and wallpaper selection more reliable (#34, `4de4684ea`)
+- Include the image decoders in normal installs (#35, `4965a39a9`)
+
+### 2026-11-21
+
+**Fix**
+
+Idle actions resume after real input rather than because the idle watcher was
+disabled or rebuilt. This prevents an idle settings change from running a
+resume command as if you had touched the keyboard or mouse.
+
+- Resume idle actions only on input (#32, `8f2470567`)
+
+### 2026-11-20
+
+**Feature**
+
+Each idle action can be turned on or off separately. You can temporarily
+disable dimming, locking, or another stage without removing its settings.
+
+- Add a toggle for each idle stage (#30, `702b62f22`)
+
 ## [0.10.0] - 2026-11-18
 
 ### 2026-11-18

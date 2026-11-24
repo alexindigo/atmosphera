@@ -2,10 +2,11 @@
 
 ## Release identity
 
-The 0.10.0 settings stack requires configqml >=0.5.1 for native
-`saveSelected`. AUR recipes share that floor through `packaging/aur/metadata.sh`;
-Nix and the devcontainer pin the same release. Regenerate both Qt tooling
-metadata variants when updating the dependency.
+Atmosphera 0.11.0 requires ConfigQml 0.5.5 or newer for plugin settings.
+Avoid ConfigQml 0.5.4, which has a lock-screen regression. AUR recipes share
+the minimum through `packaging/aur/metadata.sh`; Nix and the devcontainer pin
+the same release. Regenerate both Qt tooling metadata variants when updating
+the dependency.
 
 The tracked root `VERSION` is the authoritative release/API version. Update it
 alongside the release's changelog commit, **before** tagging, and tag that commit

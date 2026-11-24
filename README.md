@@ -115,7 +115,7 @@ sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-i
   wlr-randr cliphist wlsunset udisks2
 
 # QML helper libs from the AUR (or build from source)
-yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.1' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
+yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.5' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
 ```
 
 Images Qt can decode natively (with `qt6-imageformats`: WebP, TIFF and
