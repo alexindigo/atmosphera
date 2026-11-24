@@ -258,8 +258,8 @@ Singleton {
   // Public API: Get Notification Icon (64x64)
   // -------------------------------------------------
   function getNotificationIcon(imageUri, appName, summary, callback) {
-    // Capture before returning to the producer. Labels never identify bytes;
-    // retention, validation, cancellation and Qt acceptance share one owner.
+    // Detach producer-owned pixels and local bytes before returning. Remote
+    // locators are acquired asynchronously by the same retention owner.
     const captured = captureSource(imageUri);
     if (!captured.ok) {
       callback("", false, captured);

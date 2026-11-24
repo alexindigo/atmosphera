@@ -53,7 +53,9 @@ Scope {
         ok: true,
         source: source,
         originalSource: source,
-        captureKind: "bytes"
+        // A locator is input for asynchronous acquisition, not retained
+        // producer-owned bytes. In particular, HTTP(S) may fail after return.
+        captureKind: source.startsWith("data:") ? "bytes" : "locator"
       };
     if (!ready)
       return failure("provider-not-ready", "The image capture surface is not ready");
@@ -73,9 +75,13 @@ Scope {
       return failure("provider-failed", "The image provider could not supply this image");
     }
     const context = canvas.getContext("2d");
+    const size = provider.sourceSize;
+    const scale = Math.min(canvas.width / size.width, canvas.height / size.height);
+    const width = size.width * scale;
+    const height = size.height * scale;
     context.reset();
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(provider, 0, 0, canvas.width, canvas.height);
+    context.drawImage(provider, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
     const captured = canvas.isImageLoaded(captureUrl) ? canvas.toDataURL("image/png") : "";
     canvas.unloadImage(captureUrl);
     provider.source = "";
