@@ -456,6 +456,10 @@ Variants {
                 item.pluginApi = api;
             }
 
+            PluginInvocationPlacement {
+              api: _isPlugin ? item?.pluginApi ?? null : null
+            }
+
             function _loadWidget() {
               var widgetId = modelData.id;
               var comp = root.registeredWidgets[widgetId];

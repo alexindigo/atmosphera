@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Control
 import qs.Services.Locker
 
 // Hot corners: one command per corner, run with bash -c after a dwell. The
@@ -39,7 +40,8 @@ Singleton {
     commands: root.commands
     runSink: function (zone, command) {
       Logger.i("HotCorners", "run", zone.corner, zone.screenName);
-      Quickshell.execDetached(["bash", "-c", command]);
+      if (!IPCService.invokePanelCommand(command, zone.screenName))
+        Quickshell.execDetached(["bash", "-c", command]);
       root.fired(zone.corner, zone.screenName);
     }
   }

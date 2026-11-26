@@ -134,6 +134,10 @@ Item {
   property var _pluginInitial: null
   property string _pluginUrl: ""
 
+  PluginInvocationPlacement {
+    api: root._isPlugin ? loader.item?.pluginApi ?? null : null
+  }
+
   // Core widget URLs: file names match widget IDs exactly
   readonly property string _barWidgetsDir: Quickshell.shellDir + "/Modules/Bar/Widgets/"
 
