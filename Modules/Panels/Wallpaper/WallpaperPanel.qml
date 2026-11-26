@@ -1155,10 +1155,8 @@ SmartPanel {
             property string wallpaperPath: model.path ?? ""
             property bool isDirectory: model.isDirectory ?? false
             property bool isSelected: !isDirectory && (wallpaperPath === currentWallpaper)
-            property bool isFavorited: {
-              WallpaperService.favoritesRevision;
-              return !isDirectory && WallpaperService.isFavorite(wallpaperPath);
-            }
+            readonly property var favorite: isDirectory ? null : WallpaperService.favoriteEntryForPath(wallpaperPath)
+            property bool isFavorited: favorite !== null
             property string filename: model.name ?? wallpaperPath.split('/').pop()
 
             spacing: Style.marginXS
@@ -1341,13 +1339,7 @@ SmartPanel {
                 visible: wallpaperItem.isFavorited && paletteRow.colors.length > 0
 
                 property int diameter: 25 * Style.uiScaleRatio
-                property int _favRevision: 0
-                property var favData: {
-                  _favRevision;
-                  WallpaperService.favoritesRevision;
-                  Settings.data.wallpaper.linkLightAndDarkWallpapers;
-                  return WallpaperService.getFavoriteForDisplay(wallpaperItem.wallpaperPath);
-                }
+                readonly property var favData: wallpaperItem.favorite
                 property var colors: favData && favData.paletteColors ? favData.paletteColors : []
                 property bool isDark: {
                   if (!favData) {
@@ -1360,14 +1352,6 @@ SmartPanel {
                     return false;
                   }
                   return favData.darkMode === true;
-                }
-
-                Connections {
-                  target: WallpaperService
-                  function onFavoriteDataUpdated(path) {
-                    if (path === wallpaperItem.wallpaperPath)
-                      paletteRow._favRevision++;
-                  }
                 }
 
                 Row {
