@@ -86,12 +86,10 @@ def parse_args() -> argparse.Namespace:
         description='Extract color palettes from wallpapers and generate themes',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  python3 template-processor.py wallpaper.png                                      # tonal-spot (default), both themes
-  python3 template-processor.py wallpaper.png --scheme-type content --dark         # content scheme, dark only
-  python3 template-processor.py wallpaper.jpg --dark -o theme.json                 # output to file
-  python3 template-processor.py wallpaper.png -r template.txt:output.txt           # render template
-  python3 template-processor.py wallpaper.png -c config.toml --mode dark           # render config, dark only
+Examples (from the source checkout, with ImvQml and Quickshell installed):
+  python3 Scripts/dev/theming_sample_cli.py wallpaper.png | \\
+    python3 Scripts/python/src/theming/template-processor.py wallpaper.png --sample-stdin --dark -o theme.json
+  python3 Scripts/python/src/theming/template-processor.py theme.json -r template.txt:output.txt
         """
     )
 

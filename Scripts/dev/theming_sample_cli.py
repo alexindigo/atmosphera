@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 
 
@@ -10,7 +11,7 @@ def sample_rgba(source, path):
     env = dict(os.environ, ATMO_SAMPLE_SOURCE=path.resolve().as_uri(), QT_QPA_PLATFORM='offscreen')
     # Quickshell restricts relative imports to the selected configuration
     # directory. Stage just the fixture and its production byte encoder.
-    with tempfile.TemporaryDirectory(prefix='atmo-sample-', dir=env['TMPDIR']) as work:
+    with tempfile.TemporaryDirectory(prefix='atmo-sample-', dir=env.get('TMPDIR')) as work:
         entry = Path(work) / 'shell.qml'
         shutil.copyfile(source / 'Scripts/dev/fixtures/theming-sample-cli.qml', entry)
         shutil.copyfile(source / 'Helpers/ImageBytes.js', Path(work) / 'ImageBytes.js')
@@ -23,3 +24,12 @@ def sample_rgba(source, path):
     if len(rows) != 1:
         raise ValueError('Expected one imvqml RGBA sample')
     return rows[0] + '\n'
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('wallpaper', type=Path)
+    args = parser.parse_args()
+    sys.stdout.write(sample_rgba(Path(__file__).resolve().parents[2], args.wallpaper))

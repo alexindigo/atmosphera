@@ -87,9 +87,20 @@ def open_file(path):
 
 def read_bytes(path, limit=None):
     with open_file(path) as (stream, current):
-        data = stream.read() if limit is None else stream.read(limit + 1)
-        if limit is not None and len(data) > limit:
-            raise ValueError('Retained file exceeds the source-byte limit')
+        if limit is None:
+            data = stream.read()
+        else:
+            chunks = []
+            remaining = limit + 1
+            while remaining > 0:
+                chunk = stream.read(min(remaining, 256 * 1024))
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                remaining -= len(chunk)
+            if remaining == 0:
+                raise ValueError('Retained file exceeds the source-byte limit')
+            data = b''.join(chunks)
         if not current():
             raise OSError(errno.ESTALE, 'Image cache entry changed during capture')
         return data
