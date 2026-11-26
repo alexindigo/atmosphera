@@ -13,6 +13,7 @@ Singleton {
   property bool initialized: false
   property int _sequence: 0
   property var _notificationDownloads: ({})
+  property var _cacheClears: new Map()
   readonly property string baseDir: Settings.cacheDir + "images/"
   readonly property string notificationsDir: baseDir + "notifications/"
   readonly property string videoFramesDir: baseDir + "video-wallpapers/"
@@ -34,10 +35,29 @@ Singleton {
   }
 
   function clearRepresentations(callback) {
-    ImvCache.clear();
-    callback?.({
-                 ok: true
-               });
+    const ticket = ImvCache.clear();
+    if (ticket > 0)
+      _cacheClears.set(ticket, callback);
+    else
+      callback?.({
+                   ok: false,
+                   reason: "Cache clear could not be queued"
+                 });
+  }
+
+  Connections {
+    target: ImvCache
+    function onCleared(ticket, result) {
+      const callback = root._cacheClears.get(ticket);
+      root._cacheClears.delete(ticket);
+      callback?.({
+                   ok: result.stage === "complete" && result.failed === 0,
+                   reason: result.detail || result.code,
+                   removed: result.removed,
+                   kept: result.kept,
+                   failed: result.failed
+                 });
+    }
   }
 
   function openNotificationHistory(history, callback) {

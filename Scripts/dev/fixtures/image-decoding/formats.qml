@@ -1,12 +1,13 @@
 import QtQuick
 import Quickshell
+import "Helpers/ImageTypes.js" as ImageTypes
 import qs.Widgets
 
 ShellRoot {
   id: root
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
-  readonly property var names: ["frame-0.png", "Still.webp", "Still.jpg", "Still.svg", "Still.tiff", "Still.avif", "Still.heic", "Still.jxl", "Misleading.png", "Oriented.jpg", "Motion.webp", "Motion.gif", "Corrupt.webp", "Still.webp"]
+  readonly property var names: JSON.parse(Quickshell.env("IMAGE_FORMAT_NAMES"))
   property int index: 0
   property int tick: 0
   property bool pending: false
@@ -55,7 +56,8 @@ ShellRoot {
           root.tick = 0;
           if (root.index + 1 === root.names.length) {
             console.log("IMAGE_BASELINE|" + JSON.stringify({
-                                                             images: root.rows
+                                                             images: root.rows,
+                                                             extensions: ImageTypes.extensions.split(" ")
                                                            }));
             Qt.quit();
             return;

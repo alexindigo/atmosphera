@@ -204,6 +204,11 @@ class Run:
             (legacy / 'thumbnails/mpvpaper').mkdir(parents=True)
             (legacy / 'large/legacy-key.png').write_bytes((inputs / 'frame-0.png').read_bytes())
             (legacy / 'thumbnails/mpvpaper/plugin.bmp').write_bytes(b'plugin-owned')
+        if name == 'cache-clear':
+            # A previous process produced this valid entry and exited, so it
+            # cannot be kept alive by the current owner's memory cache.
+            cold = self.work / 'cache-clear-seed-profile/cache/images/decoded'
+            shutil.copytree(cold, profile / 'cache/images/decoded')
         if self.args.case in ('icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher'):
             # Real XdgIcon loose-icon lookup in the private XDG data root.
             themes = profile / 'data/icons'
@@ -1421,11 +1426,25 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('genuine-qt-webp-package-condition', installed == (self.args.qt_webp == 'present'), dict(installed=installed))
         inputs = self.work / 'fixtures'
         manifest = create_fixtures(inputs, self.commands)
+        video = inputs / 'Large.mp4'
+        encoded = self.command(['ffmpeg', '-nostdin', '-v', 'error', '-loop', '1', '-i', inputs / 'frame-0.png',
+                                '-t', '1', '-c:v', 'libx264', '-threads', '1', '-pix_fmt', 'yuv420p', video])
+        if encoded.returncode:
+            raise AssertionError('Could not encode large chooser fixture: ' + encoded.stderr)
+        # A valid sparse MP4: append a skippable free atom, not arbitrary
+        # bytes in the sample table. Cross the previous 256 MiB input cap.
+        padding = 257 * 1024 * 1024
+        with video.open('r+b') as stream:
+            offset = stream.seek(0, 2)
+            stream.write(padding.to_bytes(4, 'big') + b'free')
+            stream.truncate(offset + padding)
+        self.check('chooser-fixture-exceeds-old-video-limit', video.stat().st_size > 256 * 1024 * 1024,
+                   video.stat().st_size)
         (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
         result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/chooser.qml', inputs, 'chooser')
         self.check('chooser-off-is-idle', len(result['inactive']) == 3 and all(
             row['state'] == 'idle' and not row['source'] and not row['active'] for row in result['inactive']), result['inactive'])
-        self.check('chooser-exercises-every-view-and-recovers', len(result['tiles']) == 21 and
+        self.check('chooser-exercises-every-view-and-recovers', len(result['tiles']) == 24 and
                    len(result['failures']) == 6, dict(tiles=len(result['tiles']), failures=len(result['failures'])))
         for row in result['tiles']:
             width, height, pixels = read_png(output / (row['id'] + '.png'))
@@ -1625,6 +1644,10 @@ os.execv('/usr/bin/find', ['find', *args])
             raise ValueError('Cache clear red requires an explicit immutable baseline source')
         name = self.args.case
         before = {path.name: path.read_bytes() for path in inputs.iterdir() if path.is_file() and os.access(path, os.R_OK)}
+        seed = None
+        if not red:
+            seed, _ = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/cache-clear-seed.qml',
+                              inputs, 'cache-clear-seed')
         result, output = self.qt(self.args.baseline_source if red else self.args.source,
                                  self.args.source / 'Scripts/dev/fixtures/image-decoding' /
                                  ('cache-clear-red.qml.in' if red else 'cache-clear.qml'), inputs, name)
@@ -1640,9 +1663,11 @@ os.execv('/usr/bin/find', ['find', *args])
                        and probes['releasedAfterButton'] and not result['ownerClear'], dict(probes=probes, toasts=toasts), red=True)
             return result
         self.check('actual-clear-button-clicked', result['clicked'], result['clicked'])
-        self.check('clear-toast-reports-completed-owner-clear', len(toasts) == 1 and toasts[0]['type'] == 'notice'
+        self.check('clear-toast-reports-completed-owner-clear', not result['earlyToast'] and len(toasts) == 1 and toasts[0]['type'] == 'notice'
                    and toasts[0]['phase'] == 2, toasts)
-        self.check('clear-evicts-populated-decoded-cache', len(probes['populated']) >= 2 and not probes['cleared'], probes)
+        regenerated_entries = set(probes['regenerated']) - set(probes['cleared'])
+        self.check('clear-evicts-populated-decoded-cache', seed['entry'] in regenerated_entries
+                   and seed['entry'] in probes['populated'] and seed['entry'] not in probes['cleared'], probes)
         self.check('clear-keeps-live-pixels', max(abs(a - b) for a, b in zip(pixel(output / 'held-after-clear.png'), COLORS[0])) <= 8,
                    pixel(output / 'held-after-clear.png'))
         legacy = cache / 'images/wallpapers'
@@ -1656,7 +1681,7 @@ os.execv('/usr/bin/find', ['find', *args])
                    sorted(before))
         regenerated = pixel(output / 'regenerated.png')
         self.check('cleared-cache-regenerates', bool(probes['regenerated'])
-                   and set(probes['regenerated']) < set(probes['populated']) and regenerated == list(COLORS[1]),
+                   and set(probes['regenerated']) <= set(probes['populated']) and regenerated == list(COLORS[1]),
                    dict(cache=probes['regenerated'], center=regenerated))
         return result
 
@@ -1956,20 +1981,66 @@ os.execv('/usr/bin/find', ['find', *args])
         return changed
 
     def formats(self):
+        import gzip
+
+        listed = self.command(['bash', '-c', 'source "$1"; printf "%s\n" "${imvqml_readers[@]}"',
+                               'image-decoding-dependencies', self.args.source / '.devcontainer/imvqml-arch-runtime.sh'])
+        readers = listed.stdout.splitlines()
+        if listed.returncode or not readers:
+            raise AssertionError('Cannot read the ImvQml runtime reader dependency list')
+        packages = {name: self.command(['pacman', '-Q', name]).returncode == 0 for name in readers}
+        self.check('format-reader-package-condition', all(installed == (self.args.qt_webp == 'present')
+                                                          for installed in packages.values()), packages)
         inputs = self.work / 'fixtures'
         manifest = create_fixtures(inputs, self.commands)
+        stills = ('frame-0.png', 'Still.webp', 'Still.jpg', 'Still.svg', 'Still.tiff', 'Still.avif', 'Still.heic',
+                  'Still.jxl', 'Misleading.png', 'Oriented.jpg')
+        restored = {'Still.bmp': COLORS[0]}
+        for extension, original in (('jpeg', 'jpg'), ('tif', 'tiff'), ('heif', 'heic')):
+            shutil.copyfile(inputs / ('Still.' + original), inputs / ('Still.' + extension))
+            restored['Still.' + extension] = COLORS[0]
+        (inputs / 'Still.svgz').write_bytes(gzip.compress((inputs / 'Still.svg').read_bytes(), mtime=0))
+        restored['Still.svgz'] = COLORS[0]
+        # Author simple gray pixels for the grayscale/HDR formats so the
+        # oracle does not depend on an encoder's color-space conversion.
+        for ext in ('ico', 'ppm', 'pnm', 'pgm', 'pbm', 'jp2', 'j2k', 'exr', 'hdr', 'dds', 'tga', 'icns'):
+            path = inputs / ('Still.' + ext)
+            if ext == 'icns':
+                image = colored_png((255, 255, 255, 255), 128, 128)
+                size = (len(image) + 8).to_bytes(4, 'big')
+                path.write_bytes(b'icns' + (len(image) + 16).to_bytes(4, 'big') + b'ic07' + size + image)
+            else:
+                encoded = self.command(['magick', '-size', '96x64', 'xc:white',
+                                        '-type', 'TrueColor', str(path)])
+                if encoded.returncode:
+                    raise AssertionError(f'Could not encode independent {ext} fixture: {encoded.stderr}')
+                if ext == 'tga':
+                    # Qt's reader requires a TGA 2.0 footer; ImageMagick's
+                    # uncompressed raster is otherwise a valid TGA 1.0 file.
+                    with path.open('ab') as raster:
+                        raster.write(bytes(8) + b'TRUEVISION-XFILE.\0')
+            restored[path.name] = (255, 255, 255, 255)
+        manifest['files'].update({name: dict(sha256=hashlib.sha256((inputs / name).read_bytes()).hexdigest(),
+                                            size=(inputs / name).stat().st_size) for name in restored})
         (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
         result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/formats.qml',
-                                 inputs, 'formats')
+                                 inputs, 'formats', {'IMAGE_FORMAT_NAMES': json.dumps([
+                                     *stills, *restored, 'Motion.webp', 'Motion.gif', 'Corrupt.webp', 'Still.webp'])})
         rows = result['images']
+        tested_extensions = {Path(row['name']).suffix[1:] for row in rows if row['name'] != 'Corrupt.webp'}
+        self.check('formats-cover-every-recognized-extension', tested_extensions == set(result['extensions']),
+                   dict(tested=sorted(tested_extensions), recognized=sorted(result['extensions'])))
         observed = {name: [row for row in rows if row['name'] == name] for name in {row['name'] for row in rows}}
         def center(row):
             return pixel(output / (row['capture'] + '.png'))
-        for name in ('frame-0.png', 'Still.webp', 'Still.jpg', 'Still.svg', 'Still.tiff', 'Still.avif', 'Still.heic',
-                     'Still.jxl', 'Misleading.png', 'Oriented.jpg'):
+        for name, expected in {**dict.fromkeys(stills, COLORS[0]), **restored}.items():
             samples = observed[name]
+            if self.args.qt_webp == 'absent' and Path(name).suffix in ('.dds', '.icns', '.tga'):
+                self.check('optional-reader-absent-' + name,
+                           all(row['state'] == 'unavailable' and row['code'] == 'unsupported-format' for row in samples), samples)
+                continue
             self.check('format-' + name, all(row['state'] == 'ready' and
-                       max(abs(a - b) for a, b in zip(center(row), COLORS[0])) <= 12 for row in samples), samples)
+                       max(abs(a - b) for a, b in zip(center(row), expected)) <= 12 for row in samples), samples)
         jpeg = observed['Oriented.jpg'][0]
         self.check('format-jpeg-orientation', jpeg['width'] == manifest['height'] and jpeg['height'] == manifest['width'], jpeg)
         for name in ('Motion.webp', 'Motion.gif'):

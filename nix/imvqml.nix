@@ -1,13 +1,16 @@
-{ lib, stdenv, fetchurl, cmake, ninja, pkg-config, qt6, vips, libwebp, mpv-unwrapped }:
+{ lib, stdenv, fetchurl, cmake, ninja, pkg-config, qt6, kdePackages, makeWrapper, vips, libwebp, mpv-unwrapped }:
+let
+  readers = [ qt6.qtimageformats kdePackages.kimageformats ];
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "qt6-imvqml";
-  version = "0.1.2";
+  version = "0.1.3";
   src = fetchurl {
     url = "https://codeload.github.com/alexindigo/imvqml/tar.gz/refs/tags/v${finalAttrs.version}";
-    sha256 = "bc489d880373ede34064bb8d54a4757d9963cb72d5d32a072056230d02ffe071";
+    sha256 = "caac59a0ac9d32868c872d7ff952a829bb3fd9631026ad3dc6b55a762fba809d";
   };
-  nativeBuildInputs = [ cmake ninja pkg-config qt6.wrapQtAppsHook ];
-  buildInputs = [ qt6.qtbase qt6.qtdeclarative vips libwebp mpv-unwrapped ];
+  nativeBuildInputs = [ cmake ninja pkg-config makeWrapper ];
+  buildInputs = [ qt6.qtbase qt6.qtdeclarative vips libwebp mpv-unwrapped ] ++ readers;
   cmakeFlags = [
     "-DBUILD_TESTING=OFF"
     "-DCMAKE_INSTALL_LIBDIR=lib"
@@ -19,6 +22,10 @@ stdenv.mkDerivation (finalAttrs: {
       mkdir -p "$(dirname "$out/${qt6.qtbase.qtQmlPrefix}")"
       mv "$out/lib/qt6/qml" "$out/${qt6.qtbase.qtQmlPrefix}"
     fi
+  '';
+  postFixup = ''
+    wrapProgram "$out/libexec/imvqml-decoder" \
+      --prefix QT_PLUGIN_PATH : '${lib.makeSearchPath qt6.qtbase.qtPluginPrefix readers}'
   '';
   meta.platforms = lib.platforms.linux;
 })

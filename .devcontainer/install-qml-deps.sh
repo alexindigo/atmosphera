@@ -51,5 +51,4 @@ install_module pipewirespectrum 0.1.0 9c1be44521c2386f7a2190e6ca07b9eec692c4ed76
 install_module niriqml 0.3.0 d843571a03ee278d96e24e6dac7ca03194ccd2b532fcdac1cc981e721a17d3f8
 install_module mangowcqml 0.1.0 1e92e9ec4e7b274b2c0a4e28ee377cc08c026f1c364d6e1a66b62576578dc7b8
 install_module mpvqml 0.3.0 ce15ef421edfb770befbe801529b2073d4f93ee5581122c6d0d1cd3ec03acfc9
-# Review snapshot until imvqml has a published release tag. Same pin as Nix.
-install_module imvqml 0.1.2 bc489d880373ede34064bb8d54a4757d9963cb72d5d32a072056230d02ffe071
+install_module imvqml 0.1.3 caac59a0ac9d32868c872d7ff952a829bb3fd9631026ad3dc6b55a762fba809d

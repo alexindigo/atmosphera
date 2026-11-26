@@ -32,7 +32,7 @@ def main():
             assert argv[0] == 'nix' and f'path:{source}#default' in argv and '--no-update-lock-file' in argv
             assert script.read_bytes() == b'fixture\n' and os.access(script, os.X_OK)
             assert os.readlink(source / 'Scripts/link') == 'nested/fixture'
-            return SimpleNamespace(returncode=0, stdout='{"inputs":["/nix/store/hash-qt6-imvqml-0.1.2"],"preFixup":"/nix/store/hash-qt6-imvqml-0.1.2/qml"}', stderr='')
+            return SimpleNamespace(returncode=0, stdout='{"inputs":["/nix/store/hash-qt6-imvqml-0.1.3"],"preFixup":"/nix/store/hash-qt6-imvqml-0.1.3/qml"}', stderr='')
 
         qualify(SimpleNamespace(args=SimpleNamespace(source=source), out=out, check=check, command=command))
         assert {entry.name for entry in out.iterdir()} == {'atmosphera.SRCINFO', 'atmosphera-git.SRCINFO', 'nix-eval.log'}

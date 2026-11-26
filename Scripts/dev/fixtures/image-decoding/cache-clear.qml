@@ -16,6 +16,8 @@ ShellRoot {
   property var probes: ({})
   property var toasts: []
   property string retained: ""
+  property bool earlyToast: false
+  readonly property string decoded: Settings.cacheDir + "images/decoded/"
 
   function findButton(item, label) {
     if (item.text === label && typeof item.clicked === "function")
@@ -78,12 +80,14 @@ ShellRoot {
                          type: type,
                          phase: root.phase
                        });
+      if (root.phase === 2 && !root.pending)
+        root.probe("cleared");
     }
   }
   Process {
     id: scan
     property string label
-    command: ["find", Settings.cacheDir + "images/decoded", "-type", "f", "-name", "*.imvqoi", "-printf", "%P\n"]
+    command: ["find", root.decoded, "-type", "f", "-name", "*.imvqoi", "-printf", "%P\n"]
     stdout: StdioCollector {
       id: inventory
     }
@@ -94,6 +98,35 @@ ShellRoot {
       }
       root.probes[label] = inventory.text.trim().split("\n").filter(path => path !== "").sort();
       root.pending = false;
+    }
+  }
+  // The owner must not acknowledge success while the cross-process lock
+  // prevents eviction. Hold a live Qt-compatible lock until the click returns.
+  Process {
+    id: lock
+    stdinEnabled: true
+    command: ["python3", "-c", "import os, pathlib, socket, sys\np = pathlib.Path(sys.argv[1])\nwith p.open('x') as f:\n f.write(f'{os.getpid()}\\npython3\\n{socket.gethostname()}\\n')\ntry:\n print('locked', flush=True)\n sys.stdin.readline()\nfinally:\n p.unlink()", root.decoded + ".imvqml.lock"]
+    stdout: SplitParser {
+      onRead: line => {
+        if (line !== "locked") {
+          Qt.exit(3);
+          return;
+        }
+        const button = root.findButton(settings.item, I18n.tr("panels.wallpaper.settings-clear-cache-button"));
+        if (!button) {
+          Qt.exit(3);
+          return;
+        }
+        root.phase = 2;
+        root.clicked = true;
+        button.clicked();
+        root.earlyToast = root.toasts.length !== 0;
+        lock.write("release\n");
+      }
+    }
+    onExited: code => {
+      if (code !== 0)
+        Qt.exit(3);
     }
   }
   FloatingWindow {
@@ -113,7 +146,7 @@ ShellRoot {
       height: 96
       x: 96
       source: root.inputs + "/frame-1.png"
-      active: root.phase === 0 || root.phase >= 5
+      active: root.phase >= 5
     }
     Loader {
       id: settings
@@ -130,25 +163,16 @@ ShellRoot {
     onTriggered: {
       if (root.pending)
         return;
-      if (root.phase === 0 && root.retained && held.status === Image.Ready && released.status === Image.Ready) {
-        root.phase = 1;
-        root.probe("populated");
+      if (root.phase === 0 && root.retained && held.status === Image.Ready) {
+        if ((root.probes.populated || []).length < 2)
+          root.probe("populated");
+        else
+          root.phase = 1;
       } else if (root.phase === 1 && released.status === Image.Null && settings.item) {
-        const button = root.findButton(settings.item, I18n.tr("panels.wallpaper.settings-clear-cache-button"));
-        if (!button) {
-          Qt.exit(3);
-          return;
-        }
-        root.phase = 2;
-        root.clicked = true;
-        button.clicked();
-        root.probe("cleared");
+        if (!lock.running)
+          lock.running = true;
       } else if (root.phase === 2) {
-        // clear() queues eviction. Observe its result, not the first scan
-        // after the synchronous call, which can race the cache worker.
-        if (root.probes.cleared.length) {
-          root.probe("cleared");
-        } else if (held.status === Image.Ready) {
+        if (root.probes.cleared && held.status === Image.Ready) {
           root.phase = 3;
           root.capture(held, "held-after-clear");
         }
@@ -160,11 +184,14 @@ ShellRoot {
         root.phase = 6;
         root.capture(released, "regenerated");
       } else if (root.phase === 6) {
-        root.phase = 7;
-        root.probe("regenerated");
+        if ((root.probes.regenerated || []).some(path => !root.probes.cleared.includes(path)))
+          root.phase = 7;
+        else
+          root.probe("regenerated");
       } else if (root.phase === 7) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          clicked: root.clicked,
+                                                         earlyToast: root.earlyToast,
                                                          probes: root.probes,
                                                          retained: root.retained,
                                                          toasts: root.toasts
