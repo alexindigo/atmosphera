@@ -29,6 +29,7 @@
   pipewirespectrum,
   niriqml,
   mangowcqml,
+  mpvqml,
   # runtime deps
   brightnessctl,
   cliphist,
@@ -111,6 +112,7 @@ stdenvNoCC.mkDerivation {
     pipewirespectrum
     niriqml
     mangowcqml
+    mpvqml
     qt6.qtbase
     qt6.qtmultimedia
     qt6.qtimageformats
@@ -146,6 +148,7 @@ stdenvNoCC.mkDerivation {
       --set-default XDG_CONFIG_DIRS /etc/xdg
       --prefix XDG_CONFIG_DIRS : "$out/etc/xdg"
       --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
+      --prefix QML_IMPORT_PATH : ${mpvqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
   '';

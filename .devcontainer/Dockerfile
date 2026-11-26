@@ -24,7 +24,7 @@ ARG DEV_GID=1000
 RUN pacman -S --noconfirm --needed \
     quickshell qt6-declarative qt6-tools qt6-multimedia qt6-imageformats \
     imagemagick ffmpeg libwebp libheif \
-    cmake ninja pkgconf libpipewire \
+    cmake ninja pkgconf libpipewire mpv \
     python python-pip \
     git shellcheck shfmt \
     tree-sitter \

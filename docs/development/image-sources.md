@@ -53,7 +53,7 @@ after a stored failure (for a Refresh button). Plugins do not run their own
 converters or keep their own thumbnail folders.
 On a video cache miss the image owner requests one bounded frame from
 `MpvQml.MpvFrameCapture` (10% of the known duration, otherwise the first
-frame). Install an mpvqml build that exports this type; it is loaded lazily.
+frame). Install `qt6-mpvqml` 0.3.0 or newer; the type is loaded lazily.
 Without it the shell and existing cached thumbnails still load, but an
 uncached video reports a failed preview and is not written as a cached
 media failure. The owner still validates and publishes the staged PNG.

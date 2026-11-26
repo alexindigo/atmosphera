@@ -1,6 +1,8 @@
 {
   quickshell,
   configqml,
+  mpvqml,
+  lib,
   nixfmt,
   statix,
   deadnix,
@@ -16,6 +18,7 @@ mkShellNoCC {
   packages = [
     quickshell
     configqml
+    mpvqml
 
     # nix
     nixfmt # formatter
@@ -33,5 +36,5 @@ mkShellNoCC {
     lefthook # githooks
     kdePackages.qtdeclarative # qmlfmt, qmllint, qmlls and etc; Qt6
   ];
-  QML_IMPORT_PATH = "${configqml}/${kdePackages.qtbase.qtQmlPrefix}";
+  QML_IMPORT_PATH = lib.makeSearchPath kdePackages.qtbase.qtQmlPrefix [ configqml mpvqml ];
 }

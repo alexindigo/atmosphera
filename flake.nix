@@ -47,7 +47,7 @@
           quickshell.overlays.default
           (final: prev: let qmlModules = final.callPackage ./nix/qml-dependencies.nix { }; in {
             configqml = final.callPackage ./nix/configqml.nix { };
-            inherit (qmlModules) dbusqml xdgiconqml pipewirespectrum niriqml mangowcqml;
+            inherit (qmlModules) dbusqml xdgiconqml pipewirespectrum niriqml mangowcqml mpvqml;
             atmosphera = final.callPackage ./nix/package.nix {
               inherit version;
             };

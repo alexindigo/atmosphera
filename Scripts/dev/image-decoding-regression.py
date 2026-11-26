@@ -1430,16 +1430,30 @@ os.execv('/usr/bin/find', ['find', *args])
                    and result['quicklook']['frames'] == 3 and len({r['frame'] for r in result['frames']}) == 3
                    and {tuple(p) for p in colors} == set(COLORS), dict(consumer=result['quicklook'], colors=colors, frames=result['frames']))
         self.check('chooser-close-retires-interests', result['finalInterests'] == 0 and not result['workerRunning'], result)
-        video = inputs / 'Shared.mp4'
-        encoded = self.command(['ffmpeg', '-nostdin', '-v', 'error', '-loop', '1', '-i', str(inputs / 'frame-0.png'),
-            '-t', '1', '-c:v', 'libx264', '-threads', '1', '-pix_fmt', 'yuv420p', str(video)])
+        # Encode a landscape raster, then set a display matrix without rotating
+        # the stored pixels. Upright playback has red on top and green below.
+        red, green = ('0x%02X%02X%02X' % color[:3] for color in COLORS[:2])
+        landscape = self.work / 'landscape.mp4'
+        encoded = self.command(['ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i', f'color=c={green}:s=160x90:r=8:d=1',
+            '-vf', f'drawbox=x=80:y=0:w=80:h=90:color={red}:t=fill', '-c:v', 'libx264', '-threads', '1',
+            '-pix_fmt', 'yuv420p', landscape])
         if encoded.returncode:
-            raise AssertionError('Independent video fixture encoding failed')
+            raise AssertionError('Independent video fixture encoding failed: ' + encoded.stderr)
+        rotated = self.command(['ffmpeg', '-nostdin', '-v', 'error', '-display_rotation', '90', '-i', landscape,
+            '-c', 'copy', inputs / 'Shared.mp4'])
+        if rotated.returncode:
+            raise AssertionError('Video fixture display matrix failed: ' + rotated.stderr)
         shared, shared_output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/picker-sharing.qml',
             inputs, 'picker-sharing')
         self.check('two-pickers-use-one-worker-request', shared['shared'] == dict(interests=2, requests=1), shared['shared'])
         self.check('closing-one-picker-retains-other-image', shared['survivor']['ready'] and not shared['survivor']['firstUrl']
-                   and shared['survivor']['videoFrame'] == 1 and max(abs(a-b) for a,b in zip(pixel(shared_output/'survivor.png'),COLORS[0])) <= 8, shared)
+                   and shared['survivor']['videoFrame'] == 1, shared)
+        captured = shared_output / 'survivor.png'
+        width, height, _ = read_png(captured)
+        observed = [pixel(captured, width // 2, y) for y in (height // 4, height * 3 // 4)]
+        self.check('chooser-video-honors-90-degree-display-rotation',
+                   all(max(abs(a - b) for a, b in zip(actual, color)) <= 16 for actual, color in zip(observed, COLORS[:2])),
+                   dict(captureSize=[width, height], top=observed[0], bottom=observed[1]))
         self.check('last-picker-close-shuts-shared-worker', shared['finalInterests'] == shared['finalRequests'] == 0
                    and not shared['workerRunning'], shared)
         return result

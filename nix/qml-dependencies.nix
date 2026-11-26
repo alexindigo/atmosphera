@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, cmake, ninja, pkg-config, patchelf, qt6, pipewire }:
+{ stdenv, lib, fetchurl, cmake, ninja, pkg-config, patchelf, qt6, pipewire, mpv-unwrapped }:
 let
   # Match the released source pins used by the dev tooling image. All modules
   # are built against the same Qt set as Quickshell and ConfigQml.
@@ -56,5 +56,10 @@ in {
   mangowcqml = module {
     name = "mangowcqml"; version = "0.1.0";
     sha256 = "1e92e9ec4e7b274b2c0a4e28ee377cc08c026f1c364d6e1a66b62576578dc7b8";
+  };
+  mpvqml = module {
+    name = "mpvqml"; version = "0.3.0";
+    sha256 = "ce15ef421edfb770befbe801529b2073d4f93ee5581122c6d0d1cd3ec03acfc9";
+    extraInputs = [ mpv-unwrapped ];
   };
 }
