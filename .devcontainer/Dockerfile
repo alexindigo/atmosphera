@@ -35,7 +35,7 @@ RUN bash -ec '\
     bash /usr/local/share/atmosphera/arch-install.sh \
     quickshell qt6-tools qt6-multimedia \
     "${imvqml_core[@]}" libheif libjxl \
-    cmake ninja pkgconf libpipewire \
+    cmake ninja pkgconf libpipewire mpv \
     python python-pip \
     git shellcheck shfmt \
     tree-sitter \
