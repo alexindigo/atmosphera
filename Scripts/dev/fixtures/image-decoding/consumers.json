@@ -1714,7 +1714,7 @@
         {
           "path": "Services/UI/ImageCacheService.qml",
           "name": "*",
-          "sha256": "d1d316d0f0e7bf5aeede0bce7063992262c3c50787c4e40b83e51f81433914ce"
+          "sha256": "2964820b6614eacadebd1a0a77daf5a8dbf6895d2091553bf0a2edfcaa17ae11"
         }
       ]
     },
@@ -1797,7 +1797,7 @@
         {
           "path": "wallcards/src/ThumbnailService.qml",
           "name": "*",
-          "sha256": "84f271c9b509a3118bcfc52bc6051db172b6f0cbe59801c7b019ef22979a01fd"
+          "sha256": "88414dfe58515e59a7c239ea0df24576fe97701dfdded88f9c6805f73f7952d2"
         }
       ]
     }
