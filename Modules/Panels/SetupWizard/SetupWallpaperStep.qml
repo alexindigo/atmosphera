@@ -22,8 +22,15 @@ ColumnLayout {
   signal directoryChanged(string directory)
   signal wallpaperChanged(string wallpaper)
 
-  onSelectedWallpaperChanged: if (selectedWallpaper !== previewCachedPath)
-                                requestPreview(selectedWallpaper, false)
+  onSelectedWallpaperChanged: {
+    if (selectedWallpaper !== previewCachedPath) {
+      requestPreview(selectedWallpaper, false);
+    } else {
+      retirePreview();
+      errorReason = "";
+      previewState = selectedWallpaper && visible ? "ready" : "idle";
+    }
+  }
   onVisibleChanged: if (!visible)
                       retirePreview()
                     else if (selectedWallpaper !== previewCachedPath)

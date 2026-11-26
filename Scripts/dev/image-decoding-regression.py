@@ -1163,6 +1163,10 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('setup-emits-only-validated-user-selection', result['selections'] == [str(inputs/'Still.webp')]
                    and stages['valid-intent']['selected'] == str(inputs/'Still.webp')
                    and pixel(output/'valid-intent.png') == list(COLORS[0]), result['selections'])
+        self.check('setup-return-to-displayed-cancels-validation', result['returnPending']
+                   and stages['returned']['selected'] == stages['returned']['cached'] == str(inputs / 'Still.webp')
+                   and stages['returned']['state'] == 'ready' and pixel(output / 'returned.png') == list(COLORS[0]),
+                   stages['returned'])
         gallery_centers = [pixel(path) for path in output.glob('gallery-*.png')]
         self.check('setup-gallery-is-static-frame-zero', len(result['galleryFrames']) == 11
                    and all(row['status'] == 1 and row['result']['frames'] == 3 for row in result['galleryFrames'])
@@ -1560,7 +1564,7 @@ os.execv('/usr/bin/find', ['find', *args])
         errors = [row for row in result['notices'] if row['type'] == 'error']
         self.check('remote-selection-failures-have-visible-useful-errors', len(errors) == 2 and all(row['reason'] for row in errors), errors)
         self.check('remote-final-lifetime-quiescence', self.wallpaper_quiet(result)
-                   and not self.retired_acquisitions('wallpaper-remote'), result)
+                   and not self.retired_acquisitions('remote'), result)
         (self.out/'http-requests.json').write_text(json.dumps(requests, indent=2)+'\n')
 
     def remote_red(self):
@@ -2288,6 +2292,8 @@ os.execv('/usr/bin/find', ['find', *args])
 
     def retired_acquisitions(self, name):
         cache = self.work / (name + '-profile') / 'cache'
+        if not cache.is_dir():
+            raise AssertionError(f'No real cache profile for acquisition retirement: {cache}')
         return [str(path) for pattern in ('image-source-*', '.originals-*') for path in cache.rglob(pattern)]
 
     @staticmethod

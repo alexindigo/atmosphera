@@ -20,7 +20,7 @@ ShellRoot {
   function idle() {
     return ordinary.status === Image.Null && !ordinary.outputUrl && [0, 1, 2].every(i => {
       const entry = entries.itemAt(i);
-      return entry && !entry.thumbnailState.imageReady && !entry.previewUnavailable;
+      return entry && entry.thumbnailState.state === "idle";
     });
   }
   function grab(item, name) {

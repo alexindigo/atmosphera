@@ -160,6 +160,9 @@ Qt error. Every invocation needs explicit `--guest-profile`, `--source`,
 Plugin cohorts also need `--baseline-plugins`. For changed-QML reporting use
 `--lint-baseline-source`; `--baseline-source` instead requests historical red
 controls in cases that support them.
+The `cache-clear-red` control requires a tree before owner-scoped clearing,
+for example `8bf58daf94e53a0810b4ab558871fbf60ee41d81` (the parent of
+`f42031db3`), not the integration branch's merge base.
 
 Long cohorts run in an owned guest user unit with an exclusive lock, captured
 PID/start/cgroup, durable logs and exit receipts. Repeating the identical
