@@ -136,6 +136,13 @@ Item {
       completed(false, "Niri IPC unavailable");
   }
 
+  function moveWindowWithinWorkspace(windowId, target, completed) {
+    if (available)
+      loader.item.moveWindowWithinWorkspace(windowId, target, completed);
+    else if (typeof completed === "function")
+      completed(false, "Niri IPC unavailable", null);
+  }
+
   function turnOffMonitors() {
     if (available)
       loader.item.turnOffMonitors();

@@ -29,6 +29,7 @@ Helpers/LockerLifecycle.js
 Helpers/LockerSettingsInput.js
 Helpers/NiriEdgeNavigation.js
 Helpers/NiriReply.js
+Helpers/NiriRowMove.js
 Helpers/OwnedProcess.js
 Helpers/OwnedProcessChild.qml
 Helpers/PortalPaths.js

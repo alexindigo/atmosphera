@@ -32,6 +32,7 @@ jobs:
       - name: Build image tools and pinned headless compositor
         run: |
           docker build --memory=2g --memory-swap=2g --cpu-period=100000 --cpu-quota=200000 \
+            --build-arg INSTALL_SWAY=1 \
             --tag atmosphera-image-tools shell/.devcontainer
           docker build --memory=2g --memory-swap=2g --cpu-period=100000 --cpu-quota=200000 \
             --build-arg BASE_IMAGE=atmosphera-image-tools \
