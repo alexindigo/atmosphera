@@ -177,15 +177,42 @@ Scope {
   }
 
   function _cancelFrame(job) {
-    const id = _videoJobs[job];
+    const capture = _videoJobs[job];
     delete _videoJobs[job];
-    if (id !== undefined)
-      _videoProducer?.cancel(id);
+    if (capture?.id)
+      _videoProducer?.cancel(capture.id);
   }
 
   function _cancelFrames() {
+    retrySharedVideoCapacity.stop();
     for (const job of Object.keys(_videoJobs))
       _cancelFrame(job);
+  }
+
+  function _admitFrames() {
+    retrySharedVideoCapacity.stop();
+    if (!_ready || _closing)
+      return;
+    for (const job of Object.keys(_videoJobs)) {
+      const pending = _videoJobs[job];
+      if (pending.id)
+        continue;
+      const reply = pending.reply;
+      const admission = _videoProducer.admit(reply.source, reply.width, reply.height, reply.destination);
+      if (admission.waiting) {
+        // Retiring a local capture emits capacityReleased. Shared libmpv
+        // users need not emit it here, so only shared pressure uses a timer.
+        if (admission.shared)
+          retrySharedVideoCapacity.start();
+        return;
+      }
+      if (admission.id) {
+        pending.id = admission.id;
+      } else {
+        delete _videoJobs[job];
+        _finishFrame(job, admission.code);
+      }
+    }
   }
 
   function _captureFrame(reply) {
@@ -201,12 +228,13 @@ Scope {
       if (component.status === Component.Ready) {
         _videoProducer = component.createObject(root);
         _videoProducer?.finished.connect(function (id, code, reason) {
-          const job = Object.keys(root._videoJobs).find(key => root._videoJobs[key] === id);
+          const job = Object.keys(root._videoJobs).find(key => root._videoJobs[key].id === id);
           if (job !== undefined) {
             delete root._videoJobs[job];
             root._finishFrame(job, code);
           }
         });
+        _videoProducer?.capacityReleased.connect(root._admitFrames);
       }
       component.destroy();
     }
@@ -214,11 +242,17 @@ Scope {
       _finishFrame(reply.job, "video-backend-unavailable");
       return;
     }
-    const id = _videoProducer.capture(reply.source, 0.1, reply.width, reply.height, reply.destination);
-    if (id > 0)
-      _videoJobs[reply.job] = id;
-    else
-      _finishFrame(reply.job, "video-backend-busy");
+    _videoJobs[reply.job] = {
+      id: 0,
+      reply: reply
+    };
+    _admitFrames();
+  }
+
+  Timer {
+    id: retrySharedVideoCapacity
+    interval: 100
+    onTriggered: root._admitFrames()
   }
 
   function _fail(code, reason) {

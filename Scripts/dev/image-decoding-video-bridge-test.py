@@ -3,9 +3,11 @@
 import json
 import os
 from pathlib import Path
+from queue import Empty, Queue
 import subprocess
 import sys
 import tempfile
+from threading import Thread
 import unittest
 from urllib.parse import unquote, urlsplit
 
@@ -22,13 +24,29 @@ class VideoBridgeTest(unittest.TestCase):
             worker = subprocess.Popen([sys.executable, '-B', '-u', ROOT / 'Scripts/python/image-worker.py'],
                                       env=dict(os.environ, XDG_CACHE_HOME=str(directory / 'cache')),
                                       text=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            lines = Queue()
+
+            def read_lines():
+                try:
+                    for line in worker.stdout:
+                        lines.put(line)
+                finally:
+                    lines.put(None)
+
+            reader = Thread(target=read_lines, daemon=True)
+            reader.start()
             try:
                 def send(message):
                     worker.stdin.write(json.dumps(message) + '\n')
                     worker.stdin.flush()
 
                 def receive():
-                    return json.loads(worker.stdout.readline())
+                    try:
+                        line = lines.get(timeout=10)
+                    except Empty:
+                        self.fail('Timed out waiting for an image worker event')
+                    self.assertIsNotNone(line, 'Image worker closed stdout before the expected event')
+                    return json.loads(line)
 
                 self.assertEqual(receive()['event'], 'ready')
                 request = dict(source=str(video), operation='video-thumbnail', animationIntent='still',
@@ -56,14 +74,23 @@ class VideoBridgeTest(unittest.TestCase):
                 send([dict(request, generation=3, id='three')])
                 self.assertEqual(receive()['status'], 'hit')
                 self.assertFalse(output.exists(), 'owner leaked the staged frame')
+                other = directory / 'slow.mp4'
+                other.write_bytes(b'Fixture video identity')
+                for generation in (4, 5):
+                    send([dict(request, source=str(other), generation=generation, id=str(generation))])
+                    slow = receive()
+                    self.assertEqual(slow.get('event'), 'video-frame-request', slow)
+                    send(dict(command='video-frame-result', job=slow['job'], code='timeout'))
+                    self.assertEqual(receive()['status'], 'unavailable')
             finally:
-                worker.stdin.close()
                 try:
-                    worker.wait(timeout=10)
+                    worker.stdin.close()
+                    worker.wait(timeout=5)
                 finally:
                     if worker.poll() is None:
-                        worker.terminate()
+                        worker.kill()
                         worker.wait(timeout=5)
+                    reader.join(timeout=5)
                     worker.stdout.close()
 
 

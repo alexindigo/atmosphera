@@ -689,7 +689,7 @@
    "path": "Services/UI/VideoFrameProducer.qml",
    "rule": "video-frame-capture",
    "node": "MpvFrameCapture",
-   "nodeSha256": "11245379b8e371919b67e27ede69789934763c3bdb549a21d64b4c4b5bf32ba1",
+   "nodeSha256": "b1e28555d310e92e391bc10472038fffb60f81ed0299f8c1ef093f65e9598545",
    "line": 4,
    "disposition": "owner-video-producer",
    "reason": "Only the image owner may generate and validate staged video thumbnail frames."

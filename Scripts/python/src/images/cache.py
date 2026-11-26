@@ -56,6 +56,31 @@ def capability_fingerprint():
     return hashlib.sha256(json.dumps(rows, sort_keys=True).encode()).hexdigest()
 
 
+def video_failure_fingerprint():
+    # Inspect installed module artifacts without loading QML. Arch installs
+    # under /usr; wrapped Nix and custom installs supply QML import roots.
+    roots = [Path(path) for name in ('QML_IMPORT_PATH', 'QML2_IMPORT_PATH')
+             for path in os.environ.get(name, '').split(os.pathsep) if path]
+    rows = []
+    for root in dict.fromkeys([*roots, Path('/usr/lib/qt6/qml')]):
+        module = root / 'MpvQml'
+        try:
+            files = [module / 'qmldir', module / 'libmpvqmlplugin.so']
+            stamps = [identity(file.stat()) for file in files]
+        except OSError:
+            continue
+        rows.append((str(module.resolve()), stamps))
+        for library in sorted(root.parent.parent.glob('libmpvqml.so*')):
+            try:
+                rows.append((str(library), identity(library.stat())))
+            except OSError:
+                continue
+    if not rows:
+        return None
+    payload = json.dumps([capability_fingerprint(), rows])
+    return 'mpvqml-frame-v2:' + hashlib.sha256(payload.encode()).hexdigest()
+
+
 class Cache:
     def __init__(self, root=None, version=None, timeout=8, emit=lambda event: None, video_frames=None):
         self.root = Path(root or Path(os.environ.get('XDG_CACHE_HOME') or Path.home() / '.cache') / 'thumbnails')
@@ -139,27 +164,32 @@ class Cache:
         size, directory = bucket(pixels)
         target = self.root / directory / cache_name(uri)
         failure = self.failure_dir / target.name
-        fingerprint = 'mpvqml-frame-v1:' + capability_fingerprint()
         if self.valid(target, uri, info):
             return dict(url=target.as_uri(), status='hit')
-        if not retry and self.valid(failure, uri, info, capability=fingerprint):
+        fingerprint = video_failure_fingerprint()
+        if fingerprint and not retry and self.valid(failure, uri, info, capability=fingerprint):
             return dict(url='', status='failure-hit')
         attributes = {'Thumb::URI': uri, 'Thumb::MTime': str(int(info.st_mtime)), 'Thumb::Size': str(info.st_size),
                       'Atmo::MTimeNS': str(info.st_mtime_ns), 'Atmo::CTimeNS': str(info.st_ctime_ns),
-                      'Atmo::Capability': fingerprint, 'Software': 'Atmosphera'}
+                      'Software': 'Atmosphera'}
+        if fingerprint:
+            attributes['Atmo::Capability'] = fingerprint
         try:
             data = await asyncio.wait_for(self.frame(path, size), self.timeout)
             validate_png(data, maximum=(size, size))
             data, success = with_metadata(data, attributes), True
         except CommandError as error:
-            if error.code in ('video-backend-unavailable', 'video-backend-busy', 'cancelled'):
+            if error.code in ('video-backend-unavailable', 'cancelled', 'timeout'):
                 return dict(url='', status='backend-unavailable')
             data, success = with_metadata(empty_png(), attributes), False
-        except (ValueError, OSError, asyncio.TimeoutError):
+        except TimeoutError:
+            return dict(url='', status='backend-unavailable')
+        except (ValueError, OSError):
             data, success = with_metadata(empty_png(), attributes), False
         if identity(info) != identity(path.stat()):
             return dict(url='', status='changed')
-        atomic_write(target if success else failure, data, self.root)
+        if success or fingerprint:
+            atomic_write(target if success else failure, data, self.root)
         return dict(url=target.as_uri() if success else '', status='generated' if success else 'failed')
 
     async def inspect(self, prepared):

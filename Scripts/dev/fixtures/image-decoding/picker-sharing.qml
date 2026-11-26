@@ -41,7 +41,8 @@ ShellRoot {
     NImage {
       id: image
       anchors.fill: parent
-      source: second.url
+      // Do not acquire an image inspection interest before observing sharing.
+      source: root.firstReleased ? second.url : ""
       active: second.active
     }
   }
