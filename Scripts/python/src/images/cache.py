@@ -2,7 +2,6 @@
 import asyncio
 import hashlib
 import json
-import math
 import os
 from pathlib import Path
 import re
@@ -57,12 +56,38 @@ def capability_fingerprint():
     return hashlib.sha256(json.dumps(rows, sort_keys=True).encode()).hexdigest()
 
 
+def video_failure_fingerprint():
+    # Inspect installed module artifacts without loading QML. Arch installs
+    # under /usr; wrapped Nix and custom installs supply QML import roots.
+    roots = [Path(path) for name in ('QML_IMPORT_PATH', 'QML2_IMPORT_PATH')
+             for path in os.environ.get(name, '').split(os.pathsep) if path]
+    rows = []
+    for root in dict.fromkeys([*roots, Path('/usr/lib/qt6/qml')]):
+        module = root / 'MpvQml'
+        try:
+            files = [module / 'qmldir', module / 'libmpvqmlplugin.so']
+            stamps = [identity(file.stat()) for file in files]
+        except OSError:
+            continue
+        rows.append((str(module.resolve()), stamps))
+        for library in sorted(root.parent.parent.glob('libmpvqml.so*')):
+            try:
+                rows.append((str(library), identity(library.stat())))
+            except OSError:
+                continue
+    if not rows:
+        return None
+    payload = json.dumps([capability_fingerprint(), rows])
+    return 'mpvqml-frame-v2:' + hashlib.sha256(payload.encode()).hexdigest()
+
+
 class Cache:
-    def __init__(self, root=None, version=None, timeout=8, emit=lambda event: None):
+    def __init__(self, root=None, version=None, timeout=8, emit=lambda event: None, video_frames=None):
         self.root = Path(root or Path(os.environ.get('XDG_CACHE_HOME') or Path.home() / '.cache') / 'thumbnails')
         self.private = self.root / 'atmosphera-representations-v1'
         self.staging = self.private / 'staging'
         self.timeout, self.emit = timeout, emit
+        self.video_frames = video_frames
         self.animation_timeout = 120
         if version is None:
             version = (Path(__file__).resolve().parents[4] / 'VERSION').read_text().strip()
@@ -106,20 +131,24 @@ class Cache:
         except (OSError, ValueError, UnicodeError, zlib.error, struct.error):
             return False
 
-    async def command(self, argv):
-        with cache_directory(self.staging) as staging, tempfile.TemporaryDirectory(dir=descriptor_path(staging), prefix='.video-command-') as folder:
-            output = await command(argv, folder, self.timeout)
-            return output.read_bytes()
-
     async def frame(self, path, size):
-        duration = json.loads(await self.command(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'json', str(path)]))
-        seconds = float(duration.get('format', {}).get('duration', 0))
-        seek = seconds * .1 if math.isfinite(seconds) and seconds >= 1 else 0
-        argv = ['ffmpeg', '-nostdin', '-v', 'error', '-threads', '1', '-ss', str(seek), '-i', str(path),
-                                   '-frames:v', '1', '-vf', f'scale={size}:{size}:force_original_aspect_ratio=decrease',
-                                   '-threads', '1', '-pix_fmt', 'rgba', '-f', 'image2pipe', '-c:v', 'png', 'pipe:1']
-        self.emit(dict(event='ffmpeg', path=str(path), argv=argv))
-        return await self.command(argv)
+        if self.video_frames is None:
+            raise CommandError('video-backend-unavailable', 'The video frame producer is unavailable')
+        with cache_directory(self.staging) as staging, tempfile.TemporaryDirectory(
+                dir=descriptor_path(staging), prefix='.video-frame-') as folder:
+            output = Path(folder) / 'frame.png'
+            await self.video_frames.capture(path, size, output)
+            fd = os.open(output, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+            with os.fdopen(fd, 'rb') as file:
+                if not stat.S_ISREG(os.fstat(file.fileno()).st_mode):
+                    raise ValueError('Video producer output must be a regular file')
+                # A bounded RGB(A) PNG may exceed its raw size by compression
+                # overhead; leave room for headers and reject excess bytes.
+                limit = size * size * 4 + 65536
+                data = file.read(limit + 1)
+                if len(data) > limit:
+                    raise ValueError('Video frame exceeded the staged PNG limit')
+                return data
 
     async def get(self, name, pixels, retry=False):
         """Compatible freedesktop video entry point; no second decoder pool.
@@ -135,23 +164,32 @@ class Cache:
         size, directory = bucket(pixels)
         target = self.root / directory / cache_name(uri)
         failure = self.failure_dir / target.name
-        fingerprint = capability_fingerprint()
         if self.valid(target, uri, info):
             return dict(url=target.as_uri(), status='hit')
-        if not retry and self.valid(failure, uri, info, capability=fingerprint):
+        fingerprint = video_failure_fingerprint()
+        if fingerprint and not retry and self.valid(failure, uri, info, capability=fingerprint):
             return dict(url='', status='failure-hit')
         attributes = {'Thumb::URI': uri, 'Thumb::MTime': str(int(info.st_mtime)), 'Thumb::Size': str(info.st_size),
                       'Atmo::MTimeNS': str(info.st_mtime_ns), 'Atmo::CTimeNS': str(info.st_ctime_ns),
-                      'Atmo::Capability': fingerprint, 'Software': 'Atmosphera'}
+                      'Software': 'Atmosphera'}
+        if fingerprint:
+            attributes['Atmo::Capability'] = fingerprint
         try:
             data = await asyncio.wait_for(self.frame(path, size), self.timeout)
-            validate_png(data)
+            validate_png(data, maximum=(size, size))
             data, success = with_metadata(data, attributes), True
-        except (ValueError, OSError, CommandError, asyncio.TimeoutError):
+        except CommandError as error:
+            if error.code in ('video-backend-unavailable', 'cancelled', 'timeout'):
+                return dict(url='', status='backend-unavailable')
+            data, success = with_metadata(empty_png(), attributes), False
+        except TimeoutError:
+            return dict(url='', status='backend-unavailable')
+        except (ValueError, OSError):
             data, success = with_metadata(empty_png(), attributes), False
         if identity(info) != identity(path.stat()):
             return dict(url='', status='changed')
-        atomic_write(target if success else failure, data, self.root)
+        if success or fingerprint:
+            atomic_write(target if success else failure, data, self.root)
         return dict(url=target.as_uri() if success else '', status='generated' if success else 'failed')
 
     async def inspect(self, prepared):

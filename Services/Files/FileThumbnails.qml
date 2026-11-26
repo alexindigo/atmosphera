@@ -120,8 +120,8 @@ Scope {
   Connections {
     target: ImageCacheService
     function onSourceEvent(event) {
-      if (event.event === "ffmpeg" && root._subscriptions[event.path])
-        root._count("ffmpeg");
+      if (event.event === "video-frame-request" && root._subscriptions[event.path])
+        root._count("videoFrame");
     }
   }
   Timer {

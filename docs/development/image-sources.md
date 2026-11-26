@@ -51,6 +51,12 @@ The reply has `status` (`hit`, `generated` or `unavailable`), the validated
 PNG's `url`, and `code`/`reason` on failure. `retry: true` asks again even
 after a stored failure (for a Refresh button). Plugins do not run their own
 converters or keep their own thumbnail folders.
+On a video cache miss the image owner requests one bounded frame from
+`MpvQml.MpvFrameCapture` (10% of the known duration, otherwise the first
+frame). Install `qt6-mpvqml` 0.3.0 or newer; the type is loaded lazily.
+Without it the shell and existing cached thumbnails still load, but an
+uncached video reports a failed preview and is not written as a cached
+media failure. The owner still validates and publishes the staged PNG.
 `ImageCacheService.isGeneratedImage(path)` tells a thumbnail or
 representation apart from a user's own image, for example so that a
 thumbnail is never saved as the wallpaper to restore.
@@ -104,7 +110,8 @@ generation would supply the missing edge.
 of the shell and the plugins and lists every place where Qt or a process
 would decode image bytes by itself: `Image`, `AnimatedImage`, `IconImage`
 and their local wrappers, text laid out as markup, `ColorQuantizer`, QML
-built from strings, and `magick`/`ffmpeg` commands. Each must match a
+built from strings, direct `MpvFrameCapture` construction, and
+`magick`/`ffmpeg` commands. Each must match a
 reviewed entry in `Scripts/dev/fixtures/image-decoding/consumers.json`
 (fixed packaged assets with their hashes, the owner's own renderers,
 reviewed shell-authored markup, ...). A new site, a changed asset or a

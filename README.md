@@ -118,6 +118,20 @@ sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-i
 yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.5' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
 ```
 
+For video thumbnails, install `qt6-mpvqml` (at least 0.3.0) from the AUR when
+available, or build [mpvqml 0.3.0](https://github.com/alexindigo/mpvqml/releases/tag/v0.3.0)
+against the same Qt installation as Quickshell:
+
+```bash
+sudo pacman -S --needed base-devel cmake ninja mpv
+git clone --branch v0.3.0 --depth 1 https://github.com/alexindigo/mpvqml.git
+cd mpvqml
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCMAKE_INSTALL_INCLUDEDIR:PATH=include -DBUILD_TESTING=OFF
+cmake --build build
+sudo cmake --install build
+cd ..
+```
+
 Images Qt can decode natively (with `qt6-imageformats`: WebP, TIFF and
 more) render directly; anything else, or WebP when the Qt plugin is missing,
 is decoded by ImageMagick (with `libwebp`/`libheif` for WebP, HEIC and AVIF)

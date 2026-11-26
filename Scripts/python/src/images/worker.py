@@ -164,10 +164,13 @@ class Worker:
 
 
 async def serve():
+    from .video import VideoFrames
+
     os.nice(10)
     def emit(event):
         print(json.dumps(event), flush=True)
-    worker = Worker(Cache(emit=emit), emit)
+    frames = VideoFrames(emit)
+    worker = Worker(Cache(emit=emit, video_frames=frames), emit)
     loop = asyncio.get_running_loop()
     reader = asyncio.StreamReader()
     transport, _ = await loop.connect_read_pipe(lambda: asyncio.StreamReaderProtocol(reader), sys.stdin)
@@ -184,6 +187,9 @@ async def serve():
                 try:
                     message = json.loads(line)
                     if isinstance(message, dict):
+                        if message.get('command') == 'video-frame-result':
+                            frames.result(message)
+                            continue
                         if message.get('command') == 'notification-sync':
                             try:
                                 rows = worker.notifications(message)

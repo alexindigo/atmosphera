@@ -2,6 +2,7 @@ depends=(
   'quickshell'
   'qt6-dbusqml>=1.1.0'
   'qt6-configqml>=0.5.5'
+  'qt6-mpvqml>=0.3.0'
   'qt6-pipewirespectrum'
   'qt6-xdgiconqml-git'
   'imagemagick'

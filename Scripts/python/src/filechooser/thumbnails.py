@@ -1,6 +1,6 @@
 """Compatible video-thumbnail entry point backed by the shared image worker.
 
-Video retains ffprobe duration/10-percent seeking and freedesktop cache names.
+Video retains 10-percent seeking and freedesktop cache names.
 Source, cache validation, bounded concurrency and decoder lifetime have one
 implementation in images; image requests never inherit this video seek policy.
 """

@@ -41,7 +41,8 @@ ShellRoot {
     NImage {
       id: image
       anchors.fill: parent
-      source: second.url
+      // Do not acquire an image inspection interest before observing sharing.
+      source: root.firstReleased ? second.url : ""
       active: second.active
     }
   }
@@ -67,7 +68,7 @@ ShellRoot {
           ready: true,
           result: second.result,
           firstUrl: first.url,
-          ffmpeg: secondPicker.statistics.ffmpeg
+          videoFrame: secondPicker.statistics.videoFrame
         };
         if (!image.grabToImage(result => {
           console.log("IMAGE_GRAB|" + JSON.stringify({

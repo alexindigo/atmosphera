@@ -36,10 +36,12 @@ DISPOSITIONS = {
     'color-quantizer': {'owner-output'},
     'dynamic-qml': {'reviewed-construction'},
     'converter-command': {'owner-event-name', 'generated-output-edit', 'owner-thumbnail-color-sampling'},
+    'video-frame-capture': {'owner-video-producer'},
     'canvas-image': {'owner-renderer'},
 }
-SHELL_ONLY = {'owner-renderer', 'provider-adapter', 'wrapper-definition', 'shell-authored-markup', 'owner-event-name'}
+SHELL_ONLY = {'owner-renderer', 'provider-adapter', 'wrapper-definition', 'shell-authored-markup', 'owner-event-name', 'owner-video-producer'}
 OWNER_FILES = {'owner-renderer': {'Widgets/NImage.qml', 'Widgets/NImageText.qml'},
+               'owner-video-producer': {'Services/UI/VideoFrameProducer.qml'},
                'provider-adapter': {'Services/UI/ImageAdmission.qml'}, 'wrapper-definition': {'Widgets/NText.qml'}}
 IDENTITY = ('repository', 'path', 'rule', 'node', 'nodeSha256')
 SAMPLING = 'owner-thumbnail-color-sampling'
@@ -244,6 +246,8 @@ CONTROLS = {
     'escaped-auto-text-template': ('text-markup', {'TemplateText.qml': r'import QtQuick; Text { text: `\u{3c}img src="x.png">` }'}),
     'plugin-magick-converter': ('converter-command', {'Convert.qml': 'import QtQuick\nimport Quickshell.Io\nProcess { property string src\n command: ["magick", src, "png:/tmp/out.png"] }\n'}),
     'plugin-ffmpeg-template': ('converter-command', {'Frame.qml': 'import QtQuick\nimport Quickshell.Io\nProcess { property string video\n command: ["sh", "-c", `ffmpeg -y -i ${video} -vframes:v 1 out.bmp`] }\n'}),
+    'plugin-video-capture': ('video-frame-capture', {'Frame.qml': 'import MpvQml\nMpvFrameCapture {}\n'}),
+    'plugin-aliased-video-capture': ('video-frame-capture', {'Frame.qml': 'import MpvQml as Mpv\nMpv.MpvFrameCapture {}\n'}),
     'arbitrary-color-quantizer': ('color-quantizer', {'Colors.qml': 'import QtQuick\nimport Quickshell\nItem { property string userPath\n ColorQuantizer { source: userPath } }\n'}),
 }
 PNG = bytes.fromhex('89504e470d0a1a0a0000000d4948445200000001000000010806000000'

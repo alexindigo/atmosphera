@@ -1013,8 +1013,7 @@ runpy.run_path(worker, run_name='__main__')
             sentinel.write_bytes(foreign_thumbnail(source))
             self.cache.root.mkdir()
             target.parent.symlink_to(outside, target_is_directory=True)
-            # A controlled valid video frame avoids coupling this cache-boundary
-            # assertion to ffmpeg's ability to treat a still as a video input.
+            # A controlled valid frame isolates the cache boundary from decoding.
             async def frame(*_args):
                 return empty_png()
             with patch.object(self.cache, 'frame', frame), self.assertRaises(OSError):
@@ -1377,31 +1376,29 @@ runpy.run_path(worker, run_name='__main__')
             self.assertIs(adapter.Cache, Cache)
             self.assertIs(adapter.Worker, Worker)
             video = self.folder / 'Video.mp4'
-            made = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i',
-                                   'testsrc2=size=160x90:rate=8:duration=2', '-c:v', 'libx264', '-threads', '1', str(video)],
-                                  capture_output=True, timeout=30)
-            self.assertEqual(made.returncode, 0, made.stderr)
-            first = await self.cache.get(str(video), 128)
-            self.assertEqual(first['status'], 'generated')
-            self.assertEqual(len(self.events), 1)
-            self.assertEqual(self.events[0]['event'], 'ffmpeg')
-            argv = self.events[0]['argv']
-            self.assertAlmostEqual(float(argv[argv.index('-ss') + 1]), .2)
-            second = await self.cache.get(str(video), 128)
-            self.assertEqual(second['status'], 'hit')
-            self.assertEqual(second['url'], first['url'])
-            self.assertEqual(len(self.events), 1)
+            video.write_bytes(b'Fixture video identity')
+            from unittest.mock import AsyncMock
+            frame = AsyncMock(return_value=empty_png())
+            with patch.object(self.cache, 'frame', frame):
+                first = await self.cache.get(str(video), 128)
+                self.assertEqual(first['status'], 'generated')
+                second = await self.cache.get(str(video), 128)
+                self.assertEqual(second['status'], 'hit')
+                self.assertEqual(second['url'], first['url'])
+                frame.assert_awaited_once_with(video, 128)
 
         async def test_video_thumbnail_failure_honors_explicit_retry(self):
             video = self.folder / 'Broken.mp4'
             video.write_bytes(b'not a video')
             request = dict(source=str(video), width=256, height=256, fit='contain', animationIntent='still', operation='video-thumbnail')
             decodes = []
-            original = self.cache.frame
             async def frame(*arguments):
                 decodes.append(arguments)
-                return await original(*arguments)
-            with patch.object(self.cache, 'frame', frame):
+                raise CommandError('no-frame', 'Fixture video has no frame')
+            # The synthetic decoder also needs a known producer identity for
+            # the negative-cache contract, even without MpvQml installed.
+            with (patch.object(self.cache, 'frame', frame),
+                  patch('images.cache.video_failure_fingerprint', return_value='test-producer')):
                 failed = await self.cache.render(request)
                 self.assertEqual((failed['status'], failed['url']), ('unavailable', ''))
                 self.assertEqual(len(decodes), 1)
@@ -1413,6 +1410,61 @@ runpy.run_path(worker, run_name='__main__')
                 retried = await self.cache.render(dict(request, retry=True))
                 self.assertEqual(retried['status'], 'unavailable')
                 self.assertEqual(len(decodes), 2)
+
+        async def test_video_owner_deadline_does_not_cache_failure(self):
+            video = self.folder / 'Slow.mp4'
+            video.write_bytes(b'Fixture video identity')
+            self.cache.timeout = .02
+            async def frame(path, size):
+                await asyncio.Event().wait()
+            with patch.object(self.cache, 'frame', frame):
+                self.assertEqual((await self.cache.get(str(video), 128))['status'], 'backend-unavailable')
+            async def ready(path, size):
+                return empty_png()
+            with patch.object(self.cache, 'frame', ready):
+                self.assertEqual((await self.cache.get(str(video), 128))['status'], 'generated')
+
+        async def test_video_stage_rejects_unsafe_or_unbounded_output(self):
+            video = self.folder / 'Video.mp4'
+            video.write_bytes(b'Fixture video identity')
+            from images.video import VideoFrames
+            self.cache.video_frames = VideoFrames(self.events.append)
+            for kind, error, message in (('fifo', ValueError, 'regular file'),
+                                         ('symlink', OSError, 'Too many levels'),
+                                         ('oversize', ValueError, 'staged PNG limit')):
+                async def capture(path, size, output):
+                    if kind == 'fifo':
+                        os.mkfifo(output)
+                    elif kind == 'symlink':
+                        output.symlink_to(video)
+                    else:
+                        output.write_bytes(empty_png().ljust(size * size * 4 + 65537, b'\0'))
+                with self.subTest(kind=kind), patch.object(self.cache.video_frames, 'capture', capture):
+                    with self.assertRaisesRegex(error, message):
+                        await self.cache.frame(video, 128)
+            self.assertEqual(list(self.cache.staging.iterdir()), [])
+
+        async def test_video_failure_expires_when_producer_changes(self):
+            video = self.folder / 'Video.mp4'
+            video.write_bytes(b'Fixture video identity')
+            qml_root = self.folder / 'qml'
+            module = qml_root / 'MpvQml'
+            module.mkdir(parents=True)
+            (module / 'qmldir').write_text('module MpvQml\nplugin mpvqmlplugin\n')
+            plugin = module / 'libmpvqmlplugin.so'
+            plugin.write_bytes(b'old producer')
+
+            async def fail(path, size):
+                raise CommandError('no-frame', 'Fixture video has no frame')
+            async def ready(path, size):
+                return empty_png()
+            with patch.dict(os.environ, QML_IMPORT_PATH=str(qml_root)):
+                with patch.object(self.cache, 'frame', fail):
+                    self.assertEqual((await self.cache.get(str(video), 128))['status'], 'failed')
+                with patch.object(self.cache, 'frame', ready):
+                    self.assertEqual((await self.cache.get(str(video), 128))['status'], 'failure-hit')
+                    plugin.write_bytes(b'updated producer')
+                    self.assertEqual((await self.cache.get(str(video), 128))['status'], 'generated')
 
         def process_identity(self, pid):
             proc = Path('/proc') / str(pid)
