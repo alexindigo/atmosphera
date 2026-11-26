@@ -57,6 +57,9 @@ Scope {
       // move this admission to a timer, or retry by rereading the provider.
       _stageDirectory = store.stageDirectory;
       if (!_stageDirectory) {
+        // Warm the stage for subsequent events; this producer must never be
+        // read after the current callback returns.
+        store.ensureStage();
         fail("retention-unavailable", "The provider snapshot store is not ready");
         return;
       }

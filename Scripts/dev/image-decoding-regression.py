@@ -2479,7 +2479,7 @@ def main():
     parser.add_argument('--baseline-plugins', type=Path)
     parser.add_argument('--lint-baseline-source', type=Path, help='Immutable shell baseline for changed-QML reporting, never a red control')
     parser.add_argument('--qt-webp', choices=('present', 'absent'), default='absent', help=argparse.SUPPRESS)
-    parser.add_argument('--case', choices=(*CASES, 'formats', 'map-favicon', 'rotated-video', 'owner-fault', 'wallpaper-software-baseline'), required=True)
+    parser.add_argument('--case', choices=(*CASES, 'formats', 'map-favicon', 'rotated-video', 'owner-fault', 'wallpaper-software-baseline', 'staging-restart'), required=True)
     parser.add_argument('--results', type=Path)
     parser.add_argument('--job-control', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
@@ -2531,6 +2531,12 @@ def execute(args, profile):
             run.source_admission()
         elif args.case == 'download-burst':
             run.download_burst()
+        elif args.case == 'staging-restart':
+            inputs = run.work / 'fixtures'
+            create_fixtures(inputs, run.commands)
+            result, _ = run.qt(args.source, args.source / 'Scripts/dev/fixtures/image-decoding/staging-restart.qml',
+                               inputs, 'staging-restart')
+            run.check('staging-worker-recovers-after-exit', result['recovered'], result)
         elif args.case in ('cache', 'cache-red', 'cache-read', 'cache-read-red'):
             run.cache_contract()
         elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):

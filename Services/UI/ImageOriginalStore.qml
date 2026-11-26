@@ -18,6 +18,7 @@ Scope {
   property string _liveKey: ""
   property int _sequence: 0
   property bool _starting: false
+  property int _retryDelay: 100
 
   function open(directory, history, callback) {
     _store = {
@@ -69,12 +70,12 @@ Scope {
 
   function ensureStage(callback) {
     if (stageDirectory) {
-      callback(true);
+      callback?.(true);
       return;
     }
     _send({
             action: "prepare"
-          }, reply => callback(reply.ok));
+          }, callback ? reply => callback(reply.ok) : undefined);
   }
 
   function release(key) {
@@ -100,10 +101,8 @@ Scope {
       storage.write(JSON.stringify(packet) + "\n");
     } else {
       _commands.push(packet);
-      if (!storage.running) {
-        _starting = true;
-        storage.running = true;
-      }
+      if (!retry.running)
+        _start();
     }
   }
 
@@ -111,6 +110,7 @@ Scope {
     const packet = JSON.parse(line);
     if (packet.stage) {
       stageDirectory = packet.stage;
+      healthy.start();
       for (const queued of _commands)
         storage.write(JSON.stringify(queued) + "\n");
       _commands = [];
@@ -121,17 +121,38 @@ Scope {
     callback?.(packet);
   }
 
+  function _start() {
+    if (!storage.running) {
+      _starting = true;
+      storage.running = true;
+    }
+  }
+
   function _failed() {
+    healthy.stop();
     stageDirectory = "";
     _commands = [];
     const waiting = _waiting;
     _waiting = ({});
+    retry.interval = _retryDelay;
+    _retryDelay = Math.min(_retryDelay * 2, 5000);
+    retry.restart();
     for (const callback of Object.values(waiting))
       callback({
                  ok: false,
                  code: "retention-unavailable",
                  reason: "The image original store stopped"
                });
+  }
+
+  Timer {
+    id: retry
+    onTriggered: root._start()
+  }
+  Timer {
+    id: healthy
+    interval: 5000
+    onTriggered: root._retryDelay = 100
   }
 
   Process {
