@@ -2,6 +2,7 @@ import Niri 1.0
 import QtQuick
 import "../../Helpers/NiriEdgeNavigation.js" as EdgeNavigation
 import "../../Helpers/NiriReply.js" as NiriReply
+import "../../Helpers/NiriRowMove.js" as NiriRowMove
 import qs.Commons
 import qs.Services.Keyboard
 
@@ -40,11 +41,24 @@ Item {
   property int _outputGeneration: 0
   property int _peerGeneration: 0
   property bool _edgeNavigationBusy: false
+  property bool _rowMoveBusy: false
 
   Timer {
     id: outputRetry
     interval: 250
     onTriggered: root.bootstrap()
+  }
+
+  Timer {
+    id: rowMoveRefresh
+    interval: 32
+    property var retry: null
+    onTriggered: {
+      const next = retry;
+      retry = null;
+      if (next)
+        next();
+    }
   }
 
   function scrollingOrdinals(value) {
@@ -361,6 +375,114 @@ Item {
       }, current);
     }, current);
   }
+
+  // Request/reply sockets and the event stream are independent. Read the
+  // compositor's actual window state after each action rather than treating
+  // Handled as a layout change. Never retry an action, even on transport error.
+  function moveWindowWithinWorkspace(windowId, target, completed) {
+    const done = typeof completed === "function" ? completed : () => {};
+    const workspaceId = target?.workspaceId;
+    const current = currentStateGuard();
+    function observation(win, focusedId) {
+      return win ? {
+                     workspaceId: win.workspaceId,
+                     posInScrollingLayout: win.layout.posInScrollingLayout,
+                     focused: win.id === focusedId
+                   } : null;
+    }
+    function streamed() {
+      return current() ? observation(root.windowForId(windowId), root.focusedWindowId) : null;
+    }
+    if (_rowMoveBusy || !workspaceForId(workspaceId)) {
+      done(false, _rowMoveBusy ? "A same-workspace move is already running" : "Invalid or stale workspace", streamed());
+      return;
+    }
+    const intent = {
+      kind: target.kind,
+      anchorId: target.anchorId,
+      index: target.index
+    };
+    const initial = NiriRowMove.columnsFor(windows, workspaceId);
+    const final = NiriRowMove.destination(initial, windowId, intent);
+    if (!final) {
+      done(false, "Invalid or stale move target", streamed());
+      return;
+    }
+    _rowMoveBusy = true;
+
+    function finish(ok, error, observed) {
+      root._rowMoveBusy = false;
+      done(ok, error, observed);
+    }
+    function snapshot(receive) {
+      root.request("Confirm same-workspace layout", () => NiriRequests.windows(), (ok, error, rows) => {
+        if (!ok) {
+          receive(null, error);
+          return;
+        }
+        const raw = Array.from(rows);
+        const wins = raw.map(root.extractWindow);
+        const focusedId = raw.find(w => w.isFocused)?.id ?? null;
+        receive({
+                  columns: NiriRowMove.columnsFor(wins, workspaceId),
+                  focusedId,
+                  observed: observation(wins.find(w => w.id === windowId), focusedId)
+                }, "");
+      }, current);
+    }
+    function advance(state) {
+      const step = NiriRowMove.nextStep(state.columns, state.focusedId, windowId, intent, final);
+      if (!step) {
+        finish(true, "", state.observed);
+        return;
+      }
+      const actions = {
+        focus: () => NiriActions.focusWindow(windowId),
+        left: () => NiriActions.consumeOrExpelWindowLeft(windowId),
+        right: () => NiriActions.consumeOrExpelWindowRight(windowId),
+        consume: () => NiriActions.consumeWindowIntoColumn(),
+        column: () => NiriActions.moveColumnToIndex(String(step.index)),
+        up: () => NiriActions.moveWindowUp(),
+        down: () => NiriActions.moveWindowDown()
+      };
+      root.request("Move window within workspace (" + step.action + ")", actions[step.action], (ok, error) => {
+        if (!ok) {
+          snapshot(observed => finish(false, error, observed ? observed.observed : streamed()));
+          return;
+        }
+        // v26.04 sends Handled from its action idle callback and refreshes
+        // its window view separately. Wait briefly only while it is unchanged.
+        const deadline = Date.now() + 1000;
+        function confirm() {
+          snapshot((after, queryError) => {
+            if (!after) {
+              finish(false, queryError, streamed());
+            } else if (NiriRowMove.sameLayout(after.columns, step.columns) && after.focusedId === step.focusedId) {
+              advance(after);
+            } else if (Date.now() < deadline && NiriRowMove.sameLayout(after.columns, state.columns) && after.focusedId === state.focusedId) {
+              rowMoveRefresh.retry = confirm;
+              rowMoveRefresh.start();
+            } else {
+              finish(false, "Same-workspace move did not reach its expected state", after.observed);
+            }
+          });
+        }
+        confirm();
+      }, current);
+    }
+    // Returning to the origin must not focus or move.
+    snapshot((state, error) => {
+      if (!state)
+        finish(false, error, streamed());
+      else if (!NiriRowMove.sameLayout(state.columns, initial))
+        finish(false, "Workspace layout changed before the move", state.observed);
+      else if (NiriRowMove.sameLayout(state.columns, final))
+        finish(true, "", state.observed);
+      else
+        advance(state);
+    });
+  }
+
   function turnOffMonitors() {
     request("turnOffMonitors", () => NiriActions.sendAction({
                                                               PowerOffMonitors: {}
