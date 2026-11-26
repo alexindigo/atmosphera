@@ -66,9 +66,6 @@ Singleton {
   // Wallpaper panel: which appearance slot (light/dark) new selections apply to — like picking a monitor tab
   property string wallpaperSelectionAppearance: "light"
 
-  // Bumped when favorites are added/removed so grid delegates can refresh star state
-  property int favoritesRevision: 0
-
   // After favoriting, refresh snapshot once theme colors finish transitioning
   property var pendingFavoriteSchemeRefresh: null
 
@@ -1547,7 +1544,6 @@ Singleton {
     }
     if (out.length !== favorites.length) {
       Settings.data.wallpaper.favorites = out;
-      root.favoritesRevision++;
     }
   }
 
@@ -1575,17 +1571,15 @@ Singleton {
     return _findFavoriteIndex(path, appearanceSlot) !== _favoriteNotFound;
   }
 
-  // Single favorite entry per path; use _favoriteAppearanceSlot(entry) for light vs dark it was starred under.
+  // Bindings track the settings list read during lookup. Writers replace the
+  // list (including for palette updates), so consumers need no revision counter.
+  // Use _favoriteAppearanceSlot(entry) for the light or dark slot it was starred under.
   function favoriteEntryForPath(path) {
     var idx = _findAnyFavoriteIndexForPath(path);
     if (idx === _favoriteNotFound) {
       return null;
     }
     return Settings.data.wallpaper.favorites[idx];
-  }
-
-  function getFavoriteForDisplay(path) {
-    return favoriteEntryForPath(path);
   }
 
   // -------------------------------------------------------------------
@@ -1649,7 +1643,6 @@ Singleton {
 
   function _publishFavorites(favorites, path) {
     Settings.data.wallpaper.favorites = favorites;
-    root.favoritesRevision++;
 
     favoritesChanged(path);
   }
@@ -1744,11 +1737,9 @@ Singleton {
     favorites[existingIndex] = _createFavoriteEntry(favorites[existingIndex].path, slot);
     Settings.data.wallpaper.favorites = favorites;
     Logger.d("Wallpaper", "Updated color scheme for favorite:", path, slot);
-    favoriteDataUpdated(path);
   }
 
   signal favoritesChanged(string path)
-  signal favoriteDataUpdated(string path)
 
   // Auto-update favorite palette colors when theme colors finish transitioning
   Connections {

@@ -93,11 +93,11 @@ else
 fi
 
 FINGERPRINT="$({ sha256sum < "$DEVCONTAINER_DIR/Dockerfile"
-                  sha256sum < "$DEVCONTAINER_DIR/arch-snapshot.mirrorlist"
-                  sha256sum < "$DEVCONTAINER_DIR/arch-snapshot-install.sh"
+                  sha256sum < "$DEVCONTAINER_DIR/arch-install.sh"
                   sha256sum < "$DEVCONTAINER_DIR/settings-check-requirements.txt"
                   sha256sum < "$DEVCONTAINER_DIR/atmo-dev.sh"
                   sha256sum < "$DEVCONTAINER_DIR/install-qml-deps.sh"
+                  sha256sum < "$DEVCONTAINER_DIR/configqml-qt-6.12.1.patch"
                   echo "dev uid=$IMG_UID gid=$IMG_GID"; } | sha256sum | cut -c1-16)"
 IMAGE="localhost/atmosphera-dev:$FINGERPRINT"
 

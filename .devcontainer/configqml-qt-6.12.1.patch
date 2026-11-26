@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -54,5 +54,5 @@ option(CONFIGQML_BUILD_QML "Build the ConfigQml QML facade" ON)
+ if(CONFIGQML_BUILD_QML)
+     # QMetaObjectBuilder is a private ABI. Record and check its exact build identity.
+-    set(CONFIGQML_PRIVATE_QT_VERSION "6.12.0")
++    set(CONFIGQML_PRIVATE_QT_VERSION "6.12.1")
+     find_package(Qt6 ${CONFIGQML_PRIVATE_QT_VERSION} EXACT REQUIRED COMPONENTS Core Qml)
+     find_package(Qt6CorePrivate ${CONFIGQML_PRIVATE_QT_VERSION} EXACT REQUIRED)
+diff --git a/tests/private_isolation.cmake b/tests/private_isolation.cmake
+--- a/tests/private_isolation.cmake
++++ b/tests/private_isolation.cmake
+@@ -15,5 +15,5 @@ endif()
+ file(READ "${BUILD_DIR}/configqml-qt-build.txt" identity)
+-if(NOT identity STREQUAL "Core=6.12.0\nCorePrivate=6.12.0\nQml=6.12.0\n")
++if(NOT identity STREQUAL "Core=6.12.1\nCorePrivate=6.12.1\nQml=6.12.1\n")
+     message(FATAL_ERROR "Unexpected exact Qt adapter identity: ${identity}")
+ endif()
+-message(STATUS "Private API isolated; exact Core/CorePrivate/Qml 6.12.0 recorded")
++message(STATUS "Private API isolated; exact Core/CorePrivate/Qml 6.12.1 recorded")

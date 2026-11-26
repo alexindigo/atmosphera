@@ -255,15 +255,15 @@ launcher never silently retries with the other engine. Selection diagnostics
 
 ### Images
 
-`.devcontainer/arch-snapshot.mirrorlist` pins the Arch Linux Archive snapshot
-used by the devcontainer, CI checks, and AUR publisher. Change that file when
-qualifying a new Qt/Quickshell toolchain, together with any affected exact
-version checks and [native metadata](Scripts/dev/native-metadata/README.md).
-The Arch image digests pin the bootstrap images, not the package snapshot.
+The devcontainer, CI checks, and AUR publisher use `.devcontainer/arch-install.sh`
+to upgrade digest-pinned Arch bootstrap images from the normal Arch mirrors,
+with package signature verification. When the mirrors move to a new
+Qt/Quickshell toolchain, qualify it and update the exact version checks and
+[native metadata](Scripts/dev/native-metadata/README.md) together.
 
 The launcher builds a local image tagged `localhost/atmosphera-dev:<fingerprint>`,
 where the fingerprint covers the Dockerfile, its copied inputs (including the
-snapshot), and the image's dev-account IDs. Editing those inputs yields a new
+Arch installer), and the image's dev-account IDs. Editing those inputs yields a new
 tag on the next run; old images are left alone. Build and run always use the
 same selected engine.
 

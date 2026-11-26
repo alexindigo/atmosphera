@@ -10,11 +10,12 @@ an error; diagnostic categories and severities are unchanged.
 
 `dependencies/configqml-055` contains the **unmodified registrar outputs** for
 ConfigQml 0.5.5, regenerated inside `atmosphera-plugin-settings-host-and-assets`
-on ark.home with Qt 6.12.0 and the signed historical Qt 6.11.2 SDK packages.
+on ark.home with Qt 6.12.1 and the signed historical Qt 6.11.2 SDK packages.
 The published release source is `09dfa03ff3c1af0ee655b1be97d7585b97c95477`.
 The release archive matches the install recipe's pinned checksum and identifies
-that Git commit. The Qt 6.12.0 output is byte-identical to the metadata installed
-by building the release archive. Both manifests identify the same release source.
+that Git commit. The Qt 6.12.1 outputs are byte-identical to the metadata installed
+by building the release archive with the exact Qt version patch. Both manifests
+identify the same release source.
 When the tooling image lacks that module, the materializer copies these real
 registrar outputs into its private import universe, checking artifact hashes
 and the selected family's Qt version. An installed module takes precedence.
@@ -37,20 +38,23 @@ or installing libraries. In the assigned VM, with disk-backed TMPDIR:
 python3 -B Scripts/dev/configqml-metadata-generate.py \
   --source "$IMMUTABLE_CONFIGQML_SOURCE" --qt "$SDK/usr/lib/qt6" \
   --reference Scripts/dev/native-metadata/dependencies/configqml-055 \
+  --qmldir "$CONFIGQML_PRODUCER_QMLDIR" \
   --output "$WORKSPACE/generated-configqml"
 LD_LIBRARY_PATH="$SDK/usr/lib" python3 -B Scripts/dev/qml-native-metadata-selftest.py \
   --sdk "$SDK/usr/lib/qt6" -k configqml_fallback
 ```
 
 First run the generator with the reference Qt 6.12 SDK and compare its qmltypes
-byte-for-byte with the installed reference. Preserve `generation.json`, source
+byte-for-byte with the installed reference. Pass the corresponding real CMake
+`qmldir` explicitly; use the retained producer `qmldir` for historical tooling-only
+variants. Preserve `generation.json`, source
 archives, SDK package signatures and hashes outside the repository; copy only
 `configqml.qmltypes`, `qmldir` and `manifest.json` into the variant directory.
 
 | # | Family | Source commit | Qt toolchain |
 |---|---|---|---|
 | 1 | `qt611-qs031` | `1a4716cde794a59928d9d9fc15f2afc7a95de360` (Quickshell 0.3.1) | 6.11.2 |
-| 2 | `qt612-qs032` | `4f508be500dea6e5732cc3d50382a0048b17e7b1` (Quickshell 0.3.2) | 6.12.0 |
+| 2 | `qt612-qs032` | `4f508be500dea6e5732cc3d50382a0048b17e7b1` (Quickshell 0.3.2) | 6.12.1 |
 
 The manifests contain the exact source-archive checksums and inventories, not
 version-name matching. Lint verifies both native and required Qt metadata before using

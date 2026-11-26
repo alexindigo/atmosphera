@@ -2,8 +2,8 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.Commons
 import "../../../Helpers/RecordListEditor.js" as Lists
+import qs.Commons
 
 Item {
   id: root
@@ -20,26 +20,112 @@ Item {
   property bool faultBlocked: false
   property bool exitAfterRepair: false
   property var cases: [
-    {from: ["bar", "widgets", "left"], to: ["bar", "widgets", "center"], source: [], destination: []},
-    {from: ["controlCenter", "shortcuts", "left"], to: ["controlCenter", "shortcuts", "right"], source: [], destination: []},
-    {from: ["bar", "screenOverrides"], to: ["bar", "screenOverrides"], source: [{index: 0}, {key: "widgets"}, {key: "left"}], destination: [{index: 0}, {key: "widgets"}, {key: "right"}]},
-    {from: ["desktopWidgets", "monitorWidgets"], to: ["desktopWidgets", "monitorWidgets"], source: [{index: 0}, {key: "widgets"}], destination: [{index: 1}, {key: "widgets"}]}
+    {
+      from: ["bar", "widgets", "left"],
+      to: ["bar", "widgets", "center"],
+      source: [],
+      destination: []
+    },
+    {
+      from: ["controlCenter", "shortcuts", "left"],
+      to: ["controlCenter", "shortcuts", "right"],
+      source: [],
+      destination: []
+    },
+    {
+      from: ["bar", "screenOverrides"],
+      to: ["bar", "screenOverrides"],
+      source: [
+        {
+          index: 0
+        },
+        {
+          key: "widgets"
+        },
+        {
+          key: "left"
+        }
+      ],
+      destination: [
+        {
+          index: 0
+        },
+        {
+          key: "widgets"
+        },
+        {
+          key: "right"
+        }
+      ]
+    },
+    {
+      from: ["desktopWidgets", "monitorWidgets"],
+      to: ["desktopWidgets", "monitorWidgets"],
+      source: [
+        {
+          index: 0
+        },
+        {
+          key: "widgets"
+        }
+      ],
+      destination: [
+        {
+          index: 1
+        },
+        {
+          key: "widgets"
+        }
+      ]
+    }
   ]
   readonly property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
   function check(ok, name) {
     if (!ok)
       throw new Error("I4_TRANSFER_ASSERT: " + name);
   }
-  function fail(error) {console.error(String(error));if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair",function(){});return;}Qt.exit(2);}
-  function later(next){check(continuation===null,"one fixture continuation");continuation=next;readyWait.start();}
+  function fail(error) {
+    console.error(String(error));
+    if (faultBlocked && !faultProcess.running) {
+      exitAfterRepair = true;
+      fault("repair", function () {});
+      return;
+    }
+    Qt.exit(2);
+  }
+  function later(next) {
+    check(continuation === null, "one fixture continuation");
+    continuation = next;
+    readyWait.start();
+  }
   Timer {
-    id:readyWait;interval:20;repeat:true
-    onTriggered:{try{
-      var paths=[["bar","widgets","left"],["bar","widgets","center"],["controlCenter","shortcuts","left"],["controlCenter","shortcuts","right"],["bar","screenOverrides"],["desktopWidgets","monitorWidgets"]];
-      var probes=paths.map(function(path){return Settings.createRecordListEditor(path,[]);});
-      var ready=probes.every(function(probe){return !!probe;});probes.forEach(function(probe){if(probe)probe.detach();});
-      if(!ready)return;stop();var next=root.continuation;root.continuation=null;next();
-    }catch(error){stop();root.fail(error);}}
+    id: readyWait
+    interval: 20
+    repeat: true
+    onTriggered: {
+      try {
+        var paths = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["controlCenter", "shortcuts", "left"], ["controlCenter", "shortcuts", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]];
+        var probes = paths.map(function (path) {
+          return Settings.createRecordListEditor(path, []);
+        });
+        var ready = probes.every(function (probe) {
+          return !!probe;
+        });
+        probes.forEach(function (probe) {
+          if (probe)
+            probe.detach();
+        });
+        if (!ready)
+          return;
+        stop();
+        var next = root.continuation;
+        root.continuation = null;
+        next();
+      } catch (error) {
+        stop();
+        root.fail(error);
+      }
+    }
   }
   function value(path) {
     var node = Settings.data;
@@ -53,21 +139,38 @@ Item {
       node = node[path[i]];
     node[path[path.length - 1]] = data;
   }
-  function state(entry) { return Lists.stamp([value(entry.from), value(entry.to)]); }
+  function transferStamp(entry) {
+    return Lists.stamp([value(entry.from), value(entry.to)]);
+  }
   function capture(entry) {
     var path = entry.from.slice();
     var address = Lists.copy(entry.source);
-    var targets = [{path: entry.to.slice(), listAddress: Lists.copy(entry.destination)}];
+    var targets = [
+          {
+            path: entry.to.slice(),
+            listAddress: Lists.copy(entry.destination)
+          }
+        ];
     var editor = Settings.createRecordListEditor(path, address, targets);
     check(editor !== null && typeof editor.endpoint === "function", "captured transfer API");
     path[0] = "caller-mutated";
-    address.push({key: "caller-mutated"});
+    address.push({
+                   key: "caller-mutated"
+                 });
     targets[0].path[0] = "caller-mutated";
-    targets[0].listAddress.push({key: "caller-mutated"});
+    targets[0].listAddress.push({
+                                  key: "caller-mutated"
+                                });
     editor.initialValue[0].opaque.keep = false;
     return editor;
   }
-  function command(editor) { return {op: "transfer", from: editor.endpoint(0), to: editor.endpoint(1, 1)}; }
+  function command(editor) {
+    return {
+      op: "transfer",
+      from: editor.endpoint(0),
+      to: editor.endpoint(1, 1)
+    };
+  }
   function failed(result, code) {
     check(result.status === "failed" && result.error.code === code, code);
     refused++;
@@ -83,50 +186,88 @@ Item {
       var edits = [move];
       var code = "list-edit-operation";
       switch (invalidCase++) {
-      case 0: move.to.index = 99; break;
-      case 1: move.to.extra = true; break;
-      case 2: move.to.generation = 1; break;
-      case 3: move.to.listAddress = [{each: true}]; break;
-      case 4: move.to.policyId = "uncaptured"; break;
-      case 5: edits.push({op: "remove", index: 99}); break;
-      case 6: move.to.generation = "99999999999999999999"; code = "list-edit-conflict"; break;
+      case 0:
+        move.to.index = 99;
+        break;
+      case 1:
+        move.to.extra = true;
+        break;
+      case 2:
+        move.to.generation = 1;
+        break;
+      case 3:
+        move.to.listAddress = [
+              {
+                each: true
+              }
+            ];
+        break;
+      case 4:
+        move.to.policyId = "uncaptured";
+        break;
+      case 5:
+        edits.push({
+                     op: "remove",
+                     index: 99
+                   });
+        break;
+      case 6:
+        move.to.generation = "99999999999999999999";
+        code = "list-edit-conflict";
+        break;
       }
-      var before = state(entry);
+      var before = transferStamp(entry);
       var sync = true;
       check(!session.submit(edits, function (result) {
-        try { check(!sync, "async refusal"); failed(result, code); invalid(); } catch (error) { fail(error); }
+        try {
+          check(!sync, "async refusal");
+          failed(result, code);
+          invalid();
+        } catch (error) {
+          fail(error);
+        }
       }), "invalid batch refused");
-      check(state(entry) === before, "no half transfer from invalid batch");
+      check(transferStamp(entry) === before, "no half transfer from invalid batch");
       sync = false;
-    } catch (error) { fail(error); }
+    } catch (error) {
+      fail(error);
+    }
   }
   function staleSource(entry) {
     var original = value(entry.from);
     var changed = Lists.copy(original);
     Lists.listAt(changed, entry.source).reverse();
     write(entry.from, changed);
-    var before = state(entry);
+    var before = transferStamp(entry);
     check(!session.submit([command(session)], function (result) {
       try {
         failed(result, "list-edit-conflict");
-        check(state(entry) === before, "repeated-ID stale source unchanged");
+        check(transferStamp(entry) === before, "repeated-ID stale source unchanged");
         write(entry.from, original);
         later(function () {
-        session = capture(entry);
-        var target = value(entry.to);
-        var altered = Lists.copy(target);
-        Lists.listAt(altered, entry.destination).push({id: "temporary"});
-        write(entry.to, altered);
-        write(entry.to, target);
-        check(!session.submit([command(session)], function (aba) {
-          try {
-            failed(aba, "list-edit-conflict");
-            check(Lists.stamp(value(entry.to)) === Lists.stamp(target), "destination notified ABA retained");
-            later(function () {transfer(entry);});
-          } catch (error) { fail(error); }
-        }), "destination ABA refused");
+          session = capture(entry);
+          var target = value(entry.to);
+          var altered = Lists.copy(target);
+          Lists.listAt(altered, entry.destination).push({
+                                                          id: "temporary"
+                                                        });
+          write(entry.to, altered);
+          write(entry.to, target);
+          check(!session.submit([command(session)], function (aba) {
+            try {
+              failed(aba, "list-edit-conflict");
+              check(Lists.stamp(value(entry.to)) === Lists.stamp(target), "destination notified ABA retained");
+              later(function () {
+                transfer(entry);
+              });
+            } catch (error) {
+              fail(error);
+            }
+          }), "destination ABA refused");
         });
-      } catch (error) { fail(error); }
+      } catch (error) {
+        fail(error);
+      }
     }), "source stale refused");
   }
   function transfer(entry) {
@@ -135,36 +276,53 @@ Item {
     var beforeScreen = screenWrites;
     var beforeDesktop = desktopWrites;
     var sync = true;
-    check(session.submit([{op: "set", index: 0, field: "explicit", value: false}, move], function (result) {
-      try {
-        check(!sync && result.status === "admitted" && result.refreshState === "current", "current admission, not save");
-        check(Lists.listAt(value(entry.from), entry.source).length === 1, "actual source consumer");
-        var destination = Lists.listAt(value(entry.to), entry.destination);
-        check(destination.length === 2 && destination[1].tag === "first" && destination[1].opaque.keep && destination[1].explicit === false, "actual destination consumer retains row");
-        if (currentCase === 2)
-          check(screenWrites === beforeScreen + 1, "one atomic screen leaf assignment");
-        if (currentCase === 3)
-          check(desktopWrites === beforeDesktop + 1, "one atomic desktop leaf assignment");
-        session.detach();
-        check(!session.submit([command(session)], function (closed) {
-          try {
-            failed(closed, "list-editor-closed");
-            currentCase++;
-            if (currentCase === cases.length)
-              sameList();
-            else {
-              invalidCase = 0;
-              session = capture(cases[currentCase]);
-              invalid();
-            }
-          } catch (error) { fail(error); }
-        }), "closed refusal");
-      } catch (error) { fail(error); }
-    }), "transfer admitted");
-    move.from.listAddress.push({key: "caller-mutated"});
+    check(session.submit([
+                           {
+                             op: "set",
+                             index: 0,
+                             field: "explicit",
+                             value: false
+                           },
+                           move], function (result) {
+                             try {
+                               check(!sync && result.status === "admitted" && result.refreshState === "current", "current admission, not save");
+                               check(Lists.listAt(value(entry.from), entry.source).length === 1, "actual source consumer");
+                               var destination = Lists.listAt(value(entry.to), entry.destination);
+                               check(destination.length === 2 && destination[1].tag === "first" && destination[1].opaque.keep && destination[1].explicit === false, "actual destination consumer retains row");
+                               if (currentCase === 2)
+                                 check(screenWrites === beforeScreen + 1, "one atomic screen leaf assignment");
+                               if (currentCase === 3)
+                                 check(desktopWrites === beforeDesktop + 1, "one atomic desktop leaf assignment");
+                               session.detach();
+                               check(!session.submit([command(session)], function (closed) {
+                                 try {
+                                   failed(closed, "list-editor-closed");
+                                   currentCase++;
+                                   if (currentCase === cases.length)
+                                     sameList();
+                                   else {
+                                     invalidCase = 0;
+                                     session = capture(cases[currentCase]);
+                                     invalid();
+                                   }
+                                 } catch (error) {
+                                   fail(error);
+                                 }
+                               }), "closed refusal");
+                             } catch (error) {
+                               fail(error);
+                             }
+                           }), "transfer admitted");
+    move.from.listAddress.push({
+                                 key: "caller-mutated"
+                               });
     move.to.index = 99;
     check(!session.submit([], function (busy) {
-      try { failed(busy, "list-editor-busy"); } catch (error) { fail(error); }
+      try {
+        failed(busy, "list-editor-busy");
+      } catch (error) {
+        fail(error);
+      }
     }), "busy refusal");
     sync = false;
   }
@@ -172,7 +330,11 @@ Item {
     var path = cases[0].to;
     session = Settings.createRecordListEditor(path, []);
     var before = value(path);
-    var invalidMove = {op: "transfer", from: session.endpoint(0), to: session.endpoint(2)};
+    var invalidMove = {
+      op: "transfer",
+      from: session.endpoint(0),
+      to: session.endpoint(2)
+    };
     check(!session.submit([invalidMove], function (result) {
       try {
         failed(result, "list-edit-operation");
@@ -180,17 +342,29 @@ Item {
         // Destination slot is after removal, and both generations address the
         // initial publication even in a sequential two-transfer batch.
         check(session.submit([
-          {op: "transfer", from: session.endpoint(1), to: session.endpoint(0)},
-          {op: "transfer", from: session.endpoint(0), to: session.endpoint(1)}
-        ], function (admitted) {
-          try {
-            check(admitted.status === "admitted" && admitted.refreshState === "current", "same-list sequential transfers");
-            check(centerWrites <= writes + 1, "at most one same-leaf assignment notification");
-            check(Lists.stamp(value(path)) === Lists.stamp(before), "after-removal end slot");
-            save();
-          } catch (error) { fail(error); }
-        }), "same-list batch admitted");
-      } catch (error) { fail(error); }
+                               {
+                                 op: "transfer",
+                                 from: session.endpoint(1),
+                                 to: session.endpoint(0)
+                               },
+                               {
+                                 op: "transfer",
+                                 from: session.endpoint(0),
+                                 to: session.endpoint(1)
+                               }
+                             ], function (admitted) {
+                               try {
+                                 check(admitted.status === "admitted" && admitted.refreshState === "current", "same-list sequential transfers");
+                                 check(centerWrites <= writes + 1, "at most one same-leaf assignment notification");
+                                 check(Lists.stamp(value(path)) === Lists.stamp(before), "after-removal end slot");
+                                 save();
+                               } catch (error) {
+                                 fail(error);
+                               }
+                             }), "same-list batch admitted");
+      } catch (error) {
+        fail(error);
+      }
     }), "pre-removal end slot refused");
     check(Lists.stamp(value(path)) === Lists.stamp(before), "invalid self transfer unchanged");
   }
@@ -209,24 +383,28 @@ Item {
   function save() {
     finalChecks();
     check(refused === cases.length * 11 + 1, "all refusal callbacks delivered");
-    fault("block",function () {
-    Settings.saveResult(function (failedSave) {
-      try {
-        check(failedSave.status === "failed", "failed aggregate save is not admitted/saved");
-        finalChecks();
-        fault("repair",function () {
-        // Retry persistence, never replay the membership command.
-        Settings.saveResult(function (result) {
-          try {
-            check(result.status === "saved" || result.status === "nothing_to_save", "actual retry receipt");
-            finalChecks();
-            console.log("I4_LIST_TRANSFERS: SAVED_PASS");
-            Qt.exit(0);
-          } catch (error) { fail(error); }
-        });
-        });
-      } catch (error) { fail(error); }
-    });
+    fault("block", function () {
+      Settings.saveResult(function (failedSave) {
+        try {
+          check(failedSave.status === "failed", "failed aggregate save is not admitted/saved");
+          finalChecks();
+          fault("repair", function () {
+            // Retry persistence, never replay the membership command.
+            Settings.saveResult(function (result) {
+              try {
+                check(result.status === "saved" || result.status === "nothing_to_save", "actual retry receipt");
+                finalChecks();
+                console.log("I4_LIST_TRANSFERS: SAVED_PASS");
+                Qt.exit(0);
+              } catch (error) {
+                fail(error);
+              }
+            });
+          });
+        } catch (error) {
+          fail(error);
+        }
+      });
     });
   }
   function begin() {
@@ -240,32 +418,113 @@ Item {
         Qt.exit(0);
         return;
       }
-      var rows = [{id: "Repeat", tag: "first", opaque: {keep: true}, deprecatedData: {token: "retain"}}, {id: "Repeat", tag: "second"}];
-      var destination = [{id: "Repeat", tag: "destination"}];
+      var rows = [
+            {
+              id: "Repeat",
+              tag: "first",
+              opaque: {
+                keep: true
+              },
+              deprecatedData: {
+                token: "retain"
+              }
+            },
+            {
+              id: "Repeat",
+              tag: "second"
+            }
+          ];
+      var destination = [
+            {
+              id: "Repeat",
+              tag: "destination"
+            }
+          ];
       Settings.data.bar.widgets.left = Lists.copy(rows);
       Settings.data.bar.widgets.center = Lists.copy(destination);
       Settings.data.controlCenter.shortcuts.left = Lists.copy(rows);
       Settings.data.controlCenter.shortcuts.right = Lists.copy(destination);
-      Settings.data.bar.screenOverrides = [{name: "offline.屏/1", opaque: "screen", widgets: {left: Lists.copy(rows), center: [], right: Lists.copy(destination)}}];
-      Settings.data.desktopWidgets.monitorWidgets = [{name: "offline.屏/1", widgets: Lists.copy(rows)}, {name: "other.屏/2", opaque: "desktop", widgets: Lists.copy(destination)}];
+      Settings.data.bar.screenOverrides = [
+            {
+              name: "offline.屏/1",
+              opaque: "screen",
+              widgets: {
+                left: Lists.copy(rows),
+                center: [],
+                right: Lists.copy(destination)
+              }
+            }
+          ];
+      Settings.data.desktopWidgets.monitorWidgets = [
+            {
+              name: "offline.屏/1",
+              widgets: Lists.copy(rows)
+            },
+            {
+              name: "other.屏/2",
+              opaque: "desktop",
+              widgets: Lists.copy(destination)
+            }
+          ];
       later(function () {
-      session = capture(cases[0]);
-      invalid();
+        session = capture(cases[0]);
+        invalid();
       });
-    } catch (error) { fail(error); }
+    } catch (error) {
+      fail(error);
+    }
   }
-  Connections { target: Settings.data.bar; function onScreenOverridesChanged() { root.screenWrites++; } }
-  Connections { target: Settings.data.desktopWidgets; function onMonitorWidgetsChanged() { root.desktopWrites++; } }
-  Connections { target: Settings.data.bar.widgets; function onCenterChanged() { root.centerWrites++; } }
-  Connections { target: Settings; function onSettingsLoaded() { root.begin(); } }
+  Connections {
+    target: Settings.data.bar
+    function onScreenOverridesChanged() {
+      root.screenWrites++;
+    }
+  }
+  Connections {
+    target: Settings.data.desktopWidgets
+    function onMonitorWidgetsChanged() {
+      root.desktopWrites++;
+    }
+  }
+  Connections {
+    target: Settings.data.bar.widgets
+    function onCenterChanged() {
+      root.centerWrites++;
+    }
+  }
+  Connections {
+    target: Settings
+    function onSettingsLoaded() {
+      root.begin();
+    }
+  }
   Component.onCompleted: begin()
-  function fault(mode,callback){afterFault=callback;faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
-  Process {
-    id:faultProcess
-    onExited:code=>{try{
-      root.check(code===0,"private real-IO fault prerequisite");root.faultBlocked=command[command.length-1]==="block";
-      if(root.exitAfterRepair){Qt.exit(2);return;}var callback=root.afterFault;root.afterFault=null;callback();
-    }catch(error){root.fail(error);}}
+  function fault(mode, callback) {
+    afterFault = callback;
+    faultProcess.command = ["python3", "-B", Quickshell.env("I5_DESKTOP_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
+    faultProcess.running = true;
   }
-  Timer { interval: 90000; running: true; onTriggered: root.fail("transfer watchdog") }
+  Process {
+    id: faultProcess
+    onExited: code => {
+      try {
+        root.check(code === 0, "private real-IO fault prerequisite");
+        root.faultBlocked = command[command.length - 1] === "block";
+        if (root.exitAfterRepair) {
+          Qt.exit(2);
+          return;
+        }
+        var callback = root.afterFault;
+        root.afterFault = null;
+        callback();
+      } catch (error) {
+        root.fail(error);
+      }
+    }
+  }
+  Timer {
+    interval: 90000
+    running: true
+    onTriggered: root.fail("transfer watchdog")
+  }
 }
