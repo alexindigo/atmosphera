@@ -160,7 +160,7 @@ def main():
         made = []
         sockets = []
         real_popen, real_read = subprocess.Popen, ProcessIdentity.read
-        cli = ['ci', '--workspace', str(work), '--engine', 'podman', '--qt-webp', 'present',
+        cli = ['ci', '--workspace', str(work), '--engine', 'podman',
                '--label', 'held', '--cohort', 'profile']
         marker_path = work / 'ready'
         body = ('import signal,time; from pathlib import Path; '

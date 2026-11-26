@@ -146,6 +146,14 @@ def main():
     finally:
         guard.terminate()
         process.wait(timeout=10)
+    copy = fixture('active-cwd')
+    process = subprocess.Popen(['python3', '-c', 'import time; time.sleep(30)'], cwd=copy, start_new_session=True)
+    guard = protect_owned_process(process)
+    try:
+        refuse('live-consumer-with-only-cwd-refused', copy)
+    finally:
+        guard.terminate()
+        process.wait(timeout=10)
     copy = fixture('source-changed')
     (source / 'product.qml').write_text('new input')
     refuse('changed-canonical-source-refused', copy)
