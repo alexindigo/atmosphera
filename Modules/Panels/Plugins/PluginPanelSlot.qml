@@ -17,8 +17,7 @@ SmartPanel {
   // Currently loaded plugin ID (empty if no plugin using this slot)
   property string currentPluginId: ""
 
-  // Plugin api the panel loads with: the plugin api, or the api of the plugin
-  // instance that opened it (null if no plugin uses this slot)
+  // The instance that owns this slot, including while it is closed.
   property var currentPluginApi: null
 
   // Plugin instance
@@ -160,7 +159,9 @@ SmartPanel {
       return false;
     }
 
-    var api = root.currentPluginApi || Service.getPluginAPI(pluginId);
+    var api = root.currentPluginApi;
+    if (!api)
+      return false;
 
     // Clear any stale pluginInstance before loading new content
     root.pluginInstance = null;
@@ -204,9 +205,8 @@ SmartPanel {
 
   // Helper function to finalize plugin content loading
   function finalizePluginLoad(pluginId, component, api) {
-    // The panel reads its opening screen from the api while its content is created
-    if (api)
-      api.panelOpenScreen = root.screen;
+    // The panel reads its opening screen while its content is created.
+    api.panelHost = root;
 
     // The shared loader supplies the values: declared ones as initial properties
     // (available from the first binding evaluation), inherited ones after creation
@@ -224,9 +224,26 @@ SmartPanel {
     }
   }
 
+  function presentInstance(api, buttonItem) {
+    if (currentPluginApi !== api)
+      unloadPluginPanel();
+    currentPluginApi = api;
+    currentPluginId = api.pluginId;
+    api.panelHost = root;
+    open(buttonItem);
+    if (!isPanelOpen)
+      _releaseInstance();
+  }
+
+  function _releaseInstance() {
+    if (currentPluginApi?.panelHost === root)
+      currentPluginApi.panelHost = null;
+  }
+
   // Unload current plugin panel
   function unloadPluginPanel() {
     root._loadGeneration++;
+    root._releaseInstance();
     if (root.currentPluginId === "") {
       return;
     }
@@ -246,18 +263,11 @@ SmartPanel {
   Component.onCompleted: {
     PanelService.registerPanel(root);
   }
+  Component.onDestruction: _releaseInstance()
 
-  // panelOpenScreen is set in finalizePluginLoad, before the content loads
-  // (the content is recreated on every open). Cleared here on close.
   onClosed: {
     root._loadGeneration++;
-    if (root.currentPluginId !== "") {
-      var api = root.currentPluginApi || Service.getPluginAPI(root.currentPluginId);
-      if (api) {
-        api.panelOpenScreen = null;
-        Logger.d("PluginPanelSlot", "Cleared panelOpenScreen for", root.currentPluginId);
-      }
-    }
+    root._releaseInstance();
     // Clear stale references when panel closes (content is destroyed by SmartPanel)
     root.pluginInstance = null;
     root.contentLoader = null;

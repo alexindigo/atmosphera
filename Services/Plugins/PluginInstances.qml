@@ -11,6 +11,8 @@ import qs.Services.Plugins
 Singleton {
   id: root
   property var _cache: Object.create(null)
+  property real _spawnSequence: 0
+  property int invocationRevision: 0
   // Presentation invalidation only; never a capture/conflict generation.
   property int revision: 0
   Component {
@@ -50,8 +52,57 @@ Singleton {
                                       });
     _cache[key] = {
       base: base,
-      api: api
+      api: api,
+      sequence: 0
     };
+    invocationRevision++;
+    return api;
+  }
+  function _recordFor(api) {
+    if (!api)
+      return null;
+    var record = _cache[JSON.stringify([api.pluginId, api.placement])];
+    return record?.api === api ? record : null;
+  }
+  function noteSpawnedView(api) {
+    var record = _recordFor(api);
+    if (!record || record.sequence !== 0)
+      return;
+    record.sequence = ++_spawnSequence;
+    invocationRevision++;
+  }
+  function ownsInvocationApi(base, api) {
+    return !!(_recordFor(api) && api.base === base && !api.settingsError && (!api.placement || entryFor(api.placement)?.id === "plugin:" + api.pluginId));
+  }
+  // A control center entry survives dismissing its container. A placement
+  // remains live while its native mapping is current, not while it is drawn.
+  // Looking at placement settings alone does not spawn a placed instance.
+  function latestInvocationApi(base) {
+    void invocationRevision;
+    void revision;
+    var newest = null;
+    for (var record of Object.values(_cache)) {
+      if (!record.sequence || record.base !== base || !ownsInvocationApi(base, record.api))
+        continue;
+      if (!newest || record.sequence > newest.sequence)
+        newest = record;
+    }
+    return newest?.api ?? null;
+  }
+  function createInvocationApi(base) {
+    var key = JSON.stringify([base.pluginId, null]);
+    var cached = _cache[key];
+    if (cached?.base === base)
+      return cached.api;
+    var api = apiFactory.createObject(root, {
+                                        base: base
+                                      });
+    _cache[key] = {
+      base: base,
+      api: api,
+      sequence: ++_spawnSequence
+    };
+    invocationRevision++;
     return api;
   }
   function _dropPlugin(pluginKey, callback) {
@@ -71,6 +122,7 @@ Singleton {
       }
     }
     revision++;
+    invocationRevision++;
     complete = true;
     if (pending === 0 && typeof callback === "function")
       Qt.callLater(callback);

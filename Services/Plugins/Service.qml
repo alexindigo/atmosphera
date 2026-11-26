@@ -1970,6 +1970,9 @@ Singleton {
 
     // Set manifest
     api.manifest = manifest;
+    api.panelOpenScreen = Qt.binding(function () {
+      return PluginInstances.latestInvocationApi(api)?.panelOpenScreen ?? null;
+    });
 
     // Set current language (can't use binding in Qt.createQmlObject string)
     api.currentLanguage = I18n.langCode;
@@ -2058,38 +2061,17 @@ Singleton {
 
     // ----------------------------------------
     api.togglePanel = function (screen, buttonItem) {
-      // Toggle this plugin's panel on the specified screen
-      // buttonItem: optional, if provided the panel will position near this button
-      if (!screen) {
-        Logger.w("PluginAPI", "No screen available for toggling panel");
-        return false;
-      }
-      return togglePluginPanel(pluginId, screen, buttonItem);
+      return root.getPluginAPI(pluginId) === api && root.invokePluginPanel(pluginId, "toggle", screen, buttonItem);
     };
 
     // ----------------------------------------
     api.openPanel = function (screen, buttonItem) {
-      // Open this plugin's panel on the specified screen
-      // buttonItem: optional, if provided the panel will position near this button
-      if (!screen) {
-        Logger.w("PluginAPI", "No screen available for opening panel");
-        return false;
-      }
-      return openPluginPanel(pluginId, screen, buttonItem);
+      return root.getPluginAPI(pluginId) === api && root.invokePluginPanel(pluginId, "open", screen, buttonItem);
     };
 
     // ----------------------------------------
     api.closePanel = function (screen) {
-      // Close this plugin's panel (find which slot it's in and close it)
-      for (var slotNum = 1; slotNum <= 2; slotNum++) {
-        var panelName = "pluginPanel" + slotNum;
-        var panel = PanelService.getPanel(panelName, screen);
-        if (panel && panel.currentPluginId === pluginId) {
-          panel.close();
-          return true;
-        }
-      }
-      return false;
+      return root.getPluginAPI(pluginId) === api && root.invokePluginPanel(pluginId, "close", screen);
     };
 
     // ----------------------------------------
@@ -2805,124 +2787,63 @@ Singleton {
     return !!root.loadedPlugins[pluginId];
   }
 
-  // A slot shows a panel of `pluginId`. Without `api` (plugin level) any instance
-  // of the plugin counts; with `api` only the panel opened with that api does.
-  function _panelShows(panel, pluginId, api) {
-    if (panel.currentPluginId !== pluginId)
-      return false;
-    return !api || panel.currentPluginApi === api;
-  }
-
-  // Assigns a slot to a plugin panel and the api the panel loads with.
-  function _assignPanel(panel, pluginId, api) {
-    panel.currentPluginApi = api;
-    panel.currentPluginId = pluginId;
-  }
-
-  // Open a plugin's panel (finds a free slot and loads the panel).
-  // api: optional plugin api the panel loads with (a plugin instance's api);
-  // the plugin api when omitted. A slot already showing the plugin with another
-  // api is not reused for this one.
-  function openPluginPanel(pluginId, screen, buttonItem, api) {
-    if (!isPluginLoaded(pluginId)) {
-      Logger.w("PluginService", "Cannot open panel: plugin not loaded:", pluginId);
-      return false;
-    }
-
+  // Entry point for every plugin panel operation. A base API is a service,
+  // not a selection; a supplied instance API must still belong to this load.
+  function invokePluginPanel(pluginId, operation, screen, buttonItem, instanceApi) {
     var plugin = root.loadedPlugins[pluginId];
-    if (!plugin || !plugin.manifest || !plugin.manifest.entryPoints || !plugin.manifest.entryPoints.panel) {
-      Logger.w("PluginService", "Plugin does not provide a panel:", pluginId);
+    if (!plugin?.manifest?.entryPoints?.panel || !["open", "toggle", "close"].includes(operation))
       return false;
-    }
 
-    var target = api || getPluginAPI(pluginId);
-
-    // Try to find the plugin panel slot (pluginPanel1 or pluginPanel2)
-    // Priority: 1) toggle same plugin, 2) empty slot, 3) closed slot, 4) replace open slot
-    var closedSlot = null;
-
-    for (var slotNum = 1; slotNum <= 2; slotNum++) {
-      var panelName = "pluginPanel" + slotNum;
-      var panel = PanelService.getPanel(panelName, screen);
-
-      if (panel) {
-        // If this slot is already showing this plugin's panel, toggle it
-        if (_panelShows(panel, pluginId, api)) {
-          panel.toggle(buttonItem);
-          return true;
-        }
-
-        // If this slot is empty, use it
-        if (panel.currentPluginId === "") {
-          _assignPanel(panel, pluginId, target);
-          panel.open(buttonItem);
-          return true;
-        }
-
-        // Track first closed slot (panel assigned but not showing)
-        if (!closedSlot && !panel.isPanelOpen) {
-          closedSlot = panel;
-        }
+    var base = plugin.api;
+    function dispatch(output) {
+      if (!output || root.getPluginAPI(pluginId) !== base)
+        return false;
+      var target = instanceApi;
+      if (target) {
+        if (!PluginInstances.ownsInvocationApi(base, target))
+          return false;
+      } else {
+        target = PluginInstances.latestInvocationApi(base);
       }
+      if (!target && operation === "close")
+        return false;
+      return root._presentPluginPanel(operation, output, buttonItem, base, target);
     }
 
-    // Prefer reusing a closed slot over replacing an open one
-    if (closedSlot) {
-      _assignPanel(closedSlot, pluginId, target);
-      closedSlot.open(buttonItem);
-      return true;
-    }
-
-    // If both slots are occupied and open, use slot 1 (replace existing)
-    var panel1 = PanelService.getPanel("pluginPanel1", screen);
-    if (panel1) {
-      var wasAlreadyOpen = panel1.isPanelOpen;
-      panel1.unloadPluginPanel();
-      _assignPanel(panel1, pluginId, target);
-
-      // If panel was already open, Component.onCompleted won't fire again
-      // since panelContent is already loaded. We need to load the plugin manually.
-      if (wasAlreadyOpen && panel1.contentLoader) {
-        panel1.loadPluginPanel(pluginId);
-      }
-
-      panel1.open(buttonItem);
-      return true;
-    }
-
-    Logger.e("PluginService", "Failed to find plugin panel slot");
-    return false;
+    if (screen)
+      return dispatch(screen);
+    if (!root.screenDetector)
+      return false;
+    root.screenDetector.withCurrentScreen(dispatch);
+    return true;
   }
 
-  // Toggle a plugin's panel - close if open, open if closed
-  // buttonItem: optional, if provided the panel will position near this button
-  // api: optional plugin api the panel loads with (see openPluginPanel)
-  function togglePluginPanel(pluginId, screen, buttonItem, api) {
-    if (!isPluginLoaded(pluginId)) {
-      Logger.w("PluginService", "Cannot toggle panel: plugin not loaded:", pluginId);
+  function _presentPluginPanel(operation, screen, buttonItem, base, target) {
+    var slots = [PanelService.getPanel("pluginPanel1", screen, false), PanelService.getPanel("pluginPanel2", screen, false)].filter(Boolean);
+    var matching = target ? slots.find(panel => panel.currentPluginApi === target) : null;
+    var showing = matching?.isPanelOpen && !matching.isClosing;
+    if (operation === "close" || (operation === "toggle" && showing))
+      return !!showing && matching.close() !== false;
+    if (showing)
+      return true;
+
+    // Examine every slot for an exact match before choosing any free slot.
+    var slot = matching || slots.find(panel => panel.currentPluginId === "") || slots.find(panel => !panel.isPanelOpen) || slots[0];
+    if (!slot)
       return false;
-    }
 
-    var plugin = root.loadedPlugins[pluginId];
-    if (!plugin || !plugin.manifest || !plugin.manifest.entryPoints || !plugin.manifest.entryPoints.panel) {
-      Logger.w("PluginService", "Plugin does not provide a panel:", pluginId);
+    // An instance can move to another output, but cannot own two hosts.
+    var oldHost = target?.panelHost;
+    if (oldHost && oldHost !== slot && oldHost.closeImmediately() === false)
       return false;
-    }
+    if (slot.isPanelOpen && slot.closeImmediately() === false)
+      return false;
 
-    // Check if this plugin's panel (with this api, if given) is already open in any slot
-    for (var slotNum = 1; slotNum <= 2; slotNum++) {
-      var panelName = "pluginPanel" + slotNum;
-      var panel = PanelService.getPanel(panelName, screen);
-
-      if (panel && _panelShows(panel, pluginId, api)) {
-        // Panel is open for this plugin - toggle it (close)
-        panel.toggle(buttonItem);
-        return true;
-      }
-    }
-
-    // Panel is not open - open it using the existing logic
-    return openPluginPanel(pluginId, screen, buttonItem, api);
+    target = target || PluginInstances.createInvocationApi(base);
+    if (!target)
+      return false;
+    slot.presentInstance(target, buttonItem);
+    return true;
   }
 
   // ----- Error tracking functions -----

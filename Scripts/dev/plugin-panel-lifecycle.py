@@ -40,7 +40,7 @@ PROBE = r'''
 
   QtObject {
     id: lifecycleApi
-    property var panelOpenScreen: null
+    property var panelHost: null
     property int clicks: 0
   }
 
