@@ -233,6 +233,9 @@ SmartPanel {
     open(buttonItem);
     if (!isPanelOpen)
       _releaseInstance();
+    // True means the request was accepted. A late admission check may still
+    // refuse it once the plugin content declares its panel behavior.
+    return isPanelOpen;
   }
 
   function _releaseInstance() {
@@ -265,9 +268,14 @@ SmartPanel {
   }
   Component.onDestruction: _releaseInstance()
 
+  // A late admission refusal clears isPanelOpen without emitting closed.
+  onIsPanelOpenChanged: {
+    if (!isPanelOpen)
+      _releaseInstance();
+  }
+
   onClosed: {
     root._loadGeneration++;
-    root._releaseInstance();
     // Clear stale references when panel closes (content is destroyed by SmartPanel)
     root.pluginInstance = null;
     root.contentLoader = null;

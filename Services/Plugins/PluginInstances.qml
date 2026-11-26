@@ -78,11 +78,19 @@ Singleton {
   // remains live while its native mapping is current, not while it is drawn.
   // Looking at placement settings alone does not spawn a placed instance.
   function latestInvocationApi(base) {
+    return _latestApi(base, record => record.sequence > 0);
+  }
+  function panelOpenScreen(base) {
+    // Preserve Main's compatibility view of presentation without letting it
+    // influence invocation selection. Prefer the newest hosted instance.
+    return _latestApi(base, record => !!record.api.panelHost)?.panelOpenScreen ?? null;
+  }
+  function _latestApi(base, matches) {
     void invocationRevision;
     void revision;
     var newest = null;
     for (var record of Object.values(_cache)) {
-      if (!record.sequence || record.base !== base || !ownsInvocationApi(base, record.api))
+      if (record.base !== base || !ownsInvocationApi(base, record.api) || !matches(record))
         continue;
       if (!newest || record.sequence > newest.sequence)
         newest = record;

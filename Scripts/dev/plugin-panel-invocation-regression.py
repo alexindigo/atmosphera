@@ -55,7 +55,7 @@ PANEL = '''import QtQuick
 Item {
   property var pluginApi: null
   property var screen: null
-  readonly property bool exclusiveOpen: false
+  readonly property bool exclusiveOpen: screen?.name === "Virtual-2"
   readonly property real contentPreferredWidth: 240
   readonly property real contentPreferredHeight: 180
 }
@@ -65,6 +65,8 @@ PROBE = r'''
   property var firstFallback: null
   property var oldHost: null
   property int cornerFires: 0
+  property bool immediateOpenAccepted: false
+  property bool deferredOpenQueued: false
   QtObject {
     id: fixtureFocus
     function withCurrentScreen(callback) {
@@ -111,6 +113,9 @@ PROBE = r'''
         placements: (map?.placements ?? []).map(api => api.placement.section),
         latest: placed ? PluginInstances.latestInvocationApi(placed)?.placement?.section ?? "" : "",
         mapScreen: placed?.panelOpenScreen?.name ?? "", cornerFires: shellRoot.cornerFires,
+        fallbackScreen: fallback?.panelOpenScreen?.name ?? "",
+        immediateOpenAccepted: shellRoot.immediateOpenAccepted,
+        deferredOpenQueued: shellRoot.deferredOpenQueued,
         distinctFallback: !!(fallback && fallback !== unplaced && fallback.mainInstance === unplaced.mainInstance),
         sameFallback: !!(fallback && fallback === shellRoot.firstFallback)});
     }
@@ -141,6 +146,19 @@ PROBE = r'''
       const slot = PanelService.getPanel("pluginPanel1", screen, false);
       if (!slot.isPanelOpen)
         slot.unloadPluginPanel();
+    }
+    function probeOpenRefusal(name: string) {
+      const screen = Quickshell.screens.find(output => output.name === name);
+      const blocker = PanelService.getPanel("pluginPanel2", screen, false);
+      const target = PanelService.getPanel("pluginPanel1", screen, false);
+      const base = Service.getPluginAPI("invocation-unplaced");
+      blocker.closeAdmission = () => false;
+      // Exercise the synchronous claim with behavior already known; then let
+      // the next request discover its behavior by loading real panel content.
+      target.panelBehaviorReady = true;
+      shellRoot.immediateOpenAccepted = base.openPanel(screen);
+      target.panelBehaviorReady = Qt.binding(() => target.currentPluginId === "" || target.pluginInstance !== null);
+      shellRoot.deferredOpenQueued = base.openPanel(screen);
     }
     function finish() { Qt.callLater(Qt.quit); }
   }
@@ -179,7 +197,7 @@ def exercise(work):
             return dict(screen=screen, slot=slot, id=plugin, placement=placement, owned=True)
 
         def visible(name, *panels, also=lambda _: True):
-            wait(name, lambda state: state['visible'] == list(panels) and also(state))
+            return wait(name, lambda state: state['visible'] == list(panels) and also(state))
 
         def generic(operation, key='invocation-unplaced'):
             ipc('plugin', operation + 'Panel', key)
@@ -251,6 +269,21 @@ def exercise(work):
                 also=lambda s: s['mapScreen'] == two)
         probe('corner', two)
         visible('corner-toggle-closes-on-trigger-output', also=lambda s: s['cornerFires'] == 2 and not s['mapScreen'])
+
+        # The older explicit placement is open; the newer one still wins
+        # invocation selection but does not hide the open panel from Main.
+        probe('fromMain', 'open', two, 'left')
+        older = at(two, 2, 'left')
+        observed = visible('older-placement-is-open', older)
+        probe('probeOpenRefusal', two)
+        refusal = visible('dirty-owner-survives-open-refusal', older)
+        problems = []
+        if observed['mapScreen'] != two or observed['latest'] != 'right':
+            problems.append(f"base panel screen does not follow the open older placement: {observed}")
+        if refusal['immediateOpenAccepted'] or not refusal['deferredOpenQueued'] or refusal['fallbackScreen']:
+            problems.append(f"refused open reported success or kept a host: {refusal}")
+        if problems:
+            raise AssertionError('\n'.join(problems))
         probe('finish')
         return shell.wait(timeout=5)
     finally:
@@ -312,7 +345,7 @@ def main():
     cases = [json.loads(line.split('INVOCATION_CASE ', 1)[1]) for line in text.splitlines()
              if line.startswith('INVOCATION_CASE ')]
     errors = [line for line in text.splitlines() if ERRORS.search(line)]
-    receipt = dict(passed=bool(cases and cases[-1]['name'] == 'corner-toggle-closes-on-trigger-output' and not errors),
+    receipt = dict(passed=bool(cases and cases[-1]['name'] == 'dirty-owner-survives-open-refusal' and not errors),
                    cases=cases, qml_errors=errors)
     write_receipt(work, receipt, execution)
     print(json.dumps(receipt, indent=2))

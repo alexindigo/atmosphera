@@ -1971,7 +1971,7 @@ Singleton {
     // Set manifest
     api.manifest = manifest;
     api.panelOpenScreen = Qt.binding(function () {
-      return PluginInstances.latestInvocationApi(api)?.panelOpenScreen ?? null;
+      return PluginInstances.panelOpenScreen(api);
     });
 
     // Set current language (can't use binding in Qt.createQmlObject string)
@@ -2842,8 +2842,7 @@ Singleton {
     target = target || PluginInstances.createInvocationApi(base);
     if (!target)
       return false;
-    slot.presentInstance(target, buttonItem);
-    return true;
+    return slot.presentInstance(target, buttonItem);
   }
 
   // ----- Error tracking functions -----
