@@ -1013,8 +1013,7 @@ runpy.run_path(worker, run_name='__main__')
             sentinel.write_bytes(foreign_thumbnail(source))
             self.cache.root.mkdir()
             target.parent.symlink_to(outside, target_is_directory=True)
-            # A controlled valid video frame avoids coupling this cache-boundary
-            # assertion to ffmpeg's ability to treat a still as a video input.
+            # A controlled valid frame isolates the cache boundary from decoding.
             async def frame(*_args):
                 return empty_png()
             with patch.object(self.cache, 'frame', frame), self.assertRaises(OSError):
@@ -1377,30 +1376,25 @@ runpy.run_path(worker, run_name='__main__')
             self.assertIs(adapter.Cache, Cache)
             self.assertIs(adapter.Worker, Worker)
             video = self.folder / 'Video.mp4'
-            made = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i',
-                                   'testsrc2=size=160x90:rate=8:duration=2', '-c:v', 'libx264', '-threads', '1', str(video)],
-                                  capture_output=True, timeout=30)
-            self.assertEqual(made.returncode, 0, made.stderr)
-            first = await self.cache.get(str(video), 128)
-            self.assertEqual(first['status'], 'generated')
-            self.assertEqual(len(self.events), 1)
-            self.assertEqual(self.events[0]['event'], 'ffmpeg')
-            argv = self.events[0]['argv']
-            self.assertAlmostEqual(float(argv[argv.index('-ss') + 1]), .2)
-            second = await self.cache.get(str(video), 128)
-            self.assertEqual(second['status'], 'hit')
-            self.assertEqual(second['url'], first['url'])
-            self.assertEqual(len(self.events), 1)
+            video.write_bytes(b'Fixture video identity')
+            from unittest.mock import AsyncMock
+            frame = AsyncMock(return_value=empty_png())
+            with patch.object(self.cache, 'frame', frame):
+                first = await self.cache.get(str(video), 128)
+                self.assertEqual(first['status'], 'generated')
+                second = await self.cache.get(str(video), 128)
+                self.assertEqual(second['status'], 'hit')
+                self.assertEqual(second['url'], first['url'])
+                frame.assert_awaited_once_with(video, 128)
 
         async def test_video_thumbnail_failure_honors_explicit_retry(self):
             video = self.folder / 'Broken.mp4'
             video.write_bytes(b'not a video')
             request = dict(source=str(video), width=256, height=256, fit='contain', animationIntent='still', operation='video-thumbnail')
             decodes = []
-            original = self.cache.frame
             async def frame(*arguments):
                 decodes.append(arguments)
-                return await original(*arguments)
+                raise CommandError('no-frame', 'Fixture video has no frame')
             with patch.object(self.cache, 'frame', frame):
                 failed = await self.cache.render(request)
                 self.assertEqual((failed['status'], failed['url']), ('unavailable', ''))

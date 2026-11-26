@@ -636,26 +636,6 @@
   },
   {
    "repository": "shell",
-   "path": "Services/Files/FileThumbnails.qml",
-   "rule": "converter-command",
-   "node": "command",
-   "nodeSha256": "b521d86a20525198e2fe063e393ad97d398dd4ca42b686355dd526e66dc56927",
-   "line": 123,
-   "disposition": "owner-event-name",
-   "reason": "The worker's \"ffmpeg\" progress event name, compared in the owner and its chooser adapter; not a command."
-  },
-  {
-   "repository": "shell",
-   "path": "Services/Files/FileThumbnails.qml",
-   "rule": "converter-command",
-   "node": "command",
-   "nodeSha256": "b521d86a20525198e2fe063e393ad97d398dd4ca42b686355dd526e66dc56927",
-   "line": 124,
-   "disposition": "owner-event-name",
-   "reason": "The worker's \"ffmpeg\" progress event name, compared in the owner and its chooser adapter; not a command."
-  },
-  {
-   "repository": "shell",
    "path": "Services/Power/IdleService.qml",
    "rule": "dynamic-qml",
    "node": "createQmlObject",
@@ -706,13 +686,13 @@
   },
   {
    "repository": "shell",
-   "path": "Services/UI/ImageWorker.qml",
-   "rule": "converter-command",
-   "node": "command",
-   "nodeSha256": "b521d86a20525198e2fe063e393ad97d398dd4ca42b686355dd526e66dc56927",
-   "line": 186,
-   "disposition": "owner-event-name",
-   "reason": "The worker's \"ffmpeg\" progress event name, compared in the owner and its chooser adapter; not a command."
+   "path": "Services/UI/VideoFrameProducer.qml",
+   "rule": "video-frame-capture",
+   "node": "MpvFrameCapture",
+   "nodeSha256": "11245379b8e371919b67e27ede69789934763c3bdb549a21d64b4c4b5bf32ba1",
+   "line": 4,
+   "disposition": "owner-video-producer",
+   "reason": "Only the image owner may generate and validate staged video thumbnail frames."
   },
   {
    "repository": "shell",

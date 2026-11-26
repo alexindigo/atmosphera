@@ -17,8 +17,9 @@ sudo pacman -S cliphist wlsunset power-profiles-daemon ddcutil
 ```
 
 `qt6-imageformats` decodes WebP natively; ImageMagick (with `libwebp` and
-`libheif`) and FFmpeg decode what Qt cannot (see
-[image-sources.md](image-sources.md)). Optional `qt6-webengine`
+`libheif`) and FFmpeg handle still and animated image fallbacks. Newly
+generated video thumbnails require a build of `qt6-mpvqml` which exports
+`MpvFrameCapture` (see [image-sources.md](image-sources.md)). Optional `qt6-webengine`
 provides PDF preview in the file chooser; without QtPdf, PDFs show file
 information. The Nix package includes `qt6.qtimageformats`; its
 `pdfPreviewSupport` option adds `qt6.qtwebengine` for PDF previews.

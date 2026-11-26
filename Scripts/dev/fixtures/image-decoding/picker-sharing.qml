@@ -67,7 +67,7 @@ ShellRoot {
           ready: true,
           result: second.result,
           firstUrl: first.url,
-          ffmpeg: secondPicker.statistics.ffmpeg
+          videoFrame: secondPicker.statistics.videoFrame
         };
         if (!image.grabToImage(result => {
           console.log("IMAGE_GRAB|" + JSON.stringify({

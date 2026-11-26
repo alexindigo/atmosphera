@@ -1435,16 +1435,11 @@ os.execv('/usr/bin/find', ['find', *args])
             '-t', '1', '-c:v', 'libx264', '-threads', '1', '-pix_fmt', 'yuv420p', str(video)])
         if encoded.returncode:
             raise AssertionError('Independent video fixture encoding failed')
-        shim = self.work / 'picker-bin'
-        shim.mkdir()
-        probe = shim / 'ffprobe'
-        probe.write_text('#!/usr/bin/python3\nimport os,sys,time\ntime.sleep(1)\nos.execv("/usr/bin/ffprobe",["ffprobe",*sys.argv[1:]])\n')
-        probe.chmod(0o755)
         shared, shared_output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/picker-sharing.qml',
-            inputs, 'picker-sharing', dict(PATH=str(shim) + ':' + os.environ['PATH']))
+            inputs, 'picker-sharing')
         self.check('two-pickers-use-one-worker-request', shared['shared'] == dict(interests=2, requests=1), shared['shared'])
         self.check('closing-one-picker-retains-other-image', shared['survivor']['ready'] and not shared['survivor']['firstUrl']
-                   and shared['survivor']['ffmpeg'] == 1 and max(abs(a-b) for a,b in zip(pixel(shared_output/'survivor.png'),COLORS[0])) <= 8, shared)
+                   and shared['survivor']['videoFrame'] == 1 and max(abs(a-b) for a,b in zip(pixel(shared_output/'survivor.png'),COLORS[0])) <= 8, shared)
         self.check('last-picker-close-shuts-shared-worker', shared['finalInterests'] == shared['finalRequests'] == 0
                    and not shared['workerRunning'], shared)
         return result

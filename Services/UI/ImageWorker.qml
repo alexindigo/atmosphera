@@ -164,8 +164,66 @@ Scope {
     return true;
   }
 
+  property var _videoProducer: null
+  property var _videoJobs: ({})
+
+  function _finishFrame(job, code) {
+    if (_ready && !_closing)
+      process.write(JSON.stringify({
+                                     command: "video-frame-result",
+                                     job: job,
+                                     code: code
+                                   }) + "\n");
+  }
+
+  function _cancelFrame(job) {
+    const id = _videoJobs[job];
+    delete _videoJobs[job];
+    if (id !== undefined)
+      _videoProducer?.cancel(id);
+  }
+
+  function _cancelFrames() {
+    for (const job of Object.keys(_videoJobs))
+      _cancelFrame(job);
+  }
+
+  function _captureFrame(reply) {
+    if (!_ready || _closing)
+      return;
+    if (typeof reply.job !== "string" || !/^[1-9][0-9]*$/.test(reply.job) || reply.job in _videoJobs || typeof reply.source !== "string" || !reply.source.startsWith("file:///") || typeof reply.destination !== "string" || !reply.destination.startsWith("file:///proc/") || ![reply.width, reply.height].every(size => Number.isInteger(size) && size >= 1 && size
+                                                                                                                                                                                                                                                                                                                          <= 1024)) {
+      _fail("worker-protocol", "The image worker returned an invalid frame request");
+      return;
+    }
+    if (!_videoProducer) {
+      const component = Qt.createComponent("VideoFrameProducer.qml", Component.PreferSynchronous, root);
+      if (component.status === Component.Ready) {
+        _videoProducer = component.createObject(root);
+        _videoProducer?.finished.connect(function (id, code, reason) {
+          const job = Object.keys(root._videoJobs).find(key => root._videoJobs[key] === id);
+          if (job !== undefined) {
+            delete root._videoJobs[job];
+            root._finishFrame(job, code);
+          }
+        });
+      }
+      component.destroy();
+    }
+    if (!_videoProducer) {
+      _finishFrame(reply.job, "video-backend-unavailable");
+      return;
+    }
+    const id = _videoProducer.capture(reply.source, 0.1, reply.width, reply.height, reply.destination);
+    if (id > 0)
+      _videoJobs[reply.job] = id;
+    else
+      _finishFrame(reply.job, "video-backend-busy");
+  }
+
   function _fail(code, reason) {
     _ready = false;
+    _cancelFrames();
     const flight = _notificationFlight;
     const queued = _notificationQueue;
     _notificationFlight = null;
@@ -250,7 +308,11 @@ Scope {
     stats[event] = (stats[event] || 0) + 1;
     _statistics = stats;
     if (!reply.status) {
-      if (!["command", "command-result", "cancelled", "ffmpeg"].includes(reply.event))
+      if (reply.event === "video-frame-request")
+        _captureFrame(reply);
+      else if (reply.event === "video-frame-cancel")
+        _cancelFrame(reply.job);
+      else if (!["command", "command-result", "cancelled"].includes(reply.event))
         _fail("worker-protocol", "The image worker returned an unknown message");
       return;
     }
@@ -380,6 +442,7 @@ Scope {
     onExited: (code, status) => {
       root._armed = false;
       root._ready = false;
+      root._cancelFrames();
       root._notificationBatch = "";
       if (!root._closing || code !== 0 || status !== 0)
         root._fail("worker-exit", "The image worker exited before completing its requests");
