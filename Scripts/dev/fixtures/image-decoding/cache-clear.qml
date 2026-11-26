@@ -1,3 +1,4 @@
+import ImvQml
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -16,7 +17,7 @@ ShellRoot {
   property var probes: ({})
   property var toasts: []
   property string retained: ""
-  property bool earlyToast: false
+  property var events: []
   readonly property string decoded: Settings.cacheDir + "images/decoded/"
 
   function findButton(item, label) {
@@ -37,8 +38,10 @@ ShellRoot {
                                                    saved: frame.saveToFile(root.output + "/" + label + ".png")
                                                  }));
       root.pending = false;
-    }))
+    })) {
+      console.log("CACHE_CLEAR_FIXTURE|grab-rejected|" + label);
       Qt.exit(3);
+    }
   }
   function probe(label) {
     pending = true;
@@ -47,6 +50,21 @@ ShellRoot {
   }
 
   Component.onCompleted: {
+    // Observe both boundaries without depending on native slot order.
+    ImvCache.cleared.connect((ticket, result) => {
+      root.events.push({
+                         event: "owner",
+                         ticket: ticket,
+                         result: result
+                       });
+    });
+    ImageCacheService.representationsCleared.connect((ticket, result) => {
+      root.events.push({
+                         event: "evicted",
+                         ticket: ticket,
+                         result: result
+                       });
+    });
     ImageCacheService.init();
     ImageCacheService.openNotificationHistory(root.inputs + "/clear-history.json", opened => {
       if (!opened) {
@@ -80,6 +98,10 @@ ShellRoot {
                          type: type,
                          phase: root.phase
                        });
+      root.events.push({
+                         event: "toast",
+                         type: type
+                       });
       if (root.phase === 2 && !root.pending)
         root.probe("cleared");
     }
@@ -93,6 +115,7 @@ ShellRoot {
     }
     onExited: code => {
       if (code !== 0) {
+        console.log("CACHE_CLEAR_FIXTURE|scan-exited|" + label + "|" + code);
         Qt.exit(3);
         return;
       }
@@ -101,11 +124,12 @@ ShellRoot {
     }
   }
   // The owner must not acknowledge success while the cross-process lock
-  // prevents eviction. Hold a live Qt-compatible lock until the click returns.
+  // prevents eviction. Hold a live Qt-compatible lock across event-loop turns
+  // so an accidentally deferred acknowledgement cannot pass the control.
   Process {
     id: lock
     stdinEnabled: true
-    command: ["python3", "-c", "import os, pathlib, socket, sys\np = pathlib.Path(sys.argv[1])\nwith p.open('x') as f:\n f.write(f'{os.getpid()}\\npython3\\n{socket.gethostname()}\\n')\ntry:\n print('locked', flush=True)\n sys.stdin.readline()\nfinally:\n p.unlink()", root.decoded + ".imvqml.lock"]
+    command: ["python3", "-c", "import os, pathlib, socket, sys\np = pathlib.Path(sys.argv[1])\napp = os.path.basename(os.readlink('/proc/self/exe'))\nwith p.open('x') as f:\n f.write(f'{os.getpid()}\\n{app}\\n{socket.gethostname()}\\n')\ntry:\n print('locked', flush=True)\n sys.stdin.readline()\nfinally:\n p.unlink()", root.decoded + ".imvqml.lock"]
     stdout: SplitParser {
       onRead: line => {
         if (line !== "locked") {
@@ -120,14 +144,20 @@ ShellRoot {
         root.phase = 2;
         root.clicked = true;
         button.clicked();
-        root.earlyToast = root.toasts.length !== 0;
-        lock.write("release\n");
+        releaseLock.start();
       }
     }
     onExited: code => {
-      if (code !== 0)
+      if (code !== 0) {
+        console.log("CACHE_CLEAR_FIXTURE|lock-exited|" + code);
         Qt.exit(3);
+      }
     }
+  }
+  Timer {
+    id: releaseLock
+    interval: 250
+    onTriggered: lock.write("release\n")
   }
   FloatingWindow {
     visible: true
@@ -191,7 +221,7 @@ ShellRoot {
       } else if (root.phase === 7) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          clicked: root.clicked,
-                                                         earlyToast: root.earlyToast,
+                                                         events: root.events,
                                                          probes: root.probes,
                                                          retained: root.retained,
                                                          toasts: root.toasts

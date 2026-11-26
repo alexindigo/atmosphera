@@ -21,6 +21,8 @@ Singleton {
   readonly property var basicImageFilters: ImageTypes.filters
   readonly property var imageFilters: ImageTypes.filters
 
+  signal representationsCleared(int ticket, var result)
+
   function init() {
     ImvCache.directory = baseDir + "decoded/";
     ImvCache.enabled = true;
@@ -48,8 +50,11 @@ Singleton {
   Connections {
     target: ImvCache
     function onCleared(ticket, result) {
+      if (!root._cacheClears.has(ticket))
+        return;
       const callback = root._cacheClears.get(ticket);
       root._cacheClears.delete(ticket);
+      root.representationsCleared(ticket, result);
       callback?.({
                    ok: result.stage === "complete" && result.failed === 0,
                    reason: result.detail || result.code,

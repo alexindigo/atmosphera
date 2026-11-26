@@ -1668,8 +1668,14 @@ os.execv('/usr/bin/find', ['find', *args])
                        and probes['releasedAfterButton'] and not result['ownerClear'], dict(probes=probes, toasts=toasts), red=True)
             return result
         self.check('actual-clear-button-clicked', result['clicked'], result['clicked'])
-        self.check('clear-toast-reports-completed-owner-clear', not result['earlyToast'] and len(toasts) == 1 and toasts[0]['type'] == 'notice'
-                   and toasts[0]['phase'] == 2, toasts)
+        events = result['events']
+        owner = [row for row in events if row['event'] == 'owner']
+        sequence = [row for row in events if row['event'] != 'owner']
+        self.check('clear-toast-reports-completed-owner-clear', [row['event'] for row in sequence] == ['evicted', 'toast']
+                   and len(owner) == 1 and sequence[0]['ticket'] == owner[0]['ticket'] > 0
+                   and sequence[0]['result'] == owner[0]['result'] and owner[0]['result']['stage'] == 'complete'
+                   and owner[0]['result']['removed'] >= 1 and len(toasts) == 1 and toasts[0]['type'] == 'notice'
+                   and toasts[0]['phase'] == 2, dict(events=events, toasts=toasts))
         regenerated_entries = set(probes['regenerated']) - set(probes['cleared'])
         self.check('clear-evicts-populated-decoded-cache', seed['entry'] in regenerated_entries
                    and seed['entry'] in probes['populated'] and seed['entry'] not in probes['cleared'], probes)
