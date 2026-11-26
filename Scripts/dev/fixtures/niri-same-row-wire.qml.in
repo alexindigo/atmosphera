@@ -1,0 +1,30 @@
+import QtQuick
+import Quickshell
+import qs.Services.Compositor
+
+ShellRoot {
+  Timer {
+    interval: 20
+    repeat: true
+    running: true
+    onTriggered: {
+      if (!CompositorService.snapshot.ready)
+        return;
+      stop();
+      const test = @CASE@;
+      const done = (ok, error, observed) => {
+        const result = [ok, !!error, observed];
+        const passed = JSON.stringify(result) === JSON.stringify(test.result);
+        console.info("NIRI_ACTION_WIRE_RESULT|" + passed + "|" + JSON.stringify(result));
+        Qt.exit(passed ? 0 : 3);
+      };
+      const move = CompositorService.moveWindowWithinWorkspace;
+      if (typeof move !== "function") {
+        console.warn("Missing moveWindowWithinWorkspace");
+        Qt.exit(2);
+        return;
+      }
+      CompositorService.moveWindowWithinWorkspace(test.windowId, test.target, done);
+    }
+  }
+}
