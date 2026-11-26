@@ -15,7 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import unquote, urlsplit
 
 from guest_profile import activate_profile, profile_argument, protect_owned_process
-from image_decoding_fixtures import COLORS, create_fixtures, pixel, read_png
+from image_decoding_fixtures import COLORS, colored_png, create_fixtures, pixel, read_png
 from image_decoding_evidence import source_manifest
 from image_decoding_workspace import retire_fixture_copy
 from image_decoding_jobs import Worker, supervise
@@ -2134,13 +2134,23 @@ os.execv('/usr/bin/find', ['find', *args])
             inputs = self.work / 'fixtures'
             manifest = create_fixtures(inputs, self.commands)
             (self.out / 'fixture-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+        # Force a synchronous Qt error via its explicit allocation limit, not
+        # the machine's HEIF encoder/reader support. Encoded bytes fit the same
+        # owner byte budget; the built-in PNG reader's full allocation does not.
+        allocation_mib = 1
+        byte_budget = allocation_mib * 1024 * 1024
+        width, height = 1024, 768
+        synchronous_source = self.work / 'native-allocation-rejected.png'
+        encoded = colored_png(COLORS[0], width, height)
+        assert len(encoded) < byte_budget < width * height * 4
+        synchronous_source.write_bytes(encoded)
         requests = []
         class Handler(BaseHTTPRequestHandler):
             def log_message(self, *args):
                 pass
             def do_GET(self):
                 requests.append(self.path)
-                data = (inputs / 'frame-0.png').read_bytes() if self.path == '/valid' else b'x' * (1024 * 1024 + 1)
+                data = (inputs / 'frame-0.png').read_bytes() if self.path == '/valid' else b'x' * (byte_budget + 1)
                 self.send_response(200)
                 if self.path != '/streamed':
                     self.send_header('Content-Length', str(len(data)))
@@ -2156,7 +2166,8 @@ os.execv('/usr/bin/find', ['find', *args])
         thread.start()
         try:
             result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/source-admission.qml',
-                inputs, 'source-admission', dict(QT_IMAGEIO_MAXALLOC='1', IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}'))
+                inputs, 'source-admission', dict(QT_IMAGEIO_MAXALLOC=str(allocation_mib),
+                    IMAGE_SYNCHRONOUS_SOURCE=str(synchronous_source), IMAGE_REMOTE_URL=f'http://127.0.0.1:{server.server_port}'))
         finally:
             server.shutdown()
             server.server_close()

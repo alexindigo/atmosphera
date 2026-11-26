@@ -75,7 +75,7 @@ ShellRoot {
         id: synchronous
         width: 96
         height: 96
-        source: Quickshell.env("IMAGE_FIXTURES") + "/Still.heic"
+        source: Quickshell.env("IMAGE_SYNCHRONOUS_SOURCE")
         asynchronous: false
         active: !root.retiring
       }
