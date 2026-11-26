@@ -46,7 +46,9 @@ RUN bash -ec '\
 # type descriptions agree. No hand-written lint substitutes.
 COPY install-qml-deps.sh /usr/local/bin/install-qml-deps
 COPY configqml-qt-6.12.1.patch /usr/local/share/atmosphera/
-RUN bash /usr/local/bin/install-qml-deps
+COPY imvqml-video-diagnostics.py /usr/local/share/atmosphera/
+ARG TRACE_IMV_VIDEO=0
+RUN TRACE_IMV_VIDEO="$TRACE_IMV_VIDEO" bash /usr/local/bin/install-qml-deps
 
 # AST/provenance analysis tooling, not an application/runtime build. The grammar
 # archive is pinned and verified; install once per resource-capped tooling image.

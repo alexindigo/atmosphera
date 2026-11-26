@@ -29,6 +29,7 @@ jobs:
         run: |
           docker build --memory=2g --memory-swap=2g --cpu-period=100000 --cpu-quota=200000 \
             --build-arg INSTALL_IMAGE_TOOLS=1 \
+            --build-arg TRACE_IMV_VIDEO=1 \
             --tag atmosphera-image-tools shell/.devcontainer
           for readers in present absent; do
             docker build --memory=2g --memory-swap=2g --cpu-period=100000 --cpu-quota=200000 \
@@ -39,11 +40,15 @@ jobs:
         run: |
           for readers in present absent; do
             sudo install -d -o 1000 -g 1000 "$RUNNER_TEMP/image-decoding/$readers"
+            sudo install -d -o 1000 -g 1000 "$RUNNER_TEMP/image-decoding/$readers/artifacts/video-native"
+            printf 'online CPUs: '; getconf _NPROCESSORS_ONLN
+            printf 'fixture filesystem: '; stat -f -c %T "$RUNNER_TEMP/image-decoding/$readers"
             args=()
             if [[ $readers == present ]]; then args=(--cohort formats); fi
             docker run --rm --hostname "image-ci-$readers" \
               --memory=2g --memory-swap=2g --pids-limit=2048 --cpus=2 --network=none \
               --env TMPDIR=/home/dev/image-decoding/tmp \
+              --env IMV_VIDEO_DIAGNOSTICS=/home/dev/image-decoding/artifacts/video-native \
               --volume "$RUNNER_TEMP/image-decoding/$readers:/home/dev/image-decoding:rw" \
               --volume "$PWD/shell:/home/dev/image-decoding/shell:ro" \
               --volume "$PWD/plugins:/home/dev/image-decoding/plugins:ro" \

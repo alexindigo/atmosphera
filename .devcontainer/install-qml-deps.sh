@@ -37,6 +37,9 @@ install_module() {
         # Keep Core, CorePrivate and Qml on the exact tested private ABI.
         git -C "$source" apply /usr/local/share/atmosphera/configqml-qt-6.12.1.patch
     fi
+    if [[ $repo == imvqml && ${TRACE_IMV_VIDEO:-0} == 1 ]]; then
+        python -B /usr/local/share/atmosphera/imvqml-video-diagnostics.py "$source"
+    fi
     cmake -S "$source" -B "$source/build" -G Ninja \
         -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST_MODE=OFF -DBUILD_TESTING=OFF \
         -DCMAKE_SKIP_RPATH=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
