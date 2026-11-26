@@ -1,14 +1,19 @@
-FROM docker.io/library/archlinux:base-devel AS settings-check
+# Immutable Arch bootstrap; the mirrorlist selects the package versions.
+FROM docker.io/library/archlinux:base-devel@sha256:949ecb1661609ab7e8f6854ba03efd62792e7a796313738e94b040c095c20d91 AS arch-snapshot
+COPY arch-snapshot.mirrorlist arch-snapshot-install.sh /usr/local/share/atmosphera/
+RUN bash /usr/local/share/atmosphera/arch-snapshot-install.sh
+
+FROM arch-snapshot AS settings-check
 
 # The settings gates use the Qt formatter and the pinned parser, not the
 # shell runtime or any of the compiled QML plugins.
-RUN pacman -Sy --noconfirm --needed git python python-pip qt6-declarative \
+RUN pacman -S --noconfirm --needed git python python-pip qt6-declarative \
     && pacman -Scc --noconfirm
 COPY settings-check-requirements.txt /opt/settings-check-requirements.txt
 RUN pip install --break-system-packages --no-cache-dir -r /opt/settings-check-requirements.txt
 WORKDIR /workspaces/atmosphera
 
-FROM docker.io/library/archlinux:base-devel AS devcontainer
+FROM arch-snapshot AS devcontainer
 
 # Container identity for the dev account. The default matches the Podman
 # keep-id target; the Docker tooling path passes the invoking user's IDs
@@ -16,7 +21,7 @@ FROM docker.io/library/archlinux:base-devel AS devcontainer
 ARG DEV_UID=1000
 ARG DEV_GID=1000
 
-RUN pacman -Sy --noconfirm --needed \
+RUN pacman -S --noconfirm --needed \
     quickshell qt6-declarative qt6-tools qt6-multimedia qt6-imageformats \
     imagemagick ffmpeg libwebp libheif \
     cmake ninja pkgconf libpipewire \

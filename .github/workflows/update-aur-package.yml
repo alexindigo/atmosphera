@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     container:
-      image: archlinux:latest
+      image: archlinux:base@sha256:375a401bb3c6376b37f40b6dfa25067db37ec78d0b7af67ae6315f43a0184a9d
     defaults:
       run:
         shell: bash
@@ -34,11 +34,6 @@ jobs:
       TAG_NAME: ${{ inputs.tag || github.ref_name }}
 
     steps:
-      - name: Install dependencies
-        run: |
-          set -euo pipefail
-          pacman -Syu --noconfirm git base-devel pacman-contrib openssh python
-
       # Publication policy comes from the maintained branch, not the selected
       # tag: replaying an older recipe must not replay its older publisher.
       - name: Check out publisher
@@ -47,6 +42,12 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           path: publisher
           persist-credentials: false
+
+      # The first checkout can use the REST archive before Git is installed.
+      - name: Install dependencies from the shared Arch snapshot
+        run: |
+          bash publisher/.devcontainer/arch-snapshot-install.sh \
+            git base-devel pacman-contrib openssh python
 
       - name: Check out release recipes
         uses: actions/checkout@v4
