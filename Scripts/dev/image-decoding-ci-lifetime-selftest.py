@@ -108,6 +108,29 @@ def main():
                                     work / 'artifacts/ordinary.log', seconds=5, grace=.2)
             check('ordinary-cohort-records-success', success['exit'] == 0 and not success['timeout']
                   and success['cleanupComplete'], receipt=success)
+            # The real fixture waits for its private consumer group before it
+            # can exit. Keep an orphan live until EOF, then require the outer
+            # subreaper to reap it while the fixture itself is still running.
+            settle = """
+import os, subprocess, sys
+from image_decoding_workspace import settle_fixture_session
+worker = 'import os; child = os.fork(); os._exit(0) if child else os.read(0, 1)'
+with subprocess.Popen([sys.executable, '-c', worker], stdin=subprocess.PIPE, start_new_session=True) as proc:
+    assert proc.wait(timeout=2) == 0
+    try:
+        settle_fixture_session(proc, timeout=.1)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('settled with a live orphan')
+    proc.stdin.close()
+    settle_fixture_session(proc)
+"""
+            argv = [sys.executable, '-B', '-c', 'import sys; sys.path.insert(0, sys.argv[1]);' + settle,
+                    str(Path(__file__).resolve().parent)]
+            settled = ci.run_cohort(argv, work / 'artifacts/adopted.log', seconds=6, grace=.2)
+            check('live-orphan-blocks-and-is-reaped-after-eof', settled['exit'] == 0 and settled['cleanupComplete'],
+                  receipt=settled, stderr=(work / 'artifacts/adopted.stderr.log').read_text())
             with patch.object(ci.subprocess, 'Popen', side_effect=OSError('controlled spawn refusal')):
                 failed = ci.run(SimpleNamespace(label='spawn', cohort='profile', qt_readers='present'), work, admitted)
             rows = json.loads((work / 'artifacts/ci-spawn.json').read_text())
