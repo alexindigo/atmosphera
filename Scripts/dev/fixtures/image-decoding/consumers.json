@@ -1696,7 +1696,7 @@
         {
           "path": "Services/Theming/TemplateProcessor.qml",
           "name": "*",
-          "sha256": "4ea39efd88d28d5a47cf7df58f1fe9a27f2285a8098d237477fbffd267ca6d3d"
+          "sha256": "e67b39d301cbec27aa69efc4976138f1cc1fe08cf58f0a531cb160b724fa60d5"
         }
       ]
     },

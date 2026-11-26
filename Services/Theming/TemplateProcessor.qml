@@ -480,6 +480,9 @@ Singleton {
   // DEBOUNCE TIMER
   // ================================================================================
   function executePendingRequest() {
+    // The process-exit path can consume the request before its timer fires.
+    // Once consumed, only a newer request may arm cancellation again.
+    debounceTimer.stop();
     Logger.d("TemplateProcessor", `executePendingRequest: hasWallpaper=${!!pendingWallpaperRequest}, hasPredefined=${!!pendingPredefinedRequest}`);
     if (pendingWallpaperRequest) {
       const req = pendingWallpaperRequest;
