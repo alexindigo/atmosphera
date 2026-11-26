@@ -10,6 +10,7 @@ import signal
 import socket
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 import time
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -50,8 +51,11 @@ def main():
             if alive(identity):
                 os.kill(identity.pid, signal.SIGKILL)
 
+    # The nested lane owns mutable inputs and IPC under scratch, never under
+    # the upload journal. Publish only its regular receipts and logs.
+    scratch = TemporaryDirectory(prefix='life-', dir=profile.work_base)
     try:
-        work = args.output / 'cohort'
+        work = Path(scratch.name) / 'cohort'
         (work / 'shell/Scripts/dev').mkdir(parents=True)
         (work / 'artifacts').mkdir()
         marker = work / 'children.json'
@@ -155,7 +159,7 @@ def main():
         # Execute main's actual finally block with a real TERM-resistant child.
         # Only container detection/profile admission and the Sway executable
         # are replaced; the runner's lifetime implementation is untouched.
-        work = args.output / 'compositor'
+        work = Path(scratch.name) / 'compositor'
         work.mkdir()
         made = []
         sockets = []
@@ -217,9 +221,20 @@ def main():
                 process.wait(timeout=5)
             for endpoint in sockets:
                 endpoint.close()
+        for control in ('cohort', 'compositor'):
+            evidence = args.output / control
+            evidence.mkdir()
+            for entry in sorted((Path(scratch.name) / control / 'artifacts').iterdir()):
+                if entry.is_symlink() or not entry.is_file():
+                    raise AssertionError(f'not a regular control receipt: {entry}')
+                (evidence / entry.name).write_bytes(entry.read_bytes())
+        check('compositor-receipt-reopens-without-runtime',
+              json.loads((args.output / 'compositor/compositor-held.json').read_text()) == row
+              and not (args.output / 'compositor/r').exists())
         profile.verify()
     finally:
         retire_controls()
+        scratch.cleanup()
         result = dict(passed=not failures, cases=cases, failures=failures,
                       captured=[i.record() for i in identities])
         (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
