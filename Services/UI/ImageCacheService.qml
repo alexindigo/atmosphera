@@ -55,13 +55,24 @@ Singleton {
       const callback = root._cacheClears.get(ticket);
       root._cacheClears.delete(ticket);
       root.representationsCleared(ticket, result);
-      callback?.({
-                   ok: result.stage === "complete" && result.failed === 0,
-                   reason: result.detail || result.code,
-                   removed: result.removed,
-                   kept: result.kept,
-                   failed: result.failed
-                 });
+      const outcome = {
+        ok: result.stage === "complete" && result.failed === 0,
+        reason: result.detail || result.code,
+        removed: result.removed,
+        kept: result.kept,
+        failed: result.failed
+      };
+      if (!outcome.ok) {
+        callback?.(outcome);
+        return;
+      }
+      originals.clearLegacyRepresentations(reply => {
+        if (!reply.ok) {
+          outcome.ok = false;
+          outcome.reason = "Could not clear legacy image representations";
+        }
+        callback?.(outcome);
+      });
     }
   }
 

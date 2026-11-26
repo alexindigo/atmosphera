@@ -204,7 +204,12 @@ class Run:
             (legacy / 'large').mkdir(parents=True)
             (legacy / 'thumbnails/mpvpaper').mkdir(parents=True)
             (legacy / 'large/legacy-key.png').write_bytes((inputs / 'frame-0.png').read_bytes())
+            (legacy / 'thumbnails/legacy.png').write_bytes((inputs / 'frame-0.png').read_bytes())
+            (legacy / 'thumbnails/original.png').symlink_to(inputs / 'Still.webp')
             (legacy / 'thumbnails/mpvpaper/plugin.bmp').write_bytes(b'plugin-owned')
+            contributors = profile / 'cache/images/contributors'
+            contributors.mkdir()
+            (contributors / 'legacy.png').write_bytes((inputs / 'frame-0.png').read_bytes())
         if name == 'cache-clear':
             # A previous process produced this valid entry and exited, so it
             # cannot be kept alive by the current owner's memory cache.
@@ -1682,8 +1687,11 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('clear-keeps-live-pixels', max(abs(a - b) for a, b in zip(pixel(output / 'held-after-clear.png'), COLORS[0])) <= 8,
                    pixel(output / 'held-after-clear.png'))
         legacy = cache / 'images/wallpapers'
-        self.check('clear-leaves-plugin-and-legacy-files-alone',
-                   (legacy / 'large/legacy-key.png').read_bytes() == before['frame-0.png']
+        self.check('clear-removes-only-shell-legacy-representations',
+                   not (legacy / 'large/legacy-key.png').exists()
+                   and not (legacy / 'thumbnails/legacy.png').exists()
+                   and not (cache / 'images/contributors/legacy.png').exists()
+                   and (legacy / 'thumbnails/original.png').is_symlink()
                    and (legacy / 'thumbnails/mpvpaper/plugin.bmp').read_bytes() == b'plugin-owned', str(legacy))
         original = Path(result['retained'])
         self.check('clear-preserves-retained-original', original.is_relative_to(cache / 'images/notifications/retained')

@@ -476,7 +476,7 @@
     "clear-toast-reports-completed-owner-clear",
     "clear-evicts-populated-decoded-cache",
     "clear-keeps-live-pixels",
-    "clear-leaves-plugin-and-legacy-files-alone",
+    "clear-removes-only-shell-legacy-representations",
     "clear-preserves-retained-original",
     "sources-unchanged",
     "cleared-cache-regenerates",

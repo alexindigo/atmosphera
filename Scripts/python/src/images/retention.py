@@ -13,7 +13,7 @@ from urllib.parse import unquote_to_bytes, urlsplit
 from .limits import source_byte_budget
 from .lease import run
 from .notification_originals import NotificationOriginals
-from .storage import atomic_write, directory, read_bytes
+from .storage import atomic_write, clear_legacy, directory, read_bytes
 
 
 def source_bytes(source):
@@ -121,6 +121,9 @@ def serve(cache, *, shell_pid):
                     if not re.fullmatch(r'[1-9][0-9]*\.png', leaf):
                         raise ValueError('Invalid snapshot stage')
                     (stage / leaf).unlink(missing_ok=True)
+                elif action == 'clear-legacy':
+                    for relative in ('wallpapers/thumbnails', 'wallpapers/large', 'contributors'):
+                        clear_legacy(images / relative)
                 elif action != 'prepare':
                     raise ValueError('Unknown retention operation')
                 reply['ok'] = True

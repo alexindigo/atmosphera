@@ -41,6 +41,23 @@ def directory(path, create=True, private=True):
         os.close(fd)
 
 
+def clear_legacy(path):
+    """Remove only flat, owned PNG representations from a retired cache."""
+    try:
+        with directory(path, create=False, private=False) as parent:
+            for entry in os.listdir(parent):
+                if entry.startswith('.') or not entry.endswith('.png'):
+                    continue
+                try:
+                    info = os.stat(entry, dir_fd=parent, follow_symlinks=False)
+                    if stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid():
+                        os.unlink(entry, dir_fd=parent)
+                except FileNotFoundError:
+                    pass  # another shell already retired it
+    except FileNotFoundError:
+        pass
+
+
 def descriptor_path(fd):
     # A decoder child must address the parent's still-open descriptor, not its
     # own close-on-exec descriptor table. The parent holds it until every child

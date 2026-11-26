@@ -61,6 +61,12 @@ Scope {
     _send(request, callback);
   }
 
+  function clearLegacyRepresentations(callback) {
+    _send({
+            action: "clear-legacy"
+          }, callback);
+  }
+
   function ensureStage(callback) {
     if (stageDirectory) {
       callback(true);
