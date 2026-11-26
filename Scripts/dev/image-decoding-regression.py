@@ -2102,7 +2102,13 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('plugin-hermes-terminal-escapes-external-data', requests == []
                    and all(line in terminal for line in result['terminalLines']), dict(requests=requests, terminal=terminal))
         videos = result['videos']
-        for name in ('mpv-tiles', 'vw-panel'):
+        galleries = result['galleries']
+        ready_gallery = dict(visible=True, count=2)
+        for gallery in ('mpv', 'vw'):
+            self.check('plugin-' + gallery + '-browse-during-export', galleries['pending'][gallery] == ready_gallery, galleries)
+        self.check('plugin-vw-export-does-not-reload-folder', galleries['afterExport'] == ready_gallery
+                   and not galleries['galleryInvalidated'], galleries)
+        for name in ('mpv-panel', 'vw-panel'):
             # Panels render the original video in still mode, independently of
             # the selected-wallpaper export.
             tiles = images(name, 'rounded')
@@ -2110,6 +2116,7 @@ os.execv('/usr/bin/find', ['find', *args])
             failed = [row for row in tiles if row['state'] == 'unavailable']
             coverage = warning(name)
             self.check('plugin-' + name + '-video-thumbnails', len(tiles) == 2 and len(shown) == 1 and len(failed) == 1
+                       and all(row['visible'] for row in tiles)
                        and shown[0]['source'].endswith('/Red.mp4')
                        and failed[0]['code'] and failed[0]['source'].endswith('/Broken.mp4')
                        and count(name, COLORS[0], 24) > 50 and coverage > 5,

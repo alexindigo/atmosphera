@@ -222,10 +222,8 @@ ShellRoot {
       spacing: 8
     }
   }
-  // mpvpaper and video-wallpaper: the actual video thumbnail producers over a
-  // folder with one video and one broken file; video-wallpaper's actual
-  // panel. The mpvpaper tile uses the same direct source as its delegate.
-  // The settings and main stand-ins carry data and delegate to the producer.
+  // Real producer exports and real panels over the same folder. The panel
+  // stand-ins hold export readiness independently of the browsing model.
   readonly property string videos: inputs + "/videos"
   property var mpvThumbs: null
   property var vwThumbs: null
@@ -243,27 +241,14 @@ ShellRoot {
   }
   QtObject {
     id: mpvMain
-    readonly property bool thumbCacheReady: mpvSettings.thumbCacheReady
-    function getThumbUrl(path) {
-      return root.mpvThumbs ? root.mpvThumbs.getThumbUrl(path) : "";
-    }
-    function getThumbFailure(path) {
-      return root.mpvThumbs ? root.mpvThumbs.getThumbFailure(path) : ({
-                                                                        code: "",
-                                                                        reason: ""
-                                                                      });
+    readonly property bool thumbCacheReady: false
+    function registerRuntime(api) {
     }
   }
   QtObject {
     id: vwMain
-    function getThumbPath(path) {
-      return root.vwThumbs ? root.vwThumbs.thumbnailFor(path) : "";
-    }
-    function getThumbFailure(path) {
-      return root.vwThumbs ? root.vwThumbs.failureFor(path) : ({
-                                                                 code: "",
-                                                                 reason: ""
-                                                               });
+    property bool thumbnailsSettled: false
+    function registerRuntime(api) {
     }
   }
   FolderListModel {
@@ -290,17 +275,7 @@ ShellRoot {
       console.log("IMAGE_PLUGIN_ERROR|" + mpv.errorString());
     else if (mpvFolder.status === FolderListModel.Ready)
       mpvThumbs.thumbGeneration();
-    var tiles = Qt.createQmlObject("import QtQuick; Row { width: 640; height: 180; spacing: 8 }", container);
-    for (const name of ["Broken.mp4", "Red.mp4"]) {
-      const path = root.videos + "/" + name;
-      const tile = Qt.createQmlObject("import qs.Widgets; NImageRounded { width: 300; height: 168; fallbackIcon: \"alert-circle\" }", tiles);
-      tile.imagePath = path;
-    }
-    created.push({
-                   name: "mpv-tiles",
-                   object: mpvThumbs ? tiles : null,
-                   error: mpvThumbs ? "" : mpv.errorString()
-                 });
+    createVideoPanel("mpv-panel", "mpvpaper", mpvMain, mpvSettings);
     var folder = Qt.createComponent("file://" + plugins + "/video-wallpaper/common/FolderModel.qml");
     vwFolder = folder.status === Component.Ready ? folder.createObject(root, {
                                                                          folder: root.videos,
@@ -316,23 +291,76 @@ ShellRoot {
                                                                              folderModel: vwFolder,
                                                                              requestedPaths: [root.badVideo]
                                                                            }) : null;
+    if (!vwThumbs)
+      console.log("IMAGE_PLUGIN_ERROR|" + [folder.errorString(), vw.errorString()].join(" "));
+    createVideoPanel("vw-panel", "video-wallpaper", vwMain, {
+                       wallpapersFolder: videos
+                     });
+  }
+  function createVideoPanel(name, directory, main, settings) {
     var holder = Qt.createQmlObject("import QtQuick; Item { width: 880; height: 420 }", container);
-    var panel = Qt.createComponent("file://" + plugins + "/video-wallpaper/panel/PerScreenPanel.qml");
-    var object = vwThumbs && panel.status === Component.Ready ? panel.createObject(holder, {
-                                                                                     pluginApi: api({
-                                                                                                      mainInstance: vwMain
-                                                                                                    }),
-                                                                                     screenName: "fixture",
-                                                                                     selectWallpaper: () => {},
-                                                                                     writeMonitorSetting: () => {},
-                                                                                     thumbCacheReady: Qt.binding(() => root.vwFolder.ready),
-                                                                                     folderModel: vwFolder
-                                                                                   }) : null;
+    var panel = Qt.createComponent("file://" + plugins + "/" + directory + "/Panel.qml");
+    var object = panel.status === Component.Ready ? panel.createObject(holder, {
+                                                                         pluginApi: api({
+                                                                                          mainInstance: main,
+                                                                                          pluginSettings: settings
+                                                                                        })
+                                                                       }) : null;
+    if (object)
+      object.anchors.fill = holder;
     created.push({
-                   name: "vw-panel",
+                   name: name,
                    object: object ? holder : null,
-                   error: object ? "" : [folder.errorString(), vw.errorString(), panel.errorString()].join(" ")
+                   error: object ? "" : panel.errorString() || "Panel creation failed"
                  });
+  }
+  function videoGrid(name) {
+    function find(node) {
+      if (!node)
+        return null;
+      if ("cellWidth" in node && "count" in node && "availableWidth" in node)
+        return node;
+      for (const child of node.children || []) {
+        const grid = find(child);
+        if (grid)
+          return grid;
+      }
+      return null;
+    }
+    return find(created.find(row => row.name === name).object);
+  }
+  function gridState(grid) {
+    return grid ? {
+                    visible: grid.visible,
+                    count: grid.count
+                  } : null;
+  }
+  function galleryStates() {
+    const mpv = videoGrid("mpv-panel");
+    const vw = videoGrid("vw-panel");
+    const before = {
+      mpv: gridState(mpv),
+      vw: gridState(vw)
+    };
+    let galleryInvalidated = false;
+    const invalidated = () => {
+      if (!vw.visible || vw.count !== 2)
+        galleryInvalidated = true;
+    };
+    if (vw) {
+      vw.countChanged.connect(invalidated);
+      vw.visibleChanged.connect(invalidated);
+    }
+    vwMain.thumbnailsSettled = true;
+    if (vw) {
+      vw.countChanged.disconnect(invalidated);
+      vw.visibleChanged.disconnect(invalidated);
+    }
+    return {
+      pending: before,
+      afterExport: gridState(vw),
+      galleryInvalidated: galleryInvalidated
+    };
   }
   // wallcards' thumbnails and colors from the shared owner.
   property var thumbnails: null
@@ -440,6 +468,7 @@ ShellRoot {
                       obsoleteMpv: root.mpvThumbs.getThumbFailure(root.badVideo),
                       obsoleteVw: root.vwThumbs.failureFor(root.badVideo)
                     },
+                    galleries: root.galleryStates(),
                     wallcards: root.thumbnails ? {
                                                    ready: root.thumbnailReady,
                                                    loading: root.thumbnails.loading,
