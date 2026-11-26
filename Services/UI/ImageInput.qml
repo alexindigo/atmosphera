@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import "../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 
@@ -27,7 +26,7 @@ Scope {
   property string _code: ""
   property string _reason: ""
   property int _generation: 0
-  property Process _download: null
+  property var _releaseDownload: null
   property bool _initialized: false
 
   function reset() {
@@ -62,15 +61,17 @@ Scope {
       offer(source);
       return;
     } else if (/^https?:\/\//i.test(source)) {
-      _download = downloader.createObject(root, {
-                                            requestedUrl: source,
-                                            requestGeneration: _generation
-                                          });
-      if (_download) {
-        _download.running = true;
-        return;
-      }
-      fail("download-failed", "Could not start the image download");
+      const generation = _generation;
+      _releaseDownload = ImageDownloads.acquire(source, reply => {
+        if (root._generation !== generation)
+          return;
+        if (reply.source && PortalPaths.uriToPath(reply.source).ok)
+          root.offer(reply.source);
+        else {
+          root.retire();
+          root.fail(reply.code || "download-failed", reply.reason || "The image download did not return a local file");
+        }
+      });
       return;
     }
     fail("invalid-source", "Unsupported image source");
@@ -89,10 +90,9 @@ Scope {
   }
 
   function retire() {
-    const previous = _download;
-    _download = null;
-    if (previous)
-      previous.stdinEnabled = false;
+    const release = _releaseDownload;
+    _releaseDownload = null;
+    release?.();
   }
 
   onSourceChanged: reset()
@@ -103,55 +103,4 @@ Scope {
     reset();
   }
   Component.onDestruction: retire()
-
-  Component {
-    id: downloader
-    Process {
-      id: download
-      required property string requestedUrl
-      required property int requestGeneration
-      property bool announced: false
-      property bool startedOnce: false
-
-      workingDirectory: Quickshell.shellDir + "/Scripts/python/src"
-      command: ["python3", "-B", "-m", "images.download", "--hold", requestedUrl, Settings.cacheDir]
-      stdinEnabled: true
-      stdout: SplitParser {
-        onRead: line => {
-          if (root._download !== download || root.generation !== download.requestGeneration || download.announced)
-            return;
-          let packet;
-          try {
-            packet = JSON.parse(line);
-          } catch (_) {
-            packet = null;
-          }
-          if (!packet || !PortalPaths.uriToPath(packet.source).ok) {
-            root.retire();
-            root.fail("download-failed", "The image download did not return a local file");
-            return;
-          }
-          download.announced = true;
-          root.offer(packet.source);
-        }
-      }
-      onStarted: startedOnce = true
-      onRunningChanged: {
-        if (!running && !startedOnce) {
-          if (root._download === download) {
-            root._download = null;
-            root.fail("download-failed", "Could not start the image download");
-          }
-          destroy();
-        }
-      }
-      onExited: code => {
-        if (root._download === download) {
-          root._download = null;
-          root.fail(code === 3 ? "source-too-large" : "download-failed", code === 3 ? "The image download exceeded the byte limit" : "Could not download the image");
-        }
-        destroy();
-      }
-    }
-  }
 }

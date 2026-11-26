@@ -1,5 +1,6 @@
-"""Download HTTP(S) source bytes inside an owned cancellable process."""
+"""Shared, stdin-owned HTTP(S) snapshot acquisition."""
 import json
+import os
 from pathlib import Path
 import select
 import signal
@@ -11,6 +12,9 @@ from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 SOURCE_TOO_LARGE_EXIT = 3
+TRANSFER_SLOTS = 2
+QUEUE_SIZE = 32
+TRANSFER_DEADLINE = 30
 
 
 class SourceTooLarge(ValueError):
@@ -35,7 +39,8 @@ def download(source, target, budget):
             if urlsplit(response.geturl()).scheme.lower() not in ('http', 'https') or not 200 <= response.status < 300:
                 raise ValueError('Image download failed')
             declared = response.headers.get('Content-Length')
-            if declared is not None and int(declared) > budget:
+            declared = int(declared) if declared is not None else None
+            if declared is not None and declared > budget:
                 raise SourceTooLarge('Image source is too large')
             with target.open('xb') as output:
                 created = True
@@ -45,50 +50,107 @@ def download(source, target, budget):
                     if count > budget:
                         raise SourceTooLarge('Image source is too large')
                     output.write(block)
+                if declared is not None and count != declared:
+                    raise OSError('Image download ended before the complete response')
     except BaseException:
         if created:
             target.unlink(missing_ok=True)
         raise
 
 
-def hold(source, parent, *, shell_pid):
-    """Keep a private download available only while the caller holds stdin."""
+def serve(parent, *, shell_pid):
+    """Own all partial and leased files until release or shell EOF."""
     from .limits import source_byte_budget
 
     def terminated(_signal, _frame):
         raise SystemExit(0)
 
     signal.signal(signal.SIGTERM, terminated)
-    stdin = select.poll()
-    stdin.register(sys.stdin, select.POLLHUP)
+    fd = sys.stdin.fileno()
+    pipe = select.poll()
+    pipe.register(fd, select.POLLIN | select.POLLHUP)
+    queued, running, ready = {}, {}, {}
+    budget = source_byte_budget()
+
+    def reply(ticket, **result):
+        print(json.dumps(dict(id=ticket, **result)), flush=True)
+
+    def release(ticket):
+        queued.pop(ticket, None)
+        request = running.pop(ticket, None)
+        if request:
+            transfer, path, _ = request
+            if transfer.poll() is None:
+                transfer.kill()
+            transfer.wait()
+            path.unlink(missing_ok=True)
+        path = ready.pop(ticket, None)
+        if path:
+            path.unlink(missing_ok=True)
+
     with tempfile.TemporaryDirectory(prefix='image-source-', dir=parent) as work:
-        input_file = Path(work) / 'source'
-        # The lease, not the network reader, owns the directory. A blocked
-        # response or lookup cannot prevent it from observing the caller's EOF.
-        with subprocess.Popen([sys.executable, '-B', '-m', 'images.download', source,
-                               str(input_file), str(source_byte_budget())], stdin=subprocess.DEVNULL) as transfer:
-            try:
-                deadline = time.monotonic() + 30
-                while (code := transfer.poll()) is None:
-                    if stdin.poll(50):
+        buffer = bytearray()
+        try:
+            while True:
+                readable = pipe.poll(50 if running else -1)
+                if readable:
+                    # EOF is also our cancellation transport when QProcess's
+                    # supervisor is destroyed. Never start another transfer.
+                    if readable[0][1] & select.POLLHUP:
                         return
-                    if time.monotonic() >= deadline:
-                        raise TimeoutError('Image download deadline exceeded')
-            finally:
-                if transfer.poll() is None:
-                    transfer.kill()
-            if code:
-                raise SystemExit(code if code > 0 else 1)
-        print(json.dumps({'source': input_file.as_uri()}), flush=True)
-        # No request data accepted here: closing the captured pipe retires
-        # the snapshot even if the QML item or application has shut down.
-        sys.stdin.buffer.read(1)
+                    block = os.read(fd, 65536)
+                    if not block:
+                        return
+                    buffer.extend(block)
+                    while (newline := buffer.find(b'\n')) >= 0:
+                        packet = json.loads(buffer[:newline])
+                        del buffer[:newline + 1]
+                        ticket = packet['id']
+                        if type(ticket) is not int or ticket <= 0:
+                            continue
+                        if packet['action'] == 'release':
+                            release(ticket)
+                        elif packet['action'] == 'get' and ticket not in queued and ticket not in running and ticket not in ready:
+                            if len(queued) + len(running) >= QUEUE_SIZE + TRANSFER_SLOTS:
+                                reply(ticket, code='download-busy', reason='The image download queue is full')
+                            else:
+                                queued[ticket] = packet['url']
+                now = time.monotonic()
+                for ticket, (transfer, path, deadline) in list(running.items()):
+                    code = transfer.poll()
+                    if code is None and now < deadline:
+                        continue
+                    if code == 0:
+                        del running[ticket]
+                        ready[ticket] = path
+                        reply(ticket, source=path.as_uri())
+                    else:
+                        release(ticket)
+                        if code == SOURCE_TOO_LARGE_EXIT:
+                            reply(ticket, code='source-too-large', reason='The image download exceeded the byte limit')
+                        else:
+                            reply(ticket, code='download-failed', reason='Could not download the image')
+                while queued and len(running) < TRANSFER_SLOTS:
+                    ticket = next(iter(queued))
+                    source = queued.pop(ticket)
+                    path = Path(work) / str(ticket)
+                    try:
+                        transfer = subprocess.Popen([sys.executable, '-B', '-m', 'images.download', source,
+                                                     str(path), str(budget)], stdin=subprocess.DEVNULL,
+                                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    except (OSError, ValueError):
+                        reply(ticket, code='download-failed', reason='Could not start the image download')
+                    else:
+                        running[ticket] = transfer, path, time.monotonic() + TRANSFER_DEADLINE
+        finally:
+            for ticket in list(running):
+                release(ticket)
 
 
 def main():
-    if sys.argv[1] == '--hold':
+    if sys.argv[1] == '--serve':
         from .lease import run
-        run(hold, *sys.argv[2:])
+        run(serve, *sys.argv[2:])
     else:
         source, target, budget = sys.argv[1:]
         download(source, Path(target), int(budget))

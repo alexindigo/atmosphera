@@ -118,7 +118,7 @@ def main():
     parser.add_argument('--engine', choices=('podman', 'docker'), required=True)
     parser.add_argument('--label', required=True)
     parser.add_argument('--qt-readers', choices=('present', 'absent'), default='absent')
-    parser.add_argument('--cohort', choices=('all', 'ownership', 'lifetime', 'profile', 'formats', 'chooser', 'boundary', 'workspace'), default='all')
+    parser.add_argument('--cohort', choices=('all', 'ownership', 'lifetime', 'profile', 'formats', 'chooser', 'download-burst', 'boundary', 'workspace'), default='all')
     args = parser.parse_args()
     workspace = args.workspace
     marker = Path('/run/.containerenv' if args.engine == 'podman' else '/.dockerenv')
@@ -203,14 +203,14 @@ def run(args, workspace, admitted):
         'workspace': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-workspace-tests.py'),
                       '--guest-profile', str(profile_path)],
     }
-    for case in ('formats', 'chooser'):
+    for case in ('formats', 'chooser', 'download-burst'):
         commands[case] = [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-regression.py'),
                           '--guest-profile', str(profile_path), '--source', str(source), '--plugins', str(plugins),
                           '--case', case, '--qt-webp', args.qt_readers,
                           '--work-root', str(admitted.work_base / (case + '-' + args.label)),
                           '--output', str(admitted.journal_base / (case + '-' + args.label))]
     rows = []
-    for name in ('ownership', 'lifetime', 'profile', 'formats', 'chooser', 'boundary', 'workspace') if args.cohort == 'all' else (args.cohort,):
+    for name in ('ownership', 'lifetime', 'profile', 'formats', 'chooser', 'download-burst', 'boundary', 'workspace') if args.cohort == 'all' else (args.cohort,):
         result = run_cohort(commands[name], admitted.journal_base / (name + '-' + args.label + '.log'),
                             seconds=COHORT_SECONDS, grace=TERMINATE_GRACE)
         rows.append(dict(cohort=name, argv=commands[name], **result))

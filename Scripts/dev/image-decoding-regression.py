@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import select
 import shutil
 import subprocess
 import threading
@@ -24,7 +25,7 @@ from image_decoding_bus import address_for, private_bus
 from qml_probe import bootstrap_fixture
 
 
-CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'source-admission', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
+CASES = ('red', 'icons-red', 'icons', 'artwork-red', 'artwork', 'launcher-red', 'launcher', 'text-red', 'text', 'cache-clear-red', 'cache-clear', 'remote-red', 'wizard-red', 'cache-red', 'cache', 'cache-read-red', 'cache-read', 'producer-capture', 'producer-retirement-red', 'notification-adapter', 'notification-service-red', 'notification-service', 'notification-body', 'wallpaper-wizard', 'wallpaper-remote', 'owner', 'source-admission', 'download-burst', 'legacy', 'backdrops', 'rounded', 'wallpaper-admission', 'wallpaper-setup', 'wallpaper-scan', 'wallpaper-gallery', 'desktop-wallpaper', 'parallax-wallpaper', 'chooser', 'chooser-wallpaper', 'shell', 'plugins', 'packaging', 'all', 'review-results')
 ERRORS = re.compile(r'ReferenceError|TypeError|SyntaxError|Cannot assign|Unable to assign|Binding loop|'
                     r'Failed to load configuration|is not installed|Component is not ready|'
                     r'completion callback threw|Wallpaper settlement callback failed|Completion callback failed for request')
@@ -34,7 +35,7 @@ GROUPS = {
                           'desktop-wallpaper', 'parallax-wallpaper'),
     'shell': ('rounded', 'icons', 'artwork', 'launcher', 'text', 'producer-capture', 'notification-adapter',
               'notification-service', 'notification-body', 'cache', 'cache-read', 'cache-clear'),
-    'all': ('owner', 'chooser-wallpaper', 'shell', 'plugins', 'packaging'),
+    'all': ('owner', 'download-burst', 'chooser-wallpaper', 'shell', 'plugins', 'packaging'),
 }
 
 
@@ -2296,6 +2297,81 @@ os.execv('/usr/bin/find', ['find', *args])
             raise AssertionError(f'No real cache profile for acquisition retirement: {cache}')
         return [str(path) for pattern in ('image-source-*', '.originals-*') for path in cache.rglob(pattern)]
 
+    def download_burst(self):
+        inputs = self.work / 'fixtures'
+        create_fixtures(inputs, self.commands)
+        png = colored_png(COLORS[0])
+        active, started, closed = set(), [], []
+        guard = threading.Condition()
+        peak = 0
+
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+
+            def do_GET(self):
+                nonlocal peak
+                if self.path == '/ready':
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(png)))
+                    self.end_headers()
+                    self.wfile.write(png)
+                    return
+                if self.path == '/truncated':
+                    self.send_response(200)
+                    self.send_header('Content-Length', '262144')
+                    self.end_headers()
+                    self.wfile.write(b'x' * 131072)
+                    return
+                index = int(self.path.rsplit('/', 1)[1])
+                with guard:
+                    active.add(index)
+                    started.append(index)
+                    peak = max(peak, len(active))
+                try:
+                    self.send_response(200)
+                    self.send_header('Content-Length', '262144')
+                    self.end_headers()
+                    self.wfile.write(b'x' * 131072)  # reach the client's partial file
+                    ready, _, _ = select.select([self.connection], [], [], 13)
+                    if ready and not self.connection.recv(1):
+                        with guard:
+                            closed.append(index)
+                finally:
+                    with guard:
+                        active.discard(index)
+                        guard.notify_all()
+
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        name = 'download-burst'
+        size = 38
+        try:
+            result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/download-burst.qml',
+                                     inputs, name, dict(IMAGE_BURST_URL=f'http://127.0.0.1:{server.server_port}',
+                                                        IMAGE_BURST_SIZE=str(size)))
+            deadline = time.monotonic() + 3
+            with guard:
+                guard.wait_for(lambda: not active, timeout=3)
+            while self.retired_acquisitions(name) and time.monotonic() < deadline:
+                time.sleep(.025)
+            report = dict(peak=peak, started=started, closed=closed, active=sorted(active), result=result,
+                          remaining=self.retired_acquisitions(name))
+            (self.out / 'download-burst.json').write_text(json.dumps(report, indent=2) + '\n')
+            self.check('remote-downloads-share-two-transfer-slots', peak == 2 and sorted(started) == [0, 1, 2], report)
+            self.check('remote-download-cancellation-retires-consumers', result['cancelled'] == ['idle', 'idle'], report)
+            self.check('remote-download-queue-is-bounded', result['rejected'] == max(0, size - 34), report)
+            self.check('truncated-download-fails-before-it-is-leased', result['failure'] == 'download-failed', report)
+            self.check('download-sibling-lease-survives-cancellation', result['kept'] == 'ready'
+                       and pixel(output / 'kept.png') == list(COLORS[0]), report)
+            self.check('shell-exit-cleans-inflight-transfers-and-leases', not active and sorted(closed) == [0, 1, 2]
+                       and not report['remaining'], report)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=3)
+
     @staticmethod
     def wallpaper_quiet(row):
         return row['changes'] == row['reservations'] == 0
@@ -2439,6 +2515,8 @@ def execute(args, profile):
             run.owner_fault()
         elif args.case == 'source-admission':
             run.source_admission()
+        elif args.case == 'download-burst':
+            run.download_burst()
         elif args.case in ('cache', 'cache-red', 'cache-read', 'cache-read-red'):
             run.cache_contract()
         elif args.case in ('producer-capture', 'producer-retirement-red', 'notification-adapter'):
