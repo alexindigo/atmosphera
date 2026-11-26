@@ -3,7 +3,7 @@ import "PluginSettingsRead.js" as Read
 import qs.Commons
 import qs.Services.Plugins
 
-// The plugin api of one placed plugin piece (plugin-instances design, section 4).
+// The plugin api of one placed or invocation-created instance.
 // Every member of the plugin api is forwarded from `base`; the instance differs
 // in its settings (plugin settings with this placement's instanceSettings on
 // top) and in opening its panels with this api.
@@ -26,7 +26,9 @@ QtObject {
   property var launcherProvider: base ? base.launcherProvider : null
   property var controlCenterWidget: base ? base.controlCenterWidget : null
 
-  property var panelOpenScreen: base ? base.panelOpenScreen : null
+  // The exact slot owns this state; closing a different slot cannot clear it.
+  property var panelHost: null
+  readonly property var panelOpenScreen: panelHost?.screen ?? null
   property var ipcHandlers: base ? base.ipcHandlers : ({})
 
   property var pluginTranslations: base ? base.pluginTranslations : ({})
@@ -40,7 +42,6 @@ QtObject {
   property var saveState: base ? base.saveState : null
 
   property var getConfig: base ? base.getConfig : null
-  property var closePanel: base ? base.closePanel : null
   property var openLauncher: base ? base.openLauncher : null
   property var closeLauncher: base ? base.closeLauncher : null
   property var toggleLauncher: base ? base.toggleLauncher : null
@@ -67,11 +68,11 @@ QtObject {
   property var _previewGeneration: null
   property bool _constructed: false
   readonly property var _sharedPreviewBase: base && base.settingsPreviewOwner ? base.settingsPreviewOwner.baseScope : null
-  readonly property bool settingsReady: runtime !== null && runtime.ready && !_placementReplaced
+  readonly property bool settingsReady: placement ? runtime !== null && runtime.ready && !_placementReplaced : !!base?.settingsReady
   readonly property string settingsError: _openError || (_placementReplaced ? "overlay-identity" : (runtime ? runtime.error : ""))
-  readonly property var pluginSettings: runtime && !_placementReplaced ? runtime.values : null
-  readonly property var settingsView: settingsPreviewOwner.values
-  readonly property var settingsReadOwner: settingsPreviewOwner.readOwner
+  readonly property var pluginSettings: placement ? (runtime && !_placementReplaced ? runtime.values : null) : base?.pluginSettings ?? null
+  readonly property var settingsView: placement ? settingsPreviewOwner.values : base?.settingsView ?? null
+  readonly property var settingsReadOwner: placement ? settingsPreviewOwner.readOwner : base?.settingsReadOwner ?? null
   function readContextValues(source) {
     var owner = root.base ? root.base.settingsOwner : null;
     return Read.values(source, owner && !owner.closed && owner.store ? owner.store.settingsKeys : [], function (value) {
@@ -92,16 +93,18 @@ QtObject {
     sourceValue: root._inheritedPreview && root._inheritedPreview.ready ? root._inheritedPreview.values : root.pluginSettings
     sourceReadOwner: root._inheritedPreview && root._inheritedPreview.ready ? root._inheritedPreview : root.runtime
     currentOwner: function () {
-      return root.settingsReady ? root.runtime.placementToken : null;
+      return root.settingsReady && root.runtime ? root.runtime.placementToken : null;
     }
   }
 
   function createSettingsPreview(editor) {
+    if (!placement)
+      return base?.createSettingsPreview(editor);
     return settingsPreviewOwner.open(editor);
   }
 
   function _refreshPreviewView() {
-    if (!_constructed)
+    if (!_constructed || !placement)
       return;
     var token = {};
     var lifetime = _lifetime;
@@ -129,6 +132,8 @@ QtObject {
   on_SharedPreviewBaseChanged: _refreshPreviewView()
 
   Component.onCompleted: {
+    if (!placement)
+      return;
     _constructed = true;
     var lifetime = _lifetime;
     _cancelOpen = PluginInstances.openRuntime(base, placement, function (result) {
@@ -160,6 +165,8 @@ QtObject {
   // Stores only the values that differ from the plugin settings, in this
   // placement's entry. The plugin settings file is never written.
   function saveSettings(callback) {
+    if (!placement)
+      return base?.saveSettings(callback);
     return Service.savePluginSettings(root, runtime, callback);
   }
 
@@ -200,24 +207,22 @@ QtObject {
   }
 
   function createSettingsEditor(fieldIntent) {
+    if (!placement)
+      return base?.createSettingsEditor(fieldIntent);
     if (_placementReplaced)
       return null;
     return PluginInstances.createSettingsEditor(pluginId, placement, base, fieldIntent === true);
   }
 
   function openPanel(screen, buttonItem) {
-    if (!screen) {
-      Logger.w("PluginInstanceApi", "No screen available for opening panel");
-      return false;
-    }
-    return Service.openPluginPanel(pluginId, screen, buttonItem, root);
+    return Service.invokePluginPanel(pluginId, "open", screen, buttonItem, root);
   }
 
   function togglePanel(screen, buttonItem) {
-    if (!screen) {
-      Logger.w("PluginInstanceApi", "No screen available for toggling panel");
-      return false;
-    }
-    return Service.togglePluginPanel(pluginId, screen, buttonItem, root);
+    return Service.invokePluginPanel(pluginId, "toggle", screen, buttonItem, root);
+  }
+
+  function closePanel(screen) {
+    return Service.invokePluginPanel(pluginId, "close", screen, null, root);
   }
 }

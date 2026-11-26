@@ -83,6 +83,10 @@ Item {
 
   onListSectionChanged: _repointInstanceApi()
 
+  PluginInvocationPlacement {
+    api: root._isPlugin ? loader.item?.pluginApi ?? null : null
+  }
+
   function _loadPluginWidget() {
     var comp = root._registeredComponent;
     if (!comp) {

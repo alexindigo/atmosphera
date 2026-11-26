@@ -31,6 +31,19 @@ Singleton {
     Logger.i("IPCService", "Service started");
   }
 
+  // A corner can handle literal panel commands directly, including the action
+  // picker's Windows map command. Other strings retain their bash semantics.
+  function invokePanelCommand(command, screenName) {
+    const map = /^atmosphera\s+ipc\s+niriWindowsMap\s+(open|toggle|close)$/.exec(command.trim());
+    const generic = /^atmosphera\s+(?:ipc\s+)?plugin\s+(open|toggle|close)Panel\s+([\w.:-]+)$/.exec(command.trim());
+    if (!map && !generic)
+      return false;
+    const screen = Quickshell.screens.find(output => output.name === screenName);
+    if (screen)
+      Service.invokePluginPanel(root._resolvePluginKey(map ? "niri-windows-map" : generic[2]), (map || generic)[1], screen);
+    return true;
+  }
+
   // Resolve a bare plugin id ("niri-windows-map") or composite key
   // ("<hash>:niri-windows-map") to the composite key used by the registries.
   function _resolvePluginKey(id) {
@@ -850,14 +863,14 @@ Singleton {
     function all(): string {
       try {
         var snapshot = ShellState.buildStateSnapshot({
-          doNotDisturb: NotificationService.doNotDisturb,
-          atmospheraPerformanceMode: PowerProfileService.atmospheraPerformanceMode,
-          barVisible: BarService.isVisible,
-          openedPanel: PanelService.openedPanel?.objectName || "",
-          lockScreenActive: PanelService.lockScreen?.active || false,
-          wallpapers: WallpaperService.getWallpapersEffectiveMap(),
-          desktopWidgetsEditMode: DesktopWidgetRegistry.editMode || false
-        });
+                                                       doNotDisturb: NotificationService.doNotDisturb,
+                                                       atmospheraPerformanceMode: PowerProfileService.atmospheraPerformanceMode,
+                                                       barVisible: BarService.isVisible,
+                                                       openedPanel: PanelService.openedPanel?.objectName || "",
+                                                       lockScreenActive: PanelService.lockScreen?.active || false,
+                                                       wallpapers: WallpaperService.getWallpapersEffectiveMap(),
+                                                       desktopWidgetsEditMode: DesktopWidgetRegistry.editMode || false
+                                                     });
         if (!snapshot) {
           throw new Error("State snapshot unavailable");
         }
@@ -1021,51 +1034,15 @@ Singleton {
     }
 
     function openPanel(key: string) {
-      var manifest = Registry.getPluginManifest(key);
-      if (!manifest) {
-        Logger.w("IPC", "Plugin not found:", key);
-        return;
-      }
-      if (!manifest.entryPoints?.panel) {
-        Logger.w("IPC", "Plugin has no panel entry point:", key);
-        return;
-      }
-      root.screenDetector.withCurrentScreen(screen => {
-        Service.openPluginPanel(key, screen, null);
-      });
+      Service.invokePluginPanel(root._resolvePluginKey(key), "open");
     }
 
     function closePanel(key: string) {
-      var manifest = Registry.getPluginManifest(key);
-      if (!manifest) {
-        Logger.w("IPC", "Plugin not found:", key);
-        return;
-      }
-      if (!manifest.entryPoints?.panel) {
-        Logger.w("IPC", "Plugin has no panel entry point:", key);
-        return;
-      }
-      root.screenDetector.withCurrentScreen(screen => {
-        var api = Service.getPluginAPI(key);
-        if (api) {
-          api.closePanel(screen);
-        }
-      });
+      Service.invokePluginPanel(root._resolvePluginKey(key), "close");
     }
 
     function togglePanel(key: string) {
-      var manifest = Registry.getPluginManifest(key);
-      if (!manifest) {
-        Logger.w("IPC", "Plugin not found:", key);
-        return;
-      }
-      if (!manifest.entryPoints?.panel) {
-        Logger.w("IPC", "Plugin has no panel entry point:", key);
-        return;
-      }
-      root.screenDetector.withCurrentScreen(screen => {
-        Service.togglePluginPanel(key, screen, null);
-      });
+      Service.invokePluginPanel(root._resolvePluginKey(key), "toggle");
     }
   }
 
@@ -1157,23 +1134,15 @@ Singleton {
     }
 
     function open() {
-      root.screenDetector.withCurrentScreen(function (screen) {
-        Service.openPluginPanel(_mapKey(), screen);
-      });
+      Service.invokePluginPanel(_mapKey(), "open");
     }
 
     function close() {
-      root.screenDetector.withCurrentScreen(function (screen) {
-        var api = Service.getPluginAPI(_mapKey());
-        if (api)
-          api.closePanel(screen);
-      });
+      Service.invokePluginPanel(_mapKey(), "close");
     }
 
     function toggle() {
-      root.screenDetector.withCurrentScreen(function (screen) {
-        Service.togglePluginPanel(_mapKey(), screen);
-      });
+      Service.invokePluginPanel(_mapKey(), "toggle");
     }
   }
 }
