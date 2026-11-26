@@ -1395,7 +1395,10 @@ runpy.run_path(worker, run_name='__main__')
             async def frame(*arguments):
                 decodes.append(arguments)
                 raise CommandError('no-frame', 'Fixture video has no frame')
-            with patch.object(self.cache, 'frame', frame):
+            # The synthetic decoder also needs a known producer identity for
+            # the negative-cache contract, even without MpvQml installed.
+            with (patch.object(self.cache, 'frame', frame),
+                  patch('images.cache.video_failure_fingerprint', return_value='test-producer')):
                 failed = await self.cache.render(request)
                 self.assertEqual((failed['status'], failed['url']), ('unavailable', ''))
                 self.assertEqual(len(decodes), 1)
