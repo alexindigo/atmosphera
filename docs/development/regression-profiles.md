@@ -70,7 +70,8 @@ profile that failed verification. The workspace remains beneath that account's
 home and TMPDIR stays on disk.
 
 This mode uses real Wayland with software rendering, not a mock image reader.
-The CI image pins packaged Sway 1:1.12-4 with the wlroots headless backend.
+The CI image uses Sway from the same Arch snapshot as the devcontainer, with
+the wlroots headless backend.
 It cannot admit live-console or hardware-input workloads. A headless image
 result is not evidence of physical input or a desktop login session. Local
 qualification containers still run inside the task's authorized VM; this mode
