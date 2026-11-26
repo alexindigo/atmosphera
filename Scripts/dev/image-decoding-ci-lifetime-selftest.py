@@ -24,6 +24,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
+    profile.prepare_roots()
     assert args.output == args.output.resolve() and args.output.is_relative_to(profile.journal_base)
     args.output.mkdir(mode=0o700)
     spec = importlib.util.spec_from_file_location('image_ci', Path(__file__).with_name('image-decoding-ci.py'))
@@ -73,7 +74,7 @@ def main():
         fixture = work / 'shell/Scripts/dev/guest-profile-modes-selftest.py'
         fixture.write_text(body)
         admitted = SimpleNamespace(path=args.guest_profile, journal_base=work / 'artifacts', work_base=work / 'work')
-        cohort_args = SimpleNamespace(label='held', cohort='profile', qt_webp='present')
+        cohort_args = SimpleNamespace(label='held', cohort='profile', qt_readers='present')
         real_run = subprocess.run
 
         def short_old_timeout(argv, **kwargs):
@@ -108,7 +109,7 @@ def main():
             check('ordinary-cohort-records-success', success['exit'] == 0 and not success['timeout']
                   and success['cleanupComplete'], receipt=success)
             with patch.object(ci.subprocess, 'Popen', side_effect=OSError('controlled spawn refusal')):
-                failed = ci.run(SimpleNamespace(label='spawn', cohort='profile', qt_webp='present'), work, admitted)
+                failed = ci.run(SimpleNamespace(label='spawn', cohort='profile', qt_readers='present'), work, admitted)
             rows = json.loads((work / 'artifacts/ci-spawn.json').read_text())
             check('spawn-refusal-records-failure', failed == 1 and rows[0]['exit'] == 125
                   and 'controlled spawn refusal' in rows[0]['error'], rows=rows)
