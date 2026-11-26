@@ -2020,6 +2020,8 @@ os.execv('/usr/bin/find', ['find', *args])
         wallcards.mkdir()
         for name in ('Still.webp', 'frame-1.png', 'Corrupt.webp'):
             shutil.copyfile(inputs / name, wallcards / name)
+        escaped_name = 'Still #1?.webp'
+        shutil.copyfile(inputs / 'Still.webp', wallcards / escaped_name)
         # Video wallpaper plugins: one real video in the first fixture color and
         # one broken file, through the owner's video thumbnails.
         videos = inputs / 'videos'
@@ -2121,11 +2123,16 @@ os.execv('/usr/bin/find', ['find', *args])
                        and near(pixel(frame), COLORS[0], 24), videos)
         cards = result['wallcards']
         files = {row['fileName']: row for row in (cards or {}).get('files', [])}
-        self.check('plugin-wallcards-owner-thumbnails-and-colors', cards and cards['ready'] and not cards['loading'] and len(files) == 3
+        self.check('plugin-wallcards-owner-thumbnails-and-colors', cards and cards['ready'] and not cards['loading'] and len(files) == 4
                    and files['Still.webp']['filterColor'] == 'Red' and files['frame-1.png']['filterColor'] == 'Green'
                    and all(files[n]['thumbnail'] == files[n]['filePath'] for n in ('Still.webp', 'frame-1.png'))
                    and files['Corrupt.webp']['thumbnail'] == files['Corrupt.webp']['filePath'] and files['Corrupt.webp']['filterColor'] == 'Monochrome'
                    and not (output / 'unused-wallcards-cache').exists(), cards)
+        escaped = files.get(escaped_name, {})
+        self.check('plugin-wallcards-samples-literal-name', escaped.get('filePath') == str(wallcards / escaped_name)
+                   and escaped.get('thumbnail') == escaped.get('filePath')
+                   and escaped.get('hexCode') == files['Still.webp']['hexCode']
+                   and escaped.get('filterColor') == 'Red', escaped)
         return result
 
     def owner(self):
