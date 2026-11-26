@@ -117,6 +117,7 @@ def main():
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--engine', choices=('podman', 'docker'), required=True)
     parser.add_argument('--label', required=True)
+    parser.add_argument('--qt-readers', choices=('present', 'absent'), default='absent')
     parser.add_argument('--cohort', choices=('all', 'ownership', 'lifetime', 'profile', 'formats', 'chooser', 'boundary', 'workspace'), default='all')
     args = parser.parse_args()
     workspace = args.workspace
@@ -205,7 +206,7 @@ def run(args, workspace, admitted):
     for case in ('formats', 'chooser'):
         commands[case] = [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-regression.py'),
                           '--guest-profile', str(profile_path), '--source', str(source), '--plugins', str(plugins),
-                          '--case', case,
+                          '--case', case, '--qt-webp', args.qt_readers,
                           '--work-root', str(admitted.work_base / (case + '-' + args.label)),
                           '--output', str(admitted.journal_base / (case + '-' + args.label))]
     rows = []

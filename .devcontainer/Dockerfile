@@ -21,23 +21,26 @@ FROM arch-base AS devcontainer
 ARG DEV_UID=1000
 ARG DEV_GID=1000
 
-# Image-decoding CI needs headless Sway. Install it alongside Qt, before
-# compiling against Qt, so the lane never has to upgrade the built image.
-ARG INSTALL_SWAY=0
-RUN case "$INSTALL_SWAY" in \
+# Install both the runtime and independent fixture tools before compiling the
+# QML dependencies. A reader-absent image can remove packages without an upgrade.
+ARG INSTALL_IMAGE_TOOLS=0
+COPY imvqml-arch-runtime.sh /usr/local/share/atmosphera/
+RUN bash -ec '\
+    source /usr/local/share/atmosphera/imvqml-arch-runtime.sh; \
+    case "$INSTALL_IMAGE_TOOLS" in \
       0) set -- ;; \
-      1) set -- sway ;; \
-      *) echo 'INSTALL_SWAY must be 0 or 1' >&2; exit 1 ;; \
-    esac \
-    && bash /usr/local/share/atmosphera/arch-install.sh \
-    quickshell qt6-declarative qt6-tools qt6-multimedia \
-    libvips libwebp libheif libjxl \
-    cmake ninja pkgconf libpipewire mpv \
+      1) set -- sway imagemagick ffmpeg "${imvqml_readers[@]}" ;; \
+      *) echo "INSTALL_IMAGE_TOOLS must be 0 or 1" >&2; exit 1 ;; \
+    esac; \
+    bash /usr/local/share/atmosphera/arch-install.sh \
+    quickshell qt6-tools qt6-multimedia \
+    "${imvqml_core[@]}" libheif libjxl \
+    cmake ninja pkgconf libpipewire \
     python python-pip \
     git shellcheck shfmt \
     tree-sitter \
     rustup \
-    sudo "$@"
+    sudo "$@"'
 
 # Build the real QML plugins so their runtime modules and registrar-generated
 # type descriptions agree. No hand-written lint substitutes.
