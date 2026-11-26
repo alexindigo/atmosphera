@@ -557,6 +557,18 @@ Singleton {
       completed(false, "Niri IPC unavailable");
   }
 
+  // Niri: {kind: "gap", workspaceId, anchorId} means after the anchor's
+  // column (null = before first). {kind: "stack", workspaceId, anchorId,
+  // index} inserts at the 1-based slot in the anchor's column excluding the
+  // source. IDs are exact strings. Completion: (success, error, observed),
+  // where observed is {workspaceId, posInScrollingLayout, focused} or null.
+  function moveWindowWithinWorkspace(windowId, target, completed) {
+    if (niriBackend)
+      niriBackend.moveWindowWithinWorkspace(windowId, target, completed);
+    else if (typeof completed === "function")
+      completed(false, "Niri IPC unavailable", null);
+  }
+
   // Spawn command
   function spawn(command) {
     // Ensure command is a proper JS array (QML lists can behave unexpectedly in some contexts)

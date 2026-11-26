@@ -1,4 +1,5 @@
 module ConfigQml
+export 1.0
 linktarget configqmlplugin
 optional plugin configqmlplugin
 classname ConfigQmlPlugin

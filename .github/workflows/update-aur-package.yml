@@ -34,6 +34,20 @@ jobs:
       TAG_NAME: ${{ inputs.tag || github.ref_name }}
 
     steps:
+      # This checkout can use the REST archive before Git is installed. Read
+      # the installer from the same revision as the workflow invoking it.
+      - name: Check out dependency installer
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: bootstrap
+          persist-credentials: false
+
+      - name: Install dependencies from the shared Arch installer
+        run: |
+          bash bootstrap/.devcontainer/arch-install.sh \
+            git base-devel pacman-contrib openssh python
+
       # Publication policy comes from the maintained branch, not the selected
       # tag: replaying an older recipe must not replay its older publisher.
       - name: Check out publisher
@@ -42,12 +56,6 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           path: publisher
           persist-credentials: false
-
-      # The first checkout can use the REST archive before Git is installed.
-      - name: Install dependencies from the shared Arch snapshot
-        run: |
-          bash publisher/.devcontainer/arch-snapshot-install.sh \
-            git base-devel pacman-contrib openssh python
 
       - name: Check out release recipes
         uses: actions/checkout@v4

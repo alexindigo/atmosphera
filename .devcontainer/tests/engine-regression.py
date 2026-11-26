@@ -295,8 +295,8 @@ def case_image_invalidation(source, out):
     builds2 = sb.build_invocations()
 
     # Change a fingerprint input -> new tag -> new build.
-    mirrorlist = ws / ".devcontainer" / "arch-snapshot.mirrorlist"
-    mirrorlist.write_text(mirrorlist.read_text() + "\n# fingerprint perturbation\n")
+    installer = ws / ".devcontainer" / "arch-install.sh"
+    installer.write_text(installer.read_text() + "\n# fingerprint perturbation\n")
     p3 = run_launcher(source, sb, launcher=launcher)
     builds3 = sb.build_invocations()
     if len(builds3) > len(builds2):

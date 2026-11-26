@@ -11,6 +11,7 @@ import threading
 import time
 
 from fixture_profile import isolated_profile
+from niri_same_row_cases import CASES
 from workspace_guard import require_disk_backed_paths
 
 
@@ -29,6 +30,17 @@ def workspace(id, idx):
                 is_focused=idx == 1, is_urgent=False, active_window_id=HI if idx == 1 else None)
 
 
+def positioned(state):
+    columns, focused = state
+    rows = []
+    for col, ids in enumerate(columns, 1):
+        for tile, id in enumerate(ids, 1):
+            row = dict(window(id), is_focused=id == focused)
+            row['layout']['pos_in_scrolling_layout'] = [col, tile]
+            rows.append(row)
+    return rows
+
+
 class Peer(socketserver.StreamRequestHandler):
     def send(self, payload):
         self.wfile.write(json.dumps(payload).encode() + b'\n')
@@ -36,6 +48,8 @@ class Peer(socketserver.StreamRequestHandler):
     def handle(self):
         for line in self.rfile:
             request = json.loads(line)
+            scenario = self.server.scenario
+            same_row = CASES.get(scenario)
             if request == 'EventStream':
                 with self.server.lock:
                     self.server.streams += 1
@@ -44,8 +58,12 @@ class Peer(socketserver.StreamRequestHandler):
                     # Keep the replacement stream unready while request sockets work.
                     self.server.spawned.wait(3)
                 self.send({'Ok': 'Handled'})
-                self.send({'WorkspacesChanged': {'workspaces': [workspace(LO, 1), workspace(0, 2)]}})
-                self.send({'WindowsChanged': {'windows': [window(HI), window(0)]}})
+                workspaces = [workspace(LO, 1), workspace(0, 2)]
+                if same_row:
+                    workspaces[0]['active_window_id'] = same_row['initial'][1]
+                rows = positioned(same_row['initial']) if same_row else [window(HI), window(0)]
+                self.send({'WorkspacesChanged': {'workspaces': workspaces}})
+                self.send({'WindowsChanged': {'windows': rows}})
                 self.send({'OverviewOpenedOrClosed': {'is_open': False}})
                 self.send({'ConfigLoaded': {'failed': False}})
                 self.send({'CastsChanged': {'casts': []}})
@@ -74,6 +92,12 @@ class Peer(socketserver.StreamRequestHandler):
                 self.send({'Ok': {'Workspaces': [workspace(LO, 1), workspace(0, 2)]}})
                 continue
             if request == 'Windows':
+                if same_row:
+                    with self.server.lock:
+                        state = self.server.prior_layout or self.server.layout
+                        self.server.prior_layout = None
+                    self.send({'Ok': {'Windows': positioned(state)}})
+                    continue
                 self.server.release.set()
                 with self.server.lock:
                     moves = sum('MoveWindowToWorkspace' in row for row in self.server.actions)
@@ -83,6 +107,23 @@ class Peer(socketserver.StreamRequestHandler):
                 self.send({'Ok': {'Windows': rows}})
                 continue
             action = request.get('Action') if isinstance(request, dict) else None
+            if same_row and action:
+                with self.server.lock:
+                    i = len(self.server.actions)
+                    self.server.actions.append(action)
+                    steps = same_row['steps']
+                    if i >= len(steps) or action != steps[i][0]:
+                        self.send({'Err': 'unexpected action'})
+                        continue
+                    effect = steps[i][1]
+                    if isinstance(effect, str):
+                        self.send({'Err': effect})
+                        continue
+                    if same_row['delayed']:
+                        self.server.prior_layout = self.server.layout
+                    self.server.layout = effect
+                self.send({'Ok': 'Handled'})
+                continue
             if action:
                 with self.server.lock:
                     prior_moves = sum('MoveWindowToWorkspace' in row for row in self.server.actions)
@@ -99,15 +140,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--scenario', choices=('actions', 'overview', 'spawn', 'edge'), default='actions')
+    parser.add_argument('--scenario', choices=('actions', 'overview', 'spawn', 'edge', *CASES), default='actions')
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     require_disk_backed_paths(source, output, os.environ.get('TMPDIR', ''))
     output.mkdir()
-    template = Path(__file__).parent / 'fixtures/niri-action-wire.qml.in'
+    same_row = CASES.get(args.scenario)
+    template = Path(__file__).parent / 'fixtures' / ('niri-same-row-wire.qml.in' if same_row else 'niri-action-wire.qml.in')
     with tempfile.TemporaryDirectory(prefix='wire-') as temp, tempfile.NamedTemporaryFile(
             mode='w', suffix='.qml', prefix='WireFixture-', dir=source) as entry:
-        entry.write(template.read_text().replace('@SCENARIO@', args.scenario))
+        entry.write(template.read_text().replace('@CASE@', json.dumps(same_row['qml'])) if same_row else
+                    template.read_text().replace('@SCENARIO@', args.scenario))
         entry.flush()
         path = str(Path(temp) / 'socket')
         env = dict(isolated_profile(output), NIRI_SOCKET=path, XDG_CURRENT_DESKTOP='niri',
@@ -118,6 +161,8 @@ def main():
             peer.lock = threading.Lock()
             peer.actions = []
             peer.scenario = args.scenario
+            peer.layout = same_row['initial'] if same_row else None
+            peer.prior_layout = None
             peer.streams = 0
             peer.retire, peer.release, peer.spawned = (threading.Event() for _ in range(3))
             worker = threading.Thread(target=peer.serve_forever)
@@ -142,6 +187,8 @@ def main():
     marker = 'NIRI_ACTION_WIRE_RESULT|true|' in (output / 'shell.log').read_text()
     if args.scenario == 'actions':
         wire_matches = ordered == expected_order and len(unordered) == len(single) and all(row in unordered for row in single)
+    elif same_row:
+        wire_matches = actual == [row[0] for row in same_row['steps']]
     else:
         wire_matches = actual == ([{'Spawn': {'command': ['fixture-spawn']}}] if args.scenario == 'spawn' else [])
     passed = marker and process.returncode == 0 and wire_matches

@@ -33,6 +33,10 @@ install_module() {
     printf '%s  %s\n' "$checksum" "$archive" | sha256sum --check --strict
     mkdir "$source"
     tar -xzf "$archive" --strip-components=1 -C "$source"
+    if [[ $repo == configqml ]]; then
+        # Keep Core, CorePrivate and Qml on the exact tested private ABI.
+        git -C "$source" apply /usr/local/share/atmosphera/configqml-qt-6.12.1.patch
+    fi
     cmake -S "$source" -B "$source/build" -G Ninja \
         -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST_MODE=OFF \
         -DCMAKE_SKIP_RPATH=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib

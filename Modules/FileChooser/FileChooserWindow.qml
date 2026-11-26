@@ -150,7 +150,7 @@ PanelWindow {
     return rail.recentRows();
   }
   function placesState() {
-    return rail.state(panel);
+    return rail.snapshot(panel);
   }
   function iconState() {
     return listing.iconState();
