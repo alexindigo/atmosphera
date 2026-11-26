@@ -30,8 +30,8 @@ RUN case "$INSTALL_SWAY" in \
       *) echo 'INSTALL_SWAY must be 0 or 1' >&2; exit 1 ;; \
     esac \
     && bash /usr/local/share/atmosphera/arch-install.sh \
-    quickshell qt6-declarative qt6-tools qt6-multimedia qt6-imageformats \
-    imagemagick ffmpeg libwebp libheif \
+    quickshell qt6-declarative qt6-tools qt6-multimedia \
+    libvips libwebp libheif libjxl \
     cmake ninja pkgconf libpipewire mpv \
     python python-pip \
     git shellcheck shfmt \

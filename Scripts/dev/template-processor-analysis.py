@@ -76,15 +76,19 @@ def hue_to_name(hue: float) -> str:
 
 def run_our_processor(image_path: Path, scheme: str) -> dict | None:
     """Run our template-processor and return colors."""
+    from theming_sample_cli import sample_rgba
+
     cmd = [
         sys.executable,
         str(THEMING_DIR / "template-processor.py"),
         str(image_path),
+        "--sample-stdin",
         "--scheme-type", scheme,
         "--dark"
     ]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        result = subprocess.run(cmd, input=sample_rgba(THEMING_DIR.parents[3], image_path),
+                                capture_output=True, text=True, check=True)
         data = json.loads(result.stdout)
         return data.get("dark", {})
     except (subprocess.CalledProcessError, json.JSONDecodeError) as e:

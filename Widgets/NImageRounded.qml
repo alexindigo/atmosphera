@@ -31,9 +31,7 @@ Item {
   readonly property string errorCode: sourceFailureCode || image.errorCode
   readonly property string errorReason: sourceFailureCode ? sourceFailureReason : image.errorReason
   readonly property var imageResult: image.imageResult
-  readonly property int currentFrame: image.currentFrame
   readonly property string outputUrl: image.outputUrl
-  readonly property bool _software: GraphicsInfo.api === GraphicsInfo.Software
   readonly property bool _presentable: !showFallback && status === Image.Ready
   readonly property real _innerRadius: Math.max(0, radius - borderWidth)
 
@@ -48,39 +46,19 @@ Item {
       id: image
       anchors.fill: parent
       anchors.margins: root.borderWidth
-      visible: root._software && root._presentable
+      // Keep the item in the scene graph during upload, but do not show it
+      // behind the fallback or before presentation has been acknowledged.
+      opacity: root._presentable ? 1 : 0
       source: root.imagePath
       sourceRevision: root.sourceRevision
       active: root.active && !!root.imagePath
       normalize: root.normalize
       animationIntent: root.animationIntent
       paused: root.paused || !root.visible || Settings.data.general.animationDisabled
-      // The RHI shader fits and clips the texture. On software the owner
-      // renders fitted, rounded pixels before the scene graph paints them.
-      roundedRadius: root._software ? root._innerRadius : 0
-      fillMode: root._software ? root.imageFillMode : Image.Stretch
-      imageTransform: roundedRadius <= 0 ? "contain" : root.imageFillMode === Image.PreserveAspectCrop ? "cover" : root.imageFillMode === Image.PreserveAspectFit ? "contain" : "stretch"
-      mipmap: true
+      roundedRadius: root._innerRadius
+      fillMode: root.imageFillMode
       smooth: true
       antialiasing: true
-    }
-
-    ShaderEffect {
-      anchors.fill: parent
-      anchors.margins: root.borderWidth
-      visible: !root._software && root._presentable
-      property var source: image.textureItem
-      property real itemWidth: width
-      property real itemHeight: height
-      property real sourceWidth: image.decodedSize.width
-      property real sourceHeight: image.decodedSize.height
-      property real cornerRadius: root._innerRadius
-      property real imageOpacity: 1.0
-      property int fillMode: root.imageFillMode
-
-      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
-      supportsAtlasTextures: false
-      blending: true
     }
 
     AtmoIcon {

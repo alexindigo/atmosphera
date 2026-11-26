@@ -18,6 +18,7 @@ ShellRoot {
   property int requestedAt: 0
   property string expectedPath: ""
   readonly property bool redControl: Quickshell.env("IMAGE_DESKTOP_RED") === "1"
+  readonly property bool softwareProbe: Quickshell.env("IMAGE_DESKTOP_SOFTWARE_PROBE") === "1"
   // A plugin background root with the same per-screen contract (for example
   // parallax-wallpaper) replaces the shell's own background.
   readonly property string pluginRoot: Quickshell.env("IMAGE_DESKTOP_ROOT")
@@ -25,13 +26,15 @@ ShellRoot {
   property var completions: []
   property var afterCapture: null
   function desktop() {
-    return background.item.instances[0].item;
+    return background.item?.instances[0]?.item ?? null;
   }
   function overview() {
-    return overviewLoader.item.item.instances[0];
+    return overviewLoader.item?.item?.instances[0] ?? null;
   }
   function visual(window) {
-    for (var i = 0; i < window.contentItem.children.length; ++i) {
+    // Sample the topmost presented item, not the wallpaper's source buffer
+    // which participates in the scene only so the shader can sample it.
+    for (var i = window.contentItem.children.length - 1; i >= 0; --i) {
       var child = window.contentItem.children[i];
       if (child.visible && child.width > 0 && child.height > 0)
         return child;
@@ -98,9 +101,7 @@ ShellRoot {
     console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                      snapshots: root.snapshots,
                                                      completions: root.completions,
-                                                     interests: ImageCacheService.sourceInterestCount,
-                                                     requests: ImageCacheService.sourceRequestCount,
-                                                     workerRunning: ImageCacheService.sourceWorkerRunning,
+                                                     destroyed: !root.desktop() && !root.overview(),
                                                      effective: {
                                                        overviewBlur: Settings.data.wallpaper.overviewBlur,
                                                        overviewTint: Settings.data.wallpaper.overviewTint,
@@ -189,7 +190,11 @@ ShellRoot {
       if (root.phase === 0 && root.tick >= 5) {
         root.phase = 1;
         root.request(root.inputs + "/Motion.webp");
-      } else if (root.phase === 1 && root.settled()) {
+      } else if (root.phase === 1 && root.softwareProbe && root.desktop()?.wallpaperReady && root.completions.length > root.completionFloor && root.tick - root.requestedAt >= 12) {
+        root.phase = 8;
+        root.snapshot("software");
+        root.afterCapture = root.finish;
+      } else if (root.phase === 1 && !root.softwareProbe && root.settled()) {
         root.snapshot("valid");
         root.afterCapture = function () {
           root.phase = 2;
@@ -242,6 +247,20 @@ ShellRoot {
   Timer {
     interval: 23000
     running: true
-    onTriggered: Qt.exit(3)
+    onTriggered: {
+      const view = root.desktop();
+      console.log("IMAGE_TIMEOUT|" + JSON.stringify({
+                                                      phase: root.phase,
+                                                      snapshots: root.snapshots.map(row => row.name),
+                                                      completions: root.completions.length,
+                                                      view: !!view,
+                                                      expected: root.expectedPath,
+                                                      front: view?.currentWallpaper?.imageState,
+                                                      back: view?.nextWallpaper?.imageState,
+                                                      error: view?.errorReason,
+                                                      overview: !!root.overview()
+                                                    }));
+      Qt.exit(3);
+    }
   }
 }

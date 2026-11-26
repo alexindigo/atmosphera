@@ -77,8 +77,7 @@ ShellRoot {
     heldStages.push({
                       name: name,
                       backdrop: observe(backdrop),
-                      lock: observe(lock),
-                      sources: ImageCacheService.sourceInterestSources()
+                      lock: observe(lock)
                     });
   }
   function advanceHeld() {
@@ -90,7 +89,7 @@ ShellRoot {
       observeHeld("admitted");
       heldStep = "replacing";
       provider.replace(inputs + "/frame-2.png");
-    } else if (heldStep === "replacing" && backdrop.imageState === "ready" && lock.imageState === "ready" && !ImageCacheService.sourceInterestSources().includes(heldServer + "/held.png")) {
+    } else if (heldStep === "replacing" && backdrop.imageState === "ready" && lock.imageState === "ready") {
       observeHeld("before-release");
       heldStep = "capturing";
       grab(backdrop, "held-before-backdrop");
@@ -99,6 +98,10 @@ ShellRoot {
       heldStep = "releasing";
       heldControl("/release", "released");
     } else if (heldStep === "released") {
+      // Let the completed response and the next frame run before checking
+      // whether either consumer accepted pixels from the retired source.
+      heldStep = "observing";
+    } else if (heldStep === "observing") {
       observeHeld("after-release");
       heldStep = "done";
       grab(backdrop, "held-after-backdrop");
@@ -166,13 +169,14 @@ ShellRoot {
         backdrop.visible = false;
         lock.visible = false;
       }
-      if (root.tick >= 90 && !root.pending && !ImageCacheService.sourceWorkerRunning) {
+      if (root.tick >= 90 && !root.pending && backdrop.imageState === "idle" && lock.imageState === "idle") {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          stages: root.stages,
                                                          heldStages: root.heldStages,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning,
+                                                         hidden: {
+                                                           backdrop: root.observe(backdrop),
+                                                           lock: root.observe(lock)
+                                                         },
                                                          inputFocused: input.activeFocus,
                                                          inputText: input.text
                                                        }));

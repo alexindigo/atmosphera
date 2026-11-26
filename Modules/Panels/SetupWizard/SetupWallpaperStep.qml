@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import "../../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Portals
 import qs.Services.UI
@@ -15,52 +14,57 @@ ColumnLayout {
   property string selectedDirectory: ""
   property string selectedWallpaper: ""
   property string previewCachedPath: ""
-  property string _selectionRequest: ""
-  readonly property string previewState: previewRequest.imageState
-  readonly property string errorReason: previewRequest.errorReason
+  property var _previewRequest: null
+  property int _previewGeneration: 0
+  property string previewState: "idle"
+  property string errorReason: ""
 
   signal directoryChanged(string directory)
   signal wallpaperChanged(string wallpaper)
 
-  onSelectedWallpaperChanged: {
-    _selectionRequest = "";
-    if (!selectedWallpaper)
-      previewCachedPath = "";
-  }
+  onSelectedWallpaperChanged: if (selectedWallpaper !== previewCachedPath)
+                                requestPreview(selectedWallpaper, false)
+  onVisibleChanged: if (!visible)
+                      retirePreview()
+                    else if (selectedWallpaper !== previewCachedPath)
+                      requestPreview(selectedWallpaper, false)
+  Component.onDestruction: retirePreview()
 
   spacing: Style.marginL
 
   // Preview requests have this step's lifetime, not the singleton's lifetime.
   // A failed candidate keeps the last validated preview and user selection.
   function selectWallpaper(path) {
-    var sameSource = previewRequest.source === path;
-    _selectionRequest = path;
-    if (sameSource)
-      previewRequest.retry();
+    requestPreview(path, true);
   }
-  function _settlePreview() {
-    if (previewRequest.status !== Image.Ready)
-      return;
-    var resolved = PortalPaths.uriToPath(previewRequest.outputUrl);
-    if (!resolved.ok)
-      return;
-    previewCachedPath = resolved.path;
-    if (_selectionRequest && previewRequest.source === _selectionRequest) {
-      var path = _selectionRequest;
-      selectedWallpaper = path;
-      _selectionRequest = "";
-      wallpaperChanged(path);
-    }
+  function retirePreview() {
+    ++_previewGeneration;
+    _previewRequest?.cancel();
+    _previewRequest = null;
   }
-  NImage {
-    id: previewRequest
-    visible: false
-    source: root._selectionRequest || root.selectedWallpaper
-    active: root.visible && !!source
-    animationIntent: "still"
-    normalize: true
-    sourceSize: Qt.size(Math.max(1, Screen.width * Screen.devicePixelRatio), Math.max(1, Screen.height * Screen.devicePixelRatio))
-    onStatusChanged: Qt.callLater(root._settlePreview)
+  function requestPreview(path, userSelection) {
+    retirePreview();
+    errorReason = "";
+    previewState = path && visible ? "loading" : "idle";
+    if (!path && !userSelection)
+      previewCachedPath = "";
+    if (previewState !== "loading")
+      return;
+    const generation = _previewGeneration;
+    _previewRequest = ImageCacheService.validateLocalImage(path, (output, success, detail) => {
+      if (root._previewGeneration !== generation)
+        return;
+      root._previewRequest = null;
+      root.errorReason = success ? "" : detail.reason;
+      root.previewState = success ? "ready" : "unavailable";
+      if (success) {
+        root.previewCachedPath = output;
+        if (userSelection) {
+          root.selectedWallpaper = path;
+          root.wallpaperChanged(path);
+        }
+      }
+    });
   }
 
   // Large preview area

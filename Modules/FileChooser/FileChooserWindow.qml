@@ -132,10 +132,6 @@ PanelWindow {
     id: filePreview
     item: quickLook.opened ? listing.cursorItem : null
   }
-  FileThumbnails {
-    id: thumbnails
-    enabled: !root.request.settled
-  }
 
   function focusListing() {
     listing.focusNavigation();
@@ -465,7 +461,6 @@ PanelWindow {
       Layout.fillWidth: true
       Layout.fillHeight: true
       request: root.request
-      thumbnails: thumbnails
       onEditPathRequested: initial => header.editPath(initial)
       onFilterRequested: initial => header.focusFilter(initial)
       onQuickLookRequested: tile => {

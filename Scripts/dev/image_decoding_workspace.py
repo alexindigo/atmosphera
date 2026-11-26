@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import stat
 import tempfile
+import time
 
 from image_decoding_evidence import source_manifest
 
@@ -68,6 +69,23 @@ def preserve_object(path, record, store):
     return str(target)
 
 
+def settle_fixture_session(proc, timeout=2):
+    """Wait for an exited session leader's fd-owned cleanup to finish."""
+    if proc.poll() is None:
+        raise ValueError('Fixture session leader has not exited')
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            # Popen started a private session. An orphaned child can still
+            # hold this group after the leader is reaped. Never signal it.
+            os.killpg(proc.pid, 0)
+        except ProcessLookupError:
+            return
+        if time.monotonic() >= deadline:
+            raise ValueError('Fixture session still has a live consumer: ' + str(proc.pid))
+        time.sleep(.02)
+
+
 def retire_fixture_copy(source, copy, receipt, output, work_root):
     source, copy, receipt, output, work_root = map(Path, (source, copy, receipt, output, work_root))
     if (copy != copy.resolve() or copy.parent != work_root.resolve() or copy == source
@@ -85,7 +103,10 @@ def retire_fixture_copy(source, copy, receipt, output, work_root):
         if not process.name.isdecimal() or int(process.name) == os.getpid():
             continue
         try:
-            if process.stat().st_uid == os.getuid() and str(copy).encode() in (process / 'cmdline').read_bytes():
+            if process.stat().st_uid != os.getuid():
+                continue
+            if (str(copy).encode() in (process / 'cmdline').read_bytes()
+                    or Path(os.readlink(process / 'cwd')).is_relative_to(copy)):
                 raise ValueError('Fixture copy still has a live consumer: ' + process.name)
         except (FileNotFoundError, ProcessLookupError, PermissionError):
             pass

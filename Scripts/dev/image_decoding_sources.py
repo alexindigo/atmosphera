@@ -92,6 +92,7 @@ def discover(root, repository, shell_types=None):
 
 PRODUCTION_SHELL = SHELL_ROOTS + ('Quickshell', 'Portals', 'shell.qml', 'ShellSession.qml')
 NATIVE_IMAGES = {'Image', 'AnimatedImage', 'IconImage', 'BorderImage', 'AnimatedSprite', 'Sprite'}
+IMV_TYPES = {'ImvImage', 'ImvImageJob'}
 VIDEO_CAPTURE = {'MpvFrameCapture'}
 AUTO_TEXT = {'Text', 'Label'}  # Qt's default AutoText lays out markup by itself
 EXPLICIT_TEXT = {'TextEdit', 'TextArea'}  # PlainText unless textFormat says otherwise
@@ -198,7 +199,7 @@ def _embedded_sites(parser, body):
         if node.type not in ('ui_object_definition', 'ui_object_binding'):
             continue
         name = data[node.child_by_field_name('type_name').start_byte:node.child_by_field_name('type_name').end_byte].decode().split('.')[-1]
-        if name in NATIVE_IMAGES | VIDEO_CAPTURE | AUTO_TEXT | EXPLICIT_TEXT | {'NText', 'ColorQuantizer'}:
+        if name in IMV_TYPES | NATIVE_IMAGES | VIDEO_CAPTURE | AUTO_TEXT | EXPLICIT_TEXT | {'NText', 'ColorQuantizer'}:
             found.append(name)
     return found
 
@@ -306,7 +307,7 @@ class QmlTypes:
             elif value == 'qs' or value.startswith('qs.'):
                 owner = self.shell or self
                 directory = owner.root.joinpath(*value.split('.')[1:])
-            elif alias and short in NATIVE_IMAGES | VIDEO_CAPTURE | AUTO_TEXT | EXPLICIT_TEXT | {'ColorQuantizer'}:
+            elif alias and short in IMV_TYPES | NATIVE_IMAGES | VIDEO_CAPTURE | AUTO_TEXT | EXPLICIT_TEXT | {'ColorQuantizer'}:
                 candidates.add(short)
             if directory is not None:
                 target = owner.directory(directory).get(short)
@@ -363,6 +364,8 @@ def scan(root, repository, shell_types=None):
                     rule = 'native-image'
                     if kind not in NATIVE_IMAGES:
                         detail['inheritedFrom'] = sorted(bases & NATIVE_IMAGES)
+                elif bases & IMV_TYPES:
+                    rule = 'imv-boundary'
                 elif 'ColorQuantizer' in bases:
                     rule = 'color-quantizer'
                 elif 'NText' in bases:

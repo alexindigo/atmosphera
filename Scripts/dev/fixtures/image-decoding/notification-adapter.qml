@@ -64,12 +64,6 @@ ShellRoot {
     visible: true
     implicitWidth: 640
     implicitHeight: 128
-    Image {
-      id: raw
-      width: 64
-      height: 64
-      source: Quickshell.env("IMAGE_FIXTURES") + "/Still.webp"
-    }
     Item {
       id: presentations
       y: 64
@@ -83,7 +77,7 @@ ShellRoot {
                          original: source,
                          id: notificationId
                        });
-    ImageCacheService.getNotificationIcon(source, "Same app", "Same summary", function (path, success, detail) {
+    ImageCacheService.getNotificationIcon(source, function (path, success, detail) {
       root.results.push({
                           index: index,
                           path: path,
@@ -132,17 +126,17 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      if (!root.started && root.historyOpened && ImageCacheService.admissionReady && raw.status !== Image.Loading) {
+      if (!root.started && root.historyOpened) {
         root.started = true;
         for (const source of ["", Quickshell.env("IMAGE_FIXTURES") + "/Missing.webp", "image://qsimage/unknown", Quickshell.env("IMAGE_FIXTURES") + "/Corrupt.webp"])
-          ImageCacheService.getNotificationIcon(source, "Same app", "Same summary", function (path, success, detail) {
+          ImageCacheService.getNotificationIcon(source, function (path, success, detail) {
             root.failures.push({
                                  path: path,
                                  success: success,
                                  detail: detail
                                });
           });
-        const cancelled = ImageCacheService.getNotificationIcon(Quickshell.env("IMAGE_DATA"), "Same app", "Same summary", function (path, success) {
+        const cancelled = ImageCacheService.getNotificationIcon(Quickshell.env("IMAGE_DATA"), function (path, success) {
           root.cancelCallbacks.push({
                                       path: path,
                                       success: success
@@ -152,17 +146,14 @@ ShellRoot {
         root.admit(Quickshell.env("IMAGE_DATA"), -1);
         producer.running = true;
       }
-      if (root.producerDone && root.results.length === root.admitted.length && root.failures.length === 4 && root.grabs === 0 && presentations.children.length === 9 && presentations.children.every(item => item.grabbed && !item.active) && ImageCacheService.sourceInterestCount === 0 && !ImageCacheService.sourceWorkerRunning) {
+      if (root.producerDone && root.results.length === root.admitted.length && root.failures.length === 4 && root.grabs === 0 && presentations.children.length === 9 && presentations.children.every(item => item.grabbed && !item.active)) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
-                                                         raw: raw.status,
                                                          admitted: root.admitted,
                                                          results: root.results,
                                                          failures: root.failures,
                                                          cancelled: root.cancelCallbacks,
                                                          producerExit: root.producerExit,
-                                                         producerErrors: root.producerErrors,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         worker: ImageCacheService.sourceWorkerRunning
+                                                         producerErrors: root.producerErrors
                                                        }));
         Qt.quit();
       }

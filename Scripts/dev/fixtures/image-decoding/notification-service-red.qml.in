@@ -1,3 +1,4 @@
+// Assembled and linted only against the immutable pre-cutover shell.
 import QtQuick
 import Quickshell
 import Quickshell.Io

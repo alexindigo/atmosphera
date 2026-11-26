@@ -105,10 +105,6 @@ Singleton {
   property string latestMainCommit: ""
   property var contributors: []
 
-  // Avatar caching properties (simplified - uses ImageCacheService)
-  property var cachedAvatars: ({}) // username → file:// path
-  property bool avatarsCached: false // Track if we've already processed avatars
-
   property bool isInitialized: false
 
   FileView {
@@ -265,51 +261,6 @@ Singleton {
 
     // Try to fetch immediately
     fetchFromGitHub();
-  }
-
-  // Avatar caching functions (simplified - uses ImageCacheService)
-  function getAvatarPath(username) {
-    return cachedAvatars[username] || "";
-  }
-
-  function cacheTopContributorAvatars() {
-    if (contributors.length === 0)
-      return;
-
-    avatarsCached = true;
-
-    for (var i = 0; i < Math.min(contributors.length, 20); i++) {
-      var contributor = contributors[i];
-      var username = contributor.login;
-      var avatarUrl = contributor.avatar_url;
-
-      // Use closure to capture username
-      (function (uname, url) {
-        ImageCacheService.getCircularAvatar(url, uname, function (cachedPath, success) {
-          if (success) {
-            cachedAvatars[uname] = "file://" + cachedPath;
-            cachedAvatarsChanged();
-          }
-        });
-      })(username, avatarUrl);
-    }
-  }
-
-  // Hook into contributors change - only process once
-  onContributorsChanged: {
-    if (contributors.length > 0 && !avatarsCached && ImageCacheService.initialized) {
-      Qt.callLater(cacheTopContributorAvatars);
-    }
-  }
-
-  // Also watch for ImageCacheService to become initialized
-  Connections {
-    target: ImageCacheService
-    function onInitializedChanged() {
-      if (ImageCacheService.initialized && contributors.length > 0 && !avatarsCached) {
-        Qt.callLater(cacheTopContributorAvatars);
-      }
-    }
   }
 
   Process {

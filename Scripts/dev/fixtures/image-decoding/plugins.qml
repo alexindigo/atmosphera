@@ -224,19 +224,22 @@ ShellRoot {
   }
   // mpvpaper and video-wallpaper: the actual video thumbnail producers over a
   // folder with one video and one broken file; video-wallpaper's actual
-  // panel. mpvpaper's Panel does not load on this shell (it uses the removed
-  // AtmoFilePicker), so its tiles bind exactly like the Panel's delegate.
+  // panel. The mpvpaper tile uses the same direct source as its delegate.
   // The settings and main stand-ins carry data and delegate to the producer.
   readonly property string videos: inputs + "/videos"
   property var mpvThumbs: null
   property var vwThumbs: null
   property var vwFolder: null
+  property int videoPhase: 0
+  property var failedVideo: ({})
+  readonly property string redVideo: videos + "/Red.mp4"
+  readonly property string badVideo: videos + "/Broken.mp4"
   QtObject {
     id: mpvSettings
     property string wallpapersFolder: root.videos
     property bool thumbCacheReady: false
-    property bool active: false
-    property string currentWallpaper: ""
+    property bool active: true
+    property string currentWallpaper: root.badVideo
   }
   QtObject {
     id: mpvMain
@@ -277,7 +280,9 @@ ShellRoot {
                                                                     pluginApi: api({
                                                                                      pluginSettings: mpvSettings
                                                                                    }),
-                                                                    currentWallpaper: "",
+                                                                    active: true,
+                                                                    settingsContext: mpvSettings,
+                                                                    currentWallpaper: Qt.binding(() => mpvSettings.currentWallpaper),
                                                                     thumbCacheReady: Qt.binding(() => mpvSettings.thumbCacheReady),
                                                                     folderModel: mpvFolder
                                                                   }) : null;
@@ -289,9 +294,7 @@ ShellRoot {
     for (const name of ["Broken.mp4", "Red.mp4"]) {
       const path = root.videos + "/" + name;
       const tile = Qt.createQmlObject("import qs.Widgets; NImageRounded { width: 300; height: 168; fallbackIcon: \"alert-circle\" }", tiles);
-      tile.imagePath = Qt.binding(() => mpvMain.thumbCacheReady ? mpvMain.getThumbUrl(path) : "");
-      tile.sourceFailureCode = Qt.binding(() => mpvMain.thumbCacheReady ? mpvMain.getThumbFailure(path).code : "");
-      tile.sourceFailureReason = Qt.binding(() => mpvMain.thumbCacheReady ? mpvMain.getThumbFailure(path).reason : "");
+      tile.imagePath = path;
     }
     created.push({
                    name: "mpv-tiles",
@@ -310,7 +313,8 @@ ShellRoot {
                                                                                                 wallpapersFolder: root.videos
                                                                                               }
                                                                                             }),
-                                                                             folderModel: vwFolder
+                                                                             folderModel: vwFolder,
+                                                                             requestedPaths: [root.badVideo]
                                                                            }) : null;
     var holder = Qt.createQmlObject("import QtQuick; Item { width: 880; height: 420 }", container);
     var panel = Qt.createComponent("file://" + plugins + "/video-wallpaper/panel/PerScreenPanel.qml");
@@ -319,7 +323,9 @@ ShellRoot {
                                                                                                       mainInstance: vwMain
                                                                                                     }),
                                                                                      screenName: "fixture",
-                                                                                     thumbCacheReady: Qt.binding(() => root.vwThumbs.settled),
+                                                                                     selectWallpaper: () => {},
+                                                                                     writeMonitorSetting: () => {},
+                                                                                     thumbCacheReady: Qt.binding(() => root.vwFolder.ready),
                                                                                      folderModel: vwFolder
                                                                                    }) : null;
     created.push({
@@ -343,7 +349,6 @@ ShellRoot {
     createVideoProducers();
     var service = Qt.createComponent("file://" + plugins + "/wallcards/src/ThumbnailService.qml");
     thumbnails = service.status === Component.Ready ? service.createObject(root, {
-                                                                             cacheDir: Quickshell.env("IMAGE_OUTPUT") + "/unused-wallcards-cache",
                                                                              imageFilter: ["png", "webp"],
                                                                              videoFilter: ["mp4"],
                                                                              wallpaperDir: inputs + "/wallcards"
@@ -356,7 +361,7 @@ ShellRoot {
   // Settled: no owner-backed image under any root is still loading, and the
   // wallcards thumbnails are done.
   function settled() {
-    if (!root.thumbnailReady || !mpvSettings.thumbCacheReady || !root.vwThumbs || !root.vwThumbs.settled)
+    if (!root.thumbnailReady || root.videoPhase !== 1 || !mpvSettings.thumbCacheReady || !root.vwThumbs?.thumbCacheReady)
       return false;
     for (const row of root.created) {
       if (!row.object)
@@ -390,6 +395,16 @@ ShellRoot {
     repeat: true
     onTriggered: {
       ++root.tick;
+      if (root.videoPhase === 0 && root.vwThumbs?.generationFailed && mpvSettings.thumbCacheReady && root.mpvThumbs.getThumbFailure(root.badVideo).code) {
+        root.failedVideo = {
+          mpv: root.mpvThumbs.getThumbFailure(root.badVideo),
+          vw: root.vwThumbs.failureFor(root.badVideo)
+        };
+        root.videoPhase = 1;
+        mpvSettings.currentWallpaper = root.redVideo;
+        root.mpvThumbs.thumbGeneration();
+        root.vwThumbs.requestedPaths = [root.redVideo];
+      }
       if (root.grabTick < 0 && root.tick >= 30 && root.settled()) {
         root.grabTick = root.tick;
         for (const row of root.created) {
@@ -419,8 +434,11 @@ ShellRoot {
                       mpvReady: mpvSettings.thumbCacheReady,
                       vwSettled: root.vwThumbs ? root.vwThumbs.settled : false,
                       vwReady: root.vwThumbs ? root.vwThumbs.thumbCacheReady : false,
-                      vwFailed: root.vwThumbs ? root.vwThumbs.generationFailed : false,
-                      interests: ImageCacheService.sourceInterestSources().filter(source => source.indexOf(root.videos) === 0)
+                      failed: root.failedVideo,
+                      mpvPath: root.mpvThumbs.getThumbPath(root.redVideo),
+                      vwPath: root.vwThumbs.pathFor(root.redVideo),
+                      obsoleteMpv: root.mpvThumbs.getThumbFailure(root.badVideo),
+                      obsoleteVw: root.vwThumbs.failureFor(root.badVideo)
                     },
                     wallcards: root.thumbnails ? {
                                                    ready: root.thumbnailReady,

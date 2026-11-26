@@ -2,7 +2,7 @@
 
 // Binary bytes must never go through Qt.btoa(string), whose UTF-8 conversion
 // changes values above 127. Keep this portable to the existing Qt floor.
-function dataUrl(buffer) {
+function base64(buffer) {
     var bytes = new Uint8Array(buffer);
     var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     var chunks = [];
@@ -14,5 +14,9 @@ function dataUrl(buffer) {
                     + (i + 1 < bytes.length ? alphabet[((b & 15) << 2) | (c >> 6)] : "=")
                     + (i + 2 < bytes.length ? alphabet[c & 63] : "="));
     }
-    return "data:application/octet-stream;base64," + chunks.join("");
+    return chunks.join("");
+}
+
+function dataUrl(buffer) {
+    return "data:application/octet-stream;base64," + base64(buffer);
 }

@@ -2,8 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services.Files
 import qs.Modules.FileChooser
+import qs.Services.Files
 
 ShellRoot {
   id: root
@@ -22,9 +22,13 @@ ShellRoot {
   property string saved: ""
   property string mediaPath: ""
   property string mediaName: "Media.mp4"
-  property var descriptor: ({type: "folder", group: "folder", folder: "ordinary", hidden: false})
+  property var descriptor: ({
+                              type: "folder",
+                              group: "folder",
+                              folder: "ordinary",
+                              hidden: false
+                            })
   readonly property string output: Quickshell.env("FILECHOOSER_RENDER_OUTPUT")
-  FileThumbnails { id: thumbnails }
   PanelWindow {
     id: panel
     anchors.top: true
@@ -38,16 +42,22 @@ ShellRoot {
       color: root.background
       FileIcon {
         id: icon
-        x: 20; y: 40
-        width: root.size; height: root.size
+        x: 20
+        y: 40
+        width: root.size
+        height: root.size
         compact: root.size === 20
         visible: root.mode === "icon"
-        descriptor: Object.assign({}, root.descriptor, {hidden: root.faded})
+        descriptor: Object.assign({}, root.descriptor, {
+                                    hidden: root.faded
+                                  })
       }
       Rectangle {
         id: entryCanvas
-        x: 20; y: 20
-        width: 200; height: 170
+        x: 20
+        y: 20
+        width: 200
+        height: 170
         color: root.background
         visible: root.mode === "entry"
         Loader {
@@ -60,7 +70,6 @@ ShellRoot {
             directory: false
             bytes: 0
             modified: "fixture"
-            thumbnailProvider: thumbnails
             thumbnailActive: root.started
           }
         }
@@ -71,10 +80,21 @@ ShellRoot {
     return entryLoader.item ? entryLoader.item.thumbnailState : {};
   }
   function snapshot() {
-    return JSON.stringify({ready: Settings.isLoaded, tag: tag, mode: mode, hidden: faded, size: size,
-      saved: saved, grabbing: grabbing, samples: samples, frames: frames,
-      thumbnail: entryState(), geometry: entryLoader.item ? entryLoader.item.artworkGeometry() : {},
-      light: icon.paints.highlight.toString(), uiScale: Style.uiScaleRatio});
+    return JSON.stringify({
+                            ready: Settings.isLoaded,
+                            tag: tag,
+                            mode: mode,
+                            hidden: faded,
+                            size: size,
+                            saved: saved,
+                            grabbing: grabbing,
+                            samples: samples,
+                            frames: frames,
+                            thumbnail: entryState(),
+                            geometry: entryLoader.item ? entryLoader.item.artworkGeometry() : {},
+                            light: icon.paints.highlight.toString(),
+                            uiScale: Style.uiScaleRatio
+                          });
   }
   Timer {
     interval: 8
@@ -82,35 +102,54 @@ ShellRoot {
     running: root.recording && !!entryLoader.item
     onTriggered: {
       var t = root.entryState();
-      var sample = {time: Date.now(), ready: t.imageReady, reveal: t.reveal, fallbackOpacity: t.fallbackOpacity,
-        opacity: t.opacity, duration: t.duration, artworkOpacity: t.artworkOpacity};
+      var sample = {
+        time: Date.now(),
+        ready: t.imageReady,
+        reveal: t.reveal,
+        fallbackOpacity: t.fallbackOpacity,
+        opacity: t.opacity,
+        duration: t.duration,
+        artworkOpacity: t.artworkOpacity
+      };
       root.samples = root.samples.slice(-249).concat([sample]);
       if (t.imageReady && t.reveal > .05 && t.reveal < .75 && !root.grabbing && root.requestedFrames < 3) {
         root.grabbing = true;
         var file = root.output + "/" + root.tag + "-mid-" + (++root.requestedFrames) + ".png";
         // As in ImageCacheService: capture the real scene, including the opaque
         // backdrop, rather than reimplement its alpha arithmetic in the fixture.
-        entryCanvas.grabToImage(function(result) {
+        entryCanvas.grabToImage(function (result) {
           var success = result.saveToFile(file);
-          root.frames = root.frames.concat([{file: file, before: sample, after: root.entryState(), saved: success}]);
+          root.frames = root.frames.concat([
+                                             {
+                                               file: file,
+                                               before: sample,
+                                               after: root.entryState(),
+                                               saved: success
+                                             }
+                                           ]);
           root.grabbing = false;
         });
       }
       if (t.imageReady && t.reveal === 1 && !root.grabbing && !root.terminalRequested) {
         root.terminalRequested = true;
         var complete = root.output + "/" + root.tag + "-complete.png";
-        entryCanvas.grabToImage(function(result) { result.saveToFile(complete); });
+        entryCanvas.grabToImage(function (result) {
+          result.saveToFile(complete);
+        });
       }
     }
   }
   IpcHandler {
     target: "filechooserRender"
-    function state(): string { return root.snapshot(); }
+    function state(): string {
+      return root.snapshot();
+    }
     function palette(text: string): void {
       AtmoColor.skipTransition = true;
       var colors = JSON.parse(text);
       for (var key of Object.keys(colors))
-        if (key.startsWith("m")) AtmoColor[key] = colors[key];
+        if (key.startsWith("m"))
+          AtmoColor[key] = colors[key];
       root.background = colors.mSurface;
     }
     function configure(text: string): void {
@@ -132,12 +171,24 @@ ShellRoot {
       Settings.data.general.animationDisabled = data.reduced || false;
       root.mode = data.mode || "icon";
     }
-    function hidden(value: bool): void { root.faded = value; }
-    function capture(file: string): void {
-      canvas.grabToImage(function(result) { if (result.saveToFile(file)) root.saved = file; });
+    function hidden(value: bool): void {
+      root.faded = value;
     }
-    function start(): void { root.recording = true; root.started = true; }
-    function stopRecording(): void { root.recording = false; }
-    function quit(): void { thumbnails.enabled = false; Qt.quit(); }
+    function capture(file: string): void {
+      canvas.grabToImage(function (result) {
+        if (result.saveToFile(file))
+          root.saved = file;
+      });
+    }
+    function start(): void {
+      root.recording = true;
+      root.started = true;
+    }
+    function stopRecording(): void {
+      root.recording = false;
+    }
+    function quit(): void {
+      Qt.quit();
+    }
   }
 }

@@ -3,7 +3,6 @@ import Quickshell
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
-import qs.Services.UI
 
 ShellRoot {
   id: root
@@ -18,8 +17,8 @@ ShellRoot {
   property var frames: []
   property int quickStart: -1
   readonly property int quickSpan: 30
-  property int initialInterests: -1
-  readonly property var names: ["Still.webp", "Motion.webp", "Still.avif", "Still.heic", "Multipage.tiff", "Misleading.png", "Corrupt.webp", "Missing.webp"]
+  property var inactive: []
+  readonly property var names: ["Still.webp", "Motion.webp", "Still.avif", "Still.heic", "Multipage.tiff", "Misleading.png", "Corrupt.webp", "Missing.webp", "Still.webp"]
   property bool done: false
   property bool advancing: false
   function grab(item, name) {
@@ -36,9 +35,10 @@ ShellRoot {
     }
     ++pending;
   }
-  FileThumbnails {
-    id: provider
-    enabled: root.admitted
+  function presentations() {
+    return Array.from({
+                        length: entries.count
+                      }, (_, i) => entries.itemAt(i).thumbnailState);
   }
   QtObject {
     id: previewData
@@ -80,7 +80,6 @@ ShellRoot {
         compactMode: modelData === "compact"
         listMode: modelData === "list"
         columnWidths: [180, 80, 150]
-        thumbnailProvider: provider
         thumbnailActive: root.admitted
       }
     }
@@ -100,8 +99,8 @@ ShellRoot {
     running: true
     onTriggered: {
       ++root.tick;
-      if (root.tick === 2) {
-        root.initialInterests = ImageCacheService.sourceInterestCount;
+      if (!root.admitted && !root.done && root.presentations().every(state => state.state === "idle")) {
+        root.inactive = root.presentations();
         root.admitted = true;
       }
       if (root.advancing && !root.pending) {
@@ -118,7 +117,7 @@ ShellRoot {
       const elapsed = root.tick - root.quickStart;
       if (ready && elapsed <= root.quickSpan && elapsed % 2 === 0) {
         root.frames.push({
-                           frame: renderer.frame,
+                           playing: renderer.playing,
                            atMs: Date.now()
                          });
         root.grab(renderer, "quicklook-" + root.tick);
@@ -134,12 +133,12 @@ ShellRoot {
         if (settled || root.tick >= 90) {
           for (var j = 0; j < entries.count; ++j) {
             var entry = entries.itemAt(j);
-            var name = "chooser-" + entry.modelData + "-" + root.names[root.index];
+            var name = "chooser-" + entry.modelData + "-" + (root.index === root.names.length - 1 ? "recovered-" : "") + root.names[root.index];
             var row = {
               id: name,
               state: entry.thumbnailState
             };
-            if (root.index < 6) {
+            if (root.index !== 6 && root.index !== 7) {
               root.tiles.push(row);
               root.grab(entry, name);
             } else {
@@ -156,16 +155,15 @@ ShellRoot {
         };
         root.admitted = false;
       }
-      if (root.done && !root.admitted && !root.pending && !ImageCacheService.sourceWorkerRunning) {
+      if (root.done && !root.admitted && !root.pending && !quicklook.renderer && root.presentations().every(state => state.state === "idle")) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          tiles: root.tiles,
                                                          failures: root.failures,
                                                          frames: root.frames,
                                                          quicklook: root.quickResult,
-                                                         initialInterests: root.initialInterests,
+                                                         inactive: root.inactive,
                                                          kinds: ["a.heic", "a.jxl", "a.heif", "a.svgz"].map(name => FileTypes.previewKind(name)),
-                                                         finalInterests: ImageCacheService.sourceInterestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         retired: root.presentations()
                                                        }));
         Qt.quit();
       }

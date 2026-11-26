@@ -1,8 +1,11 @@
 pragma Singleton
+import ImvQml
 
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/ImageBytes.js" as ImageBytes
+import "../../Helpers/PortalPaths.js" as PortalPaths
 
 import qs.Commons
 import qs.Services.System
@@ -21,6 +24,9 @@ Singleton {
   // Debounce state for wallpaper processing
   property var pendingWallpaperRequest: null
   property var pendingPredefinedRequest: null
+  property var _sampling: null
+  property int _sampleTicket: 0
+  property string _samplePayload: ""
 
   readonly property var schemeTypes: [
     {
@@ -86,6 +92,7 @@ Singleton {
   * Uses debouncing to prevent spawning multiple processes when spamming wallpaper changes
   */
   function processWallpaperColors(wallpaperPath, mode) {
+    retireSample();
     Logger.d("TemplateProcessor", `processWallpaperColors called: path=${wallpaperPath}, mode=${mode}`);
     pendingWallpaperRequest = {
       wallpaperPath: wallpaperPath,
@@ -102,10 +109,72 @@ Singleton {
       Logger.d("TemplateProcessor", "executeWallpaperColors: no config content and no user theming, aborting");
       return;
     }
-    const script = buildGenerationScript(content, wallpaperPath, mode);
+    const source = wallpaperPath.startsWith("/") ? PortalPaths.pathToUri(wallpaperPath).uri : wallpaperPath;
+    if (!source) {
+      Logger.w("TemplateProcessor", "Invalid wallpaper source");
+      return;
+    }
+    _sampling = {
+      source: source,
+      content: content,
+      wallpaper: wallpaperPath,
+      mode: mode
+    };
+    admitSample();
+  }
 
-    generateProcess.command = ["sh", "-c", script];
-    generateProcess.running = true;
+  function retireSample() {
+    sampleBackoff.stop();
+    const previous = _sampleTicket;
+    _sampleTicket = 0;
+    _sampling = null;
+    if (previous > 0)
+      sampler.cancel(previous);
+  }
+
+  function admitSample() {
+    if (!_sampling)
+      return;
+    // Use the same sample for built-in and user templates. Video sources
+    // select the same fraction as wallpaper previews; stills ignore it.
+    const ticket = sampler.sample(_sampling.source, 112, 112, 0.1);
+    if (ticket === -2) {
+      sampleBackoff.restart();
+    } else if (ticket > 0) {
+      _sampleTicket = ticket;
+    } else {
+      retireSample();
+      Logger.w("TemplateProcessor", "Wallpaper sample admission failed:", ticket);
+    }
+  }
+
+  ImvImageJob {
+    id: sampler
+    onFinished: (ticket, result) => {
+      if (ticket !== root._sampleTicket || !root._sampling)
+        return;
+      const request = root._sampling;
+      root._sampling = null;
+      root._sampleTicket = 0;
+      if (result.code || !result.rgba) {
+        Logger.w("TemplateProcessor", "Wallpaper sample failed:", result.stage, result.code);
+        return;
+      }
+      root._samplePayload = JSON.stringify({
+                                             width: result.width,
+                                             height: result.height,
+                                             rgba: ImageBytes.base64(result.rgba)
+                                           });
+      generateProcess.command = ["sh", "-c", root.buildGenerationScript(request.content, request.wallpaper, request.mode)];
+      generateProcess.stdinEnabled = true;
+      generateProcess.running = true;
+    }
+  }
+
+  Timer {
+    id: sampleBackoff
+    interval: 50
+    onTriggered: root.admitSample()
   }
 
   readonly property string schemeJsonPath: Settings.cacheDir + "predefined-scheme.json"
@@ -117,6 +186,7 @@ Singleton {
   * Uses debouncing to prevent spawning multiple processes when spamming scheme changes
   */
   function processPredefinedScheme(schemeData, mode, wallpaperPath) {
+    retireSample();
     pendingPredefinedRequest = {
       schemeData: schemeData,
       mode: mode,
@@ -338,7 +408,7 @@ Singleton {
     const wpDelimiter = "WALLPAPER_PATH_EOF_" + Math.random().toString(36).substr(2, 9);
 
     // Use heredoc for wallpaper path to avoid all escaping issues
-    let script = `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
+    let script = `set -e\nIFS= read -r ATMO_SAMPLE\nNOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Run built-in template processor only if there are templates configured
     if (content) {
@@ -349,7 +419,7 @@ Singleton {
       // Don't pass --mode so templates get both dark and light colors (e.g., zed.json needs both)
       // Pass --default-mode so "default" in templates resolves to the current theme mode
       const schemeType = getSchemeType();
-      script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" --scheme-type ${schemeType} --config '${pathEsc}' --default-mode ${mode}\n`;
+      script += `printf '%s\\n' "$ATMO_SAMPLE" | python3 "${templateProcessorScript}" --sample-stdin --scheme-type ${schemeType} --config '${pathEsc}' --default-mode ${mode} -- "$NOCTALIA_WP_PATH"\n`;
     }
 
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
@@ -374,7 +444,7 @@ Singleton {
     const schemeType = getSchemeType();
     // Don't pass --mode so user templates get both dark and light colors
     // Pass --default-mode so "default" in templates resolves to the current theme mode
-    script += `  python3 "${templateProcessorScript}" ${inputQuoted} --scheme-type ${schemeType} --config '${userConfigPath}' --default-mode ${mode}\n`;
+    script += `  printf '%s\\n' "$ATMO_SAMPLE" | python3 "${templateProcessorScript}" --sample-stdin --scheme-type ${schemeType} --config '${userConfigPath}' --default-mode ${mode} -- ${inputQuoted}\n`;
     script += "fi";
 
     return script;
@@ -448,8 +518,17 @@ Singleton {
     id: generateProcess
     workingDirectory: Quickshell.shellDir
     running: false
+    onStarted: {
+      if (root._samplePayload) {
+        write(root._samplePayload + "\n");
+        root._samplePayload = "";
+        stdinEnabled = false;
+      }
+    }
 
     onExited: function (exitCode) {
+      root._samplePayload = "";
+      stdinEnabled = false;
       // Execute any pending request (handles both kill case and debounce timer interval case)
       if (pendingWallpaperRequest || pendingPredefinedRequest) {
         Logger.d("TemplateProcessor", "generateProcess onExited: has pending request, executing");

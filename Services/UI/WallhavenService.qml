@@ -205,8 +205,7 @@ Singleton {
       return null;
     }
     var wallpaperId = wallpaper.id;
-    var size = retentionSize();
-    return ImageCacheService.retainImage(url, wallpaperDirectory(), size.width, size.height, function (path, success, detail) {
+    return ImageCacheService.retainImage(url, wallpaperDirectory(), function (path, success, detail) {
       if (success)
         wallpaperDownloaded(wallpaperId, path);
       else
@@ -218,15 +217,6 @@ Singleton {
 
   function wallpaperDirectory() {
     return Settings.preprocessPath(Settings.data.wallpaper.directory) || Settings.defaultWallpapersDirectory;
-  }
-
-  function retentionSize() {
-    var width = 1, height = 1;
-    for (var screen of Quickshell.screens) {
-      width = Math.max(width, screen.width * screen.devicePixelRatio);
-      height = Math.max(height, screen.height * screen.devicePixelRatio);
-    }
-    return Qt.size(width, height);
   }
 
   function selectWallpaper(wallpaper, screenName, appearanceSlot) {

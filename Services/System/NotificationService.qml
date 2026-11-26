@@ -121,7 +121,7 @@ Singleton {
   }
 
   function updateNotificationServer() {
-    const enabled = Settings.isLoaded && historyStartupComplete && ImageCacheService.admissionReady && Settings.data.notifications.enabled !== false;
+    const enabled = Settings.isLoaded && historyStartupComplete && Settings.data.notifications.enabled !== false;
     if (enabled === Boolean(notificationServerLoader))
       return;
 
@@ -154,13 +154,6 @@ Singleton {
       if (ShellState.isLoaded) {
         loadState();
       }
-    }
-  }
-
-  Connections {
-    target: ImageCacheService
-    function onAdmissionReadyChanged() {
-      updateNotificationServer();
     }
   }
 
@@ -636,7 +629,7 @@ Singleton {
     pending: true
   };
     entry.imageRequests.push(request);
-    const interest = ImageCacheService.getNotificationIcon(entry.data.originalImage, "", "", function (path, success, detail) {
+    const interest = ImageCacheService.getNotificationIcon(entry.data.originalImage, function (path, success, detail) {
     request.interest = null;
     request.pending = false;
     if (popupState[entry.data.id] !== entry)
@@ -655,7 +648,7 @@ Singleton {
     data.imageState = success ? "ready" : "unavailable";
     data.imageContentSha256 = success ? detail.contentSha256 : "";
     data.imageFormat = success ? String(detail.originalFormat || "") : "";
-    data.imageRepresentation = success ? String(detail.url || "") : "";
+    data.imageRepresentation = "";
     data.imageErrorCode = success ? "" : String(detail.code || "image-unavailable");
     data.imageErrorReason = success ? "" : String(detail.reason || "The notification image is unavailable");
   }

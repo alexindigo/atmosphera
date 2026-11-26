@@ -152,14 +152,12 @@ ShellRoot {
         loader.active = false;
         root.phase = 7;
         root.tick = 0;
-      } else if (root.phase === 7 && root.tick >= 15 && !ImageCacheService.sourceInterestCount && !ImageCacheService.sourceRequestCount && !ImageCacheService.sourceWorkerRunning) {
+      } else if (root.phase === 7 && root.tick >= 15) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          snapshots: root.snapshots,
                                                          selections: root.selections,
                                                          galleryFrames: root.galleryFrames,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning,
+                                                         destroyed: !loader.active && loader.item === null,
                                                          warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255), 255]
                                                        }));
         Qt.quit();

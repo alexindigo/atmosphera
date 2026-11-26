@@ -70,7 +70,7 @@ ShellRoot {
     repeat: true
     onTriggered: {
       ++root.tick;
-      if (!root.started && NotificationService.notificationServerLoader && ImageCacheService.admissionReady) {
+      if (!root.started && NotificationService.notificationServerLoader) {
         root.started = true;
         Settings.data.general.animationDisabled = true;
         Settings.data.notifications.saveToHistory.normal = true;
@@ -85,9 +85,7 @@ ShellRoot {
           popupModel: rows(NotificationService.popupModel),
           historyModel: rows(NotificationService.historyModel),
           popupTexts: texts(popupItem, []),
-          historyTexts: texts(history, []),
-          sources: ImageCacheService.sourceInterestSources(),
-          requests: ImageCacheService.sourceRequestCount
+          historyTexts: texts(history, [])
         };
         history.grabToImage(image => {
           console.log("IMAGE_GRAB|" + JSON.stringify({

@@ -150,9 +150,8 @@ ShellRoot {
                                                          immediatePath: root.immediatePath,
                                                          beforeFavorites: root.beforeFavorites,
                                                          beforeTheme: root.beforeTheme,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         changes: Object.keys(WallpaperService._wallpaperChanges).length,
+                                                         reservations: Object.keys(WallpaperService._wallpaperReservations).length
                                                        }));
         Qt.quit();
       }

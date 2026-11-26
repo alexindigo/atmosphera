@@ -30,6 +30,7 @@
   niriqml,
   mangowcqml,
   mpvqml,
+  imvqml,
   # runtime deps
   brightnessctl,
   cliphist,
@@ -37,8 +38,6 @@
   wlsunset,
   wl-clipboard,
   wlr-randr,
-  imagemagick,
-  ffmpeg,
   coreutils,
   systemd,
   wget,
@@ -77,12 +76,9 @@ let
       ]);
   };
 
-  # The image worker's decoders (ImageMagick with its WebP/HEIF delegates,
-  # FFmpeg, Python). Always on PATH, after runtimeDeps: replacing the
-  # configurable runtimeDeps cannot remove them.
-  imageDeps = [
-    imagemagick
-    ffmpeg
+  # Source acquisition, originals and shell-owner discovery are required even
+  # when the caller replaces runtimeDeps. ImvQml owns decoding and its helper.
+  requiredTools = [
     python3
     coreutils # dispatcher path resolution and bounded shell-owner calls
     systemd # busctl used by shell-owner discovery
@@ -113,9 +109,9 @@ stdenvNoCC.mkDerivation {
     niriqml
     mangowcqml
     mpvqml
+    imvqml
     qt6.qtbase
     qt6.qtmultimedia
-    qt6.qtimageformats
   ] ++ lib.optional pdfPreviewSupport qt6.qtwebengine;
 
   installPhase = ''
@@ -141,7 +137,7 @@ stdenvNoCC.mkDerivation {
 
   preFixup = ''
     qtWrapperArgs+=(
-      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages ++ imageDeps)}
+      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages ++ requiredTools)}
       --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ wayland ]}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"
@@ -149,6 +145,7 @@ stdenvNoCC.mkDerivation {
       --prefix XDG_CONFIG_DIRS : "$out/etc/xdg"
       --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
       --prefix QML_IMPORT_PATH : ${mpvqml}/${qt6.qtbase.qtQmlPrefix}
+      --prefix QML_IMPORT_PATH : ${imvqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
   '';

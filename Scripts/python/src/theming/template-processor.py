@@ -45,17 +45,38 @@ License: MIT
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import sys
 from pathlib import Path
 
 # Import from lib package
 from lib import (
-    read_image, ImageReadError, extract_palette, generate_theme,
+    extract_palette, generate_theme,
     TemplateRenderer, expand_predefined_scheme,
     extract_source_color, source_color_to_rgb, Color,
 )
 from lib.scheme import inject_terminal_colors
+
+
+def read_rgba_sample(stream):
+    """Read the sampler's bounded unpremultiplied RGBA8 value, not a file."""
+    limit = 112
+    max_line = ((4 * limit * limit + 2) // 3) * 4 + 128
+    try:
+        line = stream.readline(max_line + 1)
+        if len(line) > max_line:
+            raise ValueError('payload exceeds the sample limit')
+        payload = json.loads(line)
+        width, height = payload['width'], payload['height']
+        if any(type(edge) is not int or not 1 <= edge <= limit for edge in (width, height)):
+            raise ValueError('dimensions must be between 1 and 112')
+        rgba = base64.b64decode(payload['rgba'], validate=True)
+        if len(rgba) != width * height * 4:
+            raise ValueError('pixel length does not match the dimensions')
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError(f'Invalid RGBA sample: {error}') from error
+    return list(zip(rgba[::4], rgba[1::4], rgba[2::4]))
 
 
 def parse_args() -> argparse.Namespace:
@@ -78,8 +99,10 @@ Examples:
         'image',
         type=Path,
         nargs='?',
-        help='Path to wallpaper image (PNG/JPG) or JSON color palette (not required if --scheme is used)'
+        help='JSON palette, or wallpaper metadata path when --sample-stdin is used'
     )
+    parser.add_argument('--sample-stdin', action='store_true',
+                        help='Read one owned RGBA8 wallpaper sample as JSON from stdin')
 
     # Scheme type selection
     parser.add_argument(
@@ -207,17 +230,17 @@ def main() -> int:
     # Path 2: Image-based extraction (default)
     else:
         # Validate image argument is provided
-        if args.image is None:
+        if args.image is None and not args.sample_stdin:
             print("Error: Image path is required (unless --scheme is used)", file=sys.stderr)
             return 1
 
         # Validate image path
-        if not args.image.exists():
+        if not args.sample_stdin and not args.image.exists():
             print(f"Error: Image not found: {args.image}", file=sys.stderr)
             return 1
 
         # Check if input is a JSON palette (Predefined Color Scheme)
-        if args.image.suffix.lower() == '.json':
+        if not args.sample_stdin and args.image.suffix.lower() == '.json':
             try:
                 with open(args.image, 'r') as f:
                     input_data = json.load(f)
@@ -247,26 +270,15 @@ def main() -> int:
                 print(f"Error reading JSON palette: {e}", file=sys.stderr)
                 return 1
         else:
-            # Standard Image Extraction
-            if not args.image.is_file():
-                print(f"Error: Not a file: {args.image}", file=sys.stderr)
+            if not args.sample_stdin:
+                print("Error: wallpaper colors require an imvqml sample on stdin", file=sys.stderr)
                 return 1
 
-            # Determine scheme type
             scheme_type = args.scheme_type
-
-            # M3 schemes use Triangle filter (matches matugen), others use Box
-            # (sharper downscale preserves distinct color regions for k-means)
-            m3_schemes = {"tonal-spot", "content", "fruit-salad", "rainbow", "monochrome"}
-            resize_filter = "Triangle" if scheme_type in m3_schemes else "Box"
-
             try:
-                pixels = read_image(args.image, resize_filter)
-            except ImageReadError as e:
-                print(f"Error reading image: {e}", file=sys.stderr)
-                return 1
-            except Exception as e:
-                print(f"Unexpected error reading image: {e}", file=sys.stderr)
+                pixels = read_rgba_sample(sys.stdin)
+            except ValueError as e:
+                print(e, file=sys.stderr)
                 return 1
 
             # Extract palette based on scheme type:

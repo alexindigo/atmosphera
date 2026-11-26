@@ -1,49 +1,29 @@
 import QtQuick
 import Quickshell
-import qs.Services.Files
-import qs.Services.UI
 import qs.Widgets
 
 ShellRoot {
   id: root
-  property bool firstReleased: false
-  property bool grabbing: false
-  property var shared: ({})
-  property var survivor: ({})
-  property bool retiring: false
-  FileThumbnails {
-    id: firstPicker
-  }
-  FileThumbnails {
-    id: secondPicker
-  }
-  FileThumbnail {
-    id: first
-    provider: firstPicker
-    path: Quickshell.env("IMAGE_FIXTURES") + "/Shared.mp4"
-    active: true
-    pixels: 128
-    stamp: "one"
-  }
-  FileThumbnail {
-    id: second
-    provider: secondPicker
-    path: first.path
-    active: true
-    pixels: first.pixels
-    stamp: first.stamp
-  }
+  readonly property string path: Quickshell.env("IMAGE_FIXTURES") + "/Shared.mp4"
+  property int phase: 0
+
   FloatingWindow {
     visible: true
-    implicitWidth: 192
-    implicitHeight: 128
-    color: "transparent"
-    NImage {
-      id: image
-      anchors.fill: parent
-      // Do not acquire an image inspection interest before observing sharing.
-      source: root.firstReleased ? second.url : ""
-      active: second.active
+    implicitWidth: 180
+    implicitHeight: 160
+    Row {
+      Repeater {
+        id: previews
+        model: 2
+        NImage {
+          required property int index
+          width: 90
+          height: 160
+          active: root.phase < (index === 0 ? 1 : 3)
+          source: active ? root.path : ""
+          sourceSize: Qt.size(90, 160)
+        }
+      }
     }
   }
   Timer {
@@ -51,51 +31,28 @@ ShellRoot {
     running: true
     repeat: true
     onTriggered: {
-      if (!root.firstReleased && firstPicker.running && secondPicker.running && ImageCacheService.sourceInterestCount === 2 && ImageCacheService.sourceRequestCount === 1) {
-        root.shared = {
-          interests: ImageCacheService.sourceInterestCount,
-          requests: ImageCacheService.sourceRequestCount
-        };
-        root.firstReleased = true;
-        first.active = false;
-        firstPicker.enabled = false;
-      }
-      // The image itself can acquire an interest after the thumbnail arrives.
-      // Observe the retired picker's ownership, not a global cardinality.
-      if (root.firstReleased && !root.grabbing && !firstPicker.running && secondPicker.running && image.status === Image.Ready) {
-        root.grabbing = true;
-        root.survivor = {
-          ready: true,
-          result: second.result,
-          firstUrl: first.url,
-          videoFrame: secondPicker.statistics.videoFrame
-        };
-        if (!image.grabToImage(result => {
+      const first = previews.itemAt(0);
+      const second = previews.itemAt(1);
+      if (root.phase === 0 && first.imageState === "ready" && second.imageState === "ready") {
+        root.phase = 1;
+      } else if (root.phase === 1 && first.imageState === "idle" && second.imageState === "ready") {
+        root.phase = 2;
+        if (!second.grabToImage(result => {
+          const saved = result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/survivor.png");
           console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                       name: "survivor",
-                                                       saved: result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/survivor.png")
+                                                       saved: saved
                                                      }));
-          root.retiring = true;
-          second.active = false;
-        })) {
-          console.error("Picker survivor grab rejected");
-          Qt.exit(3);
-        }
-      }
-      if (root.retiring && !ImageCacheService.sourceWorkerRunning) {
-        console.log("IMAGE_BASELINE|" + JSON.stringify({
-                                                         shared: root.shared,
-                                                         survivor: root.survivor,
-                                                         finalInterests: ImageCacheService.sourceInterestCount,
-                                                         finalRequests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
-                                                       }));
+          root.phase = 3;
+        }))
+          Qt.exit(2);
+      } else if (root.phase === 3 && first.imageState === "idle" && second.imageState === "idle") {
+        console.log('IMAGE_BASELINE|{"bothReady":true,"survived":true,"bothRetired":true}');
         Qt.quit();
       }
     }
   }
   Timer {
-    interval: 20000
+    interval: 18000
     running: true
     onTriggered: Qt.exit(3)
   }

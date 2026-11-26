@@ -14,6 +14,13 @@ from image_decoding_evidence import source_manifest
 
 LONG_CASES = {'all', 'plugins', 'packaging', 'shell', 'chooser-wallpaper'}
 TERMINAL = {'inactive', 'failed'}
+RUNTIME_SELECTION = ('PATH', 'QML_IMPORT_PATH', 'QT_QPA_PLATFORM', 'QT_QUICK_BACKEND')
+
+
+def runtime_environment():
+    # A user unit otherwise inherits the login manager's toolchain rather than
+    # the caller's. Explicit empties also prevent stale manager overrides.
+    return {key: os.environ.get(key, '') for key in RUNTIME_SELECTION}
 
 
 def write(path, value):
@@ -23,7 +30,8 @@ def write(path, value):
 
 
 def identity(args, profile):
-    return dict(argv=sys.argv[1:], profile=profile.record(), inputs={key: source_manifest(path)['sha256'] for key, path in
+    return dict(argv=sys.argv[1:], profile=profile.record(), runtime=runtime_environment(),
+                inputs={key: source_manifest(path)['sha256'] for key, path in
                 (('source', args.source), ('plugins', args.plugins), ('baselineSource', args.baseline_source),
                  ('baselinePlugins', args.baseline_plugins)) if path is not None})
 
@@ -92,7 +100,9 @@ def launch_job(args, profile, unit, control):
             '--property=WorkingDirectory=' + str(args.source),
             '--property=StandardOutput=append:' + str(control / 'job.log'), '--property=StandardError=inherit',
             '--setenv=TMPDIR=' + os.environ['TMPDIR'], '--setenv=QML_DISABLE_DISK_CACHE=1',
-            '--setenv=ATMOSPHERA_IMAGE_JOB=' + unit, sys.executable, '-B', str(Path(sys.argv[0]).resolve()),
+            '--setenv=ATMOSPHERA_IMAGE_JOB=' + unit,
+            *('--setenv=' + key + '=' + value for key, value in runtime_environment().items()),
+            sys.executable, '-B', str(Path(sys.argv[0]).resolve()),
             *sys.argv[1:], '--job-control', str(control)]
     try:
         linger = linger_lease(profile, unit, control, True)

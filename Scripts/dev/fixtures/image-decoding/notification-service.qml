@@ -136,11 +136,10 @@ ShellRoot {
     }
     return cohorts.popup.concat(cohorts.history).every(item => item.notification.imageState === "ready" ? item.status === Image.Ready : item.notification.imageState === "unavailable" ? item.status === Image.Error : true);
   }
-  // Admission interests only. Icon-set masks shown by the popups are shared
-  // image interests too, but never a notification image admission.
+  // An admission is owned by a live popup/history target, not an image
+  // renderer or an unrelated icon-set request.
   function admissionInterests() {
-    const icons = "file://" + Quickshell.env("IMAGE_ICON_DIR") + "/";
-    return ImageCacheService.sourceInterestSources().filter(source => !source.startsWith(icons)).length;
+    return Object.values(NotificationService.popupState).reduce((total, entry) => total + entry.imageRequests.filter(request => request.pending).length, 0);
   }
   function observeAdmission(notification) {
     if (notification.summary === "slow-start") {
@@ -206,8 +205,7 @@ ShellRoot {
             NotificationService.dismissPopup(item.id);
           } else if (root.step.name === "clear-with-popup") {
             NotificationService.clearHistory();
-            ImageCacheService.clearNotifications();
-            ImageCacheService.invalidateNotification("../not-a-content-id");
+            ImageCacheService.clearRepresentations();
           } else if (root.step.name === "closed") {
             NotificationService.dismissAllPopups();
           }
@@ -230,7 +228,7 @@ ShellRoot {
     repeat: true
     onTriggered: {
       ++root.tick;
-      if (!root.started && NotificationService.notificationServerLoader && ImageCacheService.admissionReady && raw.status !== Image.Loading) {
+      if (!root.started && NotificationService.notificationServerLoader && raw.status !== Image.Loading) {
         root.started = true;
         Settings.data.general.animationDisabled = true;
         Settings.data.notifications.respectExpireTimeout = true;
@@ -253,7 +251,7 @@ ShellRoot {
                                 originalId: current.id || 0,
                                 popup: rows(NotificationService.popupModel),
                                 history: rows(NotificationService.historyModel),
-                                interests: ImageCacheService.sourceInterestCount,
+                                interests: root.admissionInterests(),
                                 owners: Object.values(NotificationService.popupState).map(entry => ({
                                   id: entry.data.id,
                                   summary: entry.data.summary,
@@ -279,7 +277,7 @@ ShellRoot {
     }
       if (root.done && root.producerExit >= 0 && !root.pending) {
         history.close();
-        if (!ImageCacheService.sourceWorkerRunning && !ImageCacheService.sourceInterestCount) {
+        if (!root.admissionInterests()) {
           NotificationService.performSaveHistory();
           console.log("IMAGE_BASELINE|" + JSON.stringify({
             raw: raw.status,
@@ -289,8 +287,7 @@ ShellRoot {
             changes: root.changes,
             producerExit: root.producerExit,
             producerErrors: root.producerErrors,
-            interests: ImageCacheService.sourceInterestCount,
-            worker: ImageCacheService.sourceWorkerRunning,
+            interests: root.admissionInterests(),
             historyFile: NotificationService.historyFile,
             warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255)]
           }));

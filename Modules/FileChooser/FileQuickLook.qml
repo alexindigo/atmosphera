@@ -258,8 +258,7 @@ ChooserFocusScope {
     id: imagePreview
     Item {
       readonly property string previewState: image.status === Image.Ready ? "ready" : image.status === Image.Error ? "error" : "loading"
-      readonly property size decodeSize: image.sourceSize
-      readonly property int frame: image.currentFrame
+      readonly property bool playing: image.playing
       readonly property int frames: image.frameCount
       readonly property string errorReason: image.errorReason
       NImage {
@@ -271,8 +270,6 @@ ChooserFocusScope {
         animationIntent: "preserve"
         sourceRevision: root.item ? String(root.item.modified) : ""
         playing: root.opened && Style.animationNormal > 0
-        sourceSize.width: root.targetSize.width * 2
-        sourceSize.height: root.targetSize.height * 2
       }
       NText {
         anchors.centerIn: parent
