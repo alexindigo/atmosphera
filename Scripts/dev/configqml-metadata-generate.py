@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 
 
-def generate(source, qt, output, reference):
+def generate(source, qt, output, reference, qmldir):
     source, qt = source.resolve(), qt.resolve()
     output.mkdir(parents=True, exist_ok=False)
     env = dict(os.environ, LD_LIBRARY_PATH=str(qt.parent))
@@ -42,8 +42,8 @@ def generate(source, qt, output, reference):
          '--import-name=ConfigQml', '--major-version=1', '--minor-version=0',
          '--foreign-types=' + ','.join(map(str, [*foreign, output / 'core.json'])),
          '-o', output / 'registrations.cpp', output / 'qml.json'])
-    # Module identity/plugin layout is unchanged; copy the real CMake output.
-    (output / 'qmldir').write_bytes((reference / 'qmldir').read_bytes())
+    # Qt's CMake generator can change qmldir even when the types are unchanged.
+    (output / 'qmldir').write_bytes(qmldir.read_bytes())
     digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
     manifest = json.loads((reference / 'manifest.json').read_text())
     manifest.pop('package', None)
@@ -54,13 +54,13 @@ def generate(source, qt, output, reference):
     (output / 'generation.json').write_text(json.dumps(dict(commands=commands,
         sourceHeaders={p.name: digest(p) for p in source.glob('*.h')},
         tools={str(qt / name): digest(qt / name) for name in ('moc', 'qmltyperegistrar')},
-        source=str(source), qt=str(qt)), indent=2) + '\n')
+        source=str(source), qt=str(qt), qmldir=str(qmldir.resolve())), indent=2) + '\n')
     print(json.dumps(manifest), flush=True)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('source', 'qt', 'output', 'reference'):
+    for name in ('source', 'qt', 'output', 'reference', 'qmldir'):
         parser.add_argument('--' + name, type=Path, required=True)
     args = parser.parse_args()
-    generate(args.source, args.qt, args.output.resolve(), args.reference)
+    generate(args.source, args.qt, args.output.resolve(), args.reference, args.qmldir)

@@ -1,9 +1,9 @@
-# Immutable Arch bootstrap; the mirrorlist selects the package versions.
-FROM docker.io/library/archlinux:base-devel@sha256:949ecb1661609ab7e8f6854ba03efd62792e7a796313738e94b040c095c20d91 AS arch-snapshot
-COPY arch-snapshot.mirrorlist arch-snapshot-install.sh /usr/local/share/atmosphera/
-RUN bash /usr/local/share/atmosphera/arch-snapshot-install.sh
+# Immutable Arch bootstrap upgraded against the normal Arch mirrors.
+FROM docker.io/library/archlinux:base-devel@sha256:949ecb1661609ab7e8f6854ba03efd62792e7a796313738e94b040c095c20d91 AS arch-base
+COPY arch-install.sh /usr/local/share/atmosphera/
+RUN bash /usr/local/share/atmosphera/arch-install.sh
 
-FROM arch-snapshot AS settings-check
+FROM arch-base AS settings-check
 
 # The settings gates use the Qt formatter and the pinned parser, not the
 # shell runtime or any of the compiled QML plugins.
@@ -13,7 +13,7 @@ COPY settings-check-requirements.txt /opt/settings-check-requirements.txt
 RUN pip install --break-system-packages --no-cache-dir -r /opt/settings-check-requirements.txt
 WORKDIR /workspaces/atmosphera
 
-FROM arch-snapshot AS devcontainer
+FROM arch-base AS devcontainer
 
 # Container identity for the dev account. The default matches the Podman
 # keep-id target; the Docker tooling path passes the invoking user's IDs
@@ -34,6 +34,7 @@ RUN pacman -S --noconfirm --needed \
 # Build the real QML plugins so their runtime modules and registrar-generated
 # type descriptions agree. No hand-written lint substitutes.
 COPY install-qml-deps.sh /usr/local/bin/install-qml-deps
+COPY configqml-qt-6.12.1.patch /usr/local/share/atmosphera/
 RUN bash /usr/local/bin/install-qml-deps
 
 # AST/provenance analysis tooling, not an application/runtime build. The grammar
