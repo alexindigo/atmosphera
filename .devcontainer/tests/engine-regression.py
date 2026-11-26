@@ -24,6 +24,7 @@ from pathlib import Path
 ESSENTIAL_TOOLS = [
     "bash", "dirname", "sha256sum", "cut", "id", "mkdir", "touch", "cat",
     "grep", "git", "chmod", "cp", "mv", "rm", "ln", "sort", "head", "tr",
+    "nproc", "awk",
 ]
 
 MOCK_TEMPLATE = """#!/usr/bin/env bash
@@ -294,8 +295,8 @@ def case_image_invalidation(source, out):
     builds2 = sb.build_invocations()
 
     # Change a fingerprint input -> new tag -> new build.
-    atmo = ws / ".devcontainer" / "atmo-dev.sh"
-    atmo.write_text(atmo.read_text() + "\n# fingerprint perturbation\n")
+    mirrorlist = ws / ".devcontainer" / "arch-snapshot.mirrorlist"
+    mirrorlist.write_text(mirrorlist.read_text() + "\n# fingerprint perturbation\n")
     p3 = run_launcher(source, sb, launcher=launcher)
     builds3 = sb.build_invocations()
     if len(builds3) > len(builds2):
