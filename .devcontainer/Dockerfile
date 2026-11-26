@@ -1,13 +1,13 @@
-# Immutable Arch bootstrap upgraded against the normal Arch mirrors.
+# Immutable Arch bootstrap; each target refreshes the normal Arch mirrors
+# in the same layer that installs its packages.
 FROM docker.io/library/archlinux:base-devel@sha256:949ecb1661609ab7e8f6854ba03efd62792e7a796313738e94b040c095c20d91 AS arch-base
 COPY arch-install.sh /usr/local/share/atmosphera/
-RUN bash /usr/local/share/atmosphera/arch-install.sh
 
 FROM arch-base AS settings-check
 
 # The settings gates use the Qt formatter and the pinned parser, not the
 # shell runtime or any of the compiled QML plugins.
-RUN pacman -S --noconfirm --needed git python python-pip qt6-declarative \
+RUN bash /usr/local/share/atmosphera/arch-install.sh git python python-pip qt6-declarative \
     && pacman -Scc --noconfirm
 COPY settings-check-requirements.txt /opt/settings-check-requirements.txt
 RUN pip install --break-system-packages --no-cache-dir -r /opt/settings-check-requirements.txt
@@ -21,7 +21,15 @@ FROM arch-base AS devcontainer
 ARG DEV_UID=1000
 ARG DEV_GID=1000
 
-RUN pacman -S --noconfirm --needed \
+# Image-decoding CI needs headless Sway. Install it alongside Qt, before
+# compiling against Qt, so the lane never has to upgrade the built image.
+ARG INSTALL_SWAY=0
+RUN case "$INSTALL_SWAY" in \
+      0) set -- ;; \
+      1) set -- sway ;; \
+      *) echo 'INSTALL_SWAY must be 0 or 1' >&2; exit 1 ;; \
+    esac \
+    && bash /usr/local/share/atmosphera/arch-install.sh \
     quickshell qt6-declarative qt6-tools qt6-multimedia qt6-imageformats \
     imagemagick ffmpeg libwebp libheif \
     cmake ninja pkgconf libpipewire \
@@ -29,7 +37,7 @@ RUN pacman -S --noconfirm --needed \
     git shellcheck shfmt \
     tree-sitter \
     rustup \
-    sudo
+    sudo "$@"
 
 # Build the real QML plugins so their runtime modules and registrar-generated
 # type descriptions agree. No hand-written lint substitutes.

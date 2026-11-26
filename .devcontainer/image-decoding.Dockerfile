@@ -1,9 +1,7 @@
 ARG BASE_IMAGE=localhost/atmosphera-image-decoding-dev:present
 FROM ${BASE_IMAGE}
 USER root
-# Sway supplies wlroots layer-shell as well as a true headless backend.
-# Use the package databases inherited from the upgraded dev image.
-RUN pacman -S --noconfirm --needed sway
+# The base image supplies Sway (built with INSTALL_SWAY=1).
 # The package's scheduling capability cannot be acquired in a rootless
 # container. Headless pixman needs no privileged scheduling or device access.
 RUN getcap /usr/bin/sway && setcap -r /usr/bin/sway
