@@ -11,7 +11,7 @@ import qs.Services.Plugins
 Singleton {
   id: root
 
-  readonly property bool ready: _coreLoaded
+  readonly property bool ready: _coreLoaded && LegacyPanelCommands.ready
   property var actions: []
   property int revision: 0
   property bool _coreLoaded: false
@@ -106,14 +106,13 @@ Singleton {
         output.push(row);
       });
       delete pluginCore[manifest.id];
-      if (manifest.actions === undefined)
-        return;
-      if (!Array.isArray(manifest.actions)) {
+      const declared = manifest.actions === undefined ? LegacyPanelCommands.pickerActions(manifest) : manifest.actions;
+      if (!Array.isArray(declared)) {
         Logger.w("ActionRegistry", key + ": actions must be a list");
         return;
       }
       var pluginIds = [];
-      manifest.actions.forEach(function (action) {
+      declared.forEach(function (action) {
         append(action, "plugin", key, "Plugins", manifest.name, pluginIds, plugin);
       });
     });
@@ -155,6 +154,13 @@ Singleton {
       root.rebuild();
     }
     function onAllPluginsLoaded() {
+      root.rebuild();
+    }
+  }
+
+  Connections {
+    target: LegacyPanelCommands
+    function onReadyChanged() {
       root.rebuild();
     }
   }

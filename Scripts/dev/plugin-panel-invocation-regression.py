@@ -112,8 +112,10 @@ PROBE = r'''
       return JSON.stringify({outputs: outputs.map(screen => screen.name), visible, settled,
         ready: !!(registered && map && unplaced?.mainInstance && !delayedInitTimer.running && !wizardRetryTimer.running),
         placements: (map?.placements ?? []).map(api => api.placement.section),
-        latest: placed ? PluginInstances.latestInvocationApi(placed)?.placement?.section ?? "" : "",
-        mapScreen: placed?.panelOpenScreen?.name ?? "", cornerFires: shellRoot.cornerFires,
+         latest: placed ? PluginInstances.latestInvocationApi(placed)?.placement?.section ?? "" : "",
+         mapScreen: placed?.panelOpenScreen?.name ?? "", cornerFires: shellRoot.cornerFires,
+         mapVersion: Service.loadedPlugins["niri-windows-map"]?.manifest?.version ?? "",
+         mapPickerReady: !!(registered && placed && ActionRegistry.ready && !delayedInitTimer.running && !wizardRetryTimer.running),
         panelOnlyLoaded: !!Service.getPluginAPI("invocation-panel-only"),
         exactFloor: Service.checkPluginCompatibility({minAtmospheraVersion: Version.currentVersion}),
         futureFloor: Service.checkPluginCompatibility({minAtmospheraVersion: "99.0.0"}),
@@ -126,7 +128,13 @@ PROBE = r'''
 
     function actions(): string {
       return JSON.stringify(ActionRegistry.actions.filter(row => row.key.startsWith("invocation-")).map(row =>
-        ({key: row.key, command: ActionRegistry.compose(row, {})})));
+         ({key: row.key, command: ActionRegistry.compose(row, {})})));
+    }
+
+    function mapActions(): string {
+      return JSON.stringify(ActionRegistry.actions.filter(row => row.group === "Niri Windows Map" ||
+        row.key.startsWith("niri-windows-map/")).map(row =>
+          ({key: row.key, label: row.label, command: ActionRegistry.compose(row, {})})));
     }
 
     function cornerCommand(): string { return Settings.data.general.hotCorners.bottomRight; }
@@ -182,7 +190,7 @@ PROBE = r'''
 ERRORS = re.compile(r'Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:|is not a type|is unavailable')
 
 
-def exercise(work):
+def exercise(work, real_map=False):
     """Drive consumer IPC inside the same private PID and D-Bus namespaces."""
     shell = subprocess.Popen(['qs', '-n', '-p', str(work / 'shell'), '--no-color'])
     try:
@@ -220,6 +228,27 @@ def exercise(work):
 
         def generic(operation, key='invocation-unplaced'):
             ipc('plugin', operation + 'Panel', key)
+
+        if real_map:
+            plugin_id = 'niri-windows-map'
+            manifest = json.loads((work / 'config/atmosphera/plugins' / plugin_id / 'manifest.json').read_text())
+            initial = wait('real-map-ready-two-outputs', lambda s: s['mapPickerReady'] and s['mapVersion'] == manifest['version'])
+            available = manifest.get('actions', [dict(id='toggle', label='Windows map', panel='toggle')])
+            expected = [dict(key=f'{plugin_id}/{a["id"]}', label=a['label'],
+                             command=f'atmosphera ipc plugin {a["panel"]}Panel {plugin_id}') for a in available]
+            rows = json.loads(probe('mapActions'))
+            assert rows == expected, f'map {manifest["version"]} picker returned {rows}, expected {expected}'
+            print('INVOCATION_CASE ' + json.dumps(dict(name='real-map-picker-actions', version=manifest['version'],
+                                                       rows=rows)), flush=True)
+            probe('fixFocus')
+            toggle = next(row for row in rows if row['key'] == f'{plugin_id}/toggle')
+            cli(*shlex.split(toggle['command'])[1:])
+            wait('real-map-picker-opens', lambda s: len(s['visible']) == 1 and s['visible'][0]['id'] == plugin_id and
+                 s['visible'][0]['screen'] == initial['outputs'][0] and s['visible'][0]['owned'])
+            cli(*shlex.split(toggle['command'])[1:])
+            visible('real-map-picker-closes')
+            probe('finish')
+            return shell.wait(timeout=5)
 
         initial = wait('ready-two-outputs', lambda s: s['ready'] and s['placements'] == ['left'])
         probe('fixFocus')
@@ -354,6 +383,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--workspace', type=Path, required=True)
+    parser.add_argument('--map-plugin', type=Path, help='run the picker regression with this Windows Map plugin directory')
     add_execution_arguments(parser)
     args = parser.parse_args()
     work = args.workspace.resolve()
@@ -374,6 +404,10 @@ def main():
     states = {}
     for key in ('niri-windows-map', 'invocation-unplaced', 'invocation-panel-only'):
         plugin = config / 'plugins' / key
+        if key == 'niri-windows-map' and args.map_plugin:
+            shutil.copytree(args.map_plugin, plugin)
+            states[key] = dict(enabled=True)
+            continue
         plugin.mkdir(parents=True)
         entries = dict(panel='Panel.qml')
         extra = {}
@@ -402,13 +436,15 @@ def main():
     (config / 'settings').mkdir()
     bar = dict(defaults['bar'], widgets=dict(left=[dict(id='plugin:niri-windows-map')], center=[], right=[]))
     (config / 'settings/bar.json').write_text(json.dumps(bar))
+    driver = '--drive-map' if args.map_plugin else '--drive'
     execution = run_harness(['dbus-run-session', '--', sys.executable, '-B', Path(__file__).resolve(),
-                             '--drive', work], work, env, args.budget)
+                              driver, work], work, env, args.budget)
     text = (work / 'shell.log').read_text(errors='replace')
     cases = [json.loads(line.split('INVOCATION_CASE ', 1)[1]) for line in text.splitlines()
              if line.startswith('INVOCATION_CASE ')]
     errors = [line for line in text.splitlines() if ERRORS.search(line)]
-    receipt = dict(passed=bool(cases and cases[-1]['name'] == 'manifest-ipc-toggle-closes' and not errors),
+    final_case = 'real-map-picker-closes' if args.map_plugin else 'manifest-ipc-toggle-closes'
+    receipt = dict(passed=bool(cases and cases[-1]['name'] == final_case and not errors and execution['exit_code'] == 0),
                    cases=cases, qml_errors=errors)
     write_receipt(work, receipt, execution)
     print(json.dumps(receipt, indent=2))
@@ -416,6 +452,6 @@ def main():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3 and sys.argv[1] == '--drive':
-        raise SystemExit(exercise(Path(sys.argv[2])))
+    if len(sys.argv) == 3 and sys.argv[1] in ('--drive', '--drive-map'):
+        raise SystemExit(exercise(Path(sys.argv[2]), real_map=sys.argv[1] == '--drive-map'))
     raise SystemExit(main())

@@ -8,6 +8,7 @@ import Quickshell.Widgets
 
 import qs.Commons
 import qs.Modules.Panels.Settings
+import qs.Services.Actions
 import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Keyboard
@@ -31,29 +32,10 @@ Singleton {
     Logger.i("IPCService", "Service started");
   }
 
-  FileView {
-    id: legacyPanelCommands
-    path: Quickshell.shellDir + "/Assets/Actions/legacy-panel-commands.tsv"
-    preload: true
-  }
-
-  // Normalize exact legacy spellings at the command boundary, not at dispatch.
-  function _normalizePanelCommand(command) {
-    const tokens = /^atmosphera[ \t]+ipc[ \t]+(\w+)[ \t]+(\w+)$/.exec(command);
-    if (tokens) {
-      for (const line of legacyPanelCommands.text().split("\n")) {
-        const columns = line.split("\t");
-        if (!line.startsWith("#") && columns.length === 4 && columns[0] === tokens[1] && columns[1] === tokens[2])
-          return "atmosphera ipc plugin " + columns[2] + " " + columns[3];
-      }
-    }
-    return command;
-  }
-
   // A corner handles literal panel commands on its own output. Scripts and
   // other shell strings retain their bash semantics.
   function invokePanelCommand(command, screenName) {
-    const generic = /^atmosphera[ \t]+(?:ipc[ \t]+)?plugin[ \t]+(open|toggle|close)Panel[ \t]+([\w.:-]+)$/.exec(root._normalizePanelCommand(command.trim()));
+    const generic = /^atmosphera[ \t]+(?:ipc[ \t]+)?plugin[ \t]+(open|toggle|close)Panel[ \t]+([\w.:-]+)$/.exec(LegacyPanelCommands.normalize(command.trim()));
     if (!generic)
       return false;
     const screen = Quickshell.screens.find(output => output.name === screenName);

@@ -255,10 +255,12 @@ actions, or to a later release if the plugin needs other features.
 
 Existing `atmosphera ipc niriWindowsMap open|toggle|close` spellings remain
 accepted by the CLI and the hot-corner command reader via
-`Assets/Actions/legacy-panel-commands.tsv`. Retire these aliases only in an
-announced breaking shell release after their replacement has shipped. An updated
-plugin manifest alone is not a removal trigger: external bindings may still use
-the old command.
+`Assets/Actions/legacy-panel-commands.tsv`. The same table preserves picker
+actions for matching installed plugin versions that have a panel but omit
+`actions`; a manifest that declares actions always wins. Retire the compatibility
+rows only in an announced breaking shell release after their replacement has
+shipped. An updated plugin manifest alone is not a removal trigger: external
+bindings may still use the old command.
 
 ### Using the action registry
 
