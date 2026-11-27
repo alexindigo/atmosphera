@@ -1,7 +1,7 @@
 # Maintainer: Atmosphera App <atmosphera-app@proton.me>
 
 pkgname=atmosphera
-pkgver=0.11.0
+pkgver=0.12.0
 pkgrel=1
 _gitname="$pkgname-$pkgver"
 pkgdesc="Atmosphera - a customizable desktop shell for Niri and Hyprland, built with Quickshell"

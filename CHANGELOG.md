@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.12.0] - 2026-11-26
+
+### 2026-11-26
+
+**Upgrade notes**
+
+Update to `qt6-imvqml>=0.1.6` and `qt6-mpvqml>=0.3.0`. Atmosphera no longer
+requires ImageMagick or the ffmpeg command-line tool.
+
+- Update the image and video dependencies (`80d9bf885`)
+
+**Fixes**
+
+Opening a plugin panel no longer creates a duplicate. On Nix, the image library
+and its decoder load their packaged libraries rather than system copies.
+
+- Fix duplicate plugin panels (`ce93f6213`)
+- Fix the ImvQml Nix download and library paths (`bc7fb7b70`)
+
+**Features**
+
+ImvQml handles all supported image formats without separately installing Qt
+image plugins. Decoding runs in a separate process so a decoder crash does not
+take down the shell.
+
+- Switch to ImvQml for images (`80d9bf885`)
+
+**CI**
+
+Arch CI now runs on Qt 6.12.1.
+
+- Update the CI Qt version (`8c53ad59b`)
+
+### 2026-11-25
+
+**Features**
+
+Video thumbnails use libmpv. On niri, moving and dropping windows works within
+the same workspace, including between columns.
+
+- Generate video thumbnails with MpvQml (`a29a7349d`)
+- Improve window moves and drops on niri (`f51272362`)
+
 ## [0.11.0] - 2026-11-24
 
 ### 2026-11-24
