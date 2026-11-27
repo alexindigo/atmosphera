@@ -87,8 +87,15 @@ Scope {
       // off-thread. Never retry by reopening a producer-owned pathname.
       _retainOriginal = true;
       _ticket = job.retainOriginal(local.uri || PortalPaths.pathToUri(local.path).uri, _stageDirectory);
-      if (_ticket <= 0)
-        fail("admission-rejected", "Could not admit the original image");
+      if (_ticket < 0) {
+        // No job was queued. Report the refusal before the notification model
+        // inserts its row, without a second open or a transient loading state.
+        finish({
+                 ok: false,
+                 code: job.lastErrorCode || "admission-rejected",
+                 reason: job.lastErrorDetail || "Could not admit the original image"
+               });
+      }
     } else {
       _inputSource = source;
     }

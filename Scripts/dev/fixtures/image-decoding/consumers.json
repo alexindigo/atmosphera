@@ -1732,7 +1732,7 @@
         {
           "path": "Services/UI/ImageRetention.qml",
           "name": "*",
-          "sha256": "3580afc5bb4bdd409c01ece12090a958cd419e62636186c2547382bad1ce522f"
+          "sha256": "ed2c7facb4bd275daa307a52f8042fd8c157d7d4ba984165c7efe4327f47759d"
         }
       ]
     },
