@@ -231,6 +231,7 @@ Singleton {
       }
       Timer {
         id: wait
+        interval: 0
         onTriggered: validation.submit()
       }
       Component.onCompleted: wait.start()
