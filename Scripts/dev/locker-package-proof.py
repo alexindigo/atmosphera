@@ -4,8 +4,8 @@ import argparse
 import json
 import os
 from pathlib import Path
-import re
 
+from locker_imports import unresolved_imports
 from locker_test_support import require_guest, run
 
 
@@ -47,18 +47,7 @@ def main():
     # A stack merge that adds an import to a manifest file must update the
     # reviewed manifest; Quickshell's startup scanner would otherwise warn
     # and a later instantiation would fail at runtime.
-    unresolved = []
-    for config in (real, emergency):
-        for path in config.rglob('*'):
-            relative = path.relative_to(config)
-            if relative.parts[0] in ('Assets', 'Configs', 'Scripts', 'Shaders') or path.suffix not in ('.qml', '.js'):
-                continue
-            for target in re.findall(r'^\s*\.?import\s+"([^"]+)"', path.read_text(), re.MULTILINE):
-                if not (path.parent / target).exists():
-                    unresolved.append(str(relative) + ' -> ' + target)
-            for module in re.findall(r'^\s*import\s+qs\.([A-Za-z0-9_.]+)', path.read_text(), re.MULTILINE):
-                if not (config / module.replace('.', '/')).is_dir():
-                    unresolved.append(str(relative) + ' -> qs.' + module)
+    unresolved = [problem for config in (real, emergency) for problem in unresolved_imports(source, config)]
     assert not unresolved, unresolved
     (work / 'layout.json').write_text(json.dumps({'bundled': manifest, 'emergency': sorted(files)}, indent=2))
     (work / 'result.txt').write_text('PASS package-layout\n')

@@ -73,6 +73,7 @@ Services/Networking/BluetoothRssi.qml
 Services/Networking/BluetoothService.qml
 Services/Networking/NetworkService.qml
 Services/Networking/NmDevice.qml
+Services/Networking/NmState.qml
 Services/Power/PowerProfileService.qml
 Services/System/HostService.qml
 Services/System/ProgramCheckerService.qml
@@ -84,6 +85,7 @@ Services/Theming/TemplateProcessor.qml
 Services/Theming/TemplateRegistry.qml
 Services/UI/IconRegistry.qml
 Services/UI/ImageCacheService.qml
+Services/UI/ImageDownloads.qml
 Services/UI/ImageInput.qml
 Services/UI/ImageOriginalStore.qml
 Services/UI/ImageRetention.qml
