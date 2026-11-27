@@ -14,7 +14,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 SOURCE_TOO_LARGE_EXIT = 3
 TRANSFER_SLOTS = 2
 QUEUE_SIZE = 32
-TRANSFER_DEADLINE = 30
+TRANSFER_IDLE_LIMIT = 30
 
 
 class SourceTooLarge(ValueError):
@@ -42,10 +42,12 @@ def download(source, target, budget):
             declared = int(declared) if declared is not None else None
             if declared is not None and declared > budget:
                 raise SourceTooLarge('Image source is too large')
-            with target.open('xb') as output:
+            with target.open('xb', buffering=0) as output:
                 created = True
                 count = 0
-                while block := response.read(min(128 * 1024, budget - count + 1)):
+                # read1 returns available bytes instead of waiting to fill a
+                # chunk. The owner can observe progress even on a slow link.
+                while block := response.read1(min(128 * 1024, budget - count + 1)):
                     count += len(block)
                     if count > budget:
                         raise SourceTooLarge('Image source is too large')
@@ -79,7 +81,7 @@ def serve(parent, *, shell_pid):
         queued.pop(ticket, None)
         request = running.pop(ticket, None)
         if request:
-            transfer, path, _ = request
+            transfer, path, _, _ = request
             if transfer.poll() is None:
                 transfer.kill()
             transfer.wait()
@@ -116,10 +118,17 @@ def serve(parent, *, shell_pid):
                             else:
                                 queued[ticket] = packet['url']
                 now = time.monotonic()
-                for ticket, (transfer, path, deadline) in list(running.items()):
+                for ticket, (transfer, path, size, last_progress) in list(running.items()):
                     code = transfer.poll()
-                    if code is None and now < deadline:
-                        continue
+                    if code is None:
+                        try:
+                            current_size = path.stat().st_size
+                        except FileNotFoundError:
+                            current_size = 0
+                        if current_size > size:
+                            running[ticket] = transfer, path, current_size, now
+                        if current_size > size or now - last_progress < TRANSFER_IDLE_LIMIT:
+                            continue
                     if code == 0:
                         del running[ticket]
                         ready[ticket] = path
@@ -141,7 +150,7 @@ def serve(parent, *, shell_pid):
                     except (OSError, ValueError):
                         reply(ticket, code='download-failed', reason='Could not start the image download')
                     else:
-                        running[ticket] = transfer, path, time.monotonic() + TRANSFER_DEADLINE
+                        running[ticket] = transfer, path, 0, time.monotonic()
         finally:
             for ticket in list(running):
                 release(ticket)
