@@ -7,6 +7,8 @@ from pathlib import Path
 import secrets
 import stat
 
+from .writes import write_exact
+
 
 FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
 
@@ -287,7 +289,7 @@ def atomic_write(path, data, root, *, private=True):
             temporary = candidate
             with os.fdopen(output, 'wb') as stream:
                 os.fchmod(stream.fileno(), 0o600)
-                stream.write(data)
+                write_exact(stream, data)
                 stream.flush()
                 os.fsync(stream.fileno())
             os.replace(temporary, relative.name, src_dir_fd=fd, dst_dir_fd=fd)

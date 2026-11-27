@@ -14,6 +14,7 @@ from .limits import source_byte_budget
 from .lease import run
 from .notification_originals import NotificationOriginals
 from .storage import atomic_write, clear_legacy, directory, read_bytes
+from .writes import write_exact
 
 
 NATIVE_STAGE = re.compile(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}')
@@ -78,7 +79,7 @@ def publish(data, capture_dir, notification, frames):
             with tempfile.NamedTemporaryFile(prefix='.atmosphera-', dir=dest, delete=False) as file:
                 temporary = Path(file.name)
                 try:
-                    file.write(raw)
+                    write_exact(file, raw)
                     file.flush()
                     os.fsync(file.fileno())
                     os.replace(temporary, target)

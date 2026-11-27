@@ -11,6 +11,8 @@ import time
 from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from .writes import write_exact
+
 SOURCE_TOO_LARGE_EXIT = 3
 TRANSFER_SLOTS = 2
 QUEUE_SIZE = 32
@@ -48,10 +50,10 @@ def download(source, target, budget):
                 # read1 returns available bytes instead of waiting to fill a
                 # chunk. The owner can observe progress even on a slow link.
                 while block := response.read1(min(128 * 1024, budget - count + 1)):
-                    count += len(block)
-                    if count > budget:
+                    if count + len(block) > budget:
                         raise SourceTooLarge('Image source is too large')
-                    output.write(block)
+                    write_exact(output, block)
+                    count += len(block)
                 if declared is not None and count != declared:
                     raise OSError('Image download ended before the complete response')
     except BaseException:
