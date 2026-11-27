@@ -31,8 +31,8 @@ def main():
     endpoint = fixture / 'owner'
     endpoint.mkdir()
     consumer = dict(formats=[dict(name='Still.webp', consumer=dict(state='ready'))], raw=3,
-                    motion=dict(state='ready', frameCount=3, result=dict(frames=3, origin='fallback')),
-                    workerRunning=False, finalInterests=0, finalRequests=0)
+                    motion=dict(state='ready', frameCount=3, result=dict(frames=3, format='webp')),
+                    retired=[dict(state='idle', status=0, url='') for _ in range(11)])
     report = dict(inputs=expected, state='complete', qtWebp='absent', case='owner', cases=[dict(id='required', result='PASS')])
     (fixture / 'result.json').write_text(json.dumps(report))
     (endpoint / 'consumer.json').write_text(json.dumps(consumer))
@@ -65,11 +65,20 @@ def main():
     check('review-rejects-missing-owner-locker', lambda: inspect(fixture, ['required'], expected, 'absent'), True)
     (locker / 'consumer.missing').rename(locker / 'consumer.json')
     log_text = (endpoint / 'qt.log').read_text()
-    for key in ('motion', 'formats'):
+    for key in ('motion', 'formats', 'retired'):
         incomplete = {name: value for name, value in consumer.items() if name != key}
         (endpoint / 'consumer.json').write_text(json.dumps(incomplete))
         (endpoint / 'qt.log').write_text(log_text.replace(json.dumps(consumer), json.dumps(incomplete)))
         check('review-rejects-owner-without-' + key, lambda: inspect(fixture, ['required'], expected, 'absent'), True)
+    for label, retired in (
+        ('short', consumer['retired'][:-1]),
+        ('malformed', [None, *consumer['retired'][1:]]),
+        ('live', [dict(state='ready', status=1, url='file:///still.webp'), *consumer['retired'][1:]]),
+    ):
+        incomplete = dict(consumer, retired=retired)
+        (endpoint / 'consumer.json').write_text(json.dumps(incomplete))
+        (endpoint / 'qt.log').write_text(log_text.replace(json.dumps(consumer), json.dumps(incomplete)))
+        check('review-rejects-' + label + '-retirement', lambda: inspect(fixture, ['required'], expected, 'absent'), True)
     (endpoint / 'consumer.json').write_text(json.dumps(consumer))
     (endpoint / 'qt.log').write_text(log_text.replace('"name": "format-0"', '"name": "format-0.png"'))
     check('review-accepts-exact-filename-schema', lambda: inspect(fixture, ['required'], expected, 'absent'))

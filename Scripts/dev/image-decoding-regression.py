@@ -18,7 +18,7 @@ from urllib.parse import unquote, urlsplit
 
 from guest_profile import activate_profile, profile_argument, protect_owned_process
 from image_decoding_fixtures import COLORS, colored_png, create_fixtures, pixel, read_png
-from image_decoding_evidence import source_manifest
+from image_decoding_evidence import displays_retired, source_manifest
 from image_decoding_workspace import retire_fixture_copy, settle_fixture_session
 from image_decoding_jobs import Worker, supervise
 from image_decoding_bus import address_for, private_bus
@@ -2278,7 +2278,7 @@ os.execv('/usr/bin/find', ['find', *args])
                    and all(len(events) >= 3 and all(tuple(b) == COLORS[(COLORS.index(tuple(a)) + 1) % 3]
                        for a, b in zip(events, events[1:])) for events in sequences) and set(centers) == set(COLORS),
                    dict(consumer=motion, sequences=sequences, centers=centers))
-        self.check('owner-display-retirement', self.displays_retired(result['retired'], len(result['formats']) + 10), result['retired'])
+        self.check('owner-display-retirement', displays_retired(result['retired'], len(result['formats']) + 10), result['retired'])
         self.owner_fault(inputs)
         # The independent locker installs a reviewed subset, not a link to all
         # shell services. Exercise the same source API in that assembled graph
@@ -2297,13 +2297,9 @@ os.execv('/usr/bin/find', ['find', *args])
         self.check('owner-locker-standalone-consumer', locked['motion']['state'] == 'ready'
                    and locked['motion']['frameCount'] == 3 and {tuple(p) for p in centers} == set(COLORS)
                    and all(row['consumer']['state'] == 'ready' for row in locked['formats'])
-                   and self.displays_retired(locked['retired'], len(locked['formats']) + 10), locked)
+                   and displays_retired(locked['retired'], len(locked['formats']) + 10), locked)
         self.source_admission(inputs)
         return result
-
-    @staticmethod
-    def displays_retired(rows, count):
-        return len(rows) == count and all(row['state'] == 'idle' and row['status'] == 0 and not row['url'] for row in rows)
 
     def retired_acquisitions(self, name):
         cache = self.work / (name + '-profile') / 'cache'
@@ -2466,7 +2462,7 @@ os.execv('/usr/bin/find', ['find', *args])
                    all(row['code'] == 'source-too-large' and row['reason'] for row in result['terminalDetails']), result['terminalDetails'])
         self.check('owner-admitted-remote-presents-pixels', result['settled'].get('valid') == 'ready' and pixel(output / 'valid.png') == list(COLORS[0]), result)
         leases = self.retired_acquisitions('source-admission')
-        self.check('owner-admission-retires-all-interests', self.displays_retired(result['retired'], 6)
+        self.check('owner-admission-retires-all-interests', displays_retired(result['retired'], 6)
                    and not leases, dict(retired=result['retired'], leases=leases))
 
 

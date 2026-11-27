@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from image_decoding_evidence import displays_retired
 from image_decoding_fixtures import COLORS, pixel, read_png
 
 
@@ -50,7 +51,7 @@ def endpoint(directory, lane, *, owner=False):
         frames[path.name] = dict(sha256=hashlib.sha256(path.read_bytes()).hexdigest(), width=width, height=height,
                                  center=pixel(path))
     if owner:
-        require({'formats', 'motion', 'raw', 'workerRunning', 'finalInterests', 'finalRequests'} <= consumer.keys()
+        require({'formats', 'motion', 'raw', 'retired'} <= consumer.keys()
                 and isinstance(consumer['formats'], list) and consumer['formats'],
                 'Incomplete owner endpoint: ' + str(directory))
         require(consumer['raw'] == (1 if lane == 'present' else 3), 'Raw codec control mismatch')
@@ -59,12 +60,12 @@ def endpoint(directory, lane, *, owner=False):
             center = frames['format-' + str(index) + '.png']['center']
             require(max(abs(a-b) for a, b in zip(center, COLORS[0])) <= 8, 'Format pixels disagree: ' + row['name'])
         motion = consumer['motion']
-        require(motion['state'] == 'ready' and motion['frameCount'] == motion['result']['frames'] == 3,
+        require(motion['state'] == 'ready' and motion['result']['format'] == 'webp'
+                and motion['frameCount'] == motion['result']['frames'] == 3,
                 'Animated endpoint did not retain three frames')
         colors = {tuple(row['center']) for name, row in frames.items() if name.startswith('motion-')}
         require(colors == set(COLORS), 'Presented motion frames do not match independent fixture colors')
-        require(motion['result']['origin'] == ('native' if lane == 'present' else 'fallback'), 'Wrong decoder lane')
-        require(not consumer['workerRunning'] and consumer['finalInterests'] == consumer['finalRequests'] == 0,
+        require(displays_retired(consumer['retired'], len(consumer['formats']) + 10),
                 'Installed/owner endpoint retained work')
     plugins = process['imagePlugins']
     if lane == 'absent':
