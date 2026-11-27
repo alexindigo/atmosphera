@@ -2090,9 +2090,11 @@ os.execv('/usr/bin/find', ['find', *args])
         stream = json.loads(metadata.stdout)['streams'][0]
         self.check('fixture-has-landscape-raster-and-real-90-degree-matrix', (stream['width'], stream['height']) == (160, 90)
                    and any(row.get('rotation') == 90 for row in stream.get('side_data_list', [])), stream)
-        for renderer, env in (('wayland', {}), ('software', {'QT_QUICK_BACKEND': 'software'})):
+        for renderer, env in (('opengl', {'QT_QUICK_BACKEND': '', 'QSG_RHI_BACKEND': 'opengl'}),
+                              ('software', {'QT_QUICK_BACKEND': 'software'})):
             result, output = self.qt(self.args.source, self.args.source / 'Scripts/dev/fixtures/image-decoding/rotated-video.qml',
                                      inputs, 'rotated-video-' + renderer, env)
+            self.check(renderer + '-renderer-observed', result['renderer'] == renderer, result)
             self.check(renderer + '-video-and-wallpaper-export-are-upright',
                        [result[k] for k in ('width', 'height', 'exportWidth', 'exportHeight')] == [90, 160, 90, 160]
                        and result['generated'] and Path(result['exported']).is_file(), result)

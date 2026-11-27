@@ -18,6 +18,7 @@ ShellRoot {
     implicitHeight: 160
     Row {
       id: preview
+      readonly property string renderer: GraphicsInfo.api === GraphicsInfo.OpenGL ? "opengl" : GraphicsInfo.api === GraphicsInfo.Software ? "software" : "unsupported"
       anchors.centerIn: parent
       NImage {
         id: live
@@ -48,6 +49,7 @@ ShellRoot {
                                                        saved: saved
                                                      }));
           console.log("IMAGE_BASELINE|" + JSON.stringify({
+                                                           renderer: preview.renderer,
                                                            width: live.decodedSize.width,
                                                            height: live.decodedSize.height,
                                                            exportWidth: exported.decodedSize.width,
