@@ -58,7 +58,6 @@
     {"id": "bar", "group": "Toggles", "label": "Bar visibility", "description": "Toggle the shell bar.", "icon": "layout-navbar", "command": "atmosphera ipc bar toggle"},
     {"id": "dock", "group": "Toggles", "label": "Dock enabled", "description": "Turn the dock setting on or off.", "icon": "layout-bottombar", "command": "atmosphera ipc dock toggle"},
     {"id": "play-pause", "group": "Toggles", "label": "Play or pause", "description": "Toggle playback in the active player.", "icon": "player-play", "command": "atmosphera ipc media playPause"},
-    {"id": "overview", "group": "Compositor", "compositor": "niri", "label": "Overview", "description": "Toggle the native niri workspace overview.", "icon": "layout-grid", "command": "niri msg action toggle-overview"},
-    {"id": "windows-map", "requiresPlugin": "niri-windows-map", "label": "Windows map", "description": "Toggle the map of open windows.", "icon": "map", "command": "atmosphera ipc niriWindowsMap toggle"}
+    {"id": "overview", "group": "Compositor", "compositor": "niri", "label": "Overview", "description": "Toggle the native niri workspace overview.", "icon": "layout-grid", "command": "niri msg action toggle-overview"}
   ]
 }

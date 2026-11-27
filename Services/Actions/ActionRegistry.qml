@@ -11,7 +11,7 @@ import qs.Services.Plugins
 Singleton {
   id: root
 
-  readonly property bool ready: _coreLoaded
+  readonly property bool ready: _coreLoaded && LegacyPanelCommands.ready
   property var actions: []
   property int revision: 0
   property bool _coreLoaded: false
@@ -46,7 +46,7 @@ Singleton {
     var output = [];
     var commands = Object.create(null);
     var pluginCore = Object.create(null);
-    function append(action, origin, key, section, group, ids) {
+    function append(action, origin, key, section, group, ids, plugin) {
       var verdict = ActionCommand.validate(action, origin);
       if (!verdict.valid || ids.indexOf(action.id) >= 0) {
         var reason = verdict.valid ? "duplicate id" : verdict.error;
@@ -56,10 +56,20 @@ Singleton {
           Logger.w("ActionRegistry", key + ": " + reason);
         return;
       }
+      if (plugin) {
+        if (action.panel && !plugin.manifest.entryPoints?.panel) {
+          Logger.w("ActionRegistry", key + ": panel actions require entryPoints.panel");
+          return;
+        }
+        if (!action.panel && !plugin.mainInstance)
+          return;
+      }
       ids.push(action.id);
       if (!ActionCommand.available(action, context))
         return;
-      var command = ActionCommand.compose(action, {});
+      var command = action.panel ? ActionCommand.panelCommand(action.panel, key) : ActionCommand.compose(action, {});
+      if (!command)
+        return;
       if (commands[command]) {
         Logger.w("ActionRegistry", key + ": duplicate composed command " + command);
         return;
@@ -72,7 +82,7 @@ Singleton {
         label: action.label,
         description: action.description,
         icon: action.icon,
-        command: action.command,
+        command: action.panel ? command : action.command,
         arguments: action.arguments || []
       };
       if (action.requiresPlugin) {
@@ -96,15 +106,14 @@ Singleton {
         output.push(row);
       });
       delete pluginCore[manifest.id];
-      if (!plugin.mainInstance || manifest.actions === undefined)
-        return;
-      if (!Array.isArray(manifest.actions)) {
+      const declared = manifest.actions === undefined ? LegacyPanelCommands.pickerActions(manifest) : manifest.actions;
+      if (!Array.isArray(declared)) {
         Logger.w("ActionRegistry", key + ": actions must be a list");
         return;
       }
       var pluginIds = [];
-      manifest.actions.forEach(function (action) {
-        append(action, "plugin", key, "Plugins", manifest.name, pluginIds);
+      declared.forEach(function (action) {
+        append(action, "plugin", key, "Plugins", manifest.name, pluginIds, plugin);
       });
     });
     actions = output;
@@ -145,6 +154,13 @@ Singleton {
       root.rebuild();
     }
     function onAllPluginsLoaded() {
+      root.rebuild();
+    }
+  }
+
+  Connections {
+    target: LegacyPanelCommands
+    function onReadyChanged() {
       root.rebuild();
     }
   }

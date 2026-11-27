@@ -1,0 +1,4 @@
+# Legacy target	Legacy method	Panel method	Plugin ID	Picker min version (inclusive)	Picker max version (inclusive)	Picker label	Picker description	Picker icon
+niriWindowsMap	open	openPanel	niri-windows-map
+niriWindowsMap	toggle	togglePanel	niri-windows-map	1.0.0	1.0.20	Windows map	Toggle the map of open windows.	map
+niriWindowsMap	close	closePanel	niri-windows-map

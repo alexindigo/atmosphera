@@ -219,6 +219,40 @@ class ActionRegression(unittest.TestCase):
         self.manifest["entryPoints"] = {}
         self.has_error("require entryPoints.main")
 
+    def panel_action(self):
+        self.manifest["entryPoints"] = {"panel": "Panel.qml"}
+        (self.plugin / "Panel.qml").write_text("import QtQuick\nItem {}\n")
+        del self.action["command"]
+        self.action["panel"] = "open"
+
+    def test_panel_without_main(self):
+        self.panel_action()
+        self.assertEqual(self.errors(), [])
+
+    def test_panel_without_panel_entry_point(self):
+        self.panel_action()
+        self.manifest["entryPoints"] = {}
+        self.has_error("require entryPoints.panel")
+
+    def test_panel_rejects_arbitrary_operation(self):
+        self.panel_action()
+        self.action["panel"] = "install"
+        self.has_error("invalid panel operation")
+
+    def test_panel_rejects_authored_command_or_arguments(self):
+        for key, value in [("command", self.action["command"]), ("arguments", [])]:
+            with self.subTest(key=key):
+                if "panel" not in self.action:
+                    self.panel_action()
+                self.action[key] = value
+                self.has_error("panel actions cannot specify command or arguments")
+                del self.action[key]
+
+    def test_panel_rejects_duplicate_operation(self):
+        self.panel_action()
+        self.manifest["actions"].append(dict(self.action, id="other"))
+        self.has_error("duplicate composed command")
+
     def test_unknown_target(self):
         self.action["command"] = "atmosphera ipc plugin:missing show"
         self.has_error("unknown IPC target")
