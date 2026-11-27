@@ -18,6 +18,19 @@ from unittest.mock import Mock, patch
 from guest_profile import ProcessIdentity, activate_profile, profile_argument
 
 
+def publish_controls(scratch, output):
+    for control in ('cohort', 'compositor'):
+        source = scratch / control / 'artifacts'
+        if not source.is_dir():
+            continue
+        destination = output / control
+        destination.mkdir()
+        for entry in sorted(source.iterdir()):
+            if entry.is_symlink() or not entry.is_file():
+                raise AssertionError(f'not a regular control receipt: {entry}')
+            (destination / entry.name).write_bytes(entry.read_bytes())
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
@@ -245,23 +258,30 @@ with subprocess.Popen([sys.executable, '-c', worker], stdin=subprocess.PIPE, sta
                 process.wait(timeout=5)
             for endpoint in sockets:
                 endpoint.close()
-        for control in ('cohort', 'compositor'):
-            evidence = args.output / control
-            evidence.mkdir()
-            for entry in sorted((Path(scratch.name) / control / 'artifacts').iterdir()):
-                if entry.is_symlink() or not entry.is_file():
-                    raise AssertionError(f'not a regular control receipt: {entry}')
-                (evidence / entry.name).write_bytes(entry.read_bytes())
-        check('compositor-receipt-reopens-without-runtime',
-              json.loads((args.output / 'compositor/compositor-held.json').read_text()) == row
-              and not (args.output / 'compositor/r').exists())
         profile.verify()
     finally:
-        retire_controls()
-        scratch.cleanup()
-        result = dict(passed=not failures, cases=cases, failures=failures,
-                      captured=[i.record() for i in identities])
-        (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+        primary = sys.exception()
+        errors = []
+        for action in (retire_controls, lambda: publish_controls(Path(scratch.name), args.output), scratch.cleanup):
+            try:
+                action()
+            except Exception as error:
+                errors.append(error)
+        try:
+            if primary is None and not errors:
+                check('compositor-receipt-reopens-without-runtime',
+                      json.loads((args.output / 'compositor/compositor-held.json').read_text()) == row
+                      and not (args.output / 'compositor/r').exists())
+            result = dict(passed=primary is None and not errors and not failures, cases=cases, failures=failures,
+                          captured=[i.record() for i in identities])
+            (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+        except Exception as error:
+            errors.append(error)
+        if errors:
+            if primary is None:
+                raise ExceptionGroup('Lifetime evidence finalization failed', errors)
+            for error in errors:
+                primary.add_note('Lifetime evidence finalization failed: ' + repr(error))
     return 1 if failures else 0
 
 

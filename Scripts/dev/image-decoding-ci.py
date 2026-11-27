@@ -201,7 +201,7 @@ def run(args, workspace, admitted):
                      '--manifest', str(source / 'Scripts/dev/fixtures/image-decoding/consumers.json'),
                      '--report', str(admitted.journal_base / ('boundary-' + args.label + '.json'))],
         'workspace': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-workspace-tests.py'),
-                      '--guest-profile', str(profile_path)],
+                      '--guest-profile', str(profile_path), '--output', str(admitted.journal_base / ('workspace-' + args.label))],
     }
     for case in ('formats', 'chooser', 'download-burst'):
         commands[case] = [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-regression.py'),

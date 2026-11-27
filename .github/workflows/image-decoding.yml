@@ -37,6 +37,7 @@ jobs:
           done
       - name: Real headless Wayland consumers and boundary controls
         run: |
+          result=0
           for readers in present absent; do
             sudo install -d -o 1000 -g 1000 "$RUNNER_TEMP/image-decoding/$readers"
             args=()
@@ -49,8 +50,9 @@ jobs:
               --volume "$PWD/plugins:/home/dev/image-decoding/plugins:ro" \
               "atmosphera-image-ci-$readers" python3 -B /home/dev/image-decoding/shell/Scripts/dev/image-decoding-ci.py \
               --workspace /home/dev/image-decoding --engine docker \
-              --label "$readers" --qt-readers "$readers" "${args[@]}"
+              --label "$readers" --qt-readers "$readers" "${args[@]}" || result=$?
           done
+          exit "$result"
       - name: Make generated evidence readable by the runner
         if: always()
         run: |
