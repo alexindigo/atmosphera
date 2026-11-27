@@ -8,7 +8,7 @@ ARG QT_READERS=present
 RUN getcap /usr/bin/sway && setcap -r /usr/bin/sway
 RUN bash -ec '\
     source /usr/local/share/atmosphera/imvqml-arch-runtime.sh; \
-    pacman -Q "${imvqml_core[@]}" "${imvqml_readers[@]}"; \
+    pacman -Q python-dbus "${imvqml_core[@]}" "${imvqml_readers[@]}"; \
     case "$QT_READERS" in \
       present) ;; \
       absent) pacman -R --noconfirm "${imvqml_readers[@]}" ;; \

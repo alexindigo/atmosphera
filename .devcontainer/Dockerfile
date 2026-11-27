@@ -29,7 +29,7 @@ RUN bash -ec '\
     source /usr/local/share/atmosphera/imvqml-arch-runtime.sh; \
     case "$INSTALL_IMAGE_TOOLS" in \
       0) set -- ;; \
-      1) set -- sway imagemagick ffmpeg "${imvqml_readers[@]}" ;; \
+      1) set -- sway imagemagick ffmpeg python-dbus "${imvqml_readers[@]}" ;; \
       *) echo "INSTALL_IMAGE_TOOLS must be 0 or 1" >&2; exit 1 ;; \
     esac; \
     bash /usr/local/share/atmosphera/arch-install.sh \
