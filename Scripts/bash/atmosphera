@@ -121,11 +121,20 @@ case "$SUBCMD" in
   # --- ipc + shortcuts (ipc is the real module; fire/custom/plugin route through it) ---
   ipc)
     pid=$(shell_owner_require) || exit 1
+    args=("$@")
+    # Match exact historical argv before sending anything to the IPC dispatcher.
+    aliases="$SELF_DIR/../../Assets/Actions/legacy-panel-commands.tsv"
+    if (( $# == 2 )) && [[ -r "$aliases" ]]; then
+      while IFS=$'\t' read -r target method panel_method plugin_id; do
+        [[ "$target" != \#* && "$target" == "$1" && "$method" == "$2" ]] || continue
+        args=(plugin "$panel_method" "$plugin_id")
+        break
+      done < "$aliases"
+    fi
     # quickshell 0.3.2 exits 0 even for rejected IPC calls. Its ipccomm.cpp
     # diagnostics, as well as the process status, define the reply contract.
     # Pad a short call to the reported arity and retry once; never replay a
     # completed call or retry other errors. Keep handler output unchanged.
-    args=("$@")
     short_reply='^Too few arguments provided \(([0-9]+) required but ([0-9]+) were provided\.\)'
     for attempt in 0 1; do
       status=0

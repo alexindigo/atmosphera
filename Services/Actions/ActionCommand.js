@@ -47,12 +47,21 @@ function validate(action, origin) {
     var allowed = ["id", "label", "description", "icon", "command", "arguments"];
     if (origin === "core")
         allowed = allowed.concat(["group", "requiresPlugin", "compositor"]);
+    else
+        allowed.push("panel");
     if (unknown(action, allowed))
         return fail("unknown action key");
     if (typeof action.id !== "string" || !ID.test(action.id))
         return fail("invalid action id");
     if (!line(action.label) || !line(action.description) || !line(action.icon))
         return fail("label, description and icon must be non-empty single-line strings");
+    if (owns(action, "panel")) {
+        if (["open", "toggle", "close"].indexOf(action.panel) < 0)
+            return fail("invalid panel operation");
+        if (owns(action, "command") || owns(action, "arguments"))
+            return fail("panel actions cannot specify command or arguments");
+        return {valid: true, error: ""};
+    }
     if (typeof action.command !== "string")
         return fail("invalid command");
     var words = action.command.split(" ");
@@ -111,6 +120,10 @@ function validate(action, origin) {
 function available(action, context) {
     return (!action.compositor || action.compositor === context.compositor)
         && (!action.requiresPlugin || context.loadedPluginIds.indexOf(action.requiresPlugin) >= 0);
+}
+
+function panelCommand(operation, pluginKey) {
+    return pluginKey && !/[^\w.:-]/.test(pluginKey) ? "atmosphera ipc plugin " + operation + "Panel " + pluginKey : "";
 }
 
 function quote(value) {

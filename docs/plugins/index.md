@@ -196,10 +196,9 @@ Details: [image sources](../development/image-sources.md).
 
 ### Declaring actions
 
-An optional manifest `actions` list describes user-facing operations exposed by
-the plugin's Main `IpcHandler`. Commands remain ordinary shell commands, not a
-new in-process dispatch API. Only loaded plugins with a Main instance contribute
-declared actions. Unavailable actions are absent, never disabled.
+An optional manifest `actions` list describes user-facing operations. Loaded
+plugins can contribute actions from their Main `IpcHandler` or from their panel
+entry point. Unavailable actions are absent, never disabled.
 
 ```json
 "actions": [{
@@ -216,8 +215,9 @@ declared actions. Unavailable actions are absent, never disabled.
 | `id` | Lowercase letter followed by lowercase letters, digits or hyphens; unique within the source |
 | `label`, `description` | Non-empty single-line strings |
 | `icon` | Key from the shell's built-in icon set |
-| `command` | Exactly `atmosphera ipc <target> <function>`, safe words separated by single spaces |
-| `arguments` | Optional ordered list of typed arguments, each with `name`, `label`, `type` and a valid `default` |
+| `command` | For a Main action: exactly `atmosphera ipc <target> <function>`, safe words separated by single spaces |
+| `arguments` | For a Main action: optional ordered list of typed arguments, each with `name`, `label`, `type` and a valid `default` |
+| `panel` | For a panel action: `open`, `toggle` or `close`; requires `entryPoints.panel` and replaces both `command` and `arguments` |
 
 Argument names start with a lowercase letter and contain only letters/digits.
 Types are `choice` (non-empty unique `{value, label}` choices), `number` (integer,
@@ -226,13 +226,39 @@ Unknown keys are rejected, including on arguments and choices. Every argument
 needs a valid default; placeholders are not commands. Plugin actions do not set
 `group`, `requiresPlugin` or `compositor`: those are core-catalog fields only.
 
-The compatibility gate checks every manifest's actions against its real Main
-entry point: target/function, arity, supported parameter types, icons, duplicate
-IDs and commands. Parameters require an explicit `string` type; `int` is also
+The compatibility gate checks icons, duplicate IDs and commands. It checks
+Main actions against the plugin's real Main entry point for target/function,
+arity and supported parameter types. Parameters require an explicit `string` type; `int` is also
 accepted for number arguments. Untyped and `var` parameters are not registered
 by Quickshell IPC. A handler may have at most ten parameters, and its return type
 must also be IPC-compatible (no annotation, `void`, `var`, `string`, `int`, `bool`,
 `real` or `color`). Do not declare helpers merely because they are callable.
+
+A panel-only plugin does not need to add a Main entry point:
+
+```json
+"entryPoints": {"panel": "Panel.qml"},
+"actions": [{
+  "id": "toggle",
+  "label": "My panel",
+  "description": "Toggle my panel.",
+  "icon": "terminal",
+  "panel": "toggle"
+}]
+```
+
+The picker saves `atmosphera ipc plugin togglePanel <plugin-key>` (or
+`openPanel`/`closePanel`) using the installed plugin's key. A literal hot-corner
+command uses the corner's output; a CLI invocation uses the current output.
+Set `minAtmospheraVersion` to the first released shell that supports panel
+actions, or to a later release if the plugin needs other features.
+
+Existing `atmosphera ipc niriWindowsMap open|toggle|close` spellings remain
+accepted by the CLI and the hot-corner command reader via
+`Assets/Actions/legacy-panel-commands.tsv`. Retire these aliases only in an
+announced breaking shell release after their replacement has shipped. An updated
+plugin manifest alone is not a removal trigger: external bindings may still use
+the old command.
 
 ### Using the action registry
 

@@ -1,0 +1,4 @@
+# Legacy target	Legacy method	Panel method	Plugin ID
+niriWindowsMap	open	openPanel	niri-windows-map
+niriWindowsMap	toggle	togglePanel	niri-windows-map
+niriWindowsMap	close	closePanel	niri-windows-map

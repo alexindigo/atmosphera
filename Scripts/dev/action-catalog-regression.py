@@ -168,14 +168,16 @@ def main():
     check("registry:core-rows", [row["key"] for row in merged if row["section"] == "Atmosphera"],
           ["core/" + action["id"] for action in catalog if "group" in action])
     check("registry:plugin-groups", [(row["key"], row["group"]) for row in merged if row["section"] == "Plugins"],
-          [("fx-actions/show", "Fixture Actions"), ("fx-bad/show", "Mixed Fixture"), ("core/windows-map", "Niri Windows Map")])
+          [("fx-actions/show", "Fixture Actions"), ("fx-bad/show", "Mixed Fixture"), ("niri-windows-map/toggle", "Niri Windows Map")])
+    check("registry:panel-command", lookup.get("niri-windows-map/toggle", {}).get("command"),
+          "atmosphera ipc plugin togglePanel niri-windows-map")
     check("registry:overview", lookup.get("core/overview", {}).get("group"), "Compositor")
     check("registry:invalid-warning", "ActionRegistry" in log and "fx-bad: unknown action key" in log, True)
     unload = observed.get("registry:unload", {})
     check("registry:revision", unload.get("revisionBumped"), True)
     check("registry:removed", [row["key"] for row in unload.get("actions", [])], [row["key"] for row in merged if not row["key"].startswith("fx-actions/")])
     check("registry:required-removed", [row["key"] for row in observed.get("registry:required-unload", [])],
-          [row["key"] for row in merged if not row["key"].startswith("fx-actions/") and row["key"] != "core/windows-map"])
+          [row["key"] for row in merged if not row["key"].startswith(("fx-actions/", "niri-windows-map/"))])
     check("registry:completed", "ACTION_DONE" in log and execution["exit_code"] == 0 and execution["cleanup_complete"] and not ERRORS.search(log), True)
     check("registry:core-errors", bool(re.search(r"ERROR\s+qml:.*ActionRegistry", log)), False)
     hashes = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()

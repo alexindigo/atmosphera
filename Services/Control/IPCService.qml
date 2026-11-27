@@ -31,23 +31,40 @@ Singleton {
     Logger.i("IPCService", "Service started");
   }
 
-  // A corner can handle literal panel commands directly, including the action
-  // picker's Windows map command. Other strings retain their bash semantics.
+  FileView {
+    id: legacyPanelCommands
+    path: Quickshell.shellDir + "/Assets/Actions/legacy-panel-commands.tsv"
+    preload: true
+  }
+
+  // Normalize exact legacy spellings at the command boundary, not at dispatch.
+  function _normalizePanelCommand(command) {
+    const tokens = /^atmosphera[ \t]+ipc[ \t]+(\w+)[ \t]+(\w+)$/.exec(command);
+    if (tokens) {
+      for (const line of legacyPanelCommands.text().split("\n")) {
+        const columns = line.split("\t");
+        if (!line.startsWith("#") && columns.length === 4 && columns[0] === tokens[1] && columns[1] === tokens[2])
+          return "atmosphera ipc plugin " + columns[2] + " " + columns[3];
+      }
+    }
+    return command;
+  }
+
+  // A corner handles literal panel commands on its own output. Scripts and
+  // other shell strings retain their bash semantics.
   function invokePanelCommand(command, screenName) {
-    const map = /^atmosphera\s+ipc\s+niriWindowsMap\s+(open|toggle|close)$/.exec(command.trim());
-    const generic = /^atmosphera\s+(?:ipc\s+)?plugin\s+(open|toggle|close)Panel\s+([\w.:-]+)$/.exec(command.trim());
-    if (!map && !generic)
+    const generic = /^atmosphera[ \t]+(?:ipc[ \t]+)?plugin[ \t]+(open|toggle|close)Panel[ \t]+([\w.:-]+)$/.exec(root._normalizePanelCommand(command.trim()));
+    if (!generic)
       return false;
     const screen = Quickshell.screens.find(output => output.name === screenName);
     if (screen)
-      Service.invokePluginPanel(root._resolvePluginKey(map ? "niri-windows-map" : generic[2]), (map || generic)[1], screen);
+      Service.invokePluginPanel(root._resolvePluginKey(generic[2]), generic[1], screen);
     return true;
   }
 
-  // Resolve a bare plugin id ("niri-windows-map") or composite key
-  // ("<hash>:niri-windows-map") to the composite key used by the registries.
+  // Resolve a bare plugin ID or a source-qualified key used by the registries.
   function _resolvePluginKey(id) {
-    if (id.indexOf(":") !== -1) {
+    if (id.indexOf(":") !== -1 || Service.isPluginLoaded(id)) {
       return id;
     }
     var installed = Registry.installedPlugins;
@@ -1120,29 +1137,6 @@ Singleton {
       if (group)
         InputMethodService.noteGroupHint(name, group);
       return root._imResult(InputMethodService.toggleTo(name, null));
-    }
-  }
-
-  IpcHandler {
-    target: "niriWindowsMap"
-
-    // The composite key is resolved from the installed registry or the
-    // catalog source — never hardcoded to a source URL, so it works no
-    // matter which source the plugin was installed from
-    function _mapKey() {
-      return root._resolvePluginKey("niri-windows-map");
-    }
-
-    function open() {
-      Service.invokePluginPanel(_mapKey(), "open");
-    }
-
-    function close() {
-      Service.invokePluginPanel(_mapKey(), "close");
-    }
-
-    function toggle() {
-      Service.invokePluginPanel(_mapKey(), "toggle");
     }
   }
 }

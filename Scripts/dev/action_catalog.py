@@ -48,12 +48,20 @@ def validate_action(action, origin):
     allowed = {"id", "label", "description", "icon", "command", "arguments"}
     if origin == "core":
         allowed |= {"group", "requiresPlugin", "compositor"}
+    else:
+        allowed.add("panel")
     if action.keys() - allowed:
         return fail("unknown action key")
     if not isinstance(action.get("id"), str) or not ID.fullmatch(action["id"]):
         return fail("invalid action id")
     if not all(line(action.get(key)) for key in ("label", "description", "icon")):
         return fail("label, description and icon must be non-empty single-line strings")
+    if "panel" in action:
+        if action["panel"] not in ("open", "toggle", "close"):
+            return fail("invalid panel operation")
+        if "command" in action or "arguments" in action:
+            return fail("panel actions cannot specify command or arguments")
+        return {"valid": True, "error": ""}
     if not isinstance(action.get("command"), str):
         return fail("invalid command")
     words = action["command"].split(" ")
@@ -176,7 +184,7 @@ def ipc_handlers(path, lexer):
     return handlers
 
 
-def action_checks(actions, origin, icons, handlers, core_commands=()):
+def action_checks(actions, origin, icons, handlers, core_commands=(), *, plugin_id=None, panel=False):
     errors, ids, commands = [], set(), set()
     if not isinstance(actions, list):
         return ["actions must be a list"]
@@ -191,10 +199,15 @@ def action_checks(actions, origin, icons, handlers, core_commands=()):
         ids.add(action["id"])
         if action["icon"] not in icons:
             errors.append(f"{prefix}: missing icon {action['icon']}")
-        command = compose(action)
+        operation = action.get("panel")
+        if operation and not panel:
+            errors.append(f"{prefix}: panel actions require entryPoints.panel with a safe, existing file")
+        command = f"atmosphera ipc plugin {operation}Panel {plugin_id}" if operation else compose(action)
         if command in commands or command in core_commands:
             errors.append(f"{prefix}: duplicate composed command {command}")
         commands.add(command)
+        if operation:
+            continue
         words = action["command"].split(" ")
         if words[:2] != ["atmosphera", "ipc"]:
             continue
@@ -243,19 +256,30 @@ def check_core(shell):
     return action_checks(read_core(shell), "core", read_icons(shell), handlers)
 
 
+def entry_point_file(directory, entry):
+    if not isinstance(entry, str):
+        return None
+    url = urlsplit(entry)
+    if url.scheme or url.netloc or Path(url.path).is_absolute() or ".." in Path(url.path).parts:
+        return None
+    path = directory / url.path
+    return path if path.is_file() else None
+
+
 def check_plugin(manifest, directory, shell):
     if "actions" not in manifest:
         return []
+    actions = manifest["actions"]
+    if not isinstance(actions, list):
+        return ["actions must be a list"]
     directory, shell = Path(directory), Path(shell)
-    main = manifest.get("entryPoints", {}).get("main")
-    if not isinstance(main, str):
-        return ["declared actions require entryPoints.main"]
-    url = urlsplit(main)
-    if url.scheme or url.netloc or Path(url.path).is_absolute() or ".." in Path(url.path).parts:
-        return ["declared actions require a safe main entry point"]
-    path = directory / url.path
-    if not path.is_file():
-        return ["declared actions require an existing main entry point"]
+    entries = manifest.get("entryPoints", {})
+    handlers = {}
+    if any(isinstance(a, dict) and "panel" not in a for a in actions):
+        main = entry_point_file(directory, entries.get("main"))
+        if main is None:
+            return ["declared command actions require entryPoints.main with a safe, existing file"]
+        handlers = ipc_handlers(main, load_lexer(shell))
     core = [compose(a) for a in read_core(shell) if validate_action(a, "core")["valid"]]
-    return action_checks(manifest["actions"], "plugin", read_icons(shell),
-                         ipc_handlers(path, load_lexer(shell)), core)
+    return action_checks(actions, "plugin", read_icons(shell), handlers, core,
+                         plugin_id=manifest.get("id"), panel=entry_point_file(directory, entries.get("panel")) is not None)
