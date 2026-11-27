@@ -72,7 +72,12 @@ Services/Media/SpectrumService.qml
 Services/Networking/BluetoothRssi.qml
 Services/Networking/BluetoothService.qml
 Services/Networking/NetworkService.qml
+Services/Networking/NmAccessPoint.qml
+Services/Networking/NmActiveConnection.qml
 Services/Networking/NmDevice.qml
+Services/Networking/NmIpConfig.qml
+Services/Networking/NmProfile.qml
+Services/Networking/NmSsid.js
 Services/Networking/NmState.qml
 Services/Power/PowerProfileService.qml
 Services/System/HostService.qml
