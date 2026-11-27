@@ -18,7 +18,6 @@ Rectangle {
   property bool selectable: true
   property bool cursor: false
   property bool listingFocused: false
-  property var thumbnailProvider: null
   property bool thumbnailActive: false
   property var operations: null
   readonly property bool renaming: !!operations && operations.renamePath === path
@@ -76,7 +75,6 @@ Rectangle {
       modified: root.modified
       descriptor: root.iconDescriptor
       iconSize: root.iconSize
-      thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
       nameEditor: root.renaming ? renameEditor : null
     }
@@ -92,7 +90,6 @@ Rectangle {
       descriptor: root.iconDescriptor
       iconSize: root.iconSize
       widths: root.columnWidths
-      thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
       nameEditor: root.renaming ? renameEditor : null
     }
@@ -106,7 +103,6 @@ Rectangle {
       modified: root.modified
       descriptor: root.iconDescriptor
       iconSize: root.iconSize
-      thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
       nameEditor: root.renaming ? renameEditor : null
     }

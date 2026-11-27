@@ -12,7 +12,6 @@ FileListColumns {
   required property var modified
   required property var descriptor
   property real iconSize: 20 * Style.uiScaleRatio
-  property var thumbnailProvider: null
   property bool thumbnailActive: false
   property Component nameEditor: null
   leadingWidth: iconSize + Style.marginXS
@@ -38,7 +37,6 @@ FileListColumns {
         directory: root.directory
         modified: root.modified
         descriptor: root.descriptor
-        thumbnailProvider: root.thumbnailProvider
         thumbnailActive: root.thumbnailActive
       }
     }

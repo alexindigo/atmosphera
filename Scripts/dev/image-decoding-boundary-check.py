@@ -6,8 +6,8 @@ and compares every gated site with the reviewed manifest
 (Scripts/dev/fixtures/image-decoding/consumers.json). A gated site is a place
 where Qt or a process would decode image bytes by itself: native image nodes
 (also through local wrappers), text laid out as markup, ColorQuantizer,
-QML built at run time and converter commands. Owner renderers are the
-boundary and are not sites.
+QML built at run time and converter commands. The ImvQml entrypoints are
+reviewed sites too: arbitrary bypasses of shell source admission fail closed.
 
 Every discovered site must match a manifest entry exactly (file, rule, node
 text hash) with a disposition allowed for its rule, and every entry must
@@ -30,40 +30,27 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from image_decoding_sources import Language, Parser, discover, scan, tree_sitter_qmljs, walk, RENDERERS, NATIVE_IMAGES  # noqa: E402
 
 DISPOSITIONS = {
-    'native-image': {'owner-renderer', 'provider-adapter', 'fixed-asset', 'finite-asset-set', 'generated-output',
-                     'missing-packaged-asset'},
+    'native-image': {'fixed-asset', 'finite-asset-set', 'generated-output',
+                     'missing-packaged-asset', 'legacy-shell-fallback'},
     'text-markup': {'owner-renderer', 'wrapper-definition', 'shell-authored-markup', 'escaped-plugin-markup', 'plugin-authored-text'},
     'color-quantizer': {'owner-output'},
     'dynamic-qml': {'reviewed-construction'},
-    'converter-command': {'owner-event-name', 'generated-output-edit', 'owner-thumbnail-color-sampling'},
-    'video-frame-capture': {'owner-video-producer'},
-    'canvas-image': {'owner-renderer'},
+    'converter-command': {'owner-event-name', 'generated-output-edit'},
+    'imv-boundary': {'imv-entrypoint'},
 }
-SHELL_ONLY = {'owner-renderer', 'provider-adapter', 'wrapper-definition', 'shell-authored-markup', 'owner-event-name', 'owner-video-producer'}
+SHELL_ONLY = {'owner-renderer', 'wrapper-definition', 'shell-authored-markup', 'owner-event-name'}
 OWNER_FILES = {'owner-renderer': {'Widgets/NImage.qml', 'Widgets/NImageText.qml'},
-               'owner-video-producer': {'Services/UI/VideoFrameProducer.qml'},
-               'provider-adapter': {'Services/UI/ImageAdmission.qml'}, 'wrapper-definition': {'Widgets/NText.qml'}}
+               'wrapper-definition': {'Widgets/NText.qml'}}
+IMV_ENTRYPOINTS = {
+    ('shell', 'Widgets/NImage.qml', 'ImvImage'),
+    ('shell', 'Services/UI/ImageCacheService.qml', 'ImvImageJob'),
+    ('shell', 'Services/UI/ImageRetention.qml', 'ImvImageJob'),
+    ('shell', 'Services/Theming/TemplateProcessor.qml', 'ImvImageJob'),
+    ('plugins', 'wallcards/src/ThumbnailService.qml', 'ImvImageJob'),
+}
+LEGACY_FAVICON = ('plugins', 'niri-windows-map/MapFavicon.qml', 'Image')
+LEGACY_FAVICON_SOURCES = {'niri-windows-map/' + name for name in ('MapFavicon.qml', 'MapCanvas.qml', 'MapFacade.qml')}
 IDENTITY = ('repository', 'path', 'rule', 'node', 'nodeSha256')
-SAMPLING = 'owner-thumbnail-color-sampling'
-SAMPLING_ARGV = ('["magick", "-limit", "thread", "1", thumbnailPath, "-scale", "32x32>", '
-                 '"-type", "TrueColorAlpha", "-depth", "8", "-format", "%c", "histogram:info:-"]')
-
-
-def active_entries(sites, manifest):
-    """Wallcards migration: its pinned CI revision uses the old quantizer.
-
-    One exact site replaces it. Seeing both leaves the old site unclassified;
-    seeing neither leaves it stale. No other entry is conditional.
-    """
-    identities = {tuple(site[k] for k in IDENTITY) for site in sites}
-    for entry in manifest['sites']:
-        replacement = entry.get('wallcardsSamplingReplacement')
-        if (entry['repository'], entry['path'], entry.get('disposition')) == (
-                'plugins', 'wallcards/src/ThumbnailService.qml', 'owner-output') and replacement:
-            if tuple(replacement[k] for k in IDENTITY) in identities:
-                yield replacement
-                continue
-        yield entry
 
 
 def root_for(roots, repository, relative):
@@ -118,7 +105,7 @@ def declarations(root, relative, name):
 
 def check(sites, manifest, roots):
     failures = []
-    entries = list(active_entries(sites, manifest))
+    entries = manifest['sites']
     selectors = manifest.get('sourceSelectionFiles', {})
     selector_files, selector_hashes = set(), {}
     current = {tuple(site[k] for k in IDENTITY): site for site in sites}
@@ -131,6 +118,14 @@ def check(sites, manifest, roots):
             failures.append(dict(problem='shell-only disposition outside the shell', site=where, disposition=disposition))
         if disposition in OWNER_FILES and entry.get('path') not in OWNER_FILES[disposition]:
             failures.append(dict(problem='owner disposition outside the owner files', site=where, disposition=disposition))
+        if disposition == 'imv-entrypoint' and (entry['repository'], entry['path'], entry['node']) not in IMV_ENTRYPOINTS:
+            failures.append(dict(problem='unapproved ImvQml entrypoint', site=where, disposition=disposition))
+        if disposition == 'legacy-shell-fallback':
+            if (entry['repository'], entry['path'], entry['node']) != LEGACY_FAVICON:
+                failures.append(dict(problem='unapproved legacy fallback', site=where, disposition=disposition))
+            if not entry.get('removalTrigger') or not LEGACY_FAVICON_SOURCES <= {
+                    d['path'] for d in entry.get('definitions', []) if d['name'] == '*'}:
+                failures.append(dict(problem='legacy fallback without removal trigger or pinned selectors', site=where))
         if not entry.get('reason'):
             failures.append(dict(problem='entry without a review reason', site=where))
         site = current.get(tuple(entry.get(k) for k in IDENTITY))
@@ -155,13 +150,6 @@ def check(sites, manifest, roots):
                     failures.append(dict(problem='changed source-selection file', site=where, rule=rule))
         if disposition == 'plugin-authored-text' and not entry.get('definitions'):
             failures.append(dict(problem='exemption without pinned source definitions', site=where))
-        if disposition == SAMPLING:
-            if entry.get('repository') != 'plugins' or entry.get('path') != 'wallcards/src/ThumbnailService.qml':
-                failures.append(dict(problem='sampling disposition outside Wallcards thumbnail service', site=where, rule=rule))
-            if site is not None and site.get('commandArgv') != SAMPLING_ARGV:
-                failures.append(dict(problem='sampling requires the direct stdout histogram argv', site=where, rule=rule))
-            if not any(d['path'] == entry['path'] and d['name'] == '*' for d in entry.get('definitions', [])):
-                failures.append(dict(problem='sampling without pinned thumbnail source scope', site=where, rule=rule))
         for asset in entry.get('assets', []):
             if bool(asset.get('missing')) != (disposition == 'missing-packaged-asset'):
                 failures.append(dict(problem='missing-asset marking does not match the disposition', site=where, rule=rule))
@@ -192,7 +180,7 @@ def check(sites, manifest, roots):
 def reconcile(sites, manifest, inventory=()):
     """Final state of the baseline inventory and the 171 research rows."""
     current = {(s['repository'], s['path'], s['nodeSha256']) for s in sites}
-    by_identity = {(e['repository'], e['path'], e['nodeSha256']): e['disposition'] for e in active_entries(sites, manifest)}
+    by_identity = {(e['repository'], e['path'], e['nodeSha256']): e['disposition'] for e in manifest['sites']}
     owner_types = RENDERERS - NATIVE_IMAGES
     current_owners = {(s['repository'], s['path'], s['nodeSha256']) for s in inventory
                       if ({s['node']} | set(s.get('inheritedFrom', []))) & owner_types
@@ -249,59 +237,18 @@ CONTROLS = {
     'plugin-video-capture': ('video-frame-capture', {'Frame.qml': 'import MpvQml\nMpvFrameCapture {}\n'}),
     'plugin-aliased-video-capture': ('video-frame-capture', {'Frame.qml': 'import MpvQml as Mpv\nMpv.MpvFrameCapture {}\n'}),
     'arbitrary-color-quantizer': ('color-quantizer', {'Colors.qml': 'import QtQuick\nimport Quickshell\nItem { property string userPath\n ColorQuantizer { source: userPath } }\n'}),
+    'unreviewed-imv-reader': ('imv-boundary', {'Read.qml': 'import ImvQml as Imv\nImv.ImvImage { source: withPolicyBypassed }\n'}),
+    'unreviewed-imv-export': ('imv-boundary', {'Write.qml': 'import ImvQml\nImvImageJob {}\n'}),
+    'wallcards-histogram-regression': ('converter-command', {'Thumbnail.qml': 'import Quickshell.Io\nProcess { property string path\n command: ["magick", path, "histogram:info:-"] }\n'}),
 }
 PNG = bytes.fromhex('89504e470d0a1a0a0000000d4948445200000001000000010806000000'
                     '1f15c4890000000d49444154789c6360f8cfc0f01f0005000201b7f1dd4c0000000049454e44ae426082')
-
-
-def sampling_controls(folder):
-    # Exercise the real scanner and checker, but not the commands. Keep the
-    # manifest pin unchanged for provenance edits; re-pin the file for the
-    # command negatives so each proves the separate argv restriction.
-    root = Path(folder) / 'sampling'
-    relative = 'wallcards/src/ThumbnailService.qml'
-    path = root / relative
-    path.parent.mkdir(parents=True)
-    native = 'ColorQuantizer { source: thumbnailUrl }'
-    original = ('import QtQuick\nimport Quickshell.Io\nItem {\n'
-                '  Process { property string thumbnailPath: ownerThumbnail; command: ' + SAMPLING_ARGV + ' }\n}\n')
-    roots = dict(plugins=root)
-    path.write_text(original.replace(original.splitlines()[3], '  ' + native))
-    old, _ = scan(root, 'plugins')
-    path.write_text(original)
-    new, _ = scan(root, 'plugins')
-    old_entry = dict({k: old[0][k] for k in IDENTITY}, disposition='owner-output', reason='control native')
-    new_entry = dict({k: new[0][k] for k in IDENTITY}, disposition=SAMPLING, reason='control histogram',
-                     definitions=[dict(path=relative, name='*', sha256=declarations(root, relative, '*'))])
-    manifest = dict(sites=[dict(old_entry, wallcardsSamplingReplacement=new_entry)])
-    argv_problem = 'sampling requires the direct stdout histogram argv'
-    for name, body, repin, expected in (
-        ('stdout-histogram', original, False, None),
-        ('previous-native-quantizer', original.replace(original.splitlines()[3], '  ' + native), False, None),
-        ('unreviewed-thumbnail-input', original.replace('ownerThumbnail', 'originalImage'), False,
-         'changed or missing source definition ' + relative + ':*'),
-        ('argv-original-image', original.replace(', thumbnailPath,', ', originalImage,'), True, argv_problem),
-        ('output-file', original.replace('histogram:info:-', 'converted.png'), True, argv_problem),
-        ('shell-pipeline', original.replace(SAMPLING_ARGV, '["sh", "-c", "magick input.png histogram:info:- | cat"]'),
-         True, 'unclassified site'),
-        ('both-migration-sites', original[:-2] + native + '\n}\n', True, 'unclassified site'),
-        ('neither-migration-site', 'import QtQuick\nItem {}', False, 'stale manifest entry'),
-    ):
-        path.write_text(body)
-        candidate = copy.deepcopy(manifest)
-        if repin:
-            candidate['sites'][0]['wallcardsSamplingReplacement']['definitions'][0]['sha256'] = declarations(root, relative, '*')
-        rows, _ = scan(root, 'plugins')
-        problems = sorted({f['problem'] for f in check(rows, candidate, roots)})
-        yield dict(control='sampling-' + name, problems=problems,
-                   passed=expected in problems if expected else not problems)
 
 
 def selftest(sites, manifest, roots, shell_types):
     results = []
     base_failures = check(sites, manifest, roots)
     with tempfile.TemporaryDirectory(prefix='image-boundary-controls-', dir=str(roots['plugins'].parent)) as folder:
-        results.extend(sampling_controls(folder))
         for name, (rule, files) in CONTROLS.items():
             plugin = Path(folder) / name / 'zz-image-boundary-control'
             plugin.mkdir(parents=True)
@@ -431,7 +378,7 @@ def main():
     sites = shell_sites + plugin_sites
     failures = check(sites, manifest, roots)
     report = dict(sites=len(sites), byRule=dict(collections.Counter(s['rule'] for s in sites)),
-                  byDisposition=dict(collections.Counter(e['disposition'] for e in active_entries(sites, manifest))),
+                  byDisposition=dict(collections.Counter(e['disposition'] for e in manifest['sites'])),
                   failures=failures, reconciliation=reconcile(sites, manifest,
                       discover(roots['shell'], 'shell') + discover(roots['plugins'], 'plugins', shell_types)))
     if args.selftest:

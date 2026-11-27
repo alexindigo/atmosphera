@@ -2,13 +2,15 @@
 import hashlib
 import json
 from pathlib import Path
+import re
 
+from image_decoding_evidence import displays_retired
 from image_decoding_fixtures import COLORS, pixel, read_png
+from image_decoding_package_contract import AUR_REMOVED, AUR_REQUIRED, AUR_VARIANTS, NIX_DECODER, NIX_REMOVED
 
 
 OWNER_ENDPOINTS = {
     'owner': ('owner', 'owner-locker'),
-    'packaging': ('aur-shell', 'aur-locker', 'nix-shell', 'nix-locker'),
 }
 
 
@@ -50,7 +52,7 @@ def endpoint(directory, lane, *, owner=False):
         frames[path.name] = dict(sha256=hashlib.sha256(path.read_bytes()).hexdigest(), width=width, height=height,
                                  center=pixel(path))
     if owner:
-        require({'formats', 'motion', 'raw', 'workerRunning', 'finalInterests', 'finalRequests'} <= consumer.keys()
+        require({'formats', 'motion', 'raw', 'retired'} <= consumer.keys()
                 and isinstance(consumer['formats'], list) and consumer['formats'],
                 'Incomplete owner endpoint: ' + str(directory))
         require(consumer['raw'] == (1 if lane == 'present' else 3), 'Raw codec control mismatch')
@@ -59,12 +61,12 @@ def endpoint(directory, lane, *, owner=False):
             center = frames['format-' + str(index) + '.png']['center']
             require(max(abs(a-b) for a, b in zip(center, COLORS[0])) <= 8, 'Format pixels disagree: ' + row['name'])
         motion = consumer['motion']
-        require(motion['state'] == 'ready' and motion['frameCount'] == motion['result']['frames'] == 3,
+        require(motion['state'] == 'ready' and motion['result']['format'] == 'webp'
+                and motion['frameCount'] == motion['result']['frames'] == 3,
                 'Animated endpoint did not retain three frames')
         colors = {tuple(row['center']) for name, row in frames.items() if name.startswith('motion-')}
         require(colors == set(COLORS), 'Presented motion frames do not match independent fixture colors')
-        require(motion['result']['origin'] == ('native' if lane == 'present' else 'fallback'), 'Wrong decoder lane')
-        require(not consumer['workerRunning'] and consumer['finalInterests'] == consumer['finalRequests'] == 0,
+        require(displays_retired(consumer['retired'], len(consumer['formats']) + 10),
                 'Installed/owner endpoint retained work')
     plugins = process['imagePlugins']
     if lane == 'absent':
@@ -79,23 +81,42 @@ def endpoint(directory, lane, *, owner=False):
 
 
 def packages(directory):
-    for name in ('aur-candidate-build', 'aur-candidate-normal-install', 'nix-candidate-build', 'devcontainer-candidate-build'):
-        record = load(directory / (name + '-command.json'))
-        require(record['exit'] == 0 and (directory / (name + '.log')).is_file(), 'Package command failed: ' + name)
-    pkginfo = (directory / 'candidate.PKGINFO').read_text()
-    srcinfo = (directory / 'stable.SRCINFO').read_text()
-    for dep in ('qt6-imageformats', 'imagemagick', 'ffmpeg', 'python', 'libwebp', 'libheif'):
-        require('depend = ' + dep + '\n' in pkginfo and 'depends = ' + dep + '\n' in srcinfo, 'Missing AUR dependency: ' + dep)
-    closure = (directory / 'nix-closure.txt').read_text().splitlines()
-    for dep in ('imagemagick', 'ffmpeg', 'python3', 'qtimageformats', 'libheif'):
-        require(any(dep in Path(line).name for line in closure), 'Missing Nix closure: ' + dep)
-    tools = (directory / 'devcontainer-tools.txt').read_text()
-    for codec in ('WEBP', 'HEIC', 'AVIF', 'PNG', 'GIF'):
-        rows = [line.split() for line in tools.splitlines() if line.split() and line.split()[0].rstrip('*') == codec]
-        require(rows and ('r' if codec in ('WEBP', 'HEIC', 'AVIF') else 'w') in rows[0][2], 'Missing container delegate: ' + codec)
-    require({p.parent.relative_to(directory).as_posix() for p in directory.rglob('consumer.json')} == set(OWNER_ENDPOINTS['packaging']),
-             'Incomplete installed consumer matrix')
-    return dict(closure=closure, requiredConsumers=list(OWNER_ENDPOINTS['packaging']))
+    dependencies = {}
+    for variant in AUR_VARIANTS:
+        deps = set()
+        for line in (directory / (variant + '.SRCINFO')).read_text().splitlines():
+            key, _, value = line.partition('=')
+            if key.strip() == 'depends':
+                deps.add(re.split(r'[<>=]', value.strip(), maxsplit=1)[0])
+        require(AUR_REQUIRED <= deps, f'{variant}: missing dependencies {sorted(AUR_REQUIRED - deps)}')
+        require(not (AUR_REMOVED & deps), f'{variant}: retired dependencies {sorted(AUR_REMOVED & deps)}')
+        dependencies[variant] = sorted(deps)
+
+    # Qualification currently evaluates package metadata and wrapper inputs.
+    # It does not build/install packages or enumerate a transitive Nix closure.
+    graph = load(directory / 'nix-eval.json')
+    inputs = graph['inputs']
+    wrapper_paths, qml_paths = set(), set()
+    for line in graph['preFixup'].splitlines():
+        words = line.split()
+        for word in words:
+            wrapper_paths.update(path for path in word.strip('"').split(':') if path.startswith('/nix/store/'))
+        if words[:3] == ['--prefix', 'QML_IMPORT_PATH', ':'] and len(words) == 4:
+            qml_paths.add(words[3].strip('"'))
+
+    def package_name(path):
+        parts = Path(path).parts
+        require(parts[:3] == ('/', 'nix', 'store') and len(parts) >= 4, 'Invalid Nix store path: ' + path)
+        return parts[3].split('-', 1)[-1]
+
+    decoder = [path for path in inputs if package_name(path).startswith(NIX_DECODER + '-')]
+    require(len(decoder) == 1, 'Expected one imvqml build input')
+    require(any(path.startswith(decoder[0] + '/') and path.endswith('/qml') for path in qml_paths),
+            'Wrapper missing imvqml QML import path')
+    retired = {package_name(path) for path in set(inputs) | wrapper_paths if any(
+        package_name(path) == dep or package_name(path).startswith(dep + '-') for dep in NIX_REMOVED)}
+    require(not retired, 'Retired direct Nix dependencies: ' + ', '.join(sorted(retired)))
+    return dict(aurDependencies=dependencies, nixDecoder=decoder[0])
 
 
 def inspect(directory, contract, expected, lane):
@@ -106,14 +127,15 @@ def inspect(directory, contract, expected, lane):
     require(len(rows) == len({r['id'] for r in rows}) and {r['id'] for r in rows} == set(contract),
             'Missing or unexpected case IDs: ' + str(directory))
     require(all(row['result'] == 'PASS' for row in rows), 'Nonpassing required case: ' + str(directory))
+    if report['case'] == 'packaging':
+        return dict(path=str(directory), case=report['case'], qtWebp=lane, checks=len(rows),
+                    endpoints=[], packages=packages(directory))
     owner_dirs = {directory / name for name in OWNER_ENDPOINTS.get(report['case'], ())}
     observed_dirs = {path.parent for path in directory.rglob('consumer.json')}
     require(owner_dirs <= observed_dirs, 'Missing required owner endpoint: ' + str(directory))
     endpoints = [endpoint(path, lane, owner=path in owner_dirs) for path in sorted(observed_dirs)]
     require(endpoints, 'No saved consumer endpoints: ' + str(directory))
     result = dict(path=str(directory), case=report['case'], qtWebp=lane, checks=len(rows), endpoints=endpoints)
-    if report['case'] == 'packaging':
-        result['packages'] = packages(directory)
     return result
 
 

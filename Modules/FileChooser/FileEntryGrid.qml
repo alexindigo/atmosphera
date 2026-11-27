@@ -12,7 +12,6 @@ Item {
   required property var modified
   required property var descriptor
   property real iconSize: 96 * Style.uiScaleRatio
-  property var thumbnailProvider: null
   property bool thumbnailActive: false
   property Component nameEditor: null
   readonly property var labelLines: FileLabels.lines(name, labelLane.width, text => labelMetrics.advanceWidth(text))
@@ -57,7 +56,6 @@ Item {
       directory: root.directory
       modified: root.modified
       descriptor: root.descriptor
-      thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
     }
     Column {

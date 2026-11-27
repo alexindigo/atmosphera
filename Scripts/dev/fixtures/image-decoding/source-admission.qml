@@ -13,7 +13,6 @@ ShellRoot {
   property bool registered: false
   property int settledTick: -1
   property int pending: 0
-  property var candidates: []
   property var terminalDetails: []
   property var settled: ({})
 
@@ -25,16 +24,6 @@ ShellRoot {
     }
   }
 
-  function candidate(handle, name) {
-    var ticket = handle.candidate;
-    if (!ticket)
-      return;
-    candidates.push({
-                      name: name,
-                      origin: ticket.origin
-                    });
-    Qt.callLater(() => handle.report(ticket, Image.Ready, 128, 128, 1));
-  }
   function capture(item, name) {
     ++pending;
     if (!item.grabToImage(result => {
@@ -51,26 +40,28 @@ ShellRoot {
                                                  }));
     }
   }
-  ImageSource {
-    id: normalized
-    source: Quickshell.env("IMAGE_FIXTURES") + "/Still.webp"
-    normalize: true
-    active: !root.retiring
-    onCandidateChanged: root.candidate(normalized, "normalized")
-  }
-  ImageSource {
-    id: thumbnail
-    source: Quickshell.env("IMAGE_FIXTURES") + "/Still.webp"
-    thumbnail: true
-    active: !root.retiring
-    onCandidateChanged: root.candidate(thumbnail, "thumbnail")
-  }
   FloatingWindow {
-    implicitWidth: 384
+    implicitWidth: 576
     implicitHeight: 96
     color: "#202020"
     visible: true
     Row {
+      NImage {
+        id: normalized
+        width: 96
+        height: 96
+        source: Quickshell.env("IMAGE_FIXTURES") + "/Still.webp"
+        normalize: true
+        active: !root.retiring
+      }
+      NImage {
+        id: thumbnail
+        width: 96
+        height: 96
+        source: normalized.source
+        thumbnail: true
+        active: !root.retiring
+      }
       NImage {
         id: synchronous
         width: 96
@@ -131,7 +122,8 @@ ShellRoot {
           normalized: normalized.state,
           thumbnail: thumbnail.state,
           synchronous: synchronous.state,
-          synchronousOrigin: synchronous.imageResult.origin,
+          formats: [normalized, thumbnail, synchronous].map(item => item.imageResult.format),
+          extent: [synchronous.decodedSize.width, synchronous.decodedSize.height],
           declared: {
             failed: declared.failed,
             code: declared.errorCode,
@@ -144,6 +136,9 @@ ShellRoot {
           },
           valid: valid.imageState
         };
+        root.capture(normalized, "normalized");
+        root.capture(thumbnail, "thumbnail");
+        root.capture(synchronous, "synchronous");
         root.capture(declared, "declared");
         root.capture(streamed, "streamed");
         root.capture(valid, "valid");
@@ -151,17 +146,20 @@ ShellRoot {
       }
       if (root.capturing && !root.pending)
         root.retiring = true;
-      if ((root.retiring && !root.pending && ImageCacheService.sourceInterestCount === 0 && !ImageCacheService.sourceWorkerRunning) || root.tick >= 180) {
+      if (root.retiring && !root.pending) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
-                                                         candidates: root.candidates,
                                                          terminalDetails: root.terminalDetails,
                                                          settled: root.settled,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
-                                                       }));
+                                                         retired: [normalized, thumbnail, synchronous, declared, streamed, valid].map(item => ({
+                                                           state: item.status === Image.Null ? "idle" : "not-idle",
+                                                           status: item.status,
+                                                           url: item.outputUrl || ""
+                                                         }))
+      }));
         Qt.quit();
       }
+      if (root.tick >= 180)
+        Qt.exit(3);
     }
   }
 }

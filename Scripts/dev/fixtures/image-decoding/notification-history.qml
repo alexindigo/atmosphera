@@ -73,12 +73,12 @@ ShellRoot {
       }
       if (root.sampled && !root.pending) {
         history.close();
-        if (!ImageCacheService.sourceInterestCount && !ImageCacheService.sourceWorkerRunning) {
+        const interests = Object.values(NotificationService.popupState).reduce((sum, entry) => sum + entry.imageRequests.filter(request => request.pending).length, 0);
+        if (!interests) {
           console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                            rows: root.rows,
                                                            widgets: root.widgets,
-                                                           interests: ImageCacheService.sourceInterestCount,
-                                                           worker: ImageCacheService.sourceWorkerRunning
+                                                           interests: interests
                                                          }));
           Qt.quit();
         }

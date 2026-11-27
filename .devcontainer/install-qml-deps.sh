@@ -25,10 +25,10 @@ fi
 printf 'Building QML dependencies with up to %s parallel jobs\n' "$jobs"
 
 install_module() {
-    local repo=$1 version=$2 checksum=$3
+    local repo=$1 version=$2 checksum=$3 ref=${4:-refs/tags/v$2}
     local source="$work/$repo" archive="$work/$repo.tar.gz"
     curl --fail --location --retry 3 --max-time 120 \
-        "https://github.com/alexindigo/$repo/archive/refs/tags/v$version.tar.gz" \
+        "https://codeload.github.com/alexindigo/$repo/tar.gz/$ref" \
         --output "$archive"
     printf '%s  %s\n' "$checksum" "$archive" | sha256sum --check --strict
     mkdir "$source"
@@ -38,7 +38,7 @@ install_module() {
         git -C "$source" apply /usr/local/share/atmosphera/configqml-qt-6.12.1.patch
     fi
     cmake -S "$source" -B "$source/build" -G Ninja \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST_MODE=OFF \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST_MODE=OFF -DBUILD_TESTING=OFF \
         -DCMAKE_SKIP_RPATH=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
     cmake --build "$source/build" --parallel "$jobs"
     cmake --install "$source/build"
@@ -51,3 +51,4 @@ install_module pipewirespectrum 0.1.0 9c1be44521c2386f7a2190e6ca07b9eec692c4ed76
 install_module niriqml 0.3.0 d843571a03ee278d96e24e6dac7ca03194ccd2b532fcdac1cc981e721a17d3f8
 install_module mangowcqml 0.1.0 1e92e9ec4e7b274b2c0a4e28ee377cc08c026f1c364d6e1a66b62576578dc7b8
 install_module mpvqml 0.3.0 ce15ef421edfb770befbe801529b2073d4f93ee5581122c6d0d1cd3ec03acfc9
+install_module imvqml 0.1.6 7170c4448634d49edd51c2d4238491e334d637fa10a7a97b4ed1d0ae6ebd02b3

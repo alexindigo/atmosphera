@@ -16,6 +16,7 @@ ShellRoot {
   property var selections: []
   property var galleryFrames: []
   property var afterCapture: null
+  property bool returnPending: false
   FileView {
     path: Quickshell.env("IMAGE_ICON_DIR") + "/icons.json"
     onLoaded: IconRegistry.register("fixture:atmosphera-icons", JSON.parse(text()), Quickshell.env("IMAGE_ICON_DIR"))
@@ -135,6 +136,10 @@ ShellRoot {
       } else if (root.phase === 4 && presented && setup.previewCachedPath !== root.snapshots[2].cached && root.selections.length > 0) {
         root.phase = 5;
         root.snapshot("valid-intent", function () {
+          const displayed = loader.item.previewCachedPath;
+          loader.item.selectedWallpaper = root.inputs + "/frame-2.png";
+          root.returnPending = loader.item.previewState === "loading";
+          loader.item.selectedWallpaper = displayed;
           loader.item.filteredWallpapers = [root.inputs + "/Motion.webp", root.inputs + "/Corrupt.webp"];
         });
       } else if (root.phase === 5) {
@@ -149,17 +154,16 @@ ShellRoot {
             root.phase = 6;
         }
       } else if (root.phase === 6) {
-        loader.active = false;
         root.phase = 7;
+        root.snapshot("returned", () => loader.active = false);
         root.tick = 0;
-      } else if (root.phase === 7 && root.tick >= 15 && !ImageCacheService.sourceInterestCount && !ImageCacheService.sourceRequestCount && !ImageCacheService.sourceWorkerRunning) {
+      } else if (root.phase === 7 && root.tick >= 15) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          snapshots: root.snapshots,
+                                                         returnPending: root.returnPending,
                                                          selections: root.selections,
                                                          galleryFrames: root.galleryFrames,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning,
+                                                         destroyed: !loader.active && loader.item === null,
                                                          warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255), 255]
                                                        }));
         Qt.quit();

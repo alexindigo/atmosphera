@@ -1,3 +1,4 @@
+import ImvQml
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -6,129 +7,176 @@ import qs.Modules.Panels.Settings.Tabs.Wallpaper
 import qs.Services.UI
 import qs.Widgets
 
-// Actual wallpaper settings "Clear cache" button against the image owner: a
-// held representation, a released legacy-adapter representation and retired
-// pre-owner folders. Files are probed by path, never through the owner.
 ShellRoot {
   id: root
+  property bool clicked: false
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
-  readonly property string legacyDir: Settings.cacheDir + "images/wallpapers/"
-  readonly property bool ownerClear: typeof ImageCacheService.clearRepresentations === "function"
-  property int tick: 0
   property int phase: 0
-  property int pending: 0
-  property var released: null
-  property var toasts: []
+  property bool pending: false
   property var probes: ({})
-  property var clearResult: null
-  property var heldState: ({})
-  property var regenerated: ({})
-  property bool clicked: false
+  property var toasts: []
+  property string retained: ""
+  property var events: []
+  readonly property string decoded: Settings.cacheDir + "images/decoded/"
 
-  function find(item, text) {
-    if (!item)
-      return null;
-    if (item.text === text && typeof item.clicked === "function")
+  function findButton(item, label) {
+    if (item.text === label && typeof item.clicked === "function")
       return item;
-    var children = item.children || [];
-    for (var i = 0; i < children.length; ++i) {
-      var found = find(children[i], text);
+    for (const child of item.children || []) {
+      const found = findButton(child, label);
       if (found)
         return found;
     }
     return null;
   }
-  function probe(name, path) {
-    ++pending;
-    probeComponent.createObject(root, {
-                                  name: name,
-                                  command: ["test", "-e", path]
-                                });
-  }
-  function grab(item, name) {
-    if (!item.grabToImage(result => {
+  function capture(item, label) {
+    pending = true;
+    if (!item.grabToImage(frame => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                   name: name,
-                                                   saved: result.saveToFile(root.output + "/" + name + ".png")
+                                                   name: label,
+                                                   saved: frame.saveToFile(root.output + "/" + label + ".png")
                                                  }));
-      --root.pending;
+      root.pending = false;
     })) {
-      root.fail("Grab rejected: " + name);
-      return;
+      console.log("CACHE_CLEAR_FIXTURE|grab-rejected|" + label);
+      Qt.exit(3);
     }
-    ++pending;
   }
-  function fail(message) {
-    console.error("CACHE_CLEAR|" + message);
-    Qt.exit(2);
-  }
-  function state(image) {
-    return {
-      status: image.status,
-      url: image.outputUrl,
-      path: String(image.outputUrl).replace(/^file:\/\//, "")
-    };
+  function probe(label) {
+    pending = true;
+    scan.label = label;
+    scan.running = true;
   }
 
-  Component {
-    id: probeComponent
-    Process {
-      property string name
-      running: true
-      onExited: code => {
-        if (code !== 0 && code !== 1) {
-          root.fail("Probe failed: " + name + " (exit " + code + ")");
+  Component.onCompleted: {
+    // Observe both boundaries without depending on native slot order.
+    ImvCache.cleared.connect((ticket, result) => {
+      root.events.push({
+                         event: "owner",
+                         ticket: ticket,
+                         result: result
+                       });
+    });
+    ImageCacheService.representationsCleared.connect((ticket, result) => {
+      root.events.push({
+                         event: "evicted",
+                         ticket: ticket,
+                         result: result
+                       });
+    });
+    ImageCacheService.init();
+    ImageCacheService.openNotificationHistory(root.inputs + "/clear-history.json", opened => {
+      if (!opened) {
+        Qt.exit(3);
+        return;
+      }
+      ImageCacheService.getNotificationIcon(root.inputs + "/Still.webp", (path, ok) => {
+        if (!ok) {
+          Qt.exit(3);
           return;
         }
-        var probes = Object.assign({}, root.probes);
-        probes[name] = code === 0;
-        root.probes = probes;
-        --root.pending;
-        destroy();
-      }
-    }
+        ImageCacheService.updateNotificationHolders([path], [
+                                                      {
+                                                        cachedImage: path
+                                                      }
+                                                    ], saved => {
+                                                      if (saved)
+                                                        root.retained = path;
+                                                      else
+                                                        Qt.exit(3);
+                                                    });
+      });
+    });
   }
-  Component {
-    id: heldComponent
-    NImage {
-      width: 96
-      height: 96
-      normalize: true
-      sourceSize: Qt.size(96, 96)
-      source: root.inputs + "/Still.webp"
-    }
-  }
+
   Connections {
     target: ToastService
     function onNotify(title, description, icon, type, duration, actionLabel, actionCallback) {
-      root.toasts = root.toasts.concat([
-                                         {
-                                           title: title,
-                                           description: description,
-                                           type: type,
-                                           phase: root.phase
-                                         }
-                                       ]);
+      root.toasts.push({
+                         title: title,
+                         type: type,
+                         phase: root.phase
+                       });
+      root.events.push({
+                         event: "toast",
+                         type: type
+                       });
+      if (root.phase === 2 && !root.pending)
+        root.probe("cleared");
     }
   }
+  Process {
+    id: scan
+    property string label
+    command: ["find", root.decoded, "-type", "f", "-name", "*.imvqoi", "-printf", "%P\n"]
+    stdout: StdioCollector {
+      id: inventory
+    }
+    onExited: code => {
+      if (code !== 0) {
+        console.log("CACHE_CLEAR_FIXTURE|scan-exited|" + label + "|" + code);
+        Qt.exit(3);
+        return;
+      }
+      root.probes[label] = inventory.text.trim().split("\n").filter(path => path !== "").sort();
+      root.pending = false;
+    }
+  }
+  // The owner must not acknowledge success while the cross-process lock
+  // prevents eviction. Hold a live Qt-compatible lock across event-loop turns
+  // so an accidentally deferred acknowledgement cannot pass the control.
+  Process {
+    id: lock
+    stdinEnabled: true
+    command: ["python3", "-c", "import os, pathlib, socket, sys\np = pathlib.Path(sys.argv[1])\napp = os.path.basename(os.readlink('/proc/self/exe'))\nwith p.open('x') as f:\n f.write(f'{os.getpid()}\\n{app}\\n{socket.gethostname()}\\n')\ntry:\n print('locked', flush=True)\n sys.stdin.readline()\nfinally:\n p.unlink()", root.decoded + ".imvqml.lock"]
+    stdout: SplitParser {
+      onRead: line => {
+        if (line !== "locked") {
+          Qt.exit(3);
+          return;
+        }
+        const button = root.findButton(settings.item, I18n.tr("panels.wallpaper.settings-clear-cache-button"));
+        if (!button) {
+          Qt.exit(3);
+          return;
+        }
+        root.phase = 2;
+        root.clicked = true;
+        button.clicked();
+        releaseLock.start();
+      }
+    }
+    onExited: code => {
+      if (code !== 0) {
+        console.log("CACHE_CLEAR_FIXTURE|lock-exited|" + code);
+        Qt.exit(3);
+      }
+    }
+  }
+  Timer {
+    id: releaseLock
+    interval: 250
+    onTriggered: lock.write("release\n")
+  }
   FloatingWindow {
-    id: window
     visible: true
     implicitWidth: 720
     implicitHeight: 720
-    color: "transparent"
-    Row {
-      Item {
-        id: slot
-        width: 96
-        height: 96
-      }
-      Item {
-        id: again
-        width: 96
-        height: 96
-      }
+    NImage {
+      id: held
+      width: 96
+      height: 96
+      source: root.inputs + "/Still.webp"
+      active: root.phase < 4
+    }
+    NImage {
+      id: released
+      width: 96
+      height: 96
+      x: 96
+      source: root.inputs + "/frame-1.png"
+      active: root.phase >= 5
     }
     Loader {
       id: settings
@@ -138,106 +186,56 @@ ShellRoot {
       sourceComponent: GeneralSubTab {}
     }
   }
-  property Item held: null
-  Component.onCompleted: {
-    ImageCacheService.init();
-    Settings.data.wallpaper.useOriginalImages = false;
-    held = heldComponent.createObject(slot);
-    ImageCacheService.getLarge(inputs + "/Motion.webp", 192, 128, (path, success, detail) => root.released = {
-      path: path,
-      success: success
-    });
-  }
   Timer {
-    interval: 100
     running: true
     repeat: true
+    interval: 150
     onTriggered: {
-      ++root.tick;
       if (root.pending)
         return;
-      if (root.phase === 0) {
-        if (!root.released || root.held.status !== Image.Ready)
-          return;
-        if (!root.released.success || !root.released.path) {
-          root.fail("Released representation was not produced");
-          return;
-        }
-        root.heldState = root.state(root.held);
-        root.probe("releasedBeforeButton", root.released.path);
-        root.phase = 1;
-      } else if (root.phase === 1) {
-        if (!root.probes.releasedBeforeButton) {
-          root.fail("Released representation missing before clear");
-          return;
-        }
-        var button = root.find(settings.item, I18n.tr("panels.wallpaper.settings-clear-cache-button"));
-        if (!button)
-          return;
-        root.clicked = true;
-        button.clicked();
-        root.phase = 2;
+      if (root.phase === 0 && root.retained && held.status === Image.Ready) {
+        if ((root.probes.populated || []).length < 2)
+          root.probe("populated");
+        else
+          root.phase = 1;
+      } else if (root.phase === 1 && released.status === Image.Null && settings.item) {
+        if (!lock.running)
+          lock.running = true;
       } else if (root.phase === 2) {
-        if (!root.toasts.length)
-          return;
-        root.probe("heldAfterButton", root.heldState.path);
-        root.probe("releasedAfterButton", root.released.path);
-        root.probe("legacyAfterButton", root.legacyDir + "large/legacy-key.png");
-        root.probe("pluginAfterButton", root.legacyDir + "thumbnails/mpvpaper/plugin.bmp");
-        root.grab(root.held, "held-after-clear");
-        root.heldState = Object.assign({}, root.heldState, {
-                                         statusAfterButton: root.held.status
-                                       });
-        root.phase = root.ownerClear ? 3 : 9;
-      } else if (root.phase === 3) {
-        // The last interest retires; the same owner operation then removes it
-        // and a new consumer regenerates rather than inheriting a failure.
-        root.held.destroy();
-        root.phase = 31;
-      } else if (root.phase === 31) {
-        ImageCacheService.clearRepresentations(result => root.clearResult = result);
-        root.phase = 4;
-      } else if (root.phase === 4) {
-        if (!root.clearResult)
-          return;
-        root.probe("heldAfterRelease", root.heldState.path);
-        root.phase = 41;
-      } else if (root.phase === 41) {
-        if (root.probes.heldAfterRelease !== false) {
-          root.fail("Held representation still exists after release and clear");
-          return;
+        if (root.probes.cleared && held.status === Image.Ready) {
+          root.phase = 3;
+          root.capture(held, "held-after-clear");
         }
-        root.held = heldComponent.createObject(again);
+      } else if (root.phase === 3) {
+        root.phase = 4;
+      } else if (root.phase === 4 && held.status === Image.Null) {
         root.phase = 5;
-      } else if (root.phase === 5) {
-        if (root.held.status !== Image.Ready && root.held.status !== Image.Error)
-          return;
-        root.regenerated = root.state(root.held);
-        root.probe("regeneratedExists", root.regenerated.path);
-        root.grab(root.held, "regenerated");
-        root.phase = 9;
-      } else if (root.phase === 9) {
+      } else if (root.phase === 5 && released.status === Image.Ready) {
+        root.phase = 6;
+        root.capture(released, "regenerated");
+      } else if (root.phase === 6) {
+        if ((root.probes.regenerated || []).some(path => !root.probes.cleared.includes(path)))
+          root.phase = 7;
+        else
+          root.probe("regenerated");
+      } else if (root.phase === 7) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
-                                                         ownerClear: root.ownerClear,
                                                          clicked: root.clicked,
-                                                         toasts: root.toasts,
-                                                         held: root.heldState,
-                                                         released: root.released,
+                                                         events: root.events,
                                                          probes: root.probes,
-                                                         clearResult: root.clearResult,
-                                                         regenerated: root.regenerated
+                                                         retained: root.retained,
+                                                         toasts: root.toasts
                                                        }));
-        root.held.destroy();
-        settings.active = false;
-        root.phase = 10;
-      } else if (root.phase === 10) {
         Qt.quit();
       }
     }
   }
   Timer {
-    interval: 20000
+    interval: 15000
     running: true
-    onTriggered: Qt.exit(3)
+    onTriggered: {
+      console.log("IMAGE_TIMEOUT|cache-clear|" + root.phase + "|" + held.status + "|" + released.status);
+      Qt.exit(3);
+    }
   }
 }

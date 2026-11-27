@@ -1,17 +1,19 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
-import qs.Commons
-import qs.Services.UI
+import Quickshell.Io
 import qs.Widgets
 
 ShellRoot {
   id: root
-  property string token: ""
-  property var first: ({})
+  readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
+  property var first: null
   property int deliveries: 0
+  property int failedTicks: 0
   property bool retryStarted: false
-  property bool saved: false
-  property var retryResult: ({})
+  property bool grabbing: false
+  property var retryResult: null
+
   FloatingWindow {
     visible: true
     implicitWidth: 192
@@ -19,62 +21,72 @@ ShellRoot {
     NImage {
       id: retryImage
       anchors.fill: parent
-      active: false
-      source: Quickshell.env("IMAGE_FIXTURES") + "/Still.webp"
-      sourceSize: Qt.size(192, 128)
-      normalize: true
+      source: root.inputs + "/Retry.webp"
+      onImageStateChanged: {
+        if (imageState === "unavailable") {
+          ++root.deliveries;
+          if (!root.first)
+            root.first = {
+              state: imageState,
+              code: errorCode,
+              reason: errorReason,
+              url: outputUrl,
+              generation: generation
+            };
+        }
+      }
     }
   }
-  Component.onCompleted: {
-    token = ImageCacheService.acquireSource({
-                                              source: Quickshell.env("IMAGE_FIXTURES") + "/Still.webp",
-                                              width: 192,
-                                              height: 128,
-                                              animationIntent: "still",
-                                              fit: "contain"
-                                            }, function (reply) {
-                                              ++root.deliveries;
-                                              root.first = reply;
-                                              ImageCacheService.releaseSource(root.token);
-                                              root.token = "";
-                                              retryImage.active = true;
-                                            });
+  Process {
+    id: repair
+    command: ["mv", "--", root.inputs + "/Retry-replacement.webp", retryImage.source]
+    onExited: code => {
+      if (code !== 0) {
+        Qt.exit(3);
+        return;
+      }
+      root.retryStarted = true;
+      retryImage.retry();
+    }
   }
   Timer {
-    interval: 100
+    interval: 50
     running: true
     repeat: true
     onTriggered: {
-      if (retryImage.active && !root.retryStarted && retryImage.imageState === "ready" && retryImage.status === Image.Ready) {
-        root.retryStarted = true;
+      if (!root.retryStarted && retryImage.imageState === "unavailable" && ++root.failedTicks === 5)
+        repair.running = true;
+      if (root.retryStarted && !root.grabbing && retryImage.status === Image.Ready) {
+        root.grabbing = true;
         root.retryResult = {
           state: retryImage.imageState,
-          result: retryImage.imageResult
+          generation: retryImage.generation
         };
         if (!retryImage.grabToImage(result => {
-          root.saved = result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/retry.png");
+          const saved = result.saveToFile(Quickshell.env("IMAGE_OUTPUT") + "/retry.png");
           console.log("IMAGE_GRAB|" + JSON.stringify({
                                                        name: "retry",
-                                                       saved: root.saved
+                                                       saved: saved
                                                      }));
           retryImage.active = false;
-        })) {
-          console.error("Owner retry grab rejected");
+        }))
           Qt.exit(3);
-        }
       }
-      if (root.retryStarted && !retryImage.active && ImageCacheService.sourceInterestCount === 0 && ImageCacheService.sourceRequestCount === 0 && !ImageCacheService.sourceWorkerRunning) {
+      if (!retryImage.active && retryImage.imageState === "idle") {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          first: root.first,
                                                          deliveries: root.deliveries,
                                                          retry: root.retryResult,
-                                                         saved: root.saved,
-                                                         finalInterests: ImageCacheService.sourceInterestCount,
-                                                         finalRequests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         finalState: retryImage.imageState,
+                                                         finalUrl: retryImage.outputUrl
                                                        }));
         Qt.quit();
       }
     }
+  }
+  Timer {
+    running: true
+    interval: 15000
+    onTriggered: Qt.exit(2)
   }
 }

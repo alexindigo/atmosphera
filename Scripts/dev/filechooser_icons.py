@@ -82,6 +82,8 @@ def exercise(source, runtime, evidence, command, ipc, state, wait, check, open_r
 
 
 def generate():
+    from theming_sample_cli import sample_rgba
+
     enter()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
@@ -91,7 +93,7 @@ def generate():
     args = parser.parse_args()
     output = current_profile().evidence / args.label
     output.mkdir()
-    result = subprocess.run(["timeout", "120", "python3", "-B", str(args.source / "Scripts/python/src/theming/template-processor.py"), str(args.mascot_image), "--scheme-type", "tonal-spot"], capture_output=True, text=True, check=True, timeout=130)
+    result = subprocess.run(["timeout", "120", "python3", "-B", str(args.source / "Scripts/python/src/theming/template-processor.py"), str(args.mascot_image), "--sample-stdin", "--scheme-type", "tonal-spot"], input=sample_rgba(args.source, args.mascot_image), capture_output=True, text=True, check=True, timeout=130)
     raw = json.loads(result.stdout)
     mapping = {"mPrimary": "primary", "mOnPrimary": "on_primary", "mSecondary": "secondary", "mOnSecondary": "on_secondary", "mTertiary": "tertiary", "mOnTertiary": "on_tertiary", "mStandout": "standout", "mOnStandout": "on_standout", "mError": "error", "mOnError": "on_error", "mSurface": "surface", "mOnSurface": "on_surface", "mSurfaceVariant": "surface_container", "mOnSurfaceVariant": "on_surface_variant", "mOutline": "outline", "mShadow": "shadow", "mHover": "primary", "mOnHover": "on_primary"}
     fixture = {"image_sha256": hashlib.sha256(args.mascot_image.read_bytes()).hexdigest(), "source": "approved round-3 file-icons-mascot/reference.png", "method": "product template-processor.py, tonal-spot; AtmoColor template role mapping", "schemes": {mode: {role: colors[key] for role, key in mapping.items()} for mode, colors in raw.items()}}

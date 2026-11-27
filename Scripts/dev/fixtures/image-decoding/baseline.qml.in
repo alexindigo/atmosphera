@@ -1,3 +1,4 @@
+// Negative control assembled and linted only with the immutable pre-cutover shell.
 import QtQuick
 import Quickshell
 import Quickshell.Io

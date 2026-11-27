@@ -168,6 +168,7 @@ def create_fixtures(root, commands):
     encode(['ffmpeg', '-nostdin', '-v', 'error', '-i', png, '-frames:v', '1', '-threads', '1', '-c:v', 'libwebp', '-lossless', '1', str(root / 'Still.webp')])
     for ext in ('jpg', 'bmp', 'tiff', 'avif', 'heic'):
         encode(['magick', png, str(root / ('Still.' + ext))])
+    encode(['magick', png, '-quality', '100', str(root / 'Still.jxl')])
     # Independently authored EXIF orientation 6 (90 degrees clockwise), inserted
     # into a JPEG encoding. No decoder is used to predict its displayed size.
     tiff = b'II\x2a\0' + struct.pack('<I', 8) + struct.pack('<H', 1) + struct.pack('<HHI', 0x112, 3, 1) + struct.pack('<H', 6) + b'\0\0' + b'\0' * 4

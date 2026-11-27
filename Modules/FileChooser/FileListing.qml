@@ -11,7 +11,6 @@ FocusScope {
     target: root
   }
   required property var request
-  required property var thumbnails
   readonly property var settings: request.viewSettings
   readonly property bool compact: request.viewMode === "compact"
   readonly property real iconSize: settings.iconSize * Style.uiScaleRatio
@@ -57,7 +56,10 @@ FocusScope {
     // asynchronous delegate appears. Read the notifying children and row
     // properties instead, including pool transitions, without a timer/counter.
     var row = Array.from(list.contentItem.children).find(item => typeof item.index === "number" && !item.inPool);
-    return {header: listHeaders.geometry, row: row ? row.columnGeometry : []};
+    return {
+      header: listHeaders.geometry,
+      row: row ? row.columnGeometry : []
+    };
   }
   function viewState(target) {
     function rect(item) {
@@ -98,7 +100,6 @@ FocusScope {
   }
     function thumbnailState() {
     return {
-    statistics: thumbnails.statistics,
     tiles: activeEntries(activeView).filter(item => item.thumbnailActive).map(item => item.thumbnailState),
     entries: activeEntries(activeView).map(item => item.thumbnailState)
   };
@@ -173,19 +174,24 @@ FocusScope {
     Connections {
     target: root.request.browser
     function onHistoryLeaving() {
-      root.request.browser.rememberHistory("viewport", {mode: root.request.viewMode, x: root.activeView.contentX - root.activeView.originX, y: root.activeView.contentY - root.activeView.originY});
-    }
+    root.request.browser.rememberHistory("viewport", {
+    mode: root.request.viewMode,
+    x: root.activeView.contentX - root.activeView.originX,
+    y: root.activeView.contentY - root.activeView.originY
+  });
+  }
     function onHistoryRestored(state) {
-      var saved = state.viewport;
-      if (!saved) return;
-      root.request.viewMode = saved.mode;
-      Qt.callLater(function() {
-        root.activeView.forceLayout();
-        root.activeView.contentX = root.activeView.originX + saved.x;
-        root.activeView.contentY = root.activeView.originY + saved.y;
-        root.focusCurrent();
-      });
-    }
+    var saved = state.viewport;
+    if (!saved)
+    return;
+    root.request.viewMode = saved.mode;
+    Qt.callLater(function () {
+    root.activeView.forceLayout();
+    root.activeView.contentX = root.activeView.originX + saved.x;
+    root.activeView.contentY = root.activeView.originY + saved.y;
+    root.focusCurrent();
+  });
+  }
     function onCreatingFolderChanged() {
     if (root.request.browser.creatingFolder)
     Qt.callLater(function () {
@@ -223,8 +229,7 @@ FocusScope {
     path: item.path,
     index: item.index
   };
-  }).filter(rect => rect.x < bounds.x + bounds.width && rect.x + rect.width > bounds.x
-    && rect.y < bounds.y + bounds.height && rect.y + rect.height > bounds.y);
+  }).filter(rect => rect.x < bounds.x + bounds.width && rect.x + rect.width > bounds.x && rect.y < bounds.y + bounds.height && rect.y + rect.height > bounds.y);
     return {
     viewport: {
     x: bounds.x,
@@ -525,11 +530,10 @@ FocusScope {
     selectable: directory === (root.request.selection.selectable === "folders")
     cursor: root.request.selection.cursor === index
     listingFocused: root.navigationFocused
-    thumbnailProvider: root.thumbnails
     compactMode: root.compact
     iconSize: root.iconSize
     operations: root.request.browser.operations
-    thumbnailActive: root.settings.thumbnails && !inPool && visible && grid.visible && x + width > grid.contentX && x < grid.contentX + grid.width && y + height > grid.contentY && y < grid.contentY + grid.height
+    thumbnailActive: !root.request.settled && root.settings.thumbnails && !inPool && visible && grid.visible && x + width > grid.contentX && x < grid.contentX + grid.width && y + height > grid.contentY && y < grid.contentY + grid.height
     onPressed: modifiers => {
     root.focusNavigation();
     root.request.selection.click(index, modifiers);
@@ -579,8 +583,7 @@ FocusScope {
     listMode: true
     iconSize: root.iconSize
     columnWidths: listHeaders.widths
-    thumbnailProvider: root.thumbnails
-    thumbnailActive: root.settings.thumbnails && !inPool && visible && list.visible && y + height > list.contentY && y < list.contentY + list.height
+    thumbnailActive: !root.request.settled && root.settings.thumbnails && !inPool && visible && list.visible && y + height > list.contentY && y < list.contentY + list.height
     operations: root.request.browser.operations
     selected: root.request.selection.selectedPaths.includes(filePath)
     selectable: directory === (root.request.selection.selectable === "folders")

@@ -19,10 +19,19 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     profile_argument(parser)
+    parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
     profile.prepare_roots()
-    root = Path(tempfile.mkdtemp(prefix='image-workspace-', dir=profile.work_base))
+    out = args.output
+    if out != out.resolve() or not out.is_relative_to(profile.journal_base):
+        raise ValueError('Fresh canonical guest evidence directory required')
+    out.mkdir(mode=0o700)
+    with tempfile.TemporaryDirectory(prefix='image-workspace-', dir=profile.work_base) as scratch:
+        return run(Path(scratch), out)
+
+
+def run(root, out):
     source = root / 'source'
     source.mkdir()
     (source / 'product.qml').write_text('import QtQuick\nItem {}\n')
@@ -30,7 +39,7 @@ def main():
     (source / 'empty').chmod(0o750)
     (source / 'product-link').symlink_to('product.qml')
     base = source_manifest(source)
-    receipt = root / 'source.json'
+    receipt = out / 'source.json'
     receipt.write_text(json.dumps(base))
     work = root / 'work'
     work.mkdir()
@@ -51,7 +60,7 @@ def main():
 
     def refuse(name, copy):
         try:
-            retire_fixture_copy(source, copy, receipt, root / (name + '.json'), work)
+            retire_fixture_copy(source, copy, receipt, out / (name + '.json'), work)
         except ValueError:
             assert copy.exists()
             passed.append(name)
@@ -60,7 +69,7 @@ def main():
 
     copy = fixture('complete')
     actual = source_manifest(copy)
-    record = retire_fixture_copy(source, copy, receipt, root / 'complete.json', work)
+    record = retire_fixture_copy(source, copy, receipt, out / 'complete.json', work)
     rebuilt = dict(base['files'])
     for name, row in record['deltas'].items():
         raw = base64.b64decode(row['bytesBase64'], validate=True)
@@ -81,7 +90,7 @@ def main():
             return value
         try:
             with patch('image_decoding_workspace.source_manifest', mutate_after_check):
-                record = retire_fixture_copy(source, copy, receipt, root / 'race.json', work)
+                record = retire_fixture_copy(source, copy, receipt, out / 'race.json', work)
             objects = record.get('objects', {})
             digest = hashlib.sha256(before).hexdigest()
             assert digest in objects and Path(objects[digest]).read_bytes() == before
@@ -99,7 +108,7 @@ def main():
     # when the failure would have truncated a direct in-place write.
     def write_failure():
         copy = fixture('receipt-failure')
-        output = root / 'write-failure.json'
+        output = out / 'write-failure.json'
         write_text, replace = Path.write_text, __import__('os').replace
         def fail_direct(path, data, *args, **kwargs):
             if path == output and json.loads(data)['retired']:
@@ -146,11 +155,19 @@ def main():
     finally:
         guard.terminate()
         process.wait(timeout=10)
+    copy = fixture('active-cwd')
+    process = subprocess.Popen(['python3', '-c', 'import time; time.sleep(30)'], cwd=copy, start_new_session=True)
+    guard = protect_owned_process(process)
+    try:
+        refuse('live-consumer-with-only-cwd-refused', copy)
+    finally:
+        guard.terminate()
+        process.wait(timeout=10)
     copy = fixture('source-changed')
     (source / 'product.qml').write_text('new input')
     refuse('changed-canonical-source-refused', copy)
     result = dict(passed=not failures, cases=passed, failures=failures, workspace=str(root))
-    (root / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+    (out / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result))
     return 0 if result['passed'] else 1
 

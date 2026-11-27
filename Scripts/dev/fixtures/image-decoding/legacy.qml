@@ -1,122 +1,135 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
-import qs.Commons
 import qs.Services.UI
+import qs.Widgets
 
 ShellRoot {
   id: root
   readonly property string inputs: Quickshell.env("IMAGE_FIXTURES")
   readonly property string output: Quickshell.env("IMAGE_OUTPUT")
-  property var results: ({})
-  property var completions: []
-  property var failures: []
-  property int pending: 0
-  property int tick: 0
-  property bool captured: false
-  property bool cancelledCallback: false
+  readonly property var cases: [
+    {
+      name: "thumbnail",
+      file: "Motion.webp",
+      side: 64
+    },
+    {
+      name: "large",
+      file: "Motion.webp",
+      side: 192
+    },
+    {
+      name: "avatar",
+      file: "Still.webp",
+      side: 128
+    },
+    {
+      name: "misleading",
+      file: "Misleading.png",
+      side: 128
+    },
+    {
+      name: "literal",
+      file: "bracket[0]: image.webp",
+      side: 128
+    },
+    {
+      name: "corrupt",
+      file: "Corrupt.webp",
+      side: 64
+    },
+    {
+      name: "missing",
+      file: "Missing.webp",
+      side: 64
+    }
+  ]
+  property int phase: 0
+  property var presented: []
+  property int grabs: 0
+  property int cancelledDeliveries: 0
 
-  function receive(name, path, success, detail) {
-    var result = Object.assign({}, results);
-    result[name] = {
-      path: path,
-      success: success,
-      detail: detail || {}
-    };
-    results = result;
+  Component.onCompleted: {
+    ImageCacheService.init();
+    cancelled.source = root.inputs + "/frame-2.png";
+    cancelled.active = false;
   }
-  function grab(item, name) {
-    ++pending;
-    item.grabToImage(result => {
-      console.log("IMAGE_GRAB|" + JSON.stringify({
-                                                   name: name,
-                                                   saved: result.saveToFile(root.output + "/" + name + ".png")
-                                                 }));
-      --root.pending;
-    });
-  }
+
   FloatingWindow {
     visible: true
-    implicitWidth: 640
-    implicitHeight: 160
+    implicitWidth: 800
+    implicitHeight: 192
     color: "transparent"
     Row {
       Repeater {
         id: images
-        model: ["thumbnail", "large", "avatar", "misleading", "literal"]
-        Image {
-          required property string modelData
-          width: 128
-          height: 128
-          fillMode: Image.PreserveAspectFit
-          source: root.results[modelData] && root.results[modelData].success ? root.results[modelData].path : ""
+        model: root.cases
+        NImage {
+          required property var modelData
+          width: modelData.side
+          height: width
+          source: root.inputs + "/" + modelData.file
+          animationIntent: "still"
+          roundedRadius: modelData.name === "avatar" ? width / 2 : 0
         }
       }
     }
-  }
-  Connections {
-    target: ImageCacheService
-    function onProcessingComplete(key, path) {
-      root.completions.push({
-                              key: key,
-                              path: path
-                            });
+    NImage {
+      id: cancelled
+      width: 64
+      height: 64
+      onStatusChanged: {
+        if (status === Image.Ready || status === Image.Error)
+          ++root.cancelledDeliveries;
+      }
     }
-    function onProcessingFailed(key, reason) {
-      root.failures.push({
-                           key: key,
-                           reason: reason
-                         });
-    }
-  }
-  Component.onCompleted: {
-    ImageCacheService.init();
-    Settings.data.wallpaper.useOriginalImages = Quickshell.env("IMAGE_USE_ORIGINAL") === "1";
-    ImageCacheService.getThumbnail(inputs + "/Motion.webp", (path, success, detail) => root.receive("thumbnail", path, success, detail));
-    ImageCacheService.getLarge(inputs + "/Motion.webp", 192, 128, (path, success, detail) => root.receive("large", path, success, detail));
-    ImageCacheService.getCircularAvatar(inputs + "/Still.webp", "same-user", (path, success, detail) => root.receive("avatar", path, success, detail));
-    ImageCacheService.getThumbnail(inputs + "/Misleading.png", (path, success, detail) => root.receive("misleading", path, success, detail));
-    ImageCacheService.getThumbnail(inputs + "/bracket[0]: image.webp", (path, success, detail) => root.receive("literal", path, success, detail));
-    ImageCacheService.getThumbnail(inputs + "/Corrupt.webp", (path, success, detail) => root.receive("corrupt", path, success, detail));
-    ImageCacheService.getLarge(inputs + "/Missing.webp", 192, 128, (path, success, detail) => root.receive("missing", path, success, detail));
-    var cancelled = ImageCacheService.getThumbnail(inputs + "/frame-2.png", () => root.cancelledCallback = true);
-    if (cancelled)
-      cancelled.cancel();
   }
   Timer {
-    interval: 100
+    interval: 50
     running: true
     repeat: true
     onTriggered: {
-      ++root.tick;
-      if (Object.keys(root.results).length !== 7 || root.tick < 40)
-        return;
-      if (!root.captured) {
-        root.captured = true;
-        for (var i = 0; i < images.count; ++i)
-          root.grab(images.itemAt(i), images.itemAt(i).modelData);
-        return;
+      const items = Array.from({
+                                 length: images.count
+                               }, (_, i) => images.itemAt(i) as NImage);
+      if (root.phase === 0 && items.length === root.cases.length && items.every(item => item.status === Image.Ready || item.status === Image.Error)) {
+        root.phase = 1;
+        root.presented = items.map((item, i) => ({
+          name: root.cases[i].name,
+          status: item.status,
+          url: item.outputUrl,
+          reason: item.errorReason,
+          frames: item.frameCount
+        }));
+        for (let i = 0; i < items.length; ++i) {
+          const item = items[i];
+          const name = root.cases[i].name;
+          if (item.status !== Image.Ready)
+            continue;
+          ++root.grabs;
+          if (!item.grabToImage(result => {
+            console.log("IMAGE_GRAB|" + JSON.stringify({
+                                                         name: name,
+                                                         saved: result.saveToFile(root.output + "/" + name + ".png")
+                                                       }));
+            --root.grabs;
+          }))
+            Qt.exit(3);
+        }
+      } else if (root.phase === 1 && !root.grabs) {
+        root.phase = 2;
+        items.forEach(item => item.active = false);
+      } else if (root.phase === 2 && items.every(item => item.status === Image.Null && !item.outputUrl)) {
+        console.log("IMAGE_BASELINE|" + JSON.stringify({
+                                                         presented: root.presented,
+                                                         retired: items.length,
+                                                         cancelledStatus: cancelled.status,
+                                                         cancelledDeliveries: root.cancelledDeliveries
+                                                       }));
+        Qt.quit();
       }
-      if (root.pending || root.tick < 50)
-        return;
-      var readers = [];
-      for (var j = 0; j < images.count; ++j) {
-        const image = images.itemAt(j) as Image;
-        readers.push({
-                       name: image.modelData,
-                       status: image.status
-                     });
-      }
-      console.log("IMAGE_BASELINE|" + JSON.stringify({
-                                                       results: root.results,
-                                                       readers: readers,
-                                                       completions: root.completions,
-                                                       failures: root.failures,
-                                                       interests: ImageCacheService.sourceInterestCount,
-                                                       requests: ImageCacheService.sourceRequestCount,
-                                                       workerRunning: ImageCacheService.sourceWorkerRunning,
-                                                       cancelledCallback: root.cancelledCallback
-                                                     }));
-      Qt.quit();
     }
   }
   Timer {

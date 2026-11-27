@@ -10,11 +10,25 @@ import signal
 import socket
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 import time
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from guest_profile import ProcessIdentity, activate_profile, profile_argument
+
+
+def publish_controls(scratch, output):
+    for control in ('cohort', 'compositor'):
+        source = scratch / control / 'artifacts'
+        if not source.is_dir():
+            continue
+        destination = output / control
+        destination.mkdir()
+        for entry in sorted(source.iterdir()):
+            if entry.is_symlink() or not entry.is_file():
+                raise AssertionError(f'not a regular control receipt: {entry}')
+            (destination / entry.name).write_bytes(entry.read_bytes())
 
 
 def main():
@@ -23,6 +37,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     profile = activate_profile(args.guest_profile)
+    profile.prepare_roots()
     assert args.output == args.output.resolve() and args.output.is_relative_to(profile.journal_base)
     args.output.mkdir(mode=0o700)
     spec = importlib.util.spec_from_file_location('image_ci', Path(__file__).with_name('image-decoding-ci.py'))
@@ -50,8 +65,11 @@ def main():
             if alive(identity):
                 os.kill(identity.pid, signal.SIGKILL)
 
+    # The nested lane owns mutable inputs and IPC under scratch, never under
+    # the upload journal. Publish only its regular receipts and logs.
+    scratch = TemporaryDirectory(prefix='life-', dir=profile.work_base)
     try:
-        work = args.output / 'cohort'
+        work = Path(scratch.name) / 'cohort'
         (work / 'shell/Scripts/dev').mkdir(parents=True)
         (work / 'artifacts').mkdir()
         marker = work / 'children.json'
@@ -69,7 +87,7 @@ def main():
         fixture = work / 'shell/Scripts/dev/guest-profile-modes-selftest.py'
         fixture.write_text(body)
         admitted = SimpleNamespace(path=args.guest_profile, journal_base=work / 'artifacts', work_base=work / 'work')
-        cohort_args = SimpleNamespace(label='held', cohort='profile', qt_webp='present')
+        cohort_args = SimpleNamespace(label='held', cohort='profile', qt_readers='present')
         real_run = subprocess.run
 
         def short_old_timeout(argv, **kwargs):
@@ -103,8 +121,31 @@ def main():
                                     work / 'artifacts/ordinary.log', seconds=5, grace=.2)
             check('ordinary-cohort-records-success', success['exit'] == 0 and not success['timeout']
                   and success['cleanupComplete'], receipt=success)
+            # The real fixture waits for its private consumer group before it
+            # can exit. Keep an orphan live until EOF, then require the outer
+            # subreaper to reap it while the fixture itself is still running.
+            settle = """
+import os, subprocess, sys
+from image_decoding_workspace import settle_fixture_session
+worker = 'import os; child = os.fork(); os._exit(0) if child else os.read(0, 1)'
+with subprocess.Popen([sys.executable, '-c', worker], stdin=subprocess.PIPE, start_new_session=True) as proc:
+    assert proc.wait(timeout=2) == 0
+    try:
+        settle_fixture_session(proc, timeout=.1)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('settled with a live orphan')
+    proc.stdin.close()
+    settle_fixture_session(proc)
+"""
+            argv = [sys.executable, '-B', '-c', 'import sys; sys.path.insert(0, sys.argv[1]);' + settle,
+                    str(Path(__file__).resolve().parent)]
+            settled = ci.run_cohort(argv, work / 'artifacts/adopted.log', seconds=6, grace=.2)
+            check('live-orphan-blocks-and-is-reaped-after-eof', settled['exit'] == 0 and settled['cleanupComplete'],
+                  receipt=settled, stderr=(work / 'artifacts/adopted.stderr.log').read_text())
             with patch.object(ci.subprocess, 'Popen', side_effect=OSError('controlled spawn refusal')):
-                failed = ci.run(SimpleNamespace(label='spawn', cohort='profile', qt_webp='present'), work, admitted)
+                failed = ci.run(SimpleNamespace(label='spawn', cohort='profile', qt_readers='present'), work, admitted)
             rows = json.loads((work / 'artifacts/ci-spawn.json').read_text())
             check('spawn-refusal-records-failure', failed == 1 and rows[0]['exit'] == 125
                   and 'controlled spawn refusal' in rows[0]['error'], rows=rows)
@@ -155,12 +196,12 @@ def main():
         # Execute main's actual finally block with a real TERM-resistant child.
         # Only container detection/profile admission and the Sway executable
         # are replaced; the runner's lifetime implementation is untouched.
-        work = args.output / 'compositor'
+        work = Path(scratch.name) / 'compositor'
         work.mkdir()
         made = []
         sockets = []
         real_popen, real_read = subprocess.Popen, ProcessIdentity.read
-        cli = ['ci', '--workspace', str(work), '--engine', 'podman', '--qt-webp', 'present',
+        cli = ['ci', '--workspace', str(work), '--engine', 'podman',
                '--label', 'held', '--cohort', 'profile']
         marker_path = work / 'ready'
         body = ('import signal,time; from pathlib import Path; '
@@ -219,10 +260,28 @@ def main():
                 endpoint.close()
         profile.verify()
     finally:
-        retire_controls()
-        result = dict(passed=not failures, cases=cases, failures=failures,
-                      captured=[i.record() for i in identities])
-        (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+        primary = sys.exception()
+        errors = []
+        for action in (retire_controls, lambda: publish_controls(Path(scratch.name), args.output), scratch.cleanup):
+            try:
+                action()
+            except Exception as error:
+                errors.append(error)
+        try:
+            if primary is None and not errors:
+                check('compositor-receipt-reopens-without-runtime',
+                      json.loads((args.output / 'compositor/compositor-held.json').read_text()) == row
+                      and not (args.output / 'compositor/r').exists())
+            result = dict(passed=primary is None and not errors and not failures, cases=cases, failures=failures,
+                          captured=[i.record() for i in identities])
+            (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+        except Exception as error:
+            errors.append(error)
+        if errors:
+            if primary is None:
+                raise ExceptionGroup('Lifetime evidence finalization failed', errors)
+            for error in errors:
+                primary.add_note('Lifetime evidence finalization failed: ' + repr(error))
     return 1 if failures else 0
 
 

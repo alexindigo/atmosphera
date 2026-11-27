@@ -598,6 +598,10 @@ Singleton {
 
   // -------------------------------------------------------------------
   function changeWallpaper(path, screenName, appearanceSlot, onComplete, retentionDirectory, onSettled, automatic) {
+    // Setup supplies no explicit destination; capture the configured directory
+    // with remote intent instead of submitting HTTP to local-only validation.
+    if (!retentionDirectory && /^https?:\/\//i.test(String(path)))
+      retentionDirectory = Settings.preprocessPath(Settings.data.wallpaper.directory) || Settings.defaultWallpapersDirectory;
     if (!path) {
       _rejectWallpaperChange(onSettled, "empty-source");
       return null;
@@ -645,26 +649,17 @@ Singleton {
     // A retired ticket must never start a new, now-unowned decoder interest.
     if (_wallpaperChanges[ticket.id] !== ticket)
       return ticket;
-    var width = 1;
-    var height = 1;
-    for (var j = 0; j < Quickshell.screens.length; ++j) {
-      var screen = Quickshell.screens[j];
-      if (names.has(screen.name)) {
-        width = Math.max(width, screen.width * screen.devicePixelRatio);
-        height = Math.max(height, screen.height * screen.devicePixelRatio);
-      }
-    }
     if (isSolidColorPath(ticket.path)) {
       // callLater coalesces the same function; independent tickets must each settle.
       Qt.callLater(() => root._completeWallpaperChange(ticket, ticket.path, true, {
                                                          format: "solid"
                                                        }));
     } else if (retentionDirectory) {
-      ticket.request = ImageCacheService.retainImage(ticket.path, retentionDirectory, width, height, function (output, success, detail) {
+      ticket.request = ImageCacheService.retainImage(ticket.path, retentionDirectory, function (output, success, detail) {
         root._completeWallpaperChange(ticket, output, success, detail);
       });
     } else {
-      ticket.request = ImageCacheService.requestImage(ticket.path, width, height, "contain", function (output, success, detail) {
+      ticket.request = ImageCacheService.validateLocalImage(ticket.path, function (output, success, detail) {
         root._completeWallpaperChange(ticket, output, success, detail);
       });
     }
@@ -766,6 +761,8 @@ Singleton {
     }
     if (detail && detail.originalPath)
       ticket.path = detail.originalPath;
+    else if (!isSolidColorPath(ticket.path))
+      ticket.path = output;
     names.forEach(name => root._saveOutgoingFavorites(ticket.path, name, ticket.slot));
     if (Settings.data.wallpaper.useSolidColor)
       Settings.data.wallpaper.useSolidColor = false;

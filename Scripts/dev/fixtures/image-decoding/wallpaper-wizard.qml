@@ -238,7 +238,7 @@ ShellRoot {
           root.submit(root.url + "/slow.jpg", 1.35);
           root.stage = 5;
         });
-      } else if (root.stage === 5 && status.status === "Running" && ImageCacheService.sourceInterestCount > 0) {
+      } else if (root.stage === 5 && status.status === "Running" && Object.values(WallpaperService._wallpaperChanges).some(change => change.request && change.path.endsWith("/slow.jpg"))) {
         root.stage = 6;
         WallpaperService.changeWallpaper(root.inputs + "/frame-2.png", root.monitor);
       } else if (root.stage === 6 && status.status === "Stopped") {
@@ -288,7 +288,7 @@ ShellRoot {
       } else if (root.stage === 12 && status.status === "Succeeded") {
         root.stage = 13;
         root.snapshot("no-selection", root.retireAndProbe);
-      } else if ((root.stage === 13 || root.stage === 99) && !root.pending && ImageCacheService.sourceInterestCount === 0 && !ImageCacheService.sourceWorkerRunning) {
+      } else if ((root.stage === 13 || root.stage === 99) && !root.pending && Object.keys(WallpaperService._wallpaperChanges).length === 0) {
         root.finished = true;
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          snapshots: root.snapshots,
@@ -302,9 +302,8 @@ ShellRoot {
                                                          legacy: root.legacy,
                                                          detached: root.detached,
                                                          raw: raw.status,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning,
+                                                         changes: Object.keys(WallpaperService._wallpaperChanges).length,
+                                                         reservations: Object.keys(WallpaperService._wallpaperReservations).length,
                                                          queue: BindingsService.queueCount,
                                                          state: BindingsService.state
                                                        }));

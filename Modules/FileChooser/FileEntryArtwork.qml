@@ -12,12 +12,11 @@ Item {
   required property bool directory
   required property var modified
   required property var descriptor
-  property var thumbnailProvider: null
   property bool thumbnailActive: false
   property bool compact: false
-  readonly property var videoResult: videoThumbnail.item ? videoThumbnail.item.result : null
-  readonly property bool previewUnavailable: thumbnail.imageState === "unavailable" || (!!videoResult && videoResult.status === "unavailable")
-  readonly property string previewError: thumbnail.errorReason || (videoResult ? videoResult.reason || "" : "")
+  readonly property string previewKind: directory ? "" : FileTypes.previewKind(name)
+  readonly property bool previewUnavailable: thumbnail.imageState === "unavailable"
+  readonly property string previewError: thumbnail.errorReason
   readonly property string previewTooltip: errorHover.hovered && previewUnavailable ? I18n.tr("widgets.file-picker.preview-unavailable") + ": " + previewError : ""
   onPreviewTooltipChanged: {
     if (previewTooltip)
@@ -36,7 +35,7 @@ Item {
   readonly property var thumbnailState: ({
                                            path: path,
                                            active: thumbnailActive,
-                                           ready: videoThumbnail.active && thumbnail.status === Image.Ready,
+                                           ready: previewKind === "video" && thumbnail.status === Image.Ready,
                                            imageReady: thumbnail.status === Image.Ready,
                                            unavailable: previewUnavailable,
                                            errorReason: previewError,
@@ -69,14 +68,10 @@ Item {
     NImage {
       id: thumbnail
       anchors.fill: parent
-      source: videoThumbnail.item ? videoThumbnail.item.url : (!root.directory && ["image", "animatedImage"].includes(FileTypes.previewKind(root.name)) ? root.path : "")
+      source: root.thumbnailActive && ["image", "animatedImage", "video"].includes(root.previewKind) ? root.path : ""
       active: root.thumbnailActive
       sourceRevision: String(root.modified)
       animationIntent: "still"
-      thumbnail: !videoThumbnail.active
-      sourceSize.width: Math.ceil(root.width * root.Screen.devicePixelRatio)
-      sourceSize.height: Math.ceil(root.height * root.Screen.devicePixelRatio)
-      asynchronous: true
       fillMode: Image.PreserveAspectFit
     }
     Item {
@@ -84,7 +79,7 @@ Item {
       anchors.centerIn: thumbnail
       width: thumbnail.paintedWidth
       height: thumbnail.paintedHeight
-      visible: videoThumbnail.active && thumbnail.status === Image.Ready
+      visible: root.previewKind === "video" && thumbnail.status === Image.Ready
       Rectangle {
         id: playBadge
         anchors.right: parent.right
@@ -100,17 +95,6 @@ Item {
           color: AtmoColor.mOnSurface
         }
       }
-    }
-  }
-  Loader {
-    id: videoThumbnail
-    active: root.thumbnailActive && !!root.thumbnailProvider && !root.directory && FileTypes.previewKind(root.name) === "video"
-    sourceComponent: FileThumbnail {
-      provider: root.thumbnailProvider
-      path: root.path
-      active: root.thumbnailActive
-      pixels: Math.max(root.width, root.height) * root.Screen.devicePixelRatio
-      stamp: String(root.modified)
     }
   }
   FileIcon {

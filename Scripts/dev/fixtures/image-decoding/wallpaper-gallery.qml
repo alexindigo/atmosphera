@@ -14,6 +14,13 @@ ShellRoot {
   property int pending: 0
   property var snapshots: []
   property var afterCapture: null
+  property var previews: []
+  Component {
+    id: previewTrack
+    QtObject {
+      required property QtObject item
+    }
+  }
   FileView {
     path: Quickshell.env("IMAGE_ICON_DIR") + "/icons.json"
     onLoaded: IconRegistry.register("fixture:atmosphera-icons", JSON.parse(text()), Quickshell.env("IMAGE_ICON_DIR"))
@@ -48,13 +55,17 @@ ShellRoot {
     var grid = cohort === "local" ? content.screenRepeater.itemAt(0).gridView : content.wallhavenView.gridView;
     var tile = grid.itemAtIndex(index);
     var image = find(tile, item => "imagePath" in item);
+    if (!previews.some(track => track.item === image))
+      previews.push(previewTrack.createObject(root, {
+                                                item: image
+                                              }));
     snapshots.push({
                      cohort: cohort,
                      index: index,
                      tick: tick,
                      source: image.imagePath,
                      status: image.status,
-                     result: image.imageResult,
+                     animationIntent: image.animationIntent,
                      reason: image.errorReason
                    });
     grab(image, cohort + "-image-" + index + "-" + tick);
@@ -136,9 +147,7 @@ ShellRoot {
       } else if (root.tick >= 100 && !root.pending) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          snapshots: root.snapshots,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning,
+                                                         retired: root.previews.every(track => !track.item || track.item.imageState === "idle"),
                                                          warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255), 255]
                                                        }));
         Qt.quit();

@@ -116,9 +116,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--engine', choices=('podman', 'docker'), required=True)
-    parser.add_argument('--qt-webp', choices=('present', 'absent'), required=True)
     parser.add_argument('--label', required=True)
-    parser.add_argument('--cohort', choices=('all', 'ownership', 'lifetime', 'profile', 'owner', 'chooser', 'boundary', 'worker'), default='all')
+    parser.add_argument('--qt-readers', choices=('present', 'absent'), default='absent')
+    parser.add_argument('--cohort', choices=('all', 'ownership', 'lifetime', 'profile', 'formats', 'chooser', 'download-burst', 'boundary', 'workspace'), default='all')
     args = parser.parse_args()
     workspace = args.workspace
     marker = Path('/run/.containerenv' if args.engine == 'podman' else '/.dockerenv')
@@ -200,19 +200,17 @@ def run(args, workspace, admitted):
                      '--source', str(source), '--plugins', str(plugins), '--selftest',
                      '--manifest', str(source / 'Scripts/dev/fixtures/image-decoding/consumers.json'),
                      '--report', str(admitted.journal_base / ('boundary-' + args.label + '.json'))],
-        'worker': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-worker-tests.py'),
-                   '--guest-profile', str(profile_path), '--source', str(source),
-                   '--work-root', str(admitted.work_base / ('worker-' + args.label)),
-                   '--output', str(admitted.journal_base / ('worker-' + args.label))],
+        'workspace': [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-workspace-tests.py'),
+                      '--guest-profile', str(profile_path), '--output', str(admitted.journal_base / ('workspace-' + args.label))],
     }
-    for case in ('owner', 'chooser'):
+    for case in ('formats', 'chooser', 'download-burst'):
         commands[case] = [sys.executable, '-B', str(source / 'Scripts/dev/image-decoding-regression.py'),
                           '--guest-profile', str(profile_path), '--source', str(source), '--plugins', str(plugins),
-                          '--case', case, '--qt-webp', args.qt_webp,
+                          '--case', case, '--qt-webp', args.qt_readers,
                           '--work-root', str(admitted.work_base / (case + '-' + args.label)),
                           '--output', str(admitted.journal_base / (case + '-' + args.label))]
     rows = []
-    for name in ('ownership', 'lifetime', 'profile', 'owner', 'chooser', 'boundary', 'worker') if args.cohort == 'all' else (args.cohort,):
+    for name in ('ownership', 'lifetime', 'profile', 'formats', 'chooser', 'download-burst', 'boundary', 'workspace') if args.cohort == 'all' else (args.cohort,):
         result = run_cohort(commands[name], admitted.journal_base / (name + '-' + args.label + '.log'),
                             seconds=COHORT_SECONDS, grace=TERMINATE_GRACE)
         rows.append(dict(cohort=name, argv=commands[name], **result))

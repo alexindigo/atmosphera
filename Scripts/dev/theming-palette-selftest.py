@@ -2,6 +2,7 @@
 """Actual positional-palette rendering, compared to the pinned PR base in VM."""
 from copy import deepcopy
 import json
+import base64
 import os
 from pathlib import Path
 import subprocess
@@ -15,6 +16,33 @@ BASE = Path(os.environ['THEMING_PALETTE_BASELINE'])
 
 class PaletteTests(unittest.TestCase):
     """Observe rendered files and diagnostics, not normalization implementation."""
+
+    def sample(self, payload):
+        return subprocess.run([
+            'timeout', '15', sys.executable, '-B', str(ROOT / 'Scripts/python/src/theming/template-processor.py'),
+            '/no-media-needed-for-owned-pixels.webp', '--sample-stdin', '--scheme-type', 'faithful',
+        ], input=json.dumps(payload) + '\n', capture_output=True, text=True, timeout=20)
+
+    def test_owned_sample_controls_palette_without_an_image_file(self):
+        def palette(pixel):
+            result = self.sample({'width': 4, 'height': 4, 'rgba': base64.b64encode(bytes(pixel) * 16).decode()})
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return json.loads(result.stdout)
+
+        red = palette((238, 32, 64, 255))
+        blue = palette((32, 64, 238, 255))
+        self.assertEqual(set(red), {'dark', 'light'})
+        self.assertNotEqual(red['dark'], blue['dark'])
+        self.assertNotEqual(red['light'], blue['light'])
+
+    def test_sample_requires_matching_bounded_geometry_and_rgba(self):
+        for payload in ({'width': 113, 'height': 1, 'rgba': 'AAAAAAAA'},
+                        {'width': 2, 'height': 1, 'rgba': 'AAAAAA=='},
+                        {'width': 1, 'height': 1, 'rgba': '@@@@@@@@'}):
+            with self.subTest(payload=payload):
+                result = self.sample(payload)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Invalid RGBA sample', result.stderr)
 
     def render(self, source, data, template='{{colors.brand.default.hex}}', scheme=False):
         """Run the real CLI once and return its rendered file and JSON palette."""

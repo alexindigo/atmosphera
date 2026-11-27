@@ -298,7 +298,6 @@ ShellRoot {
       if (root.phase === 0 && root.settled(replaced, 1, "ready") && root.settled(retained, 2, "ready")) {
         root.phase = 1;
         root.retainedBefore = root.describe(retained);
-        root.interestsBeforePlain = ImageCacheService.sourceInterestSources().length;
         root.grab(replaced, "replaced-before", function () {
           replaced.second = true;
           retained.revised = true;
@@ -374,14 +373,12 @@ ShellRoot {
                                                                                              notesLoaded: Version.changelogNotesLoaded,
                                                                                              releaseContent: Version.releaseContent
                                                                                            },
-                                                         interestSources: ImageCacheService.sourceInterestSources(),
                                                          warningColor: [Math.round(AtmoColor.mError.r * 255), Math.round(AtmoColor.mError.g * 255), Math.round(AtmoColor.mError.b * 255), 255]
                                                        }));
         Qt.quit();
       }
     }
   }
-  property int interestsBeforePlain: 0
   property bool notesSet: false
   // As the shell does at startup: detect the installed version.
   Component.onCompleted: Version.init()

@@ -6,6 +6,13 @@ from pathlib import Path
 import stat
 
 
+def displays_retired(rows, count):
+    return (isinstance(rows, list) and len(rows) == count
+            and all(isinstance(row, dict) and row.get('state') == 'idle'
+                    and type(row.get('status')) is int and row['status'] == 0
+                    and row.get('url') == '' for row in rows))
+
+
 def source_manifest(root):
     root = Path(root)
     rows = {}

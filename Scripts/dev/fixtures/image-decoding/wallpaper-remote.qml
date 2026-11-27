@@ -194,9 +194,8 @@ ShellRoot {
                                                          capturedDirectory: root.capturedDirectory,
                                                          immediatePublication: root.immediatePublication,
                                                          raw: root.rawStatus,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         changes: Object.keys(WallpaperService._wallpaperChanges).length,
+                                                         reservations: Object.keys(WallpaperService._wallpaperReservations).length
                                                        }));
         Qt.quit();
       }

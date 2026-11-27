@@ -14,9 +14,15 @@ ShellRoot {
   property int tick: 0
   property int pending: 0
   property bool captured: false
-  property int idleInterests: -1
+  property bool idleBeforeAdmission: false
   property var rows: []
   property var raw: ({})
+  function idle() {
+    return ordinary.status === Image.Null && !ordinary.outputUrl && [0, 1, 2].every(i => {
+      const entry = entries.itemAt(i);
+      return entry && entry.thumbnailState.state === "idle";
+    });
+  }
   function grab(item, name) {
     if (!item.grabToImage(result => {
       console.log("IMAGE_GRAB|" + JSON.stringify({
@@ -70,7 +76,7 @@ ShellRoot {
     onTriggered: {
       ++root.tick;
       if (root.tick === 2) {
-        root.idleInterests = ImageCacheService.sourceInterestCount;
+        root.idleBeforeAdmission = root.idle();
         root.admitted = true;
       }
       if (root.tick >= 12 && !root.captured && ordinary.imageState === "ready") {
@@ -98,14 +104,12 @@ ShellRoot {
       }
       if (root.captured && !root.pending && root.admitted)
         root.admitted = false;
-      if (root.captured && !root.pending && !root.admitted && !ImageCacheService.sourceWorkerRunning) {
+      if (root.captured && !root.pending && !root.admitted && root.idle()) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          rows: root.rows,
                                                          ordinary: root.raw,
-                                                         idleInterests: root.idleInterests,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         idleBeforeAdmission: root.idleBeforeAdmission,
+                                                         idleAfterRetirement: root.idle()
                                                        }));
         Qt.quit();
       }

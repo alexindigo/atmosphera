@@ -21,6 +21,20 @@ def identity(pid):
     return dict(pid=pid, start=fields[19], uid=path.stat().st_uid, group=int(fields[2]))
 
 
+def adopted_children(direct_pid):
+    for pid in Path(f'/proc/self/task/{os.getpid()}/children').read_text().split():
+        if int(pid) != direct_pid:
+            yield int(pid)
+
+
+def reap_adopted(direct_pid):
+    for pid in adopted_children(direct_pid):
+        try:
+            os.waitpid(pid, os.WNOHANG)
+        except ChildProcessError:
+            continue
+
+
 def main():
     # The dedicated watcher becomes the orphan reaper for the decoder subtree.
     libc = ctypes.CDLL(None, use_errno=True)
@@ -42,6 +56,10 @@ def main():
             child = identity(process.pid)
             Path(spec['identity']).write_text(json.dumps(child) + '\n')
             while process.poll() is None:
+                # Our command can wait for an orphan's process group to
+                # disappear before returning. Reap adopted exits now, not
+                # only on teardown. Never reap Popen's direct child here.
+                reap_adopted(process.pid)
                 if time.monotonic() - started >= spec['timeout']:
                     timed_out = True
                     break
@@ -70,10 +88,9 @@ def main():
                     break
                 if joined:
                     continue
-                children = Path(f'/proc/self/task/{os.getpid()}/children').read_text().split()
-                for pid in children:
+                for pid in adopted_children(process.pid):
                     try:
-                        owned = identity(int(pid))
+                        owned = identity(pid)
                         if identity(owned['pid']) == owned:
                             os.kill(owned['pid'], signal.SIGKILL)
                     except (FileNotFoundError, ProcessLookupError):

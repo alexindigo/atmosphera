@@ -7,6 +7,8 @@ from pathlib import Path
 import secrets
 import stat
 
+from .writes import write_exact
+
 
 FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
 
@@ -85,9 +87,22 @@ def open_file(path):
             yield stream, current
 
 
-def read_bytes(path):
+def read_bytes(path, limit=None):
     with open_file(path) as (stream, current):
-        data = stream.read()
+        if limit is None:
+            data = stream.read()
+        else:
+            chunks = []
+            remaining = limit + 1
+            while remaining > 0:
+                chunk = stream.read(min(remaining, 256 * 1024))
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                remaining -= len(chunk)
+            if remaining == 0:
+                raise ValueError('Retained file exceeds the source-byte limit')
+            data = b''.join(chunks)
         if not current():
             raise OSError(errno.ESTALE, 'Image cache entry changed during capture')
         return data
@@ -274,7 +289,7 @@ def atomic_write(path, data, root, *, private=True):
             temporary = candidate
             with os.fdopen(output, 'wb') as stream:
                 os.fchmod(stream.fileno(), 0o600)
-                stream.write(data)
+                write_exact(stream, data)
                 stream.flush()
                 os.fsync(stream.fileno())
             os.replace(temporary, relative.name, src_dir_fd=fd, dst_dir_fd=fd)

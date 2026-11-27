@@ -9,7 +9,7 @@ import qs.Services.UI
 // Rich text or Markdown that can carry images (notifications, changelog,
 // plugin README/chat). Qt's text layout never loads the images: each one is
 // a sized transparent slot in the text, and an NImage from the shared image
-// owner is laid over the slot, so fallback decoding and animation work and a
+// owner is laid over the slot, so decoding and animation stay in imvqml and a
 // failure is a labelled placeholder. Links, styles and text flow stay Qt's.
 // NText never decodes images; it is for shell-authored strings only.
 Item {
@@ -96,7 +96,7 @@ Item {
     var state = _states[index] || {};
     var width = image.width;
     var height = image.height;
-    if (state.state === "ready" && state.naturalWidth > 0 && state.naturalHeight > 0) {
+    if (state.state !== "unavailable" && state.naturalWidth > 0 && state.naturalHeight > 0) {
       if (!width && !height) {
         width = state.naturalWidth;
         height = state.naturalHeight;
@@ -215,14 +215,19 @@ Item {
       return;
     var states = _states.slice();
     var result = image.imageResult || {};
-    var before = states[index] || {};
+    const source = parsedContent.images[index].source;
+    // A resize can start a new pixel decode for the same source. Do not
+    // collapse the slot back to placeholder size while that decode settles:
+    // doing so would invalidate the new size and restart the same cycle.
+    var before = states[index]?.source === source ? states[index] : {};
     states[index] = {
+      source: source,
       state: image.imageState,
       code: image.errorCode,
       reason: image.errorReason,
-      naturalWidth: image.imageState === "ready" ? result.width || 0 : 0,
-      naturalHeight: image.imageState === "ready" ? result.height || 0 : 0,
-      frames: image.imageState === "ready" ? result.frames || 1 : 0
+      naturalWidth: result.width || before.naturalWidth || 0,
+      naturalHeight: result.height || before.naturalHeight || 0,
+      frames: result.frames || before.frames || 0
     };
     _states = states;
     if (before.state !== states[index].state || before.naturalWidth !== states[index].naturalWidth || before.naturalHeight !== states[index].naturalHeight)
@@ -335,14 +340,11 @@ Item {
         animationIntent: "preserve"
         fillMode: Image.Stretch
         imageTransform: "contain"
-        // Independent of the text's width: a layout that depends on the
-        // image's size must not re-request it. Declared size, else a fixed
-        // bound (raster images are not enlarged).
-        sourceSize: slot.image.width > 0 && slot.image.height > 0 ? Qt.size(Math.ceil(slot.image.width * Screen.devicePixelRatio), Math.ceil(slot.image.height * Screen.devicePixelRatio)) : Qt.size(2048, 2048)
         paused: !root.animationsPlaying || !root.visible || Settings.data.general.animationDisabled
         // Read the settled result after the state notification (the failure
         // reason is published after the state).
         onImageStateChanged: Qt.callLater(() => root._report(slot.index, picture))
+        onDecodedSizeChanged: Qt.callLater(() => root._report(slot.index, picture))
         Component.onCompleted: root._report(slot.index, picture)
         Accessible.role: Accessible.Graphic
         Accessible.name: slot.image.alt || slot.image.title || ""

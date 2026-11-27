@@ -88,22 +88,22 @@ ShellRoot {
       if (root.phase === 0 && backdrop.imageState === "ready" && !root.pending) {
         root.phase = 1;
         root.grab("before", function () {
-          WallpaperService.changeWallpaper(root.inputs + "/Motion.webp", root.monitor, "light", (success, names, detail) => root.callbacks.push({
-                                                                                                                                                  success: success,
-                                                                                                                                                  detail: detail
-                                                                                                                                                }));
+          WallpaperService.changeWallpaper(root.inputs + "/Corrupt.webp", root.monitor, "light", (success, names, detail) => root.callbacks.push({
+                                                                                                                                                   success: success,
+                                                                                                                                                   detail: detail
+                                                                                                                                                 }));
           root.phase = 2;
         });
       } else if (root.phase === 2 && root.callbacks.length === 1) {
         root.phase = 3;
-        WallpaperService.toggleFavorite(root.inputs + "/Still.webp", "light", root.monitor);
+        WallpaperService.toggleFavorite(root.inputs + "/Missing.webp", "light", root.monitor);
       } else if (root.phase === 3 && root.notices.length === 2 && !root.pending) {
         root.phase = 4;
         root.grab("after", function () {
           backdrop.requestedWallpaperPath = "";
           root.phase = 5;
         });
-      } else if (root.phase === 5 && !root.pending && ImageCacheService.sourceInterestCount === 0 && ImageCacheService.sourceRequestCount === 0 && !ImageCacheService.sourceWorkerRunning) {
+      } else if (root.phase === 5 && !root.pending && backdrop.imageState === "idle") {
         root.phase = 6;
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          path: WallpaperService.getWallpaper(root.monitor),
@@ -112,9 +112,8 @@ ShellRoot {
                                                          completions: root.completions,
                                                          callbacks: root.callbacks,
                                                          favorites: Settings.data.wallpaper.favorites,
-                                                         interests: ImageCacheService.sourceInterestCount,
-                                                         requests: ImageCacheService.sourceRequestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         changes: Object.keys(WallpaperService._wallpaperChanges).length,
+                                                         reservations: Object.keys(WallpaperService._wallpaperReservations).length
                                                        }));
         Qt.quit();
       }
@@ -129,9 +128,7 @@ ShellRoot {
                                                       callbacks: root.callbacks.length,
                                                       notices: root.notices.length,
                                                       imageState: backdrop.imageState,
-                                                      interests: ImageCacheService.sourceInterestCount,
-                                                      requests: ImageCacheService.sourceRequestCount,
-                                                      worker: ImageCacheService.sourceWorkerRunning
+                                                      changes: Object.keys(WallpaperService._wallpaperChanges).length
                                                     }));
       Qt.exit(3);
     }

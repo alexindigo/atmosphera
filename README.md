@@ -110,15 +110,15 @@ For installing the git `main` branch without an AUR helper.
 
 ```bash
 # from the official repos
-sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-imageformats \
-  imagemagick brightnessctl ffmpeg python python-dbus python-gobject \
+sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia \
+  brightnessctl mpv python python-dbus python-gobject \
   wlr-randr cliphist wlsunset udisks2
 
 # QML helper libs from the AUR (or build from source)
-yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.5' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
+yay -S --needed qt6-imvqml qt6-dbusqml 'qt6-configqml>=0.5.5' qt6-xdgiconqml-git 'qt6-niriqml>=0.3.0' qt6-mangowcqml
 ```
 
-For video thumbnails, install `qt6-mpvqml` (at least 0.3.0) from the AUR when
+For video wallpaper playback, install `qt6-mpvqml` (at least 0.3.0) from the AUR when
 available, or build [mpvqml 0.3.0](https://github.com/alexindigo/mpvqml/releases/tag/v0.3.0)
 against the same Qt installation as Quickshell:
 
@@ -132,12 +132,11 @@ sudo cmake --install build
 cd ..
 ```
 
-Images Qt can decode natively (with `qt6-imageformats`: WebP, TIFF and
-more) render directly; anything else, or WebP when the Qt plugin is missing,
-is decoded by ImageMagick (with `libwebp`/`libheif` for WebP, HEIC and AVIF)
-or FFmpeg into a validated PNG or animated GIF. Optionally install
+ImvQml decodes images and video thumbnails, independently of Qt's image format
+plugins. Its libvips loaders include libheif and libjxl; video frames use libmpv.
+Optionally install
 `qt6-webengine` for PDF preview in the file chooser; without it, PDFs show file
-information. Nix includes `qt6.qtimageformats`; enable `pdfPreviewSupport` in
+information. Enable `pdfPreviewSupport` in
 `nix/package.nix` to include `qt6.qtwebengine` for PDF previews.
 
 The file chooser discovers and mounts local volumes through the system UDisks2

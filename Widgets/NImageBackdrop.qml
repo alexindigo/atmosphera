@@ -83,14 +83,14 @@ Item {
     id: first
     anchors.fill: parent
     active: false
-    visible: root._front === 0
+    opacity: root._front === 0 ? 1 : 0
     onStatusChanged: Qt.callLater(root._settle, 0)
   }
   NImage {
     id: second
     anchors.fill: parent
     active: false
-    visible: root._front === 1
+    opacity: root._front === 1 ? 1 : 0
     onStatusChanged: Qt.callLater(root._settle, 1)
   }
   Timer {

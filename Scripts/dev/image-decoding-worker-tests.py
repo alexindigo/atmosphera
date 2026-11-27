@@ -366,7 +366,7 @@ runpy.run_path(worker, run_name='__main__')
                 headers = {'Content-Length': '1048577'}
                 def geturl(self):
                     return 'https://example.test/image'
-                def read(self, size):
+                def read1(self, size):
                     raise AssertionError('Declared oversize body was read')
             class Opener:
                 def open(self, *args, **kwargs):

@@ -11,7 +11,6 @@ Item {
   required property var modified
   required property var descriptor
   required property real iconSize
-  property var thumbnailProvider: null
   property bool thumbnailActive: false
   property Component nameEditor: null
   readonly property var thumbnailState: artwork.thumbnailState
@@ -37,7 +36,6 @@ Item {
       modified: root.modified
       descriptor: root.descriptor
       compact: true
-      thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
     }
     NText {

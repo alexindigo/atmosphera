@@ -3,7 +3,6 @@ import Quickshell
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
-import qs.Services.UI
 
 ShellRoot {
   id: root
@@ -13,13 +12,14 @@ ShellRoot {
   property int index: 0
   property int pending: 0
   property bool admitted: false
+  property int sourceTick: 0
   property var tiles: []
   property var failures: []
   property var frames: []
   property int quickStart: -1
   readonly property int quickSpan: 30
-  property int initialInterests: -1
-  readonly property var names: ["Still.webp", "Motion.webp", "Still.avif", "Still.heic", "Multipage.tiff", "Misleading.png", "Corrupt.webp", "Missing.webp"]
+  property var inactive: []
+  readonly property var names: ["Still.webp", "Motion.webp", "Still.avif", "Still.heic", "Multipage.tiff", "Misleading.png", "Corrupt.webp", "Missing.webp", "Large.mp4", "Still.webp"]
   property bool done: false
   property bool advancing: false
   function grab(item, name) {
@@ -36,9 +36,10 @@ ShellRoot {
     }
     ++pending;
   }
-  FileThumbnails {
-    id: provider
-    enabled: root.admitted
+  function presentations() {
+    return Array.from({
+                        length: entries.count
+                      }, (_, i) => entries.itemAt(i).thumbnailState);
   }
   QtObject {
     id: previewData
@@ -80,7 +81,6 @@ ShellRoot {
         compactMode: modelData === "compact"
         listMode: modelData === "list"
         columnWidths: [180, 80, 150]
-        thumbnailProvider: provider
         thumbnailActive: root.admitted
       }
     }
@@ -100,16 +100,19 @@ ShellRoot {
     running: true
     onTriggered: {
       ++root.tick;
-      if (root.tick === 2) {
-        root.initialInterests = ImageCacheService.sourceInterestCount;
+      if (!root.admitted && !root.done && root.presentations().every(state => state.state === "idle")) {
+        root.inactive = root.presentations();
         root.admitted = true;
+        root.sourceTick = root.tick;
       }
       if (root.advancing && !root.pending) {
         root.advancing = false;
         if (root.index + 1 === root.names.length)
           root.done = true;
-        else
+        else {
           ++root.index;
+          root.sourceTick = root.tick;
+        }
       }
       const renderer = quicklook.renderer;
       const ready = renderer && renderer.previewState === "ready";
@@ -118,28 +121,28 @@ ShellRoot {
       const elapsed = root.tick - root.quickStart;
       if (ready && elapsed <= root.quickSpan && elapsed % 2 === 0) {
         root.frames.push({
-                           frame: renderer.frame,
+                           playing: renderer.playing,
                            atMs: Date.now()
                          });
         root.grab(renderer, "quicklook-" + root.tick);
       }
       // Capture only settled frames, not the previous source's fade.
-      if (root.tick >= 12 && root.tick % 7 === 0 && !root.done && !root.advancing) {
+      if (root.admitted && root.tick >= 12 && root.tick % 7 === 0 && !root.done && !root.advancing) {
         var settled = true;
         for (var i = 0; i < entries.count; ++i) {
           var state = entries.itemAt(i).thumbnailState;
           if ((!state.imageReady || state.reveal < 1) && !state.unavailable)
             settled = false;
         }
-        if (settled || root.tick >= 90) {
+        if (settled || root.tick - root.sourceTick >= 90) {
           for (var j = 0; j < entries.count; ++j) {
             var entry = entries.itemAt(j);
-            var name = "chooser-" + entry.modelData + "-" + root.names[root.index];
+            var name = "chooser-" + entry.modelData + "-" + (root.index === root.names.length - 1 ? "recovered-" : "") + root.names[root.index];
             var row = {
               id: name,
               state: entry.thumbnailState
             };
-            if (root.index < 6) {
+            if (entry.name !== "Corrupt.webp" && entry.name !== "Missing.webp") {
               root.tiles.push(row);
               root.grab(entry, name);
             } else {
@@ -156,16 +159,15 @@ ShellRoot {
         };
         root.admitted = false;
       }
-      if (root.done && !root.admitted && !root.pending && !ImageCacheService.sourceWorkerRunning) {
+      if (root.done && !root.admitted && !root.pending && !quicklook.renderer && root.presentations().every(state => state.state === "idle")) {
         console.log("IMAGE_BASELINE|" + JSON.stringify({
                                                          tiles: root.tiles,
                                                          failures: root.failures,
                                                          frames: root.frames,
                                                          quicklook: root.quickResult,
-                                                         initialInterests: root.initialInterests,
+                                                         inactive: root.inactive,
                                                          kinds: ["a.heic", "a.jxl", "a.heif", "a.svgz"].map(name => FileTypes.previewKind(name)),
-                                                         finalInterests: ImageCacheService.sourceInterestCount,
-                                                         workerRunning: ImageCacheService.sourceWorkerRunning
+                                                         retired: root.presentations()
                                                        }));
         Qt.quit();
       }
