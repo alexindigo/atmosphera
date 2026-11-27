@@ -16,6 +16,16 @@ from .notification_originals import NotificationOriginals
 from .storage import atomic_write, clear_legacy, directory, read_bytes
 
 
+NATIVE_STAGE = re.compile(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}')
+PNG_STAGE = re.compile(r'[1-9][0-9]*\.png')
+
+
+def snapshot_stage(directory, leaf):
+    if not isinstance(leaf, str) or not (PNG_STAGE.fullmatch(leaf) or NATIVE_STAGE.fullmatch(leaf)):
+        raise ValueError('Invalid snapshot stage')
+    return directory / leaf
+
+
 def source_bytes(source):
     limit = source_byte_budget()
     if source.startswith('data:'):
@@ -35,21 +45,19 @@ def source_bytes(source):
 
 def publish(data, capture_dir, notification, frames):
     leaf = data.get('stage')
-    stage = None
-    if leaf is not None:
-        if not re.fullmatch(r'[1-9][0-9]*\.png', leaf):
-            raise ValueError('Invalid provider snapshot stage')
-        stage = capture_dir / leaf
+    stage = snapshot_stage(capture_dir, leaf) if leaf is not None else None
     try:
         raw = (read_bytes(stage, limit=source_byte_budget()) if stage is not None
                else source_bytes(data['source']))
         if not raw:
             raise ValueError('Empty retained source')
         original_format = data['format']
-        extension = 'png' if stage is not None else original_format
+        extension = 'png' if stage is not None and PNG_STAGE.fullmatch(leaf) else original_format
         if not re.fullmatch('[a-z0-9]+', extension):
             extension = 'image'
         digest = hashlib.sha256(raw).hexdigest()
+        if stage is not None and NATIVE_STAGE.fullmatch(leaf) and digest != data.get('sha256'):
+            raise ValueError('Retained snapshot digest mismatch')
         name = f'atmosphera-{digest}.{extension}'
         if data.get('notification'):
             if notification is None:
@@ -117,10 +125,7 @@ def serve(cache, *, shell_pid):
                 elif action == 'publish':
                     reply.update(publish(packet, stage, owner, images / 'video-wallpapers'))
                 elif action == 'discard':
-                    leaf = packet['stage']
-                    if not re.fullmatch(r'[1-9][0-9]*\.png', leaf):
-                        raise ValueError('Invalid snapshot stage')
-                    (stage / leaf).unlink(missing_ok=True)
+                    snapshot_stage(stage, packet['stage']).unlink(missing_ok=True)
                 elif action == 'clear-legacy':
                     refused = sum(clear_legacy(images / relative)['refused']
                                   for relative in ('wallpapers/thumbnails', 'wallpapers/large', 'contributors'))

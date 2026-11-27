@@ -26,6 +26,7 @@ Singleton {
   function init() {
     ImvCache.directory = baseDir + "decoded/";
     ImvCache.enabled = true;
+    originals.ensureStage();
     initialized = true;
   }
 

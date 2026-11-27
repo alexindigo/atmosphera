@@ -4,10 +4,10 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "qt6-imvqml";
-  version = "0.1.3";
+  version = "0.1.5";
   src = fetchurl {
     url = "https://codeload.github.com/alexindigo/imvqml/tar.gz/refs/tags/v${finalAttrs.version}";
-    sha256 = "caac59a0ac9d32868c872d7ff952a829bb3fd9631026ad3dc6b55a762fba809d";
+    sha256 = "59cc363fa25b52e860148b1c113c1c321efe339dde07a4242ceeae1022f13ca3";
   };
   nativeBuildInputs = [ cmake ninja pkg-config makeWrapper ];
   buildInputs = [ qt6.qtbase qt6.qtdeclarative vips libwebp mpv-unwrapped ] ++ readers;

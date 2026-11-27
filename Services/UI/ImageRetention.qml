@@ -3,8 +3,6 @@ import ImvQml
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import "../../Helpers/ImageBytes.js" as ImageBytes
 import "../../Helpers/PortalPaths.js" as PortalPaths
 
 Scope {
@@ -17,7 +15,8 @@ Scope {
   required property var completed
   property bool videoFrame: false
   property string _stageDirectory: ""
-  readonly property string _stage: key + ".png"
+  property string _stage: key + ".png"
+  property bool _retainOriginal: false
   property string _inputSource: ""
   property int _ticket: 0
   property int _backoff: 25
@@ -71,19 +70,25 @@ Scope {
     if (source.startsWith("/") || /^file:/i.test(source)) {
       const local = source.startsWith("/") ? PortalPaths.pathToUri(source) : PortalPaths.uriToPath(source);
       if (!local.ok) {
-        rejectInput("invalid-source", "The original image path is invalid");
+        finish({
+                 ok: false,
+                 code: "invalid-source",
+                 reason: "The original image path is invalid"
+               });
         return;
       }
-      // FileView::waitForJob (unlike blockLoading) waits on every path.
-      // Own the raw bytes now; the producer can unlink after this call.
-      raw.path = local.path || source;
-      const bytes = raw.waitForJob() && raw.loaded ? raw.data() : null;
-      raw.path = "";
-      if (!bytes || !bytes.byteLength) {
-        rejectInput("source-unreadable", "The original image could not be captured");
+      _stageDirectory = store.stageDirectory;
+      if (!_stageDirectory) {
+        store.ensureStage();
+        fail("retention-unavailable", "The original image store is not ready");
         return;
       }
-      _inputSource = ImageBytes.dataUrl(bytes);
+      // Admission opens the bounded descriptor now; copy and decode happen
+      // off-thread. Never retry by reopening a producer-owned pathname.
+      _retainOriginal = true;
+      _ticket = job.retainOriginal(local.uri || PortalPaths.pathToUri(local.path).uri, _stageDirectory);
+      if (_ticket <= 0)
+        fail("admission-rejected", "Could not admit the original image");
     } else {
       _inputSource = source;
     }
@@ -112,17 +117,7 @@ Scope {
     laterFailure.restart();
   }
 
-  function rejectInput(code, reason) {
-    // The producer-time byte read has already failed. Make that known to
-    // synchronous admission observers before the model inserts the entry.
-    finish({
-             ok: false,
-             code: code,
-             reason: reason
-           });
-  }
-
-  function publish(format) {
+  function publish(format, sha256) {
     if (_stageDirectory && _stageDirectory !== store.stageDirectory) {
       fail("retention-unavailable", "The provider snapshot store was retired");
       return;
@@ -139,6 +134,8 @@ Scope {
       packet.stage = _stage;
     else
       packet.source = input.url;
+    if (_retainOriginal)
+      packet.sha256 = sha256;
     store.publish(packet, reply => {
       _writing = false;
       if (!_closed)
@@ -171,16 +168,12 @@ Scope {
     if (_ticket > 0) {
       job.cancel(_ticket);
       // A publication may already have started. Await its receipt, then
-      // discard the provider stage, rather than orphaning a finished PNG.
+      // discard the stage, rather than orphaning a finished file.
     } else if (!_writing) {
       destroy();
     }
   }
 
-  FileView {
-    id: raw
-    printErrors: false
-  }
   ImageInput {
     id: input
     source: root.videoFrame ? "" : root._inputSource
@@ -196,12 +189,14 @@ Scope {
       if (id !== root._ticket)
         return;
       root._ticket = 0;
+      if (result.stage === "complete" && root._retainOriginal)
+        root._stage = result.path.slice(root._stageDirectory.length + 1);
       if (root._closed) {
         if (result.stage === "complete")
           root.store.discard(root._stageDirectory, root._stage);
         root.destroy();
       } else if (result.stage === "complete") {
-        root.publish(result.sourceInfo.format);
+        root.publish(root._retainOriginal ? result.format : result.sourceInfo.format, result.sha256);
       } else {
         root.fail(result.code, result.detail || result.code);
       }
