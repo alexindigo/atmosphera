@@ -122,8 +122,10 @@ def serve(cache, *, shell_pid):
                         raise ValueError('Invalid snapshot stage')
                     (stage / leaf).unlink(missing_ok=True)
                 elif action == 'clear-legacy':
-                    for relative in ('wallpapers/thumbnails', 'wallpapers/large', 'contributors'):
-                        clear_legacy(images / relative)
+                    refused = sum(clear_legacy(images / relative)['refused']
+                                  for relative in ('wallpapers/thumbnails', 'wallpapers/large', 'contributors'))
+                    if refused:
+                        raise ValueError('Legacy image cache refused its owner sweep')
                 elif action != 'prepare':
                     raise ValueError('Unknown retention operation')
                 reply['ok'] = True
