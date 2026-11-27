@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import select
 import shutil
+import socket
 import subprocess
 import threading
 import time
@@ -37,6 +38,16 @@ GROUPS = {
               'notification-service', 'notification-body', 'cache', 'cache-read', 'cache-clear'),
     'all': ('owner', 'download-burst', 'chooser-wallpaper', 'shell', 'plugins', 'packaging'),
 }
+
+
+def peer_closed(connection):
+    """Observe the held HTTP client, independent of handler scheduling."""
+    try:
+        return not connection.recv(1, socket.MSG_PEEK | socket.MSG_DONTWAIT)
+    except BlockingIOError:
+        return False
+    except ConnectionResetError:
+        return True
 
 
 def warning_coverage(path, color, *, background=None):
@@ -1287,7 +1298,8 @@ os.execv('/usr/bin/find', ['find', *args])
         def with_held_request(source, name, assembled=False):
             release = threading.Event()
             started = threading.Condition()
-            held = dict(started=0, answered=0, leasesAtAdmission=None, leasesAtRelease=None)
+            held = dict(started=0, closedBeforeRelease=0, answered=0,
+                        workersAtAdmission=None, workersAtRelease=None, workersAfterExit=None)
             cache = self.work / (name + '-profile') / 'cache'
             data = (inputs / 'frame-0.png').read_bytes()
 
@@ -1297,6 +1309,15 @@ os.execv('/usr/bin/find', ['find', *args])
                         with started:
                             held['started'] += 1
                             started.notify_all()
+                        deadline = time.monotonic() + 8
+                        while not release.is_set() and time.monotonic() < deadline:
+                            readable, _, _ = select.select([self.connection], [], [], .05)
+                            if readable and peer_closed(self.connection):
+                                with started:
+                                    if not release.is_set():
+                                        held['closedBeforeRelease'] += 1
+                                        started.notify_all()
+                                break
                         if not release.wait(8):
                             self.send_error(504)
                             return
@@ -1312,17 +1333,15 @@ os.execv('/usr/bin/find', ['find', *args])
                         with started:
                             both_admitted = started.wait_for(lambda: held['started'] >= 2, timeout=8)
                         if both_admitted:
-                            held['leasesAtAdmission'] = sorted(p.name for p in cache.glob('image-source-*'))
+                            held['workersAtAdmission'] = sorted(p.name for p in cache.glob('image-source-*'))
                             self.respond()
                         else:
                             self.send_error(504)
                     elif self.path == '/release':
-                        deadline = time.monotonic() + 3
-                        while list(cache.glob('image-source-*')) and time.monotonic() < deadline:
-                            time.sleep(.02)
-                        held['leasesAtRelease'] = sorted(p.name for p in cache.glob('image-source-*'))
-                        release.set()
                         with started:
+                            started.wait_for(lambda: held['closedBeforeRelease'] == 2, timeout=3)
+                            held['workersAtRelease'] = sorted(p.name for p in cache.glob('image-source-*'))
+                            release.set()
                             both_answered = started.wait_for(lambda: held['answered'] >= 2, timeout=8)
                         if both_answered:
                             self.respond()
@@ -1346,6 +1365,10 @@ os.execv('/usr/bin/find', ['find', *args])
             try:
                 observed, output = self.qt(source, fixture, inputs, name,
                                            dict(IMAGE_HELD_SERVER=f'http://127.0.0.1:{server.server_port}'), assembled=assembled)
+                deadline = time.monotonic() + 3
+                while (workers := sorted(p.name for p in cache.glob('image-source-*'))) and time.monotonic() < deadline:
+                    time.sleep(.02)
+                held['workersAfterExit'] = workers
                 (output / 'held-http.json').write_text(json.dumps(held, indent=2) + '\n')
                 return observed, output, held
             finally:
@@ -1371,8 +1394,10 @@ os.execv('/usr/bin/find', ['find', *args])
             self.check(prefix + 'hide-retires-display', all(row['state'] == 'idle' and not row['resolved']
                        for row in observed['hidden'].values()), observed['hidden'])
             admitted, before_release, after_release = observed['heldStages']
-            self.check(prefix + 'held-request-admitted-and-retired', held['started'] == held['answered'] == 2
-                       and len(held['leasesAtAdmission']) == 2 and held['leasesAtRelease'] == [], held)
+            self.check(prefix + 'held-request-admitted-and-retired',
+                       held['started'] == held['closedBeforeRelease'] == held['answered'] == 2, held)
+            self.check(prefix + 'shared-download-worker-retires-at-exit', len(held['workersAtAdmission']) == 1
+                       and held['workersAtAdmission'] == held['workersAtRelease'] and held['workersAfterExit'] == [], held)
             for name in ('backdrop', 'lock'):
                 before_image = captures / ('held-before-' + name + '.png')
                 after_image = captures / ('held-after-' + name + '.png')
@@ -2313,8 +2338,9 @@ os.execv('/usr/bin/find', ['find', *args])
         inputs = self.work / 'fixtures'
         create_fixtures(inputs, self.commands)
         png = colored_png(COLORS[0])
-        active, started, closed = set(), [], []
+        active, started, closed = {}, [], []
         guard = threading.Condition()
+        advance = threading.Event()
         peak = 0
 
         class Handler(BaseHTTPRequestHandler):
@@ -2337,21 +2363,27 @@ os.execv('/usr/bin/find', ['find', *args])
                     return
                 index = int(self.path.rsplit('/', 1)[1])
                 with guard:
-                    active.add(index)
+                    active[index] = self.connection
                     started.append(index)
-                    peak = max(peak, len(active))
+                    peak = max(peak, sum(not peer_closed(conn) for conn in active.values()))
+                    if index == 2:
+                        advance.set()
                 try:
                     self.send_response(200)
-                    self.send_header('Content-Length', '262144')
+                    self.send_header('Content-Length', str(len(png)))
                     self.end_headers()
-                    self.wfile.write(b'x' * 131072)  # reach the client's partial file
+                    self.wfile.write(png[:1])
+                    # Only completion of these earlier transfers frees the
+                    # slots needed to get past the cancelled queued index 4.
+                    if index in (1, 2, 3) and advance.wait(8):
+                        self.wfile.write(png[1:])
                     ready, _, _ = select.select([self.connection], [], [], 13)
-                    if ready and not self.connection.recv(1):
+                    if ready and peer_closed(self.connection):
                         with guard:
                             closed.append(index)
                 finally:
                     with guard:
-                        active.discard(index)
+                        del active[index]
                         guard.notify_all()
 
         server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
@@ -2371,13 +2403,14 @@ os.execv('/usr/bin/find', ['find', *args])
             report = dict(peak=peak, started=started, closed=closed, active=sorted(active), result=result,
                           remaining=self.retired_acquisitions(name))
             (self.out / 'download-burst.json').write_text(json.dumps(report, indent=2) + '\n')
-            self.check('remote-downloads-share-two-transfer-slots', peak == 2 and sorted(started) == [0, 1, 2], report)
+            self.check('remote-downloads-share-two-transfer-slots', peak == 2, report)
+            self.check('queued-download-cancellation-observed', sorted(started) == [0, 1, 2, 3, 5, 6], report)
             self.check('remote-download-cancellation-retires-consumers', result['cancelled'] == ['idle', 'idle'], report)
             self.check('remote-download-queue-is-bounded', result['rejected'] == max(0, size - 34), report)
             self.check('truncated-download-fails-before-it-is-leased', result['failure'] == 'download-failed', report)
             self.check('download-sibling-lease-survives-cancellation', result['kept'] == 'ready'
                        and pixel(output / 'kept.png') == list(COLORS[0]), report)
-            self.check('shell-exit-cleans-inflight-transfers-and-leases', not active and sorted(closed) == [0, 1, 2]
+            self.check('shell-exit-cleans-inflight-transfers-and-leases', not active and sorted(closed) == sorted(started)
                        and not report['remaining'], report)
         finally:
             server.shutdown()
