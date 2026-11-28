@@ -33,7 +33,7 @@ nix develop
 Or with flakes:
 
 ```sh
-nix develop github:alexindigo/atmosphera
+nix develop github:atmosphera-dev/atmosphera
 ```
 
 ### Debian/Ubuntu
@@ -76,7 +76,7 @@ sudo ./install/install_scripts.sh /usr/local/bin
 ### Nix
 
 ```sh
-nix build github:alexindigo/atmosphera
+nix build github:atmosphera-dev/atmosphera
 ./result/bin/atmosphera
 ```
 

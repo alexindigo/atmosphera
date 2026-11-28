@@ -158,7 +158,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Atmosphera - a customizable desktop shell for Niri and Hyprland, built with Quickshell";
-    homepage = "https://github.com/alexindigo/atmosphera";
+    homepage = "https://github.com/atmosphera-dev/atmosphera";
     license = lib.licenses.gpl3Only;
     mainProgram = "atmosphera";
   };

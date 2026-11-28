@@ -46,7 +46,7 @@ in
     ];
     systemd.user.services.atmosphera = {
       description = "Atmosphera - Wayland desktop shell";
-      documentation = [ "https://github.com/alexindigo/atmosphera" ];
+      documentation = [ "https://github.com/atmosphera-dev/atmosphera" ];
       after = [ cfg.target ];
       partOf = [ cfg.target ];
       wantedBy = [ cfg.target ];

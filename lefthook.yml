@@ -11,7 +11,7 @@ pre-push:
       run: |
         url=$(git remote get-url "$1" 2>/dev/null || echo "unknown")
         case "$url" in
-          *github.com:alexindigo/atmosphera*|*aur-atmosphera*) ;;
+          git@github.com:atmosphera-dev/atmosphera|git@github.com:atmosphera-dev/atmosphera.git|*aur-atmosphera*) ;;
           *)
             echo "ERROR: Push to untrusted remote '$1' ($url)"
             exit 1

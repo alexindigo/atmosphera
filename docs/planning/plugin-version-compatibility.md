@@ -13,7 +13,7 @@ plugins:
 
 1. **Noctalia/upstream plugins** — the ecosystem from
    `noctalia-dev/legacy-v4-plugins` (and our converted mirror at
-   `alexindigo/atmosphera-plugins`). Their manifests declare
+   `atmosphera-dev/atmosphera-plugins`). Their manifests declare
    `minNoctaliaVersion` in **Noctalia's own versioning** (3.6.0, 4.1.2,
    4.5.0, 4.6.6, …).
 2. **Atmosphera-native plugins** — plugins authored for this fork.
@@ -41,7 +41,7 @@ Upstream Noctalia never needs (2) as a separate value — its product version
 
 1. **The stated mechanism cannot have occurred against the default source.**
    `installPlugin` gates on the **registry index entry**, not the downloaded
-   `manifest.json` — and the index at `alexindigo/atmosphera-plugins` carried
+   `manifest.json` — and the index at `atmosphera-dev/atmosphera-plugins` carried
    `minNoctaliaVersion` on **0 of 158 entries** (the manifests carried it on
    156). `if (pluginMetadata.minNoctaliaVersion)` was always falsy, so the
    gate **never executed**. The comparison that was blamed for blocking

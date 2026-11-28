@@ -9,7 +9,7 @@ pkgrel=12
 install=atmosphera-git.install
 pkgdesc="Atmosphera - a customizable desktop shell for Niri and Hyprland, built with Quickshell (git version)"
 arch=('any')
-url="https://github.com/alexindigo/atmosphera"
+url="https://github.com/atmosphera-dev/atmosphera"
 license=('GPL-3.0-or-later')
 makedepends=('git')
 source "$(dirname "${BASH_SOURCE[0]}")/../metadata.sh"

@@ -209,7 +209,7 @@ in
     systemd.user.services.atmosphera = lib.mkIf cfg.systemd.enable {
       Unit = {
         Description = "Atmosphera - Wayland desktop shell";
-        Documentation = "https://github.com/alexindigo/atmosphera";
+        Documentation = "https://github.com/atmosphera-dev/atmosphera";
         PartOf = [ config.wayland.systemd.target ];
         After = [ config.wayland.systemd.target ];
         X-Restart-Triggers =

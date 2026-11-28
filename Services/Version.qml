@@ -185,7 +185,7 @@ Singleton {
   Process {
     id: mainCommitProcess
 
-    command: ["curl", "-s", "https://api.github.com/repos/alexindigo/atmosphera/commits/main"]
+    command: ["curl", "-s", "https://api.github.com/repos/atmosphera-dev/atmosphera/commits/main"]
 
     stdout: StdioCollector {
       onStreamFinished: {
@@ -269,7 +269,7 @@ Singleton {
     property bool fetchSucceeded: false
     property bool wasRateLimited: false
 
-    command: ["curl", "-s", "https://api.github.com/repos/alexindigo/atmosphera/releases/latest"]
+    command: ["curl", "-s", "https://api.github.com/repos/atmosphera-dev/atmosphera/releases/latest"]
 
     stdout: StdioCollector {
       onStreamFinished: {

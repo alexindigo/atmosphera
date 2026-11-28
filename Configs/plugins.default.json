@@ -14,7 +14,7 @@
     {
       "enabled": true,
       "name": "Atmosphera Plugins",
-      "url": "https://github.com/alexindigo/atmosphera-plugins"
+      "url": "https://github.com/atmosphera-dev/atmosphera-plugins"
     }
   ],
   "states": {

@@ -1494,7 +1494,7 @@ left the bar showing a stale network.
 
 **Feature**
 
-The shell now ships with the [Atmosphera plugin registry](https://github.com/alexindigo/atmosphera-plugins)
+The shell now ships with the [Atmosphera plugin registry](https://github.com/atmosphera-dev/atmosphera-plugins)
 pre-linked as an enabled, out-of-the-box plugin source — a full conversion of
 the upstream Noctalia plugin catalog plus plugins vendored from unmerged
 upstream PRs. New installs can browse and install community plugins from

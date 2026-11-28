@@ -20,9 +20,9 @@ import sys
 from presentation_harness import check_execution_paths, run_harness, write_receipt
 from qml_probe import inject_probe, probe_owner_path
 
-REGISTRY_URL = 'https://github.com/alexindigo/atmosphera-plugins'
+REGISTRY_URL = 'https://github.com/atmosphera-dev/atmosphera-plugins'
 OTHER_URL = 'https://example.invalid/hot-corners-fork'
-KEY = hashlib.sha256(REGISTRY_URL.encode()).hexdigest()[:6] + ':hot-corners'
+KEY = '57e8d5:hot-corners'
 OTHER_KEY = hashlib.sha256(OTHER_URL.encode()).hexdigest()[:6] + ':hot-corners'
 CORNERS = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
 EMPTY = {corner: '' for corner in CORNERS}

@@ -8,7 +8,7 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'alexindigo/atmosphera' }}
+    if: ${{ github.repository == 'atmosphera-dev/atmosphera' }}
     permissions:
       contents: write
     steps:

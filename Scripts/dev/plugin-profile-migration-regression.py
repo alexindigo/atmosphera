@@ -24,7 +24,7 @@ import traceback
 from pathlib import Path
 
 ROOT = Path('/home/tester/Projects/qt612-atmocolor/081-integrity')
-REGISTRY_URL = 'https://github.com/alexindigo/atmosphera-plugins'
+REGISTRY_URL = 'https://github.com/atmosphera-dev/atmosphera-plugins'
 WALLPAPERS_URL = 'https://github.com/atmosphera/atmosphera-wallpapers'
 REGISTRY_HASH = '57e8d5'
 START_SECONDS = 15
@@ -571,7 +571,7 @@ def main():
     runtime = ROOT / 'runtime' / output.name
     if output.exists() or runtime.exists():
         raise SetupError('output or runtime for %s already exists' % output.name)
-    if short_hash(REGISTRY_URL) != REGISTRY_HASH:
+    if short_hash('https://github.com/alexindigo/atmosphera-plugins') != REGISTRY_HASH:
         raise SetupError('hash helper does not reproduce the registry key hash')
     output.mkdir(parents=True)
     runtime.mkdir(parents=True)

@@ -65,7 +65,7 @@ https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 ## Getting Started
 
 **New to Atmosphera?**
-Check the [installation guide](https://github.com/alexindigo/atmosphera/releases) and [FAQ](https://github.com/alexindigo/atmosphera/issues) to get up and running!
+Check the [installation guide](https://github.com/atmosphera-dev/atmosphera/releases) and [FAQ](https://github.com/atmosphera-dev/atmosphera/issues) to get up and running!
 
 ---
 
@@ -168,7 +168,7 @@ cd ..
 **4. Install the shell**
 
 ```bash
-git clone https://github.com/alexindigo/atmosphera.git
+git clone https://github.com/atmosphera-dev/atmosphera.git
 cd atmosphera
 
 # shell tree (plain QML — no build step)
@@ -390,7 +390,7 @@ Some features go beyond what a desktop shell can or should do. These are typical
 - **Volume mounting**: the file chooser uses UDisks2 for mount, unmount and eject
 - **Screen mirroring/casting**: managed by the compositor or dedicated tools
 
-We appreciate feature suggestions, but if a request falls into this category, it's likely outside what Atmosphera can provide. When in doubt, feel free to ask in our [GitHub Issues](https://github.com/alexindigo/atmosphera/issues).
+We appreciate feature suggestions, but if a request falls into this category, it's likely outside what Atmosphera can provide. When in doubt, feel free to ask in our [GitHub Issues](https://github.com/atmosphera-dev/atmosphera/issues).
 
 ---
 
@@ -399,7 +399,7 @@ We appreciate feature suggestions, but if a request falls into this category, it
 We welcome contributions of any size — bug fixes, new features, documentation improvements, or custom themes and configs.
 
 **Get involved:**
-- **Found a bug?** [Open an issue](https://github.com/alexindigo/atmosphera/issues/new)
+- **Found a bug?** [Open an issue](https://github.com/atmosphera-dev/atmosphera/issues/new)
 
 ---
 

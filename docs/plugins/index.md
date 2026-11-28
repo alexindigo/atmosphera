@@ -360,4 +360,4 @@ plugin records for itself: caches, last-known values, counters.
 ## Example Plugin
 
 A complete example lock screen plugin is available at
-[`builtin/plugins/demo-custom-lockscreen/`](https://github.com/alexindigo/atmosphera/tree/main/builtin/plugins/demo-custom-lockscreen).
+[`builtin/plugins/demo-custom-lockscreen/`](https://github.com/atmosphera-dev/atmosphera/tree/main/builtin/plugins/demo-custom-lockscreen).
