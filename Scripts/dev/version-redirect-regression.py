@@ -2,13 +2,14 @@
 """Run in a Quickshell/Niri test VM with TMPDIR on the guest workspace disk."""
 import argparse
 from collections import Counter
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
-from threading import Thread
+from threading import Lock, Thread
+from time import sleep
 
 from qml_probe import inject_probe, probe_owner_path
 from workspace_guard import require_disk_backed_paths
@@ -24,12 +25,9 @@ ANSWERS = {RELEASE: {'tag_name': 'v91.2.3'}, MAIN: {'sha': SHA},
 
 PROBE = r'''
   Timer {
-    property int ticks: 0
-    interval: 200; running: true; repeat: true
+    interval: 50; running: true; repeat: true
     onTriggered: {
-      if (!Settings.isLoaded)
-        return;
-      if (++ticks < 15)
+      if (!Settings.isLoaded || Version.redirectFixtureFinished !== 4)
         return;
       console.log("VERSION_REDIRECT|" + JSON.stringify({release: Version.latestVersion,
         sha: Version.latestMainCommit, qs: Version.latestQSVersion,
@@ -40,14 +38,19 @@ PROBE = r'''
 '''
 
 
-def run(source, work, loop):
+def run(source, work, loop, response_delay):
     work.mkdir()
     requests = Counter()
+    request_lock = Lock()
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            requests[self.path] += 1
+            with request_lock:
+                requests[self.path] += 1
+                first_request = requests[self.path] == 1
             if self.path in ANSWERS:
+                if first_request and response_delay:
+                    sleep(response_delay)
                 self.send_response(301)
                 self.send_header('Location', self.path if loop and self.path == RELEASE else '/moved' + self.path)
                 self.end_headers()
@@ -66,6 +69,15 @@ def run(source, work, loop):
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '.qmlls.ini', '__pycache__'))
     probe = probe_owner_path(shell)
     probe.write_text(inject_probe(probe.read_text(), PROBE))
+    # Instrument only the throwaway copy: count after each real collector's
+    # handler returns, including a failed curl or an empty response body.
+    version = shell / 'Services/Version.qml'
+    source_text = version.read_text()
+    singleton = 'Singleton {\n'
+    collector = '      onStreamFinished: {\n'
+    assert source_text.count(singleton) == 1 and source_text.count(collector) == len(ANSWERS)
+    version.write_text(source_text.replace(singleton, singleton + '  property int redirectFixtureFinished: 0\n')
+                       .replace(collector, collector + '        Qt.callLater(() => root.redirectFixtureFinished++);\n'))
     for name in ('tmp', 'home', 'config', 'data', 'cache', 'state', 'bin'):
         (work / name).mkdir()
     config = work / 'config/atmosphera/settings'
@@ -85,7 +97,7 @@ os.execv('/usr/bin/curl', ['curl', '--noproxy', '*', *sys.argv[1:-1],
                           os.environ['FIXTURE_ORIGIN'] + url.removeprefix(prefix)])
 ''')
     curl.chmod(0o700)
-    with HTTPServer(('127.0.0.1', 0), Handler) as server:
+    with ThreadingHTTPServer(('127.0.0.1', 0), Handler) as server:
         thread = Thread(target=server.serve_forever)
         thread.start()
         try:
@@ -122,11 +134,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--response-delay', type=float, default=0, help='delay the first reply per API endpoint')
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     require_disk_backed_paths(source, output, os.environ['TMPDIR'])
     if output.is_relative_to(source):
         parser.error('output must be outside the source tree')
     output.mkdir()
-    run(source, output / 'redirect', False)
-    run(source, output / 'loop', True)
+    run(source, output / 'redirect', False, args.response_delay)
+    run(source, output / 'loop', True, args.response_delay)
