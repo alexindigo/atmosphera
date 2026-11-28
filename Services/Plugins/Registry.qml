@@ -16,6 +16,9 @@ Singleton {
 
   readonly property int currentVersion: 6
 
+  readonly property string officialSourceUrl: "https://github.com/atmosphera-dev/atmosphera-plugins"
+  readonly property string _legacyOfficialSourceUrl: "https://github.com/alexindigo/atmosphera-plugins"
+
   // The shell-shipped source's location (read-only distribution payload at
   // builtin/plugins/). Its identity is hashed from this path exactly like
   // any other source — no special-cased constant.
@@ -37,15 +40,20 @@ Singleton {
     bootstrap();
   }
 
-  // Generate a short hash (6 characters) from a source URL
+  function _canonicalSourceUrl(url) {
+    return url === root._legacyOfficialSourceUrl ? root.officialSourceUrl : url;
+  }
+
+  // The official source kept its install identity when its GitHub owner moved.
+  // Other sources, including the shell-shipped one, still hash their own URL.
   function generateSourceHash(sourceUrl) {
-    var hash = Crypto.sha256(sourceUrl);
+    const url = root._canonicalSourceUrl(sourceUrl);
+    var hash = Crypto.sha256(url === root.officialSourceUrl ? root._legacyOfficialSourceUrl : url);
     return hash.substring(0, 6);
   }
 
   // Generate composite key: plain ID for null/empty URLs (local-only
-  // plugins), "<source-hash>:<id>" for everything else. One rule for every
-  // source — the shell-shipped source hashes its path like any other.
+  // plugins), "<source-hash>:<id>" for everything else.
   function generateCompositeKey(pluginId, sourceUrl) {
     if (!sourceUrl) {
       return pluginId;
@@ -71,6 +79,7 @@ Singleton {
 
   // Get source name by URL
   function getSourceNameByUrl(sourceUrl) {
+    sourceUrl = root._canonicalSourceUrl(sourceUrl);
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url === sourceUrl) {
         return root.pluginSources[i].name;
@@ -81,6 +90,7 @@ Singleton {
 
   // Check if the source URL is from the official/main plugin registry
   function isMainSource(sourceUrl) {
+    sourceUrl = root._canonicalSourceUrl(sourceUrl);
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url === sourceUrl) {
         return root.pluginSources[i].isOfficial === true;
@@ -105,10 +115,46 @@ Singleton {
     return state ? state.sourceUrl : null;
   }
 
+  // Preserve the first official source record and its preferences if both
+  // aliases are configured. Never rewrite state keys or placement/settings IDs.
+  function _migrateOfficialSource(sources, states) {
+    let changed = false;
+    let seen = false;
+    const canonical = sources.filter(function (source) {
+      const url = root._canonicalSourceUrl(source.url);
+      if (url !== root.officialSourceUrl)
+        return true;
+      if (seen) {
+        changed = true;
+        return false;
+      }
+      seen = true;
+      if (source.url !== url) {
+        source.url = url;
+        changed = true;
+      }
+      return true;
+    });
+    for (const key of Object.keys(states)) {
+      const state = states[key];
+      const url = root._canonicalSourceUrl(state.sourceUrl);
+      if (state.sourceUrl !== url) {
+        state.sourceUrl = url;
+        changed = true;
+      }
+    }
+    return {
+      sources: canonical,
+      changed: changed
+    };
+  }
+
   // Signals
   signal pluginsChanged
   property var _reloadCallback: null
-  property var _registryRead: ({callback: null})
+  property var _registryRead: ({
+                                 callback: null
+                               })
   property bool _registryWriting: false
   property bool _registryWritePending: false
   property int _scanGeneration: 0
@@ -136,7 +182,9 @@ Singleton {
       _registryWriting = true;
       pluginsFileView.writeAdapter();
     } else if (_reloadCallback) {
-      _registryRead = {callback: _reloadCallback};
+      _registryRead = {
+        callback: _reloadCallback
+      };
       pluginsFileView.reload();
     }
   }
@@ -150,28 +198,38 @@ Singleton {
         root._reloadCallback = null;
       Qt.callLater(root._pumpRegistry);
       if (callback)
-        callback({status: success ? "reloaded" : "failed", error: {code: success ? "" : "registry-load"}});
+        callback({
+                   status: success ? "reloaded" : "failed",
+                   error: {
+                     code: success ? "" : "registry-load"
+                   }
+                 });
     });
   }
   function _validRegistry(data) {
-    function object(value) { return value !== null && typeof value === "object" && !Array.isArray(value); }
+    function object(value) {
+      return value !== null && typeof value === "object" && !Array.isArray(value);
+    }
     if (!object(data) || (data.version !== undefined && (!Number.isInteger(data.version) || data.version < 0)))
       return false;
     if (data.states !== undefined) {
-      if (!object(data.states)) return false;
+      if (!object(data.states))
+        return false;
       for (const key of Object.keys(data.states)) {
         const state = data.states[key];
-        if (!object(state) || (state.enabled !== undefined && typeof state.enabled !== "boolean") ||
-            (state.sourceUrl !== undefined && state.sourceUrl !== null && typeof state.sourceUrl !== "string"))
+        if (!object(state) || (state.enabled !== undefined && typeof state.enabled !== "boolean") || (state.sourceUrl !== undefined && state.sourceUrl !== null && typeof state.sourceUrl !== "string"))
           return false;
       }
     }
     if (data.sources !== undefined) {
-      if (!Array.isArray(data.sources)) return false;
+      if (!Array.isArray(data.sources))
+        return false;
       for (const source of data.sources) {
-        if (!object(source)) return false;
+        if (!object(source))
+          return false;
         for (const field of ["url", "path", "name"])
-          if (source[field] !== undefined && typeof source[field] !== "string") return false;
+          if (source[field] !== undefined && typeof source[field] !== "string")
+            return false;
       }
     }
     return true;
@@ -203,20 +261,23 @@ Singleton {
       var data;
       try {
         data = JSON.parse(text());
-        if (!root._validRegistry(data)) throw new Error("invalid registry state");
+        if (!root._validRegistry(data))
+          throw new Error("invalid registry state");
       } catch (error) {
         Logger.e("PluginRegistry", "Registry load rejected; keeping active state:", error);
         root._completeReload(false, operation);
         return;
       }
       Logger.i("PluginRegistry", "Loaded plugin states from:", path);
-      root.pluginStates = data.states || {};
-      root.pluginSources = data.sources || [];
+      const states = data.states || {};
+      const migration = root._migrateOfficialSource(data.sources || [], states);
+      root.pluginStates = states;
+      root.pluginSources = migration.sources;
       root._loadedVersion = data.version === undefined ? root.currentVersion : data.version;
       root._v5Pending = root._loadedVersion < 5;
       root._v6Pending = root._loadedVersion < 6;
 
-      var needsSave = false;
+      var needsSave = migration.changed;
       for (var i = 0; i < root.pluginSources.length; i++) {
         var src = root.pluginSources[i];
         if (!src.url && src.path) {
@@ -245,7 +306,9 @@ Singleton {
       }
 
       root.migratePluginData(function () {
-        scanPluginFolder(function (success) { root._completeReload(success, operation); });
+        scanPluginFolder(function (success) {
+          root._completeReload(success, operation);
+        });
       });
     }
 
@@ -258,7 +321,9 @@ Singleton {
       Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
       root.pluginStates = {};
       root.pluginSources = [];
-      root.scanPluginFolder(function (success) { root._completeReload(success, operation); });
+      root.scanPluginFolder(function (success) {
+        root._completeReload(success, operation);
+      });
     }
     onSaved: {
       root._registryWriting = false;
@@ -1128,7 +1193,7 @@ for key in sys.argv[3:]:
         {
           "enabled": true,
           "name": "Atmosphera Plugins",
-          "url": "https://github.com/alexindigo/atmosphera-plugins"
+          "url": root.officialSourceUrl
         },
         {
           "enabled": false,
@@ -1350,6 +1415,7 @@ for key in sys.argv[3:]:
   // Register a plugin (add to installed plugins after download)
   // sourceUrl is required for new plugins to generate composite key
   function registerPlugin(manifest, sourceUrl) {
+    sourceUrl = root._canonicalSourceUrl(sourceUrl);
     var compositeKey = generateCompositeKey(manifest.id, sourceUrl);
     manifest.compositeKey = compositeKey;
     root.installedPlugins[compositeKey] = manifest;
@@ -1398,6 +1464,7 @@ for key in sys.argv[3:]:
 
   // Add a plugin source
   function addPluginSource(name, url) {
+    url = root._canonicalSourceUrl(url);
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url === url) {
         Logger.w("PluginRegistry", "Source already exists:", url);
@@ -1420,6 +1487,7 @@ for key in sys.argv[3:]:
 
   // Remove a plugin source
   function removePluginSource(url) {
+    url = root._canonicalSourceUrl(url);
     var newSources = [];
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url !== url) {
@@ -1440,15 +1508,20 @@ for key in sys.argv[3:]:
 
   // Edit a plugin source (identify by oldUrl, update name and url)
   function editPluginSource(oldUrl, name, url) {
+    oldUrl = root._canonicalSourceUrl(oldUrl);
+    url = root._canonicalSourceUrl(url);
+    if (oldUrl !== url && root.pluginSources.some(source => source.url === url)) {
+      Logger.w("PluginRegistry", "Source already exists:", url);
+      return false;
+    }
     var newSources = [];
     var found = false;
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url === oldUrl) {
-        newSources.push({
-                          name: name,
-                          url: url,
-                          enabled: root.pluginSources[i].enabled !== false
-                        });
+        newSources.push(Object.assign({}, root.pluginSources[i], {
+                                        name: name,
+                                        url: url
+                                      }));
         found = true;
       } else {
         newSources.push(root.pluginSources[i]);
@@ -1466,15 +1539,14 @@ for key in sys.argv[3:]:
 
   // Set source enabled/disabled state
   function setSourceEnabled(url, enabled) {
+    url = root._canonicalSourceUrl(url);
     var newSources = [];
     var found = false;
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url === url) {
-        newSources.push({
-                          name: root.pluginSources[i].name,
-                          url: root.pluginSources[i].url,
-                          enabled: enabled
-                        });
+        newSources.push(Object.assign({}, root.pluginSources[i], {
+                                        enabled: enabled
+                                      }));
         found = true;
       } else {
         newSources.push(root.pluginSources[i]);
@@ -1494,6 +1566,7 @@ for key in sys.argv[3:]:
 
   // Check if source is enabled
   function isSourceEnabled(url) {
+    url = root._canonicalSourceUrl(url);
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (root.pluginSources[i].url === url) {
         return root.pluginSources[i].enabled !== false; // Default to true if not set

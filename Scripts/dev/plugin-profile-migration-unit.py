@@ -33,7 +33,7 @@ ERRORS = re.compile(r"ReferenceError|TypeError|Cannot assign to non-existent pro
 
 BUILTIN = "file:///etc/xdg/quickshell/atmosphera/builtin/plugins"
 OLD_BUILTIN = "file:///etc/xdg/quickshell/atmosphera/Plugins"
-REGISTRY = "https://github.com/alexindigo/atmosphera-plugins"
+REGISTRY = "https://github.com/atmosphera-dev/atmosphera-plugins"
 WALLPAPERS = "https://github.com/atmosphera/atmosphera-wallpapers"
 SHIPPED = ["noctalia-icons", "clock", "launcher"]
 REGISTRY_IDS = [("pomodoro", True), ("weather", False), ("todo", True), ("calendar", True),
@@ -254,7 +254,7 @@ def main():
     config = run / "profile"
     for part in ("config", "cache"):
         (config / part).mkdir(parents=True)
-    hashes = {"current": source_hash(BUILTIN), "old": source_hash(OLD_BUILTIN), "registry": source_hash(REGISTRY)}
+    hashes = {"current": source_hash(BUILTIN), "old": source_hash(OLD_BUILTIN), "registry": "57e8d5"}
 
     hashes_src = {}
     for rel in FILES:

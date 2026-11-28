@@ -21,7 +21,7 @@ jobs:
         run: echo "PLUGINS_REF=$(cat shell/.github/image-decoding-plugins-ref)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
-          repository: alexindigo/atmosphera-plugins
+          repository: atmosphera-dev/atmosphera-plugins
           ref: ${{ env.PLUGINS_REF }}
           persist-credentials: false
           path: plugins

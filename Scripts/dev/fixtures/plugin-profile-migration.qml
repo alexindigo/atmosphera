@@ -12,7 +12,7 @@ Item {
 
   readonly property string builtinUrl: "file:///etc/xdg/quickshell/atmosphera/builtin/plugins"
   readonly property string oldBuiltinUrl: "file:///etc/xdg/quickshell/atmosphera/Plugins"
-  readonly property string registryUrl: "https://github.com/alexindigo/atmosphera-plugins"
+  readonly property string registryUrl: "https://github.com/atmosphera-dev/atmosphera-plugins"
   readonly property string wallpapersUrl: "https://github.com/atmosphera/atmosphera-wallpapers"
   readonly property var shippedIds: ["noctalia-icons", "clock", "launcher"]
   readonly property var registryIds: [["pomodoro", true], ["weather", false], ["todo", true], ["calendar", true], ["notes", false], ["timer", true], ["music", true], ["wifi-menu", false], ["emoji", true], ["unit-converter", false], ["rss", true]]

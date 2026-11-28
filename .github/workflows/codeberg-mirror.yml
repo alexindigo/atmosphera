@@ -6,6 +6,16 @@ on:
       - '**'
     tags:
       - '**'
+  # A deleted branch or tag may not produce a push run. The flake updater's
+  # GITHUB_TOKEN pushes deliberately don't trigger push workflows at all.
+  delete:
+  workflow_run:
+    workflows: ["update flake"]
+    types: [completed]
+    branches: [main]
+  # Bulk tag operations may emit no event; reconcile against GitHub anyway.
+  schedule:
+    - cron: '37 10 * * *'
   workflow_dispatch:
 
 # Every run force-pushes a full snapshot of all branches and tags. Overlapping
@@ -18,12 +28,16 @@ concurrency:
 
 jobs:
   mirror:
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository) }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout (full history + all tags)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_run' && github.event.repository.default_branch || github.ref }}
 
       # On tag-triggered runs, actions/checkout rewrites the triggering tag as a
       # lightweight tag pointing at the commit, dropping the annotated (signed)

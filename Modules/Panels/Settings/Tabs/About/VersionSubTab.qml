@@ -453,7 +453,7 @@ ColumnLayout {
               onExited: TooltipService.hide()
               onClicked: {
                 if (root.commitDisplay) {
-                  Quickshell.execDetached(["xdg-open", "https://github.com/alexindigo/atmosphera/commit/" + root.commitDisplay]);
+                  Quickshell.execDetached(["xdg-open", "https://github.com/atmosphera-dev/atmosphera/commit/" + root.commitDisplay]);
                 }
               }
             }
