@@ -181,11 +181,16 @@ Singleton {
     mainCommitProcess.running = true;
   }
 
+  function _githubApiCommand(path) {
+    // Repository transfers redirect API requests; stop if the chain loops.
+    return ["curl", "-s", "-L", "--max-redirs", "3", "https://api.github.com/repos/" + path];
+  }
+
   // Latest main-branch commit of our repo — drives the -git update check
   Process {
     id: mainCommitProcess
 
-    command: ["curl", "-s", "https://api.github.com/repos/atmosphera-dev/atmosphera/commits/main"]
+    command: root._githubApiCommand("atmosphera-dev/atmosphera/commits/main")
 
     stdout: StdioCollector {
       onStreamFinished: {
@@ -269,7 +274,7 @@ Singleton {
     property bool fetchSucceeded: false
     property bool wasRateLimited: false
 
-    command: ["curl", "-s", "https://api.github.com/repos/atmosphera-dev/atmosphera/releases/latest"]
+    command: root._githubApiCommand("atmosphera-dev/atmosphera/releases/latest")
 
     stdout: StdioCollector {
       onStreamFinished: {
@@ -308,7 +313,7 @@ Singleton {
     property bool fetchSucceeded: false
     property bool wasRateLimited: false
 
-    command: ["curl", "-s", "https://api.github.com/repos/quickshell-mirror/quickshell/releases/latest"]
+    command: root._githubApiCommand("quickshell-mirror/quickshell/releases/latest")
 
     stdout: StdioCollector {
       onStreamFinished: {
@@ -347,7 +352,7 @@ Singleton {
     property bool fetchSucceeded: false
     property bool wasRateLimited: false
 
-    command: ["curl", "-s", "https://api.github.com/repos/noctalia-dev/noctalia-shell/contributors?per_page=100"]
+    command: root._githubApiCommand("noctalia-dev/noctalia-shell/contributors?per_page=100")
 
     stdout: StdioCollector {
       onStreamFinished: {
