@@ -13,6 +13,9 @@ on:
     workflows: ["update flake"]
     types: [completed]
     branches: [main]
+  # Bulk tag operations may emit no event; reconcile against GitHub anyway.
+  schedule:
+    - cron: '37 10 * * *'
   workflow_dispatch:
 
 # Every run force-pushes a full snapshot of all branches and tags. Overlapping
