@@ -12,6 +12,11 @@ pre-push:
         url=$(git remote get-url "$1" 2>/dev/null || echo "unknown")
         case "$url" in
           git@github.com:atmosphera-dev/atmosphera|git@github.com:atmosphera-dev/atmosphera.git|*aur-atmosphera*) ;;
+          git@github.com:alexindigo/atmosphera|git@github.com:alexindigo/atmosphera.git)
+            echo "ERROR: Atmosphera moved to atmosphera-dev. Update this remote before pushing:" >&2
+            echo "  git remote set-url $1 git@github.com:atmosphera-dev/atmosphera.git" >&2
+            exit 1
+            ;;
           *)
             echo "ERROR: Push to untrusted remote '$1' ($url)"
             exit 1
